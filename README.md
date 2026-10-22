@@ -27,7 +27,8 @@ stability of negative-mass Schwarzschild, regular negative-mass sources, and wha
    turning-point criterion carries over to negative mass when stated in N (not M).
 5. **The phantom point particle is Bondi's all-negative mass**: one parameter is inertial, passive and active
    mass; gravity alone cannot distinguish "positive inertial, negative active". At 1PN the dipole midpoint
-   acceleration is exactly m/d² (no correction); a matched pair slowly contracts (d̈ = −E_tot/d²).
+   acceleration is exactly m/d² (no correction); a matched pair slowly contracts (d̈ = −E_tot/d²) — the separation law and rigidity condition were
+   already found by Ivanov 2012 (arXiv:1204.1269).
 6. **Mass bounds:** per slice, M ≥ −(phantom's weighted energy), tight to 0.1 % for the phantom star; no bound
    uniform in time. Whether radiation can drive the Bondi mass to −∞ is open.
 7. **Review of Shirokov's code:** the runaway physics is implemented correctly (signs, couplings, diagnostics
@@ -39,7 +40,10 @@ stability of negative-mass Schwarzschild, regular negative-mass sources, and wha
    unconfirmed. Early-time fine-grid a·d²/M̄ (true mass) ≈ 1.01–1.02; "steady to 2 %" holds only on the coarse
    grid and only to t ≈ 300.
 
-In progress: non-radial (l ≥ 2) stability of the phantom star.
+Novelty status of each result: `notes/novelty/RESULTS.md`.
+
+In progress: non-radial (l ≥ 2) stability of the phantom star; radiation from the runaway pair; lone-star
+1+1 evolution; proof of "exactly one unstable mode" for all l.
 
 ## Setup
 ```
