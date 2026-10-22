@@ -1,0 +1,8 @@
+canonical M = +0.014626, phantom M = -0.014580, |M2|/M1 = 0.99689
+d =   8.0:  F d^2/(M1 M2) = 0.99123   W d/(M1 M2) = 0.99912   mass beyond d/2: 9.36e-02 (canonical), 9.70e-02 (phantom)
+d =  10.0:  F d^2/(M1 M2) = 0.99915   W d/(M1 M2) = 0.99982   mass beyond d/2: 2.48e-02 (canonical), 2.63e-02 (phantom)
+d =  12.0:  F d^2/(M1 M2) = 0.99987   W d/(M1 M2) = 0.99985   mass beyond d/2: 6.51e-03 (canonical), 7.07e-03 (phantom)
+d =  15.0:  F d^2/(M1 M2) = 0.99993   W d/(M1 M2) = 0.99984   mass beyond d/2: 8.77e-04 (canonical), 9.88e-04 (phantom)
+d =  20.0:  F d^2/(M1 M2) = 0.99993   W d/(M1 M2) = 0.99981   mass beyond d/2: 3.08e-05 (canonical), 3.70e-05 (phantom)
+d =  25.0:  F d^2/(M1 M2) = 0.99993   W d/(M1 M2) = 0.99978   mass beyond d/2: 2.20e-07 (canonical), 6.87e-07 (phantom)
+(1.00000 = point-particle Newtonian force; < 1 means overlap weakens the interaction)

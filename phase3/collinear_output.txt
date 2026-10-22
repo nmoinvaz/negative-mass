@@ -1,0 +1,19 @@
+a1 (front, mu1=+m1) = epsilon*(-3*V1**2*m2/d**2 + 3*V1*V2*m2/d**2 - 5*V2**2*m2/(2*d**2) - 5*m1*m2/d**3 + 4*m2**2/d**3) + m2/d**2
+a2 (rear,  mu2=-m2) = epsilon*(-5*V1**2*m1/(2*d**2) + 3*V1*V2*m1/d**2 - 3*V2**2*m1/d**2 - 4*m1**2/d**3 + 5*m1*m2/d**3) + m1/d**2
+
+at rest:  a1 = m2*(d - 5*epsilon*m1 + 4*epsilon*m2)/d**3    a2 = m1*(d - 4*epsilon*m1 + 5*epsilon*m2)/d**3
+dipole at rest: a1 = m*(d - epsilon*m)/d**3 , a2 = m*(d + epsilon*m)/d**3 , a_mid = m/d**2 , d'' = -2*epsilon*m**2/d**3
+
+proper-separation acceleration at rest  a1 - a2 + a_mid^2 d = -(4*d*m1 - 4*d*m2 - 17*epsilon*m1**2 + 38*epsilon*m1*m2 - 17*epsilon*m2**2)/(4*d**3)
+  -E_tot/d^2                                                 = -(d*m1 - d*m2 + epsilon*m1*m2)/d**3
+  difference = 17*epsilon*(m1 - m2)**2/(4*d**3)  -> zero at O(eps) when m2 - m1 = O(eps): 0
+  rigid (E_tot = 0) mass condition: m2 = [d*m1/(d - m1)]  = m1 (1 + m1/d) + O(m1^3/d^2)
+
+dipole, common axial velocity V: a1 = -m*(5*V**2*d*epsilon - 2*d + 2*epsilon*m)/(2*d**3) , a2 = -m*(5*V**2*d*epsilon - 2*d - 2*epsilon*m)/(2*d**3) , a_mid = -m*(5*V**2*epsilon - 2)/(2*d**2)
+dipole, d'' with V1 = V + u/2, V2 = V - u/2: -epsilon*m*(V*u + 2*m/d)/d**2
+dipole, common transverse velocity V: a1 = [m*(d - epsilon*(V**2*d + m))/d**3, 0, 0] , a2 = [m*(d - epsilon*(V**2*d - m))/d**3, 0, 0]
+
+Shirokov's quoted masses (M+ = 0.014350, M- = -0.014295), d = 10, at rest:
+  a1 d^2/Mbar = 0.99663,  a2 d^2/Mbar = 1.00333
+  E_tot = 7.551e-05;  proper-separation accel = -7.551e-07  -> delta(t) = -3.776e-07 t^2 :  t=200: -0.0151, t=400: -0.0604
+  (Phase-2 masses +0.014626/-0.014580: E_tot = 6.732e-05, delta(400) = -0.0539)

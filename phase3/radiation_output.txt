@@ -1,0 +1,5 @@
+dipole moment 2nd derivative: 0
+quadrupole luminosity L2 = 0
+octupole  luminosity L3 = 24*a**4*d**2*m**2/35  = (with a = m/d^2) 24*m**6/(35*d**6)
+m = 0.0143, d = 10: L3 = 5.86e-18;  energy radiated by t = 1000: 5.9e-15  vs  E_tot = m^2/d = 2.0e-05
+(The slow-motion expansion about a fixed origin fails once v ~ 1; higher multipoles grow like powers of v.)
