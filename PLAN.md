@@ -11,7 +11,7 @@ independent reproduction of the DG08 spectrum (cheap with the Phase 0 code).
 
 ## Phase 2 — Regular negative-mass stars (in progress — see phase2/RESULTS.md)
 - ✅ Vacuum exterior cannot host an even-parity instability when |M|/R < 0.374 (Robin κ ≥ 0).
-- ✅ Shirokov's canonical and phantom stars reproduced (radius exact; masses +2 % common factor, open).
+- ✅ Shirokov's canonical and phantom stars reproduced (profiles exact; paper's masses are enclosed at φ=5 % of φ_c, ours are true ADM).
 - Build static, spherically symmetric negative-ADM-mass stars (Shirokov's sextic phantom soliton, and a
   perfect-fluid alternative) as an ODE shooting problem.
 - Compute their even-parity linear spectrum for l = 0, 1, 2, 3, ….

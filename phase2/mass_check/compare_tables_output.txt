@@ -1,0 +1,12 @@
+canonical_omega0.750.dat 
+  header: # self-gravitating boson star phi0(r) [canonical]: m=1.0 lam=10240.0 mu=21845333.0 omega_eigenvalue=0.7499946563554473 ADM_mass=0.014349964367378492
+  phi_c=0.0197204696  seam r_m=5.1871 phi(r_m)/phi_c=0.0496  M from tail lapse: +0.01434996..+0.01434997
+  ours phi_c=0.0197204282 (diff -2.10e-06); max|dphi|/phi_c=1.41e-05; max|dalpha|=2.84e-07
+  areal radius of seam: psi^2 r = 5.1849
+  M_paper-style(ours)=+0.0143460  M_true(ours)=+0.0146265  ratio header/true=0.98109
+phantom_omega0.7603.dat 
+  header: # self-gravitating boson star phi0(r) [exotic]: m=1.0 lam=10240.0 mu=21845333.0 omega_eigenvalue=0.7603045190007871 ADM_mass=-0.014294691595748159
+  phi_c=0.0196641883  seam r_m=5.2401 phi(r_m)/phi_c=0.0498  M from tail lapse: -0.01429473..-0.01429465
+  ours phi_c=0.0196642262 (diff +1.92e-06); max|dphi|/phi_c=1.26e-05; max|dalpha|=1.34e-07
+  areal radius of seam: psi^2 r = 5.2090
+  M_paper-style(ours)=-0.0142937  M_true(ours)=-0.0145803  ratio header/true=0.98041

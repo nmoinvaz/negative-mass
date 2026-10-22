@@ -1,0 +1,4 @@
+eps=+1 target 0.75 as w_paper: phic=0.019720428 w_paper=0.7500000 w_true=0.7499929  M_paper-style=+0.0143460  M_true=+0.0146265  (paper +0.014350; r_m iso=5.178, areal=5.192; far r=24.5 phi=1.4e-09)
+eps=+1 target 0.75 as w_true : phic=0.019720373 w_paper=0.7500071 w_true=0.7500000  M_paper-style=+0.0143455  M_true=+0.0146260  (paper +0.014350; r_m iso=5.178, areal=5.192; far r=24.5 phi=1.4e-09)
+eps=-1 target 0.7603 as w_paper: phic=0.019664226 w_paper=0.7603000 w_true=0.7603022  M_paper-style=-0.0142937  M_true=-0.0145803  (paper -0.014295; r_m iso=5.236, areal=5.222; far r=31.8 phi=9.7e-12)
+eps=-1 target 0.7603 as w_true : phic=0.019664245 w_paper=0.7602978 w_true=0.7603000  M_paper-style=-0.0142938  M_true=-0.0145805  (paper -0.014295; r_m iso=5.236, areal=5.222; far r=24.5 phi=1.5e-09)
