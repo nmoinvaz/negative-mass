@@ -30,7 +30,10 @@ stability of negative-mass Schwarzschild, regular negative-mass sources, and wha
    acceleration is exactly m/d² (no correction); a matched pair slowly contracts (d̈ = −E_tot/d²) — the separation law and rigidity condition were
    already found by Ivanov 2012 (arXiv:1204.1269).
 6. **Mass bounds:** per slice, M ≥ −(phantom's weighted energy), tight to 0.1 % for the phantom star; no bound
-   uniform in time. Whether radiation can drive the Bondi mass to −∞ is open.
+   uniform in time. Radiation (phase4/radiation): the hyperbolic ± pair radiates at a constant rest-frame rate
+   L₀ = (24/35)m⁶/d⁶ (checked two ways), so eternal motion loses unbounded energy, but in the exact
+   Bonnor–Swaminarayan solution it arrives only at the endpoint of null infinity; a 1PN back-reaction toy model
+   suggests a pair from rest stops accelerating, giving a finite (huge) loss. M_B → −∞ is not established.
 7. **Review of Shirokov's code:** the runaway physics is implemented correctly (signs, couplings, diagnostics
    verified). Two real bugs off the paper's path (boosted-star Π sign; Ψ4 matter term zeroed). Precision
    claims are weaker than stated: the a = M̄/d² agreement rests on the coarse grid (fine grid 7 % higher at
@@ -42,7 +45,7 @@ stability of negative-mass Schwarzschild, regular negative-mass sources, and wha
 
 Novelty status of each result: `notes/novelty/RESULTS.md`.
 
-In progress: non-radial (l ≥ 2) stability of the phantom star; radiation from the runaway pair; lone-star
+In progress: non-radial (l ≥ 2) stability of the phantom star; lone-star
 1+1 evolution; proof of "exactly one unstable mode" for all l.
 
 ## Setup
