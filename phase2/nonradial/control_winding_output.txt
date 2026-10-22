@@ -1,0 +1,4 @@
+around QNM: winding = +1.0000  (52 evaluations, 145s)
+displaced by +0.004i: winding = +0.0000  (32 evaluations, 222s)
+winding2 normalisation control, around QNM: winding = +1.0000
+winding2 normalisation control, displaced: winding = -0.0000

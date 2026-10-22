@@ -1,0 +1,18 @@
+l=2: static Zerilli residual of psi0(M) = 0
+   eps=-1 w=0.7603 M=-0.014580 r_m= 24.11 (phi_cut 1e-09): q_int=1.244686741294e-01 g=1.244684380457e-01  (q_int-g)/g=+1.897e-06  c_l=-9.27381e+00  sign(kappa_eff-kappa_c)=+   [rtol check: +1.897e-06]
+   eps=-1 w=0.7603 M=-0.014580 r_m= 34.21 (phi_cut 1e-12): q_int=8.772487417548e-02 g=8.772484522864e-02  (q_int-g)/g=+3.300e-07  c_l=-9.27213e+00  sign(kappa_eff-kappa_c)=+   [rtol check: +3.300e-07]
+   eps=+1 w=0.75 M=+0.014626 r_m= 23.76 (phi_cut 1e-09): q_int=1.261981872323e-01 g=1.261984269866e-01  (q_int-g)/g=-1.900e-06  c_l=+8.63775e+00  sign(kappa_eff-kappa_c)=-   [rtol check: -1.900e-06]
+   eps=+1 w=0.75 M=+0.014626 r_m= 33.68 (phi_cut 1e-12): q_int=8.904604731708e-02 g=8.904607689549e-02  (q_int-g)/g=-3.322e-07  c_l=+8.63931e+00  sign(kappa_eff-kappa_c)=-   [rtol check: -3.322e-07]
+   eps=-1 w=0.85 M=-0.009745 r_m= 27.94 (phi_cut 1e-09): q_int=1.073882035787e-01 g=1.073881163670e-01  (q_int-g)/g=+8.121e-07  c_l=-8.29946e+00  sign(kappa_eff-kappa_c)=+   [rtol check: +8.121e-07]
+   eps=-1 w=0.85 M=-0.009745 r_m= 40.35 (phi_cut 1e-12): q_int=7.435964731251e-02 g=7.435963769741e-02  (q_int-g)/g=+1.293e-07  c_l=-8.29856e+00  sign(kappa_eff-kappa_c)=+   [rtol check: +1.293e-07]
+   eps=+1 w=0.85 M=+0.009430 r_m= 27.93 (phi_cut 1e-09): q_int=1.073742428812e-01 g=1.073743255647e-01  (q_int-g)/g=-7.700e-07  c_l=+7.85840e+00  sign(kappa_eff-kappa_c)=-   [rtol check: -7.700e-07]
+   eps=+1 w=0.85 M=+0.009430 r_m= 40.36 (phi_cut 1e-12): q_int=7.433090864168e-02 g=7.433091773961e-02  (q_int-g)/g=-1.224e-07  c_l=+7.85921e+00  sign(kappa_eff-kappa_c)=-   [rtol check: -1.224e-07]
+l=3: static Zerilli residual of psi0(M) = 0
+   eps=-1 w=0.7603 M=-0.014580 r_m= 24.11 (phi_cut 1e-09): q_int=1.658759071875e-01 g=1.658759038827e-01  (q_int-g)/g=+1.992e-08  c_l=-5.39009e+01  sign(kappa_eff-kappa_c)=+   [rtol check: +1.992e-08]
+   eps=-1 w=0.7603 M=-0.014580 r_m= 34.21 (phi_cut 1e-12): q_int=1.169257249962e-01 g=1.169257247947e-01  (q_int-g)/g=+1.723e-09  c_l=-5.39446e+01  sign(kappa_eff-kappa_c)=+   [rtol check: +1.723e-09]
+   eps=+1 w=0.75 M=+0.014626 r_m= 23.76 (phi_cut 1e-09): q_int=1.683490859514e-01 g=1.683490892824e-01  (q_int-g)/g=-1.979e-08  c_l=+4.84125e+01  sign(kappa_eff-kappa_c)=-   [rtol check: -1.979e-08]
+   eps=+1 w=0.75 M=+0.014626 r_m= 33.68 (phi_cut 1e-12): q_int=1.187701866982e-01 g=1.187701869025e-01  (q_int-g)/g=-1.721e-09  c_l=+4.83727e+01  sign(kappa_eff-kappa_c)=-   [rtol check: -1.721e-09]
+   eps=-1 w=0.85 M=-0.009745 r_m= 27.94 (phi_cut 1e-09): q_int=1.431433585511e-01 g=1.431433570646e-01  (q_int-g)/g=+1.038e-08  c_l=-7.88815e+01  sign(kappa_eff-kappa_c)=+   [rtol check: +1.038e-08]
+   eps=-1 w=0.85 M=-0.009745 r_m= 40.35 (phi_cut 1e-12): q_int=9.912662324228e-02 g=9.912662316365e-02  (q_int-g)/g=+7.932e-10  c_l=-7.89190e+01  sign(kappa_eff-kappa_c)=+   [rtol check: +7.932e-10]
+   eps=+1 w=0.85 M=+0.009430 r_m= 27.93 (phi_cut 1e-09): q_int=1.432052226138e-01 g=1.432052240371e-01  (q_int-g)/g=-9.938e-09  c_l=+7.53979e+01  sign(kappa_eff-kappa_c)=-   [rtol check: -9.938e-09]
+   eps=+1 w=0.85 M=+0.009430 r_m= 40.36 (phi_cut 1e-12): q_int=9.912679977577e-02 g=9.912679985077e-02  (q_int-g)/g=-7.566e-10  c_l=+7.53649e+01  sign(kappa_eff-kappa_c)=-   [rtol check: -7.566e-10]

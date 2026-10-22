@@ -1,0 +1,19 @@
+tth second derivatives: {'H0': False, 'H1': False, 'K': False, 'F': False, 'G': False}
+tr second derivatives: {'H0': False, 'H1': False, 'K': False, 'F': False, 'G': False}
+rth second derivatives: {'H0': False, 'H1': False, 'K': False, 'F': False, 'G': False}
+rr second derivatives: {'H0': True, 'H1': False, 'K': True, 'F': False, 'G': False}
+KGR second derivatives: {'H0': False, 'H1': False, 'K': False, 'F': True, 'G': False}
+KGI second derivatives: {'H0': False, 'H1': False, 'K': False, 'F': False, 'G': True}
+first-order relations: contain F'' or G''? False  1s
+  rr: has H0'=False K'=False H1'=False F''=False G''=True H0=True
+  KGR: has H0'=False K'=False H1'=False F''=True G''=False H0=True
+  KGI: has H0'=False K'=False H1'=False F''=False G''=True H0=False
+joint solve done 80s
+matrix built 106s
+entries with s in denominator: []  h: []
+entries not even in s: []
+vacuum: metric-scalar blocks decouple: True True
+vacuum Zerilli (Moncrief map) residual row 0: 0
+vacuum Zerilli (Moncrief map) residual row 1: 0
+vacuum free-KG residual: 0
+wrote polar_matrix_generated.py 109s

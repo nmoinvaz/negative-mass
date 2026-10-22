@@ -1,0 +1,8 @@
+/home/claude/negative-mass/phase2/nonradial/polar_solver.py:106: RuntimeWarning: overflow encountered in multiply
+  return r * (s * s + V(r) - q * q) / f
+/usr/local/lib/python3.13/dist-packages/scipy/integrate/_ivp/rk.py:684: RuntimeWarning: invalid value encountered in dot
+  err5 = np.dot(K.T, self.E5) / scale
+/usr/local/lib/python3.13/dist-packages/scipy/integrate/_ivp/rk.py:685: RuntimeWarning: invalid value encountered in dot
+  err3 = np.dot(K.T, self.E3) / scale
+eps+1_w0.75_l2: rm=23.76 M=+0.014626 rtol=1e-10 phi_cut=1e-09  100 pts in [0.001,300.0]  (675s)
+   sign changes: 0;  D range: min|D|=1.044e-09 at gamma=300; sign at gmin -1, at gmax -1
