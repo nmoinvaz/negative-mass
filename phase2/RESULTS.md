@@ -35,10 +35,11 @@ negative active/ADM mass). Static shooting in Schwarzschild-like coordinates, ω
 | canonical | 0.7500 | +0.014626 | +0.014350 | 4.344 | 4.34 | 3.4e-3 |
 | phantom | 0.7603 | −0.014580 | −0.014295 | 4.402 | — | 3.3e-3 |
 
-- Radius and compactness reproduce the paper. Masses are **1.9–2.0 % high, by the same factor (0.981)
-  for both stars**; the mass-match |M₋|/M₊ = 0.997 (paper: matched to 0.39 %) agrees. A common factor
-  points to a convention difference (e.g. how the paper extracts ADM mass on its finite box), not a sign
-  or model error. Unresolved — check against the paper's repo.
+- Radius and compactness reproduce the paper. Our masses are 1.9–2.0 % above the paper's.
+  **Resolved (see `mass_check/RESULTS.md`):** the paper's solver reports the mass enclosed at the radius
+  where φ falls to 5 % of φ_c (r ≈ 5.2, still inside the matter tail), not the ADM mass at infinity. Our
+  enclosed mass at that radius reproduces the paper to 3×10⁻⁴; profiles agree to 1.4×10⁻⁵. Our values are
+  the true ADM masses. The bias depends on frequency (0.977–0.985), so it is not a fixed factor.
 - At equal frequency the phantom is heavier in magnitude (paper's Fig. 2): canonical ≈ +0.01424 vs
   phantom −0.01482 at ω ≈ 0.757. Both families lighten toward ω → 0.9 (≈ 0.57 of the campaign mass at
   ω ≈ 0.895; paper reports a floor ≈ 0.54 near ω ≈ 0.93).

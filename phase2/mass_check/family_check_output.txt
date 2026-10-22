@@ -1,0 +1,2 @@
+eps=+1 w=0.8: phic=0.019126391  M_paper-style=+0.011204279 (paper +0.011209378, rel -4.5e-04)  M_true=+0.011478272  paper/true=0.97657
+eps=-1 w=0.7: phic=0.019944749  M_paper-style=-0.020515198 (paper -0.020520688, rel -2.7e-04)  M_true=-0.020824855  paper/true=0.98539
