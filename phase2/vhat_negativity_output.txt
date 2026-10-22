@@ -1,0 +1,19 @@
+l=2: static residual=0  chi>0 on r>0: True  V^<0 on r in [1.5450, 2.6740]|M|  min V^=-19.83
+l=3: static residual=0  chi>0 on r>0: True  V^<0 on r in [0.6179, 1.0143]|M|  min V^=-499.7
+l=4: static residual=0  chi>0 on r>0: True  V^<0 on r in [0.3431, 0.5519]|M|  min V^=-4505
+l=5: static residual=0  chi>0 on r>0: True  V^<0 on r in [0.2205, 0.3512]|M|  min V^=-2.454e+04
+l=6: static residual=None  chi>0 on r>0: True  V^<0 on r in [0.1543, 0.2444]|M|  min V^=-9.818e+04
+l=7: static residual=None  chi>0 on r>0: True  V^<0 on r in [0.1143, 0.1804]|M|  min V^=-3.181e+05
+l=8: static residual=None  chi>0 on r>0: True  V^<0 on r in [0.0882, 0.1388]|M|  min V^=-8.837e+05
+
+Compactness bound: exterior cannot host an instability (kappa>=0) when R > r_neg(l), i.e. |M|/R < 1/r_neg(l)
+ l     k  r_neg/|M|  |M|/R bound  2sqrt(2/k)
+ 2     4     2.6740       0.3740      1.4142
+ 3    20     1.0143       0.9859      0.6325
+ 4    60     0.5519       1.8118      0.3651
+ 5   140     0.3512       2.8474      0.2390
+ 6   280     0.2444       4.0914      0.1690
+ 7   504     0.1804       5.5435      0.1260
+ 8   840     0.1388       7.2036      0.0976
+
+All l in 2..8: exterior positive whenever |M|/R < 0.3740
