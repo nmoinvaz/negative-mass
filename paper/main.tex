@@ -20,7 +20,8 @@
 
 \title{The instability of negative-mass Schwarzschild\\is a point-mass effect:\\[4pt]
 \large Exact thresholds for finite stars and a radially stable negative-mass boson star}
-\author{Nathan\thanks{\href{mailto:nathan@nathanm.com}{nathan@nathanm.com}}}
+\author{Nathan Moinvaziri\thanks{\href{mailto:nathan@nathanm.com}{nathan@nathanm.com}}\\[2pt]
+\normalsize\textit{Independent researcher}}
 \date{October 2026}
 
 \begin{document}
@@ -389,13 +390,61 @@ has an unstable vacuum~\cite{CJM2004}. And the Robin model of the interior is ex
 independent of frequency; a real star supplies a frequency-dependent one, for which Theorem~\ref{thm:trunc} gives the
 count at each fixed frequency.
 
+\section{How the results were obtained}\label{sec:method}
+
+This work was carried out by the author working with an AI research assistant (Anthropic's Claude, run as an agent
+with a Python environment and the ability to delegate independent tasks to parallel sub-agents). The author set the
+questions, the scope and the priorities, and reviewed each stage; the assistant carried out the literature reading,
+derivations, code and drafting under that direction. Because AI-generated mathematics can be wrong in ways that read
+fluently, the workflow was built so that no claim rests on the assistant's word alone.
+
+\paragraph{From literature to a list of gaps.} We began from Bondi's paper~\cite{Bondi1957} and read forward through
+the work it prompted~\cite{Bonnor1989,GHI2005,GD2006,CC2006,DG2009,Dotti2022,MP2014,Johnson2020,Alves2025} and the recent
+simulation of Ref.~\cite{Shirokov2026}. For each paper we recorded what is proved, what is assumed and what is only
+asserted, and collected the open points into a list of gaps: whether the three Bondi masses can differ consistently,
+whether the runaway survives beyond Newtonian order, whether the known instability counts all unstable modes, whether
+it survives replacing the singularity by a star, and what the positive-mass theorem does and does not exclude. Each gap
+became a phase of a written plan, with a stated test for what would count as closing it.
+
+\paragraph{Checking the starting points.} Before building on any published result we re-derived it. The Zerilli
+potential, the Dotti--Gleiser intertwiner and the Gleiser--Dotti growth rate were reproduced symbolically; this
+exposed a sign misprint in one intermediate expression of Ref.~\cite{DG2009}, which we corrected before use, and the
+discontinuity of the truncated mode used in Ref.~\cite{GHI2005}. The static boson stars of Ref.~\cite{Shirokov2026} were
+reproduced to $10^{-5}$ in the field profile, and the $2\%$ mass offset traced to the definition of mass used there.
+
+\paragraph{Analytic results.} The proofs of Lemma~\ref{lem:props} and Theorems~\ref{thm:one}--\ref{thm:trunc} were
+first written out as conventional arguments; then every algebraic identity on which they depend (the ground-state identity, the
+closed form of $\kappa_c$, the factorisations and sign properties of $\chi$ and $\mathcal N$) was verified in exact
+arithmetic with SymPy, for $\ell=2$--$10$ individually and symbolically in $\ell$ where the text says so. Sign and root
+claims were checked by exact root isolation for $\ell\le50$. Each proof was then tested numerically: the predicted
+eigenvalue count was compared with direct spectral computations over a 1000-case grid in $(\ell,R,\kappa)$, with no
+disagreement.
+
+\paragraph{Numerical results.} Every eigenvalue reported in Sec.~\ref{sec:bs} was computed by two independent methods
+(compound-matrix shooting and a finite-difference generalised eigenproblem), and the stability changes were compared
+against the turning points of the families computed separately from the background solutions. The nonlinear evolution
+code was validated by its convergence order, by conservation of the Misner--Sharp mass, and by recovering the linear
+growth rates of unstable stars to $0.2\%$. Numerical codes use NumPy, SciPy and mpmath; all scripts and their recorded
+outputs are in the repository.
+
+\paragraph{Independent review and novelty.} Separate agents, given the code but not the conclusions, reviewed the
+public code accompanying Ref.~\cite{Shirokov2026} and our own codes for errors. A literature search was run for each
+result before calling it new; it showed, for example, that the first post-Newtonian separation law for a Bondi pair that we rederived had
+already been obtained~\cite{Ivanov2012}, which is why it is not presented here, and that the zero mode
+$\phi_0=1/\psi_0$ on which Sec.~\ref{sec:one} builds already appears in Ref.~\cite{DG2009}, as credited there.
+
+\paragraph{Limitations of the process.} The checks above are internal. The results have not yet been reviewed by
+specialists in the field, and the symbolic and numerical verifications establish the stated identities and spectra
+but cannot rule out an error in how a statement was set up. We would welcome independent scrutiny, and the repository is
+organised so that each claim can be traced to the script that checks it.
+
 \paragraph{Reproducibility.} The symbolic verifications (Lemma~\ref{lem:props}, Theorems~\ref{thm:one}--\ref{thm:trunc},
 exact for $\ell=2$--$10$ and symbolically in $\ell$ where stated; root isolation of $\mathcal N$ for $\ell\le50$), the
 spectral computations, the boson-star background and perturbation codes, the nonlinear evolution code, and the script
 that generates every figure are in the accompanying repository.
 
-\paragraph{Acknowledgments.} Analysis, computations and drafting were carried out with assistance from Anthropic's
-Claude.
+\paragraph{Acknowledgments.} The author thanks Anthropic's Claude, which carried out the analysis, computations and
+drafting described in Sec.~\ref{sec:method} under the author's direction.
 
 \begin{thebibliography}{99}
 
@@ -419,6 +468,8 @@ Phys. Rev. D \textbf{74}, 024027 (2006), arXiv:gr-qc/0604101.
 bubbles in de Sitter space-time,'' arXiv:1910.01774.
 \bibitem{Alves2025} M. de Aguiar Alves, A. G. S. Landulfo and B. Arderucio Costa, arXiv:2408.00154; Phys. Rev. D
 \textbf{111}, 044027 (2025).
+\bibitem{Ivanov2012} P. B. Ivanov, ``On relativistic motion of a pair of particles having opposite signs of
+masses,'' Phys. Usp. \textbf{55}, 1232 (2012), arXiv:1204.1269.
 \bibitem{Zerilli1970} F. J. Zerilli, ``Effective potential for even-parity Regge--Wheeler gravitational perturbation
 equations,'' Phys. Rev. Lett. \textbf{24}, 737 (1970); Phys. Rev. D \textbf{2}, 2141 (1970).
 \bibitem{Giveon2004} A. Giveon, B. Kol, A. Ori and A. Sever, ``On the resolution of the time-like singularities in
