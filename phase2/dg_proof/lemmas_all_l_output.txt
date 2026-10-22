@@ -1,0 +1,28 @@
+== L1 ==
+P2 = -r^2 (r+2)(c r - 6): P2(r_s) = 0
+chi'/chi at r_s = -P0/P1 = -(l - 1)**2*(l + 2)**2/(12*(l**2 + l + 1)) ; -1/(r_s(r_s+2)) = -(l - 1)**2*(l + 2)**2/(12*(l**2 + l + 1)) ; diff = 0
+P1(r_s) = 144*(l**2 + l + 1)/((l - 1)**2*(l + 2)**2) (nonzero for l>=2, so the relation is forced; chi(r_s)>0 by Lemma A)
+phi0_xx(r_s) with chi' = ratio*chi: 0
+Res_{r_s} psi0^2 dx/dr : 0
+
+== L2: behaviour at r = 0 (needs chi = (3/2) r - a r^3 + b r^4 + e r^5 + O(r^6)) ==
+r^4 V^ =  12 + ( 2*(l**2 + l + 3) ) r + O(r^2)
+-> r^4 V^ analytic at 0 (rational with chi = r*(3/2+...)), value 12; indicial eq. in r:
+   s(s-1) - s - 3 = (s - 3)*(s + 1)  -> exponents 3, -1 for every l
+
+== L3: infinity ==
+lim r^2 V^ = (l + 1)*(l + 2)  (V^ = 2 g^2 - V)
+
+== L4: DG unstable mode, all l ==
+(H_Z Psi)/Psi with k = c(c+2)/6 : -l**2*(l - 1)**2*(l + 1)**2*(l + 2)**2/144  ; -(k/2)^2 = -l**2*(l - 1)**2*(l + 1)**2*(l + 2)**2/144
+difference: 0
+k = c(c+2)/6 = (l-1)l(l+1)(l+2)/6 : True
+
+== L5: DG eq. 59 inequality ==
+(K s)^2 - 18^2 (K-16)^2 with s^2 = 6(K-18): 6*(K - 24)**3
+K = (l-1)l(l+1)(l+2) >= 120 for l >= 3  ->  q(r0) > 0;  K = 24 (l = 2) is exactly the degenerate case.
+
+== L6: DG mode mapped by A* = -d/dx + g is regular at r_s and admissible at r = 0 (all l) ==
+(ln h)'(r_s) - (ln chi)'(r_s) = 0  -> numerator h chi' - h' chi vanishes at r_s: Psi^ regular there
+X1'/X1 - H1'/H1 =  0 + 0 * r + 0 * r^2 + O(r^3)
+ -> h chi' - h' chi = r^2 X1 H1 (X1'/X1 - H1'/H1) = O(r^5), Psi^ = O(r^3): admissible branch (b0 = 0).

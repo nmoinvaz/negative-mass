@@ -17,7 +17,7 @@ stability of negative-mass Schwarzschild, regular negative-mass sources, and wha
 
 1. **Negative-mass Schwarzschild is linearly unstable** (Dotti–Gleiser 2006/2008, reproduced). The earlier
    stability claim (Gibbons–Hartnoll–Ishibashi 2004) rests on a perturbation whose metric is discontinuous.
-   Exactly one unstable mode per l (checked l ≤ 8), localized at the singularity, growth ∝ l⁴.
+   Exactly one unstable mode per l — now **proven for all l** (phase2/dg_proof), localized at the singularity, growth ∝ l⁴.
 2. **A regular star hides that instability.** φ₀ = 1/ψ₀ is an exact zero mode of the transformed operator, giving
    a closed-form threshold: with a non-energy-injecting surface condition (κ ≥ 0) a star is stable once
    R > r_*(l) (l = 2: 2.279|M|). The l⁴ growth belongs to the point singularity only.
@@ -49,7 +49,7 @@ stability of negative-mass Schwarzschild, regular negative-mass sources, and wha
 
 Novelty status of each result: `notes/novelty/RESULTS.md`.
 
-In progress: non-radial (l ≥ 2) stability of the phantom star; proof of "exactly one unstable mode" for all l.
+In progress: non-radial (l ≥ 2) stability of the phantom star.
 
 ## Setup
 ```

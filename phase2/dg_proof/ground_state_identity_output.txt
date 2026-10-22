@@ -1,0 +1,2 @@
+u'^2 + V u^2 - [phi^2 h'^2 + (phi phi' h^2)'] = 0
+phi'^2 + V phi^2 - (phi phi')' = 0

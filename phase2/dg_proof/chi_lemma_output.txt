@@ -1,0 +1,57 @@
+== Part 1: coefficients ==
+c_1 = 3/2
+c_2 = 0
+c_3 = -l*(l - 1)*(l + 1)*(l + 2)/32
+c_4 = l*(l - 1)*(l + 1)*(l + 2)/96
+c_5 = l*(l - 2)*(l - 1)*(l + 1)*(l + 2)*(l + 3)*(l**2 + l + 4)/6144
+c_6 = l*(l - 3)*(l - 2)*(l - 1)*(l + 1)*(l + 2)*(l + 3)*(l + 4)*(2*l**2 + 2*l + 5)/230400
+c_7 = l*(l - 4)*(l - 3)*(l - 2)*(l - 1)*(l + 1)*(l + 2)*(l + 3)*(l + 4)*(l + 5)*(l**2 + l + 2)/4423680
+closed form agrees with common.chi_poly for l = 2..12
+Sign: for n >= 4, (n-2) > 0, (n-4)l(l+1)+n-1 > 0, and rf(l-n+3, 2n-4) = (l-n+3)...(l+n-2) is a product
+of consecutive integers: > 0 if n <= l+2, = 0 if n >= l+3 (contains the factor 0). So c_n >= 0 for n >= 4;
+c_1 = 3/2 > 0, c_2 = 0, c_3 = -K/32 < 0 is the ONLY negative coefficient.  deg chi = l+2, c_{l+2} > 0.
+
+== Part 2: chi-ODE and recurrence, identically in l ==
+P2 = -r**2*(r + 2)*(l**2*r + l*r - 2*r - 6)
+P1 = 2*r*(l**2*r**2 + 3*l**2*r + l*r**2 + 3*l*r - 2*r**2 - 6*r - 6)
+P0 = l**4*r**2 + 2*l**3*r**2 - 3*l**2*r**2 - 6*l**2*r - 4*l*r**2 - 6*l*r + 4*r**2 + 12*r + 12
+operator on r^n -> sum_j a_j(n) r^(n+j):
+  j=0: a_j(n) = 12*(n - 1)**2
+  j=1: a_j(n) = -2*(n - 1)*(l**2*n - 3*l**2 + l*n - 3*l - 5*n + 6)
+  j=2: a_j(n) = (l - 1)*(l + 2)*(l - n + 2)*(l + n - 1)
+recurrence residual / c_(m-jmax), generic m, l: 0
+recurrence satisfied exactly for every coefficient, l = 2..40: True
+
+== Part 2b: recurrence as a polynomial identity in (l, m) (all l, all m >= 5) ==
+polynomial identity residual (should be 0): 0
+(valid for m >= 4 where (m-3)! and the rf factorisation make sense; m = 1..4 checked below symbolically in l)
+  m=-1: residual = 0
+  m=0: residual = 0
+  m=1: residual = 0
+  m=2: residual = 0
+  m=3: residual = 0
+  m=4: residual = 0
+Also: c_n = 0 for n >= l+3 automatically (rf contains the factor 0), so the polynomial chi of degree
+l+2 satisfies the full recurrence -> psi0 = chi/(c r - 6) solves the static Zerilli eq. for every l >= 2.
+
+== Part 3: chi > 0 on r > 0 for all l ==
+chi/r = 3/2 - a r^2 + b r^3 + c r^4 + (non-negative terms), a = l*(l - 1)*(l + 1)*(l + 2)/32  b = l*(l - 1)*(l + 1)*(l + 2)/96  c = l*(l - 2)*(l - 1)*(l + 1)*(l + 2)*(l + 3)*(l**2 + l + 4)/6144
+l = 2: c = 0, chi/r = 3/2 - (3/4) r^2 + (1/4) r^3 exactly; min at r = 2, value 1/2 > 0.
+   check: r**3/4 - 3*r**2/4 + 3/2  at r=2: 1/2
+  l=3: r0 (ours) = 0.7807764064, r0 (DG eq.58) = 0.7807764064
+  l=4: r0 (ours) = 0.4678453168, r0 (DG eq.58) = 0.4678453168
+  l=5: r0 (ours) = 0.3148441150, r0 (DG eq.58) = 0.3148441150
+  l=7: r0 (ours) = 0.1710642343, r0 (DG eq.58) = 0.1710642343
+  l=10: r0 (ours) = 0.0879827291, r0 (DG eq.58) = 0.0879827291
+  l=30: r0 (ours) = 0.0105191604, r0 (DG eq.58) = 0.0105191604
+  rho^2 / rhoDG^2 = l**2*(l - 1)**2*(l + 1)**2*(l + 2)**2/36864
+  q(r0) = A0(l) + A1(l)*s,  s = sqrt(6l(l^2-1)(l+2)-108)
+  A0 = -72*(l**4 + 2*l**3 - l**2 - 2*l - 18)*(l**4 + 2*l**3 - l**2 - 2*l - 16)/((l - 2)**3*(l + 3)**3*(l**2 + l + 4)**3)
+  A1 = 4*l*(l + 1)*(l + 2)*(l**4 + 2*l**3 - l**2 - 2*l - 18)*Abs(l - 1)/((l - 2)**3*(l + 3)**3*(l**2 + l + 4)**3)
+  q(r0) - 4(K-18)(K s - 18(K-16))/((l-2)(l+3)(l^2+l+4))^3 = 0
+  (K s)^2 - (18(K-16))^2 = 6(K-24)^3 > 0 for K > 24 (l >= 3)  =>  q(r0) > 0  =>  chi/r >= q > 0.
+  l=3: q(r0) direct = 0.505718664756, formula = 0.505718664756
+  l=4: q(r0) direct = 0.364805798301, formula = 0.364805798301
+  l=6: q(r0) direct = 0.201743267449, formula = 0.201743267449
+  l=10: q(r0) direct = 0.0841548156722, formula = 0.0841548156722
+  l=25: q(r0) direct = 0.0149276845971, formula = 0.0149276845971

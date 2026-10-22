@@ -1,0 +1,15 @@
+X(0.5) closed form 0.746098973677264  series 0.746098973677264
+X(3) closed form 3.70264835487291  series 3.70264835487291
+X(10) closed form 11.3820850618754  series 11.3820850618754
+X > 0 on (0, 200]: True
+rho_* = 8.48570096737   rho_neg = 9.63598944259   (lower edge of V~<0: 6.16880936733)
+sign changes of V~ = phi_yy/phi on (0,60): 2
+
+  l    c*r_*    c*r_neg    l^2 r_neg
+  2    9.11512   10.69629   10.69629   (all positive roots of phi0_xx: [6.0, 6.18, 10.6963])
+  3    8.78904   10.14352    9.12917   (all positive roots of phi0_xx: [6.0, 6.1792, 10.1435])
+  5    8.60450    9.83391    8.78028   (all positive roots of phi0_xx: [6.0, 6.174, 9.8339])
+ 10    8.51778    9.68932    8.97159   (all positive roots of phi0_xx: [6.0, 6.1703, 9.6893])
+ 20    8.49408    9.64991    9.23436   (all positive roots of phi0_xx: [6.0, 6.1692, 9.6499])
+ 40    8.48785    9.63955    9.41592   (all positive roots of phi0_xx: [6.0, 6.1689, 9.6396])
+ 80    8.48624    9.63689    9.52086   (all positive roots of phi0_xx: [6.0, 6.1688, 9.6369])

@@ -1,0 +1,36 @@
+(a) closed form = common.symbolic(l)['dlogphi0_dx']:
+   identical for l = 2..10
+(b) large R: kappa_c = -(l+1)/R + a2/R^2 + O(R^-3)
+   l=2: -3/R - 15/(2*R**2)
+   l=3: -4/R - 101/(15*R**2)
+   l=4: -5/R - 43/(6*R**2)
+   l=5: -6/R - 276/(35*R**2)
+   l=6: -7/R - 523/(60*R**2)
+   l=7: -8/R - 605/(63*R**2)
+   l=8: -9/R - 1473/(140*R**2)
+   l=9: -10/R - 2269/(198*R**2)
+   l=10: -11/R - 1117/(90*R**2)
+   general l: a2 = -(2*l**3 - l**2*rho + 4*l**2 - l*rho - 2*l + 2*rho - 10)/((l - 1)*(l + 2))  with rho = c_{l+1}/c_{l+2}
+   rho(l) = [-3, 2/3, 5/2, 39/10, 77/15, 44/7, 207/28, 305/36, 143/15, 582/55]
+   rho(l) interpolating poly/rational: (32*l**9 - 2047*l**8 + 57408*l**7 - 926652*l**6 + 9494154*l**5 - 64129473*l**4 + 286474462*l**3 - 821445428*l**2 + 1412855784*l - 1116876960)/19958400
+(b') small R: x_R = R^2/4 - R^3/12 + ..., kappa_c * x_R ->
+   l=2: kappa_c = -2/r**2 - 7/(3*r) + 4/9 - 28*r/27 + O(r**2);  kappa_c*x = -1/2 - 5*r/12 + 35*r**2/144 + O(r**3)
+   l=3: kappa_c = -2/r**2 - 13/(3*r) + 25/9 - 325*r/27 + O(r**2);  kappa_c*x = -1/2 - 11*r/12 + 143*r**2/144 + O(r**3)
+   l=5: kappa_c = -2/r**2 - 31/(3*r) + 196/9 - 6076*r/27 + O(r**2);  kappa_c*x = -1/2 - 29*r/12 + 899*r**2/144 + O(r**3)
+(c) roots of N:
+   l= 2: roots in (0,r_s): 0; in (r_s,oo): 1; Descartes sign changes of N(r_s+t): 1;  r_* = 2.278780425462, c r_* = 9.11512170
+   l= 3: roots in (0,r_s): 0; in (r_s,oo): 1; Descartes sign changes of N(r_s+t): 1;  r_* = 0.878904126969, c r_* = 8.78904127
+   l= 4: roots in (0,r_s): 0; in (r_s,oo): 1; Descartes sign changes of N(r_s+t): 1;  r_* = 0.481397196824, c r_* = 8.66514954
+   l= 5: roots in (0,r_s): 0; in (r_s,oo): 1; Descartes sign changes of N(r_s+t): 1;  r_* = 0.307303689594, c r_* = 8.60450331
+   l= 6: roots in (0,r_s): 0; in (r_s,oo): 1; Descartes sign changes of N(r_s+t): 1;  r_* = 0.214255635450, c r_* = 8.57022542
+   l= 7: roots in (0,r_s): 0; in (r_s,oo): 1; Descartes sign changes of N(r_s+t): 1;  r_* = 0.158313680837, c r_* = 8.54893877
+   l= 8: roots in (0,r_s): 0; in (r_s,oo): 1; Descartes sign changes of N(r_s+t): 1;  r_* = 0.121925795157, c r_* = 8.53480566
+   l= 9: roots in (0,r_s): 0; in (r_s,oo): 1; Descartes sign changes of N(r_s+t): 1;  r_* = 0.096874317313, c r_* = 8.52493992
+   l=10: roots in (0,r_s): 0; in (r_s,oo): 1; Descartes sign changes of N(r_s+t): 1;  r_* = 0.078868323819, c r_* = 8.51777897
+   l=11: roots in (0,r_s): 0; in (r_s,oo): 1; Descartes sign changes of N(r_s+t): 1;  r_* = 0.065480123419, c r_* = 8.51241604
+   l=12: roots in (0,r_s): 0; in (r_s,oo): 1; Descartes sign changes of N(r_s+t): 1;  r_* = 0.055248670428, c r_* = 8.50829525
+   l=20: roots in (0,r_s): 0; in (r_s,oo): 1; Descartes sign changes of N(r_s+t): 1;  r_* = 0.020320763903, c r_* = 8.49407931
+   l=30: roots in (0,r_s): 0; in (r_s,oo): 1; Descartes sign changes of N(r_s+t): 1;  r_* = 0.009148149481, c r_* = 8.48948272
+   l=40: roots in (0,r_s): 0; in (r_s,oo): 1; Descartes sign changes of N(r_s+t): 1;  r_* = 0.005181834609, c r_* = 8.48784509
+   l=50: roots in (0,r_s): 0; in (r_s,oo): 1; Descartes sign changes of N(r_s+t): 1;  r_* = 0.003330879046, c r_* = 8.48707981
+   exceptions for l = 2..50: []
