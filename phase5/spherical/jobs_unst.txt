@@ -1,0 +1,12 @@
+c940_h0.1_pp c0940 0.1 400 400 kind=pert delta=1e-5
+c940_h0.1_pm c0940 0.1 400 400 kind=pert delta=-1e-5
+p940_h0.1_pp p0940 0.1 400 400 kind=pert delta=1e-5
+p940_h0.1_pm p0940 0.1 400 400 kind=pert delta=-1e-5
+c940_h0.05_pp c0940 0.05 400 400 kind=pert delta=1e-5
+p940_h0.05_pp p0940 0.05 400 400 kind=pert delta=1e-5
+c940_h0.1_qp c0940 0.1 400 300 kind=pert delta=1e-7
+c940_h0.1_qm c0940 0.1 400 300 kind=pert delta=-1e-7
+p940_h0.1_qp p0940 0.1 400 300 kind=pert delta=1e-7
+p940_h0.1_qm p0940 0.1 400 300 kind=pert delta=-1e-7
+c940_h0.05_pm c0940 0.05 400 400 kind=pert delta=-1e-5
+p940_h0.05_pm p0940 0.05 400 400 kind=pert delta=-1e-5

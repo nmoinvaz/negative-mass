@@ -4,3 +4,8 @@ __pycache__/
 .ipynb_checkpoints/
 *.png
 !docs/**/*.png
+
+# regenerable binaries (cached stars, checkpoints)
+phase5/spherical/stars/
+*.npz
+*.pkl

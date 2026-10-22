@@ -1,0 +1,6 @@
+c750_pert5_h0.1: late w=0.744636; evolved amp=1.9760523e-02 m20=+0.01504937 N50=0.01649500
+   static BVP at that w: phic=1.9760533e-02 M=+0.01504940 N=0.01649503;  rel diffs amp -4.9e-07 m20 -2.2e-06 N -1.7e-06
+   initial (t=0) m(50)=+0.01506967 N(50)=0.01650141: radiated fraction of N 3.88e-04, of M 1.35e-03
+p7603_pert5_h0.1: late w=0.754997; evolved amp=1.9706784e-02 m20=-0.01500277 N50=0.01630121
+   static BVP at that w: phic=1.9706794e-02 M=-0.01500281 N=0.01630124;  rel diffs amp -5.4e-07 m20 -2.3e-06 N -1.8e-06
+   initial (t=0) m(50)=-0.01502280 N(50)=0.01630752: radiated fraction of N 3.87e-04, of M 1.33e-03

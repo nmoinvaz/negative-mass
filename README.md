@@ -42,11 +42,14 @@ stability of negative-mass Schwarzschild, regular negative-mass sources, and wha
    the wrong way across grids. Only the stars' slowly drifting frequency tracks it (implying ~9–11 % mass growth),
    unconfirmed. Early-time fine-grid a·d²/M̄ (true mass) ≈ 1.01–1.02; "steady to 2 %" holds only on the coarse
    grid and only to t ≈ 300.
+8. **Lone stars are stationary** (phase5/spherical): an accurate 1+1 nonlinear evolution keeps both campaign
+   stars (ε = ±1) stationary to t = 1500 (drifts ≤ 1e-6, 4th-order convergent; unstable-star growth rates match
+   the radial analysis to < 0.6 %). Shirokov's lone-star drifts are 4–5 orders larger, so they are 3D-code or
+   initial-data artefacts; his 5 %-radius seam is not the cause. The frequency→mass proxy holds to a few %.
 
 Novelty status of each result: `notes/novelty/RESULTS.md`.
 
-In progress: non-radial (l ≥ 2) stability of the phantom star; lone-star
-1+1 evolution; proof of "exactly one unstable mode" for all l.
+In progress: non-radial (l ≥ 2) stability of the phantom star; proof of "exactly one unstable mode" for all l.
 
 ## Setup
 ```

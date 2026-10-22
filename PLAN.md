@@ -40,7 +40,10 @@ of this kind found (closest: Shi–Tam 2004).
 Witten spinor argument with a signed source: lower bound on the Bondi mass, or a construction showing
 unbounded energy extraction. Stop after ~2 weeks if it trivializes.
 
-## Phase 5 — Nonlinear checks (optional)
+## Phase 5 — Nonlinear checks
+✅ 1+1 lone-star evolution (phase5/spherical/RESULTS.md): both campaign stars stationary to t=1500; Shirokov's
+lone-star drifts not physical. Remaining: 3D items below (need GPUs).
+
 1+1 evolution of the lone phantom star (is the 0.63%/100 decay physical?); 3+1 Shirokov N = 192 test and
 an off-axis kick.
 

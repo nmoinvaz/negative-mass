@@ -1,0 +1,11 @@
+c750_seam_h0.1 c0750 0.1 300 1500 kind=seam seamM=0.0143454135 jump=-4.3e-5
+p7603_seam_h0.1 p07603 0.1 300 1500 kind=seam seamM=-0.0142938184 jump=5.1e-5
+c750_seam_h0.05 c0750 0.05 300 1500 kind=seam seamM=0.0143454135 jump=-4.3e-5
+p7603_seam_h0.05 p07603 0.05 300 1500 kind=seam seamM=-0.0142938184 jump=5.1e-5
+c750_seam0_h0.1 c0750 0.1 300 1500 kind=seam seamM=0.0143454135 jump=0
+c750_pert_h0.1 c0750 0.1 300 1500 kind=pert delta=1e-2
+p7603_pert_h0.1 p07603 0.1 300 1500 kind=pert delta=1e-2
+c750_scale_h0.1 c0750 0.1 300 1500 kind=scale delta=1e-3
+p7603_scale_h0.1 p07603 0.1 300 1500 kind=scale delta=1e-3
+c750_pert_h0.05 c0750 0.05 300 1500 kind=pert delta=1e-2
+p7603_pert_h0.05 p07603 0.05 300 1500 kind=pert delta=1e-2
