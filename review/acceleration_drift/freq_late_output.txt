@@ -1,0 +1,48 @@
+local dM/domega near 0.75 = -0.0661  -> 11% mass rise needs domega = -0.0244
+N128         coordinate omega per 50-window: 0.74607 0.73467 0.72430 0.71479  | change first->last -0.03128  => implied dM/M +14.13%
+N192         coordinate omega per 50-window: 0.74739 0.73844 0.73005 0.72206  | change first->last -0.02533  => implied dM/M +11.44%
+N256         coordinate omega per 50-window: 0.74843 0.74132 0.73481 0.72849  | change first->last -0.01993  => implied dM/M +9.00%
+N128_t400    coordinate omega per 50-window: 0.74607 0.73467 0.72430 0.71479 0.70482 0.69606 0.68685 0.67877  | change first->last -0.06730  => implied dM/M +30.39%
+lone_c_N128  coordinate omega per 50-window: 0.74423 0.73312 0.72289 0.71351  | change first->last -0.03073  => implied dM/M +13.88%
+
+### late-time cells: 50-unit windows of a_mid, a_canon, a_phantom (x1e-4), core sep, distance of leading star to sponge (r=24 from 32)
+  N128_t400            [    5,   55] mid 1.468 can 1.464 ph 1.471 sep 9.999 lead r 5.22 trail r 5.00
+  N128_t400            [   55,  105] mid 1.450 can 1.474 ph 1.426 sep 9.999 lead r 5.80 trail r 4.78
+  N128_t400            [  105,  155] mid 1.458 can 1.541 ph 1.375 sep 10.014 lead r 6.75 trail r 4.19
+  N128_t400            [  155,  205] mid 1.470 can 1.628 ph 1.312 sep 10.069 lead r 8.11 trail r 3.26
+  N128_t400            [  205,  255] mid 1.476 can 1.715 ph 1.238 sep 10.202 lead r 9.87 trail r 1.98
+  N128_t400            [  255,  305] mid 1.449 can 1.788 ph 1.111 sep 10.457 lead r 12.09 trail r 1.46
+  N128_t400            [  305,  355] mid 1.379 can 1.819 ph 0.938 sep 10.882 lead r 14.73 trail r 3.58
+  nomill_left          [    5,   55] mid 1.466 can 1.463 ph 1.469 sep 9.999 lead r 4.99 trail r 14.99
+  nomill_left          [   55,  105] mid 1.457 can 1.477 ph 1.437 sep 9.999 lead r 4.77 trail r 14.77
+  nomill_left          [  105,  155] mid 1.456 can 1.535 ph 1.376 sep 10.013 lead r 4.15 trail r 14.15
+  nomill_left          [  155,  205] mid 1.481 can 1.637 ph 1.325 sep 10.067 lead r 3.21 trail r 13.24
+  nomill_left          [  205,  255] mid 1.482 can 1.728 ph 1.236 sep 10.196 lead r 1.78 trail r 11.91
+  nomill_left          [  255,  305] mid 1.465 can 1.801 ph 1.130 sep 10.447 lead r 2.07 trail r 10.36
+  nomill_left          [  305,  355] mid 1.394 can 1.840 ph 0.948 sep 10.866 lead r 4.62 trail r 8.39
+  nomill_left          [  355,  405] mid 1.279 can 1.821 ph 0.737 sep 11.507 lead r 7.86 trail r 6.31
+  nomill_left          [  405,  455] mid 1.129 can 1.757 ph 0.500 sep 12.415 lead r 11.28 trail r 3.84
+  nomill_left          [  455,  505] mid 0.915 can 1.616 ph 0.214 sep 13.643 lead r 15.43 trail r 1.41
+  nomill_left          [  505,  555] mid 0.641 can 1.357 ph -0.075 sep 15.213 lead r 19.62 trail r 3.61
+  chase03c: grid recentred; coordinates jump at shifts -> only gap and midpoint_true used
+  chase03c(treadmill)  [    5,   55] a_mid_true 1.468  sep 9.999
+  chase03c(treadmill)  [   55,  105] a_mid_true 1.450  sep 9.999
+  chase03c(treadmill)  [  105,  155] a_mid_true 1.459  sep 10.014
+  chase03c(treadmill)  [  155,  205] a_mid_true 1.469  sep 10.070
+  chase03c(treadmill)  [  205,  255] a_mid_true 1.478  sep 10.202
+  chase03c(treadmill)  [  255,  305] a_mid_true 1.455  sep 10.458
+  chase03c(treadmill)  [  305,  355] a_mid_true 1.394  sep 10.883
+  chase03c(treadmill)  [  355,  405] a_mid_true 1.292  sep 11.534
+  chase03c(treadmill)  [  405,  455] a_mid_true 1.152  sep 12.456
+  chase03c(treadmill)  [  455,  505] a_mid_true 0.985  sep 13.705
+  chase03c(treadmill)  [  505,  555] a_mid_true 0.805  sep 15.314
+  chase03c(treadmill)  [  555,  605] a_mid_true 0.635  sep 17.330
+  chase03c(treadmill)  [  605,  655] a_mid_true 0.477  sep 19.768
+  chase03c(treadmill)  [  655,  705] a_mid_true 0.341  sep 22.662
+  chase03c(treadmill)  [  705,  755] a_mid_true 0.221  sep 26.013
+
+### longrun vs nomill (pair 10 left): gap and midpoint displacement at same t
+  t=100: drift longrun 0.7286 nomill 0.7285 (ratio 0.9999); sep 10.0003 vs 10.0004
+  t=200: drift longrun 2.9120 nomill 2.9155 (ratio 1.0012); sep 10.1072 vs 10.1036
+  t=300: drift longrun 6.5638 nomill 6.5825 (ratio 1.0028); sep 10.5962 vs 10.5840
+  t=400: drift longrun 11.6268 nomill 11.6798 (ratio 1.0046); sep 11.8442 vs 11.8236

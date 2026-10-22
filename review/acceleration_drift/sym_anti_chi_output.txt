@@ -1,0 +1,10 @@
+### symmetric / antisymmetric parts (x1e-4)
+N128: sym 1.468 1.445 1.460 1.469  (Q4/Q1 1.0004) | anti -0.0033 +0.0192 +0.0836 +0.1501
+N192: sym 1.478 1.524 1.594 1.662  (Q4/Q1 1.1250) | anti +0.0017 +0.0021 +0.0244 +0.0510
+N256: sym 1.480 1.522 1.580 1.641  (Q4/Q1 1.1086) | anti +0.0014 +0.0039 +0.0155 +0.0284
+
+### lone stars: 1-chi shell means (|chi-1| for phantom) at R8 and R16, t=40 and 200, and t=1000 for t1000 cell
+lone_canon           R8 3.3140e-03->3.3784e-03 (+1.95%)  R16 1.4768e-03->1.4943e-03 (+1.19%)
+lone_phantom         R8 3.1521e-03->3.2974e-03 (+4.61%)  R16 1.4534e-03->1.4670e-03 (+0.93%)
+lone_phantom_t1000   R8 3.1521e-03->3.2974e-03 (+4.61%)  R16 1.4535e-03->1.4669e-03 (+0.92%)  t1000: R8 +99.3% R16 +53.9%
+note: canonical star is box-centred (shells centred on it); phantom cells are off-centre at x=37 (shells not centred).

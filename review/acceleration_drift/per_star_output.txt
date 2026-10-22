@@ -1,0 +1,8 @@
+N128: Q1 1.4683 Q4 1.4689 Q4/Q1 1.0004
+N192: Q1 1.4777 Q4 1.6624 Q4/Q1 1.1250
+N256: Q1 1.4804 Q4 1.6412 Q4/Q1 1.1086
+Richardson N192/N256, p=1: Q4/Q1 -> 1.0596; Q4 a -> 1.5778e-4 (a d2/Mtrue at d=10: 1.0804)
+Richardson N192/N256, p=2: Q4/Q1 -> 1.0876; Q4 a -> 1.6140e-4 (a d2/Mtrue at d=10: 1.1052)
+Richardson N192/N256, p=3: Q4/Q1 -> 1.0967; Q4 a -> 1.6258e-4 (a d2/Mtrue at d=10: 1.1133)
+Richardson N192/N256, p=4: Q4/Q1 -> 1.1011; Q4 a -> 1.6314e-4 (a d2/Mtrue at d=10: 1.1172)
+order p at which the rise would extrapolate to zero: 0.49
