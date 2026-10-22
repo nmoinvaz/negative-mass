@@ -1,0 +1,7 @@
+(a) EL_t - [mu g_ab a^b - q F_ab u^b]  (proper time) = 0
+(a) EL_x - [mu g_ab a^b - q F_ab u^b]  (proper time) = 0
+    => mu * (covariant acceleration) = q F u :  mu cancels when q = 0 (geodesic for either sign).
+(c) L = mu*v**4/8 + mu*v**2/2 - mu ;  p = mu*v/sqrt(1 - v**2) ;  E = mu/sqrt(1 - v**2)
+(d) dv/dt = E_field*q*(1 - v(t)**2)**(3/2)/mu  -> sign(dv/dt) = sign(q E / mu): opposite to the force when mu < 0
+    flipped-sector coupling s(-m dtau + q A): EOM coefficient ratio q_eff/mu_eff = q/m (unchanged response), sources Maxwell with charge q*s
+(b) U = mu/r is harmonic away from 0: 0 ; flux -oint grad U . dS / 4pi = mu = active mass

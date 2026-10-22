@@ -19,7 +19,13 @@ independent reproduction of the DG08 spectrum (cheap with the Phase 0 code).
 - Check convergence of the unstable spectrum to the Gleiser–Dotti modes as R → 0.
 - Question: is the point-singularity problem ill-posed (growth unbounded in l), and does any regular star cure it?
 
-## Phase 3 — Conservation and the third law
+## Phase 3 — Conservation and the third law ✅ (see phase3/RESULTS.md)
+Result: the phantom particle is Bondi's all-negative mass (μ = s·m in every role; gravity alone cannot tell
+them apart); Bergmann holds. 1PN: midpoint acceleration exactly m/d² (no 1PN correction); proper separation
+obeys d̈ = −E_tot/d², rigid only if |μ₋| = μ₊(1+μ₊/d). Conserved E, signed P, J, G verified. 1PN good to ~1%
+up to v≈0.4. Shirokov's +6–8% excess is not a 1PN or finite-size effect.
+
+(original plan:)
 First post-Newtonian two-body expansion of G = 8π(T₊ − T₋): which mass combinations appear, and does
 Bergmann's "active ≠ passive is impossible" survive?
 

@@ -1,0 +1,65 @@
+Bondi dipole, mu1=+0.0143, mu2=-0.0143, d0=10.0  (Shirokov's campaign values);  a_N = m/d^2 = 1.430000e-04
+  m/d = 1.430e-03
+
+  [exact  ] at rest: a1 d^2/m = 0.99855571, a2 d^2/m = 1.00141567, mid = 0.99998569   (1PN prediction 1 -/+ m/d = 0.99857000, 1.00143000, 1)
+  [reduced] at rest: a1 d^2/m = 0.99857000, a2 d^2/m = 1.00143000, mid = 1.00000000   (1PN prediction 1 -/+ m/d = 0.99857000, 1.00143000, 1)
+  common V=0.05: mid a d^2/m = 0.993750  (1 - 5V^2/2 = 0.993750);  proper accel * d_rest^2/m = 0.999988
+  common V=0.1: mid a d^2/m = 0.975000  (1 - 5V^2/2 = 0.975000);  proper accel * d_rest^2/m = 0.999808
+  common V=0.2: mid a d^2/m = 0.900000  (1 - 5V^2/2 = 0.900000);  proper accel * d_rest^2/m = 0.996700
+
+--- matched |mu2| = mu1   (tmax = 2000.0)
+  [exact  ] drift E = 1.70e-18 (E0 = 2.0449e-05, scale m^2/d = 2.04e-05), P = 4.77e-18, J = 0.00e+00, K=G-Pt = 7.65e-04
+  [reduced] drift E = 2.62e-07 (E0 = 2.0449e-05, scale m^2/d = 2.04e-05), P = 1.31e-06, J = 0.00e+00, K=G-Pt = 1.11e-03
+   t=  200: v_mid=0.0286 (v^2=8.18e-04)  X_mid-X0=   2.860  d=9.991823  d*gamma=9.995910
+   t=  400: v_mid=0.0572 (v^2=3.27e-03)  X_mid-X0=  11.437  d=9.967317  d*gamma=9.983645
+   t= 1000: v_mid=0.1425 (v^2=2.03e-02)  X_mid-X0=  71.381  d=9.796841  d*gamma=9.897898
+   t= 2000: v_mid=0.2828 (v^2=8.00e-02)  X_mid-X0= 284.275  d=9.200399  d*gamma=9.591866
+   hyperbola centres (t0, c) body1 | body2 at t=0, tmax/2, tmax:
+      (+0.000, -6993.122) | (+0.000, -6983.121)
+      (+14.154, -6845.148) | (+14.220, -6834.884)
+      (+125.041, -6346.021) | (+125.736, -6334.365)
+
+--- rigid  |mu2| = mu1(1+mu1/d)   (tmax = 2000.0)
+  [exact  ] drift E = 9.37e-18 (E0 = 2.0478e-05, scale m^2/d = 2.05e-05), P = 1.32e-17, J = 0.00e+00, K=G-Pt = 7.25e-04
+  [reduced] drift E = 2.52e-07 (E0 = 2.0478e-05, scale m^2/d = 2.05e-05), P = 1.24e-06, J = 0.00e+00, K=G-Pt = 1.06e-03
+   t=  200: v_mid=0.0286 (v^2=8.18e-04)  X_mid-X0=   2.861  d=9.995901  d*gamma=9.999994
+   t=  400: v_mid=0.0571 (v^2=3.27e-03)  X_mid-X0=  11.439  d=9.983634  d*gamma=9.999977
+   t= 1000: v_mid=0.1417 (v^2=2.01e-02)  X_mid-X0=  71.192  d=9.898974  d*gamma=9.999849
+   t= 2000: v_mid=0.2757 (v^2=7.60e-02)  X_mid-X0= 280.776  d=9.611495  d*gamma=9.999123
+   hyperbola centres (t0, c) body1 | body2 at t=0, tmax/2, tmax:
+      (+0.000, -6983.064) | (+0.000, -6983.050)
+      (+0.617, -6977.588) | (+0.622, -6977.536)
+      (+16.893, -6906.332) | (+17.031, -6905.797)
+
+--- Shirokov-like mismatch |mu2| = 0.9961 mu1   (tmax = 2000.0)
+  [exact  ] drift E = 5.64e-18 (E0 = 2.0369e-05, scale m^2/d = 2.04e-05), P = 5.20e-18, J = 0.00e+00, K=G-Pt = 8.95e-04
+  [reduced] drift E = 2.81e-07 (E0 = 2.0369e-05, scale m^2/d = 2.04e-05), P = 1.50e-06, J = 0.00e+00, K=G-Pt = 1.28e-03
+   t=  200: v_mid=0.0286 (v^2=8.16e-04)  X_mid-X0=   2.855  d=9.980695  d*gamma=9.984768
+   t=  400: v_mid=0.0572 (v^2=3.27e-03)  X_mid-X0=  11.431  d=9.922728  d*gamma=9.939016
+   t= 1000: v_mid=0.1450 (v^2=2.10e-02)  X_mid-X0=  71.913  d=9.514690  d*gamma=9.616265
+   t= 2000: v_mid=0.3057 (v^2=9.34e-02)  X_mid-X0= 295.020  d=8.016332  d*gamma=8.419287
+   hyperbola centres (t0, c) body1 | body2 at t=0, tmax/2, tmax:
+      (+0.000, -7020.697) | (+0.000, -6983.316)
+      (+51.354, -6484.541) | (+51.588, -6448.366)
+      (+429.622, -4850.842) | (+431.877, -4817.031)
+
+--- mismatch |mu2| = 1.0039 mu1   (tmax = 2000.0)
+  [exact  ] drift E = 1.20e-18 (E0 = 2.0529e-05, scale m^2/d = 2.05e-05), P = 4.77e-18, J = 0.00e+00, K=G-Pt = 6.65e-04
+  [reduced] drift E = 2.34e-07 (E0 = 2.0529e-05, scale m^2/d = 2.05e-05), P = 1.15e-06, J = 0.00e+00, K=G-Pt = 9.66e-04
+   t=  200: v_mid=0.0286 (v^2=8.20e-04)  X_mid-X0=   2.864  d=10.002943  d*gamma=10.007045
+   t=  400: v_mid=0.0571 (v^2=3.26e-03)  X_mid-X0=  11.442  d=10.011776  d*gamma=10.028144
+   t= 1000: v_mid=0.1403 (v^2=1.97e-02)  X_mid-X0=  70.873  d=10.073784  d*gamma=10.174352
+   t= 2000: v_mid=0.2649 (v^2=7.02e-02)  X_mid-X0= 275.183  d=10.296918  d*gamma=10.678328
+   hyperbola centres (t0, c) body1 | body2 at t=0, tmax/2, tmax:
+      (+0.000, -6965.760) | (+0.000, -6982.927)
+      (-22.640, -7206.586) | (-22.741, -7225.071)
+      (-165.962, -7887.258) | (-166.769, -7909.823)
+
+--- scaling of non-conservation with m/d (d = 10, run to t = 0.3 d^2/m, i.e. v ~ 0.3)
+  m/d=0.0014: exact-EL: dE=1.7e-18 dP=5.2e-18 dK/(m d)=6.42e-03;  reduced: dE/(m^2/d)=1.55e-02 dP/m=1.06e-04 dK/(m d)=9.47e-03
+  m/d=0.0050: exact-EL: dE=1.3e-17 dP=1.2e-17 dK/(m d)=6.55e-03;  reduced: dE/(m^2/d)=1.55e-02 dP/m=3.70e-04 dK/(m d)=9.32e-03
+  m/d=0.0200: exact-EL: dE=1.7e-16 dP=1.7e-16 dK/(m d)=7.15e-03;  reduced: dE/(m^2/d)=1.58e-02 dP/m=1.48e-03 dK/(m d)=8.70e-03
+
+--- off-axis: dipole with transverse velocity 0.01 on the negative body
+  [exact  ] J0 = [0.0000e+00 0.0000e+00 7.1572e-06], drift J = 9.05e-16, drift E = 6.78e-19, drift P = 1.06e-18
+  [reduced] J0 = [0.0000e+00 0.0000e+00 7.1572e-06], drift J = 1.04e-06, drift E = 5.36e-09, drift P = 5.20e-08

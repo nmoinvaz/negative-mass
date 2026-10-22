@@ -1,0 +1,6 @@
+1. max |EL(EIH) - Blanchet eq.(203)| (O(1) and O(eps) coefficients, random signed-mass points): 3.29e-47 6.49e-49
+2. d(E)/dt: max |O(1) and O(eps) coefficient| at random points = 1.31e-46
+2. d(P)/dt: max |O(1) and O(eps) coefficient| at random points = 1.52e-46
+2. d(J)/dt: max |O(1) and O(eps) coefficient| at random points = 4.93e-47
+2. d(G - P t)/dt: max |O(1) and O(eps) coefficient| at random points = 1.65e-48
+   control, G without 1PN terms:  712.0
