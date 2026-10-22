@@ -1,4 +1,4 @@
-# Phase 2 results (in progress)
+# Phase 2 results
 
 ## 1. Where the vacuum exterior can drive an instability — `vhat_negativity.py`
 
@@ -106,5 +106,11 @@ by an independent FD pencil including complex eigenvalues.
   theorems (Weyl limit-point/limit-circle, Kato form representation, Glazman's lemma); the link to metric perturbations
   rests on DG's intertwining equivalence.
 
-## Next
-Non-radial (l ≥ 2) perturbations of the phantom star, with the effective surface condition κ_eff compared to κ_c.
+## Non-radial stability (`nonradial/RESULTS.md`)
+- Polar l = 2, 3: no growing mode for the phantom star (ω = 0.7603; also 0.70, 0.85 at l = 2) or the canonical star.
+  Real γ scanned up to 300 (l = 2) and 1000 (l = 3), which contains the point-mass rates 137 and 686; argument-principle
+  count finds no zero in 0.1 ≤ Re s ≤ 2, |Im s| ≤ 2.5.
+- Axial: V_ax > 0 for all l ≥ 2, so stable.
+- Exact identity κ_eff − κ_c = s²/(q_int − g); for the phantom star κ_eff > κ_c at every γ tabulated in [1e-4, 150]
+  (independently re-checked from `kappa_eff_l2_w0.7603.csv`: min gap 5.4e-4 at γ = 1e-4).
+- Open: l ≥ 4, slow modes Re s < 0.1, |Im s| > 2.5, compact phantom stars, closely spaced real-root pairs.
