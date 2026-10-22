@@ -5,8 +5,7 @@ G_ab = 8πε T_ab (ε = −1 phantom, ε = +1 canonical), field equation unchang
 solver `background.py` (a frozen copy of `../radial/background.py`), so α(∞) = 1 and ω is the physical
 frequency. Perturbations go as e^{st}; **a growing mode is s = γ > 0** (or Re s > 0).
 
-**Status:** the main results are complete. The extra phantom frequencies ω = 0.70 and 0.85 (l = 2, real γ)
-are (pending).
+**Status:** complete for the scope below (see Caveats).
 
 ## 1. Equations
 
@@ -71,6 +70,8 @@ Regge–Wheeler potential (their (κ/2)(ρ − p_rad) term with κ = 8π).
 | phantom ω = 0.7603 | 3 | [1e-3, 1000] | **0** |
 | canonical ω = 0.75, M = +0.014626 | 2 | [1e-3, 300] | **0** |
 | canonical ω = 0.75 | 3 | [1e-3, 1000] (30 pts) | **0** |
+| phantom ω = 0.70, M = −0.020824 | 2 | [1e-3, 300] (30 pts) | **0** |
+| phantom ω = 0.85, M = −0.009745 | 2 | [1e-3, 300] (30 pts) | **0** |
 
 The DG point-mass rate k/(2|M|) is 137 (l = 2) and 686 (l = 3); both lie inside the scanned ranges.
 
