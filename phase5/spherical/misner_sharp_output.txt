@@ -1,0 +1,14 @@
+c750_h0.05 m8 t0 +0.0146193621 rel to M_ADM -4.51e-04; max|dev| over run 2.2e-08
+c750_h0.05 m12 t0 +0.0146259248 rel to M_ADM -2.26e-06; max|dev| over run 2.2e-08
+c750_h0.05 m20 t0 +0.0146259572 rel to M_ADM -4.70e-08; max|dev| over run 2.2e-08
+c750_h0.05 m30 t0 +0.0146259572 rel to M_ADM -4.70e-08; max|dev| over run 2.2e-08
+c750_h0.05 m50 t0 +0.0146259572 rel to M_ADM -4.70e-08; max|dev| over run 2.2e-08
+c750_h0.05 mR t0 +0.0146259572 rel to M_ADM -4.70e-08; max|dev| over run 2.2e-08
+c750_h0.05 N50 0.01592839597111 4.4974557411592286e-10 2.685518374345719e-08
+p7603_h0.05 m8 t0 -0.0145730050 rel to M_ADM -5.14e-04; max|dev| over run 4.1e-09
+p7603_h0.05 m12 t0 -0.0145804556 rel to M_ADM -2.81e-06; max|dev| over run 4.3e-09
+p7603_h0.05 m20 t0 -0.0145804960 rel to M_ADM -4.44e-08; max|dev| over run 4.3e-09
+p7603_h0.05 m30 t0 -0.0145804960 rel to M_ADM -4.43e-08; max|dev| over run 4.3e-09
+p7603_h0.05 m50 t0 -0.0145804960 rel to M_ADM -4.43e-08; max|dev| over run 4.3e-09
+p7603_h0.05 mR t0 -0.0145804960 rel to M_ADM -4.43e-08; max|dev| over run 4.3e-09
+p7603_h0.05 N50 0.01574382485978 4.5100767565031674e-10 5.199498942509706e-09
