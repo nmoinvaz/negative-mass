@@ -1,0 +1,10 @@
+p w=0.804: csv -0.0114725 ours-5% -0.0114702 true -0.0117509 csv/true 0.97631
+c w=0.81: csv +0.0107205 ours-5% +0.0107188 true +0.0109926 csv/true 0.97524
+p w=0.88: csv -0.0085731 ours-5% -0.0085694 true -0.0088636 csv/true 0.96723
+w0804: predicted pull ratio paper-M 0.8026  true-M 0.8059  shift +0.42%
+w088: predicted pull ratio paper-M 0.5997  true-M 0.6079  shift +1.36%
+heavy: predicted pull ratio paper-M 0.7471  true-M 0.7516  shift +0.60%
+heavy: |M-|/M+ paper 1.3334 true 1.3264
+w0804: |M-|/M+ paper 0.7995 true 0.8034
+w088: |M-|/M+ paper 0.5974 true 0.6060
+matched: paper 0.9961 true 0.9968
