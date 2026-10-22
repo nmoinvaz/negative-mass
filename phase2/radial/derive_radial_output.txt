@@ -1,0 +1,40 @@
+background vs boson_star.py (should be 0 0 0): 0 0 0
+theta-theta background consistent with Bianchi: 0
+
+(tr) gives  L = 8*pi*epsilon*r*(-I*omega*B(r)*Derivative(phi0(r), r) + I*omega*phi0(r)*Derivative(B(r), r) + sigma*A(r)*Derivative(phi0(r), r))/sigma
+
+L in reduced variables:  L = 8*pi*epsilon*(-omega*Psi(r)*exp(lam0(r)/2 - nu0(r)/2) + r**2*A(r)*Derivative(phi0(r), r))/r    (has B? False )
+
+(rr) contains Gt', B? False False
+(rr) gives  N' = 8*pi*epsilon*(-12*pi*epsilon*omega**3*r**2*Psi(r)*phi0(r)**2*exp(3*lam0(r)/2 + 2*nu0(r)) + 2*pi*epsilon*omega*r**2*(-3*Lambda*phi0(r)**2 + 2*mu*phi0(r)**4 + 6)*Psi(r)*phi0(r)**2*exp(3*lam0(r)/2 + 3*nu0(r)) + 3*omega*r**3*(4*pi*epsilon*omega*r*A(r)*phi0(r)*Derivative(phi0(r), r) + omega*A(r) - Gt(r))*phi0(r)*exp(lam0(r) + 5*nu0(r)/2) - 3*omega*Psi(r)*exp(3*lam0(r)/2 + 3*nu0(r)) + r**2*(6*pi*Lambda*epsilon*r**2*A(r)*phi0(r)**4*exp(lam0(r))*Derivative(phi0(r), r) + 3*Lambda*r*A(r)*phi0(r)**3*exp(lam0(r)) - 4*pi*epsilon*mu*r**2*A(r)*phi0(r)**6*exp(lam0(r))*Derivative(phi0(r), r) - 12*pi*epsilon*r**2*A(r)*phi0(r)**2*exp(lam0(r))*Derivative(phi0(r), r) - 3*mu*r*A(r)*phi0(r)**5*exp(lam0(r)) - 3*r*A(r)*phi0(r)*exp(lam0(r)) + 3*r*Derivative(A(r), r)*Derivative(phi0(r), r) + 3*A(r)*exp(lam0(r))*Derivative(phi0(r), r))*exp(7*nu0(r)/2))*exp(-7*nu0(r)/2)/(3*r**2)
+   N appears undifferentiated in N'? (must be False: gauge) False
+
+KG_R reduced: has B? False  has N? False  has Gt'? False
+   A'' even in sigma? True
+
+Verification: residuals of ALL linearized field equations on solutions of the reduced system
+   residual[tr] = 0
+   residual[rr] = 0
+   residual[KGR] = 0
+   residual[KGI] = 0
+   residual[tt] = 0
+   residual[thth] = 0
+
+================ FINAL RADIAL SYSTEM (sigma enters only as sigma^2) ================
+Variables: A = delta Re(phi) amplitude, Gt = i sigma B + w phi0 N/2 (gauge-invariant),
+           Psi = perturbation of enclosed Noether charge (i sig Psi = r^2 e^{(nu0-lam0)/2}(phi0 B' - phi0' B)).
+Notation: E = e^{(nu0-lam0)/2} = alpha/a.
+
+L   = 8*pi*epsilon*(-omega*Psi(r)*exp(lam0(r)/2 - nu0(r)/2) + r**2*A(r)*Derivative(phi0(r), r))/r
+
+N'  = 8*pi*epsilon*(-12*pi*epsilon*omega**3*r**2*Psi(r)*phi0(r)**2*exp(3*lam0(r)/2 + 2*nu0(r)) + 2*pi*epsilon*omega*r**2*(-3*Lambda*phi0(r)**2 + 2*mu*phi0(r)**4 + 6)*Psi(r)*phi0(r)**2*exp(3*lam0(r)/2 + 3*nu0(r)) + 3*omega*r**3*(4*pi*epsilon*omega*r*A(r)*phi0(r)*Derivative(phi0(r), r) + omega*A(r) - Gt(r))*phi0(r)*exp(lam0(r) + 5*nu0(r)/2) - 3*omega*Psi(r)*exp(3*lam0(r)/2 + 3*nu0(r)) + r**2*(6*pi*Lambda*epsilon*r**2*A(r)*phi0(r)**4*exp(lam0(r))*Derivative(phi0(r), r) + 3*Lambda*r*A(r)*phi0(r)**3*exp(lam0(r)) - 4*pi*epsilon*mu*r**2*A(r)*phi0(r)**6*exp(lam0(r))*Derivative(phi0(r), r) - 12*pi*epsilon*r**2*A(r)*phi0(r)**2*exp(lam0(r))*Derivative(phi0(r), r) - 3*mu*r*A(r)*phi0(r)**5*exp(lam0(r)) - 3*r*A(r)*phi0(r)*exp(lam0(r)) + 3*r*Derivative(A(r), r)*Derivative(phi0(r), r) + 3*A(r)*exp(lam0(r))*Derivative(phi0(r), r))*exp(7*nu0(r)/2))*exp(-7*nu0(r)/2)/(3*r**2)
+
+Psi' = r*(4*pi*epsilon*omega*(omega*Psi(r)*exp(lam0(r)/2 - nu0(r)/2) - r**2*A(r)*Derivative(phi0(r), r))*phi0(r) - r*(2*omega*A(r) - Gt(r)))*phi0(r)*exp(lam0(r)/2 - nu0(r)/2)
+
+-sigma^2 Psi = r^2 E (phi0 Gt' - phi0' Gt - w phi0^2 N'/2)
+
+A'' = (-16*pi**2*epsilon**2*omega*r**2*(-3*Lambda*phi0(r)**2 + 2*mu*phi0(r)**4 + 6)*Psi(r)*phi0(r)**2*exp(3*lam0(r)/2 + 7*nu0(r)/2)*Derivative(phi0(r), r) + 24*pi*epsilon*omega**3*r*Psi(r)*phi0(r)*exp(3*lam0(r)/2 + 5*nu0(r)/2) - 24*pi*epsilon*omega*r*(-Lambda*phi0(r)**2 + mu*phi0(r)**4 + 1)*Psi(r)*phi0(r)*exp(3*lam0(r)/2 + 7*nu0(r)/2) + 24*pi*epsilon*omega*Psi(r)*exp(3*lam0(r)/2 + 7*nu0(r)/2)*Derivative(phi0(r), r) + 3*r**2*(-8*pi*epsilon*omega**2*r*A(r)*phi0(r)*Derivative(phi0(r), r) - omega**2*A(r) + 2*omega*Gt(r) - sigma**2*A(r))*exp(lam0(r) + 3*nu0(r)) + r**2*(-48*pi**2*Lambda*epsilon**2*r**2*A(r)*phi0(r)**4*Derivative(phi0(r), r)**2 - 48*pi*Lambda*epsilon*r*A(r)*phi0(r)**3*Derivative(phi0(r), r) - 6*pi*Lambda*epsilon*r*phi0(r)**4*Derivative(A(r), r) - 9*Lambda*A(r)*phi0(r)**2 + 32*pi**2*epsilon**2*mu*r**2*A(r)*phi0(r)**6*Derivative(phi0(r), r)**2 + 96*pi**2*epsilon**2*r**2*A(r)*phi0(r)**2*Derivative(phi0(r), r)**2 + 48*pi*epsilon*mu*r*A(r)*phi0(r)**5*Derivative(phi0(r), r) + 4*pi*epsilon*mu*r*phi0(r)**6*Derivative(A(r), r) + 48*pi*epsilon*r*A(r)*phi0(r)*Derivative(phi0(r), r) + 12*pi*epsilon*r*phi0(r)**2*Derivative(A(r), r) - 24*pi*epsilon*A(r)*Derivative(phi0(r), r)**2 + 15*mu*A(r)*phi0(r)**4 + 3*A(r))*exp(lam0(r) + 4*nu0(r)) - 3*r*(exp(lam0(r)) + 1)*exp(4*nu0(r))*Derivative(A(r), r))*exp(-4*nu0(r))/(3*r**2)
+
+Gt' codegen check (0): a*chi*s2*(r**2 - r**2)/(alpha*r**2*r**2)
+dependence check: A'' has sigma^2 only linearly: 1
+wrote radial_rhs_generated.py
