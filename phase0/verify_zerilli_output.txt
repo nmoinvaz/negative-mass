@@ -1,0 +1,25 @@
+=== A. Do the published exact solutions solve the Zerilli equation? ===
+  GHI C3 piece  : residual = 0
+  GHI C4 piece  : residual = 0
+  DG08 psi0 (l=2): residual = 0
+  GD unstable mode l=2: k=4, growth rate = 2/m, residual = 0
+  GD unstable mode l=3: k=20, growth rate = 10/m, residual = 0
+  GD unstable mode l=4: k=60, growth rate = 30/m, residual = 0
+  GD unstable mode l=5: k=140, growth rate = 70/m, residual = 0
+
+=== B. GHI critical boundary condition q_C ===
+  residue of (C3*sol3 + C4*sol4) at r_C=3/4 (should be 0): 0  ~ 0
+  Taylor at r_C: [0, 0, 0.5804988662, 0.4422848504]
+  fitted q at r~0.0001: 4.35631385031871
+  fitted q at r~1.0e-7: 4.3876353279249
+  fitted q at r~1.0e-10: 4.38774267165987
+  GHI q_C = 2 + log(98/9)       : 4.38774290133435
+
+=== C. Is GHI's truncated marginal mode a smooth metric perturbation? ===
+  left limit of K       at r_C: 0   (right side = 0)
+  left limit of dK/dr   at r_C: 4.06349206349   (right side = 0)
+  left limit of H2      at r_C: 3.04761904762   (right side = 0)
+  left limit of dH2/dr  at r_C: 6.38548752835   (right side = 0)
+
+=== D. Lemma 1 (DG08 eq.18) on the unstable l=2 mode: smooth metric <=> Laurent c0 = lam^2 c_{-1} / (3M(3+2 lam)) ===
+  c_-1 = 2.80168948011, c_0 = -0.533655139068, predicted c_0 = -0.533655139068
