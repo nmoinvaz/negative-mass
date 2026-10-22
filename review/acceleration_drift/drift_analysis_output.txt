@@ -1,0 +1,104 @@
+### Quarter fits on [5,200] (x1e-4): midpoint a, canonical a, phantom a; a*d^2/Mbar_true with instantaneous d
+N128             [  5.0, 53.8] mid 1.468 can 1.465 ph 1.472 bary 1.474 | d_core 9.9993 d_prop 10.0002 | ad2/M (10,core,prop) 1.0054 1.0053 1.0055 | dp/dt c,p 0.023 0.023 | p/v c,p 0.01504 0.01506 | content c,p 4.091 4.204 | peak 0.02455 0.02443
+N128             [ 53.8,102.5] mid 1.445 can 1.464 ph 1.426 bary 1.333 | d_core 9.9989 d_prop 10.0006 | ad2/M (10,core,prop) 0.9896 0.9893 0.9897 | dp/dt c,p 0.026 0.025 | p/v c,p 0.01591 0.01600 | content c,p 4.279 4.403 | peak 0.02455 0.02443
+N128             [102.5,151.2] mid 1.460 can 1.543 ph 1.376 bary 1.455 | d_core 10.0121 d_prop 10.0197 | ad2/M (10,core,prop) 0.9997 1.0021 1.0037 | dp/dt c,p 0.029 0.027 | p/v c,p 0.01684 0.01698 | content c,p 4.448 4.586 | peak 0.02451 0.02439
+N128             [151.2,200.0] mid 1.469 can 1.619 ph 1.319 bary 1.666 | d_core 10.0624 d_prop 10.0556 | ad2/M (10,core,prop) 1.0059 1.0185 1.0171 | dp/dt c,p 0.034 0.029 | p/v c,p 0.01781 0.01801 | content c,p 4.639 4.795 | peak 0.02447 0.02435
+N192             [  5.0, 53.8] mid 1.478 can 1.479 ph 1.476 bary 1.523 | d_core 9.9990 d_prop 10.0001 | ad2/M (10,core,prop) 1.0119 1.0117 1.0119 | dp/dt c,p 0.023 0.023 | p/v c,p 0.01505 0.01503 | content c,p 4.072 4.186 | peak 0.02466 0.02454
+N192             [ 53.8,102.5] mid 1.524 can 1.526 ph 1.522 bary 1.581 | d_core 9.9974 d_prop 10.0008 | ad2/M (10,core,prop) 1.0437 1.0431 1.0439 | dp/dt c,p 0.026 0.026 | p/v c,p 0.01569 0.01574 | content c,p 4.220 4.325 | peak 0.02464 0.02452
+N192             [102.5,151.2] mid 1.594 can 1.618 ph 1.569 bary 1.581 | d_core 9.9996 d_prop 10.0061 | ad2/M (10,core,prop) 1.0914 1.0913 1.0927 | dp/dt c,p 0.029 0.029 | p/v c,p 0.01641 0.01649 | content c,p 4.335 4.453 | peak 0.02461 0.02449
+N192             [151.2,200.0] mid 1.662 can 1.713 ph 1.611 bary 1.769 | d_core 10.0143 d_prop 10.0243 | ad2/M (10,core,prop) 1.1383 1.1416 1.1439 | dp/dt c,p 0.034 0.032 | p/v c,p 0.01715 0.01727 | content c,p 4.473 4.603 | peak 0.02457 0.02445
+N256             [  5.0, 53.8] mid 1.480 can 1.482 ph 1.479 bary 1.469 | d_core 9.9990 d_prop 10.0001 | ad2/M (10,core,prop) 1.0137 1.0135 1.0138 | dp/dt c,p 0.022 0.023 | p/v c,p 0.01498 0.01498 | content c,p 4.053 4.165 | peak 0.02469 0.02457
+N256             [ 53.8,102.5] mid 1.522 can 1.526 ph 1.518 bary 1.567 | d_core 9.9975 d_prop 10.0010 | ad2/M (10,core,prop) 1.0422 1.0417 1.0424 | dp/dt c,p 0.025 0.025 | p/v c,p 0.01546 0.01549 | content c,p 4.167 4.269 | peak 0.02468 0.02455
+N256             [102.5,151.2] mid 1.580 can 1.596 ph 1.565 bary 1.556 | d_core 9.9981 d_prop 10.0045 | ad2/M (10,core,prop) 1.0823 1.0818 1.0832 | dp/dt c,p 0.028 0.027 | p/v c,p 0.01600 0.01607 | content c,p 4.247 4.359 | peak 0.02465 0.02453
+N256             [151.2,200.0] mid 1.641 can 1.670 ph 1.613 bary 1.709 | d_core 10.0056 d_prop 10.0154 | ad2/M (10,core,prop) 1.1239 1.1251 1.1273 | dp/dt c,p 0.031 0.030 | p/v c,p 0.01657 0.01666 | content c,p 4.346 4.467 | peak 0.02463 0.02450
+N128_t400        [  5.0, 54.4] mid 1.468 can 1.465 ph 1.472 bary 1.474 | d_core 9.9993 d_prop 10.0004 | ad2/M (10,core,prop) 1.0054 1.0053 1.0055 | dp/dt c,p 0.023 0.023 | p/v c,p 0.01504 0.01506 | content c,p 4.091 4.204 | peak 0.02455 0.02443
+N128_t400        [ 54.4,103.8] mid 1.448 can 1.469 ph 1.426 bary 1.337 | d_core 9.9990 d_prop 10.0023 | ad2/M (10,core,prop) 0.9912 0.9910 0.9917 | dp/dt c,p 0.026 0.025 | p/v c,p 0.01592 0.01601 | content c,p 4.280 4.404 | peak 0.02455 0.02443
+N128_t400        [103.8,153.1] mid 1.458 can 1.540 ph 1.375 bary 1.470 | d_core 10.0128 d_prop 10.0189 | ad2/M (10,core,prop) 0.9982 1.0008 1.0020 | dp/dt c,p 0.030 0.027 | p/v c,p 0.01686 0.01701 | content c,p 4.452 4.590 | peak 0.02451 0.02439
+N128_t400        [153.1,202.5] mid 1.473 can 1.627 ph 1.318 bary 1.653 | d_core 10.0658 d_prop 10.0752 | ad2/M (10,core,prop) 1.0085 1.0218 1.0238 | dp/dt c,p 0.034 0.029 | p/v c,p 0.01785 0.01806 | content c,p 4.647 4.804 | peak 0.02447 0.02434
+N128_t400        [202.5,251.9] mid 1.472 can 1.709 ph 1.236 bary 1.613 | d_core 10.1919 d_prop 10.2050 | ad2/M (10,core,prop) 1.0083 1.0474 1.0501 | dp/dt c,p 0.040 0.031 | p/v c,p 0.01887 0.01914 | content c,p 4.861 5.036 | peak 0.02441 0.02428
+N128_t400        [251.9,301.2] mid 1.451 can 1.788 ph 1.115 bary 1.416 | d_core 10.4335 d_prop 10.4510 | ad2/M (10,core,prop) 0.9939 1.0820 1.0856 | dp/dt c,p 0.045 0.031 | p/v c,p 0.01993 0.02026 | content c,p 5.079 5.275 | peak 0.02435 0.02422
+N128_t400        [301.2,350.6] mid 1.386 can 1.818 ph 0.955 bary 1.287 | d_core 10.8404 d_prop 10.8630 | ad2/M (10,core,prop) 0.9493 1.1155 1.1202 | dp/dt c,p 0.050 0.031 | p/v c,p 0.02103 0.02143 | content c,p 5.317 5.538 | peak 0.02429 0.02415
+N128_t400        [350.6,400.0] mid 1.264 can 1.783 ph 0.746 bary 1.415 | d_core 11.4592 d_prop 11.4880 | ad2/M (10,core,prop) 0.8657 1.1368 1.1425 | dp/dt c,p 0.054 0.028 | p/v c,p 0.02217 0.02263 | content c,p 5.573 5.820 | peak 0.02422 0.02407
+L128N256(dx0.5)  [  5.0, 53.8] mid 1.471 can 1.468 ph 1.475 bary 1.362 | d_core 9.9993 d_prop 10.0004 | ad2/M (10,core,prop) 1.0075 1.0074 1.0076 | dp/dt c,p 0.023 0.023 | p/v c,p 0.01505 0.01506 | content c,p 4.115 4.226 | peak 0.02455 0.02443
+L128N256(dx0.5)  [ 53.8,102.5] mid 1.450 can 1.470 ph 1.429 bary 1.563 | d_core 9.9988 d_prop 10.0022 | ad2/M (10,core,prop) 0.9926 0.9924 0.9931 | dp/dt c,p 0.026 0.025 | p/v c,p 0.01591 0.01600 | content c,p 4.525 4.633 | peak 0.02455 0.02443
+L128N256(dx0.5)  [102.5,151.2] mid 1.465 can 1.548 ph 1.382 bary 1.025 | d_core 10.0118 d_prop 10.0179 | ad2/M (10,core,prop) 1.0034 1.0058 1.0070 | dp/dt c,p 0.030 0.027 | p/v c,p 0.01684 0.01698 | content c,p 4.687 4.834 | peak 0.02451 0.02439
+L128N256(dx0.5)  [151.2,200.0] mid 1.475 can 1.624 ph 1.326 bary 1.561 | d_core 10.0620 d_prop 10.0712 | ad2/M (10,core,prop) 1.0103 1.0228 1.0247 | dp/dt c,p 0.034 0.029 | p/v c,p 0.01781 0.01801 | content c,p 4.865 5.015 | peak 0.02447 0.02435
+N128_eta2        [  5.0, 53.8] mid 1.469 can 1.462 ph 1.475 bary 1.474 | d_core 9.9989 d_prop 10.0005 | ad2/M (10,core,prop) 1.0057 1.0055 1.0058 | dp/dt c,p 0.023 0.023 | p/v c,p 0.01508 0.01502 | content c,p 4.091 4.205 | peak 0.02455 0.02443
+N128_eta2        [ 53.8,102.5] mid 1.445 can 1.463 ph 1.427 bary 1.333 | d_core 9.9970 d_prop 10.0024 | ad2/M (10,core,prop) 0.9895 0.9889 0.9900 | dp/dt c,p 0.026 0.025 | p/v c,p 0.01594 0.01597 | content c,p 4.279 4.403 | peak 0.02455 0.02443
+N128_eta2        [102.5,151.2] mid 1.460 can 1.540 ph 1.379 bary 1.455 | d_core 10.0074 d_prop 10.0179 | ad2/M (10,core,prop) 0.9996 1.0011 1.0032 | dp/dt c,p 0.029 0.027 | p/v c,p 0.01686 0.01696 | content c,p 4.447 4.585 | peak 0.02451 0.02439
+N128_eta2        [151.2,200.0] mid 1.468 can 1.614 ph 1.322 bary 1.665 | d_core 10.0535 d_prop 10.0701 | ad2/M (10,core,prop) 1.0053 1.0161 1.0194 | dp/dt c,p 0.034 0.029 | p/v c,p 0.01783 0.01800 | content c,p 4.638 4.793 | peak 0.02447 0.02435
+N128_amr1        [  5.0, 53.8] mid 1.468 can 1.465 ph 1.472 bary 1.474 | d_core 9.9993 d_prop 10.0004 | ad2/M (10,core,prop) 1.0054 1.0053 1.0055 | dp/dt c,p 0.023 0.023 | p/v c,p 0.01504 0.01506 | content c,p 4.091 4.204 | peak 0.02455 0.02443
+N128_amr1        [ 53.8,102.5] mid 1.445 can 1.464 ph 1.426 bary 1.333 | d_core 9.9989 d_prop 10.0022 | ad2/M (10,core,prop) 0.9896 0.9894 0.9900 | dp/dt c,p 0.026 0.025 | p/v c,p 0.01591 0.01600 | content c,p 4.279 4.403 | peak 0.02455 0.02443
+N128_amr1        [102.5,151.2] mid 1.460 can 1.543 ph 1.376 bary 1.455 | d_core 10.0121 d_prop 10.0182 | ad2/M (10,core,prop) 0.9997 1.0022 1.0034 | dp/dt c,p 0.029 0.027 | p/v c,p 0.01684 0.01698 | content c,p 4.448 4.586 | peak 0.02451 0.02439
+N128_amr1        [151.2,200.0] mid 1.469 can 1.619 ph 1.319 bary 1.666 | d_core 10.0624 d_prop 10.0717 | ad2/M (10,core,prop) 1.0060 1.0186 1.0205 | dp/dt c,p 0.034 0.029 | p/v c,p 0.01781 0.01801 | content c,p 4.639 4.795 | peak 0.02447 0.02435
+
+### sliding a_mid(t), window 40 (x1e-4)
+t=  25 N128:1.477 N192:1.470 N256:1.485 N128_t400:1.477 L128N256(dx0.5):1.480 N128_eta2:1.478 N128_amr1:1.477
+t=  50 N128:1.438 N192:1.499 N256:1.508 N128_t400:1.438 L128N256(dx0.5):1.438 N128_eta2:1.438 N128_amr1:1.438
+t=  75 N128:1.446 N192:1.536 N256:1.519 N128_t400:1.446 L128N256(dx0.5):1.449 N128_eta2:1.445 N128_amr1:1.446
+t= 100 N128:1.458 N192:1.557 N256:1.548 N128_t400:1.458 L128N256(dx0.5):1.460 N128_eta2:1.457 N128_amr1:1.458
+t= 125 N128:1.467 N192:1.594 N256:1.575 N128_t400:1.467 L128N256(dx0.5):1.473 N128_eta2:1.467 N128_amr1:1.467
+t= 150 N128:1.465 N192:1.626 N256:1.607 N128_t400:1.465 L128N256(dx0.5):1.472 N128_eta2:1.467 N128_amr1:1.465
+t= 175 N128:1.477 N192:1.664 N256:1.638 N128_t400:1.477 L128N256(dx0.5):1.479 N128_eta2:1.473 N128_amr1:1.477
+t= 200 N128:nan N192:nan N256:nan N128_t400:1.469 L128N256(dx0.5):nan N128_eta2:nan N128_amr1:nan
+t= 225 N128:nan N192:nan N256:nan N128_t400:1.474 L128N256(dx0.5):nan N128_eta2:nan N128_amr1:nan
+t= 250 N128:nan N192:nan N256:nan N128_t400:1.466 L128N256(dx0.5):nan N128_eta2:nan N128_amr1:nan
+t= 275 N128:nan N192:nan N256:nan N128_t400:1.456 L128N256(dx0.5):nan N128_eta2:nan N128_amr1:nan
+t= 300 N128:nan N192:nan N256:nan N128_t400:1.423 L128N256(dx0.5):nan N128_eta2:nan N128_amr1:nan
+t= 325 N128:nan N192:nan N256:nan N128_t400:1.385 L128N256(dx0.5):nan N128_eta2:nan N128_amr1:nan
+t= 350 N128:nan N192:nan N256:nan N128_t400:1.341 L128N256(dx0.5):nan N128_eta2:nan N128_amr1:nan
+t= 375 N128:nan N192:nan N256:nan N128_t400:1.266 L128N256(dx0.5):nan N128_eta2:nan N128_amr1:nan
+
+### linear trend of sliding a_mid over centres 25..180: slope (per 100 time) / mean
+N128             mean 1.4564e-4  rel slope +0.55% per 100
+N192             mean 1.5633e-4  rel slope +8.14% per 100
+N256             mean 1.5536e-4  rel slope +7.26% per 100
+N128_t400        mean 1.4564e-4  rel slope +0.56% per 100
+L128N256(dx0.5)  mean 1.4612e-4  rel slope +0.77% per 100
+N128_eta2        mean 1.4560e-4  rel slope +0.47% per 100
+N128_amr1        mean 1.4564e-4  rel slope +0.56% per 100
+
+### H2 gauge: v_mid(200), gamma^3-1, shift at cores, mean core shift, lapse
+N128             v(200)=0.0284 gamma^3-1=0.121% | shift_c -7.59e-04 shift_p +7.33e-04 mean -1.30e-05 d(mean shift)/dt -2.38e-07 (= -0.16% of a) | min lapse t=5,200: 0.99188 0.99131
+N192             v(200)=0.0304 gamma^3-1=0.139% | shift_c -7.88e-04 shift_p +7.62e-04 mean -1.30e-05 d(mean shift)/dt -1.28e-07 (= -0.09% of a) | min lapse t=5,200: 0.99183 0.99123
+N256             v(200)=0.0303 gamma^3-1=0.137% | shift_c -7.68e-04 shift_p +7.46e-04 mean -1.07e-05 d(mean shift)/dt -9.90e-08 (= -0.07% of a) | min lapse t=5,200: 0.99181 0.99133
+N128_t400        v(200)=0.0284 gamma^3-1=0.121% | shift_c -7.59e-04 shift_p +7.33e-04 mean -1.30e-05 d(mean shift)/dt -2.38e-07 (= -0.16% of a) | min lapse t=5,200: 0.99188 0.99131
+L128N256(dx0.5)  v(200)=0.0285 gamma^3-1=0.122% | shift_c -7.60e-04 shift_p +7.35e-04 mean -1.27e-05 d(mean shift)/dt -2.35e-07 (= -0.16% of a) | min lapse t=5,200: 0.99188 0.99128
+N128_eta2        v(200)=0.0284 gamma^3-1=0.121% | shift_c -7.26e-04 shift_p +6.95e-04 mean -1.56e-05 d(mean shift)/dt -2.37e-07 (= -0.16% of a) | min lapse t=5,200: 0.99188 0.99132
+N128_amr1        v(200)=0.0284 gamma^3-1=0.121% | shift_c -7.59e-04 shift_p +7.33e-04 mean -1.30e-05 d(mean shift)/dt -2.38e-07 (= -0.16% of a) | min lapse t=5,200: 0.99188 0.99131
+
+### H1 field content (int |Phi|-modulus dV) and peak; lone-star controls
+N128             c: content 3.911->4.733 (+21.0%) confined-content +21.8% peak -0.36% p: content 4.037->4.899 (+21.4%) confined-content +22.7% peak -0.41%
+N192             c: content 3.911->4.542 (+16.1%) confined-content +16.2% peak -0.34% p: content 4.037->4.676 (+15.8%) confined-content +16.6% peak -0.48%
+N256             c: content 3.911->4.397 (+12.4%) confined-content +12.6% peak -0.25% p: content 4.037->4.520 (+12.0%) confined-content +13.0% peak -0.38%
+N128_t400        c: content 3.911->4.733 (+21.0%) confined-content +21.8% peak -0.36% p: content 4.037->4.899 (+21.4%) confined-content +22.7% peak -0.41%
+L128N256(dx0.5)  c: content 3.911->4.953 (+26.7%) confined-content +20.8% peak -0.37% p: content 4.037->5.109 (+26.6%) confined-content +22.6% peak -0.42%
+N128_eta2        c: content 3.911->4.731 (+21.0%) confined-content +21.7% peak -0.36% p: content 4.037->4.898 (+21.3%) confined-content +22.7% peak -0.42%
+N128_amr1        c: content 3.911->4.733 (+21.0%) confined-content +21.8% peak -0.36% p: content 4.037->4.899 (+21.4%) confined-content +22.7% peak -0.41%
+lone_c_N128      c: content 3.913->4.697 (+20.0%) confined-content +21.3% peak -0.48%
+lone_p_N128      p: content 4.035->4.878 (+20.9%) confined-content +nan% peak -0.48%
+
+### H4 geometry: core |x - 32| and leading-edge distance to sponge inner radius 24 (L64 cells)
+N128       t=  0 canon x=37.000 (r=5.00, gap to sponge 19.00)  phantom x=27.000 (r=5.00)
+N128       t=100 canon x=37.729 (r=5.73, gap to sponge 18.27)  phantom x=27.729 (r=4.27)
+N128       t=200 canon x=39.966 (r=7.97, gap to sponge 16.03)  phantom x=29.859 (r=2.14)
+N192       t=  0 canon x=37.000 (r=5.00, gap to sponge 19.00)  phantom x=27.000 (r=5.00)
+N192       t=100 canon x=37.742 (r=5.74, gap to sponge 18.26)  phantom x=27.745 (r=4.26)
+N192       t=200 canon x=40.061 (r=8.06, gap to sponge 15.94)  phantom x=30.032 (r=1.97)
+N256       t=  0 canon x=37.000 (r=5.00, gap to sponge 19.00)  phantom x=27.000 (r=5.00)
+N256       t=100 canon x=37.741 (r=5.74, gap to sponge 18.26)  phantom x=27.744 (r=4.26)
+N256       t=200 canon x=40.041 (r=8.04, gap to sponge 15.96)  phantom x=30.028 (r=1.97)
+N128_t400  t=  0 canon x=37.000 (r=5.00, gap to sponge 19.00)  phantom x=27.000 (r=5.00)
+N128_t400  t=100 canon x=37.729 (r=5.73, gap to sponge 18.27)  phantom x=27.729 (r=4.27)
+N128_t400  t=200 canon x=39.966 (r=7.97, gap to sponge 16.03)  phantom x=29.859 (r=2.14)
+N128_t400  t=300 canon x=43.862 (r=11.86, gap to sponge 12.14)  phantom x=33.266 (r=1.27)
+N128_t400  t=400 canon x=49.549 (r=17.55, gap to sponge 6.45)  phantom x=37.705 (r=5.70)
+
+### H4 constraints L2_Ham at t=5,100,200 and growth
+N128             Ham 1.008e-05 8.110e-06 1.061e-05  ratio200/5 1.05; Mom 6.60e-07 3.28e-07
+N192             Ham 6.097e-06 5.306e-06 6.584e-06  ratio200/5 1.08; Mom 4.71e-07 1.79e-07
+N256             Ham 5.580e-06 4.740e-06 5.645e-06  ratio200/5 1.01; Mom 3.99e-07 2.00e-07
+N128_t400        Ham 9.949e-06 8.109e-06 1.061e-05  ratio200/5 1.07; Mom 6.53e-07 3.28e-07
+L128N256(dx0.5)  Ham 1.719e-06 2.722e-06 3.590e-06  ratio200/5 2.09; Mom 1.42e-07 1.18e-07
+N128_eta2        Ham 9.868e-06 8.096e-06 1.062e-05  ratio200/5 1.08; Mom 6.48e-07 3.28e-07
+N128_amr1        Ham 1.002e-05 8.110e-06 1.061e-05  ratio200/5 1.06; Mom 6.59e-07 3.28e-07

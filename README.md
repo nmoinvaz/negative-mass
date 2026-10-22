@@ -33,7 +33,11 @@ stability of negative-mass Schwarzschild, regular negative-mass sources, and wha
 7. **Review of Shirokov's code:** the runaway physics is implemented correctly (signs, couplings, diagnostics
    verified). Two real bugs off the paper's path (boosted-star Π sign; Ψ4 matter term zeroed). Precision
    claims are weaker than stated: the a = M̄/d² agreement rests on the coarse grid (fine grid 7 % higher at
-   d = 10), and the acceleration rises ~11 % over the run on both fine grids.
+   d = 10), and the acceleration rises ~11 % over the run on both fine grids. That rise is not gauge, separation,
+   constraint or boundary error and barely converges between the two fine grids; field-content growth runs
+   the wrong way across grids. Only the stars' slowly drifting frequency tracks it (implying ~9–11 % mass growth),
+   unconfirmed. Early-time fine-grid a·d²/M̄ (true mass) ≈ 1.01–1.02; "steady to 2 %" holds only on the coarse
+   grid and only to t ≈ 300.
 
 In progress: non-radial (l ≥ 2) stability of the phantom star.
 
