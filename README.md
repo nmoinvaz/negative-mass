@@ -4,6 +4,7 @@ Working notes and code on negative (active) mass in general relativity: Bondi's 
 stability of negative-mass Schwarzschild, regular negative-mass sources, and what remains open.
 
 - `PLAN.md` — phases, status, next steps
+- `paper/` — draft paper (`main.pdf`), with `figures/make_figures.py` regenerating every figure from repo data
 - `notes/literature.md` — papers read, with what each establishes
 - `phase0/` — verification of published perturbation results for negative-mass Schwarzschild
 - `phase2/` — regular negative-mass (phantom boson) stars: backgrounds, Dotti–Gleiser spectrum, radial and
