@@ -1,0 +1,2 @@
+eps=+1 w=0.75: sigma^2 in [-4,-1e-6]: sign changes of D = 0, min|D|=1.69e-03
+eps=-1 w=0.7603: sigma^2 in [-4,-1e-6]: sign changes of D = 0, min|D|=1.57e-03

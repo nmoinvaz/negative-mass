@@ -75,6 +75,19 @@ the stability of these stars is, it is a property of the phantom matter, not of 
 - Note: DG08 eq. (27) as rendered on ar5iv has a sign slip in the l = 2 eigenfunction denominator; the correct form is
   r³(r−2M)⁴ e^{2(t−r)/|M|}/(4r³ + 12Mr² − 24M³).
 
+## 4. Radial (l = 0) stability — `radial/RESULTS.md`
+
+Derived with sympy (all six linearized equations residual 0), solved by compound-matrix shooting, cross-checked
+by an independent FD pencil including complex eigenvalues.
+- **Canonical validation:** the fundamental mode crosses σ² = 0 at the extremum of M and N (ω = 0.925844) to 2×10⁻⁸,
+  and again at the strong-field maximum of N (ω ≈ 0.1996) within scan resolution.
+- **Phantom (ε = −1):** the campaign star ω = 0.7603 is **radially stable** (no real growth rate up to |σ| = 2; no
+  complex eigenvalue). The family is stable for ω ≲ 0.92891 and unstable above, exactly at dN/dω = 0 (to 8×10⁻⁸).
+  The turning-point criterion carries over to ε = −1 **stated in N** (first law becomes dM = εω dN, so the M-form
+  of the criterion flips sign). The phantom ω-fold at ω ≈ 0.4223 is not a stability change; the strong-field
+  phantom branch (|2m/r| up to 0.4) is stable with no turning point found.
+- Caveat: near ω ≈ 0.93 the instability is essentially the flat-space Vakhitov–Kolokolov Q-ball instability;
+  the strong-field branch is the more meaningful test of how ε enters.
+
 ## Next
-Linear perturbations of the phantom star: radial (l = 0) first, then even-parity l ≥ 2 with the
-interface/interior treated explicitly.
+Non-radial (l ≥ 2) perturbations of the phantom star, with the effective surface condition κ_eff compared to κ_c.
