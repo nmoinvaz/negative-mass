@@ -171,7 +171,7 @@ k± → 0 at Im s = ±(1−ω), which makes the integration slow (R_s ∝ 1/Re k
   nearby roots (an even number between grid points) would be missed. The κ_eff picture (q_int − q_ext ≈
   2γ, far from 0) makes this implausible, but it is not a proof.
 - Complex s: the strip 0 < Re s < 0.1 off the real axis, and |Im s| > 2.5, were not counted.
-- Only l = 2, 3. The ω = 0.7603 star was done fully; c_l and axial positivity also at ω = 0.85 (and axial
+- Only l = 2, 3. The ω = 0.7603 star was done fully; ω = 0.70 and 0.85 have only the l = 2 real-γ scan (30 pts); c_l and axial positivity also at ω = 0.85 (and axial
   at 0.70, 0.90).
 - The equations for (tt) and the angular trace are verified numerically (relative residual ≤ 7×10⁻⁷),
   not symbolically. (tθ), (tr), (rθ) are verified exactly.
