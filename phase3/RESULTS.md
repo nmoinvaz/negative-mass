@@ -1,3 +1,10 @@
+> **Prior work (found by notes/novelty):** the separation law D̈ = −2Δμ/D² − μ²/D³ (our d̈ = −E_tot/d²), the
+> rigidity condition and the midpoint acceleration μ/D² were derived by B. V. Ivanov, "On relativistic motion
+> of a pair of particles having opposite signs of masses", Phys. Usp. 55, 1232 (2012), arXiv:1204.1269, from
+> four-momentum conservation and Fermi–Walker kinematics. We recover them from the signed EIH Lagrangian; the
+> EIH derivation, the absence of a 1PN correction to the proper midpoint acceleration, and the conserved
+> integrals are the parts not found elsewhere.
+
 # Phase 3 results — signed point particles at first post-Newtonian order
 
 Model: S = Σ_A s_A(−m_A ∫dτ_A) + S_EH, m_A > 0, s_A = ±1. This is the point-particle version of Shirokov's
