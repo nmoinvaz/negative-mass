@@ -50,28 +50,33 @@ def shoot(phic, w, eps, rmax=80.0):
     y0 = [phic + c2 * r0**2, 2 * c2 * r0, 0.0, 0.0]
     def cross(r, y, *a): return y[0]
     cross.terminal = True; cross.direction = -1
-    def turn(r, y, *a): return y[1] if r > 1.0 else -1.0
+    # genuine undershoot: phi has fallen below phi_c and turns back up
+    def turn(r, y, *a): return y[1] if y[0] < 0.99 * phic else -1.0
     turn.terminal = True; turn.direction = 1
-    sol = solve_ivp(rhs, (r0, rmax), y0, args=(w, eps), events=(cross, turn),
+    # runaway past the hill top: counts as "too large", same side as overshoot
+    def runaway(r, y, *a): return y[0] - 1.5 * phic
+    runaway.terminal = True; runaway.direction = 1
+    sol = solve_ivp(rhs, (r0, rmax), y0, args=(w, eps), events=(cross, turn, runaway),
                     rtol=1e-12, atol=1e-16, method='DOP853', max_step=0.05)
-    if sol.t_events[0].size: return -1, sol
+    if sol.t_events[0].size or sol.t_events[2].size or not sol.success: return -1, sol
     if sol.t_events[1].size: return +1, sol
     return 0, sol
 
-def find_star(w, eps, phic_lo=1e-4, phic_hi=0.035, tol=1e-13):
+def find_star(w, eps, phic_lo=0.0, phic_hi=0.0, tol=1e-13):
     """Bisect the central amplitude at fixed (alpha(0)=1) frequency w."""
-    flo, _ = shoot(phic_lo, w, eps)
-    fhi, _ = shoot(phic_hi, w, eps)
-    if flo == fhi:
-        # scan for a bracket
-        grid = np.linspace(phic_lo, phic_hi, 60)
-        signs = [shoot(p, w, eps)[0] for p in grid]
-        for i in range(len(grid) - 1):
-            if signs[i] != signs[i + 1] and 0 not in (signs[i], signs[i + 1]):
-                phic_lo, phic_hi, flo = grid[i], grid[i + 1], signs[i]
+    have_bracket = phic_lo > 0 and shoot(phic_lo, w, eps)[0] == +1 and shoot(phic_hi, w, eps)[0] == -1
+    if not have_bracket:
+        # Scan for the physical bracket: undershoot (+1) just below overshoot (-1) as phi_c increases.
+        # (Very small phi_c also reads -1: the linear tail grows and runs away; skip that branch.)
+        grid = np.linspace(0.008, 0.03, 23)
+        signs = [shoot(p, w, eps, rmax=30.0)[0] for p in grid]
+        for i in range(len(grid) - 2, -1, -1):
+            if signs[i] == +1 and signs[i + 1] == -1:
+                phic_lo, phic_hi = grid[i], grid[i + 1]
                 break
         else:
-            raise RuntimeError(f"no bracket at w={w}, eps={eps}: {set(signs)}")
+            raise RuntimeError(f"no bracket at w={w}, eps={eps}: {signs}")
+    flo = +1
     lo, hi = phic_lo, phic_hi
     while hi - lo > tol * max(1.0, hi):
         mid = 0.5 * (lo + hi)
@@ -97,8 +102,11 @@ def star_properties(phic, w, eps):
     a = 1.0 / np.sqrt(1.0 - 2.0 * y[2, :i_cut] / r[:i_cut])
     wgt = phi[:i_cut]**2 * a * r[:i_cut]**2
     rrms = np.sqrt(np.trapezoid(wgt * r[:i_cut]**2, r[:i_cut]) / np.trapezoid(wgt, r[:i_cut]))
-    return dict(M=m_cut, w_phys=w_phys, rrms=rrms, rcut=rc, phic=phic,
-                phi_cut=phi[i_cut], compact=abs(m_cut) / rrms)
+    # Shirokov's tracker weight is (|Phi|^2 + |Pi|^2)^{1/2}, i.e. proportional to |phi|
+    wgt1 = np.abs(phi[:i_cut]) * a * r[:i_cut]**2
+    rrms1 = np.sqrt(np.trapezoid(wgt1 * r[:i_cut]**2, r[:i_cut]) / np.trapezoid(wgt1, r[:i_cut]))
+    return dict(M=m_cut, w_phys=w_phys, rrms=rrms, rrms_abs=rrms1, rcut=rc, phic=phic,
+                phi_cut=phi[i_cut], compact=abs(m_cut) / rrms1)
 
 def star_at_physical_frequency(w_target, eps, iters=4):
     """Fixed-point iteration w <- w_target * alpha(inf); converges fast in weak field."""
@@ -114,7 +122,7 @@ if __name__ == "__main__":
     for w_t, eps in [(0.750, +1), (0.7603, -1)]:
         s = star_at_physical_frequency(w_t, eps)
         print(f"  eps={eps:+d} w_phys={s['w_phys']:.6f}  M_ADM={s['M']:+.6f}  phi_c={s['phic']:.6f}  "
-              f"r_rms={s['rrms']:.3f}  |M|/r_rms={s['compact']:.2e}  (cut r={s['rcut']:.1f}, phi={s['phi_cut']:.1e})")
+              f"r_rms(phi^2)={s['rrms']:.3f} r_rms(|phi|)={s['rrms_abs']:.3f}  |M|/r_rms={s['compact']:.2e}  (cut r={s['rcut']:.1f}, phi={s['phi_cut']:.1e})")
     print()
     print("M(w) families (alpha(0)=1 frequency scanned, physical frequency reported)")
     for eps in (+1, -1):
@@ -123,6 +131,6 @@ if __name__ == "__main__":
             try:
                 p = find_star(w, eps)
                 s = star_properties(p, w, eps)
-                print(f"    w_phys={s['w_phys']:.4f}  M={s['M']:+.6f}  phi_c={p:.5f}  r_rms={s['rrms']:.3f}")
+                print(f"    w_phys={s['w_phys']:.4f}  M={s['M']:+.6f}  phi_c={p:.5f}  r_rms(|phi|)={s['rrms_abs']:.3f}")
             except RuntimeError as e:
                 print(f"    w={w}: {e}")

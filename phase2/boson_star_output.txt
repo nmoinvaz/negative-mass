@@ -1,0 +1,17 @@
+Shirokov campaign stars (paper: canonical w=0.750 -> M=+0.014350; phantom w=0.7603 -> M=-0.014295)
+  eps=+1 w_phys=0.750000  M_ADM=+0.014626  phi_c=0.019720  r_rms(phi^2)=2.482 r_rms(|phi|)=4.344  |M|/r_rms=3.37e-03  (cut r=23.0, phi=3.6e-09)
+  eps=-1 w_phys=0.760300  M_ADM=-0.014580  phi_c=0.019664  r_rms(phi^2)=2.494 r_rms(|phi|)=4.402  |M|/r_rms=3.31e-03  (cut r=23.3, phi=3.6e-24)
+
+M(w) families (alpha(0)=1 frequency scanned, physical frequency reported)
+  eps=+1
+    w_phys=0.6916  M=+0.020506  phi_c=0.01998  r_rms(|phi|)=4.262
+    w_phys=0.7426  M=+0.015218  phi_c=0.01978  r_rms(|phi|)=4.322
+    w_phys=0.7934  M=+0.011823  phi_c=0.01923  r_rms(|phi|)=4.549
+    w_phys=0.8441  M=+0.009624  phi_c=0.01816  r_rms(|phi|)=5.003
+    w_phys=0.8949  M=+0.008339  phi_c=0.01621  r_rms(|phi|)=5.877
+  eps=-1
+    w_phys=0.7081  M=-0.019763  phi_c=0.01993  r_rms(|phi|)=4.307
+    w_phys=0.7573  M=-0.014820  phi_c=0.01969  r_rms(|phi|)=4.392
+    w_phys=0.8065  M=-0.011620  phi_c=0.01909  r_rms(|phi|)=4.648
+    w_phys=0.8558  M=-0.009551  phi_c=0.01795  r_rms(|phi|)=5.146
+    w_phys=0.9050  M=-0.008387  phi_c=0.01591  r_rms(|phi|)=6.110
