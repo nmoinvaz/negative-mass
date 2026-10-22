@@ -1,0 +1,5 @@
+full l=9 N=200 a=0.1: #neg=1, E0=-435600, exact=-435600.0
+full l=9 N=240 a=0.3: #neg=1, E0=-435600, exact=-435600.0
+full l=10 N=200 a=0.1: #neg=1, E0=-980100, exact=-980100.0
+full l=10 N=240 a=0.3: #neg=1, E0=-980100, exact=-980100.0
+truncated count formula: 108/108 agree (l = 6, 8, 10)

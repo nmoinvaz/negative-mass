@@ -89,5 +89,22 @@ by an independent FD pencil including complex eigenvalues.
 - Caveat: near ω ≈ 0.93 the instability is essentially the flat-space Vakhitov–Kolokolov Q-ball instability;
   the strong-field branch is the more meaningful test of how ε enters.
 
+## 5. Proofs for all l — `dg_proof/RESULTS.md`
+
+- **Theorem 1:** for every l ≥ 2 the Dotti–Gleiser operator Ĥ has exactly one negative eigenvalue, −(k/2)², simple; 0 is
+  not an eigenvalue. Proof: ground-state identity u′² + V̂u² = φ₀²h′² + (φ₀φ₀′h²)′ (u = φ₀h) plus Glazman's lemma —
+  imposing u(x_s) = 0 (one condition) makes the form non-negative, so at most one; the explicit DG mode gives one.
+  This upgrades DG's numerical observation to a theorem.
+- **Theorem 2:** the truncated-star count #neg = [R < r_s] + [κ < κ_c(R)] holds for all l, with closed-form κ_c; N has
+  exactly one root r_* > r_s, so Dirichlet is unstable iff R < r_s, Neumann iff R < r_*, and κ ≥ 0 is stable for R ≥ r_*.
+- Supporting lemmas for all l: closed-form χ coefficients, ψ₀ solves static Zerilli identically in l (previously checked
+  l ≤ 5), χ > 0 on r > 0 (DG's argument verified and put in closed form), limit-point at both ends.
+- κ_c asymptotics: large R, κ_c = −(l+1)/R − (l⁴+3l³+4l²+4)/(l(l−1)(l+2))R⁻² + …; small R, κ_c x_R = −1/2 − (l²+l−1)R/12 + ….
+- Derived, not proven: large-l scaling r_neg ≈ 9.636/((l+2)(l−1)) and r_* ≈ 8.486/((l+2)(l−1)) (the earlier "≈ 9/l²" is
+  this law at moderate l).
+- Conditional on: the sympy identities (symbolic in l; exact checks l = 2..10, root isolation l ≤ 50) and textbook
+  theorems (Weyl limit-point/limit-circle, Kato form representation, Glazman's lemma); the link to metric perturbations
+  rests on DG's intertwining equivalence.
+
 ## Next
 Non-radial (l ≥ 2) perturbations of the phantom star, with the effective surface condition κ_eff compared to κ_c.
