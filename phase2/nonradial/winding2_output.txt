@@ -5,3 +5,8 @@ RESULT eps-1_w0.7603_l2_0.1_2.0_2.5: zeros in Re s∈[0.1,2.0], |Im s|≤2.5: wi
    edge (0.1+2.5j)->(0.1+0j): cumulative phase +0.0000  (97 evals, 226s)
    D(x0)=-6.036e-02  D(x1)=-4.425e-03 (same sign required)
 RESULT eps-1_w0.7603_l3_0.1_2.0_2.5: zeros in Re s∈[0.1,2.0], |Im s|≤2.5: winding = +0.0000  (max phase step 0.40 rad, min|D| 1.68e-03)
+   edge (2+0j)->(2+2.5j): cumulative phase -3.5329  (14 evals, 132s)
+   edge (2+2.5j)->(0.1+2.5j): cumulative phase -6.6200  (25 evals, 256s)
+   edge (0.1+2.5j)->(0.1+0j): cumulative phase +0.0000  (50 evals, 382s)
+   D(x0)=-3.181e-02  D(x1)=-1.821e-03 (same sign required)
+RESULT eps+1_w0.75_l2_0.1_2.0_2.5: zeros in Re s∈[0.1,2.0], |Im s|≤2.5: winding = +0.0000  (max phase step 0.40 rad, min|D| 6.88e-04)
