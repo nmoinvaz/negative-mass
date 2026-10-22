@@ -1,0 +1,7 @@
+Lemma B: M >= -E_-/(1-kappa)
+  phantom star w=0.7603  M=-0.014580 E_-=0.014545 ||mu_-||_3/2=2.339e-03 S_g>=5.442 kappa0=5.401e-03 bound=-0.014597 kappa=3.601e-03 holds=True ratio M/bound=0.99886
+  phantom star w=0.905   M=-0.008387 E_-=0.008374 ||mu_-||_3/2=1.383e-03 S_g>=5.455 kappa0=3.186e-03 bound=-0.008392 kappa=2.124e-03 holds=True ratio M/bound=0.99933
+  shell |M|=0.1 w=0.05   M=-0.100000 E_-=0.095153 ||mu_-||_3/2=7.881e-02 S_g>=4.945 kappa0=2.003e-01 bound=-0.109815 kappa=1.335e-01 holds=True ratio M/bound=0.91063
+  shell |M|=0.1 w=0.3    M=-0.100000 E_-=0.096093 ||mu_-||_3/2=4.106e-02 S_g>=4.987 kappa0=1.035e-01 bound=-0.103212 kappa=6.897e-02 holds=True ratio M/bound=0.96888
+  shell |M|=0.5 w=0.3    M=-0.500000 E_-=0.402327 ||mu_-||_3/2=2.466e-01 S_g>=3.253 kappa0=9.525e-01 bound=-1.102335 kappa=6.350e-01 holds=True ratio M/bound=0.45358
+  shell |M|=1.0 w=0.5    M=-1.000000 E_-=0.679171 ||mu_-||_3/2=4.670e-01 S_g>=1.958 kappa0=2.997e+00 bound=+nan kappa=1.998e+00 holds=n/a ratio M/bound=nan

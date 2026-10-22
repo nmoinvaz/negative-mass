@@ -23,7 +23,13 @@ independent reproduction of the DG08 spectrum (cheap with the Phase 0 code).
 First post-Newtonian two-body expansion of G = 8π(T₊ − T₋): which mass combinations appear, and does
 Bergmann's "active ≠ passive is impossible" survive?
 
-## Phase 4 — Bondi mass bound (high risk)
+## Phase 4 — Bondi mass bound ✅ (see phase4/RESULTS.md)
+Result: per-slice bound M ≥ −W₋ (Witten; exact identity for conformally flat data) and an a-priori
+M ≥ −E₋/(1−κ) for κ<1, tight to 0.1% for the phantom star; no uniform-in-time bound (E₋, W₋ not conserved;
+no universal constant). Open: GW luminosity of a relativistic ± pair decides whether M_B → −∞. No prior bound
+of this kind found (closest: Shi–Tam 2004).
+
+(original plan:)
 Witten spinor argument with a signed source: lower bound on the Bondi mass, or a construction showing
 unbounded energy extraction. Stop after ~2 weeks if it trivializes.
 
