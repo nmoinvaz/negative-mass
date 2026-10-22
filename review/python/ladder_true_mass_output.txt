@@ -1,0 +1,6 @@
+w0850: M+ paper-style +0.0091526 true +0.0094310 | M- paper-style -0.0091570 true -0.0094435 | Mbar csv 0.0091571 ours-5% 0.0091548 true 0.0094372 ratio csv/true 0.97031; a d^2/Mbar csv 1.0244 true 0.9940
+d20: M+ paper-style +0.0143460 true +0.0146265 | M- paper-style -0.0142933 true -0.0145800 | Mbar csv 0.0143216 ours-5% 0.0143197 true 0.0146032 ratio csv/true 0.98072; a d^2/Mbar csv 0.9972 true 0.9780
+w0700: M+ paper-style +0.0191657 true +0.0194632 | M- paper-style -0.0191671 true -0.0194715 | Mbar csv 0.0191729 ours-5% 0.0191664 true 0.0194673 ratio csv/true 0.98487; a d^2/Mbar csv 0.9888 true 0.9738
+w0675: M+ paper-style +0.0225379 true +0.0228485 | M- paper-style -0.0225361 true -0.0228539 | Mbar csv 0.0225412 ours-5% 0.0225370 true 0.0228512 ratio csv/true 0.98644; a d^2/Mbar csv 0.9867 true 0.9733
+slope with csv masses   p = 0.9661 +- 0.0611
+slope with true masses  p = 0.9818 +- 0.0621
