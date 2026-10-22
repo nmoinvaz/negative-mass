@@ -56,6 +56,25 @@ negative active/ADM mass). Static shooting in Schwarzschild-like coordinates, ω
 l = 2 negative shell would sit at r ≈ 0.02–0.04, deep inside a core of rms radius ≈ 4.4. Whatever
 the stability of these stars is, it is a property of the phantom matter, not of the negative-mass vacuum.
 
+## 3. Dotti–Gleiser spectrum reproduced; exact stability thresholds — `dg_spectrum/RESULTS.md`
+
+- Full problem, l = 2..8: E₀ = −(k/2)² to ≤3×10⁻¹³ (Chebyshev, Ψ̂ = r³u); exactly **one** negative eigenvalue in
+  all 140 resolution/domain runs, confirmed by Sturm counts. (Numerical evidence for l ≤ 8, not a proof for all l.)
+- φ₀ = 1/ψ₀ is an exact zero mode of Ĥ = (−∂ₓ+g)(∂ₓ+g), with a single node at r_s = 6/((l+2)(l−1)). This gives an
+  exact count for the truncated (star-like) problem with Robin condition Ψ̂′ = κΨ̂ at areal radius R:
+  #negative = [R < r_s] + [κ < κ_c(R)], κ_c = d ln φ₀/dx at R (closed form; matches bisection to 1e-7; 1000-case
+  scan agrees).
+- Thresholds (units |M|): Dirichlet unstable iff R < r_s (l=2: 1.5); Neumann/any κ ≥ 0 unstable iff R < r_*
+  (l=2: 2.279, l=3: 0.879, l=4: 0.481, l=5: 0.307) — sharper than the §1 bound r_neg (2.674, 1.014, 0.552, 0.351).
+  So the κ ≥ 0 statement of §1 holds with |M|/R < 1/2.279 = 0.439.
+- Large R: an instability needs κ < κ_c → −(l+1)/R, i.e. a surface condition softer than the static vacuum tail by an
+  O(1) factor. Small R: truncation reproduces the DG eigenvalue with error ∝ R⁴.
+- Growth rate: the ~l⁴/12 growth belongs to the point singularity; any finite R with l-independent κ caps it
+  (κ ≥ 0: only l ≲ 3/√R unstable; fixed κ < 0: growth ≤ |κ|). Caveat: a real star's interface condition may depend
+  on l and frequency — not determined here.
+- Note: DG08 eq. (27) as rendered on ar5iv has a sign slip in the l = 2 eigenfunction denominator; the correct form is
+  r³(r−2M)⁴ e^{2(t−r)/|M|}/(4r³ + 12Mr² − 24M³).
+
 ## Next
 Linear perturbations of the phantom star: radial (l = 0) first, then even-parity l ≥ 2 with the
 interface/interior treated explicitly.
