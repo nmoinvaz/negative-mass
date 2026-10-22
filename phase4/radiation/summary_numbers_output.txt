@@ -1,0 +1,9 @@
+L0 = 5.864e-18  A = 0.000143
+t=1.0e+3: eta=0.1425  E_B-E0=-5.864e-15  |P_sys| (past-directed)=5.849e-15  approx L0*sqrt(2t/A)=2.193e-14  W_-=0.01649  E_rad/W_-=3.556e-13
+t=1.0e+6: eta=5.656  E_B-E0=-5.864e-12  |P_sys| (past-directed)=6.91e-13  approx L0*sqrt(2t/A)=6.934e-13  W_-=4.09  E_rad/W_-=1.434e-12
+t=1.0e+12: eta=19.47  E_B-E0=-5.864e-6  |P_sys| (past-directed)=6.934e-10  approx L0*sqrt(2t/A)=6.934e-10  W_-=4.09e+6  E_rad/W_-=1.434e-12
+t=1.0e+16: eta=28.68  E_B-E0=-0.05864  |P_sys| (past-directed)=6.934e-8  approx L0*sqrt(2t/A)=6.934e-8  W_-=4.09e+10  E_rad/W_-=1.434e-12
+asymptotic ratio E_rad/W_- -> L0/(2 A m) = (12/35)(m/d)^4 = 1.434e-12
+lab time for E_B to fall by m: 2.439e+15
+u=0.01: u^2 L(u) = 0.37505637 (3/8 = 0.375)
+u=0.001: u^2 L(u) = 0.37500056 (3/8 = 0.375)

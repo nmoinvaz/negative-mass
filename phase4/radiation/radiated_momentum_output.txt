@@ -1,0 +1,6 @@
+max rel |single + BS| over 200 random points: 1.0337e-22
+eta=0: dE/deta=0.685714285714 (L0 cosh=0.685714285714),  dPz/deta=0.0 (L0 sinh=0.0)
+eta=0.5: dE/deta=0.773229233284 (L0 cosh=0.773229233284),  dPz/deta=0.357322495196 (L0 sinh=0.357322495196)
+eta=1: dE/deta=1.0581124353 (L0 cosh=1.0581124353),  dPz/deta=0.80585224707 (L0 sinh=0.80585224707)
+eta=2: dE/deta=2.57979133103 (L0 cosh=2.57979133103),  dPz/deta=2.48698999395 (L0 sinh=2.48698999395)
+eta=4: dE/deta=18.7256453733 (L0 cosh=18.7256453733),  dPz/deta=18.713086078 (L0 sinh=18.713086078)

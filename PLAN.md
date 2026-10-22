@@ -32,7 +32,8 @@ Bergmann's "active ≠ passive is impossible" survive?
 ## Phase 4 — Bondi mass bound ✅ (see phase4/RESULTS.md)
 Result: per-slice bound M ≥ −W₋ (Witten; exact identity for conformally flat data) and an a-priori
 M ≥ −E₋/(1−κ) for κ<1, tight to 0.1% for the phantom star; no uniform-in-time bound (E₋, W₋ not conserved;
-no universal constant). Open: GW luminosity of a relativistic ± pair decides whether M_B → −∞. No prior bound
+no universal constant). GW luminosity computed (phase4/radiation): L₀ = (24/35)m⁶/d⁶ in the rest frame; M_B → −∞ not established
+(toy back-reaction model suggests a finite loss). No prior bound
 of this kind found (closest: Shi–Tam 2004).
 
 (original plan:)
