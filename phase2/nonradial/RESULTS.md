@@ -5,8 +5,8 @@ G_ab = 8πε T_ab (ε = −1 phantom, ε = +1 canonical), field equation unchang
 solver `background.py` (a frozen copy of `../radial/background.py`), so α(∞) = 1 and ω is the physical
 frequency. Perturbations go as e^{st}; **a growing mode is s = γ > 0** (or Re s > 0).
 
-**Status: in progress.** Sections marked (pending) are still running. The file is refreshed as results
-come in.
+**Status:** the main results are complete. The extra phantom frequencies ω = 0.70 and 0.85 (l = 2, real γ)
+are (pending).
 
 ## 1. Equations
 
@@ -70,7 +70,7 @@ Regge–Wheeler potential (their (κ/2)(ρ − p_rad) term with κ = 8π).
 | phantom ω = 0.7603, M = −0.014580 | 2 | [1e-3, 300] | **0** (D < 0 throughout) |
 | phantom ω = 0.7603 | 3 | [1e-3, 1000] | **0** |
 | canonical ω = 0.75, M = +0.014626 | 2 | [1e-3, 300] | **0** |
-| canonical ω = 0.75 | 3 | [1e-3, 1000] | (pending) |
+| canonical ω = 0.75 | 3 | [1e-3, 1000] (30 pts) | **0** |
 
 The DG point-mass rate k/(2|M|) is 137 (l = 2) and 686 (l = 3); both lie inside the scanned ranges.
 
@@ -123,17 +123,74 @@ argument-principle count of zeros of D in a rectangle of the right half-plane (`
 - Validation (`control_winding.py`, `control_winding_output.txt`): around the Mini BS I QNM the winding is
   **+1.0000**; displaced by 0.004i it is **0.0000**.
 
-(pending: phantom l = 2 rectangle Re s ∈ [0.01, 2], |Im s| ≤ 2.5)
+Production version `winding2.py`:
+- the scalar plane is started at an s-independent radius;
+- the trivial zero-free phases of the inward/outward exponentials are removed analytically;
+- it is restart-safe (per-evaluation cache).
 
-## 6. Conclusions so far
+Control (`control_winding2.py`, appended to `control_winding_output.txt`): winding +1.0000 around the
+Mini BS I QNM, 0.0000 displaced.
 
-- **No unstable polar mode** with real growth rate for the phantom campaign star: γ ∈ [10⁻³, 300]
-  (l = 2) and [10⁻³, 1000] (l = 3), 100 log points, D sign-stable under convergence variants.
-- **Axial: no unstable mode for any l ≥ 2, by positivity.** min r²V_ax/(α² l(l+1)) = 1.000 for the
-  phantom stars ω = 0.70, 0.7603, 0.85, 0.90 (minimum at the centre). For ε = −1, m(r) < 0 makes
-  −6m/r³ > 0 (stabilising). 8πεV = −8πV is destabilising (V(φ0²) ≥ 0 on these stars, max 3×10⁻⁵), but it
-  is ≤ 7×10⁻⁴ of the centrifugal term and smaller than the mass term. So V_ax > 0 everywhere,
-  −∂²_{r*} + V_ax > 0, and there is no bound state with s² > 0 for any l ≥ 2. The canonical star has
-  ratio ≥ 0.9969 and is also stable.
-- **κ_eff:** the phantom star supplies a Robin condition **above** κ_c at every γ tested, so the
-  exterior DG mechanism is not triggered. This is the direct answer to the §1/§3 question of phase 2.
+| star | l | box | winding (# growing modes) |
+|---|---|---|---|
+| phantom ω = 0.7603 | 2 | Re s ∈ [0.1, 2], \|Im s\| ≤ 2.5 | **0.0000** |
+| phantom ω = 0.7603 | 3 | same | **0.0000** |
+| canonical ω = 0.75 | 2 | same | **0.0000** |
+
+(`winding2_output.txt`; max phase step 0.4 rad; D(x0), D(x1) have the same sign.) No oscillatory
+instability with e-folding time ≤ 10 (code units) and |Im s| ≤ 2.5. This range covers the scalar
+frequencies ω ± Im s up to the continuum and beyond.
+
+**Not covered:** 0 < Re s < 0.1 off the real axis. That strip passes the scalar continuum thresholds
+k± → 0 at Im s = ±(1−ω), which makes the integration slow (R_s ∝ 1/Re k). The real axis down to
+γ = 10⁻³ is covered by the scan.
+
+## 6. Conclusions
+
+1. **Polar, real growth rates.** For the phantom campaign star (ω = 0.7603, M = −0.01458) there is
+   **no unstable polar mode with γ ∈ [10⁻³, 300] (l = 2) or γ ∈ [10⁻³, 1000] (l = 3)**. The search used
+   100 log-spaced points, and D keeps the same sign under all convergence variants. The point-mass DG
+   rates (137 and 686) lie inside these ranges. The canonical star (ω = 0.75) gives the same result
+   (expected: it is on the stable branch).
+2. **Polar, complex growth rates.** Argument-principle count (validated on a known QNM): **0 zeros** in
+   Re s ∈ [0.1, 2], |Im s| ≤ 2.5, for phantom l = 2, phantom l = 3 and canonical l = 2. This covers
+   matter-sector (Q-ball-type) oscillatory instabilities in that box.
+3. **Axial: stable for all l ≥ 2.** V_ax > 0 everywhere; positivity is exact once V_ax > 0 is checked on
+   the grid (r²V_ax/(α² l(l+1)) ≥ 1 − 10⁻⁶).
+4. **κ_eff.** κ_eff − κ_c = s²/(q_int − g) exactly, and for the phantom star q_int > g, so the matter
+   supplies **κ_eff > κ_c at every γ > 0** (l = 2 tabulated for γ ∈ [10⁻⁴, 150]; l = 2, 3 at γ → 0 via
+   c_l). The static limit is degenerate (κ_eff → κ_c as s²). The sign is fixed by a Love-type
+   coefficient, c_l < 0 for the phantom stars (c_l > 0 canonical). The large-R requirement κ < κ_c ≈
+   −(l+1)/R is **not** met. The phantom matter acts as a stiff (κ > 0 for γ ≳ 2.5×10⁻⁴) surface, so the
+   DG negative-mass-vacuum instability is not triggered.
+
+## 7. Caveats
+
+- Real-γ scans resolve sign changes on a 100-point log grid (30 points for canonical l = 3). A pair of
+  nearby roots (an even number between grid points) would be missed. The κ_eff picture (q_int − q_ext ≈
+  2γ, far from 0) makes this implausible, but it is not a proof.
+- Complex s: the strip 0 < Re s < 0.1 off the real axis, and |Im s| > 2.5, were not counted.
+- Only l = 2, 3. The ω = 0.7603 star was done fully; c_l and axial positivity also at ω = 0.85 (and axial
+  at 0.70, 0.90).
+- The equations for (tt) and the angular trace are verified numerically (relative residual ≤ 7×10⁻⁷),
+  not symbolically. (tθ), (tr), (rθ) are verified exactly.
+- Weak-field stars only (|M|/R ~ 3×10⁻³). Nothing here says what happens for compact phantom stars.
+- Linear theory, Regge–Wheeler gauge, m = 0 (sufficient by spherical symmetry).
+
+## 8. Files
+
+| file | role |
+|---|---|
+| `lincommon.py` | shared sympy linearisation of G_ab − 8πεT_ab and KG (ε symbolic) |
+| `derive_nonradial.py` (+`_output.txt`) | polar linearisation and separation → `polar_eqs.pkl`; exact check of 3 eqs |
+| `reduce_polar.py` (+`_output.txt`) | joint reduction → `polar_matrix_generated.py`; vacuum Zerilli/KG checks |
+| `verify_polar.py` (+`_output.txt`) | numerical check of all 8 equations |
+| `derive_axial.py`, `axial.py` (+outputs) | axial master equation, positivity of V_ax |
+| `background.py` | frozen copy of `../radial/background.py` |
+| `polar_solver.py` | determinant D(s), exterior Zerilli/KG, κ_eff helper |
+| `scan_growing.py`, `scan_*.csv/log` | real-γ scans |
+| `convergence.py` (+`convergence_l2_output.txt`) | robustness of D |
+| `winding2.py`, `winding2_output.txt`, `control_winding*.py` | complex-s argument principle + controls (`winding.py` = first version) |
+| `kappa_eff.py`, `kappa_eff_l2_*`, `love.py`, `love_output.txt` | κ_eff vs κ_c; static Love-type coefficient |
+| `mini_bs.py`, `mini_bs_output.txt` | validation against Macedo et al. 2013 Mini BS I polar QNM |
+| `check_bg.py`, `matter_sv.py` | background / denominator sanity checks; scalar-sector SVD diagnostic (not run) |
