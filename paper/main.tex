@@ -392,51 +392,23 @@ count at each fixed frequency.
 
 \section{How the results were obtained}\label{sec:method}
 
-This work was carried out by the author working with an AI research assistant (Anthropic's Claude, run as an agent
-with a Python environment and the ability to delegate independent tasks to parallel sub-agents). The author set the
-questions, the scope and the priorities, and reviewed each stage; the assistant carried out the literature reading,
-derivations, code and drafting under that direction. Because AI-generated mathematics can be wrong in ways that read
-fluently, the workflow was built so that no claim rests on the assistant's word alone.
-
-\paragraph{From literature to a list of gaps.} We began from Bondi's paper~\cite{Bondi1957} and read forward through
-the work it prompted~\cite{Bonnor1989,GHI2005,GD2006,CC2006,DG2009,Dotti2022,MP2014,Johnson2020,Alves2025} and the recent
-simulation of Ref.~\cite{Shirokov2026}. For each paper we recorded what is proved, what is assumed and what is only
-asserted, and collected the open points into a list of gaps: whether the three Bondi masses can differ consistently,
-whether the runaway survives beyond Newtonian order, whether the known instability counts all unstable modes, whether
-it survives replacing the singularity by a star, and what the positive-mass theorem does and does not exclude. Each gap
-became a phase of a written plan, with a stated test for what would count as closing it.
-
-\paragraph{Checking the starting points.} Before building on any published result we re-derived it. The Zerilli
-potential, the Dotti--Gleiser intertwiner and the Gleiser--Dotti growth rate were reproduced symbolically; this
-exposed a sign misprint in one intermediate expression of Ref.~\cite{DG2009}, which we corrected before use, and the
-discontinuity of the truncated mode used in Ref.~\cite{GHI2005}. The static boson stars of Ref.~\cite{Shirokov2026} were
-reproduced to $10^{-5}$ in the field profile, and the $2\%$ mass offset traced to the definition of mass used there.
-
-\paragraph{Analytic results.} The proofs of Lemma~\ref{lem:props} and Theorems~\ref{thm:one}--\ref{thm:trunc} were
-first written out as conventional arguments; then every algebraic identity on which they depend (the ground-state identity, the
-closed form of $\kappa_c$, the factorisations and sign properties of $\chi$ and $\mathcal N$) was verified in exact
-arithmetic with SymPy, for $\ell=2$--$10$ individually and symbolically in $\ell$ where the text says so. Sign and root
-claims were checked by exact root isolation for $\ell\le50$. Each proof was then tested numerically: the predicted
-eigenvalue count was compared with direct spectral computations over a 1000-case grid in $(\ell,R,\kappa)$, with no
-disagreement.
-
-\paragraph{Numerical results.} Every eigenvalue reported in Sec.~\ref{sec:bs} was computed by two independent methods
-(compound-matrix shooting and a finite-difference generalised eigenproblem), and the stability changes were compared
-against the turning points of the families computed separately from the background solutions. The nonlinear evolution
-code was validated by its convergence order, by conservation of the Misner--Sharp mass, and by recovering the linear
-growth rates of unstable stars to $0.2\%$. Numerical codes use NumPy, SciPy and mpmath; all scripts and their recorded
-outputs are in the repository.
-
-\paragraph{Independent review and novelty.} Separate agents, given the code but not the conclusions, reviewed the
-public code accompanying Ref.~\cite{Shirokov2026} and our own codes for errors. A literature search was run for each
-result before calling it new; it showed, for example, that the first post-Newtonian separation law for a Bondi pair that we rederived had
-already been obtained~\cite{Ivanov2012}, which is why it is not presented here, and that the zero mode
-$\phi_0=1/\psi_0$ on which Sec.~\ref{sec:one} builds already appears in Ref.~\cite{DG2009}, as credited there.
-
-\paragraph{Limitations of the process.} The checks above are internal. The results have not yet been reviewed by
-specialists in the field, and the symbolic and numerical verifications establish the stated identities and spectra
-but cannot rule out an error in how a statement was set up. We would welcome independent scrutiny, and the repository is
-organised so that each claim can be traced to the script that checks it.
+The author set the questions and scope and reviewed each stage; Anthropic's Claude, run as an agent with a Python
+environment and parallel sub-agents, did the literature reading, derivations, code and drafting. No claim rests on
+the assistant's word alone:
+\begin{itemize}
+\item \emph{Gaps.} Starting from Bondi~\cite{Bondi1957}, each later paper was read for what it proves versus asserts;
+the open points became the phases of a written plan.
+\item \emph{Starting points.} Published results were re-derived before use, exposing a sign misprint in
+Ref.~\cite{DG2009} and the discontinuous mode of Ref.~\cite{GHI2005}; the stars of Ref.~\cite{Shirokov2026} were
+reproduced to $10^{-5}$.
+\item \emph{Proofs.} Every identity behind Lemma~\ref{lem:props} and Theorems~\ref{thm:one}--\ref{thm:trunc} was verified
+in exact arithmetic (SymPy), and the predicted mode counts were confirmed by a 1000-case spectral scan.
+\item \emph{Numerics.} Each eigenvalue was computed by two independent methods; the evolution code was checked by
+convergence order, mass conservation and recovery of the linear growth rates.
+\item \emph{Review.} Separate agents audited the codes without seeing our conclusions, and a literature search preceded
+every novelty claim (it found, e.g., that the post-Newtonian Bondi-pair law was already known~\cite{Ivanov2012}).
+\end{itemize}
+These checks are internal; the work has not yet been reviewed by specialists.
 
 \paragraph{Reproducibility.} The symbolic verifications (Lemma~\ref{lem:props}, Theorems~\ref{thm:one}--\ref{thm:trunc},
 exact for $\ell=2$--$10$ and symbolically in $\ell$ where stated; root isolation of $\mathcal N$ for $\ell\le50$), the
