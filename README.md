@@ -50,7 +50,10 @@ stability of negative-mass Schwarzschild, regular negative-mass sources, and wha
 
 Novelty status of each result: `notes/novelty/RESULTS.md`.
 
-In progress: non-radial (l ≥ 2) stability of the phantom star.
+9. **No non-radial instability found** (phase2/nonradial): for the phantom star, l = 2, 3 polar perturbations have no
+   growing mode (real γ up to 300 / 1000, covering the point-mass rates 137 / 686; no complex growing mode in
+   0.1 ≤ Re s ≤ 2, |Im s| ≤ 2.5), and the axial sector is stable for all l. The interior supplies κ_eff > κ_c, so the
+   point-mass instability is not triggered. Scans, not proofs: l ≥ 4, Re s < 0.1 and compact stars remain open.
 
 ## Setup
 ```
