@@ -3,8 +3,14 @@
 Working notes and code on negative (active) mass in general relativity: Bondi's 1957 runaway, the
 stability of negative-mass Schwarzschild, regular negative-mass sources, and what remains open.
 
+**Papers**
+- **I.** N. Moinvaziri, *The instability of negative-mass Schwarzschild is a point-mass effect: exact thresholds for
+  finite stars* — [`paper/1-thresholds/main.pdf`](paper/1-thresholds/main.pdf)
+- **II.** N. Moinvaziri, *Stability of a negative-mass boson star* —
+  [`paper/2-boson-star/main.pdf`](paper/2-boson-star/main.pdf)
+
 - `PLAN.md` — phases, status, next steps
-- `paper/` — draft paper (`main.pdf`), with `figures/make_figures.py` regenerating every figure from repo data
+- `paper/` — the two papers above, with `figures/make_figures.py` regenerating every figure from repo data
 - `notes/literature.md` — papers read, with what each establishes
 - `phase0/` — verification of published perturbation results for negative-mass Schwarzschild
 - `phase2/` — regular negative-mass (phantom boson) stars: backgrounds, Dotti–Gleiser spectrum, radial and

@@ -11,10 +11,10 @@ phase5/spherical/stars/
 *.pkl
 
 # LaTeX build products
-paper/*.aux
-paper/*.log
-paper/*.out
-paper/*.fls
-paper/*.fdb_latexmk
-paper/*.synctex.gz
-paper/build.log
+paper/**/*.aux
+paper/**/*.log
+paper/**/*.out
+paper/**/*.fls
+paper/**/*.fdb_latexmk
+paper/**/*.synctex.gz
+paper/**/build.log
