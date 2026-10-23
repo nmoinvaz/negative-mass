@@ -37,6 +37,8 @@
   Runaway survives full GR: a ∝ d^−2.03, signed momentum conserved, no detectable radiation; lone phantom
   star to t = 1000. Open: off-axis kicks, rigidity past t ≈ 200, relativistic-speed radiation; N = 192 test
   predicts d(400) ≈ 10.7.
+- **Ghost-wormhole thresholds vs. Choptuik critical collapse** (Shinkai–Hayward gr-qc/0205041, González–Guzmán–Sarbach
+  0806.0608/0806.1370, normal + ghost σ-models, phantom collapse): see `notes/critical_ghost.md`.
 
 ## Cosmology / observation
 - Farnes 2018, A&A 620, A92; critique Socas-Navarro 2019, A&A 626, A5 (large-scale runaway).
