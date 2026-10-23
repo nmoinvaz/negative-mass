@@ -3,12 +3,34 @@
 Working notes and code on negative (active) mass in general relativity: Bondi's 1957 runaway, the
 stability of negative-mass Schwarzschild, regular negative-mass sources, and what remains open.
 
-**Papers**
-- **I.** N. Moinvaziri, *The instability of negative-mass Schwarzschild is a point-mass effect: exact thresholds for
-  finite stars* — [`paper/1-thresholds/main.pdf`](paper/1-thresholds/main.pdf)
-- **II.** N. Moinvaziri, *Stability of a negative-mass boson star* —
-  [`paper/2-boson-star/main.pdf`](paper/2-boson-star/main.pdf)
+Repository: https://github.com/nmoinvaz/negative-mass
 
+## Paper I — point-mass thresholds
+N. Moinvaziri, *The instability of negative-mass Schwarzschild is a point-mass effect: exact thresholds for finite
+stars* — [`paper/1-thresholds/main.pdf`](paper/1-thresholds/main.pdf)
+- **Exactly one unstable mode.** The Dotti–Gleiser operator has exactly one negative eigenvalue for every l ≥ 2, at
+  their growth rate k/(2|M|) (Theorem 1).
+- **Exact count for a finite star.** With a Robin surface condition κ, the number of unstable modes is
+  [R < r_s] + [κ < κ_c(R)], with κ_c in closed form (Theorem 2).
+- **Thresholds.** A star with |M|/R < 0.439 and κ ≥ 0 has no unstable even-parity mode for any l; any finite radius
+  caps the l⁴ growth of the point mass.
+- **Verified by:** `phase2/dg_proof/` (exact SymPy checks of every identity, symbolic in l and for l = 2–10),
+  `phase2/dg_spectrum/` (independent numerical spectra, 1000-case scan).
+
+## Paper II — negative-mass boson star
+N. Moinvaziri, *Stability of a negative-mass boson star* —
+[`paper/2-boson-star/main.pdf`](paper/2-boson-star/main.pdf)
+- **Radially stable.** Shirokov's phantom star (ω = 0.7603) is stable; the family loses stability where the Noether
+  charge N peaks. The first law dM = −ω dN makes the criterion flip sign when written in M.
+- **Nonlinear evolution.** 1+1 simulations keep stable stars stationary to t = 1500 and reproduce linear growth rates
+  of unstable ones to < 0.2 %.
+- **Non-radial.** No unstable l = 2, 3 polar or axial mode; the star supplies κ_eff > κ_c, so the point-mass
+  instability is not triggered. Numerical scans, not proofs.
+- **Verified by:** `phase2/radial/`, `phase2/nonradial/`, `phase2/mass_check/`, `phase5/spherical/`.
+
+Both papers: AI-assisted (see each paper's "How the results were obtained"); not yet reviewed by specialists.
+
+## Repository layout
 - `PLAN.md` — phases, status, next steps
 - `paper/` — the two papers above, with `figures/make_figures.py` regenerating every figure from repo data
 - `notes/literature.md` — papers read, with what each establishes
