@@ -48,5 +48,23 @@ lone-star drifts not physical. Remaining: 3D items below (need GPUs).
 1+1 evolution of the lone phantom star (is the 0.63%/100 decay physical?); 3+1 Shirokov N = 192 test and
 an off-axis kick.
 
+## Later — Ghost-wormhole threshold vs. Choptuik critical collapse (to investigate)
+From the literature check in `notes/critical_ghost.md`: the ghost-wormhole threshold is type I (finite black-hole
+mass, measured by Shinkai–Hayward 2002) and Choptuik's is type II. No paper connects the two, and in the normal + ghost
+model they sit in disjoint sets of initial data. Saved to investigate later:
+- **Where a real connection could still exist** (none studied):
+  1. self-similar solutions in which the normal and ghost fields boost into each other (the Lorentzian analogue of
+     Hirschmann–Eardley's rotating complex-scalar solution);
+  2. Brans–Dicke gravity with ω < −3/2 (a ghost scalar in the Einstein frame);
+  3. the outcome map for regular-centre normal + ghost initial data, where temporary throats have been seen.
+- **Untested prediction:** a small ghost admixture leaves Choptuik's critical solution unchanged (same Δ and γ).
+  Reason: its ghost-sector perturbations are the same problem as a complex scalar's imaginary-part perturbations, which
+  all decay except one symmetry mode. Test: compute those perturbations of the choptuik-large-d solution across D and
+  look for an eigenvalue crossing zero (that would signal a genuinely two-field branch).
+- **Can our solvers represent a wormhole throat?** Not as they stand: choptuik-large-d's areal radial coordinate (and
+  this repo's 1+1 code) cannot pass a throat, which shows up like an apparent horizon. Investigate whether a change of
+  coordinates (proper radius, or double-null/characteristic coordinates as Shinkai–Hayward used) makes it possible,
+  and what it would cost.
+
 ## Out of scope
 Quantum vacuum instability of the phantom sector.
