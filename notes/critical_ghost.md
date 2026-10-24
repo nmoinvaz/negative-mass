@@ -6,6 +6,10 @@ to Choptuik's threshold between dispersal and black-hole formation. The two syst
 massless scalar, with the sign of the scalar's energy flipped. Bondi, Gleiser–Dotti, the phantom stars and the mass bound
 are in `notes/literature.md` and the phase RESULTS files and are not repeated here.
 
+Follow-up: [`bh_to_wormhole.md`](bh_to_wormhole.md) works out when a black hole's horizon becomes a wormhole throat
+(the sign of the energy flux through it), the Roberts family's horizons, and why a small ghost admixture fades out at
+Choptuik's threshold.
+
 Status words: **literature** (with a reference); **checked here** (by hand or sympy; scripts in the appendix);
 **argued** (a derivation sketch, not a proof); **conjecture**; **unverified** (a reference detail I could not confirm).
 Most papers were read through arXiv/ar5iv pages via a summarizing fetch tool, not byte-for-byte. Quoted numbers are the
