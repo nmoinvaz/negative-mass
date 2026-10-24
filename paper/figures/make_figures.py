@@ -234,9 +234,70 @@ def fig5_evolution():
     plt.close(fig)
 
 
+def fig6_wormhole():
+    """Paper III. (a) W^2 a^2 - 2(D - 3) against 1/(D - 3): Torii-Shinkai's Table I (D <= 11) and the r-integration
+    (D >= 20), with the two- and three-term large-D results. (b) The growing mode's profile delta r / delta r(a) at
+    D = 10, 20, 100, 1000 against the large-D limit (r/a) e^{1 - r^2/a^2}. Data: notes/wormhole_largeD/growth.csv,
+    profiles.csv (written by notes/wormhole_largeD/profiles.py)."""
+    import csv
+    d = os.path.join(ROOT, "notes", "wormhole_largeD")
+    rows = list(csv.DictReader(open(os.path.join(d, "growth.csv"))))
+    D = np.array([int(r["D"]) for r in rows], float)
+    W2 = np.array([float(r["W2a2"]) for r in rows])
+    ts = np.array([r["source"].startswith("TS13") for r in rows])
+    x, y = 1 / (D - 3), W2 - 2 * (D - 3)
+    c0 = -4 * np.log(2)
+    c1 = np.pi**2 / 3 + 4 * np.log(2) ** 2
+    BLUE, ORANGE, AQUA, INK2 = "#2a78d6", "#eb6834", "#1baf7a", "#52514e"
+    fig, axs = plt.subplots(1, 2, figsize=(2 * W1, 2.5))
+    ax = axs[0]
+    xx = np.linspace(0, 0.62, 200)
+    ax.axhline(c0, color=INK2, ls="--", lw=1.0)
+    ax.plot(xx, c0 + c1 * xx, color=AQUA, lw=1.4)
+    ax.plot(x[ts], y[ts], "o", ms=4.5, mfc="white", mec=ORANGE, mew=1.2, label="Torii & Shinkai (2013)")
+    ax.plot(x[~ts], y[~ts], "o", ms=3.5, color=BLUE, label="this work")
+    for Dl in (4, 5, 6, 8, 11, 20):
+        i = int(np.where(D == Dl)[0][0])
+        ax.annotate(f"$D={Dl}$", (x[i], y[i]), xytext=(4, -9 if Dl > 5 else 3), textcoords="offset points",
+                    fontsize=6.5, color="0.25")
+    ax.text(0.97, c0 - 0.09, r"$-4\ln 2$", transform=ax.get_yaxis_transform(), ha="right", va="top", fontsize=7,
+            color="0.25")
+    ax.text(0.45, -0.66, r"$-4\ln 2+\dfrac{\pi^2/3+4\ln^2 2}{D-3}$", ha="left", va="center", fontsize=7,
+            color="0.25")
+    ax.set_xlim(0, 1.05)
+    ax.set_ylim(-3.0, -0.4)
+    ax.set_xlabel(r"$1/(D-3)$")
+    ax.set_ylabel(r"$W^2a^2-2(D-3)$")
+    ax.legend(frameon=False, loc="center right", bbox_to_anchor=(1.0, 0.36), fontsize=7)
+    ax.set_title("(a)", loc="left", fontsize=8)
+
+    ax = axs[1]
+    prow = list(csv.DictReader(open(os.path.join(d, "profiles.csv"))))
+    r = np.array([float(q["r_over_a"]) for q in prow])
+    ramp = {10: "#86b6ef", 20: "#3987e5", 100: "#1c5cab", 1000: "#0d366b"}
+    for Dv, col in ramp.items():
+        Y = np.array([float(q[f"Y_D{Dv}"]) for q in prow])
+        ax.plot(r, Y, color=col, lw=1.3, label=f"$D={Dv}$")
+        if Dv in (10, 20):                       # 100 and 1000 nearly coincide with the limit; the legend names them
+            j = np.argmin(np.abs(r - 2.05))
+            ax.annotate(f"$D={Dv}$", (r[j], Y[j]), xytext=(2, 3), textcoords="offset points", fontsize=6.5,
+                        color="0.25")
+    lim = np.array([float(q["Y_largeD_limit"]) for q in prow])
+    ax.plot(r, lim, "--", color=ORANGE, lw=1.2, label=r"$D\to\infty$: $(r/a)\,e^{1-r^2/a^2}$")
+    ax.set_xlim(1, 3)
+    ax.set_ylim(0, 1.05)
+    ax.set_xlabel(r"$r/a$")
+    ax.set_ylabel(r"$\delta r(r)\,/\,\delta r(a)$")
+    ax.legend(frameon=False, loc="upper right", fontsize=7)
+    ax.set_title("(b)", loc="left", fontsize=8)
+    fig.tight_layout()
+    fig.savefig(os.path.join(OUT, "fig6_wormhole_largeD.pdf"))
+    plt.close(fig)
+
+
 if __name__ == "__main__":
-    fig1_vhat(); print("fig1")
-    fig2_kappa(); print("fig2")
-    fig3_growth(); print("fig3")
-    fig4_radial(); print("fig4")
-    fig5_evolution(); print("fig5")
+    import sys
+    figs = {"fig1": fig1_vhat, "fig2": fig2_kappa, "fig3": fig3_growth, "fig4": fig4_radial, "fig5": fig5_evolution,
+            "fig6": fig6_wormhole}
+    for name in (sys.argv[1:] or figs):          # all figures, or only those named (e.g. fig6)
+        figs[name](); print(name)

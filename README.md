@@ -28,7 +28,19 @@ N. Moinvaziri, *Stability of a negative-mass boson star* —
   instability is not triggered. Numerical scans, not proofs.
 - **Verified by:** `phase2/radial/`, `phase2/nonradial/`, `phase2/mass_check/`, `phase5/spherical/`.
 
-Both papers: AI-assisted (see each paper's "How the results were obtained"); not yet reviewed by specialists.
+## Paper III — ghost-scalar wormholes at large D
+N. Moinvaziri, *The instability of ghost-scalar wormholes at large dimension* —
+[`paper/3-wormhole-largeD/main.pdf`](paper/3-wormhole-largeD/main.pdf)
+- **Growth rate.** The Ellis–Bronnikov wormhole's single unstable radial mode has
+  W²a² = 2(D − 3) − 4 ln 2 + (π²/3 + 4 ln²2)/(D − 3) + O(D⁻²), by matched asymptotics (the third term's closed form
+  identified numerically).
+- **Mode.** At large D the throat moves rigidly and the mode is (r/a) e^{1 − r²/a²} in the nearly flat region outside.
+- **Threshold.** 1/W is the slope of the type I lifetime law between collapse and expansion; published runs in D = 4, 5, 6
+  are consistent with it.
+- **Verified by:** `notes/wormhole_largeD/` (symbolic check with control, two integrations against Torii–Shinkai's table,
+  `paper_numbers.py`).
+
+All three papers: AI-assisted (see each paper's "How the results were obtained"); not yet reviewed by specialists.
 
 ## Repository layout
 - `PLAN.md` — phases, status, next steps

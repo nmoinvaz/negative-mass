@@ -143,6 +143,11 @@ comes only from the absence of the growing term.
 - `modes_r.py`: the r-integration with its convergence check (`logs_modes_r.txt`).
 - `matched.py`: the h_k from the series (`logs_matched.txt`).
 - `order3.py`: Ω₁ (`logs_order3.txt`).
+- `profiles.py`: the mode profiles and the table of growth rates behind Paper III's figure (`profiles.csv`,
+  `growth.csv`).
+- `paper_numbers.py`: every number quoted in Paper III, with checks (`logs_paper_numbers.txt`).
+
+Written up as Paper III, [`paper/3-wormhole-largeD/main.pdf`](../../paper/3-wormhole-largeD/main.pdf).
 
 ## References
 
