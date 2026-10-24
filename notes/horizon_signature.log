@@ -1,0 +1,11 @@
+n = 2 (D = 4): G++ - expected = 0   (ok)
+n = 3 (D = 5): G++ - expected = 0   (ok)
+n = 4 (D = 6): G++ - expected = 0   (ok)
+horizon tangent norm = 16*pi*T*r*exp(-f)/(k*n)  (a positive multiple of T++: ok)
+control (inner horizon, d-d+ r > 0): norm/T++ = -16*pi*r*exp(-f)/(k*n) -> fires
+Roberts: G_uv = 0, G_uu = -v**2*(4*C1*C2 - 1)/(2*(C1*v**2 + C2*u**2 - u*v)**2), G_vv = -u**2*(4*C1*C2 - 1)/(2*(C1*v**2 + C2*u**2 - u*v)**2)
+  theta_v=0: u = 2 C1 v: R^2 on it = C1*v**2*(4*C1*C2 - 1); tangent norm = -4*C1; G_vv there = -2/(v**2*(4*C1*C2 - 1)); G_uu there = -1/(2*C1**2*v**2*(4*C1*C2 - 1))
+  theta_u=0: v = 2 C2 u: R^2 on it = C2*u**2*(4*C1*C2 - 1); tangent norm = -4*C2; G_vv there = -1/(2*C2**2*u**2*(4*C1*C2 - 1)); G_uu there = -2/(u**2*(4*C1*C2 - 1))
+boost: T++(cosh b phi, sinh b phi) - T++(phi) = 0  (ok)
+control (expected formula shifted): residual eps -> fires
+control (ghost sign flipped in the boost check): 8*sinh(b)**2 -> fires
