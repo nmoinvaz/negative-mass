@@ -59,11 +59,11 @@ class Wormhole:
         self.nu_end = [float(mp.re(nu_mp(s * (mp.pi / 2 - mp.mpf("1e-25")), *p))) for s in (-1, 1)]
 
     def coeffs(self, yy, W):
-        p = (self.n, self.c, self.g1, self.e2)
+        p = (self.n, self.c, self.g1, complex(self.e2))   # complex: Lam = sqrt(g1^2 - e2) is imaginary when e2 > g1^2
         return [np.real(np.asarray(f(yy + 0j, *p, W + 0j))) for f in self.f_np]
 
     def bg(self, yy):
-        p = (self.n, self.c, self.g1, self.e2)
+        p = (self.n, self.c, self.g1, complex(self.e2))
         return [np.real(np.asarray(f(yy + 0j, *p))) for f in self.bgf]
 
     def frobenius(self, W, K=14, rho=None):
