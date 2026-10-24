@@ -98,7 +98,8 @@ Two remarks.
   states. The Dotti–Gleiser and GGS operators are different, but the one-mode theorem has the same structure.
 
 *Large n (remark, my fit to three points of [TS13]):* |ω²|a² ≈ 2n − 8.6 for n = 20–100, so the growth rate rises like
-√(2n)/a.
+√(2n)/a. Derived since in [`wormhole_largeD/`](wormhole_largeD/README.md): |ω²|a² = 2(n − 3) − 4 ln 2 +
+(π²/3 + 4 ln²2)/(n − 3) + O(n⁻²), the third term's closed form identified numerically.
 
 ### 1.2 Nonlinear fate
 

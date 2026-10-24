@@ -1,0 +1,11 @@
+(0, 0) -> 0 (ok)
+(0, 1) -> 0 (ok)
+(1, 1) -> 0 (ok)
+E2 -> 0 (ok)
+control (wrong Y' coefficient):
+(0, 0) -> residual at a generic point 0.717362296588456
+(0, 1) -> residual at a generic point 0
+(1, 1) -> residual at a generic point -0.187881449577403
+E2 -> residual at a generic point -0.298274210482893
+control fires
+exit 0
