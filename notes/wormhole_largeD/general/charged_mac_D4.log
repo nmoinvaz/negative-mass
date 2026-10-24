@@ -1,0 +1,4 @@
+D = 4, gamma1 = 0.0, eps2 = 0.05: What = 1.0870538236 (larger end radius 1.0870538237), 459 s
+D = 4, gamma1 = 0.0, eps2 = 0.1: What = 0.9754432694 (larger end radius 0.9754432695), 390 s
+D = 4, gamma1 = 0.0, eps2 = 0.2: What = nan (larger end radius nan), 33 s
+D = 4, gamma1 = 0.0, eps2 = 0.3: What = nan (larger end radius nan), 37 s
