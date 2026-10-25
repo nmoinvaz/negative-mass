@@ -124,6 +124,24 @@ class Leading:
                 roots.append(brentq(lambda om: float(np.real(self.det(om))), a, b, xtol=1e-14, rtol=1e-13))
         return roots
 
+    def eigen_complex(self, re=(-2.0, 6.0, 0.25), im=(0.05, 4.0, 0.25), n=4):
+        """complex eigenvalues (Im omega > 0; their conjugates are roots too): local minima of |det| on a grid,
+        refined by eigen. For the symmetric charged wormhole the leading-order eigenvalue is complex (gamma1 = 0,
+        eps2 = 0.05: omega = -0.0749 + 0.2201i), so eigen_real finds none."""
+        rs, ims = np.arange(re[0], re[1] + 1e-9, re[2]), np.arange(im[0], im[1] + 1e-9, im[2])
+        A = np.array([[abs(self.det(complex(a, b))) for a in rs] for b in ims])
+        mins = sorted((A[i, j], complex(rs[j], ims[i])) for i in range(len(ims)) for j in range(len(rs))
+                      if A[i, j] == A[max(i - 1, 0):i + 2, max(j - 1, 0):j + 2].min() and A[i, j] < 0.5 * np.median(A))
+        roots = []
+        for _, z in mins[:n]:
+            try:
+                om = self.eigen(z)
+            except Exception:                   # findroot did not converge from this minimum
+                continue
+            if om.imag > 0 and all(abs(om - r) > 1e-8 for r in roots):
+                roots.append(om)
+        return roots
+
     def eigen(self, guess):
         f = lambda om: complex(self.det(complex(om)))  # noqa: E731
         return complex(mp.findroot(f, mp.mpc(guess), tol=1e-20, maxsteps=100))
@@ -133,13 +151,19 @@ if __name__ == "__main__":
     g1, e2 = float(sys.argv[1]), float(sys.argv[2])
     guess = complex(sys.argv[3]) if len(sys.argv) > 3 else None
     L = Leading(g1, e2)
-    if guess is None:
-        roots = L.eigen_real()
-        print("real roots:", roots)
-        om = roots[0] if roots else float("nan")
+    if guess is not None:
+        oms = [L.eigen(guess)]
     else:
-        om = L.eigen(guess)
+        oms = L.eigen_real()
+        print("real roots:", oms)
+        if not oms:
+            oms = L.eigen_complex()
+            print("no real root; complex roots (Im omega > 0):", oms)
     print(f"gamma1 = {g1}, eps2 = {e2}: y_th = {L.yth:.6f}, nu_th = {L.nu_th:.6f}, nu_ends = {L.nu_end}")
-    print(f"  omega = {om:.12f}  -> W_th a ~ (D-3) sqrt(omega) = (D-3) * {np.sqrt(om):.10f}")
-    print(f"  upper/lower path determinant at the root: {abs(L.det(om, path_sign=1)):.1e}, "
-          f"{abs(L.det(om, path_sign=-1)):.1e}")
+    for om in oms or [float("nan")]:
+        w = np.sqrt(complex(om))
+        print(f"  omega = {om:.12f}  -> W_th a ~ (D-3) sqrt(omega) = (D-3) * {w:.10f}"
+              + (f" (growth {w.real:.10f}, oscillation {w.imag:.10f})" if abs(w.imag) > 1e-12 else ""))
+        if om == om:
+            print(f"  upper/lower path determinant at the root: {abs(L.det(om, path_sign=1)):.1e}, "
+                  f"{abs(L.det(om, path_sign=-1)):.1e}")

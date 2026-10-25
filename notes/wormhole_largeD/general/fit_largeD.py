@@ -7,7 +7,8 @@
   2. With the slope free: the same fit with an s N term; s must come out at sqrt(omega).
   3. Control: the same free fit to What + 1e-3 N (a wrong slope) must give s off by 1e-3, so check 2 can fail.
 
-    python3 fit_largeD.py CSV [CSV ...] [--dmin=8] [--dfit=20] [--k=6] [--a=2]
+    python3 fit_largeD.py CSV [CSV ...] [--dmin=8] [--dfit=20] [--k=6] [--a=2] [--slope=S]   (S: leading.py's
+    sqrt(omega) for the gamma1 of the CSVs; 1.0293216299 for gamma1 = 1)
 """
 import csv
 import sys
@@ -49,9 +50,10 @@ def predict(c, Dq, k, slope):
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
     opt = dict(a[2:].split("=") for a in sys.argv[1:] if a.startswith("--") and "=" in a)
-    global A
+    global A, SQRT_OMEGA
     dmin, dfit, k = int(opt.get("dmin", 8)), int(opt.get("dfit", 20)), int(opt.get("k", 6))
     A = float(opt.get("a", 2))
+    SQRT_OMEGA = float(opt.get("slope", SQRT_OMEGA))
     rows = load(args)
     print("D, What, What at the larger end (difference), offset What - (D - 3) sqrt(omega)")
     for D, (w, w2) in rows.items():
