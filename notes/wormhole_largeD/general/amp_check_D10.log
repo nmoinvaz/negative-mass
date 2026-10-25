@@ -1,0 +1,9 @@
+D 10 What 7.550000: amp -1.936005e-01   cos +5.440e-04   th spread 4.1e-13
+D 10 What 7.675000: amp -4.343631e-03   cos +1.405e-05   th spread 2.4e-14
+D 10 What 7.800000: amp +1.471984e-01   cos -4.039e-04   th spread 3.5e-14
+D 10: root amp 7.678238762588, cos 7.678238762590, rel diff 2.4e-13
+D 10: quadratic residual z 1.0e-11 (det -4.107389e-05 .. +4.107167e-05); control {'coord': 'y'} 6.5e-05 (det +2.049998e-04 .. +1.784289e-04)
+D 10: control psi_shift 1e-3: root 7.677865001199, moved -3.74e-04
+D 10: rmax 90: 7.678238762593 (+6.1e-13); rtol 1e-13: 7.678238762595 (+8.1e-13)
+1125 s; PASS
+exit 0

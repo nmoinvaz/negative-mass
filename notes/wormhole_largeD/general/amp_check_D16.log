@@ -1,0 +1,9 @@
+D 16 What 13.550000: amp -2.186469e-01   cos +2.216e-04   th spread 8.7e-13
+D 16 What 13.850000: amp -7.204138e-04   cos +8.516e-07   th spread 1.1e-14
+D 16 What 14.150000: amp +1.696736e-01   cos -1.645e-04   th spread 4.8e-13
+D 16: root amp 13.851132306224, cos 13.851132306227, rel diff 2.3e-13
+D 16: quadratic residual z 2.0e-12 (det -3.523489e-05 .. +3.523329e-05); control {'noise': 1e-08} 6.9e-09 (det -3.522989e-05 .. +3.523829e-05)
+D 16: control psi_shift 1e-3: root 13.850346323299, moved -7.86e-04
+D 16: rmax 90: 13.851132306221 (-2.2e-13); rtol 1e-13: 13.851132306244 (+1.4e-12)
+493 s; PASS
+exit 0
