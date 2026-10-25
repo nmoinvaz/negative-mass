@@ -251,7 +251,8 @@ class Wormhole:
         for (a, fa), (b, fb) in zip(zip(grid, vals), zip(grid[1:], vals[1:])):
             if np.sign(fa) != np.sign(fb):
                 What = brentq(lambda h: self.det(self.W2_of(h))[0], a, b, xtol=1e-12)
-                return self.W2_of(What), What
+                if abs(self.det(self.W2_of(What))[0]) < 1e-6:     # else a jump of the amp form's signs, not a zero
+                    return self.W2_of(What), What
         return None, None
 
 

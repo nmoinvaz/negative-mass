@@ -19,7 +19,9 @@ def root(w, lo, hi, N, **kw):
     vals = [f(h) for h in grid]
     for (a, fa), (b, fb) in zip(zip(grid, vals), zip(grid[1:], vals[1:])):
         if np.isfinite(fa) and np.isfinite(fb) and np.sign(fa) != np.sign(fb):
-            return brentq(f, a, b, xtol=1e-10)
+            r = brentq(f, a, b, xtol=1e-10)
+            if abs(f(r)) < 1e-6:        # else a jump of the amp form's signs, not a zero: look further
+                return r
     return float("nan")
 
 
