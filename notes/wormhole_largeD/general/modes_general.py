@@ -102,7 +102,7 @@ class Wormhole:
         Yp = sum(ck * (k + r0) * zz ** (k + r0 - 1) for k, ck in enumerate(cks) if k + r0 > 0)
         return Y, Yp
 
-    def shoot(self, W, side, Y0, Yp0, z0, ymax_margin):
+    def shoot(self, W, side, Y0, Yp0, z0, ymax_margin, rtol=1e-11):
         """amplitude-phase form Y = e^psi cos(th), Y' = e^psi sin(th): psi' = sin cos + F sin, th' = -sin^2 + F cos with
         F = Y''/e^psi = -(A1 sin + A0 cos)/A2. Returns psi, th at the end (no overflow however much Y grows)."""
         def f(yy, s_):
@@ -114,12 +114,24 @@ class Wormhole:
         y0 = self.yth + side * z0
         yend = side * (np.pi / 2 - ymax_margin)
         s0 = [0.5 * np.log(Y0 * Y0 + Yp0 * Yp0), np.arctan2(Yp0, Y0)]
-        sol = solve_ivp(f, (y0, yend), s0, method="DOP853", rtol=1e-11, atol=1e-12)
+        sol = solve_ivp(f, (y0, yend), s0, method="DOP853", rtol=rtol, atol=rtol * 0.1)
         return sol.y[0, -1], sol.y[1, -1], yend
 
-    def det(self, W2, rmax_factor=60.0, z0=None, X=30.0):
-        """2 x 2 determinant of the growing parts at the two ends. The growing part at an end is Y = e^psi cos(th);
-        the factor e^{-W_loc r} that would normalize it is common to a row and is dropped."""
+    def det(self, W2, rmax_factor=60.0, z0=None, X=30.0, form="amp", rtol=1e-11, psi_shift=0.0):
+        """2 x 2 determinant of the growing parts at the two ends; its zero in W is the eigenvalue.
+
+        At an end the growing exponential dominates (the decaying one is e^{-2 rmax_factor} smaller), so both throat
+        solutions leave along the same direction in the (Y, Y') plane: th = th_end + k pi, with th_end common to the
+        end and k an integer per solution. The growing amplitude of a solution is then A = (-1)^k e^psi times a factor
+        common to the end, so the determinant A_L0 A_R3 - A_L3 A_R0 is, up to a nonzero factor,
+            s_L0 s_R3 e^{psi_L0 + psi_R3} - s_L3 s_R0 e^{psi_L3 + psi_R0},   s = (-1)^k, k = round((th - pi/2) / pi),
+        scaled by the larger exponential (form="amp", the default). Its scale is 1 at every D.
+        form="cos" is the earlier e^psi cos(th) form. Its zeros are the same, but cos(th_end) is 1e-4 to 1e-9 at
+        D = 8 and falls with D, so that form is 1e-13 at D = 8, 3e-15 at D = 10 and at the precision of th from D = 12.
+        rtol is the shooting's relative tolerance (psi ~ 1e2, so e^psi is good to about 1e2 rtol relative).
+        psi_shift is added to psi_L0, for the controls of amp_check.py (a wrong amplitude must move the root).
+        sols["th_spread"] is the larger difference, over the two ends, between the two solutions' th modulo pi: the amp
+        form assumes it is 0 (both solutions on the growing direction), so it should stay near the shooting's error."""
         W = np.sqrt(W2)
         sols = self.frobenius(W)
         z0 = z0 or 0.02 * min(1.0, np.pi / 2 - abs(self.yth))
@@ -135,15 +147,21 @@ class Wormhole:
                 else:
                     yh = ym
             margin = np.pi / 2 - abs(yh)
-            row = []
+            row, ths = [], []
             for r0 in (0, 3):
                 Y0, Yp0 = self.local(sols, r0, side * z0)
-                psi, th, _ = self.shoot(W, side, Y0, Yp0, z0, margin)
-                row.append((psi, np.cos(th)))
+                psi, th, _ = self.shoot(W, side, Y0, Yp0, z0, margin, rtol=rtol)
+                ths.append(th)
+                if form == "cos":
+                    row.append((psi, np.cos(th)))
+                else:
+                    row.append((psi, -1.0 if round((th - np.pi / 2) / np.pi) % 2 else 1.0))
             rows.append(row)
+            dth = (ths[0] - ths[1]) % np.pi
+            sols["th_spread"] = max(sols.get("th_spread", 0.0), min(dth, np.pi - dth))
         (pL0, cL0), (pL3, cL3) = rows[0]
         (pR0, cR0), (pR3, cR3) = rows[1]
-        e1, e2 = pL0 + pR3, pL3 + pR0
+        e1, e2 = pL0 + psi_shift + pR3, pL3 + pR0
         m = max(e1, e2)
         return np.exp(e1 - m) * cL0 * cR3 - np.exp(e2 - m) * cL3 * cR0, sols
 
