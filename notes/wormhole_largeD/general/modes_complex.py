@@ -31,6 +31,8 @@ import modes_general as mg
 class ComplexWormhole(mg.Wormhole):
     def frobenius_c(self, W, K=14, rho=None):
         """Wormhole.frobenius for complex W: the Taylor coefficients stay complex"""
+        if self.fast:
+            return self.frobenius_fast(W, K, rho, real=False)
         p = (self.n, self.c, self.g1, self.e2)
         rho = rho or 0.05 * min(1.0, np.pi / 2 - abs(self.yth))
         M = 64
@@ -59,10 +61,15 @@ class ComplexWormhole(mg.Wormhole):
 
     def coeffs_zc(self, zz, W, side):
         p = (self.n, self.c, self.g1, complex(self.e2))
+        if self.fast:
+            return list((self.F.end_L if side < 0 else self.F.end_R)(complex(zz), *p, complex(W))[:3])
         return [complex(np.asarray(f(zz + 0j, *p, complex(W)))) for f in mg.end_functions(side)[0]]
 
     def system(self, zz, W, side):
         """d(Y, V)/dt = z M(z) (Y, V), t = log z (Wormhole.shoot's system, linear and complex)"""
+        if self.fast:
+            p = (self.n, self.c, self.g1, complex(self.e2))
+            return (self.F.lin_L if side < 0 else self.F.lin_R)(complex(zz), *p, complex(W))
         A2, A1, A0 = self.coeffs_zc(zz, W, side)
         rz, rzz = float(self.r_z(zz, side, 1)), float(self.r_z(zz, side, 2))
         g2 = 1.0 + rz * rz

@@ -3,7 +3,8 @@ two real roots (charged_scan.py) that move toward each other as eps2 grows, meet
 pair W_r +- i W_i (a growth that oscillates). Near the meeting the mismatch is f ~ a (W - m)^2 + b (eps2 - eps2*), so
 (W_2 - W_1)^2 is linear in eps2 there: eps2* is where that line reaches 0, and past it the guess is m +- i sqrt(...).
 
-    python3 charged_complex.py OUT.csv D W1 W2 eps2_0 eps2_1 ... (W1, W2: the real pair at eps2_0, from charged_scan.py)
+    python3 charged_complex.py OUT.csv D W1 W2 eps2_0 eps2_1 ... (W1, W2: the real pair at eps2_0, from charged_scan.py;
+    the continuation solves eps2_1, eps2_2, ...)
     (CSV rows: D, gamma1, eps2, Re What, Im What, seconds; one row per root, the complex ones with Im > 0)
 """
 import csv
@@ -18,11 +19,11 @@ import modes_complex as mc
 def main():
     out, D, w1, w2 = sys.argv[1], int(sys.argv[2]), float(sys.argv[3]), float(sys.argv[4])
     eps = [float(v) for v in sys.argv[5:]]
-    hist = [(eps[0], w1, w2)]
+    hist = [(eps[0], w1, w2)]         # the given pair at eps[0]; the continuation starts at eps[1]
     root = None                       # the complex root (Im > 0) once the pair has met
     with open(out, "a", newline="") as fh:
         wr = csv.writer(fh)
-        for e2 in eps:
+        for e2 in eps[1:]:
             t = time.time()
             w = mc.ComplexWormhole(D, 0.0, e2)
             if root is None:

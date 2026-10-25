@@ -10,6 +10,11 @@ growth rate in that end's asymptotic time), and the eigenvalue is the zero of th
 Output: What = W_th a, the growth rate in proper time at the throat, times the throat's areal radius a (as in
 Gonzalez, Guzman & Sarbach 2009, whose T = 1/What).
 
+Wormhole(..., fast=True) (the default) evaluates the coefficients with the compiled functions of fastcoef.py (the same
+expressions, numba, about 200 times faster) and computes the Frobenius step's Cauchy integrals and recursion in double
+precision; fast=False is the earlier path (lambdified sympy expressions; mpmath at 30 digits for the Frobenius step),
+kept for fast_check.py, which compares the two.
+
     python3 modes_general.py D gamma1 eps2 [What_lo What_hi]
 """
 import functools
@@ -61,7 +66,11 @@ def end_functions(side):
 
 
 class Wormhole:
-    def __init__(self, D, g1, e2, c=0.0):
+    def __init__(self, D, g1, e2, c=0.0, fast=True):
+        self.fast = fast
+        if fast:
+            import fastcoef
+            self.F = fastcoef.load()
         self.n = D - 2
         self.g1, self.e2, self.c = g1, e2, c
         if abs(g1**2 - e2) < 1e-14:            # Lam = 0: step off it (the formulas divide by Lam)
@@ -85,15 +94,50 @@ class Wormhole:
 
     def coeffs_z(self, zz, W, side):
         p = (self.n, self.c, self.g1, complex(self.e2))
+        if self.fast:
+            f = self.F.end_L if side < 0 else self.F.end_R
+            return [v.real for v in f(complex(zz), *p, complex(W))[:3]]
         return [np.real(np.asarray(f(zz + 0j, *p, W + 0j))) for f in end_functions(side)[0]]
 
     def r_z(self, zz, side, k=0):
         """r (k = 0), dr/dz (k = 1) or d^2r/dz^2 (k = 2) at z = pi/2 - side y"""
         p = (self.n, self.c, self.g1, complex(self.e2))
+        if self.fast:
+            return (self.F.r_L if side < 0 else self.F.r_R)(complex(zz), *p)[k].real
         return np.real(np.asarray(end_functions(side)[1][k](zz + 0j, *p)))
+
+    def frobenius_fast(self, W, K=14, rho=None, real=True):
+        """frobenius in double precision with the compiled coefficients: the Cauchy integrals by FFT on M = 64 points
+        of the circle |z| = rho; real=False keeps the coefficients complex (complex W, modes_complex.py)"""
+        p = (self.n, self.c, self.g1, complex(self.e2))
+        rho = rho or 0.05 * min(1.0, np.pi / 2 - abs(self.yth))
+        M = 64
+        z = rho * np.exp(2j * np.pi * np.arange(M) / M)
+        A = np.array([self.F.coef_x(self.yth + zz, *p, complex(W)) for zz in z])
+        Pv, Qv = z * A[:, 1] / A[:, 0], z * z * A[:, 2] / A[:, 0]
+        sc = rho ** -np.arange(K + 1)
+        Pk, Qk = np.fft.fft(Pv)[:K + 1] / M * sc, np.fft.fft(Qv)[:K + 1] / M * sc
+        if real:
+            Pk, Qk = Pk.real, Qk.real
+        sols = {}
+        for r0 in (0, 3):
+            cks = [1.0 + 0j if not real else 1.0]
+            for k in range(1, K + 1 - r0):
+                ind = (k + r0) * (k + r0 - 1) + Pk[0] * (k + r0) + Qk[0]
+                rhs = -sum((Pk[j] * (k - j + r0) + Qk[j]) * cks[k - j] for j in range(1, k + 1))
+                if abs(ind) < 1e-12:            # resonance (r0 = 0, k = 3): the log-free condition is rhs = 0
+                    sols["resonance_rhs"] = rhs if not real else float(rhs)
+                    cks.append(0.0 * cks[0])
+                else:
+                    cks.append(rhs / ind)
+            sols[r0] = [complex(v) for v in cks] if not real else [float(v) for v in cks]
+        sols["P0"], sols["Q0"] = Pk[0], Qk[0]
+        return sols
 
     def frobenius(self, W, K=14, rho=None):
         """Taylor coefficients of P = z A1/A2 and Q = z^2 A0/A2 at z = 0; the two series solutions"""
+        if self.fast:
+            return self.frobenius_fast(W, K, rho)
         p = (self.n, self.c, self.g1, self.e2)
         rho = rho or 0.05 * min(1.0, np.pi / 2 - abs(self.yth))
         M = 64
@@ -145,7 +189,12 @@ class Wormhole:
             g0 = np.sqrt(1.0 + self.r_z(np.pi / 2 - side * self.yth - z0, side, 1) ** 2)
             s0 = [0.5 * np.log(Y0 * Y0 + (Yp0 / g0) ** 2), np.arctan2(Yp0 / g0, Y0)]
 
+            rhs = (self.F.rhs_L if side < 0 else self.F.rhs_R) if self.fast else None
+            pw =(self.n, self.c, self.g1, complex(self.e2), complex(W))
+
             def ft(t, s_):
+                if self.fast:
+                    return rhs(t, s_[0], s_[1], *pw)
                 zz = np.exp(t)
                 psi, th = s_
                 A2, A1, A0 = self.coeffs_z(zz, W, side)

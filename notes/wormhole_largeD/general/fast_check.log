@@ -1,0 +1,15 @@
+D 7: 1. coefficients max relative difference 7.5e-16
+   2. Frobenius series terms at z0 max difference 2.0e-16 of the largest (resonance rhs fast -1.3e-13, mpmath -4.4e-17)
+   3. det at What 4.6025: fast +0.027819455339833 (0.2 s), slow +0.027819455333926 (8.4 s), difference +5.9e-12
+   3. det at What 4.5825: fast -0.028909153480011 (0.2 s), slow -0.028909153476476 (5.5 s), difference -3.5e-12
+      control: slow at What (1 + 1e-7) differs by +1.3e-06
+   4. root fast 4.5924835810095 (1.7 s), largeD_roots_a.csv 4.5924835810107: relative -2.6e-13
+   5. det_c at What 4.5925+0.4592j: fast -8.324953316848e-02+6.614029610574e-01j (0.2 s), slow -8.324953317104e-02+6.614029610560e-01j (6.8 s), relative 4.4e-12; control (1 + 1e-7) 1.0e-06  [54 s]
+D 13: 1. coefficients max relative difference 3.8e-15
+   2. Frobenius series terms at z0 max difference 2.1e-16 of the largest (resonance rhs fast 9.3e-15, mpmath -4.3e-17)
+   3. det at What 10.7744: fast +0.008591180890558 (0.2 s), slow +0.008591180894324 (8.6 s), difference -3.8e-12
+   3. det at What 10.7544: fast -0.008687822987956 (0.2 s), slow -0.008687822979998 (8.7 s), difference -8.0e-12
+      control: slow at What (1 + 1e-7) differs by +9.2e-07
+   4. root fast 10.7643974194374 (3.2 s), largeD_roots_a.csv 10.7643974194349: relative +2.4e-13
+   5. det_c at What 10.7644+1.0764j: fast -6.794464232020e-02+5.679047571854e-01j (0.2 s), slow -6.794464231918e-02+5.679047571844e-01j (7.1 s), relative 2.5e-12; control (1 + 1e-7) 1.0e-06  [45 s]
+PASS
