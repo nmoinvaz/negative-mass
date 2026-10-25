@@ -16,6 +16,14 @@ import numpy as np
 import modes_complex as mc
 
 
+def principal(h):
+    """the growth rate of a root of root_c: the mismatch depends on What^2 only (det_c takes W^2 and uses its principal
+    square root), so h and -h are the same root; the growth rate is the root with Re > 0, given with Im >= 0 (its
+    conjugate is the other member of the pair)"""
+    w = complex(np.sqrt(complex(h) ** 2))
+    return complex(w.real, abs(w.imag))
+
+
 def main():
     out, D, w1, w2 = sys.argv[1], int(sys.argv[2]), float(sys.argv[3]), float(sys.argv[4])
     eps = [float(v) for v in sys.argv[5:]]
@@ -41,7 +49,7 @@ def main():
                         found.append(w.root_c(complex(g) if abs(complex(g).imag) > 1e-9 else complex(g.real, 0.0)))
                     except Exception as exc:               # findroot gave up
                         print(f"  eps2 {e2}: no root from {g:.6f} ({type(exc).__name__})", flush=True)
-                found = [complex(f.real, abs(f.imag)) for f in found]
+                found = [principal(f) for f in found]
                 if len(found) == 2 and max(abs(f.imag) for f in found) < 1e-8 and abs(found[0] - found[1]) > 1e-6:
                     a, b = sorted(f.real for f in found)
                     hist.append((e2, a, b))
@@ -54,8 +62,7 @@ def main():
                     root = cx[0]
                     rows = [(root.real, root.imag)]
             else:
-                root = w.root_c(root)
-                root = complex(root.real, abs(root.imag))
+                root = principal(w.root_c(root))
                 rows = [(root.real, root.imag)]
             for re_, im_ in rows:
                 wr.writerow([D, 0.0, e2, f"{re_:.10f}", f"{im_:.10f}", f"{time.time() - t:.0f}"])
