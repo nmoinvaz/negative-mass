@@ -1,0 +1,12 @@
+D  4: eps2* = 0.190299 (quadratic), 0.190300 (linear), bracket 0.19..0.195; control (Im doubled): 0.190123, moves -1.8e-04
+D  6: eps2* = 0.050191 (quadratic), 0.050191 (linear), bracket 0.05..0.0502; control (Im doubled): 0.050184, moves -7.1e-06
+D  8: eps2* = 0.023609 (quadratic), 0.023609 (linear), bracket 0.0235..0.024; control (Im doubled): 0.023548, moves -6.1e-05
+D 10: eps2* = 0.013772 (quadratic), 0.013772 (linear), bracket 0.0135..0.014; control (Im doubled): 0.013653, moves -1.2e-04
+D 14: eps2* = 0.006375 (quadratic), 0.006375 (linear), bracket 0.0062..0.0064; control (Im doubled): 0.006365, moves -1.0e-05
+D 20: eps2* = 0.002916 (quadratic), 0.002916 (linear), bracket 0.0029..0.00295; control (Im doubled): 0.002906, moves -9.7e-06
+eps2* (D - 2)^2: D 4: 0.7612, D 6: 0.8031, D 8: 0.8499, D 10: 0.8814, D 14: 0.9180, D 20: 0.9447
+quadratic in 1/(D - 2): eps2* (D - 2)^2 -> 1.0025 as D -> infinity (coefficients -1.1224, 1.2803); residual 1.2e-03
+log-log slope of eps2* against D - 2: -1.897
+held out D 20: predicted 0.9433, measured 0.9447; limit without it 1.0012
+planted limit 0.9 (cubic term 0, +-1.28; noise 1e-4): recovered to -0.0104 ... +0.0104
+PASS
