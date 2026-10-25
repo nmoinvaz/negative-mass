@@ -1,0 +1,5 @@
+D = 10, gamma1 = 0.0, eps2 = 0.05: What = nan (larger end radius nan), 64 s
+D = 10, gamma1 = 0.0, eps2 = 0.1: What = nan (larger end radius nan), 58 s
+D = 10, gamma1 = 0.0, eps2 = 0.2: What = nan (larger end radius nan), 100 s
+D = 10, gamma1 = 0.0, eps2 = 0.3: What = nan (larger end radius nan), 94 s
+exit 0
