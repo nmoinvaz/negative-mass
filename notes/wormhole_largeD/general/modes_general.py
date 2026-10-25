@@ -180,14 +180,19 @@ class Wormhole:
         to the end and k an integer per solution. The growing amplitude of a solution is then A = (-1)^k e^psi times a
         factor common to the end, so the determinant A_L0 A_R3 - A_L3 A_R0 is, up to a nonzero factor,
             s_L0 s_R3 e^{psi_L0 + psi_R3} - s_L3 s_R0 e^{psi_L3 + psi_R0},   s = (-1)^k, k = round((th - th_c) / pi),
-        divided by the sum of the two exponentials (form="amp", the default): it is in [-1, 1] at every D and analytic in
-        W (divided by the larger one instead, it has a jump in its second derivative at the root, where the larger one
-        changes over, of (e1 - e2)^2: 1e-8 across 1e-5 in What). th_c is a center that
+        divided by the sum of the two exponentials (form="amp", the default), i.e. (P - Q)/(|P| + |Q|) for the two
+        products P = A_L0 A_R3, Q = A_L3 A_R0: continuous wherever P and Q are not both 0, so each sign change is a
+        zero. For a symmetric wormhole (gamma1 = 0) |P| = |Q| (the two throat solutions are even and odd), the form is
+        +-1, and the zero (A_R0 or A_R3 = 0, where both vanish) is its jump, located to e^{-2 rmax_factor}. Otherwise
+        it is analytic in W, in [-1, 1] at every D (divided by the larger exponential instead, it has a jump in its
+        second derivative at the root, where the larger one changes over, of (e1 - e2)^2: 1e-8 across 1e-5 in What).
+        th_c is a center that
         th_end cannot be pi/2 away from: with coord="z", V = Y'/g with g > 0, and Y'/Y has the sign of side on the
         growing direction (Y grows toward the end), so th_end is in (0, pi/2) at the right end and (pi/2, pi) at the
         left, and th_c = pi/2 - side pi/4; with coord="y", th_end is pi/2 to within 1/(Y'/Y), and th_c = pi/2.
-        form="cos" is the earlier e^psi cos(th) form. Its zeros are the same, but cos(th_end) is 1e-4 to 1e-9 at
-        D = 8 and falls with D, so that form is 1e-13 at D = 8, 3e-15 at D = 10 and at the precision of th from D = 12.
+        form="cos" is the earlier e^psi cos(th) form (Y at the ends), scaled by the larger exponential. Its zeros are
+        the same; with coord="y" its cos(th_end) is 1e-4 to 1e-9 at D = 8 and falls with D, so that form is 1e-13 at
+        D = 8, 3e-15 at D = 10 and at the precision of th from D = 12 (with coord="z" cos(th_end) is O(1)).
         rtol is the shooting's relative tolerance (psi ~ 1e2, so e^psi is good to about 1e2 rtol relative).
         psi_shift is added to psi_L0, for the controls of amp_check.py (a wrong amplitude must move the root).
         coord is the shooting's coordinate and phase (shoot): "z" (the default), or "y", the earlier one, whose right end
@@ -251,8 +256,7 @@ class Wormhole:
         for (a, fa), (b, fb) in zip(zip(grid, vals), zip(grid[1:], vals[1:])):
             if np.sign(fa) != np.sign(fb):
                 What = brentq(lambda h: self.det(self.W2_of(h))[0], a, b, xtol=1e-12)
-                if abs(self.det(self.W2_of(What))[0]) < 1e-6:     # else a jump of the amp form's signs, not a zero
-                    return self.W2_of(What), What
+                return self.W2_of(What), What
         return None, None
 
 

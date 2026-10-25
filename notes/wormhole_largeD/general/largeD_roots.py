@@ -17,14 +17,11 @@ SQRT_OMEGA = 1.0293216299
 
 
 def root(w, guess, **kw):
-    """the zero of det near guess; a sign change where det stays O(1) is a jump of the amp form's signs (a growing
-    amplitude through zero at one end), not a zero, and gives nan"""
     f = lambda h: w.det(w.W2_of(h), **kw)[0]  # noqa: E731
     for hw in (0.05, 0.15, 0.4):
         lo, hi = guess - hw, guess + hw
         if f(lo) * f(hi) < 0:
-            r = brentq(f, lo, hi, xtol=1e-13)
-            return r if abs(f(r)) < 1e-6 else float("nan")
+            return brentq(f, lo, hi, xtol=1e-13)
     return float("nan")
 
 
