@@ -198,7 +198,9 @@ class Wormhole:
         coord is the shooting's coordinate and phase (shoot): "z" (the default), or "y", the earlier one, whose right end
         amplitudes carry noise that grows fast with D (1e-7 in psi at D = 8, 1e-4 at D = 10).
         sols["th_spread"] is the larger difference, over the two ends, between the two solutions' th modulo pi: the amp
-        form assumes it is 0 (both solutions on the growing direction), so it should stay near the shooting's error."""
+        form assumes it is 0 (both solutions on the growing direction), so it should stay near the shooting's error.
+        sols["k"][(side, r0)] and sols["th"][(side, r0)] are each solution's k (its growing amplitude changes sign
+        where k changes by 1) and end angle."""
         W = np.sqrt(W2)
         sols = self.frobenius(W)
         z0 = z0 or 0.02 * min(1.0, np.pi / 2 - abs(self.yth))
@@ -231,6 +233,8 @@ class Wormhole:
                 Y0, Yp0 = self.local(sols, r0, side * z0)
                 psi, th, _ = self.shoot(W, side, Y0, Yp0, z0, margin, rtol=rtol, coord=coord)
                 ths.append(th)
+                sols.setdefault("k", {})[(side, r0)] = round((th - th_c) / np.pi)
+                sols.setdefault("th", {})[(side, r0)] = th
                 if form == "cos":
                     row.append((psi, np.cos(th)))
                 else:
