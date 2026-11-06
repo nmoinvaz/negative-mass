@@ -18,7 +18,10 @@ papers' own.
 ## Summary
 
 **The wormhole threshold is a known critical phenomenon, of type I.** The static wormholes supported by a massless ghost
-scalar have exactly one unstable mode. González, Guzmán and Sarbach proved this for the whole static family [GGS09a]. It also
+scalar have exactly one unstable mode. González, Guzmán and Sarbach proved this for the asymmetric members (γ₁ ≠ 0) and
+argued the reflection-symmetric one by continuity [GGS09a]; Cremona, Pizzocchero and Sarbach treat the symmetric one by a
+Sturm argument [CPS20]. For the symmetric member it is now **proved** in every D ≥ 4
+([`wormhole_largeD/one_mode.md`](wormhole_largeD/one_mode.md)). It also
 holds numerically in every dimension computed (n = 4–11, 20, 50, 100) [TS13], and for the charged family (proven for most
 members) [GGS09c]. Shinkai and Hayward's
 2002 evolutions [SH02] already measured scaling at the threshold, although they did not call it type I:
@@ -85,7 +88,7 @@ The places where a real connection could still exist, all untested:
 
 | system | result | ref |
 |---|---|---|
-| Static spherically symmetric wormholes of a massless ghost scalar, the full 2-parameter family (throat radius, product of the asymptotic masses) | **Exactly one** exponentially growing mode, proven. The operator is factorized with the zero mode 1/Ψ₀, and a nodal argument gives exactly one bound state. Time scale τ/r_throat = 0.846 (massless symmetric) → 0.590 (large asymmetry γ₁) | [GGS09a] |
+| Static spherically symmetric wormholes of a massless ghost scalar, the full 2-parameter family (throat radius, product of the asymptotic masses) | **Exactly one** exponentially growing mode: proven for γ₁ ≠ 0, where the operator is factorized with the zero mode 1/Ψ₀ and a nodal argument gives exactly one bound state; for γ₁ = 0 that zero mode is not normalizable, a Rayleigh–Ritz bound gives a bound state and uniqueness is asserted by continuity (the symmetric case is proved in every D in `wormhole_largeD/one_mode.md`). Time scale τ/r_throat = 0.846 (massless symmetric) → 0.590 (large asymmetry γ₁) | [GGS09a] |
 | Same, in n = 4…11, 20, 50, 100 spacetime dimensions | One negative ω² in every n. ω²a² = −1.397, −2.985, −4.687, −8.290, −12.044 (n = 4, 5, 6, 8, 10); −31.6, −91.3, −191.3 (n = 20, 50, 100). Faster in higher n | [TS13] |
 | Charged (Maxwell + ghost) wormholes, 4-parameter family | One growing mode, proven for sub-critical and critical members; numerical evidence for super-critical | [GGS09c] |
 | Ghost scalar with a potential: Ellis–Bronnikov and an AdS wormhole | Ellis–Bronnikov: a unique bound state; the asymmetric case also has a zero-energy mode growing linearly in t (a move along the family). AdS wormhole: exactly one unstable mode | [CPS20] |
@@ -507,8 +510,8 @@ signs ε_i (ε₁ = +1, ε₂ = −1) give:
 - [BKZ12] K. A. Bronnikov, R. A. Konoplya, A. Zhidenko, "Instabilities of wormholes and regular black holes supported by a
   phantom scalar field", arXiv:1205.2224 (PRD 86, 024028 (2012) *(unverified)*).
 - [CPS20] F. Cremona, L. Pizzocchero, O. Sarbach, "Gauge-invariant spherical linear perturbations of wormholes in Einstein
-  gravity minimally coupled to a self-interacting phantom scalar field", arXiv:1911.13103 (PRD 101, 104061 (2020)
-  *(unverified)*).
+  gravity minimally coupled to a self-interacting phantom scalar field", arXiv:1911.13103, PRD 101, 104061 (2020)
+  (journal from the DOI on the arXiv page).
 - [DFKKR13] V. Dzhunushaliev, V. Folomeev, B. Kleihaus, J. Kunz, E. Radu, "Rotating wormholes in five dimensions",
   arXiv:1309.2448 (journal *(unverified)*).
 - [DFKK13] V. Dzhunushaliev, V. Folomeev, B. Kleihaus, J. Kunz, "Mixed neutron-star-plus-wormhole systems: linear stability

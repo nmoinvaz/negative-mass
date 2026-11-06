@@ -1,0 +1,38 @@
+PASS  S1: E2[rZ] - r(Z'' - (w'/w)Z' - W^2 Z) = 0
+PASS  S1 (control): with n -> n + 1 in the Y' coefficient: residual -(Z(l)*Derivative(r(l), l) + r(l)*Derivative(Z(l), l))*Derivative(r(l), l)/r(l)
+PASS  S2: Z equation at Z = w q'/W^2 equals w (((w q')' - W^2 w q)/w)'/W^2: residual 0
+PASS  S2: (w q')' - W^2 w q = s (chi'' - (s''/s) chi - W^2 chi) with q = chi/s: residual 0
+PASS  S2 (control): q = chi/w instead of chi/s leaves a residual
+PASS  S3: s''/s - [(n-2)(n-4)/(4r^2) - 3n^2/(4r^(2n))] = 0
+PASS  S3 (control): the formula with 3n^2 -> 3n^2 + 1 differs
+PASS  S4: U(r = 1) + (n + 4)(n - 1)/2 = 0; U depends on l only through r(l), which is even
+PASS  S5: (sH)'' - (s''/s) sH with H' = -1/s^2: 0
+PASS  S5 (control): (sH)'' - (s''/s) sH with H' = -1/s^1: -Derivative(s(l), l)/s(l)
+PASS  N1: m = 3: H(inf) from the ODE -0.809550215963, -B/(2m) -0.809550215963
+PASS  N1 (control): m = 3: against +B/(2m)
+PASS  N1: m = 4: H(inf) from the ODE -0.327757194287, -B/(2m) -0.327757194287
+PASS  N1 (control): m = 4: against +B/(2m)
+PASS  N1: m = 6: H(inf) from the ODE -0.116848508777, -B/(2m) -0.116848508777
+PASS  N1 (control): m = 6: against +B/(2m)
+PASS  N1: m = 10: H(inf) from the ODE -0.0367909398041, -B/(2m) -0.0367909398041
+PASS  N1 (control): m = 10: against +B/(2m)
+PASS  N1: m = 25: H(inf) from the ODE -0.00532802927773, -B/(2m) -0.00532802927773
+PASS  N1 (control): m = 25: against +B/(2m)
+PASS  N2: B(1/2 - 1/m, -1/2) > 0 for m = 3..200; Gamma signs at m = 3: (True, True, True)
+PASS  N3: D = 4: zeros on (0, 40] of the even zero-energy solution 1, of the odd one 0
+PASS  N3: D = 5: zeros on (0, 40] of the even zero-energy solution 1, of the odd one 0
+PASS  N3: D = 6: zeros on (0, 40] of the even zero-energy solution 1, of the odd one 0
+PASS  N3: D = 8: zeros on (0, 15] of the even zero-energy solution 1, of the odd one 0
+PASS  N3: D = 12: zeros on (0, 15] of the even zero-energy solution 1, of the odd one 0
+PASS  N3: D = 20: zeros on (0, 15] of the even zero-energy solution 1, of the odd one 0
+PASS  N3: D = 50: zeros on (0, 15] of the even zero-energy solution 1, of the odd one 0
+PASS  N4: D = 4: even bound state -E = 1.39705243433 against W^2 = 1.39705243 (relative 3.1e-9)
+PASS  N4: D = 4: even bound state -E = 1.55610197542 against W^2 = 1.39705243 (relative 0.11) with 3n^2 -> 3n^2 + 1
+PASS  N4: D = 10: even bound state -E = 12.0442650145 against W^2 = 12.044265 (relative 1.2e-9)
+PASS  N4: D = 10: even bound state -E = 12.1735330397 against W^2 = 12.044265 (relative 0.011) with 3n^2 -> 3n^2 + 1
+PASS  N4: D = 20: even bound state -E = 31.5751101284 against W^2 = 31.5751101276 (relative 2.4e-11)
+PASS  N4: D = 20: even bound state -E = 31.6999156654 against W^2 = 31.5751101276 (relative 0.004) with 3n^2 -> 3n^2 + 1
+PASS  N4: D = 50: even bound state -E = 91.3457759136 against W^2 = 91.3457759034 (relative 1.1e-10)
+PASS  N4: D = 50: even bound state -E = 91.4701297379 against W^2 = 91.3457759034 (relative 0.0014) with 3n^2 -> 3n^2 + 1
+all checks pass, all controls fire
+exit 0
