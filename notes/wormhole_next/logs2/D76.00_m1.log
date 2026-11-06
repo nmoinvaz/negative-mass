@@ -1,0 +1,28 @@
+== D76.00_m1 2026-11-06 03:48 UTC: ghost_mu.py --hp=/Users/nathan/Source/choptuik-large-d/hp --threads=2 --tag=D76.00_m1 --out=/Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu2.jsonl /Users/nathan/Source/choptuik-large-d-raw/T85-mac/pin7_x80_D76.0000.npz --lo=-1.3 --hi=-0.04 --h=0.06
+pin7_x80_D76.0000.npz: D 76.0, M 32, K 6, |F| 1.5e-22, Delta 1.7759855067, omega 3.537858, mode 1, plant None
+  mu = 0: ln|det| -637.8534, min pivot 1.10e-22;  mu = -0.06: min pivot 1.07e-21
+  -1.3000: ln|det|    -655.1859  sign +1  min pivot 1.0e-21
+  -1.2400: ln|det|    -654.2359  sign +1  min pivot 1.0e-21
+  -1.1800: ln|det|    -653.3684  sign +1  min pivot 1.0e-21
+  -1.1200: ln|det|    -652.6202  sign +1  min pivot 9.9e-22
+  -1.0600: ln|det|    -652.1106  sign +1  min pivot 9.5e-22
+  -1.0000: ln|det|    -652.6805  sign +1  min pivot 6.9e-22
+  -0.9400: ln|det|    -650.4191  sign -1  min pivot 1.3e-21
+  -0.8800: ln|det|    -648.5142  sign -1  min pivot 1.2e-21
+  -0.8200: ln|det|    -647.0060  sign -1  min pivot 1.1e-21
+  -0.7600: ln|det|    -645.6478  sign -1  min pivot 1.1e-21
+  -0.7000: ln|det|    -644.3730  sign -1  min pivot 1.1e-21
+  -0.6400: ln|det|    -643.1543  sign -1  min pivot 1.2e-21
+  -0.5800: ln|det|    -641.9785  sign -1  min pivot 1.2e-21
+  -0.5200: ln|det|    -640.8390  sign -1  min pivot 1.2e-21
+  -0.4600: ln|det|    -639.7333  sign -1  min pivot 1.2e-21
+  -0.4000: ln|det|    -638.6615  sign -1  min pivot 1.2e-21
+  -0.3400: ln|det|    -637.6269  sign -1  min pivot 1.2e-21
+  -0.2800: ln|det|    -636.6371  sign -1  min pivot 1.3e-21
+  -0.2200: ln|det|    -635.7061  sign -1  min pivot 1.3e-21
+  -0.1600: ln|det|    -634.8638  sign -1  min pivot 1.3e-21
+  -0.1000: ln|det|    -634.1835  sign -1  min pivot 9.9e-22
+  -0.0400: ln|det|    -633.9563  sign -1  min pivot 9.5e-22
+  zero in [-1.0000, -0.9400]: mu = -0.985919738729 (width 9.2e-12, 17 steps)
+  41 evaluations, 82 s; record appended to /Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu2.jsonl
+== D76.00_m1 exit 0 2026-11-06 03:49 UTC

@@ -1,0 +1,28 @@
+== D78.10_m1 2026-11-06 03:49 UTC: ghost_mu.py --hp=/Users/nathan/Source/choptuik-large-d/hp --threads=2 --tag=D78.10_m1 --out=/Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu2.jsonl /Users/nathan/Source/choptuik-large-d-raw/T85-mac/pin7_x80_D78.1049.npz --lo=-1.3 --hi=-0.04 --h=0.06
+pin7_x80_D78.1049.npz: D 78.104858, M 32, K 6, |F| 9.2e-23, Delta 1.7725327435, omega 3.544750, mode 1, plant None
+  mu = 0: ln|det| -643.3272, min pivot 1.92e-23;  mu = -0.06: min pivot 1.07e-21
+  -1.3000: ln|det|    -659.9354  sign +1  min pivot 1.3e-21
+  -1.2400: ln|det|    -659.0100  sign +1  min pivot 1.3e-21
+  -1.1800: ln|det|    -658.1499  sign +1  min pivot 1.3e-21
+  -1.1200: ln|det|    -657.3888  sign +1  min pivot 1.2e-21
+  -1.0600: ln|det|    -656.8196  sign +1  min pivot 9.4e-22
+  -1.0000: ln|det|    -656.9010  sign +1  min pivot 6.4e-22
+  -0.9400: ln|det|    -655.6411  sign -1  min pivot 9.3e-22
+  -0.8800: ln|det|    -653.5360  sign -1  min pivot 1.5e-21
+  -0.8200: ln|det|    -651.9821  sign -1  min pivot 1.1e-21
+  -0.7600: ln|det|    -650.6058  sign -1  min pivot 1.2e-21
+  -0.7000: ln|det|    -649.3234  sign -1  min pivot 1.2e-21
+  -0.6400: ln|det|    -648.1030  sign -1  min pivot 1.2e-21
+  -0.5800: ln|det|    -646.9298  sign -1  min pivot 1.2e-21
+  -0.5200: ln|det|    -645.7969  sign -1  min pivot 1.4e-21
+  -0.4600: ln|det|    -644.7017  sign -1  min pivot 1.4e-21
+  -0.4000: ln|det|    -643.6449  sign -1  min pivot 1.4e-21
+  -0.3400: ln|det|    -642.6305  sign -1  min pivot 1.4e-21
+  -0.2800: ln|det|    -641.6669  sign -1  min pivot 1.3e-21
+  -0.2200: ln|det|    -640.7700  sign -1  min pivot 9.4e-22
+  -0.1600: ln|det|    -639.9711  sign -1  min pivot 8.7e-22
+  -0.1000: ln|det|    -639.3471  sign -1  min pivot 1.0e-21
+  -0.0400: ln|det|    -639.1982  sign -1  min pivot 1.2e-21
+  zero in [-1.0000, -0.9400]: mu = -0.972781629886 (width 5.2e-12, 13 steps)
+  37 evaluations, 120 s; record appended to /Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu2.jsonl
+== D78.10_m1 exit 0 2026-11-06 03:51 UTC

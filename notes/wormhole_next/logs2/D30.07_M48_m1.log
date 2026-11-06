@@ -1,0 +1,9 @@
+== D30.07_M48_m1 2026-11-06 03:52 UTC: ghost_mu.py --hp=/Users/nathan/Source/choptuik-large-d/hp --threads=2 --tag=D30.07_M48_m1 --out=/Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu2.jsonl /Users/nathan/Source/choptuik-large-d/hp/data/modecount_state_D30.0688_M48.npz --lo=-0.98 --hi=-0.92 --h=0.06
+  |F| 9.0e-18 in this layout: Newton
+modecount_state_D30.0688_M48.npz: D 30.068824, M 48, K 5, |F| 4.1e-21, Delta 1.9642678763, omega 3.198742, mode 1, plant None
+  mu = 0: ln|det| -1799.4511, min pivot 1.27e-23;  mu = -0.06: min pivot 1.45e-12
+  -0.9800: ln|det|   -1846.4477  sign -1  min pivot 2.7e-13
+  -0.9200: ln|det|   -1842.0170  sign +1  min pivot 2.6e-13
+  zero in [-0.9800, -0.9200]: mu = -0.942391978168 (width 5.1e-14, 12 steps)
+  16 evaluations, 290 s; record appended to /Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu2.jsonl
+== D30.07_M48_m1 exit 0 2026-11-06 04:01 UTC

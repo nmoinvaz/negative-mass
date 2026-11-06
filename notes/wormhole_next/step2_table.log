@@ -1,0 +1,84 @@
+counts (region: aLL < Re mu < aR, |Im mu| < 1.5 omega unless only B0, U0)
+  D   4.0000 M 48: Re (-0.345, 0.193), |Im| < 2.735; windings {'B0': 0, 'U0': 0}; max step 0.305; 42 evaluations
+PASS  C1 test_D4.0000_M48n B0+U0: resolved True, windings {'B0': 0, 'U0': 0}
+PASS  C2 test_D4.0000_M48n B0+U0: plant (-0.25+0.5j): windings {'B0': 2, 'U0': 0}, box holding it ['B0']
+  D   4.0000 M 48: Re (-0.345, 6.700), |Im| < 2.735; windings {'full': 0}; max step 0.313; 67 evaluations
+PASS  C1 test_D4.0000_M48n full: resolved True, windings {'full': 0}
+PASS  C2 test_D4.0000_M48n full: plant (2+1j): windings {'full': 2}, box holding it ['full']
+  D   5.0000 M 48: Re (-0.423, 6.700), |Im| < 2.925; windings {'B0': 0, 'U0': 0, 'full': 0}; max step 0.333; 69 evaluations
+PASS  C1 test_D5.0000_M48 B0+U0+full: resolved True, windings {'B0': 0, 'U0': 0, 'full': 0}
+PASS  C2 test_D5.0000_M48 B0+U0+full: plant (-0.3+0.6j): windings {'B0': 2, 'U0': 0, 'full': 0}, box holding it ['B0']
+  D   6.0000 M 48: Re (-0.425, 6.700), |Im| < 3.132; windings {'B0': 0, 'U0': 0, 'full': 0}; max step 0.349; 69 evaluations
+PASS  C1 test_D6.0000_M48 B0+U0+full: resolved True, windings {'B0': 0, 'U0': 0, 'full': 0}
+PASS  C2 test_D6.0000_M48 B0+U0+full: plant (-0.35+0.6j): windings {'B0': 2, 'U0': 0, 'full': 0}, box holding it ['B0']
+  D   7.0000 M 48: Re (-0.477, 6.700), |Im| < 3.315; windings {'B0': 0, 'U0': 0, 'full': 0}; max step 0.331; 68 evaluations
+PASS  C1 test_D7.0000_M48 B0+U0+full: resolved True, windings {'B0': 0, 'U0': 0, 'full': 0}
+PASS  C2 test_D7.0000_M48 B0+U0+full: plant (-0.4+0.6j): windings {'B0': 2, 'U0': 0, 'full': 0}, box holding it ['B0']
+  D   8.2500 M 32: Re (-0.532, 0.248), |Im| < 3.512; windings {'B0': 0, 'U0': 0}; max step 0.387; 42 evaluations
+PASS  C1 test_D8.2500_M32 B0+U0: resolved True, windings {'B0': 0, 'U0': 0}
+PASS  C2 test_D8.2500_M32 B0+U0: plant (-0.45+0.6j): windings {'B0': 2, 'U0': 0}, box holding it ['B0']
+  D  16.7600 M 32: Re (-0.751, 0.300), |Im| < 4.295; windings {'B0': 0, 'U0': 0}; max step 0.380; 57 evaluations
+PASS  C1 test_D16.7600_M32 B0+U0: resolved True, windings {'B0': 0, 'U0': 0}
+PASS  C2 test_D16.7600_M32 B0+U0: plant (-0.6+0.8j): windings {'B0': 2, 'U0': 0}, box holding it ['B0']
+  D  30.0688 M 32: Re (-0.922, 0.300), |Im| < 4.798; windings {'B0': 0, 'U0': 0}; max step 0.385; 68 evaluations
+PASS  C1 test_D30.0688_M32 B0+U0: resolved True, windings {'B0': 0, 'U0': 0}
+PASS  C2 test_D30.0688_M32 B0+U0: plant (-0.7+0.8j): windings {'B0': 2, 'U0': 0}, box holding it ['B0']
+  D  45.0507 M 32: Re (-0.896, 0.300), |Im| < 5.061; windings {'B0': 0, 'U0': 0}; max step 0.362; 64 evaluations
+PASS  C1 test_D45.0507_M32 B0+U0: resolved True, windings {'B0': 0, 'U0': 0}
+PASS  C2 test_D45.0507_M32 B0+U0: plant (-0.7+0.8j): windings {'B0': 2, 'U0': 0}, box holding it ['B0']
+  D  52.0414 M 32: Re (-0.962, 6.000), |Im| < 5.138; windings {'B0': 0, 'U0': 0, 'full': 0}; max step 0.382; 98 evaluations
+PASS  C1 test_D52.0414 B0+U0+full: resolved True, windings {'B0': 0, 'U0': 0, 'full': 0}
+PASS  C2 test_D52.0414 B0+U0+full: plant (-0.7+0.8j): windings {'B0': 2, 'U0': 0, 'full': 0}, box holding it ['B0']
+  D  60.0020 M 32: Re (-0.967, 6.109), |Im| < 5.207; windings {'B0': 0, 'U0': 0, 'full': 0}; max step 0.378; 101 evaluations
+PASS  C1 test_D60.0020 B0+U0+full: resolved True, windings {'B0': 0, 'U0': 0, 'full': 0}
+PASS  C2 test_D60.0020 B0+U0+full: plant (-0.7+0.8j): windings {'B0': 2, 'U0': 0, 'full': 0}, box holding it ['B0']
+  D  67.0115 M 32: Re (-0.910, 6.662), |Im| < 5.256; windings {'B0': 0, 'U0': 0, 'full': 0}; max step 0.364; 97 evaluations
+PASS  C1 test_D67.0115_M32 B0+U0+full: resolved True, windings {'B0': 0, 'U0': 0, 'full': 0}
+PASS  C2 test_D67.0115_M32 B0+U0+full: plant (-0.7+0.8j): windings {'B0': 2, 'U0': 0, 'full': 0}, box holding it ['B0']
+other parity sector, Im mu = omega (zeros on the line, Re mu from lo to hi)
+  down_D5.0000.npz: D 5.0000, Re -1.0 .. -0.02: phase jumps in [(-0.96, -0.9199999999999999)]; refined on the line [-0.949968]; real-axis zero -0.4430361582119213
+PASS  C3 down_D5.0000.npz: every jump below -0.4430
+  down_D6.0000.npz: D 6.0000, Re -1.6 .. -0.02: phase jumps in [(-0.9999999999999996, -0.9499999999999995)]; refined on the line [-0.975829]; real-axis zero -0.5052240827037351
+PASS  C3 down_D6.0000.npz: every jump below -0.5052
+  modecount_state_D8.2500_M32.npz: D 8.2500, Re -1.6 .. -0.02: phase jumps in [(-0.9999999999999996, -0.9599999999999995)]; refined on the line [-0.996904]; real-axis zero -0.6124708659805327
+PASS  C3 modecount_state_D8.2500_M32.npz: every jump below -0.6125
+  up2_D16.7600.npz: D 16.7600, Re -1.6 .. -0.02: phase jumps in [(-1.0399999999999996, -0.9999999999999996)]; refined on the line [-1.003319]; real-axis zero -0.8312825960308907
+PASS  C3 up2_D16.7600.npz: every jump below -0.8313
+  up6_D30.0688.npz: D 30.0688, Re -1.6 .. -0.02: phase jumps in [(-1.0399999999999996, -0.9999999999999996)]; refined on the line [-1.001217]; real-axis zero -0.9423919781683865
+PASS  C3 up6_D30.0688.npz: every jump below -0.9424
+  up7_D45.0507.npz: D 45.0507, Re -1.6 .. -0.02: phase jumps in [(-1.0399999999999996, -0.9999999999999996)]; refined on the line [-1.000398]; real-axis zero -0.9755511995682464
+PASS  C3 up7_D45.0507.npz: every jump below -0.9756
+  up70_D67.0115.npz: D 67.0115, Re -1.6 .. -0.02: phase jumps in [(-1.0399999999999996, -0.9999999999999996)]; refined on the line [-1.000077]; real-axis zero -0.98956158650649
+PASS  C3 up70_D67.0115.npz: every jump below -0.9896
+  up9_D52.0414.npz: D 52.0414, Re -1.6 .. -0.02: phase jumps in [(-1.0399999999999996, -0.9999999999999996)]; refined on the line [-1.000242]; real-axis zero -0.9820679889601851
+PASS  C3 up9_D52.0414.npz: every jump below -0.9821
+  up13_D60.0020.npz: D 60.0020, Re -1.6 .. -0.02: phase jumps in [(-1.0399999999999996, -0.9999999999999996)]; refined on the line [-1.000135]; real-axis zero -0.9867848269178574
+PASS  C3 up13_D60.0020.npz: every jump below -0.9868
+  pin7_x80_D78.1049.npz: D 78.1049, Re -1.6 .. -0.02: phase jumps in [(-1.0399999999999996, -0.9999999999999996)]; refined on the line []; real-axis zero -0.9727816298856576
+PASS  C3 pin7_x80_D78.1049.npz: every jump below -0.9728
+  up2_D20.0437.npz: D 20.0437, Re -1.6 .. -0.02: phase jumps in [(-1.0399999999999996, -0.9999999999999996)]; refined on the line [-1.002664]; real-axis zero -0.8743130935432717
+PASS  C3 up2_D20.0437.npz: every jump below -0.8743
+  up_D12.0000.npz: D 12.0000, Re -1.6 .. -0.02: phase jumps in [(-1.0499999999999996, -0.9999999999999996)]; refined on the line []; real-axis zero -0.7345316442034706
+PASS  C3 up_D12.0000.npz: every jump below -0.7345
+  up_D10.0000.npz: D 10.0000, Re -1.6 .. -0.02: phase jumps in [(-1.0499999999999996, -0.9999999999999996)]; refined on the line []; real-axis zero -0.6761242034294794
+PASS  C3 up_D10.0000.npz: every jump below -0.6761
+  down_D7.0000.npz: D 7.0000, Re -1.6 .. -0.02: phase jumps in [(-0.9999999999999996, -0.9499999999999995)]; refined on the line [-0.988805]; real-axis zero -0.5573230923903209
+PASS  C3 down_D7.0000.npz: every jump below -0.5573
+  down_D7.0000.npz: D 7.0000, Re -1.6 .. -0.02: phase jumps in [(-0.9999999999999996, -0.9499999999999995)]; refined on the line [-0.988805]; real-axis zero -0.5573230923903209
+PASS  C3 down_D7.0000.npz: every jump below -0.5573
+real-axis zeros of step 2 (ghost_mu2.jsonl)
+  D68.50_m1          D  68.5000 M 32 K 5 |F| 4.8e-22: zeros [-0.9900225636] in [-1.3, -0.04]; pivot(0)/pivot(-h) 4.4e-05 (used)
+  D70.50_m1          D  70.5000 M 32 K 5 |F| 9.5e-22: zeros [-0.9906206434] in [-1.3, -0.04]; pivot(0)/pivot(-h) 4.3e-05 (used)
+  D72.00_m1          D  72.0000 M 32 K 5 |F| 2.1e-21: zeros [-0.9912815543] in [-1.3, -0.04]; pivot(0)/pivot(-h) 6.9e-04 (marginal)
+  D73.27_m1          D  73.2657 M 32 K 5 |F| 2.5e-21: zeros [-0.9918991512] in [-1.3, -0.04]; pivot(0)/pivot(-h) 1.6e-03 (marginal)
+  D74.00_m1          D  74.0000 M 32 K 6 |F| 1.6e-22: zeros [-0.9650662202] in [-1.3, -0.04]; pivot(0)/pivot(-h) 1.7e-01 (rejected: exact zero not resolved)
+  D76.00_m1          D  76.0000 M 32 K 6 |F| 1.5e-22: zeros [-0.9859197387] in [-1.3, -0.04]; pivot(0)/pivot(-h) 1.0e-01 (rejected: exact zero not resolved)
+  D78.10_m1          D  78.1049 M 32 K 6 |F| 9.2e-23: zeros [-0.9727816299] in [-1.3, -0.04]; pivot(0)/pivot(-h) 1.8e-02 (rejected: exact zero not resolved)
+  D74.00_x85_m1      D  74.0000 M 32 K 6 |F| 4.1e-21: zeros [] in [-1.05, -0.93]; pivot(0)/pivot(-h) 9.8e-01 (rejected: exact zero not resolved)
+  D76.00_x85_m1      D  76.0000 M 32 K 6 |F| 6.3e-27: zeros [] in [-1.05, -0.93]; pivot(0)/pivot(-h) 2.1e+00 (rejected: exact zero not resolved)
+  D30.07_M48_m1      D  30.0688 M 48 K 5 |F| 4.1e-21: zeros [-0.9423919782] in [-0.98, -0.92]; pivot(0)/pivot(-h) 8.7e-12 (used)
+  D52.04_M32_m1      D  52.0414 M 32 K 5 |F| 1.5e-24: zeros [-0.982067989] in [-1.4, -0.04]; pivot(0)/pivot(-h) 2.4e-10 (used)
+  D55.04_m1          D  55.0351 M 32 K 5 |F| 4.4e-24: zeros [-0.9840968362] in [-1.4, -0.04]; pivot(0)/pivot(-h) 9.5e-10 (used)
+  D58.01_m1          D  58.0060 M 32 K 5 |F| 1.4e-23: zeros [-0.9857920452] in [-1.4, -0.04]; pivot(0)/pivot(-h) 1.5e-08 (used)
+  D60.00_m1          D  60.0020 M 32 K 5 |F| 2.3e-23: zeros [-0.9867848269] in [-1.4, -0.04]; pivot(0)/pivot(-h) 1.9e-08 (used)
+exit 0

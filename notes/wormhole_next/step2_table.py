@@ -9,11 +9,13 @@ Checks (exit 1 if one fails):
       g is 0, so the only zero of det M_psi in the counted region is the expected mu = 0.
   C2  every planted count: the box holding the planted pair counts 2 more (B0 is symmetric about the real axis and
       holds both members), every other box the same as the plain count. A count without its planted run fails C2.
-  C3  the other parity sector: every zero found on the line Im mu = omega has Re mu below the real-axis zero of the
-      same state (so the real zero is the least damped on the two lines).
-Printed, not checked: the real-axis zeros mu(D) of ghost_mu2.jsonl and the layout and resolution pairs.
+  C3  the other parity sector: every phase jump of det M_psi along the line Im mu = omega (a zero on or next to it)
+      lies below the real-axis zero of the same state, so the real zero is the least damped on the two lines.
+Printed, not checked: the real-axis zeros mu(D) of ghost_mu2.jsonl with the ratio pivot(0)/pivot(-h), which says
+whether the exact zero mu = 0 stands out (used below 1e-4, marginal to 1e-2, rejected above; mu_inf.py).
 """
 import json
+import math
 import os
 import sys
 
@@ -33,8 +35,9 @@ def rows(path):
 
 def main():
     counts = rows(os.path.join(HERE, "counts", "modecount_test_results.jsonl"))
-    plain = {r["tag"]: r for r in counts if r.get("plant") is None}
-    planted = {r["tag"]: r for r in counts if r.get("plant") is not None}
+    key = lambda r: (r["tag"].split("_plant")[0], tuple(sorted(r["boxes"])))   # noqa: E731  (one count per box set)
+    plain = {key(r): r for r in counts if r.get("plant") is None}
+    planted = {key(r): r for r in counts if r.get("plant") is not None}
     print("counts (region: aLL < Re mu < aR, |Im mu| < 1.5 omega unless only B0, U0)")
     for tag, r in sorted(plain.items(), key=lambda kv: kv[1]["D"]):
         bx = r["boxes"]
@@ -43,12 +46,12 @@ def main():
         res = all(v["resolved"] for v in bx.values())
         step = max(v["max_step"] for v in bx.values())
         print(f"  D {r['D']:8.4f} M {r['M']}: {reg}; windings {w}; max step {step:.3f}; {r['evaluations']} evaluations")
+        tag = f"{tag[0]} {'+'.join(tag[1])}"
         check(f"C1 {tag}", res and all(v == 0 for v in w.values()), f"resolved {res}, windings {w}")
-        pk = [k for k in planted if k.startswith(tag)]
-        if not pk:
+        if (r["tag"], tuple(sorted(bx))) not in planted:
             check(f"C2 {tag}", False, "no planted run")
             continue
-        p = planted[pk[0]]
+        p = planted[(r["tag"], tuple(sorted(bx)))]
         z = complex(*p["plant"])
         inside = [b for b, v in p["boxes"].items()
                   if v["rect"][0] < z.real < v["rect"][1] and v["rect"][2] < z.imag < v["rect"][3]]
@@ -65,18 +68,24 @@ def main():
                     mus.setdefault(r["state"], []).append((r["D"], r["M"], max(z), r["tag"]))
     print("other parity sector, Im mu = omega (zeros on the line, Re mu from lo to hi)")
     for r in rows(os.path.join(HERE, "modecount_test_axis.jsonl")) + rows(os.path.join(HERE, "axis_s1.jsonl")):
-        zs = [z["re"] for z in r["zeros"] if "re" in z]
+        # a zero shows as a phase jump above pi/2 between grid points; the refinement is quoted only if it stayed on
+        # the line (|Im/omega - 1| < 1e-5), else the jump's interval is the location
+        sm = r["samples"]
+        jumps = [(a[0], b[0]) for a, b in zip(sm, sm[1:]) if abs(math.remainder(b[2] - a[2], 2 * math.pi)) > math.pi / 2]
+        on = [z["re"] for z in r["zeros"] if "re" in z and abs(z["im_over_omega"] - 1) < 1e-5]
         real = [m for _, _, m, _ in mus.get(r["state"], [])]
         ref = max(real) if real else None
-        print(f"  {r['state']}: D {r['D']:.4f}, Re {r['lo']} .. {r['hi']}: zeros at Re {[round(z, 6) for z in zs]}; "
-              f"real-axis zero {ref}")
+        print(f"  {r['state']}: D {r['D']:.4f}, Re {r['lo']} .. {r['hi']}: phase jumps in {jumps}; refined on the line "
+              f"{[round(z, 6) for z in on]}; real-axis zero {ref}")
         if ref is not None:
-            check(f"C3 {r['state']}", all(z < ref for z in zs), f"line zeros {[round(z, 4) for z in zs]} below {ref:.4f}")
+            check(f"C3 {r['state']}", all(b < ref for _, b in jumps), f"every jump below {ref:.4f}")
     print("real-axis zeros of step 2 (ghost_mu2.jsonl)")
     for r in rows(os.path.join(HERE, "ghost_mu2.jsonl")):
         z = [x["mu"] for x in r["zeros"] if x["ok"]]
+        q = r["pivot0"] / r["pivot_h"]
+        use = "used" if q < 1e-4 else "marginal" if q < 1e-2 else "rejected: exact zero not resolved"
         print(f"  {r['tag']:18s} D {r['D']:8.4f} M {r['M']} K {r['K']} |F| {r['F']:.1e}: zeros {[round(x, 10) for x in z]}"
-              f" in [{r['lo']}, {r['hi']}]")
+              f" in [{r['lo']}, {r['hi']}]; pivot(0)/pivot(-h) {q:.1e} ({use})")
     sys.exit(1 if bad else 0)
 
 

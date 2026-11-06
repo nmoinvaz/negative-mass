@@ -1,0 +1,30 @@
+== D60.00_m1 2026-11-06 04:11 UTC: ghost_mu.py --hp=/Users/nathan/Source/choptuik-large-d/hp --threads=2 --tag=D60.00_m1 --out=/Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu2.jsonl /Users/nathan/Source/choptuik-large-d/hp/data/states/up13_D60.0020.npz --lo=-1.4 --hi=-0.04 --h=0.06
+up13_D60.0020.npz: D 60.001952, M 32, K 5, |F| 2.3e-23, Delta 1.8098842580, omega 3.471595, mode 1, plant None
+  mu = 0: ln|det| -368.5758, min pivot 1.10e-23;  mu = -0.06: min pivot 5.71e-16
+  -1.4000: ln|det|    -397.0319  sign +1  min pivot 2.9e-17
+  -1.3400: ln|det|    -394.8551  sign +1  min pivot 3.4e-17
+  -1.2800: ln|det|    -392.7603  sign +1  min pivot 3.9e-17
+  -1.2200: ln|det|    -390.7440  sign +1  min pivot 4.4e-17
+  -1.1600: ln|det|    -388.8226  sign +1  min pivot 4.9e-17
+  -1.1000: ln|det|    -387.0495  sign +1  min pivot 5.4e-17
+  -1.0400: ln|det|    -385.6230  sign +1  min pivot 7.0e-17
+  -0.9800: ln|det|    -385.5157  sign -1  min pivot 3.7e-17
+  -0.9200: ln|det|    -381.0749  sign -1  min pivot 7.9e-17
+  -0.8600: ln|det|    -378.2917  sign -1  min pivot 1.2e-16
+  -0.8000: ln|det|    -375.7736  sign -1  min pivot 1.3e-16
+  -0.7400: ln|det|    -373.3757  sign -1  min pivot 1.5e-16
+  -0.6800: ln|det|    -371.0504  sign -1  min pivot 1.5e-16
+  -0.6200: ln|det|    -368.7764  sign -1  min pivot 1.7e-16
+  -0.5600: ln|det|    -366.5430  sign -1  min pivot 1.9e-16
+  -0.5000: ln|det|    -364.3447  sign -1  min pivot 2.1e-16
+  -0.4400: ln|det|    -362.1797  sign -1  min pivot 2.4e-16
+  -0.3800: ln|det|    -360.0487  sign -1  min pivot 2.6e-16
+  -0.3200: ln|det|    -357.9558  sign -1  min pivot 2.9e-16
+  -0.2600: ln|det|    -355.9095  sign -1  min pivot 3.3e-16
+  -0.2000: ln|det|    -353.9276  sign -1  min pivot 3.6e-16
+  -0.1400: ln|det|    -352.0483  sign -1  min pivot 4.1e-16
+  -0.0800: ln|det|    -350.3795  sign -1  min pivot 4.5e-16
+  -0.0200: ln|det|    -349.5441  sign -1  min pivot 4.6e-16
+  zero in [-1.0400, -0.9800]: mu = -0.986784826918 (width 6.6e-12, 13 steps)
+  39 evaluations, 235 s; record appended to /Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu2.jsonl
+== D60.00_m1 exit 0 2026-11-06 04:15 UTC

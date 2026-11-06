@@ -1,0 +1,28 @@
+== D72.00_m1 2026-11-06 03:43 UTC: ghost_mu.py --hp=/Users/nathan/Source/choptuik-large-d/hp --threads=2 --tag=D72.00_m1 --out=/Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu2.jsonl /Users/nathan/Source/choptuik-large-d-raw/T75/pin7_D72.0000.npz --lo=-1.3 --hi=-0.04 --h=0.06
+pin7_D72.0000.npz: D 72.0, M 32, K 5, |F| 2.1e-21, Delta 1.7830868580, omega 3.523769, mode 1, plant None
+  mu = 0: ln|det| -371.8325, min pivot 4.31e-21;  mu = -0.06: min pivot 6.25e-18
+  -1.3000: ln|det|    -408.5971  sign +1  min pivot 4.9e-19
+  -1.2400: ln|det|    -406.4835  sign +1  min pivot 5.7e-19
+  -1.1800: ln|det|    -404.4554  sign +1  min pivot 6.6e-19
+  -1.1200: ln|det|    -402.5542  sign +1  min pivot 7.4e-19
+  -1.0600: ln|det|    -400.9150  sign +1  min pivot 7.8e-19
+  -1.0000: ln|det|    -400.7275  sign +1  min pivot 3.9e-19
+  -0.9400: ln|det|    -396.7168  sign -1  min pivot 1.6e-18
+  -0.8800: ln|det|    -393.7155  sign -1  min pivot 1.3e-18
+  -0.8200: ln|det|    -391.0694  sign -1  min pivot 1.4e-18
+  -0.7600: ln|det|    -388.5657  sign -1  min pivot 1.6e-18
+  -0.7000: ln|det|    -386.1435  sign -1  min pivot 1.8e-18
+  -0.6400: ln|det|    -383.7768  sign -1  min pivot 2.0e-18
+  -0.5800: ln|det|    -381.4529  sign -1  min pivot 2.3e-18
+  -0.5200: ln|det|    -379.1653  sign -1  min pivot 2.5e-18
+  -0.4600: ln|det|    -376.9110  sign -1  min pivot 2.9e-18
+  -0.4000: ln|det|    -374.6900  sign -1  min pivot 3.2e-18
+  -0.3400: ln|det|    -372.5052  sign -1  min pivot 3.6e-18
+  -0.2800: ln|det|    -370.3634  sign -1  min pivot 4.0e-18
+  -0.2200: ln|det|    -368.2785  sign -1  min pivot 4.5e-18
+  -0.1600: ln|det|    -366.2795  sign -1  min pivot 5.3e-18
+  -0.1000: ln|det|    -364.4398  sign -1  min pivot 5.9e-18
+  -0.0400: ln|det|    -363.0531  sign -1  min pivot 4.9e-18
+  zero in [-1.0000, -0.9400]: mu = -0.991281554313 (width 3.6e-13, 15 steps)
+  39 evaluations, 115 s; record appended to /Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu2.jsonl
+== D72.00_m1 exit 0 2026-11-06 03:45 UTC

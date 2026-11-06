@@ -55,7 +55,7 @@ A *pure* ghost field has no black-hole threshold at all. In the numerical relati
 - To linear order the ghost-sector perturbations are test fields on Choptuik's background. That is the same problem as the
   imaginary-part perturbations of a complex scalar, which all decay apart from a symmetry mode [GMG96, LRR07]. So
   ghost admixture should be irrelevant at Choptuik's threshold: the same γ and Δ. No evolution has tested this. The
-  linear premise is now numerical evidence at D = 4–67 (choptuik-large-d notes/GHOST_ADMIXTURE.md;
+  linear premise is now numerical evidence at D = 4–70.5 (choptuik-large-d notes/GHOST_ADMIXTURE.md;
   [`wormhole_next.md`](wormhole_next.md)).
 
 **What links the two sectors in the literature, and what does not.**
@@ -365,8 +365,8 @@ Beyond `notes/literature.md` and the repo's phase 2 and phase 5 results:
 3. **Ghost admixture at Choptuik's threshold** (§2.3). Linear analysis says it is irrelevant: same γ and Δ, ghost content
    decaying or riding the boost mode. No evolution has tested this. At linear order the decay is now numerical evidence
    in D = 4–67 (choptuik-large-d notes/GHOST_ADMIXTURE.md; [`wormhole_next.md`](wormhole_next.md) §1): no growing
-   ghost-sector mode in the regions counted, and the least-damped real rate falls from −0.365 (D = 4) to −0.990
-   (D = 67). Open: the counts listed in wormhole_next.md §1.2, and an evolution.
+   ghost-sector mode at the eleven values of D counted from 4 to 67, and the least-damped rate falls from −0.365
+   (D = 4) to −0.991 (D = 70.5). Open: D > 73 (a precision wall of the determinant), and an evolution.
 4. **The outcome map of regular-centre normal + ghost data.** Dispersal, black hole, and transient throats [NRM12] are all
    seen. Two questions are open:
    - Is there a codimension-one boundary between "black hole" and "throat/expansion" outcomes?

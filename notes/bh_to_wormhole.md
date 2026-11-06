@@ -23,9 +23,9 @@ Status words as in CG: **literature** (with a reference), **checked here** (symp
 - **A little ghost field mixed into Choptuik's collapse fades out at the threshold** (§3, argued). Its energy at horizon
   formation, relative to the black hole's, falls like (p − p*)^{2|μ|γ}, with μ the least-damped ghost-sector
   (charge-mode) rate: exponent 0.273 in D = 4, 0.366 in D = 5, rising to 0.95 at D = 45
-  ([`wormhole_next.md`](wormhole_next.md) §1.3). So the first horizon is always a black-hole horizon. The one escape, a
-  ghost-sector mode that grows in some D, was looked for in choptuik-large-d and not found at D = 4, 8.25, 16.76, 30.07
-  and 45.05 (numerical evidence, §6).
+  ([`wormhole_next.md`](wormhole_next.md) §1.3, §6). So the first horizon is always a black-hole horizon. The one
+  escape, a ghost-sector mode that grows in some D, was looked for with choptuik-large-d's test-field determinant and
+  not found at eleven values of D from 4 to 67 (numerical evidence, §6).
 - **Two published routes turn black holes into wormholes, and neither fits a collapse black hole** (§5): beaming
   negative energy into the eternal two-sided black hole [HK04, KH04], and Hawking evaporation, which makes the horizon
   timelike, "a traversible wormhole by any reasonable definition" in Hayward's local sense [H02]. The second is the
@@ -106,7 +106,7 @@ its modes grow or decay as e^{μτ}, with τ = −ln(−t) the logarithmic scale
 - μ = 0 exactly for the boost mode, δφ₂ ∝ φ_Ch;
 - the least-damped other mode on the real axis, from choptuik-large-d's test-field determinant
   ([`wormhole_next.md`](wormhole_next.md) §1.3, numerical evidence): μ = −0.3651 at D = 4, −0.4430 at D = 5, −0.5052 at
-  D = 6, falling to −0.976 at D = 45 and −0.990 at D = 67;
+  D = 6, falling to −0.976 at D = 45 and −0.991 at D = 70.5;
 - published: μ = −0.362 ± 0.012 at D = 4 ([GMG96], who write it as +0.362 with the opposite sign of τ; their
   δ = (2 + 0.362)γ = 0.883 is MGM26's relation δ_Q = (D − 2 − μ)γ), which agrees with −0.3651; and μ = −0.448 at D = 5
   [MGM26], a periodicity fit to evolutions in the window −0.450 to −0.446, which the determinant's −0.4430 lies outside.
@@ -129,9 +129,9 @@ its modes grow or decay as e^{μτ}, with τ = −ln(−t) the logarithmic scale
 
 **So a small ghost admixture cannot open a throat at Choptuik's threshold.** The threshold keeps Choptuik's γ and Δ (CG's
 conjecture), and the argument now says how fast the ghost content becomes irrelevant. It rests on μ < 0 for every
-ghost-sector mode except the boost. That is numerical evidence: choptuik-large-d's argument-principle counts find no
-other zero with Re μ > −0.1 at D = 4, 8.25, 16.76, 30.07 and 45.05, and the real-axis rates above are negative at every
-D computed, 4 to 67 (§6, item 2).
+ghost-sector mode except the boost. That is numerical evidence: argument-principle counts of the test field's
+determinant find no zero other than the boost to the right of the real-axis rate, |Im μ| < 1.5ω, at eleven values of D
+from 4 to 67, and the real-axis rates are negative at every D computed, 4 to 70.5 (§6, item 2).
 
 On "dispersal at the critical time": below the threshold no marginally trapped sphere ever forms, so there is no
 horizon whose direction could flip. Exactly at the threshold the black hole has zero size, and Choptuik's solution
@@ -189,10 +189,12 @@ own. The reverse, black hole into wormhole, needs negative energy, which is §5.
    multiple-shooting determinant (`hp/modecount_cx`: the field's p, m equations with a and c held at the background)
    and counts its zeros by the argument principle. It finds only the boost in −0.1 ≲ Re μ ≲ 6.2, |Im μ| < 1.5ω, at
    D = 8.25, 16.76, 30.07 and 45.05, and near the imaginary axis at D = 4, in two node layouts each (its
-   notes/GHOST_ADMIXTURE.md). The least-damped real rates at D = 4–67 are in [`wormhole_next.md`](wormhole_next.md)
-   §1.3, with D = 4 matching [GMG96] and D = 5 differing from [MGM26] (§1.4 there). Still open: counts between D = 4
-   and 8.25 and above 45, the region between the real zero and Re μ = −0.1, and non-spherical ghost modes
-   (wormhole_next.md §6 runs the first two).
+   notes/GHOST_ADMIXTURE.md). [`wormhole_next.md`](wormhole_next.md) §6 extends the counts with the same code to
+   D = 4–7, 52.04, 60.00 and 67.01, and to the left edge just right of the real-axis rate at every counted D. So at
+   eleven values of D from 4 to 67 nothing but the boost lies to the right of the real-axis rate, which is therefore
+   the least-damped mode. The rates at D = 4–70.5 are in its §1.3 and §6.3, with D = 4 matching [GMG96] and D = 5
+   differing from [MGM26] (§1.4 there). Still open: D > 73, where the determinant meets a double-double precision
+   wall; the value at D = ∞, which the data put near −1 (a conjecture); and non-spherical ghost modes.
 3. **Large ghost content.** The arguments here are for a small admixture. Regular-centre data with comparable normal and
    ghost fields show transient throats [NRM12]; whether a sharp boundary separates black holes from throats there is
    open (CG §4.4). Item 1 says where to look: on spheres that are about to be trapped.

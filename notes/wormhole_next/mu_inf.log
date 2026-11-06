@@ -1,0 +1,17 @@
+data: 11 points, D = [16.76, 20.0437, 30.0688, 45.0507, 52.0414, 55.0351, 58.006, 60.002, 67.0115, 68.5, 70.5]
+  T1 planted L0 = -1.00: midpoint -1.00566, half-range 0.01052 over 9 fits (L from -1.01617 to -0.99514)
+PASS  T1 L0 = -1.00
+  T1 planted L0 = -0.98: midpoint -0.99883, half-range 0.01734 over 9 fits (L from -1.01616 to -0.98149)
+FAIL  T1 L0 = -0.98
+  T1 planted L0 = -1.02: midpoint -1.00643, half-range 0.01121 over 9 fits (L from -1.01765 to -0.99522)
+FAIL  T1 L0 = -1.02
+  T2 planted -1 with (a + b ln n)/n^2: midpoint -1.00599, half-range 0.01028 over 9 fits (L from -1.01627 to -0.99571)
+PASS  T2
+  T3 control, shifted by -0.05: midpoint -1.05566, half-range 0.01052 over 9 fits (L from -1.06617 to -1.04514)
+PASS  T3 control (the shift is seen)
+  T4 pole at n = -8.3, planted -1: midpoint -1.00560, half-range 0.01048 over 9 fits (L from -1.01608 to -0.99512)
+PASS  T4
+  T5 t^(5/2), planted -1: midpoint -1.00562, half-range 0.01049 over 9 fits (L from -1.01611 to -0.99513)
+PASS  T5 (informative, not graded)
+planted-truth test failed (['T1 -0.98', 'T1 -1.02']): no estimate of mu_inf is quoted
+exit 1

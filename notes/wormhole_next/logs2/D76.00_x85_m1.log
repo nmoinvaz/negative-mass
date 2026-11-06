@@ -1,0 +1,8 @@
+== D76.00_x85_m1 2026-11-06 03:51 UTC: ghost_mu.py --hp=/Users/nathan/Source/choptuik-large-d/hp --threads=2 --tag=D76.00_x85_m1 --out=/Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu2.jsonl /Users/nathan/Source/choptuik-large-d-raw/T85-mac/pin7_x85_D76.0000.npz --lo=-1.05 --hi=-0.93 --h=0.06
+pin7_x85_D76.0000.npz: D 76.0, M 32, K 6, |F| 6.3e-27, Delta 1.7759861360, omega 3.537857, mode 1, plant None
+  mu = 0: ln|det| -834.6804, min pivot 4.74e-27;  mu = -0.06: min pivot 2.22e-27
+  -1.0500: ln|det|    -851.0275  sign -1  min pivot 2.0e-27
+  -0.9900: ln|det|    -850.1394  sign -1  min pivot 3.2e-27
+  -0.9300: ln|det|    -849.3571  sign -1  min pivot 5.9e-27
+  5 evaluations, 12 s; record appended to /Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu2.jsonl
+== D76.00_x85_m1 exit 0 2026-11-06 03:52 UTC

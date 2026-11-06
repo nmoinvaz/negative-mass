@@ -1,0 +1,28 @@
+== D73.27_m1 2026-11-06 03:45 UTC: ghost_mu.py --hp=/Users/nathan/Source/choptuik-large-d/hp --threads=2 --tag=D73.27_m1 --out=/Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu2.jsonl /Users/nathan/Source/choptuik-large-d-raw/T75/pin7_D73.2657.npz --lo=-1.3 --hi=-0.04 --h=0.06
+pin7_D73.2657.npz: D 73.265722, M 32, K 5, |F| 2.5e-21, Delta 1.7807570807, omega 3.528379, mode 1, plant None
+  mu = 0: ln|det| -372.3793, min pivot 6.53e-21;  mu = -0.06: min pivot 3.96e-18
+  -1.3000: ln|det|    -410.5550  sign +1  min pivot 2.5e-19
+  -1.2400: ln|det|    -408.3778  sign +1  min pivot 3.0e-19
+  -1.1800: ln|det|    -406.2931  sign +1  min pivot 3.6e-19
+  -1.1200: ln|det|    -404.3421  sign +1  min pivot 4.0e-19
+  -1.0600: ln|det|    -402.6608  sign +1  min pivot 4.1e-19
+  -1.0000: ln|det|    -402.4958  sign +1  min pivot 2.6e-19
+  -0.9400: ln|det|    -398.3614  sign -1  min pivot 9.5e-19
+  -0.8800: ln|det|    -395.3314  sign -1  min pivot 7.0e-19
+  -0.8200: ln|det|    -392.6548  sign -1  min pivot 9.0e-19
+  -0.7600: ln|det|    -390.1221  sign -1  min pivot 1.0e-18
+  -0.7000: ln|det|    -387.6724  sign -1  min pivot 1.2e-18
+  -0.6400: ln|det|    -385.2799  sign -1  min pivot 1.2e-18
+  -0.5800: ln|det|    -382.9317  sign -1  min pivot 1.3e-18
+  -0.5200: ln|det|    -380.6211  sign -1  min pivot 1.5e-18
+  -0.4600: ln|det|    -378.3451  sign -1  min pivot 1.7e-18
+  -0.4000: ln|det|    -376.1035  sign -1  min pivot 1.9e-18
+  -0.3400: ln|det|    -373.8992  sign -1  min pivot 2.1e-18
+  -0.2800: ln|det|    -371.7387  sign -1  min pivot 2.3e-18
+  -0.2200: ln|det|    -369.6360  sign -1  min pivot 2.5e-18
+  -0.1600: ln|det|    -367.6200  sign -1  min pivot 2.8e-18
+  -0.1000: ln|det|    -365.7638  sign -1  min pivot 3.2e-18
+  -0.0400: ln|det|    -364.3615  sign -1  min pivot 4.2e-18
+  zero in [-1.0000, -0.9400]: mu = -0.991899151181 (width 2.7e-12, 16 steps)
+  40 evaluations, 70 s; record appended to /Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu2.jsonl
+== D73.27_m1 exit 0 2026-11-06 03:46 UTC

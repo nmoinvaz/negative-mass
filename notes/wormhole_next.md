@@ -10,6 +10,20 @@ that fails), **argued** (a derivation, not a proof), **conjecture**, *(unverifie
 
 ## Summary
 
+**Update, 2026-11-06: steps 1–3 done.**
+- **Step 1.** BW, CG and PLAN now cite CLD's counts and this note (commits ce5bbe1 and later). The D = 5 discrepancy
+  is kept open.
+- **Step 2 (§6).**
+  - Winding counts now run from just right of the real-axis zero to Re μ ≈ 6.2–6.7, |Im μ| < 1.5ω. At eleven values of
+    D from 4 to 67 they find nothing but the boost (numerical evidence, each with a planted control).
+  - The other parity sector's slowest mode is more damped at every D scanned, and tends to −1.
+  - μ(D) is known from D = 4 to 70.5. At D ≥ 74 the double-double determinant cannot resolve its exact zero.
+  - μ∞ is not quoted: the planted-truth test of the extrapolation fails at ±0.02. μ∞ = −1 stays a conjecture.
+- **Step 3 (§7).** Exactly one unstable radial mode of the symmetric wormhole in every D ≥ 4 is now **proved**, with
+  each identity checked symbolically.
+
+The rest of this summary, and §§1–5, are the first report (2026-11-05).
+
 - **The "untested escape" of BW §3 and §6.2 was tested in CLD after BW was written.** BW (2026-10-24) says the
   ghost-sector rates μ of Choptuik's solution are known only at D = 4 and 5. CLD's
   [`notes/GHOST_ADMIXTURE.md`](https://github.com/nmoinvaz/choptuik-large-d/blob/main/notes/GHOST_ADMIXTURE.md)
@@ -321,6 +335,8 @@ the best next analytic task and can run in parallel, since it needs no CPU.
 
 ## 5. Proposed text for BW, CG and PLAN (for the coordinator)
 
+*Applied on 2026-11-06 (commit ce5bbe1), and updated with §6's results.*
+
 These are drafts. The numbers come from §1.3.
 
 - **BW, Summary, fourth bullet.** Replace the last two sentences by: "Its energy at horizon formation, relative to the
@@ -351,6 +367,138 @@ These are drafts. The numbers come from §1.3.
 - **PLAN.md, "Later", "Untested prediction".** "Tested at linear order (numerical evidence, D = 4–67): no ghost-sector
   mode other than the boost grows (choptuik-large-d notes/GHOST_ADMIXTURE.md; notes/wormhole_next.md). Next:
   wormhole_next.md §4."
+
+## 6. Step 2: the ghost sector finished on CLD's code
+
+Run on 2026-11-06 on this Mac, read-only on CLD as in §1.3, at 2 threads per job and at most two jobs, nice 10. Wall time
+was about 3 h.
+
+- **Queues.** `wormhole_next/step2.sh` (queues P, Q), `step2b.sh` (R), `step2c.sh` (S) and `step2d.sh` (T).
+- **Output.** Logs in `logs2/`. The counts' evaluation caches and records are in `counts/`, written per evaluation, so a
+  restart loses nothing. The other-sector scans are in `axis_s1.jsonl`, the real-axis zeros in `ghost_mu2.jsonl`.
+- **Checks.** `step2_table.py` (log `step2_table.log`): C1–C3 all pass. `mu_inf.py` (log `mu_inf.log`) exits 1, because
+  its planted-truth test fails (§6.4).
+
+### 6.1 Winding counts: no other zero right of the real one
+
+Each count is CLD's `hp/modecount_test.py` (edges refined until every phase step is below π/4) with the left edge aLL
+just right of the real-axis zero μ. In every count the strip |Im μ| < 1.5ω holds every Floquet exponent once (§1.2).
+Every count has a planted pair (μ_p, μ̄_p) inside B0, which B0 must count as 2 more (C2), and every plain count must
+show winding 0 in every box (C1).
+
+| D | state (M) | counted here | with CLD's | zeros besides μ = 0 | planted pair | evaluations |
+|---|---|---|---|---|---|---|
+| 4 | lowDn_D4 (48, 11 nodes) | −0.345 < Re μ < 6.70 (B0, U0, then full) | | 0 | −0.25 ± 0.5i in B0, 2.0 ± 1.0i in full: +2 each | 67 (one cache) |
+| 5 | T79 down_D5 (48) | −0.423 < Re μ < 6.70 | | 0 | −0.30 ± 0.6i: +2 | 69 |
+| 6 | T79 down_D6 (48) | −0.425 < Re μ < 6.70 | | 0 | −0.35 ± 0.6i: +2 | 69 |
+| 7 | T79 down_D7 (48) | −0.477 < Re μ < 6.70 | | 0 | −0.40 ± 0.6i: +2 | 68 |
+| 8.25 | modecount_state (32) | −0.532 < Re μ < 0.248 | to 6.70 | 0 | −0.45 ± 0.6i: +2 | 42 |
+| 16.76 | up2 (32) | −0.751 < Re μ < 0.300 | to 6.26 | 0 | −0.60 ± 0.8i: +2 | 57 |
+| 30.07 | up6 (32) | −0.922 < Re μ < 0.300 | to 6.18 | 0 | −0.70 ± 0.8i: +2 | 68 |
+| 45.05 | up7 (32) | −0.896 < Re μ < 0.300 | to 6.28 | 0 | −0.70 ± 0.8i: +2 | 64 |
+| 52.04 | up9 (32) | −0.962 < Re μ < 6.00 | | 0 | −0.70 ± 0.8i: +2 | 98 |
+| 60.00 | up13 (32) | −0.967 < Re μ < 6.11 | | 0 | −0.70 ± 0.8i: +2 | 101 |
+| 67.01 | up70 (32) | −0.910 < Re μ < 6.66 | | 0 | −0.70 ± 0.8i: +2 | 97 |
+
+At these 11 values of D from 4 to 67 the ghost sector has no growing mode, and the least-damped mode is the real-axis
+zero of §1.3 and §6.3 (numerical evidence). Values of D between them are not counted. A mode would have to cross
+Re μ = 0 and come back between counted D, against the smooth μ(D) below.
+
+### 6.2 The other parity sector
+
+The other parity sector is the line Im μ = ω, scanned with CLD's `hp/modecount_test_axis.py` for −1.6 < Re μ < −0.02.
+A zero there appears as a phase jump between grid points.
+
+| D | phase jump in | refined on the line |
+|---|---|---|
+| 5 | (−0.96, −0.92) | −0.949968 |
+| 6 | (−1.00, −0.95) | −0.975829 |
+| 7 | (−1.00, −0.95) | −0.988805 |
+| 8.25 | (−1.00, −0.96) | −0.996904 |
+| 10, 12 | (−1.05, −1.00) | (the refinement left the line) |
+| 16.76 | (−1.04, −1.00) | −1.003319 |
+| 20.04 | (−1.04, −1.00) | −1.002664 |
+| 30.07 | (−1.04, −1.00) | −1.001217 |
+| 45.05 | (−1.04, −1.00) | −1.000398 |
+| 52.04 | (−1.04, −1.00) | −1.000242 |
+| 60.00 | (−1.04, −1.00) | −1.000135 |
+| 67.01 | (−1.04, −1.00) | −1.000077 |
+
+There is one zero per scan, always more damped than the real one (C3). From D = 10 on it lies just below −1 and
+approaches it, the departure falling faster than 1/n² at large D. D = 4 has none in (−0.7, −0.02) (CLD).
+
+### 6.3 μ(D) beyond D = 67, and a conditioning wall at D ≥ 74
+
+| D | state | μ | pivot(0)/pivot(−h) | 2\|μ\|γ | δ_Q |
+|---|---|---|---|---|---|
+| 30.07 | modecount_state M 48 | −0.9423919782 (M 32: same to 10⁻¹²) | 9×10⁻¹² | | |
+| 52.04 | up9 | −0.9820679890 | 2×10⁻¹⁰ | 0.9581 | 24.889 |
+| 55.04 | up10 | −0.9840968362 | 1×10⁻⁹ | 0.9612 | 26.381 |
+| 58.01 | up12 | −0.9857920452 | 2×10⁻⁸ | 0.9639 | 27.862 |
+| 60.00 | up13 | −0.9867848269 | 2×10⁻⁸ | 0.9655 | 28.857 |
+| 68.50 | T84 pin7 (full) | −0.9900225636 | 4×10⁻⁵ | | |
+| 70.50 | T84 pin7 (full) | −0.9906206434 | 4×10⁻⁵ | | |
+| 72.00 | T75 pin7 | −0.9912815543 (marginal) | 7×10⁻⁴ | | |
+| 73.27 | T75 pin7 | −0.9918991512 (marginal) | 2×10⁻³ | | |
+| 74, 76, 78.10 | T85 pin7 x80 (nodes to 0.8) | rejected | 0.02–0.17 | | |
+| 74, 76 | T85 pin7 x85 (nodes to 0.85) | rejected | 1–2 | | |
+
+- **The ratio.** pivot(0)/pivot(−h) measures how far the exact zero μ = 0 stands out from its neighbourhood. It is
+  10⁻²³ to 10⁻¹³ up to D = 45, 10⁻⁶ to 10⁻⁵ at D = 67–70.5, and of order 1 at D ≥ 74.
+- **D ≥ 74.** The determinant is numerically singular at every μ there, so those zeros mean nothing. This is the
+  double-double precision wall that CLD's large-D runs met at D ≈ 73, where they moved to pinned and quad-double
+  solves. CLD lists "the pinned determinant for the mode scans at D ≥ 73" as open.
+- **D = 72 and 73.27.** These are marginal. n²(μ + 1) drops there to 42.7 and 41.1, from a smooth 45.4 → 44.0 over
+  D = 30–70.5, so they are treated as unreliable.
+- **γ.** For the exponents, γ is CLD's (`hp/data/local/gamma_dd.jsonl`). None is stored above D = 61.
+- **Result.** μ(D) is now known from D = 4 to 70.5. It falls monotonically, with n²(μ + 1) rising to about 45 by D ≈ 30
+  and then slowly declining.
+
+### 6.4 μ∞: the planted-truth test fails, so no value is quoted
+
+`mu_inf.py`'s estimator and pass criteria were committed before it saw the step-2 data (commits 84cf3b8, 8f7261c). The
+conditioning selection (ratio < 10⁻⁴) was added after the D ≥ 74 runs and before its first real run (49a9e78). The
+estimator is the spread of 9 fits in 1/n, with 2–4 terms, starting from the three lowest D ≥ 16.
+
+On synthetic data on the same D grid (D = 16.76 to 70.5):
+
+| plant | estimate (midpoint ± half-range) | pass |
+|---|---|---|
+| T1, L0 = −1.00 | −1.0057 ± 0.0105 | yes |
+| T1, L0 = −0.98 | −0.9988 ± 0.0173 | **no** |
+| T1, L0 = −1.02 | −1.0064 ± 0.0112 | **no** |
+| T2, (a + b ln n)/n² tail, L0 = −1 | −1.0060 ± 0.0103 | yes |
+| T3 control, the −1.00 model shifted by −0.05 | −1.0557 ± 0.0105 (−1 excluded) | yes |
+| T4, a pole at n = −8.3 | −1.0056 ± 0.0105 | yes |
+| T5, t^{5/2} (informative) | −1.0056 ± 0.0105 | |
+
+Models built to fit the data with limits −0.98 and −1.02 come back as −1.00 ± 0.01–0.02. The estimator cannot tell
+limits within about ±0.02 of −1 apart on this D range, so by the protocol no μ∞ is quoted.
+
+Two things are reported but not used:
+- the free 1/n fit with 5 terms gives −1.0005;
+- refits with the limit held at −0.98, −1.00 and −1.02 leave maximum residuals 1.8×10⁻⁴, 7×10⁻⁶ and 1.7×10⁻⁴.
+
+μ∞ = −1 stays a conjecture, consistent with the data. The other sector's zero (§6.2) converging to −1 points the same
+way. A test that could fail needs one of two things:
+- μ(D) from D ≥ 74, which needs a pinned or quad-double test-field determinant (new code in CLD);
+- the D = ∞ inner Stokes problem (§1.5).
+
+### 6.5 What step 2 settles, and what remains
+
+**Settled (numerical evidence).**
+- At the 11 values of D counted from 4 to 67, the ghost sector of Choptuik's solution has no growing mode.
+- Its least-damped mode is the real-axis zero μ(D), negative and decreasing from −0.365 (D = 4) to −0.991 (D = 70.5).
+- The other parity sector's slowest mode is more damped at every D scanned.
+- BW's fade-out exponent 2|μ|γ rises from 0.27 (D = 4) to 0.97 (D = 60).
+
+**Remaining.**
+- Values of D between the counted ones.
+- D > 73, where a new determinant is needed.
+- μ∞.
+- The D = 5 discrepancy with [MGM26] (§1.4, unchanged).
+- Non-spherical ghost modes.
+- An evolution, the nonlinear test.
 
 ## 7. Step 3: one unstable radial mode in every D (proved)
 

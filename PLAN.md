@@ -60,8 +60,9 @@ model they sit in disjoint sets of initial data. Saved to investigate later:
 - **Prediction, tested at linear order:** a small ghost admixture leaves Choptuik's critical solution unchanged (same Δ
   and γ). Reason: its ghost-sector perturbations are the same problem as a complex scalar's imaginary-part
   perturbations. choptuik-large-d's test-field counts (its notes/GHOST_ADMIXTURE.md) and `notes/wormhole_next.md` find no
-  growing ghost-sector mode other than the boost at D = 4–67 (numerical evidence). Next: `notes/wormhole_next.md` §4
-  and §6 (the remaining counts, μ∞), and an evolution for the nonlinear test.
+  growing ghost-sector mode other than the boost at eleven values of D from 4 to 67 (numerical evidence). Next
+  (`notes/wormhole_next.md` §6.5): D > 73 and μ∞, which need new code, and an evolution for the nonlinear test.
+- **Paper III's one-mode premise is proved** for the symmetric wormhole in every D (`notes/wormhole_largeD/one_mode.md`).
 - **Can our solvers represent a wormhole throat?** Not as they stand: choptuik-large-d's areal radial coordinate (and
   this repo's 1+1 code) cannot pass a throat, which shows up like an apparent horizon. Investigate whether a change of
   coordinates (proper radius, or double-null/characteristic coordinates as Shinkai–Hayward used) makes it possible,
