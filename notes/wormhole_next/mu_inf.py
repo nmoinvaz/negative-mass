@@ -17,6 +17,10 @@ Planted truth (same D grid, same estimator):
       contains -1.
   T3  control: the T1 model with L0 = -1.00, shifted by -0.05 at every point; the recovered interval must not contain
       -1.00 (the estimator sees a 0.05 change).
+  T4  structure outside the model class (as CLD's hp/planted_dinf.py does): the T1 model with L0 = -1 plus
+      s t^3/(1 + t/0.12), t = 1/n, a pole at n = -8.3, with s set so that the added term is 1e-3 at the lowest D used.
+      Pass: the interval contains -1.
+  T5  informative, not graded: the T1 model plus s t^(5/2), 1e-3 at the lowest D (non-analytic at t = 0).
 The real-data estimate is reported only if T1-T3 pass; if not, the script says so and exits 1. Whether the real interval
 contains -1 is reported, not checked.
 """
@@ -107,6 +111,16 @@ def main():
     ok = not (mid - half <= -1.0 <= mid + half)
     print(f"{'PASS' if ok else 'FAIL'}  T3 control (the shift is seen)")
     bad += [] if ok else ["T3"]
+    _, c, _ = fit(n, y, 5, L=-1.0)
+    base = -1.0 + sum(c[j - 1] * n ** -j for j in range(1, 6))
+    t = 1 / n
+    for name, h, graded in (("T4 pole at n = -8.3", t ** 3 / (1 + t / 0.12), True), ("T5 t^(5/2)", t ** 2.5, False)):
+        syn = base + 1e-3 * h / h[0]
+        mid, half, Ls = estimate(D, syn)
+        show(f"{name}, planted -1", mid, half, Ls)
+        ok = mid - half <= -1 <= mid + half
+        print(f"{'PASS' if ok else 'FAIL'}  {name.split()[0]}" + ("" if graded else " (informative, not graded)"))
+        bad += [] if (ok or not graded) else [name.split()[0]]
     if bad:
         print(f"planted-truth test failed ({bad}): no estimate of mu_inf is quoted")
         sys.exit(1)
