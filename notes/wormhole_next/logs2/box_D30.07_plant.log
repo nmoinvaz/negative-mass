@@ -1,0 +1,13 @@
+== box_D30.07_plant 2026-11-06 03:39 UTC: modecount_test.py /Users/nathan/Source/choptuik-large-d/hp/data/states/up6_D30.0688.npz --threads=2 --data=/Users/nathan/Source/negative-mass-wh/notes/wormhole_next/counts --allow_unraw --boxes=B0,U0 --aLL=-0.9224 --tag=D30.0688_M32 --plant=-0.70+0.8j
+  |F| 3.3e-12 in this layout: Newton
+=== 2026-11-05 19:40:18  test field, up6_D30.0688.npz: D 30.068824, M 32, kfreeze None, |F| 6.0e-25; Delta 1.964267876260, omega 3.198742; planted zeros at (-0.7+0.8j) and its conjugate
+  contour: aLL -0.9224, aL 0.3000, a1 1.2235, a2 2.6797, aR 6.1820; y1 = omega/2 = 1.5994, y2 = 1.5 omega = 4.7981
+  candidate poles with |Im| < y2, Re in (-1, 9): [(4.9431, -3.1987), (1.6372, -3.1987), (6.5961, -3.1987), (0.8107, -3.1987), (2.4636, -3.1987), (3.2901, -3.1987), (4.1166, -3.1987), (7.4225, -3.1987), (8.249, -3.1987), (-0.0158, -3.1987), (-0.8423, -3.1987), (5.7696, -3.1987), (5.7696, 3.1987), (-0.8423, 3.1987), (-0.0158, 3.1987), (8.249, 3.1987), (7.4225, 3.1987), (4.1166, 3.1987), (3.2901, 3.1987), (2.4636, 3.1987), (0.8107, 3.1987), (6.5961, 3.1987), (1.6372, 3.1987), (4.9431, 3.1987)]
+  expected zeros: [(0.0, -6.397483), (0.0, 0.0), (0.0, 6.397483)]
+    10 evaluations, 0.0 s each
+  real axis, sign of det M: 0.300:+, 0.500:+, 1.000:+, 1.224:+, 1.500:+, 2.000:+, 2.500:+, 2.680:+, 3.000:+, 3.500:+, 4.000:+, 4.500:+, 5.000:+, 5.500:+, 6.000:+, 6.182:+
+  sign changes of det M on the real axis: []
+  404 candidate poles multiplied out, 3 expected zeros divided out; trend p(lam) = -0.4323 lam^2 + 68.0190 lam + 234.007 (residual on the real axis max 0.148)
+    20 evaluations, 0.0 s each
+  edge Re=aL, Im 0->y1: 5 points, phase change of g +0.312796, max step 0.196 rad (det M itself: 1.061), spacing 4.00e-01..4.00e-01, ln|g| -0.15..0.64, verified 0 (mismatch 0) in 1 passes
+    30 evaluations, 0.7 s each

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Tables and checks of step 2 (notes/wormhole_next.md section 6), from counts/modecount_test_results.jsonl,
-axis_s1.jsonl, ghost_mu.jsonl and ghost_mu2.jsonl.
+modecount_test_axis.jsonl (the pilot's D 5 line) and axis_s1.jsonl, ghost_mu.jsonl and ghost_mu2.jsonl.
 
     python3 step2_table.py
 
@@ -64,7 +64,7 @@ def main():
                 if z:
                     mus.setdefault(r["state"], []).append((r["D"], r["M"], max(z), r["tag"]))
     print("other parity sector, Im mu = omega (zeros on the line, Re mu from lo to hi)")
-    for r in rows(os.path.join(HERE, "axis_s1.jsonl")):
+    for r in rows(os.path.join(HERE, "modecount_test_axis.jsonl")) + rows(os.path.join(HERE, "axis_s1.jsonl")):
         zs = [z["re"] for z in r["zeros"] if "re" in z]
         real = [m for _, _, m, _ in mus.get(r["state"], [])]
         ref = max(real) if real else None
