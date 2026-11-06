@@ -1,0 +1,41 @@
+== D45.05_M32_m1 2026-11-06 01:09 UTC
+up7_D45.0507.npz: D 45.050722, M 32, K 5, |F| 9.4e-26, Delta 1.8623794272, omega 3.373741, mode 1, plant None
+  mu = 0: ln|det| -355.3436, min pivot 9.14e-26;  mu = -0.06: min pivot 4.98e-13
+  -2.0000: ln|det|    -388.5152  sign -1  min pivot 5.8e-15
+  -1.9400: ln|det|    -386.7231  sign -1  min pivot 6.4e-15
+  -1.8800: ln|det|    -384.9574  sign -1  min pivot 7.0e-15
+  -1.8200: ln|det|    -383.2272  sign -1  min pivot 7.4e-15
+  -1.7600: ln|det|    -381.5481  sign -1  min pivot 7.5e-15
+  -1.7000: ln|det|    -379.9496  sign -1  min pivot 7.2e-15
+  -1.6400: ln|det|    -378.5013  sign -1  min pivot 5.9e-15
+  -1.5800: ln|det|    -377.4615  sign -1  min pivot 3.3e-15
+  -1.5200: ln|det|    -376.6407  sign +1  min pivot 1.5e-15
+  -1.4600: ln|det|    -373.1856  sign +1  min pivot 9.6e-15
+  -1.4000: ln|det|    -370.7491  sign +1  min pivot 2.2e-14
+  -1.3400: ln|det|    -368.5530  sign +1  min pivot 2.4e-14
+  -1.2800: ln|det|    -366.4852  sign +1  min pivot 2.3e-14
+  -1.2200: ln|det|    -364.5159  sign +1  min pivot 2.7e-14
+  -1.1600: ln|det|    -362.6481  sign +1  min pivot 3.2e-14
+  -1.1000: ln|det|    -360.9207  sign +1  min pivot 3.5e-14
+  -1.0400: ln|det|    -359.4801  sign +1  min pivot 3.9e-14
+  -0.9800: ln|det|    -360.0730  sign +1  min pivot 8.7e-15
+  -0.9200: ln|det|    -355.4838  sign -1  min pivot 7.3e-14
+  -0.8600: ln|det|    -352.7009  sign -1  min pivot 1.2e-13
+  -0.8000: ln|det|    -350.2454  sign -1  min pivot 1.3e-13
+  -0.7400: ln|det|    -347.9268  sign -1  min pivot 1.4e-13
+  -0.6800: ln|det|    -345.6881  sign -1  min pivot 1.5e-13
+  -0.6200: ln|det|    -343.5048  sign -1  min pivot 1.8e-13
+  -0.5600: ln|det|    -341.3648  sign -1  min pivot 1.8e-13
+  -0.5000: ln|det|    -339.2617  sign -1  min pivot 1.3e-13
+  -0.4400: ln|det|    -337.1934  sign -1  min pivot 2.4e-13
+  -0.3800: ln|det|    -335.1602  sign -1  min pivot 2.1e-13
+  -0.3200: ln|det|    -333.1660  sign -1  min pivot 2.3e-13
+  -0.2600: ln|det|    -331.2194  sign -1  min pivot 2.7e-13
+  -0.2000: ln|det|    -329.3377  sign -1  min pivot 2.6e-13
+  -0.1400: ln|det|    -327.5593  sign -1  min pivot 4.1e-13
+  -0.0800: ln|det|    -325.9920  sign -1  min pivot 4.7e-13
+  -0.0200: ln|det|    -325.2588  sign -1  min pivot 6.3e-13
+  zero in [-1.5800, -1.5200]: mu = -1.535428304566 (width 2.8e-12, 11 steps)
+  zero in [-0.9800, -0.9200]: mu = -0.975551199568 (width 7.1e-14, 10 steps)
+  57 evaluations, 493 s; record appended to /Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu.jsonl
+== D45.05_M32_m1 exit 0 2026-11-06 01:17 UTC

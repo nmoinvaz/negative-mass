@@ -1,0 +1,32 @@
+== D5_M48_m2 2026-11-06 00:48 UTC
+down_D5.0000.npz: D 5.0, M 48, K 10, |F| 2.3e-31, Delta 3.2217019446, omega 1.950269, mode 2, plant None
+  mu = 0: ln|det| -532.1771, min pivot 2.22e-03;  mu = -0.04: min pivot 1.73e-03
+  -1.0000: ln|det|    -605.5394  sign +1  min pivot 1.6e-05
+  -0.9600: ln|det|    -605.4735  sign +1  min pivot 2.9e-05
+  -0.9200: ln|det|    -605.9361  sign +1  min pivot 2.6e-05
+  -0.8800: ln|det|    -607.5754  sign +1  min pivot 5.7e-06
+  -0.8400: ln|det|    -606.3676  sign -1  min pivot 2.3e-05
+  -0.8000: ln|det|    -605.5074  sign -1  min pivot 5.7e-05
+  -0.7600: ln|det|    -604.9991  sign -1  min pivot 8.7e-05
+  -0.7200: ln|det|    -604.5961  sign -1  min pivot 1.1e-04
+  -0.6800: ln|det|    -604.2521  sign -1  min pivot 1.3e-04
+  -0.6400: ln|det|    -603.9985  sign -1  min pivot 1.4e-04
+  -0.6000: ln|det|    -603.9098  sign -1  min pivot 1.3e-04
+  -0.5600: ln|det|    -603.3096  sign -1  min pivot 2.0e-04
+  -0.5200: ln|det|    -601.0674  sign -1  min pivot 1.6e-04
+  -0.4800: ln|det|    -597.9612  sign -1  min pivot 1.5e-04
+  -0.4400: ln|det|    -594.0651  sign -1  min pivot 6.4e-05
+  -0.4000: ln|det|    -592.1541  sign +1  min pivot 4.4e-06
+  -0.3600: ln|det|    -584.6541  sign +1  min pivot 9.3e-05
+  -0.3200: ln|det|    -579.3689  sign +1  min pivot 2.1e-04
+  -0.2800: ln|det|    -574.3003  sign +1  min pivot 3.7e-04
+  -0.2400: ln|det|    -569.2515  sign +1  min pivot 4.4e-04
+  -0.2000: ln|det|    -564.1087  sign +1  min pivot 6.8e-04
+  -0.1600: ln|det|    -558.6854  sign +1  min pivot 1.0e-03
+  -0.1200: ln|det|    -552.6718  sign +1  min pivot 1.5e-03
+  -0.0800: ln|det|    -546.0556  sign +1  min pivot 1.4e-03
+  -0.0400: ln|det|    -539.1597  sign +1  min pivot 1.7e-03
+  zero in [-0.8800, -0.8400]: mu = -0.870727230257 (width 1.1e-16, 10 steps)
+  zero in [-0.4400, -0.4000]: mu = -0.402368245633 (width 4.5e-12, 11 steps)
+  48 evaluations, 514 s; record appended to /Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu.jsonl
+== D5_M48_m2 exit 0 2026-11-06 00:57 UTC

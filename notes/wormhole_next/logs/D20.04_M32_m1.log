@@ -1,0 +1,31 @@
+== D20.04_M32_m1 2026-11-06 01:18 UTC
+up2_D20.0437.npz: D 20.043653, M 32, K 8, |F| 1.9e-29, Delta 2.1111402926, omega 2.976205, mode 1, plant None
+  mu = 0: ln|det| -871.1817, min pivot 7.98e-27;  mu = -0.06: min pivot 7.61e-08
+  -1.4000: ln|det|    -909.7700  sign -1  min pivot 2.1e-09
+  -1.3400: ln|det|    -905.4785  sign +1  min pivot 3.0e-09
+  -1.2800: ln|det|    -901.1040  sign +1  min pivot 3.5e-09
+  -1.2200: ln|det|    -897.1858  sign +1  min pivot 4.2e-09
+  -1.1600: ln|det|    -893.4499  sign +1  min pivot 4.8e-09
+  -1.1000: ln|det|    -889.8385  sign +1  min pivot 5.6e-09
+  -1.0400: ln|det|    -886.3505  sign +1  min pivot 1.2e-08
+  -0.9800: ln|det|    -883.0383  sign +1  min pivot 1.3e-08
+  -0.9200: ln|det|    -880.1422  sign +1  min pivot 1.5e-08
+  -0.8600: ln|det|    -877.5901  sign -1  min pivot 1.4e-08
+  -0.8000: ln|det|    -872.2494  sign -1  min pivot 1.9e-08
+  -0.7400: ln|det|    -867.9811  sign -1  min pivot 2.4e-08
+  -0.6800: ln|det|    -863.9517  sign -1  min pivot 1.6e-08
+  -0.6200: ln|det|    -860.0388  sign -1  min pivot 1.8e-08
+  -0.5600: ln|det|    -856.1999  sign -1  min pivot 2.1e-08
+  -0.5000: ln|det|    -852.4163  sign -1  min pivot 4.5e-08
+  -0.4400: ln|det|    -848.6791  sign -1  min pivot 5.7e-08
+  -0.3800: ln|det|    -844.9854  sign -1  min pivot 3.4e-08
+  -0.3200: ln|det|    -841.3369  sign -1  min pivot 4.1e-08
+  -0.2600: ln|det|    -837.7408  sign -1  min pivot 4.8e-08
+  -0.2000: ln|det|    -834.2134  sign -1  min pivot 5.7e-08
+  -0.1400: ln|det|    -830.7926  sign -1  min pivot 6.6e-08
+  -0.0800: ln|det|    -827.5856  sign -1  min pivot 7.2e-08
+  -0.0200: ln|det|    -825.2150  sign -1  min pivot 8.5e-08
+  zero in [-1.4000, -1.3400]: mu = -1.381332693750 (width 2.2e-16, 10 steps)
+  zero in [-0.9200, -0.8600]: mu = -0.874313093543 (width 3.4e-12, 11 steps)
+  47 evaluations, 124 s; record appended to /Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu.jsonl
+== D20.04_M32_m1 exit 0 2026-11-06 01:20 UTC

@@ -1,0 +1,5 @@
+coefficient 1/4: residual 0 -> PASS
+coefficient 3/4: residual nonzero -> PASS (control)
+(c Psi)_s - c (Psi_s + Y^2 Psi/4) = 0
+psi = phi solves psi_s = c^-1 (c^-1 psi_t)_t: identical to the background's own equation (by construction)
+exit 0

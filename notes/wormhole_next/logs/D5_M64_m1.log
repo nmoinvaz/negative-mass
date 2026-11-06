@@ -1,0 +1,9 @@
+== D5_M64_m1 2026-11-06 00:43 UTC
+m64_D5.0000.npz: D 5.0, M 64, K 10, |F| 1.3e-30, Delta 3.2217019446, omega 1.950269, mode 1, plant None
+  mu = 0: ln|det| -786.4528, min pivot 9.19e-25;  mu = -0.04: min pivot 2.44e-03
+  -0.4800: ln|det|    -853.7564  sign +1  min pivot 1.0e-04
+  -0.4400: ln|det|    -846.3420  sign -1  min pivot 2.1e-04
+  -0.4000: ln|det|    -833.7872  sign -1  min pivot 3.0e-04
+  zero in [-0.4800, -0.4400]: mu = -0.443036158214 (width 5.6e-17, 15 steps)
+  20 evaluations, 409 s; record appended to /Users/nathan/Source/negative-mass-wh/notes/wormhole_next/ghost_mu.jsonl
+== D5_M64_m1 exit 0 2026-11-06 00:50 UTC

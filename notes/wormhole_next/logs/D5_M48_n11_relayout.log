@@ -1,0 +1,6 @@
+== relayout 2026-11-06 01:18 UTC
+D 5.0: 10 nodes, M 48 -> 11 nodes [0.01, 0.02, 0.05, 0.1, 0.16, 0.23, 0.3, 0.4, 0.5, 0.6, 0.7], M 48, kc 80, ks 200, kfreeze None; start |F| 1.22e-16
+  dn 0 [all]: |F| 1.22e-16 -> 3.16e-25 lam 1 Delta 3.221701944618060 t 20s
+  dn 1: |F| 3.16e-25 converged, Delta 3.221701944618060
+|F| 3.16e-25 after 2 steps; Delta 3.2217019446180597 here, 3.2217019446180597 in the first layout, difference +0.00e+00; saved /private/tmp/claude-501/-Users-nathan-Source-choptuik-large-d/43f19197-40d3-4ad8-aa26-db5322fa8689/scratchpad/wh_states/n11_D5.0000_M48.npz
+== relayout exit 0 2026-11-06 01:18 UTC
