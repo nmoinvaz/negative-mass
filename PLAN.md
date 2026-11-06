@@ -57,10 +57,11 @@ model they sit in disjoint sets of initial data. Saved to investigate later:
      Hirschmann–Eardley's rotating complex-scalar solution);
   2. Brans–Dicke gravity with ω < −3/2 (a ghost scalar in the Einstein frame);
   3. the outcome map for regular-centre normal + ghost initial data, where temporary throats have been seen.
-- **Untested prediction:** a small ghost admixture leaves Choptuik's critical solution unchanged (same Δ and γ).
-  Reason: its ghost-sector perturbations are the same problem as a complex scalar's imaginary-part perturbations, which
-  all decay except one symmetry mode. Test: compute those perturbations of the choptuik-large-d solution across D and
-  look for an eigenvalue crossing zero (that would signal a genuinely two-field branch).
+- **Prediction, tested at linear order:** a small ghost admixture leaves Choptuik's critical solution unchanged (same Δ
+  and γ). Reason: its ghost-sector perturbations are the same problem as a complex scalar's imaginary-part
+  perturbations. choptuik-large-d's test-field counts (its notes/GHOST_ADMIXTURE.md) and `notes/wormhole_next.md` find no
+  growing ghost-sector mode other than the boost at D = 4–67 (numerical evidence). Next: `notes/wormhole_next.md` §4
+  and §6 (the remaining counts, μ∞), and an evolution for the nonlinear test.
 - **Can our solvers represent a wormhole throat?** Not as they stand: choptuik-large-d's areal radial coordinate (and
   this repo's 1+1 code) cannot pass a throat, which shows up like an apparent horizon. Investigate whether a change of
   coordinates (proper radius, or double-null/characteristic coordinates as Shinkai–Hayward used) makes it possible,

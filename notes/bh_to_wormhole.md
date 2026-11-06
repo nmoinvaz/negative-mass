@@ -21,9 +21,11 @@ Status words as in CG: **literature** (with a reference), **checked here** (symp
   vanishes (dispersal), and reappears as two timelike throats only after the field has passed through zero and become a
   ghost.
 - **A little ghost field mixed into Choptuik's collapse fades out at the threshold** (§3, argued). Its energy at horizon
-  formation, relative to the black hole's, falls like (p − p*)^{2|μ|γ}: exponent 0.271 in D = 4 and 0.370 in D = 5,
-  from the known ghost-sector (charge-mode) rates [GMG96, MGM26]. So the first horizon is always a black-hole horizon.
-  The one escape, a ghost-sector mode that grows in some D, is untested (§6).
+  formation, relative to the black hole's, falls like (p − p*)^{2|μ|γ}, with μ the least-damped ghost-sector
+  (charge-mode) rate: exponent 0.273 in D = 4, 0.366 in D = 5, rising to 0.95 at D = 45
+  ([`wormhole_next.md`](wormhole_next.md) §1.3). So the first horizon is always a black-hole horizon. The one escape, a
+  ghost-sector mode that grows in some D, was looked for in choptuik-large-d and not found at D = 4, 8.25, 16.76, 30.07
+  and 45.05 (numerical evidence, §6).
 - **Two published routes turn black holes into wormholes, and neither fits a collapse black hole** (§5): beaming
   negative energy into the eternal two-sided black hole [HK04, KH04], and Hawking evaporation, which makes the horizon
   timelike, "a traversible wormhole by any reasonable definition" in Hayward's local sense [H02]. The second is the
@@ -50,7 +52,11 @@ So the same marginally trapped sphere is
 - **spacelike or null** where the null energy flux through it is positive or zero: a black-hole horizon;
 - **timelike** where the flux is negative: a wormhole throat, which can be crossed in both directions.
 
-This is S. A. Hayward's unification of black holes and wormholes (**literature**: the theorem in [H94], Theorem 2; the wormhole case in [H99, H09]). It holds in every D, and it is
+This is S. A. Hayward's unification of black holes and wormholes (**literature**: the theorem in [H94], Theorem 2; the
+wormhole case in [H99, H09]). It holds in every D: Nozawa and Maeda prove the n-dimensional signature law, that under
+the null energy condition an outer trapping horizon is non-timelike, for Einstein–Gauss–Bonnet gravity in its GR branch,
+which contains Einstein gravity [NM08, Proposition 10]; the expression above is the n-dimensional one (checked here for
+n = 2, 3, 4). It is
 the precise sense in which a black hole "provides the right conditions" for a wormhole: the black hole's horizon is the
 place where a throat would be, and the only thing that decides which it is, is the sign of T₊₊ there. For a massless
 scalar, T₊₊ = ε(∂₊φ)² with ε = +1 (normal) or −1 (ghost). So for the sister equations the answer is simply the sign ε:
@@ -98,8 +104,13 @@ threshold (parameter p, threshold p*), and a small ghost component of size ε_g.
 (φ₁ = φ_Ch, φ₂ = 0) the ghost perturbation is a test field: it obeys the wave equation on the fixed background, and
 its modes grow or decay as e^{μτ}, with τ = −ln(−t) the logarithmic scale (CG §2.3). Known values:
 - μ = 0 exactly for the boost mode, δφ₂ ∝ φ_Ch;
-- the leading other mode: μ = −0.448 at D = 5 [MGM26]; μ = −0.362 ± 0.012 at D = 4 ([GMG96], who write it as +0.362 with the opposite sign of τ; their
-  δ = (2 + 0.362)γ = 0.883 is MGM26's relation δ_Q = (D − 2 − μ)γ).
+- the least-damped other mode on the real axis, from choptuik-large-d's test-field determinant
+  ([`wormhole_next.md`](wormhole_next.md) §1.3, numerical evidence): μ = −0.3651 at D = 4, −0.4430 at D = 5, −0.5052 at
+  D = 6, falling to −0.976 at D = 45 and −0.990 at D = 67;
+- published: μ = −0.362 ± 0.012 at D = 4 ([GMG96], who write it as +0.362 with the opposite sign of τ; their
+  δ = (2 + 0.362)γ = 0.883 is MGM26's relation δ_Q = (D − 2 − μ)γ), which agrees with −0.3651; and μ = −0.448 at D = 5
+  [MGM26], a periodicity fit to evolutions in the window −0.450 to −0.446, which the determinant's −0.4430 lies outside.
+  That discrepancy is open (wormhole_next.md §1.4).
 
 **Argued:**
 1. The solution leaves the critical regime at the scale L ∝ (p − p*)^γ, the size of the black hole that then forms
@@ -111,13 +122,16 @@ its modes grow or decay as e^{μτ}, with τ = −ln(−t) the logarithmic scale
 4. The boost mode does not decay, but it cannot help: an exact boost (φ₁, φ₂) = (cosh β φ, sinh β φ) leaves T₊₊ unchanged
    (**checked here**). A boosted Choptuik solution forms the same black holes.
 5. In energy terms: the ghost energy near the horizon, relative to the black hole's mass, falls like
-   ε_g² (p − p*)^{2|μ|γ}. The exponent is 0.271 at D = 4 and 0.370 at D = 5. The closer to the threshold, the less the
+   ε_g² (p − p*)^{2|μ|γ}. The exponent is 0.273 at D = 4, 0.366 at D = 5 (0.370 with MGM26's μ) and 0.95 at D = 45
+   (wormhole_next.md §1.3). The closer to the threshold, the less the
    ghost field matters. Keeping it comparable would need ε_g to grow like (p − p*)^{−|μ|γ}, which leaves the
    small-admixture regime.
 
 **So a small ghost admixture cannot open a throat at Choptuik's threshold.** The threshold keeps Choptuik's γ and Δ (CG's
 conjecture), and the argument now says how fast the ghost content becomes irrelevant. It rests on μ < 0 for every
-ghost-sector mode except the boost, which is known only at D = 4 and 5.
+ghost-sector mode except the boost. That is numerical evidence: choptuik-large-d's argument-principle counts find no
+other zero with Re μ > −0.1 at D = 4, 8.25, 16.76, 30.07 and 45.05, and the real-axis rates above are negative at every
+D computed, 4 to 67 (§6, item 2).
 
 On "dispersal at the critical time": below the threshold no marginally trapped sphere ever forms, so there is no
 horizon whose direction could flip. Exactly at the threshold the black hole has zero size, and Choptuik's solution
@@ -171,10 +185,14 @@ own. The reverse, black hole into wormhole, needs negative energy, which is §5.
    conditions": it provides the sphere, never the negative energy.
 2. **A growing ghost-sector mode.** If some ghost-sector mode other than the boost had μ > 0 in some D, the ghost content
    would grow near Choptuik's solution instead of fading, and a genuinely two-field critical solution would branch off
-   there (CG §5.3). μ is known only at D = 4 (−0.362) and D = 5 (−0.448). Computing μ(D) across D on the
-   choptuik-large-d background is the decisive test. It needs a test-field version of that solver (the field's two
-   transport equations with the metric frozen), with the exact boost mode (μ = 0) and the D = 4 and 5 values as built-in
-   checks. Not done.
+   there (CG §5.3). **Tested since, at linear order (numerical evidence).** choptuik-large-d computes the test field's
+   multiple-shooting determinant (`hp/modecount_cx`: the field's p, m equations with a and c held at the background)
+   and counts its zeros by the argument principle. It finds only the boost in −0.1 ≲ Re μ ≲ 6.2, |Im μ| < 1.5ω, at
+   D = 8.25, 16.76, 30.07 and 45.05, and near the imaginary axis at D = 4, in two node layouts each (its
+   notes/GHOST_ADMIXTURE.md). The least-damped real rates at D = 4–67 are in [`wormhole_next.md`](wormhole_next.md)
+   §1.3, with D = 4 matching [GMG96] and D = 5 differing from [MGM26] (§1.4 there). Still open: counts between D = 4
+   and 8.25 and above 45, the region between the real zero and Re μ = −0.1, and non-spherical ghost modes
+   (wormhole_next.md §6 runs the first two).
 3. **Large ghost content.** The arguments here are for a small admixture. Regular-centre data with comparable normal and
    ghost fields show transient throats [NRM12]; whether a sharp boundary separates black holes from throats there is
    open (CG §4.4). Item 1 says where to look: on spheres that are about to be trapped.
@@ -205,3 +223,7 @@ guaranteed byte-exact):
 - [SMMV19] A. Simpson, P. Martín-Moruno, M. Visser, CQG 36, 145007 (2019), arXiv:1902.04232.
 - [CK21] S. Chakrabarti, S. Kar, PRD 104, 024071 (2021), arXiv:2106.14761.
 - [Ter22] D. R. Terno, arXiv:2203.03770 (journal not found).
+- [NM08] M. Nozawa, H. Maeda, "Dynamical black holes with symmetry in Einstein–Gauss–Bonnet gravity", CQG 25, 055009
+  (2008), arXiv:0710.2709, doi:10.1088/0264-9381/25/5/055009 (journal and DOI from the arXiv page). Proposition 10 read
+  through ar5iv via a summarizing fetch.
+- choptuik-large-d, notes/GHOST_ADMIXTURE.md (main fece0ba): the test-field counts quoted in §3 and §6.

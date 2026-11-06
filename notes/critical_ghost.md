@@ -51,7 +51,9 @@ A *pure* ghost field has no black-hole threshold at all. In the numerical relati
 - Choptuik's solution embedded in the normal field is an exact solution for either sign.
 - To linear order the ghost-sector perturbations are test fields on Choptuik's background. That is the same problem as the
   imaginary-part perturbations of a complex scalar, which all decay apart from a symmetry mode [GMG96, LRR07]. So
-  ghost admixture should be irrelevant at Choptuik's threshold: the same γ and Δ. No one has tested this.
+  ghost admixture should be irrelevant at Choptuik's threshold: the same γ and Δ. No evolution has tested this. The
+  linear premise is now numerical evidence at D = 4–67 (choptuik-large-d notes/GHOST_ADMIXTURE.md;
+  [`wormhole_next.md`](wormhole_next.md)).
 
 **What links the two sectors in the literature, and what does not.**
 - No paper found connects Choptuik's solution to the wormholes, and none fine-tunes normal + ghost data. The 2025 review
@@ -241,10 +243,14 @@ Model: G_ab = 8π[T_ab(φ₁) + ε T_ab(φ₂)] with □φ₁ = □φ₂ = 0, ε
    - It contains the λ = 0 symmetry mode δφ₂ ∝ φ_Ch: the boost here, the U(1) phase for the complex field.
    - The literature says all charge-carrying perturbations of the real critical solution decay: "only one growing
      perturbation mode within the enlarged solution space" [LRR07, §3.5, summarizing GMG96].
-   - In D = 5 the leading imaginary-perturbation rate is μ = −0.448 [MGM26] (as recorded in choptuik-large-d
-     `matter/LITERATURE.md` §8; not re-read).
+   - In D = 5, [MGM26] fit μ = −0.448 to evolutions (the window −0.450 to −0.446; read for wormhole_next.md).
+     choptuik-large-d's test-field determinant gives −0.4430 there, a discrepancy that is open
+     ([`wormhole_next.md`](wormhole_next.md) §1.4). The value was first recorded here from choptuik-large-d
+     `matter/LITERATURE.md` §8.
    - Identifying GMG96's charged modes at q → 0 with these free test-field modes is argued, not checked against their text.
-4. **Consequence (conjecture, untested).** The black-hole threshold of regular-centre normal + ghost data near Choptuik's
+     Their D = 4 value, −0.362 ± 0.012, agrees with the test-field determinant's −0.3651 (wormhole_next.md §1.3).
+4. **Consequence (conjecture; its linear premise is numerical evidence, §4 item 3).** The black-hole threshold of
+   regular-centre normal + ghost data near Choptuik's
    solution has Choptuik's γ and Δ. The ghost content decays or rides the boost mode. This is the same picture as for a
    complex scalar.
 
@@ -354,8 +360,10 @@ Beyond `notes/literature.md` and the repo's phase 2 and phase 5 results:
    - Is [GGS09b]'s second threshold (ε_c ≈ −0.05) the stable manifold of another member?
    - In n > 4 and Einstein–Gauss–Bonnet, [ST17] have threshold energies and masses but no lifetime scaling.
 3. **Ghost admixture at Choptuik's threshold** (§2.3). Linear analysis says it is irrelevant: same γ and Δ, ghost content
-   decaying or riding the boost mode. No evolution has tested this. Unknown in D > 5: whether the decay of the ghost-sector
-   (test-field) modes on Choptuik's solution persists. It is equivalent to the charge-mode question of [MGM26].
+   decaying or riding the boost mode. No evolution has tested this. At linear order the decay is now numerical evidence
+   in D = 4–67 (choptuik-large-d notes/GHOST_ADMIXTURE.md; [`wormhole_next.md`](wormhole_next.md) §1): no growing
+   ghost-sector mode in the regions counted, and the least-damped real rate falls from −0.365 (D = 4) to −0.990
+   (D = 67). Open: the counts listed in wormhole_next.md §1.2, and an evolution.
 4. **The outcome map of regular-centre normal + ghost data.** Dispersal, black hole, and transient throats [NRM12] are all
    seen. Two questions are open:
    - Is there a codimension-one boundary between "black hole" and "throat/expansion" outcomes?
@@ -414,7 +422,9 @@ signs ε_i (ε₁ = +1, ε₂ = −1) give:
 - ε scales out (§2.3.1), and the embedded Choptuik solution is an exact, ε-independent point. There is nothing to continue
   in, and a Newton continuation in ε would just sit on (φ_Ch, 0).
 - What *is* natural, in order of cost:
-  1. **Ghost-sector spectrum of Choptuik's solution in D dimensions (cheap).**
+  1. **Ghost-sector spectrum of Choptuik's solution in D dimensions (cheap).** *Done since* in choptuik-large-d
+     (notes/GHOST_ADMIXTURE.md), with the test-field sector of `hp/modecount_cx` rather than `dss_ell.py`; the rates are
+     in [`wormhole_next.md`](wormhole_next.md) §1.3. The plan as first written:
      - Freeze the background (a, c) and solve the linear periodic problem for (p₂, m₂) alone, in both half-period parity
        sectors. This is the existing perturbation machinery (`mode_matrix` / `dss_ell.py` at L = 0) with the metric
        perturbation switched off.
