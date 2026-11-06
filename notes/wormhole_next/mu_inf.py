@@ -4,7 +4,10 @@ extrapolation first (notes/wormhole_next.md section 6.4). Criteria written befor
 
     python3 mu_inf.py [--records=ghost_mu.jsonl,ghost_mu2.jsonl] [--dmin=16]
 
-Data: the least-damped real zero mu(D) of every mode-1, unplanted record with D >= dmin (one per D, the highest M).
+Data: the least-damped real zero mu(D) of every mode-1, unplanted record with D >= dmin (one per D, the highest M),
+whose exact zero at mu = 0 stands out: pivot(0)/pivot(-h) < ratio_max (default 1e-4). This selection was added on
+2026-11-06 after the step-2 runs at D >= 74 showed the determinant numerically singular at every mu (ratio 0.02-2), and
+before this script was first run on real data; the script also reports the fit with ratio_max = 1e-2 (D 72, 73.27 in).
 
 Estimator (fixed here): least-squares fits mu(n) = L + sum_{j=1..k} c_j n^-j, n = D - 2, for k = 2, 3, 4 and for the
 data from each of the three lowest D upward (9 fits; a fit needs at least k + 3 points). The estimate is the midpoint of
@@ -31,7 +34,7 @@ import sys
 import numpy as np
 
 
-def load(paths, dmin):
+def load(paths, dmin, ratio_max=1e-4):
     pts = {}
     for p in paths:
         if not os.path.exists(p):
@@ -39,6 +42,8 @@ def load(paths, dmin):
         for line in open(p):
             r = json.loads(line)
             if r["mode"] != 1 or r.get("plant") is not None or r["D"] < dmin:
+                continue
+            if r["pivot0"] / r["pivot_h"] >= ratio_max:
                 continue
             z = [x["mu"] for x in r["zeros"] if x["ok"]]
             if not z:
@@ -79,7 +84,7 @@ def main():
     opts = dict(a[2:].split("=", 1) for a in sys.argv[1:] if a.startswith("--") and "=" in a)
     here = os.path.dirname(os.path.abspath(__file__))
     recs = [os.path.join(here, f) for f in opts.get("records", "ghost_mu.jsonl,ghost_mu2.jsonl").split(",")]
-    D, y = load(recs, float(opts.get("dmin", 16)))
+    D, y = load(recs, float(opts.get("dmin", 16)), float(opts.get("ratio_max", 1e-4)))
     n = D - 2
     print(f"data: {len(D)} points, D = {[float(d) for d in D]}")
     bad = []
@@ -130,6 +135,10 @@ def main():
         print(f"    terms to 1/n^{k}, from D = {d0:.2f}: L = {L:+.6f}, max residual {res:.1e}")
     print(f"mu_inf = {mid:+.4f} +- {half:.4f} (spread over fit choices); the interval "
           f"{'contains' if mid - half <= -1 <= mid + half else 'excludes'} -1")
+    D2, y2 = load(recs, float(opts.get("dmin", 16)), 1e-2)
+    if len(D2) != len(D):
+        mid2, half2, _ = estimate(D2, y2)
+        print(f"with ratio_max = 1e-2 ({len(D2)} points, to D = {float(D2[-1])}): mu_inf = {mid2:+.4f} +- {half2:.4f}")
 
 
 if __name__ == "__main__":
