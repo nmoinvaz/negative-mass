@@ -48,7 +48,8 @@ and nonlinear stability are all outside this theorem.
   Z'' - \frac{w'}{w}\,Z' = W^2 Z .
   ```
 
-- With Z = w q′/W² this equation is equivalent, for W ≠ 0, to (w q′)′ = W² w q (S2).
+- With q = Z′/w the equation reads q′ = W² Z/w, so Z = w q′/W² and, differentiating, (w q′)′ = W² w q. Conversely a
+  solution q of that equation gives Z = w q′/W² with Z′ = w q, which solves the Z equation (W ≠ 0; S2).
 - With q = χ/s, it becomes a Schrödinger equation (S2):
 
   ```math
@@ -98,7 +99,7 @@ So χ_N has exactly one zero on (0, ∞) for every n ≥ 2, and χ₀ none.
 - At a zero β of u, 𝒲(β) = u′(β)v(β) ≤ 0; at a zero α, 𝒲(α) = u′(α)v(α) ≥ 0.
 - At a Neumann end, or an end where u = v = 0, 𝒲 = 0.
 - At ±∞, 𝒲 → 0: u and u′ decay exponentially (assumption 2), while χ₀, χ_N and their derivatives grow at most like
-  a power of l (s ~ l^{(n−2)/2}, H bounded on [1, ∞)).
+  a power of l (s ~ l^{(n−2)/2}, and |H| grows at most like l).
 - Every case gives 𝒲(β) − 𝒲(α) ≤ 0, a contradiction. ∎
 
 **Step 5: at most one, and none odd (proved).**

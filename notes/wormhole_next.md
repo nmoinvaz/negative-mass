@@ -208,6 +208,8 @@ CLD's `matter/LITERATURE.md` §8 already lists μ(D) as a "cheap side test".
 
 ### 2.1 Exactly one unstable mode in every D
 
+*Done since: proved for the symmetric wormhole in every D ≥ 4, §7 and `wormhole_largeD/one_mode.md`.*
+
 - **Known.** [GGS09a]'s abstract claims one growing mode for every member of the D = 4 static family. Their proof, read
   through a summarizing fetch, uses the zero mode 1/Ψ₀ and covers γ₁ ≠ 0. For the symmetric member (γ₁ = 0, Paper III's
   case) that zero mode is not normalizable, and uniqueness is asserted "by continuity". CG §1.1 says the whole family is
@@ -349,6 +351,36 @@ These are drafts. The numbers come from §1.3.
 - **PLAN.md, "Later", "Untested prediction".** "Tested at linear order (numerical evidence, D = 4–67): no ghost-sector
   mode other than the boost grows (choptuik-large-d notes/GHOST_ADMIXTURE.md; notes/wormhole_next.md). Next:
   wormhole_next.md §4."
+
+## 7. Step 3: one unstable radial mode in every D (proved)
+
+The proof is in [`wormhole_largeD/one_mode.md`](wormhole_largeD/one_mode.md), and its checks are in `one_mode.py`
+(log `one_mode.log`: all pass, all controls fire).
+
+- **What is proved.** The massless, reflection-symmetric Ellis wormhole has exactly one unstable spherically symmetric
+  mode in every D ≥ 4. The mode is even across the throat, and there is no odd one.
+- **What is assumed.**
+  - Paper III's master equation in the gauge δφ = 0, checked symbolically there for symbolic n.
+  - Standard spectral facts for −d²/dl² + U with U bounded and vanishing at infinity (refs. in one_mode.md): self-adjointness,
+    σ_ess = [0, ∞), and exponential decay of bound states.
+- **How the proof goes.**
+  - With Y = rZ, q = Z′/w and χ = s q, where s = r′ r^{(n−2)/2} and w = s², Paper III's equation becomes
+    −χ″ + Uχ = −W²χ with U = (n − 2)(n − 4)/(4r²) − 3n²/(4r^{2n}), regular at the throat. At D = 4 this is [CPS20]'s
+    −3/r⁴.
+  - The odd zero-energy solution s is positive for l > 0, so the odd sector has no unstable mode.
+  - The even zero-energy solution s·H has exactly one positive zero. For D ≥ 6 this rests on the sign of a Beta function,
+    H(∞) = −B(1/2 − 1/m, −1/2)/(2m) < 0 with m = D − 3. For D = 4 and 5, H diverges to −∞.
+  - A Wronskian comparison lemma and a variational argument then give exactly one even negative eigenvalue.
+- **Checks.**
+  - Each identity is checked in sympy with a control: S1–S5.
+  - Numerically (N1–N4): the Beta formula against the integrated ODE at m = 3–25; the zero counts at D = 4–50; and the
+    bound state's −E against Paper III's W² to 3×10⁻⁹ (D = 4, 10, 20, 50). The control, a wrong potential, moves it by
+    0.14–11%.
+- **Relation to the literature** (read for this):
+  - [GGS09a] prove D = 4 for γ₁ ≠ 0 and argue γ₁ = 0 by continuity.
+  - [CPS20] sketch γ₁ = 0 with a non-normalizable zero-energy solution.
+  - Two searches found no proof for D > 4.
+  - critical_ghost §1.1 overstated GGS09a and is corrected.
 
 ## Files
 

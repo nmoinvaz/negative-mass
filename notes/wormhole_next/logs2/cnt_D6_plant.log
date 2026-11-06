@@ -1,0 +1,12 @@
+== cnt_D6_plant 2026-11-06 02:56 UTC: modecount_test.py /Users/nathan/Source/choptuik-large-d-raw/T79-win/down_D6.0000.npz --threads=2 --data=/Users/nathan/Source/negative-mass-wh/notes/wormhole_next/counts --allow_unraw --boxes=B0,U0,full --aLL=-0.4252 --tag=D6.0000_M48 --plant=-0.35+0.6j
+=== 2026-11-05 18:56:12  test field, down_D6.0000.npz: D 6.0, M 48, kfreeze None, |F| 1.8e-31; Delta 3.009483220493, omega 2.087795; planted zeros at (-0.35+0.6j) and its conjugate
+  contour: aLL -0.4252, aL 0.3000, a1 1.9752, a2 2.9252, aR 6.7000; y1 = omega/2 = 1.0439, y2 = 1.5 omega = 3.1317
+  candidate poles with |Im| < y2, Re in (-1, 9): [(1.3732, -2.0878), (-0.5073, -2.0878), (0.1195, -2.0878), (0.7463, -2.0878), (0.7463, 2.0878), (0.1195, 2.0878), (-0.5073, 2.0878), (1.3732, 2.0878)]
+  expected zeros: [(0.0, -4.175591), (0.0, 0.0), (0.0, 4.175591)]
+    10 evaluations, 0.0 s each
+  real axis, sign of det M: 0.300:+, 0.500:+, 1.000:+, 1.500:+, 1.975:+, 2.000:+, 2.500:+, 2.925:+, 3.000:+, 3.500:+, 4.000:+, 4.500:+, 5.000:+, 5.500:+, 6.000:+, 6.500:+, 6.700:+
+  sign changes of det M on the real axis: []
+  404 candidate poles multiplied out, 3 expected zeros divided out; trend p(lam) = -0.5950 lam^2 + 180.1383 lam + 680.241 (residual on the real axis max 0.325)
+    20 evaluations, 0.0 s each
+  edge Re=aR, Im 0->y1: 4 points, phase change of g +0.564127, max step 0.193 rad (det M itself: 1.519), spacing 3.48e-01..3.48e-01, ln|g| 0.03..0.24, verified 0 (mismatch 0) in 1 passes
+  edge Re=aL, Im 0->y1: 4 points, phase change of g +0.834596, max step 0.352 rad (det M itself: 1.145), spacing 3.48e-01..3.48e-01, ln|g| -0.32..0.43, verified 0 (mismatch 0) in 1 passes

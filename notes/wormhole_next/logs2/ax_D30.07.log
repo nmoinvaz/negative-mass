@@ -1,0 +1,31 @@
+== ax_D30.07 2026-11-06 02:44 UTC: modecount_test_axis.py /Users/nathan/Source/choptuik-large-d/hp/data/states/up6_D30.0688.npz --s=1 --threads=2 --out=/Users/nathan/Source/negative-mass-wh/notes/wormhole_next/axis_s1.jsonl --allow_unraw --lo=-1.6 --hi=-0.02 --h=0.04
+  |F| 3.3e-12 in this layout: Newton
+D 30.068824: M 32, |F| 6.0e-25, omega 3.198742; line Im = 1.0 omega = 3.198742, Re -1.6 .. -0.02; poles multiplied out: [(1.6372, 3.1987), (0.8107, 3.1987), (-0.0158, 3.1987), (-0.8423, 3.1987), (-1.6688, 3.1987), (-2.4953, 3.1987), (-3.3218, 3.1987)]
+  -1.6000: ln|g|   -1142.7143, arg g -1.0128, min |u_kk| 2.0e-12
+  -1.5600: ln|g|   -1140.3342, arg g -1.0074, min |u_kk| 2.2e-12
+  -1.5200: ln|g|   -1137.9671, arg g -1.0019, min |u_kk| 2.5e-12
+  -1.4800: ln|g|   -1135.6127, arg g -0.9965, min |u_kk| 3.1e-12
+  -1.4400: ln|g|   -1133.2709, arg g -0.9911, min |u_kk| 3.5e-12
+  -1.4000: ln|g|   -1130.9423, arg g -0.9856, min |u_kk| 3.8e-12
+  -1.3600: ln|g|   -1128.6281, arg g -0.9802, min |u_kk| 4.2e-12
+  -1.3200: ln|g|   -1126.3301, arg g -0.9748, min |u_kk| 4.6e-12
+  -1.2800: ln|g|   -1124.0512, arg g -0.9693, min |u_kk| 5.1e-12
+  -1.2400: ln|g|   -1121.7960, arg g -0.9639, min |u_kk| 5.6e-12
+  -1.2000: ln|g|   -1119.5718, arg g -0.9585, min |u_kk| 6.1e-12
+  -1.1600: ln|g|   -1117.3912, arg g -0.9530, min |u_kk| 6.7e-12
+  -1.1200: ln|g|   -1115.2781, arg g -0.9476, min |u_kk| 7.3e-12
+  -1.0800: ln|g|   -1113.2873, arg g -0.9422, min |u_kk| 8.0e-12
+  -1.0400: ln|g|   -1111.5961, arg g -0.9367, min |u_kk| 8.7e-12
+  -1.0000: ln|g|   -1112.6590, arg g +2.2103, min |u_kk| 2.7e-12
+  -0.9600: ln|g|   -1106.7396, arg g +2.2157, min |u_kk| 1.1e-11
+  -0.9200: ln|g|   -1103.6653, arg g +2.2212, min |u_kk| 1.2e-11
+  -0.8800: ln|g|   -1100.8698, arg g +2.2266, min |u_kk| 1.3e-11
+  -0.8400: ln|g|   -1098.1904, arg g +2.2321, min |u_kk| 1.4e-11
+  -0.8000: ln|g|   -1095.5755, arg g +2.2375, min |u_kk| 1.5e-11
+  -0.7600: ln|g|   -1093.0015, arg g +2.2429, min |u_kk| 1.7e-11
+  -0.7200: ln|g|   -1090.4560, arg g +2.2484, min |u_kk| 1.8e-11
+  -0.6800: ln|g|   -1087.9315, arg g +2.2538, min |u_kk| 2.0e-11
+  -0.6400: ln|g|   -1085.4231, arg g +2.2593, min |u_kk| 2.2e-11
+  -0.6000: ln|g|   -1082.9275, arg g +2.2647, min |u_kk| 2.4e-11
+  -0.5600: ln|g|   -1080.4422, arg g +2.2701, min |u_kk| 2.6e-11
+  -0.5200: ln|g|   -1077.9654, arg g +2.2756, min |u_kk| 2.4e-11
