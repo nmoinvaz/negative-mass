@@ -2,7 +2,7 @@
 # so instead test the canonical-star crossing: radial agent's unstable canonical l=0 is not polar l>=2.
 # Use the mini star with the box shifted to contain s_qnm (Re s<0 allowed here since kp,km cuts are on Re s=0
 # only for |Im s| > 1-w ... box is small and away from them).
-import sys; sys.path.insert(0,'/home/claude/negative-mass/phase2/nonradial')
+import os, sys; sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np, mini_bs as mb, background as B
 from polar_solver import PolarProblem
 st=mb.star_from_shoot(0.08)
