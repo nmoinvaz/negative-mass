@@ -21,11 +21,12 @@ physics is in [README.md](README.md) and the plan in [PLAN.md](PLAN.md). This se
 
 ## Tasks: the GitHub project
 
-Every task is an issue of this repository, planned in the GitHub project "negative-mass" of the user nmoinvaz (private),
-with the fields Status, Owner, Area, Estimate and Depends on, and the repository's milestones as goals. The issue's body
-is the task: its commands, threads, stop conditions, what to push, and acceptance criteria whose check can fail. Issues
-are public, so they carry no credentials, personal data or private correspondence, and an @ handle only for a real login
-meant to be notified. Nathan's own to-dos stay out of the project.
+Every task is an issue of this repository, planned in the GitHub project "negative-mass" of the user nmoinvaz ([project
+2](https://github.com/users/nmoinvaz/projects/2), private), with the fields Status, Owner, Area, Estimate and Depends
+on, and the repository's milestones as goals. The issue's body is the task: its commands, threads, stop conditions, what
+to push, and acceptance criteria whose check can fail. Issues are public, so they carry no credentials, personal data or
+private correspondence, and an @ handle only for a real login meant to be notified. Nathan's own to-dos stay out of the
+project.
 
 - **Assignment, by Remote Control.** The coordinator tells each runner which task to take next with a Remote Control
   message to the runner's session (SendMessage), naming the issue and repeating its commands; the issue's body stays the
