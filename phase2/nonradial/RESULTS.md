@@ -70,14 +70,28 @@ Regge–Wheeler potential (their (κ/2)(ρ − p_rad) term with κ = 8π).
 | phantom ω = 0.7603 | 3 | [1e-3, 1000] | **0** |
 | canonical ω = 0.75, M = +0.014626 | 2 | [1e-3, 300] | **0** |
 | canonical ω = 0.75 | 3 | [1e-3, 1000] (30 pts) | **0** |
-| phantom ω = 0.70, M = −0.020824 | 2 | [1e-3, 300] (30 pts) | **0** |
-| phantom ω = 0.85, M = −0.009745 | 2 | [1e-3, 300] (30 pts) | **0** |
+| phantom ω = 0.70, M = −0.020824 | 2 | [1e-3, 300] | **0** |
+| phantom ω = 0.70 | 3 | [1e-3, 1000] | **0** |
+| phantom ω = 0.85, M = −0.009745 | 2 | [1e-3, 300] | **0** |
+| phantom ω = 0.85 | 3 | [1e-3, 2000] | **0** |
 
-The DG point-mass rate k/(2|M|) is 137 (l = 2) and 686 (l = 3); both lie inside the scanned ranges.
+The DG point-mass rate k/(2|M|) is 137 (l = 2) and 686 (l = 3) for the campaign star; both lie inside the scanned
+ranges. It scales as 1/|M|, so the ω = 0.85, l = 3 scan goes to 2000.
+
+The ω = 0.70 and 0.85 rows are from #7 (`TAG=_n100`, raw negative-mass-raw I7-win2 at 60553bc). The ω = 0.85, l = 2
+scan crashed twice on win2 (access violations, at a different offset each time) and was completed on the Mac (I7-mac
+at d766289). Its CSV agrees with win2's serial evaluation of D on the same grid to a relative 7×10⁻⁹ at worst
+(`cmp_scan_diag.py`, pass criterion 10⁻⁸). The earlier 30-point l = 2 scans of these stars, `scan_eps-1_w0.7_l2.csv` and
+`scan_eps-1_w0.85_l2.csv`, also had no sign change.
 
 **Convergence** (`convergence.py`, `convergence_l2_output.txt`, phantom l = 2, γ ∈ {1e-3 … 137}):
 - rtol 1e-12, background R = 90 and r0 = 3e-3 change D by ≤ 2×10⁻⁴ relative, with the sign unchanged;
 - moving r_m to 34 (φ0 = 10⁻¹²) rescales D (it is a normalised determinant), and the sign is unchanged.
+
+#7 repeats this for ω = 0.70 and 0.85, l = 2 and 3 (`convergence.py l w`). D is negative in all five variants at every
+γ, with a relative spread at the same r_m of at most 1.4×10⁻⁴ (ω = 0.70) and 2.6×10⁻⁴ (ω = 0.85) (I7-win2 at 60553bc).
+The ω = 0.85 jobs crashed on win2 before finishing and were completed on the Mac (I7-mac at d766289), with every row
+both machines printed identical to the printed digits.
 
 The mode condition q_int = q_ext (interior vs exterior Zerilli log-derivative at r_m) is far from
 satisfied at every γ: q_int ≈ +√(γ² + …) and q_ext ≈ −√(γ² + …). The interior solution is the
@@ -137,8 +151,20 @@ Mini BS I QNM, 0.0000 displaced.
 | phantom ω = 0.7603 | 2 | Re s ∈ [0.1, 2], \|Im s\| ≤ 2.5 | **0.0000** |
 | phantom ω = 0.7603 | 3 | same | **0.0000** |
 | canonical ω = 0.75 | 2 | same | **0.0000** |
+| phantom ω = 0.70 | 2 | same | **0.0000** |
+| phantom ω = 0.70 | 3 | same | **0.0000** |
+| phantom ω = 0.85 | 2 | same | **0.0000** |
+| phantom ω = 0.85 | 3 | same | **−2.0000** |
 
-(`winding2_output.txt`; max phase step 0.4 rad; D(x0), D(x1) have the same sign.) No oscillatory
+(`winding2_output.txt` for the first three rows, #7's I7-win2 at 60553bc for the rest; max phase step 0.4 rad; D(x0),
+D(x1) have the same sign.)
+
+**Discrepancy (#7).** A count of zeros cannot be negative, so for ω = 0.85, l = 3 D has a net pole in the box. A
+hypothesis, tested in #54: the Zerilli column (1, q/f) of `polar_solver.decaying_plane` has a pole wherever the
+decaying Zerilli solution vanishes at r_m. If so, each winding counts zeros minus poles, and a 0 alone does not exclude a
+zero. Until #54 settles it, the 0 counts are conditional on D having no pole in the box.
+
+No oscillatory
 instability with e-folding time ≤ 10 (code units) and |Im s| ≤ 2.5. This range covers the scalar
 frequencies ω ± Im s up to the continuum and beyond.
 
@@ -152,10 +178,12 @@ k± → 0 at Im s = ±(1−ω), which makes the integration slow (R_s ∝ 1/Re k
    **no unstable polar mode with γ ∈ [10⁻³, 300] (l = 2) or γ ∈ [10⁻³, 1000] (l = 3)**. The search used
    100 log-spaced points, and D keeps the same sign under all convergence variants. The point-mass DG
    rates (137 and 686) lie inside these ranges. The canonical star (ω = 0.75) gives the same result
-   (expected: it is on the stable branch).
-2. **Polar, complex growth rates.** Argument-principle count (validated on a known QNM): **0 zeros** in
-   Re s ∈ [0.1, 2], |Im s| ≤ 2.5, for phantom l = 2, phantom l = 3 and canonical l = 2. This covers
-   matter-sector (Q-ball-type) oscillatory instabilities in that box.
+   (expected: it is on the stable branch). The phantom stars ω = 0.70 and 0.85 give the same result for
+   l = 2 and 3 (#7).
+2. **Polar, complex growth rates.** Argument-principle count (validated on a known QNM): winding **0** in
+   Re s ∈ [0.1, 2], |Im s| ≤ 2.5, for phantom l = 2, phantom l = 3 and canonical l = 2, and for ω = 0.70
+   (l = 2, 3) and ω = 0.85 (l = 2). This means 0 zeros only if D has no pole in the box. ω = 0.85, l = 3
+   gives −2, a net pole, so that condition is open (§5, #54).
 3. **Axial: stable for all l ≥ 2.** V_ax > 0 everywhere; positivity is exact once V_ax > 0 is checked on
    the grid (r²V_ax/(α² l(l+1)) ≥ 1 − 10⁻⁶).
 4. **κ_eff.** κ_eff − κ_c = s²/(q_int − g) exactly, and for the phantom star q_int > g, so the matter
@@ -171,8 +199,9 @@ k± → 0 at Im s = ±(1−ω), which makes the integration slow (R_s ∝ 1/Re k
   nearby roots (an even number between grid points) would be missed. The κ_eff picture (q_int − q_ext ≈
   2γ, far from 0) makes this implausible, but it is not a proof.
 - Complex s: the strip 0 < Re s < 0.1 off the real axis, and |Im s| > 2.5, were not counted.
-- Only l = 2, 3. The ω = 0.7603 star was done fully; ω = 0.70 and 0.85 have only the l = 2 real-γ scan (30 pts); c_l and axial positivity also at ω = 0.85 (and axial
-  at 0.70, 0.90).
+- Only l = 2, 3. The ω = 0.7603, 0.70 and 0.85 stars have the real-γ scans, convergence variants and windings (0.70
+  and 0.85 in #7). c_l and axial positivity are also checked at ω = 0.85, and axial positivity at 0.70 and 0.90.
+- The windings count zeros minus poles of D if D has poles in the box, and ω = 0.85, l = 3 shows a net pole (§5, #54).
 - The equations for (tt) and the angular trace are verified numerically (relative residual ≤ 7×10⁻⁷),
   not symbolically. (tθ), (tr), (rθ) are verified exactly.
 - Weak-field stars only (|M|/R ~ 3×10⁻³). Nothing here says what happens for compact phantom stars.
