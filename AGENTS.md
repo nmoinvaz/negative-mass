@@ -73,6 +73,8 @@ project.
 - **Long runs** start with a pilot of the hardest case with a stop condition, are launched detached (on Windows with
   `start`), so a session restart cannot end them, and write their results incrementally. Windows Update can restart a
   machine: before an overnight run on win2 or the laptop, ask Nathan to pause updates.
+- **Memory.** On win2 nothing stops or kills a process because of its memory use (Nathan, 2026-11-08). No stop
+  condition triggers on memory, and a memory watcher only reports, on the issue and to the coordinator.
 
 ## How results are checked
 
