@@ -96,8 +96,9 @@ Novelty status of each result: `notes/novelty/RESULTS.md`.
    point-mass instability is not triggered. Scans, not proofs: l ≥ 4, Re s < 0.1 and compact stars remain open.
 
 ## Setup
+Software and environment: [setup.md](setup.md).
 ```
-pip install sympy mpmath numpy scipy
+pip install -r requirements.txt
 python phase0/verify_zerilli.py   # several minutes (symbolic limits)
 python phase0/mode_width.py
 ```
