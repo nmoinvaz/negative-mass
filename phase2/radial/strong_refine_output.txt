@@ -1,0 +1,5 @@
+selftest planted turning point 0.2734: recovered
+PASS: rows 19, step 0.001, sign changes 1, alpha_sigma 0.2734, alpha_N 0.2734, alpha_M 0.2734, |alpha_N - alpha_sigma| 4.15779e-14, |alpha_M - alpha_sigma| 3.01426e-14
+selftest crossing moved by 5 steps: FIRED
+FAIL: rows 19, step 0.001, sign changes 1, alpha_sigma 0.2784, alpha_N 0.2734, alpha_M 0.2734, |alpha_N - alpha_sigma| 0.005, |alpha_M - alpha_sigma| 0.005
+PASS: rows 19, step 0.001, sign changes 1, alpha_sigma 0.270923, alpha_N 0.270924, alpha_M 0.270924, |alpha_N - alpha_sigma| 1.277e-06, |alpha_M - alpha_sigma| 1.08711e-06

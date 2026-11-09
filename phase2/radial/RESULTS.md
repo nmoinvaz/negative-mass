@@ -103,11 +103,14 @@ Convergence (`convergence.py`, `convergence_output.txt`). The eigenvalue changes
 
 For example, ω = 0.94 gives σ² = −5.4314738e-3 in every variant. The FD check gives σ² = −5.449e-3 at
 n = 300, consistent with O(h²) (more resolutions are in `fd_check_output.txt`, see §6). FD finds no complex
-eigenvalue with |σ²| < 0.3 at ω = 0.75 (n = 300 and 600) or at ω = 0.94 (n = 300).
+eigenvalue with |σ²| < 0.3 at ω = 0.75 or 0.94 (n = 300 and 600).
 
-Canonical low-ω / strong-field part (`lowscan.py`, `strongfield.py`; `low_p.txt`, `strong_p.txt`).
+Canonical low-ω / strong-field part (`lowscan.py`, `strongfield.py`; `low_p.txt`, `strong_p.txt`,
+`strong_p_turn.txt`).
 - Along the canonical family **N and M keep growing down to ω ≈ 0.200, where N peaks at ≈ 42.73
   (M ≈ 11.93, max 2m/r ≈ 0.66)**. The value "ω_min = 0.316" corresponds to N ≈ 9.2, not to a turning point.
+- At the 11 values of N from 0.3 to 42.6 in `low_p.txt` (160 + 160 grid points, §6) the fundamental σ² is
+  positive, falling from 8.57e-2 to 4.04e-5.
 - The fundamental σ² stays positive and drops toward 0 as that maximum is approached:
 
 | α(0) | ω | N | M | σ²₀ |
@@ -124,10 +127,12 @@ Canonical low-ω / strong-field part (`lowscan.py`, `strongfield.py`; `low_p.txt
 | 0.27 | 0.199631 | 42.72676 | 11.931862 | **−2.01e-6** |
 | 0.26 | 0.198538 | 42.67740 | 11.922043 | **−2.36e-5** (past the maximum, N falling) |
 
-**The second turning point also reproduces the criterion.** σ₀² changes sign between α₀ = 0.28 and 0.27,
-and the maximum of N (and M) lies in the same interval: N = 42.6944 → 42.72676 → 42.6774, peak within
-≈ 0.27 ± 0.005. Beyond it the star is unstable. The resolution is set by the α₀ step (0.01); I did not
-refine the coincidence here to the 1e-8 level achieved at the high-ω turning point.
+**The second turning point also reproduces the criterion.** A rescan from α₀ = 0.280 to 0.262 in steps of
+0.001 (`strong_p_turn.txt`, #9 on win2, raw `I9-win2` at 30241af) has one sign change of σ₀², between
+α₀ = 0.271 (+1.68e-7, ω = 0.199746) and 0.270 (−2.01e-6, ω = 0.199631). `strong_refine.py`
+(`strong_refine_output.txt`) puts σ₀² = 0 at α₀ = 0.270923 and the maxima of N and M at 0.270924, from
+parabolas through the largest row and its neighbours. They agree to 1.3×10⁻⁶ in α₀, against the 0.001 step.
+Beyond it the star is unstable.
 (The value "ω_min = 0.316" corresponds to N ≈ 9.2, not to a turning point; the family continues to ω ≈ 0.199.)
 
 ## 4. Phantom family (ε = −1)
@@ -166,7 +171,8 @@ For the campaign star there is no sign change of D on σ² ∈ [−4, (1−ω)²
 (`deep_negative_output.txt`, `convergence_output.txt`). That excludes real growth rates up to |σ| = 2 in code
 units (e-folding time ≥ 0.5) and beyond. The FD complex-spectrum check for ε = −1 finds no complex eigenvalue; see §6.
 
-Low-ω / strong-field phantom (`lowscan.py` via N-continuation, `strongfield.py` via α(0); `strong_m.txt`):
+Low-ω / strong-field phantom (`lowscan.py` via N-continuation, `strongfield.py` via α(0); `low_m.txt`,
+`strong_m.txt`):
 - The phantom family has a **fold in ω (ω_min ≈ 0.42226 at N ≈ 5.6)**. N and |M| are monotone through it,
   and ω turns back up.
 - The fundamental σ² stays positive and smooth across the fold. No mode crosses there.
@@ -180,6 +186,7 @@ Low-ω / strong-field phantom (`lowscan.py` via N-continuation, `strongfield.py`
 | α₀ = 1.17 (fold) | 0.42226 | 5.46 | −2.404 | 2.25e-2 |
 | α₀ = 1.20 | 0.4230 | 7.33 | −3.193 | 1.99e-2 |
 | α₀ = 1.25 | 0.4269 | 10.92 | −4.718 | 1.72e-2 |
+| N = 12 | 0.4284 | 12.00 | −5.181 | 1.66e-2 |
 | α₀ = 1.30 | 0.4328 | 15.07 | −6.502 | 1.55e-2 |
 | α₀ = 1.40 | 0.4479 | 24.91 | −10.84 | 1.36e-2 |
 | α₀ = 1.50 | 0.4653 | 36.65 | −16.20 | 1.27e-2 |
@@ -191,7 +198,7 @@ phantom low-ω side, and no unstable radial mode.
 
 1. **Canonical:** reproduced the textbook result at both turning points of the family. The fundamental
    mode crosses σ² = 0 at the weak-field extremum of M and N (ω = 0.925844), to 2×10⁻⁸. It crosses again
-   at the strong-field maximum of N and M (ω ≈ 0.1996, N ≈ 42.727), to the scan resolution. The stable
+   at the strong-field maximum of N and M (ω ≈ 0.1997, N ≈ 42.727), to 1.3×10⁻⁶ in α₀. The stable
    side is dN/dω < 0 between them.
 2. **Phantom:** the campaign star ω = 0.7603 is **radially (l = 0) linearly stable**.
    - The family is stable for ω ≲ 0.9289 and unstable above it. The instability sets in exactly at the
@@ -213,20 +220,24 @@ phantom low-ω side, and no unstable radial mode.
 
 ## 6. Caveats / open items
 
-- **Coarse root grids on the low-ω tables.** `lowest_modes` brackets roots on a fixed σ² grid. A re-check of
-  canonical N = 3 with a 5× denser grid found the fundamental at **1.637e-2**. The coarse run listed
-  1.749e-1 there: it skipped a close pair. Rows from `low_p.txt` / the 16-point grid may therefore have
-  missed the lowest positive root. The `strongfield.py` rows use a 64-point grid on [−0.2, 0.1], and the
-  high-ω tables are bracketed densely near 0, which is where the sign question lives. **Negative σ² can
-  still be missed only if an even number of roots sits between grid points.** The stronger statement for
-  the campaign stars, "no root on [−4, 0)", comes from 40 log-spaced points plus the FD spectrum.
-- **Strong-field canonical maximum (ω ≈ 0.2)** is resolved only to the α₀ step 0.01 (§3). Not refined.
-- **FD and complex-spectrum checks (completed before a container restart cut off the remaining cells):**
+- **Root grids.** `lowest_modes` brackets roots on a fixed σ² grid, so a pair of roots between two grid
+  points is lost. #9 (win2, raw `I9-win2` at 30241af) ran `lowscan.py` at 16 + 16, 80 + 80 and 160 + 160
+  points. The 80 and 160 point rows agree root for root in all 14 rows (`cmp_lowscan.py`). The 16-point
+  grid missed the lowest root at ε = +1, N = 3 (1.637e-2, where it listed 1.749e-1) and at ε = −1, N = 12
+  (1.661e-2, where it listed 1.379e-1), and higher roots in 7 more rows. No row has a negative root at any
+  grid. `low_p.txt` and `low_m.txt` hold the 160-point rows. The grids of `scan_canonical.py` (16 + 16),
+  `crossing.py` (8 + 8, first root only) and `strongfield.py` (24 + 40 on [−0.2, 0.1]) are not yet
+  rechecked (#56). They are log-dense near 0, where the sign question lives. **Negative σ² can still be
+  missed only if an even number of roots sits between grid points.** The stronger statement for the
+  campaign stars, "no root on [−4, 0)", comes from 40 log-spaced points plus the FD spectrum.
+- **FD and complex-spectrum checks** (the cells a container restart cut off were completed by #9):
   - FD lowest σ² converge under n = 250/400/550 and agree with shooting: ε=+1 ω=0.94 −5.437e-3 (shooting
-    −5.431e-3); ε=−1 ω=0.9275 +5.816e-4 (shooting +5.801e-4); ε=−1 ω=0.7603 no bound mode (lowest FD value
-    0.05844 sits above the continuum threshold 0.05746).
-  - Complex spectrum (|σ²| < 0.3): none for ε=+1 ω=0.75, 0.94 and ε=−1 ω=0.7603, 0.85 at n = 300 and 600;
-    ε=−1 ω=0.94 at n = 300 (real −4.456e-3, matching shooting −4.446e-3). Remaining planned cells were lost.
+    −5.431e-3); ε=−1 ω=0.94 −4.4599e-3, −4.4514e-3, −4.4487e-3 (shooting −4.446e-3); ε=−1 ω=0.9275
+    +5.816e-4 (shooting +5.801e-4); ε=−1 ω=0.7603 no bound mode (lowest FD value 0.05844 sits above the
+    continuum threshold 0.05746).
+  - Complex spectrum (|σ²| < 0.3): none for ε=+1 ω=0.75, 0.94 and ε=−1 ω=0.7603, 0.85, 0.94 at n = 300 and
+    600. At ε=−1 ω=0.94 the real bound σ² is −4.456e-3 (n = 300) and −4.448e-3 (n = 600), matching shooting
+    −4.446e-3.
 - The FD pencil is extremely ill-conditioned because coefficients carry φ₀ ~ e^{−kr}. Eigenvalues are
   stable under refinement where checked, but the dense solve limits n to ≈ 1200.
 - Masses here are true ADM masses; the +2 % difference from the paper is the paper's 5 %-radius mass
@@ -247,4 +258,7 @@ phantom low-ω side, and no unstable radial mode.
 | `convergence.py` → `convergence_output.txt` | tolerance/radius convergence |
 | `deep_negative.py` → `deep_negative_output.txt` | no real growth rate up to \|σ\| = 2 at the campaign stars |
 | `fold_scan.py` → `fold_p.txt` | N-continuation of the families (folds) |
-| `lowscan.py`, `strongfield.py` → `low_p.txt`, `strong_*.txt`, `low_recheck_*.txt` | low-ω / strong-field spectra |
+| `lowscan.py` → `low_p.txt`, `low_m.txt` | low-ω spectra: `python lowscan.py 1 0.3,1,3,6,9.2,15,25,35,40,42,42.6 160 160` and `python lowscan.py -1 0.3,1,12 160 160` |
+| `strongfield.py` → `strong_*.txt` | strong-field spectra; `strong_p_turn.txt` is `python strongfield.py 1 0.280,0.279,0.278,0.277,0.276,0.275,0.274,0.273,0.272,0.271,0.270,0.269,0.268,0.267,0.266,0.265,0.264,0.263,0.262` |
+| `cmp_lowscan.py` | compares the roots of two `lowscan.py` outputs (`--selftest`) |
+| `strong_refine.py` → `strong_refine_output.txt` | σ₀² = 0 against the maxima of N and M: `python strong_refine.py ../../../negative-mass-raw/I9-win2/strongfield_eps+1.json --selftest` |

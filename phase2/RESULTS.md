@@ -80,7 +80,7 @@ the stability of these stars is, it is a property of the phantom matter, not of 
 Derived with sympy (all six linearized equations residual 0), solved by compound-matrix shooting, cross-checked
 by an independent FD pencil including complex eigenvalues.
 - **Canonical validation:** the fundamental mode crosses σ² = 0 at the extremum of M and N (ω = 0.925844) to 2×10⁻⁸,
-  and again at the strong-field maximum of N (ω ≈ 0.1996) within scan resolution.
+  and again at the strong-field maximum of N (ω ≈ 0.1997) to 1.3×10⁻⁶ in α₀.
 - **Phantom (ε = −1):** the campaign star ω = 0.7603 is **radially stable** (no real growth rate up to |σ| = 2; no
   complex eigenvalue). The family is stable for ω ≲ 0.92891 and unstable above, exactly at dN/dω = 0 (to 8×10⁻⁸).
   The turning-point criterion carries over to ε = −1 **stated in N** (first law becomes dM = εω dN, so the M-form

@@ -14,3 +14,7 @@ eps=-1 w=0.9275: lowest FD eigenvalues sigma^2 (|.|<1e-8 dropped: trivial mode, 
      n=250: [0.0005877 0.0054323 0.0058868]
      n=400: [0.0005829 0.0054323 0.0058869]
      n=550: [0.0005816 0.0054324 0.005887 ]
+eps=-1 w=0.94: lowest FD eigenvalues sigma^2 (|.|<1e-8 dropped: trivial mode, see RESULTS)  continuum threshold (1-w)^2=0.00360
+     n=250: [-0.0044599  0.0037195  0.0040206]
+     n=400: [-0.0044514  0.0037195  0.0040207]
+     n=550: [-0.0044487  0.0037195  0.0040207]
