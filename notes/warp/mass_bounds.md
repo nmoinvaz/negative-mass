@@ -63,7 +63,9 @@ with lapse 1, shift β_x = −v f and K_ij = ½(∂_iβ_j + ∂_jβ_i). It is th
   satisfy the full DEC for all observers would cost at least as much.
 - Flat slices have E = 0 for every K, so they cannot carry the bound M ≥ −E₋/(1 − κ) of #13 with K ≠ 0. The existence
   argument of item 5 avoids Kato's inequality for ∇̃, the obstruction #13 names, only because the metric is flat.
-- Nothing here claims novelty. The prior work on warp-drive energy conditions and ADM quantities has not been read.
+- Nothing here claims novelty. [prior_work.md](prior_work.md) (#60) compares each result with prior work. It finds the
+  flat-slice form of the Witten operator and the Sobolev–Hölder argument in earlier papers, and a sharper constant
+  (Frank–Loss) that may raise every v_c by √3, not yet checked.
 
 ## Conventions
 

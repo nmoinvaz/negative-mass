@@ -90,8 +90,8 @@ holds at a point only where R_ab = 0, and R_ab ≠ 0 wherever f′(r_s) ≠ 0. T
 sign does not help and the normal sign fails the same way.
 
 The lemma excludes any R_ab = λ g_ab + s u_a u_b. A perfect fluid of any equation of state, with a timelike or null
-flow, has a Ricci tensor of that form, so the same identities exclude it at every wall point. This corollary has not
-been compared with the literature.
+flow, has a Ricci tensor of that form, so the same identities exclude it at every wall point. The closest prior work
+found by #60 treats only dust and perfect fluids at rest in the Eulerian frame ([prior_work.md](prior_work.md)).
 
 On the axis, (I1), (I2) and R_01 ≠ 0 make R^a_b restricted to (E_0, E_1) equal to [[−R_00, −R_01], [R_01, −R_00]].
 Its eigenvalues are −R_00 ± i R_01, a complex pair. At x − v t = ±1 on the axis, for Alcubierre's profile with σ = 8,
