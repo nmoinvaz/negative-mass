@@ -23,17 +23,18 @@ where μ± = T±(n, n) and J±_i = −n^a T±_ai are the normal projections of T
 μ± ≥ |J±|. ε₀ is a constant spinor at infinity with |ε₀| = 1, aligned with P so that the boundary term is
 E − |P|. ε solves the hypersurface Dirac equation D̃ε = 0 with ε → ε₀.
 
-Conventions are those of notes/warp/mass_bounds.md, "Conventions": the gammas γ⁰ = i diag(1, 1, −1, −1)
-and γ^j = [[0, σ_j], [σ_j, 0]], ⟨a, b⟩ = a†b, J_i = −n^a T_ai, and ∇̃_i = ∇_i + ½K_ij γ^jγ⁰ with
-D̃ = γ^i∇̃_i, in an orthonormal frame e_j of Σ. On a flat slice with lapse 1 that ∇̃ is the spacetime
-spin connection restricted to the slice, after γ⁰ ↦ −γ⁰ (notes/warp/conventions.py).
+The conventions are those of notes/warp/mass_bounds.md, "Conventions". The gammas are
+γ⁰ = i diag(1, 1, −1, −1) and γ^j = [[0, σ_j], [σ_j, 0]], with ⟨a, b⟩ = a†b, and
+∇̃_i = ∇_i + ½K_ij γ^jγ⁰ and D̃ = γ^i∇̃_i in an orthonormal frame e_j of Σ. On a flat slice with lapse 1
+that ∇̃ is the spacetime spin connection restricted to the slice, after γ⁰ ↦ −γ⁰
+(notes/warp/conventions.py).
 
 The Witten / Parker–Taubes identity (checked numerically below to 1.6×10⁻⁷, including normalisation) is
 
   E − |P| = (1/4π) ∫_Σ |∇̃ε|² dV + ∫_Σ T(ξ_ε, n) dV,  ξ_ε = |ε|² n + ξ⃗,  ξ⃗ = ξ^j e_j,  ξ^j = ⟨ε, γ⁰γ^j ε⟩.
 
 ξ_ε is future causal, |ξ⃗| ≤ |ε|². Its time component |ε|² is not ⟨ε, γ⁰γ⁰ε⟩, which is −|ε|² in these
-gammas. With J_i = −n^a T_ai, T(ξ_ε, n) = μ|ε|² − J·ξ⃗.
+gammas. With J_i = −n^a T_ai as above, T(ξ_ε, n) = μ|ε|² − J·ξ⃗.
 
 Each T± satisfies the DEC, so T₊(ξ_ε, n) ≥ 0 and 0 ≤ T₋(ξ_ε, n) = μ₋|ε|² − J₋·ξ⃗ ≤ (μ₋ + |J₋|)|ε|².
 
