@@ -16,7 +16,8 @@ sign, closure and potential conditions are never reached.
 Every C² profile with f(0) = 1 that decays at infinity has f′ ≠ 0 on an open interval of r_s. So no (φ, V) sources
 the metric, and the conditions fail at every point of the bubble wall, the set where f′(r_s) ≠ 0.
 
-The obstruction is two identities of the Ricci tensor that hold for every profile, and a five-line lemma.
+The obstruction is two identities of the Ricci tensor that hold for every profile, and a five-line lemma. Prior work
+that overlaps, the Type IV maps of [Rod26] and [Le26] and the fluid results for u = n, is cited after the lemma.
 
 ## Setup
 
@@ -69,6 +70,11 @@ They are checked in comoving spherical coordinates for a general w(r) (`identity
 for a general f with the jets f, f′, f″ as free symbols (`identity_lab`), and on the axis y = z = 0, where they read
 R(E_2, ·) = R(E_3, ·) = 0 and R_00 + R_11 = 0 (`identity_axis`).
 
+Since G_11 − 3G_00 = −(R_00 + R_11 + 2R_ρρ + 2R_ϕϕ) and R_ϕϕ = 0 by (I1), (I2) is equivalent to G_11 = 3G_00
+([prior_work.md](prior_work.md), "The identities"). That is the identity G_zz = 3G_nn stated for Alcubierre in [SSV22]
+Sec. 7.1. It is implicit in [LV04a] Eq. 16, where the average of the null energy along ± the direction of motion is
+4ρ, and it is behind p = 3μ in [SAR21a] (Eq. 3.4) and p_x = 3ρ in [ABV23] (Eqs. 30–31).
+
 The curvature does not vanish in the wall. R_ρρ = v² f′² (y² + z²)/(2 r_s²) off the axis, and R_01 = v f′(r_s)/r_s on
 it (`wall_curvature`). So R_ab ≠ 0 at every point where f′(r_s) ≠ 0.
 
@@ -90,12 +96,22 @@ holds at a point only where R_ab = 0, and R_ab ≠ 0 wherever f′(r_s) ≠ 0. T
 sign does not help and the normal sign fails the same way.
 
 The lemma excludes any R_ab = λ g_ab + s u_a u_b. A perfect fluid of any equation of state, with a timelike or null
-flow, has a Ricci tensor of that form, so the same identities exclude it at every wall point. The closest prior work
-found by #60 treats only dust and perfect fluids at rest in the Eulerian frame ([prior_work.md](prior_work.md)).
+flow, has a Ricci tensor of that form, so the same identities exclude it at every wall point. For a flow at rest in
+the Eulerian frame, u = n, and any shift, this exclusion is prior work: [SAR21a] and [SAR21b] for a perfect fluid
+without and with Λ, [ABV23] for an isotropic fluid and an anisotropic one with two equal pressures, and [SAR20] and
+[ABV23] for dust. Their key step is G_11 = 3G_00, as above. The comparison is in [prior_work.md](prior_work.md) §2.
 
 On the axis, (I1), (I2) and R_01 ≠ 0 make R^a_b restricted to (E_0, E_1) equal to [[−R_00, −R_01], [R_01, −R_00]].
 Its eigenvalues are −R_00 ± i R_01, a complex pair. At x − v t = ±1 on the axis, for Alcubierre's profile with σ = 8,
 bubble radius R = 1 and v = 1, the script prints 16 ± 4i and 0.
+
+G^a_b differs from R^a_b by a multiple of the identity, so it has the same complex pair, and the Einstein tensor is of
+Hawking–Ellis Type IV there. [Rod26] finds Type IV along the whole axis, numerically, for one parameter set. On the
+axis ρ_n = S_∥ = 0, so [Le26]'s criterion 2|j| > |ρ_n + S_∥| holds wherever j ≠ 0. Off the axis, [Le26] finds the
+sampled wall Type IV except at 1.3 % of points at v = 0.5 and 24.9 % at v = 2.5, while [Rod26] finds the wall annulus
+of the equatorial cut Type I ([prior_work.md](prior_work.md), discrepancy 4). A scalar (Type I or II) or a perfect
+fluid (Type I, or II for a null flow) cannot be the source at a Type IV point, so these maps already exclude both at
+their Type IV points ([prior_work.md](prior_work.md) §1–2).
 
 ## Explicit profiles, through the control's code path
 
@@ -180,3 +196,15 @@ fluid, not a scalar.
 - [Alc94] M. Alcubierre, "The warp drive: hyper-fast travel within general relativity", Class. Quantum Grav. 11, L73
   (1994), arXiv:gr-qc/0009013, doi:10.1088/0264-9381/11/5/001. Checked on 2026-11-13 against the arXiv abstract page
   and PDF (Eqs. (6), (8), (10) and (19) read there) and IOP's article page.
+
+The entries below are those of [`../literature.md`](../literature.md), "Warp drives", whose journal data were checked
+against INSPIRE and arXiv identifiers against arXiv for #60.
+
+- [ABV23] Abellán, Bolívar, Vasilev, arXiv:2302.13826, GRG 55, 60 (2023).
+- [Le26] Le, arXiv:2602.18023, CQG 43, 215013 (2026).
+- [LV04a] Lobo, Visser, arXiv:gr-qc/0406083, CQG 21, 5871 (2004).
+- [Rod26] Rodal, arXiv:2512.18008, GRG 58, 1 (2026).
+- [SAR20] Santos-Pereira, Abreu, Ribeiro, arXiv:2008.06560, EPJC 80, 786 (2020).
+- [SAR21a] Santos-Pereira, Abreu, Ribeiro, arXiv:2101.11467, EPJC 81, 133 (2021).
+- [SAR21b] Santos-Pereira, Abreu, Ribeiro, arXiv:2108.10960, EPJ Plus 136, 902 (2021).
+- [SSV22] Santiago, Schuster, Visser, arXiv:2105.03079, PRD 105, 064038 (2022).
