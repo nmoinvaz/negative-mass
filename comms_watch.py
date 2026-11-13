@@ -4,11 +4,11 @@
 A session starts this as a background command; it costs nothing while it waits. Every --interval seconds it checks,
 in this order:
 
-- the Coordination issue of --repo (the open issue labelled "coordination", AGENTS.md "Coordination"): a comment
+- the Coordination issue of --repo (the open issue labelled "coordination", if one is opened): a comment
   whose first line is "<sender> to <recipients>" naming --name or "all", newer than the last one it printed. It prints
   those comments in full, records the newest as handled (in the state file, by default in the checkout's git
   directory), and exits 0;
-- the task issues (AGENTS.md, "Tasks: the GitHub project"): the open issues labelled --name and not "running". It
+- the task issues (AGENTS.md, "Tasks: GitHub issues"): the open issues labelled --name and not "running". It
   prints them and exits 0. A runner adds "running" when it starts a task, so a task wakes it once;
 - comms.txt on origin/main, if the repository has one (negative-mass does not), for entries addressed to --name after
   those in HEAD. This check comes from choptuik-large-d, whose comms.txt is an archive.

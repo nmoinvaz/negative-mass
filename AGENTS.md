@@ -19,23 +19,21 @@ physics is in [README.md](README.md) and the plan in [PLAN.md](PLAN.md). This se
   never stop or change that project's processes. Share a machine's threads with them: its budget is the machine's, not
   the session's.
 
-## Tasks: the GitHub project
+## Tasks: GitHub issues
 
-Every task is an issue of this repository, planned in the GitHub project "negative-mass" of the user nmoinvaz ([project
-2](https://github.com/users/nmoinvaz/projects/2), private), with the fields Status, Owner, Area, Estimate and Depends
-on, and the repository's milestones as goals. The issue's body is the task: its commands, threads, stop conditions, what
-to push, and acceptance criteria whose check can fail. Issues are public, so they carry no credentials, personal data or
-private correspondence, and an @ handle only for a real login meant to be notified. Nathan's own to-dos stay out of the
-project.
+Every task is an issue of this repository, with the repository's milestones as goals and labels for its owner and state.
+There is no project board. The issue's body is the task: its commands, threads, stop conditions, what to push,
+acceptance criteria whose check can fail, and a **Depends on.** line where it depends on another issue. Issues are
+public, so they carry no credentials, personal data or private correspondence, and an @ handle only for a real login
+meant to be notified. Nathan's own to-dos stay out of the issues.
 
 - **Assignment, by Remote Control.** The coordinator tells each runner which task to take next with a Remote Control
   message to the runner's session (SendMessage), naming the issue and repeating its commands; the issue's body stays the
   record. At the same time it adds the machine's label (`win2`, `macm3`, `win` or `mac`), which marks the owner. A
   runner takes up a task only when the coordinator's message names it, not from a label alone. A blocked issue loses its
-  machine label, with Status set to Blocked, until it is ready again.
+  machine label, and its body says **Status.** Blocked, with the reason, until it is ready again.
 - **Picking it up.** The runner adds the label `running`, comments "started" on the issue with the machine, the checkout
-  and the threads, sets the project's Status to In Progress (or asks the coordinator to, if its gh token lacks the
-  project scope), and replies to `negative-mass-coordinator` that it started.
+  and the threads, and replies to `negative-mass-coordinator` that it started.
 - **Raw output** goes to [negative-mass-raw](https://github.com/nmoinvaz/negative-mass-raw), in a folder
   `I<issue>-<machine>/` whose README.md starts `# I<issue>-<machine>: <what it holds>`, then the machine and the issue's
   URL. Clone it once beside your checkout (`git clone git@github.com:nmoinvaz/negative-mass-raw.git
@@ -55,15 +53,12 @@ project.
   tells the coordinator.
 - **Recommended tasks go to the coordinator.** An agent whose task needs further investigation or calculation does not
   open an issue itself. It lists each task under "Recommended tasks" (a title, what, why, acceptance criteria whose
-  check can fail, and what it depends on), and the coordinator files it, with Depends on naming its origin.
-- **Coordination fallback.** A machine that Remote Control cannot reach uses the pinned Coordination issue,
-  [#1](https://github.com/nmoinvaz/negative-mass/issues/1) (label `coordination`): each comment starts with the header
-  line `<sender> to <recipients>` (`coordinator`, `win2`, `win`, `macm3`, `mac`, or `all`), and the session waits with
-  `python3 -u comms_watch.py --name <machine>` run as a background command. It exits 0 on a Coordination comment
-  addressed to it or a task issue labelled for it, and 3 after 110 min with nothing new.
-- **gh.** A runner needs the gh CLI logged in with access to this repository (`gh auth status`), and the project scope
-  to set Status (`gh auth refresh -h github.com -s project,read:project`). `.claude/settings.json` allows the `gh issue`
-  list, view, comment, edit and close commands and the project item commands.
+  check can fail, and what it depends on), and the coordinator files it, with a **Depends on.** line naming its origin.
+- **Waiting for a task.** A runner that Remote Control cannot reach waits with `python3 -u comms_watch.py --name
+  <machine>` run as a background command. It exits 0 when an open issue is labelled for it and not `running`, and 3
+  after 110 min with nothing new.
+- **gh.** A runner needs the gh CLI logged in with access to this repository (`gh auth status`). `.claude/settings.json`
+  allows the `gh issue` list, view, comment, edit and close commands.
 
 ## Machines
 
