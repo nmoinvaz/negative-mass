@@ -309,6 +309,11 @@ def main():
             statuses[(lab_, eps)] = statuses.get((lab_, eps), []) + [st]
     for k, sts in statuses.items():
         print(f"  {k[0]:>16}, eps = {k[1]:+d}: {len(sts)} points, outcomes {sorted(set(sts))}")
+    # On the axis R^a_b restricted to (E_0, E_1) is [[-R_00, -R_01], [R_01, -R_00]], eigenvalues -R_00 +- i R_01.
+    for (lab_, p, vv, jets) in samples[6:12:3]:
+        sub = {X: p[0], y: p[1], z: p[2], R: p[3], v: vv, F[0]: jets[0], F[1]: jets[1], F[2]: jets[2]}
+        ev = [sp.N(e, 6) for e in (eta * Rt.subs(sub)).eigenvals()]
+        print(f"  info: eigenvalues of R^a_b on the axis at x - v t = {p[0]}, v = {vv} ({lab_}): {ev}")
     allfail = all(st == "algebraic" for sts in statuses.values() for st in sts)
     check("alc_points_fail", allfail, f"every sample point fails the algebraic condition (no lam gives rank <= 1), "
           f"{sum(len(s) for s in statuses.values())} tests")
