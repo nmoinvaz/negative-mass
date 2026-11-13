@@ -116,8 +116,9 @@ Read for #60 on 2026-11-13. Journal data checked against INSPIRE, arXiv identifi
 - **Le 2026**, arXiv:2602.18023, CQG 43, 215013. Observer-complete NEC, WEC, SEC and DEC tests as matrix inequalities.
   For flat-slice, unit-lapse drives with β ∝ v, ρ_n and S_ij ∝ v² and |j| ∝ v exactly. When ĵ is a principal axis of
   S_ij, the (n, ĵ) block has complex eigenvalues iff 2|j| > |ρ_n + S_∥|, and the null witness k = n ± ĵ gives
-  ρ_n + S_∥ − 2|j|, linear in |j| (Eqs. 18–19). Numerically the Alcubierre wall is 81–99 % Type IV at its reference
-  parameters. The integrated negative Eulerian energy scales exactly as v².
+  ρ_n + S_∥ − 2|j|, linear in |j| (Eqs. 18–19). Numerically the Alcubierre wall (f ∈ [0.1, 0.9]) has a Type I
+  fraction of 1.3 % at v = 0.5, rising to 24.9 % at v = 2.5, the rest Type IV (Sec. 3, Tables 2–3). The integrated
+  negative Eulerian energy scales exactly as v².
 - **Barzegar, Buchert & Vigneron 2026**, arXiv:2602.16495 (preprint). Classification and errata of warp-drive papers.
   Corollary IV.37: asymptotically flat flat-slice drives violate the DEC, by the positive energy theorem. See also the
   ADM entry below.
