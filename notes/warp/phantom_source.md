@@ -14,7 +14,7 @@ and for any value of V. The test fails at its first, algebraic stage, since no �
 sign, closure and potential conditions are never reached.
 
 Every C² profile with f(0) = 1 that decays at infinity has f′ ≠ 0 on an open interval of r_s. So no (φ, V) sources
-the metric, and the bubble wall is exactly where the conditions fail.
+the metric, and the conditions fail at every point of the bubble wall, the set where f′(r_s) ≠ 0.
 
 The obstruction is two identities of the Ricci tensor that hold for every profile, and a five-line lemma.
 
@@ -27,9 +27,10 @@ The metric is Alcubierre's Eq. (8) [Alc94], with constant v = v_s,
 The scalar has T_ab = ε(∂_aφ ∂_bφ − ½ g_ab (∇φ)²) − g_ab V(φ), and G_ab = 8π T_ab gives
 R_ab = 8π(ε ∂_aφ ∂_bφ + V g_ab). A cosmological constant is a constant in V.
 
-The frame is orthonormal. E_0 = ∂_t + v f ∂_x is the Eulerian observer n, E_1 = ∂_x, and e_ρ, e_φ are the
-cylindrical radial and azimuthal unit vectors about the axis of motion, so e_ρ = (y ∂_y + z ∂_z)/ρ with
-ρ² = y² + z². Let θ be the angle from the direction of motion, so sin θ = ρ/r_s and cos θ = (x − v t)/r_s.
+The frame is orthonormal. E_0 = ∂_t + v f ∂_x is the Eulerian observer n, E_1 = ∂_x, and e_ρ, e_ϕ are the
+cylindrical radial and azimuthal unit vectors about the axis of motion (ϕ is the azimuth, not the scalar φ), so
+e_ρ = (y ∂_y + z ∂_z)/ρ with ρ² = y² + z². Let θ be the angle from the direction of motion, so sin θ = ρ/r_s
+and cos θ = (x − v t)/r_s.
 
 ## The energy density
 
@@ -54,14 +55,14 @@ With w(r) = v(1 − f(r)), the shift in the comoving coordinate ξ = x − v t, 
     R_11   =  [2 w w′ s² + 2 r w w″ c² + r w′² (3c² − 1)] / (2r)
     R_1ρ   = [w (r w″ − w′) + 2 r w′²] s c / (2r)
     R_ρρ   = w′² s² / 2
-    R_aφ   = 0   for every a.
+    R_aϕ   = 0   for every a.
 
 The lab-coordinate computation and the comoving spherical one agree at 24 exact rational points, with random v and
 jets (`ricci_xcheck`).
 
 Two identities follow, for every C² profile and every v.
 
-- **(I1)** R(e_φ, ·) = 0.
+- **(I1)** R(e_ϕ, ·) = 0.
 - **(I2)** R_00 + R_11 + 2 R_ρρ = 0.
 
 They are checked in comoving spherical coordinates for a general w(r) (`identity_sph`), in lab Cartesian coordinates
@@ -76,7 +77,7 @@ it (`wall_curvature`). So R_ab ≠ 0 at every point where f′(r_s) ≠ 0.
 **Lemma (proved).** Let R_ab be real and symmetric on an orthonormal frame (e_0, e_1, e_2, e_3), with R_a3 = 0 for every
 a and R_00 + R_11 + 2 R_22 = 0. If R_ab = λ η_ab + s u_a u_b with λ and s real and u a real covector, then R_ab = 0.
 
-*Proof.* If s u = 0 then R = λη, and R_33 = λ = 0. Otherwise R_a3 = s u_a u_3 = 0 for a ≠ 3, and
+*Proof.* If s = 0 or u = 0 then R = λη, and R_33 = λ = 0. Otherwise R_a3 = s u_a u_3 = 0 for a ≠ 3, and
 R_33 = λ + s u_3² = 0.
 
 - If u_3 ≠ 0, then u_0 = u_1 = u_2 = 0 and λ = −s u_3² ≠ 0. Then R_00 + R_11 + 2R_22 = −λ + λ + 2λ = 2λ ≠ 0, a
@@ -84,7 +85,7 @@ R_33 = λ + s u_3² = 0.
 - If u_3 = 0, then λ = 0 and R_00 + R_11 + 2R_22 = s(u_0² + u_1² + 2u_2²) = 0. The form is positive definite, so
   u = 0 and R = 0. ∎
 
-Apply it with (e_2, e_3) = (e_ρ, e_φ) off the axis and (E_2, E_3) on it, s = 8πε and λ = 8πV. The scalar form then
+Apply it with (e_2, e_3) = (e_ρ, e_ϕ) off the axis and (E_2, E_3) on it, s = 8πε and λ = 8πV. The scalar form then
 holds at a point only where R_ab = 0, and R_ab ≠ 0 wherever f′(r_s) ≠ 0. The sign of s never enters, so the phantom
 sign does not help and the normal sign fails the same way.
 
@@ -163,7 +164,8 @@ shares only the chain-rule derivative `D` with the lab route.
 
 Assumed: one real, minimally coupled scalar with T_ab as above, G_ab = 8π T_ab, a C² profile and a constant v.
 
-Not covered: a time-dependent v_s(t), two or more scalars, non-minimal coupling and other matter. A normal plus a
+Not covered: a time-dependent v_s(t), two or more scalars, non-minimal coupling, and matter whose Ricci tensor is
+not of the form λ g_ab + s u_a u_b. A normal plus a
 phantom scalar give R_ab − λ g_ab of rank 2 with mixed signs, which the lemma does not exclude.
 
 The answer rests on computer algebra, so it should get an independent review before it is relied on.
