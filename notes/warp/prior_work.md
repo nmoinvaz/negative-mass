@@ -126,8 +126,9 @@ while the contraction bound keeps κ_K < 1.
 
 1. #60 names the dust and perfect-fluid authors "Santos-Pereira, Abreu and Rebouças". The third author is Marcelo B.
    Ribeiro (INSPIRE and the PDFs).
-2. [FL22] would raise the existence threshold of mass_bounds.md item 5 by √3, if the reduction above holds. The note
-   says "Beyond v_c this says nothing either way", which stays true of the contraction.
+2. [FL22] would raise the existence threshold of mass_bounds.md item 5 by √3, if the reduction above holds. #63
+   checked the reduction symbolically and wrote out the L³ and Fredholm steps ([frank_loss.md](frank_loss.md)), so the
+   √3 holds, pending an independent review.
 3. [LV04a] call the net NEC violation O(v²), while mass_bounds.md item 4 calls E₋ O(v). The quantities differ (§3);
    the notes should say so when they cite [LV04a].
 4. [Rod26] find the equatorial wall annulus Type I, while [Le26] find the Alcubierre wall 98.7 % non-Type-I at
