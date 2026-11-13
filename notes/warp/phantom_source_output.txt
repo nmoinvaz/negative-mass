@@ -1,0 +1,61 @@
+phantom_source.py, issue #57. sympy 1.14.0, mpmath 1.3.0, python 3.14.7. mutation: none
+
+== 1. Eulerian energy density ==
+[PASS] rho_einstein: G_ab n^a n^b / 8 pi - expected reduces to 0 (0 s)
+[PASS] rho_3p1: (K^2 - K_ij K^ij) / 16 pi - expected reduces to 0
+
+== 2. Ricci tensor in the tetrad (E_0 = n, E_1 = d_x, e_rho, e_varphi), comoving spherical ==
+  R_(0,0) = -(-2*W0*W1*cos(theta)**2 + 2*W0*W1 + 2*W0*W2*r*cos(theta)**2 + W1**2*r*cos(theta)**2 + W1**2*r)/(2*r)
+  R_(0,1) = -(-W1*sin(theta)**2 + 2*W1 + W2*r*sin(theta)**2)/(2*r)
+  R_(0,rho) = (-W1 + W2*r)*sin(2*theta)/(4*r)
+  R_(0,varphi) = 0
+  R_(1,1) = (-2*W0*W1*cos(theta)**2 + 2*W0*W1 + 2*W0*W2*r*cos(theta)**2 + 3*W1**2*r*cos(theta)**2 - W1**2*r)/(2*r)
+  R_(1,rho) = (-W0*W1 + W0*W2*r + 2*W1**2*r)*sin(2*theta)/(4*r)
+  R_(1,varphi) = 0
+  R_(rho,rho) = W1**2*sin(theta)**2/2
+  R_(rho,varphi) = 0
+  R_(varphi,varphi) = 0
+[PASS] ricci_xcheck: lab-frame and spherical tetrad Ricci differ at 0 of 24 exact points (random rational v and jets)
+
+== 3. Identities: R(e_varphi, .) = 0 and R_00 + R_11 + 2 R_rho,rho = 0 ==
+[PASS] identity_sph: comoving spherical, general w(r): [0, 0, 0, 0, 0]
+[PASS] identity_lab: lab Cartesian, general f, residues mod r_s^2: [0, 0, 0, 0, 0]
+[PASS] identity_axis: on the axis y = z = 0: R(E_2, .), R(E_3, .), R_00 + R_11 reduce to [0, 0, 0, 0, 0, 0, 0, 0, 0]
+[PASS] wall_curvature: R_rho,rho = v^2 f'^2 (y^2 + z^2) / (2 r_s^2) [residue 0] and, on the axis, R_01 = v f' / r_s [residue 0]. So R_ab != 0 wherever f'(r_s) != 0.
+  Lemma (by hand, notes/warp/phantom_source.md): a symmetric R_ab with R(e_varphi, .) = 0 and
+  R_00 + R_11 + 2 R_rho,rho = 0 is of the form lam eta_ab + s u_a u_b (s real, nonzero) only if R_ab = 0.
+  With wall_curvature, the scalar form fails at every point where f'(r_s) != 0, for either eps and any V.
+
+== 4. Scalar-form test at exact points (same code as the Ellis-Bronnikov control) ==
+   tanh sig=8 Rb=1, eps = -1: 15 points, outcomes ['algebraic']
+   tanh sig=8 Rb=1, eps = +1: 15 points, outcomes ['algebraic']
+         bump Rb=2, eps = -1: 4 points, outcomes ['algebraic']
+         bump Rb=2, eps = +1: 4 points, outcomes ['algebraic']
+       random jets, eps = -1: 4 points, outcomes ['algebraic']
+       random jets, eps = +1: 4 points, outcomes ['algebraic']
+  info: eigenvalues of R^a_b on the axis at x - v t = 1, v = 1 (tanh sig=8 Rb=1): [16.0 - 4.0*I, 16.0 + 4.0*I, 0]
+  info: eigenvalues of R^a_b on the axis at x - v t = -1, v = 1 (tanh sig=8 Rb=1): [16.0 - 4.0*I, 16.0 + 4.0*I, 0]
+[PASS] alc_points_fail: every sample point fails the algebraic condition (no lam gives rank <= 1), 46 tests
+
+== 5. Control: Ellis-Bronnikov, ds^2 = -dt^2 + dl^2 + r(l)^2 dOmega^2, r^2 = l^2 + a^2 ==
+  eps = -1. Nonzero R_ab: R_ll = -2*a**2/(a**2 + l**2)**2
+[PASS] eb_algebraic: triple eigenvalue: status pass, lam = 0
+[PASS] eb_sign: rank-1 remainder M = 8 pi eps u u needs M_kk / (8 pi eps) > 0: pass
+[PASS] eb_closed: u = [0, -a/(2*sqrt(pi)*(a**2 + l**2)), 0, 0], du = [0, 0, 0, 0, 0, 0]
+[PASS] eb_potential: phi = -atan(l/a)/(2*sqrt(pi)), d phi = u: True, V = 0, dV ^ d phi = [0, 0, 0, 0, 0, 0]
+[PASS] eb_residual: G_ab - 8 pi T_ab with (phi, V) substituted back: 0
+
+checks: 13 passed, 0 failed []. 14 s
+
+== Controls: each mutation must make its target checks fail ==
+[FIRED] --mutate=rho-v2 (doubles v in the expected energy density): exit 1, failed ['rho_einstein', 'rho_3p1']
+[FIRED] --mutate=xcheck-v (doubles v in the spherical-coordinate Ricci tensor only): exit 1, failed ['ricci_xcheck']
+[FIRED] --mutate=alc-drop-w2 (drops the shift's square from g_tt in both coordinate systems): exit 1, failed ['rho_einstein', 'ricci_xcheck', 'identity_sph', 'identity_lab', 'identity_axis', 'wall_curvature']
+[FIRED] --mutate=wall-v2 (doubles v in the expected wall curvature): exit 1, failed ['wall_curvature']
+[FIRED] --mutate=alc-planted (replaces the Ricci tensor at the sample points by a planted scalar form): exit 1, failed ['alc_points_fail']
+[FIRED] --mutate=eb-eps+1 (tests Ellis-Bronnikov with eps = +1): exit 1, failed ['eb_sign']
+[FIRED] --mutate=eb-deform (deforms Ellis-Bronnikov's r(l)^2 = l^2 + a^2 by a^4/(l^2 + a^2)): exit 1, failed ['eb_algebraic']
+[FIRED] --mutate=eb-unclosed (multiplies the extracted gradient u by 1 + cos(theta)^2): exit 1, failed ['eb_closed']
+[FIRED] --mutate=eb-potential (adds t/(8 pi a^3) to V): exit 1, failed ['eb_potential', 'eb_residual']
+[FIRED] --mutate=eb-residual (scales phi by 11/10 before substituting it back): exit 1, failed ['eb_residual']
+controls: all fired
