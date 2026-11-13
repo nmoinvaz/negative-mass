@@ -54,8 +54,9 @@ and conversely u = (R₁ − R₂)/(2i), w = (R₁ + R₂)/2 for R₁, R₂ the 
 and |ψ|² + |χ|² = 2|ε|², so ε = 0 iff ψ = χ = 0. Both are identities in sympy for an arbitrary real τ(x, y, z) and
 arbitrary complex a, b (`reduction`, `norms`). Flipping the sign of the lower block of γ⁰ (`--mutate=g0block`) makes
 `reduction` fail: then w + iu = σ·∇ψ − ½τχ, and the two equations couple. The reduction is the one #60 wrote by hand
-(prior_work.md §4). It is the 2-spinor form of the Witten operator, in which only tr K enters, as [FNS11] note (their
-Eq. 2.1, recorded in [../literature.md](../literature.md), not re-read here).
+([prior_work.md](prior_work.md) §4). It parallels the 2-spinor Witten operator of [FNS11], the intrinsic Dirac operator
+plus ½(tr K)t (their Eq. 2.1, as recorded in [../literature.md](../literature.md)); that paper was not re-read here and
+the correspondence was not checked.
 
 If ε ∈ Ḣ¹, then ψ, χ ∈ Ḣ¹(ℝ³, ℂ²) and, a.e., |σ·∇ψ| = ½|τ||ψ| and |σ·∇χ| = ½|τ||χ|. These are the pointwise
 inequalities of [FL22] Remark 4 with |A| = ½|τ|, for the Pauli matrices that [FL22] use in d = 3 (N = 2^{[3/2]} = 2).
@@ -156,20 +157,106 @@ With ξ^j = ⟨ε, γ⁰γ^jε⟩ (the vector of item 6), for any smooth ε,
 because γ⁰γ^j is Hermitian and (γ⁰)² = −1 (`divxi`; `--mutate=g0block` makes it fail). The product rule holds for
 ε ∈ H¹_loc, so the identity holds in L¹_loc. For a zero mode ε ∈ Ḣ¹ ∩ L³ (§3), |ξ| ≤ |ε|² gives ξ ∈ L^{3/2}, and
 ∂_jξ^j = τ|ε|² ∈ L¹. Integrate against a cut-off φ(x/R) with ∇φ supported in 1 ≤ |x| ≤ 2. The boundary term is at most
-(C/R)‖ξ‖_{L^{3/2}(|x|>R)} (vol of the shell)^{1/3} ≤ C′‖ξ‖_{L^{3/2}(|x|>R)} → 0, so ∫τ|ε|² dV = 0. If τ ≥ 0 a.e. (or ≤ 0) and τ ≢ 0, then τ|ε|² = 0 a.e.,
-so Bε = 0 and Dε = 0, and ε = 0 because D is injective on Ḣ¹. Hence for a slice whose tr K has one sign, D̃(v) has no
+(C/R)‖ξ‖_{L^{3/2}(|x|>R)} (vol of the shell)^{1/3} ≤ C′‖ξ‖_{L^{3/2}(|x|>R)} → 0, so ∫τ|ε|² dV = 0.
+If τ ≥ 0 a.e. (or ≤ 0), then τ|ε|² = 0 a.e., so Bε = 0 and Dε = 0, and ε = 0 because D is injective on Ḣ¹. Hence for a slice whose tr K has one sign, D̃(v) has no
 kernel at any real v, and the Witten spinor exists and is unique for every amplitude.
 
 The same identity explains why FL's extremal τ = 6/(1 + r²) > 0 reaches the bound only at imaginary v (§4). For real v
-and sign-changing τ the true first zero-mode speed can lie above √3 v_c, and for the tanh profile it does (§9).
+and sign-changing τ the first zero-mode speed, if there is one, can lie above √3 v_c. For the tanh profile the grid
+operator has none up to 4 v_c (§9).
 
 ## 9. Numerics (*numerical evidence*)
 
-TBD
+The operators are #58's FFT discretisation on the periodic box [−L, L)³: D⁻¹ by its symbol −iγ·k/|k|² with k = 0 set to
+zero, and B₁ by multiplication. T₁ = D⁻¹B₁ and D̃D⁻¹ = I + vB₁D⁻¹ act on ℂ^{4N³}. In the ℓ² norm the latter's singular
+values are those of D̃ : Ḣ¹ → L², because D is an isometry. So s_min := σ_min(D̃D⁻¹) = inf ‖D̃ψ‖₂/‖∇ψ‖₂, which is 1 at
+v = 0 and at least 1 − κ_K while κ_K < 1. Eigenvalues come from ARPACK (`eigs`, largest magnitude), s_min from Lanczos on
+(D̃D⁻¹)ᴴ(D̃D⁻¹) (`eigsh`, smallest), using (D⁻¹)ᴴ = −D⁻¹ and B₁ᴴ = −B₁. The Witten equation is solved by GMRES
+(restart 20) on (I + vT₁)ψ = −vT₁ε₀, ε₀ = (1, 0, 0, 0). The boxes are #58's: L = 8 at σR = 2 and L = 5 at σR = 4.
+
+**Planted truth** (`planted`). For τ₁ = 6/(1 + r²) the exact answer is known (§4): T₁ has eigenvalues ±i, each fourfold
+(two spinor states in each of the ψ and χ sectors), so ρ(T₁) = 1 = 1/(√3 v_c), and FL's bound is attained. Under
+stereographic projection these are the Dirac eigenvalues ±(3/2 + k) on the round S³, so the next |λ| is (3/2)/(5/2) =
+3/5. At L = 10, N = 64 the code finds eight eigenvalues ±0.9910i, with |Re λ|/|λ| ≤ 10⁻¹⁵, and the ninth at 0.6000.
+`--mutate=half` (B₁ without its ½) doubles them, and the check fails.
+
+**The spectrum of T₁ for the tanh profile** (`fl_bound`). Times v_c:
+
+| σR | L | N | ρ(T₁)v_c | ρ(T₁)√3 v_c (FL: ≤ 1) | ‖T₁‖v_c (contraction: ≤ 1) | leading eigenvalues × v_c |
+|---|---|---|---|---|---|---|
+| 2 | 8 | 64 | 0.40938 | 0.7091 | 0.81080 | ±0.0270 ± 0.4085i |
+| 2 | 8 | 128 | 0.40940 | 0.7091 | 0.81079 | ±0.0271 ± 0.4085i |
+| 2 | 12 | 96 | 0.40949 | 0.7093 | 0.84133 | ±0.0272 ± 0.4086i |
+| 4 | 5 | 64 | 0.36732 | 0.6362 | 0.72761 | ±0.0154 ± 0.3670i |
+| 4 | 5 | 128 | 0.36736 | 0.6363 | 0.72760 | ±0.0154 ± 0.3670i |
+
+The leading eigenvalues are a complex quadruple, sixteenfold at N = 64 (scan), so the first zero modes sit at complex
+speeds of modulus 2.44 v_c (σR = 2) and 2.72 v_c (σR = 4). The next quadruple is at ±0.0048 ± 0.2989i and
+±0.0028 ± 0.2885i. None of the top 24 is real, so no real zero-mode speed of the discrete operator lies below 3.35 v_c
+(σR = 2) or 3.47 v_c (σR = 4). FL's bound holds with room: ρ√3 v_c ≈ 0.71 and 0.64, against the contraction norm
+0.81 and 0.73. ρ is stable to 2×10⁻⁴ under L = 8 → 12, while ‖T₁‖ moves by 4 %; the norm is set by spread-out functions.
+
+**GMRES solves at N = 128.** The residual is the RMS of D̃ε = Dψ + vB₁(ε₀ + ψ), with D by spectral differentiation,
+over that of vB₁ε₀. It includes the box mean (k = 0), which a periodic box cannot set to zero. That mean is a
+discretisation error: at σR = 2, v = 6.3 it is 1.5×10⁻⁸ at N = 48, 9×10⁻¹¹ at N = 64 and 4×10⁻¹⁴ at N = 128. The
+identity is |G + ∫T(ξ, n)|/G of item 6. Picard (#58's iteration) is run at N = 64.
+
+| σR | v | v/v_c | GMRES iterations | residual | s_min, N = 64 / 128 | identity | \|ε\|² range | Picard |
+|---|---|---|---|---|---|---|---|---|
+| 2 | 1.0 | 0.267 | 10 | 2.5×10⁻¹³ | 0.898834 / 0.898834 | 4.4×10⁻¹⁴ | 0.962–1.034 | 10 |
+| 2 | 4.5 | 1.202 | 18 | 1.6×10⁻¹³ | 0.650175 / 0.650176 | 3.6×10⁻¹⁴ | 0.482–1.558 | 31 |
+| 2 | 5.5 | 1.469 | 20 | 9.9×10⁻¹⁴ | 0.603374 / 0.603375 | 3.1×10⁻¹⁴ | 0.348–1.763 | 42 |
+| 2 | 6.3 | 1.682 | 21 | 2.2×10⁻¹³ | 0.571516 / 0.571516 | 2.7×10⁻¹⁴ | 0.260–1.929 | 58 |
+| 2 | 13.0 | 3.471 | 36 | 4.2×10⁻¹³ | 0.415708 / 0.415709 | 8.9×10⁻¹⁴ | 0.013–3.221 | diverges |
+| 4 | 0.5 | 0.202 | 9 | 2.8×10⁻¹³ | 0.933035 / 0.933036 | 1.0×10⁻¹² | 0.984–1.009 | 9 |
+| 4 | 3.0 | 1.214 | 17 | 3.5×10⁻¹³ | 0.689872 / 0.689872 | 8.8×10⁻¹³ | 0.583–1.268 | 27 |
+| 4 | 3.6 | 1.457 | 19 | 1.3×10⁻¹³ | 0.650325 / 0.650325 | 8.7×10⁻¹³ | 0.470–1.366 | 35 |
+| 4 | 4.2 | 1.700 | 20 | 3.1×10⁻¹³ | 0.616188 / 0.616187 | 7.6×10⁻¹³ | 0.371–1.472 | 47 |
+| 4 | 8.5 | 3.440 | 34 | 3.3×10⁻¹³ | 0.468369 / 0.468376 | 5.6×10⁻¹³ | 0.049–2.285 | diverges |
+
+- Every solve in (v_c, √3 v_c), and those near 3.45 v_c, reaches a residual below 10⁻¹⁰ (`gmres`), so the acceptance
+  item holds with no failure to report. s_min is converged in N to six digits and stays far from zero.
+- G at #58's rows, (2, 1) and (4, 0.5), equals #58's Picard values to their printed digits, and the identity of item 6
+  now holds beyond v_c too.
+- Picard converges for v < 1/ρ(T₁), that is up to 2.44 v_c and 2.72 v_c, well past v_c, as §7 predicts, and diverges
+  at 3.4 v_c, where GMRES still converges. Its iteration count grows like 1/log(1/(vρ)).
+- As v grows the spinor's norm dips: min |ε|² is 0.013 at σR = 2, v = 13. Nothing here needs |ε| > 0.
+
+**The box.** At σR = 2 and the same spacing (dx = 0.25), L = 12 gives s_min = 0.5561 at v = 6.3 and 0.3997 at v = 13,
+against 0.5715 and 0.4157 at L = 8. L = 16 gives L16_TBD. ρ(T₁) moves by 2×10⁻⁴. The box error in s_min is a few
+per cent and does not bring it near zero.
+
+**Scan** (`--part=scan`, N = 64). s_min(v) for v/v_c = 0.25, 0.5, …, 4 decreases smoothly, from 0.905 to 0.390 at
+σR = 2 and from 0.918 to 0.441 at σR = 4, with no dip. Singular values are 1-Lipschitz under perturbation, and
+D̃(v)D⁻¹ − D̃(v′)D⁻¹ = (v − v′)B₁D⁻¹, so between grid points s_min changes by at most
+0.125 v_c ‖T₁‖ ≤ 0.11. So the discrete operator has s_min ≥ 0.28 on all of 0 ≤ v ≤ 4 v_c at both σR: no real zero mode
+of the grid operator there.
+
+**Controls** (`--controls`). Each mutation is run beside the same command without it, and counts as fired only if
+its target checks pass without it and fail with it.
+
+CONTROLS_TBD
+
+Peak resident memory (`/usr/bin/time -l`): 5.95 GB for `--part=krylov --sigmas=2` and 5.16 GB for `--sigmas=4`,
+both at N = 128 with ARPACK ncv = 20 and GMRES restart 20. 1.67 GB for the scan.
 
 ## What this does and does not show
 
-TBD
+- The existence threshold of item 5 rises from κ_K < 1 to κ_K < √3, *proved* by hand from [FL22], and not yet
+  independently reviewed. The reduction and the pointwise identities are *checked symbolically*. FL's own inequality
+  is cited, not re-derived.
+- Existence and uniqueness hold for every real v outside a discrete set E ⊂ {|v| ≥ √3 v_c}, *proved* by hand. For the
+  tanh profile at σR = 2 and 4 the grid operator has no real zero mode up to 4 v_c, and none of its 24 largest
+  eigenvalues is real (*numerical evidence*). That E is empty for the tanh profile is a *conjecture*.
+- The √3 is the best this route gives for complex amplitudes (the planted case attains it), but not necessarily for
+  real ones (§8). For the tanh profile, the first complex zero mode is at 2.44 v_c and 2.72 v_c.
+- The contraction threshold v_c keeps its role for the quantitative bound ‖∇ψ‖₂ ≤ ‖Bε₀‖₂/(1 − κ_K). Beyond it, the
+  Witten spinor exists but this note gives no bound on its size, and |ε| can come close to zero (min |ε|² = 0.013 at
+  3.47 v_c, σR = 2).
+- Nothing changes in #58's conclusions on the mass: flat slices have E = P = 0, and the identity of item 6 is a
+  statement at E = 0. The new range only says the spinor in that identity exists for faster bubbles.
+- The numerics use one box per σR, with the box error estimated from L = 12 and 16 at σR = 2 only.
+- No novelty is claimed. The analytic core is [FL22]'s, and the Fredholm and spectral steps are standard.
 
 ## Discrepancies and reading notes
 
