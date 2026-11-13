@@ -47,7 +47,7 @@ with lapse 1, shift β_x = −v f and K_ij = ½(∂_iβ_j + ∂_jβ_i). It is th
    is [SSV22]'s (item 1), and [Le26] proves |j| ∝ v exactly, with a null-witness deficit linear in |j|. [LV04a]
    integrate the signed O(v) term, find zero, and call the net violation O(v²). That is a signed volume integral, while
    E₋ integrates a pointwise minimum over splits, so the two do not conflict ([prior_work.md](prior_work.md) §3).
-5. **The Witten spinor exists for κ_K < 1** (*proved*, by hand, not yet independently reviewed). On a flat slice
+5. **The Witten spinor exists for κ_K < 1** (*proved*, by hand, confirmed by #59's review, [review.md](review.md)). On a flat slice
    ∇̃_i = ∂_i + ½K_ij γ^jγ⁰, with the sign fixed in "Conventions", and K_ij γ^iγ^j = tr K (*checked symbolically*),
    so the Witten operator is D̃ = D + ½(tr K)γ⁰ with D = γ^i∂_i. That only tr K enters is [FNS11] Eq. 2.1, in
    two-spinor form. D is an isometry from Ḣ¹ onto L² (Fourier). With ε = ε₀ + ψ, the equation is

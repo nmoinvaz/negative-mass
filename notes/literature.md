@@ -45,6 +45,12 @@ Read for #60 on 2026-11-13. Journal data checked against INSPIRE, arXiv identifi
 `notes/warp/phantom_source.md` and `notes/warp/mass_bounds.md`, the search log and what was not read are in
 `notes/warp/prior_work.md`. Below, u is the 4-velocity of the matter and n the Eulerian normal.
 
+### The metric
+- **Alcubierre 1994**, arXiv:gr-qc/0009013, Class. Quantum Grav. 11, L73–L77, doi:10.1088/0264-9381/11/5/001 (checked on
+  arXiv). Defines ds² = −dt² + (dx − v_s f(r_s) dt)² + dy² + dz² with the tanh profile, and gives the Eulerian energy
+  density −(v_s²/32π)((y² + z²)/r_s²) f′² < 0 (Eq. 19; the arXiv text prints r_c where r_s is meant, as #57 found).
+  Concludes that exotic matter is needed. Names no matter model. Reproduced in `notes/warp/alcubierre_bounds.py`.
+
 ### Matter sources
 - **Santos-Pereira, Abreu & Ribeiro 2020**, arXiv:2008.06560, EPJC 80, 786. Dust T = μ u u with u = n, for a general
   shift β(t, x, y, z). The field equations force μ = 0 and β independent of y and z, which is vacuum with β obeying the
