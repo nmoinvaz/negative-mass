@@ -1,0 +1,34 @@
+review_cartan.py, issue #59. sympy 1.14.0, python 3.14.7. mutation: none
+
+== 1. Planted truth for the Cartan routine ==
+[PASS] planted_desitter: R_ab = 3 H^2 eta_ab: [-3*H**2, 3*H**2, 3*H**2, 3*H**2]
+[PASS] planted_schw: Schwarzschild R_ab = 0
+[PASS] planted_eb: Ellis-Bronnikov R_ll = -2*a**2/(a**4 + 2*a**2*r**2 + r**4), others 0
+
+== 2. General shift: ds^2 = -dt^2 + (dx + b dt)^2 + dy^2 + dz^2, frame (n, d_x, d_y, d_z) ==
+[PASS] structure_eqs: omega antisymmetric and torsion-free: 0 violations
+[PASS] connection_K: omega_0j(e_i) - K_ij = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+[PASS] general_3p1: R_00 = n(K) - K_ij K_ij, R_0i = d_i K - d_j K_ji, R_ij = -n(K_ij) + K_jx d_i b + K_ix d_j b + K K_ij - 2 K_ik K_kj
+[PASS] general_I2: R_00 + R_11 + 2 (R_22 + R_33) = 0, R_AB - b_A b_B / 2 = [0, 0, 0, 0], G_00 + |grad_perp b|^2 / 4 = 0
+  R_00 + R_11 = -b_0001**2 - b_0010**2
+
+== 3. Axisymmetric shift b = G(t, x, y^2 + z^2), any t-dependence, frame (n, d_x, e_rho, e_varphi) ==
+[PASS] axi_I1: rho R(e_varphi, n), rho R(e_varphi, d_x), rho^2 R_rho,varphi, rho^2 R_varphi,varphi = [0, 0, 0, 0]
+[PASS] axi_I2: rho^2 (R_00 + R_11 + 2 R_rho,rho) = 0
+[PASS] axi_axis: on y = z = 0: R(E_2, .), R(E_3, .), R_00 + R_11 = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+== 4. Alcubierre with constant v: the note's frame components and wall curvature ==
+[PASS] alc_table: code minus the note's table: {'00': 0, '01': 0, '0r': 0, '11': 0, '1r': 0, 'rr': 0}
+[PASS] alc_wall: R_rho,rho - v^2 f'^2 rho^2 / (2 r_s^2) = 0, on the axis R_01 - v f' / r_s = 0, G_00 / 8 pi + (v^2 / 32 pi) (rho / r_s)^2 f'^2 = 0
+
+checks: 12 passed, 0 failed []. 1 s
+
+== Controls: each mutation must make its target checks fail ==
+[FIRED] --mutate=cartan-sign (flips the sign of omega ^ omega in the curvature 2-form): exit 1, failed ['planted_desitter', 'planted_schw', 'planted_eb', 'general_3p1', 'general_I2', 'axi_I2', 'alc_table', 'alc_wall']
+[FIRED] --mutate=torsion (solves for omega with T_bca and T_cab swapped): exit 1, failed ['planted_desitter', 'planted_schw', 'planted_eb', 'structure_eqs', 'connection_K', 'general_3p1', 'general_I2', 'axi_I2', 'axi_axis', 'alc_table', 'alc_wall']
+[FIRED] --mutate=rotate (rotates (e_rho, e_varphi) by alpha with tan(alpha/2) = 1/20): exit 1, failed ['axi_I1', 'axi_I2']
+[FIRED] --mutate=nonaxi (makes the shift depend on y^2 + 2 z^2, not on rho): exit 1, failed ['axi_I1', 'axi_I2']
+[FIRED] --mutate=lapse (gives the slicing the lapse 1 + b, not 1): exit 1, failed ['connection_K', 'general_3p1', 'general_I2', 'axi_I1', 'axi_I2', 'axi_axis']
+[FIRED] --mutate=table-sign (flips the sign of R_0rho in the note's table): exit 1, failed ['alc_table']
+[FIRED] --mutate=wall-v2 (doubles v in the expected wall curvature): exit 1, failed ['alc_wall']
+controls: all fired
