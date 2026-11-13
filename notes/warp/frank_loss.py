@@ -5,7 +5,8 @@ Frank and Loss, arXiv:2201.03610 [FL22], prove that a nontrivial psi in Hdot^1 a
 needs ||A||_3^2 >= 3 S (their Theorem 1, Remark 4 and Section 3). This script checks the steps that carry that bound to
 the flat-slice Witten operator D~ = D + (1/2)(tr K) g0 of mass_bounds.md, and tests the result numerically.
 
-    python notes/warp/frank_loss.py [--part=reduce,fl,vc,planted,krylov] [--sigmas=2,4] [--Ns=64,96,128]
+    python notes/warp/frank_loss.py [--part=reduce,fl,vc,planted,krylov,scan] [--sigmas=2,4] [--Ns=64,96,128]
+                                    [--vs=...] [--L=...]
     python notes/warp/frank_loss.py --controls          every --mutate control, each must make its check fail
 
 Parts:
@@ -18,6 +19,7 @@ Parts:
   planted  the FFT eigen-solver on the planted extremal tr K = 6/(1 + r^2), whose spectral radius is 1 = 1/(sqrt3 v_c).
   krylov   for the tanh profile: the top eigenvalues of T1 = D^-1 B1, its norm, then GMRES solves of the Witten equation
            (I + v T1) psi = -v T1 eps0 per v, with residuals, the smallest singular value of D~ D^-1 and the identity.
+  scan     at N = 64: the top 24 eigenvalues of T1 and s_min(D~ D^-1) for v/v_c = 0.25, 0.5, ..., 4.
 
 Mutations (each must make its check fail): g0block, gamma, ly, sobolev, half, vscale, Jsign.
 Exits 1 when any check fails. Peak memory at N = 128 is a few GB; run under nice.
@@ -40,6 +42,7 @@ ap.add_argument("--mutate", default="")
 ap.add_argument("--sigmas", default="2,4")
 ap.add_argument("--Ns", default="64,96,128")
 ap.add_argument("--vs", default="")
+ap.add_argument("--L", type=float, default=0.0, help="box half-width; 0 uses #58's (8 at sigma R = 2, 5 at 4)")
 ap.add_argument("--controls", action="store_true")
 args = ap.parse_args()
 MUT = args.mutate
@@ -47,7 +50,7 @@ PARTS = args.part.split(",")
 FAILED = []
 KRY = "--part=krylov --sigmas=2 --Ns=96 --vs=4.5"
 MUTATIONS = {  # name: (what it breaks, the run's options, the checks that must fail)
-    "g0block": ("flips the sign of the lower block of g0", "--part=reduce", ["reduction"]),
+    "g0block": ("flips the sign of the lower block of g0", "--part=reduce", ["reduction", "divxi"]),
     "gamma": ("scales gamma^1 and sigma_1 by 11/10", "--part=reduce", ["clifford", "penrose"]),
     "ly": ("scales the Loss-Yau vector potential by 11/10", "--part=fl,vc", ["loss_yau"]),
     "sobolev": ("uses 21/20 of the sharp Sobolev constant", "--part=fl,vc", ["S_3", "loss_yau_norm", "v_c"]),
@@ -114,6 +117,11 @@ def part_reduce():
     check("reduction", fwd and bwd, "D~eps = 0  <=>  sigma.grad psi = +tau psi/2 and sigma.grad chi = -tau chi/2")
     n2 = sp.expand((psi.H * psi + chi.H * chi)[0] - 2 * (a.H * a + b.H * b)[0])
     check("norms", n2 == 0, "|psi|^2 + |chi|^2 = 2 |eps|^2, so psi = chi = 0 iff eps = 0")
+    # 2 Re<eps, g0 D~ eps> = div xi - tau |eps|^2 with xi^j = <eps, g0 g^j eps>: a kernel element has int tau |eps|^2 = 0
+    xi = [(eps.H * g0 * g[j] * eps)[0] for j in range(3)]
+    q = (eps.H * g0 * Dt)[0]
+    dv = sp.expand(q + sp.conjugate(q) - sum(sp.diff(xi[j], X[j]) for j in range(3)) + tau * (eps.H * eps)[0])
+    check("divxi", dv == 0, "2 Re<eps, g0 D~eps> = d_j xi^j - tr K |eps|^2, pointwise")
     # the Clifford relations FL assume, for sigma (their N = 2 in d = 3) and for the 4x4 gammas
     cl = all(sp.expand(m[i] * m[j] + m[j] * m[i] - 2 * int(i == j) * sp.eye(m[0].shape[0])) == sp.zeros(*m[0].shape)
              for m in (s, g) for i in range(3) for j in range(3))
@@ -402,10 +410,11 @@ def identity_terms(g, f, v, eps):
         del A, Kg
     G = np.sum(G2) * g.dV / (4 * np.pi)
     trK = -v * F1 * n[0]
-    KK = 2 * (v / 2) ** 2 * F1**2 * (1 + n[0] ** 2)  # K_ij K_ij
+    nn = n[0] ** 2 + n[1] ** 2 + n[2] ** 2  # 1, except 0 at the grid point r = 0, where F1 and F2 are taken at r = 1
+    KK = 2 * (v / 2) ** 2 * F1**2 * (n[0] ** 2 + nn)  # K_ij K_ij
     mu = (trK**2 - KK) / (16 * np.pi)
     hess0 = [F2 * n[0] * n[j] + F1r * ((1 if j == 0 else 0) - n[0] * n[j]) for j in range(3)]
-    lap = F2 + 2 * F1r
+    lap = F2 * nn + F1r * (3 - nn)
     J = [(v / (16 * np.pi)) * (hess0[j] - (lap if j == 0 else 0)) for j in range(3)]
     e2 = np.sum(np.abs(eps) ** 2, axis=0)
     xi = [np.real(np.sum(eps.conj() * gam(0, gam(j, eps)), axis=0)) for j in (1, 2, 3)]
@@ -452,7 +461,7 @@ def part_krylov():
     for sig in sigmas:
         f = tanh_profile(sig)
         vc = 1 / kappa1(sig)
-        L = BOX[sig]
+        L = args.L or BOX[sig]
         vs = [float(v_) for v_ in args.vs.split(",")] if args.vs else VS[sig]
         print(f"== krylov: sigma R = {sig}, L = {L}, v_c = {vc:.5f}, sqrt3 v_c = {math.sqrt(3) * vc:.5f}", flush=True)
         for N in Ns:
