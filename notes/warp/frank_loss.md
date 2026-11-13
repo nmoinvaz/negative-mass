@@ -158,7 +158,8 @@ because γ⁰γ^j is Hermitian and (γ⁰)² = −1 (`divxi`; `--mutate=g0block`
 ε ∈ H¹_loc, so the identity holds in L¹_loc. For a zero mode ε ∈ Ḣ¹ ∩ L³ (§3), |ξ| ≤ |ε|² gives ξ ∈ L^{3/2}, and
 ∂_jξ^j = τ|ε|² ∈ L¹. Integrate against a cut-off φ(x/R) with ∇φ supported in 1 ≤ |x| ≤ 2. The boundary term is at most
 (C/R)‖ξ‖_{L^{3/2}(|x|>R)} (vol of the shell)^{1/3} ≤ C′‖ξ‖_{L^{3/2}(|x|>R)} → 0, so ∫τ|ε|² dV = 0.
-If τ ≥ 0 a.e. (or ≤ 0), then τ|ε|² = 0 a.e., so Bε = 0 and Dε = 0, and ε = 0 because D is injective on Ḣ¹. Hence for a slice whose tr K has one sign, D̃(v) has no
+If τ ≥ 0 a.e. (or ≤ 0), then τ|ε|² = 0 a.e., so Bε = 0 and Dε = 0, and ε = 0 because D is injective on Ḣ¹. Hence
+for a slice whose tr K has one sign, D̃(v) has no
 kernel at any real v, and the Witten spinor exists and is unique for every amplitude.
 
 The same identity explains why FL's extremal τ = 6/(1 + r²) > 0 reaches the bound only at imaginary v (§4). For real v
@@ -177,8 +178,8 @@ v = 0 and at least 1 − κ_K while κ_K < 1. Eigenvalues come from ARPACK (`eig
 **Planted truth** (`planted`). For τ₁ = 6/(1 + r²) the exact answer is known (§4): T₁ has eigenvalues ±i, each fourfold
 (two spinor states in each of the ψ and χ sectors), so ρ(T₁) = 1 = 1/(√3 v_c), and FL's bound is attained. Under
 stereographic projection these are the Dirac eigenvalues ±(3/2 + k) on the round S³, so the next |λ| is (3/2)/(5/2) =
-3/5. At L = 10, N = 64 the code finds eight eigenvalues ±0.9910i, with |Re λ|/|λ| ≤ 10⁻¹⁵, and the ninth at 0.6000.
-`--mutate=half` (B₁ without its ½) doubles them, and the check fails.
+3/5. At L = 10, N = 64 the code finds eight eigenvalues ±0.9910i, with |Re λ|/|λ| < 2×10⁻¹⁵, and the ninth at 0.6000.
+The 0.9 % shortfall is the box and the grid. `--mutate=half` (B₁ without its ½) doubles them, and the check fails.
 
 **The spectrum of T₁ for the tanh profile** (`fl_bound`). Times v_c:
 
@@ -194,12 +195,13 @@ The leading eigenvalues are a complex quadruple, sixteenfold at N = 64 (scan), s
 speeds of modulus 2.44 v_c (σR = 2) and 2.72 v_c (σR = 4). The next quadruple is at ±0.0048 ± 0.2989i and
 ±0.0028 ± 0.2885i. None of the top 24 is real, so no real zero-mode speed of the discrete operator lies below 3.35 v_c
 (σR = 2) or 3.47 v_c (σR = 4). FL's bound holds with room: ρ√3 v_c ≈ 0.71 and 0.64, against the contraction norm
-0.81 and 0.73. ρ is stable to 2×10⁻⁴ under L = 8 → 12, while ‖T₁‖ moves by 4 %; the norm is set by spread-out functions.
+0.81 and 0.73. ρ moves by 1.4×10⁻⁴ from L = 8 to 16, while ‖T₁‖ moves by 6 % (the box, below).
 
 **GMRES solves at N = 128.** The residual is the RMS of D̃ε = Dψ + vB₁(ε₀ + ψ), with D by spectral differentiation,
 over that of vB₁ε₀. It includes the box mean (k = 0), which a periodic box cannot set to zero. That mean is a
-discretisation error: at σR = 2, v = 6.3 it is 1.5×10⁻⁸ at N = 48, 9×10⁻¹¹ at N = 64 and 4×10⁻¹⁴ at N = 128. The
-identity is |G + ∫T(ξ, n)|/G of item 6. Picard (#58's iteration) is run at N = 64.
+discretisation error: at σR = 2, v = 6.3 it is 4.6×10⁻¹¹ at N = 64, 5.4×10⁻¹⁴ at N = 96 and 3.9×10⁻¹⁴ at N = 128, while
+the mean-free part stays at 2×10⁻¹³. The identity is |G + ∫T(ξ, n)|/G of item 6. Picard (#58's iteration) is run at
+N = 64.
 
 | σR | v | v/v_c | GMRES iterations | residual | s_min, N = 64 / 128 | identity | \|ε\|² range | Picard |
 |---|---|---|---|---|---|---|---|---|
@@ -218,13 +220,22 @@ identity is |G + ∫T(ξ, n)|/G of item 6. Picard (#58's iteration) is run at N 
   item holds with no failure to report. s_min is converged in N to six digits and stays far from zero.
 - G at #58's rows, (2, 1) and (4, 0.5), equals #58's Picard values to their printed digits, and the identity of item 6
   now holds beyond v_c too.
-- Picard converges for v < 1/ρ(T₁), that is up to 2.44 v_c and 2.72 v_c, well past v_c, as §7 predicts, and diverges
-  at 3.4 v_c, where GMRES still converges. Its iteration count grows like 1/log(1/(vρ)).
+- Picard converges at every v tried below 1/ρ(T₁) (2.44 v_c and 2.72 v_c), well past v_c, as §7 predicts. It diverges
+  at 3.4 v_c, above 1/ρ(T₁), where GMRES still converges. Its iteration count grows like 1/log(1/(vρ)).
 - As v grows the spinor's norm dips: min |ε|² is 0.013 at σR = 2, v = 13. Nothing here needs |ε| > 0.
 
-**The box.** At σR = 2 and the same spacing (dx = 0.25), L = 12 gives s_min = 0.5561 at v = 6.3 and 0.3997 at v = 13,
-against 0.5715 and 0.4157 at L = 8. L = 16 gives L16_TBD. ρ(T₁) moves by 2×10⁻⁴. The box error in s_min is a few
-per cent and does not bring it near zero.
+**The box.** At σR = 2 and one spacing, dx = 0.25 (L = 8, 12, 16 at N = 64, 96, 128):
+
+| L | ρ(T₁)v_c | ‖T₁‖v_c | s_min at v = 6.3 | s_min at v = 13 | G at v = 6.3 |
+|---|---|---|---|---|---|
+| 8 | 0.40938 | 0.81080 | 0.5715 | 0.4157 | 3.21264 |
+| 12 | 0.40949 | 0.84133 | 0.5561 | 0.3997 | 3.21586 |
+| 16 | 0.40952 | 0.85638 | 0.5489 | 0.3924 | 3.21664 |
+
+The spectral radius moves by 1.4×10⁻⁴. s_min and ‖T₁‖ move like 1/L, the slow r⁻² tail of the spinor; extrapolating
+in 1/L from L = 12 and 16 gives s_min ≈ 0.53 and 0.37 and ‖T₁‖v_c ≈ 0.90, still below the contraction bound 1. So the
+box error in s_min is about 8 % at L = 8 and does not bring it near zero. These two runs fail `gmres` and `identity` at
+that coarse spacing, as N = 64 at L = 8 would; they measure the box, not the solve.
 
 **Scan** (`--part=scan`, N = 64). s_min(v) for v/v_c = 0.25, 0.5, …, 4 decreases smoothly, from 0.905 to 0.390 at
 σR = 2 and from 0.918 to 0.441 at σR = 4, with no dip. Singular values are 1-Lipschitz under perturbation, and
@@ -235,10 +246,21 @@ of the grid operator there.
 **Controls** (`--controls`). Each mutation is run beside the same command without it, and counts as fired only if
 its target checks pass without it and fail with it.
 
-CONTROLS_TBD
+| mutation | what it breaks | checks that fail |
+|---|---|---|
+| `g0block` | lower block of γ⁰ flipped | `reduction`, `divxi` (and `clifford`) |
+| `gamma` | γ¹ and σ₁ scaled by 11/10 | `clifford`, `penrose` |
+| `ly` | Loss–Yau 𝒜 scaled by 11/10 | `loss_yau`, `loss_yau_norm` |
+| `sobolev` | 21/20 of the sharp S | `S_3`, `loss_yau_norm`, `fl_scalar_extremal`, `v_c` |
+| `half` | ½ dropped from B₁ in the FFT operator | `planted`, `fl_bound` (and `identity`) |
+| `vscale` | GMRES solves with 1.001 v | `gmres` |
+| `Jsign` | +J·ξ in the identity | `identity` |
 
-Peak resident memory (`/usr/bin/time -l`): 5.95 GB for `--part=krylov --sigmas=2` and 5.16 GB for `--sigmas=4`,
-both at N = 128 with ARPACK ncv = 20 and GMRES restart 20. 1.67 GB for the scan.
+All seven fired. The Krylov controls run at σR = 2, N = 96, v = 4.5, where the unmutated run passes.
+
+Peak resident memory (`/usr/bin/time -l`, maximum resident set size): 5.54 GiB (5.95 GB) for
+`--part=krylov --sigmas=2` and 4.80 GiB (5.16 GB) for `--sigmas=4`, both at N = 128 with ARPACK ncv = 20 and GMRES
+restart 20; 1.55 GiB for the scan.
 
 ## What this does and does not show
 
@@ -255,7 +277,7 @@ both at N = 128 with ARPACK ncv = 20 and GMRES restart 20. 1.67 GB for the scan.
   3.47 v_c, σR = 2).
 - Nothing changes in #58's conclusions on the mass: flat slices have E = P = 0, and the identity of item 6 is a
   statement at E = 0. The new range only says the spinor in that identity exists for faster bubbles.
-- The numerics use one box per σR, with the box error estimated from L = 12 and 16 at σR = 2 only.
+- The numerics use #58's box per σR, with the box error estimated from L = 12 and 16 at σR = 2 only.
 - No novelty is claimed. The analytic core is [FL22]'s, and the Fredholm and spectral steps are standard.
 
 ## Discrepancies and reading notes

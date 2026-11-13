@@ -172,7 +172,8 @@ def part_fl():
     nA2 = sp.simplify(nA3 ** sp.Rational(2, 3))
     check("loss_yau_norm", sp.simplify(nA2 - 3 * S_used) == 0, f"||A||_3^2 = {nA2} = {float(nA2):.10f}, 3 S = "
           f"{float(3 * S_used):.10f}")
-    # FL appendix: sigma.(-i grad) Psi~ = Lambda Psi~, Lambda = 3 s/(1 + r^2), Psi~ = (1 + r^2)^(-3/2)(1 + i s sigma.x) phi0
+    # FL appendix: sigma.(-i grad) Psi~ = Lambda Psi~ with Lambda = 3 s/(1 + r^2) and
+    # Psi~ = (1 + r^2)^(-3/2) (1 + i s sigma.x) phi0
     # In D~'s reduced form sigma.grad psi = (v/2) tau1 psi this is tau1 = 6/(1 + r^2) at v = i s.
     phi0 = sp.Matrix([sp.Symbol("c0"), sp.Symbol("c1")])
     ok = True
@@ -536,7 +537,8 @@ def part_scan():
             print("    " + ", ".join(f"{z_.real * vc:+.4f}{z_.imag * vc:+.4f}i" for z_ in lam[i:i + 6]))
         if reals:
             print(f"  real eigenvalues among them: " + ", ".join(f"{z_.real * vc:+.4f}" for z_ in reals)
-                  + f"; the first real zero-mode speed is v = {1 / abs(reals[0]):.4f} = {1 / abs(reals[0]) / vc:.3f} v_c")
+                  + f"; the first real zero-mode speed is v = {1 / abs(reals[0]):.4f} = "
+                  f"{1 / abs(reals[0]) / vc:.3f} v_c")
         else:
             print(f"  no real eigenvalue among the top 24, so no real zero-mode speed below {1 / abs(lam[-1]):.4f} = "
                   f"{1 / abs(lam[-1]) / vc:.3f} v_c")

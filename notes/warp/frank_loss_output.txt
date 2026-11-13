@@ -1,0 +1,213 @@
+# notes/warp/frank_loss.py output, issue #63
+# mac (Apple M5), 2026-11-13; Python 3.14.7, numpy 2.5.4, scipy 1.18.1, sympy 1.14.0
+# Each section is one run from the repository root under `nice -n 10 /usr/bin/time -l`:
+#   python notes/warp/frank_loss.py <options>
+# Of the time -l block only the wall time and the maximum resident set size are kept.
+# The L = 12 and L = 16 runs measure the box error at the spacing dx = 0.25 of N = 64, L = 8. Their gmres and
+# identity checks fail at that spacing (as N = 64 at L = 8 would); they are not the acceptance runs.
+
+######## python notes/warp/frank_loss.py --part=reduce,fl,vc,planted
+== reduce: D~ eps = 0 on 4-spinors against two 2-spinor equations (symbolic)
+  [PASS] reduction: D~eps = 0  <=>  sigma.grad psi = +tau psi/2 and sigma.grad chi = -tau chi/2
+  [PASS] norms: |psi|^2 + |chi|^2 = 2 |eps|^2, so psi = chi = 0 iff eps = 0
+  [PASS] divxi: 2 Re<eps, g0 D~eps> = d_j xi^j - tr K |eps|^2, pointwise
+  [PASS] clifford: sigma_j and g^j Hermitian and anticommuting; g0^2 = -1, g0 anti-Hermitian, {g0, g^j} = 0
+  [PASS] penrose: FL's pointwise Penrose formula holds for the 2x2 and the 4x4 gammas
+== fl: Frank-Loss constants and extremal pairs in d = 3 (symbolic)
+  [PASS] S_3: FL's S_3 = 5.477904089531, item 5's S = 5.477904089531
+  [PASS] loss_yau: sigma.(-i grad - A) Psi = 0, |A|^2 = 9*(x**2 + y**2 + z**2 + 1)**2 / (1 + r^2)^4
+  [PASS] loss_yau_norm: ||A||_3^2 = 9*2**(2/3)*pi**(4/3)/4 = 16.4337122686, 3 S = 16.4337122686
+  [PASS] fl_scalar_extremal: tau1 = 6/(1 + r^2) has zero modes at v = +-i; kappa_K(1) = sqrt(3), so sqrt(3) v_c = |v| = 1
+== vc: v_c = 1/kappa_K(1) (contraction) and sqrt(3) v_c (Frank-Loss), S = 5.477904090
+  sigma R | v_c (#58)  | v_c here   | sqrt3 v_c  | thin wall sqrt3 v_c
+      2.0 |    3.74490 |    3.74490 |    6.48636 |    6.82624
+      4.0 |    2.47097 |    2.47097 |    4.27985 |    4.30026
+      8.0 |    1.56243 |    1.56243 |    2.70621 |    2.70900
+     16.0 |    0.98503 |    0.98503 |    1.70612 |    1.70656
+  [PASS] v_c: equal to #58's printed values, max difference 3.7e-06
+== planted: tau1 = 6/(1 + r^2) has zero modes at v = +-i (FL appendix), so rho(T1) = 1 = 1/(sqrt3 v_c)
+  L = 10.0, N = 64: top |lambda| = 0.9910, 0.9910, 0.9910, 0.9910, 0.9910, 0.9910, 0.9910, 0.9910, 0.6000, 0.6000
+  top eigenvalues: -0.0000+0.9910i, -0.0000-0.9910i, +0.0000+0.9910i, -0.0000-0.9910i, -0.0000+0.9910i, +0.0000+0.9910i, +0.0000-0.9910i, -0.0000-0.9910i
+  115 applications, 12 s, peak 0.75 GB
+  [PASS] planted: rho(T1) = 0.9910 (exact 1) eightfold, max |Re lambda|/|lambda| over the top 8 = 1.7e-15 (exact 0), ninth |lambda| = 0.6000 (exact 3/5)
+peak resident memory 0.75 GB
+all checks passed
+  wall time 12.61 s
+  maximum resident set size 0.75 GiB
+
+######## python notes/warp/frank_loss.py --part=krylov --sigmas=2
+== krylov: sigma R = 2.0, L = 8.0, v_c = 3.74490, sqrt3 v_c = 6.48636
+  N = 64: rho(T1) v_c = 0.40938 (FL: <= 1/sqrt3 = 0.57735), ||T1|| v_c = 0.81080 (contraction: <= 1), 10 s
+    top eigenvalues of T1 times v_c: -0.0270+0.4085i, +0.0270-0.4085i, +0.0270+0.4085i, -0.0270-0.4085i, +0.0270-0.4085i, -0.0270-0.4085i, +0.0270+0.4085i, -0.0270+0.4085i
+    no real eigenvalue among the top 8: any real zero-mode speed is above 9.1477
+     v    | v/v_c | v rho(T1) | GMRES its | r_pre    | r_phys   | k=0 part | k!=0 part | s_min(D~D^-1) | G           | rel. identity | |eps|^2 range   | Picard its
+     1.00 | 0.267 |    0.1093 |        10 | 6.20e-14 | 4.41e-12 | 4.40e-12 | 2.41e-13  |      0.898834 | 6.50304e-02 |      9.98e-07 | 0.9622-1.0343 | 10 (5e-12)   [8 s, peak 0.75 GB]
+     4.50 | 1.202 |    0.4919 |        18 | 2.88e-14 | 4.55e-11 | 4.55e-11 | 1.35e-13  |      0.650175 | 1.51351e+00 |      1.16e-06 | 0.4822-1.5586 | 31 (5e-12)   [9 s, peak 0.77 GB]
+     5.50 | 1.469 |    0.6012 |        20 | 1.77e-14 | 3.78e-11 | 3.78e-11 | 7.53e-14  |      0.603374 | 2.36684e+00 |      1.14e-06 | 0.3479-1.7627 | 42 (8e-12)   [11 s, peak 0.79 GB]
+     6.30 | 1.682 |    0.6887 |        21 | 6.00e-14 | 4.64e-11 | 4.64e-11 | 1.99e-13  |      0.571516 | 3.21264e+00 |      1.11e-06 | 0.2599-1.9278 | 58 (8e-12)   [13 s, peak 0.79 GB]
+    13.00 | 3.471 |    1.4211 |        36 | 8.92e-14 | 1.19e-09 | 1.19e-09 | 3.72e-13  |      0.415708 | 1.63724e+01 |      2.40e-07 | 0.0124-3.2098 | 51 (1e+06)   [17 s, peak 0.79 GB]
+  N = 96: rho(T1) v_c = 0.40940 (FL: <= 1/sqrt3 = 0.57735), ||T1|| v_c = 0.81079 (contraction: <= 1), 34 s
+    top eigenvalues of T1 times v_c: -0.0271+0.4085i, +0.0271-0.4085i, -0.0271-0.4085i, -0.0271+0.4085i, +0.0271+0.4085i, -0.0271-0.4085i, +0.0271-0.4085i, +0.0271+0.4085i
+    no real eigenvalue among the top 8: any real zero-mode speed is above 9.1473
+     v    | v/v_c | v rho(T1) | GMRES its | r_pre    | r_phys   | k=0 part | k!=0 part | s_min(D~D^-1) | G           | rel. identity | |eps|^2 range   | Picard its
+     1.00 | 0.267 |    0.1093 |        10 | 8.41e-14 | 2.58e-13 | 5.22e-14 | 2.53e-13  |      0.898834 | 6.50304e-02 |      9.36e-11 | 0.9622-1.0343 | -   [15 s, peak 2.23 GB]
+     4.50 | 1.202 |    0.4919 |        18 | 3.13e-14 | 1.62e-13 | 5.20e-14 | 1.54e-13  |      0.650176 | 1.51351e+00 |      1.01e-10 | 0.4820-1.5584 | -   [22 s, peak 2.24 GB]
+     5.50 | 1.469 |    0.6013 |        20 | 2.80e-14 | 1.04e-13 | 5.22e-14 | 8.96e-14  |      0.603375 | 2.36684e+00 |      9.59e-11 | 0.3478-1.7627 | -   [23 s, peak 2.24 GB]
+     6.30 | 1.682 |    0.6887 |        21 | 5.64e-14 | 2.22e-13 | 5.40e-14 | 2.15e-13  |      0.571516 | 3.21264e+00 |      9.61e-11 | 0.2599-1.9290 | -   [29 s, peak 2.24 GB]
+    13.00 | 3.471 |    1.4212 |        36 | 8.23e-14 | 4.28e-13 | 1.63e-13 | 3.96e-13  |      0.415709 | 1.63723e+01 |      2.11e-10 | 0.0128-3.2188 | -   [68 s, peak 2.24 GB]
+  N = 128: rho(T1) v_c = 0.40940 (FL: <= 1/sqrt3 = 0.57735), ||T1|| v_c = 0.81079 (contraction: <= 1), 117 s
+    top eigenvalues of T1 times v_c: -0.0271-0.4085i, +0.0271+0.4085i, +0.0271+0.4085i, -0.0271+0.4085i, -0.0271-0.4085i, +0.0271-0.4085i, -0.0271+0.4085i, +0.0271-0.4085i
+    no real eigenvalue among the top 8: any real zero-mode speed is above 9.1473
+     v    | v/v_c | v rho(T1) | GMRES its | r_pre    | r_phys   | k=0 part | k!=0 part | s_min(D~D^-1) | G           | rel. identity | |eps|^2 range   | Picard its
+     1.00 | 0.267 |    0.1093 |        10 | 6.45e-14 | 2.49e-13 | 3.91e-14 | 2.46e-13  |      0.898834 | 6.50304e-02 |      4.42e-14 | 0.9622-1.0343 | -   [51 s, peak 5.54 GB]
+  [PASS] #58 Picard value of G at (2, 1), N = 128: 6.503037e-02 against 6.50304e-02
+     4.50 | 1.202 |    0.4919 |        18 | 3.38e-14 | 1.59e-13 | 3.91e-14 | 1.54e-13  |      0.650176 | 1.51351e+00 |      3.61e-14 | 0.4820-1.5583 | -   [54 s, peak 5.54 GB]
+     5.50 | 1.469 |    0.6013 |        20 | 2.89e-14 | 9.85e-14 | 3.91e-14 | 9.04e-14  |      0.603375 | 2.36684e+00 |      3.10e-14 | 0.3478-1.7628 | -   [61 s, peak 5.54 GB]
+     6.30 | 1.682 |    0.6887 |        21 | 5.70e-14 | 2.17e-13 | 3.90e-14 | 2.14e-13  |      0.571516 | 3.21264e+00 |      2.67e-14 | 0.2599-1.9293 | -   [73 s, peak 5.54 GB]
+    13.00 | 3.471 |    1.4212 |        36 | 8.26e-14 | 4.18e-13 | 3.90e-14 | 4.16e-13  |      0.415709 | 1.63723e+01 |      8.85e-14 | 0.0128-3.2205 | -   [94 s, peak 5.54 GB]
+  [PASS] gmres: largest residual at the finest grid 4.2e-13 (target 1e-10)
+  [PASS] identity: worst relative |G + int T| at the finest grid 8.9e-14
+  [PASS] fl_bound: rho(T1) sqrt3 v_c = 0.7091 at the finest grid (FL: <= 1)
+peak resident memory 5.54 GB
+all checks passed
+  wall time 708.71 s
+  maximum resident set size 5.54 GiB
+
+######## python notes/warp/frank_loss.py --part=krylov --sigmas=4
+== krylov: sigma R = 4.0, L = 5.0, v_c = 2.47097, sqrt3 v_c = 4.27985
+  N = 64: rho(T1) v_c = 0.36732 (FL: <= 1/sqrt3 = 0.57735), ||T1|| v_c = 0.72761 (contraction: <= 1), 12 s
+    top eigenvalues of T1 times v_c: +0.0154-0.3670i, -0.0154-0.3670i, -0.0154+0.3670i, +0.0154+0.3670i, -0.0154+0.3670i, +0.0154+0.3670i, -0.0154-0.3670i, +0.0154-0.3670i
+    no real eigenvalue among the top 8: any real zero-mode speed is above 6.7270
+     v    | v/v_c | v rho(T1) | GMRES its | r_pre    | r_phys   | k=0 part | k!=0 part | s_min(D~D^-1) | G           | rel. identity | |eps|^2 range   | Picard its
+     0.50 | 0.202 |    0.0743 |         9 | 7.31e-14 | 1.64e-10 | 1.64e-10 | 2.77e-13  |      0.933035 | 2.84621e-02 |      1.51e-05 | 0.9840-1.0085 | 9 (2e-12)   [7 s, peak 0.75 GB]
+     3.00 | 1.214 |    0.4460 |        17 | 6.52e-14 | 1.54e-09 | 1.54e-09 | 3.42e-13  |      0.689872 | 1.11179e+00 |      1.74e-05 | 0.5831-1.2674 | 27 (7e-12)   [11 s, peak 0.75 GB]
+     3.60 | 1.457 |    0.5352 |        19 | 2.34e-14 | 1.90e-09 | 1.90e-09 | 1.26e-13  |      0.650325 | 1.64311e+00 |      1.80e-05 | 0.4707-1.3660 | 35 (7e-12)   [13 s, peak 0.76 GB]
+     4.20 | 1.700 |    0.6244 |        20 | 5.47e-14 | 2.20e-09 | 2.20e-09 | 2.93e-13  |      0.616188 | 2.29339e+00 |      1.86e-05 | 0.3710-1.4717 | 47 (6e-12)   [12 s, peak 0.76 GB]
+     8.50 | 3.440 |    1.2636 |        34 | 6.37e-14 | 6.41e-09 | 6.41e-09 | 3.04e-13  |      0.468369 | 1.06426e+01 |      2.34e-05 | 0.0488-2.2830 | 75 (1e+06)   [19 s, peak 0.76 GB]
+  N = 96: rho(T1) v_c = 0.36736 (FL: <= 1/sqrt3 = 0.57735), ||T1|| v_c = 0.72760 (contraction: <= 1), 34 s
+    top eigenvalues of T1 times v_c: -0.0154-0.3670i, -0.0154+0.3670i, +0.0154-0.3670i, +0.0154+0.3670i, +0.0154+0.3670i, -0.0154+0.3670i, +0.0154-0.3670i, -0.0154-0.3670i
+    no real eigenvalue among the top 8: any real zero-mode speed is above 6.7263
+     v    | v/v_c | v rho(T1) | GMRES its | r_pre    | r_phys   | k=0 part | k!=0 part | s_min(D~D^-1) | G           | rel. identity | |eps|^2 range   | Picard its
+     0.50 | 0.202 |    0.0743 |         9 | 7.34e-14 | 2.81e-13 | 4.46e-14 | 2.78e-13  |      0.933036 | 2.84619e-02 |      9.68e-09 | 0.9840-1.0085 | -   [18 s, peak 2.23 GB]
+     3.00 | 1.214 |    0.4460 |        17 | 6.63e-14 | 6.01e-13 | 4.87e-13 | 3.52e-13  |      0.689872 | 1.11177e+00 |      1.20e-08 | 0.5827-1.2674 | -   [28 s, peak 2.24 GB]
+     3.60 | 1.457 |    0.5352 |        19 | 3.01e-14 | 5.79e-13 | 5.63e-13 | 1.34e-13  |      0.650325 | 1.64308e+00 |      1.21e-08 | 0.4703-1.3663 | -   [28 s, peak 2.24 GB]
+     4.20 | 1.700 |    0.6244 |        20 | 5.62e-14 | 7.19e-13 | 6.51e-13 | 3.05e-13  |      0.616187 | 2.29335e+00 |      1.22e-08 | 0.3706-1.4724 | -   [30 s, peak 2.24 GB]
+     8.50 | 3.440 |    1.2637 |        34 | 6.11e-14 | 4.48e-12 | 4.46e-12 | 3.23e-13  |      0.468376 | 1.06423e+01 |      1.40e-08 | 0.0490-2.2848 | -   [84 s, peak 2.24 GB]
+  N = 128: rho(T1) v_c = 0.36736 (FL: <= 1/sqrt3 = 0.57735), ||T1|| v_c = 0.72760 (contraction: <= 1), 98 s
+    top eigenvalues of T1 times v_c: +0.0154+0.3670i, -0.0154+0.3670i, +0.0154-0.3670i, -0.0154-0.3670i, +0.0154+0.3670i, -0.0154-0.3670i, +0.0154-0.3670i, -0.0154+0.3670i
+    no real eigenvalue among the top 8: any real zero-mode speed is above 6.7262
+     v    | v/v_c | v rho(T1) | GMRES its | r_pre    | r_phys   | k=0 part | k!=0 part | s_min(D~D^-1) | G           | rel. identity | |eps|^2 range   | Picard its
+     0.50 | 0.202 |    0.0743 |         9 | 9.19e-14 | 2.83e-13 | 4.11e-16 | 2.83e-13  |      0.933036 | 2.84619e-02 |      1.03e-12 | 0.9840-1.0085 | -   [49 s, peak 4.67 GB]
+  [PASS] #58 Picard value of G at (4, 0.5), N = 128: 2.846190e-02 against 2.84619e-02
+     3.00 | 1.214 |    0.4460 |        17 | 6.63e-14 | 3.53e-13 | 4.54e-16 | 3.53e-13  |      0.689872 | 1.11177e+00 |      8.83e-13 | 0.5827-1.2675 | -   [67 s, peak 4.67 GB]
+     3.60 | 1.457 |    0.5352 |        19 | 3.14e-14 | 1.34e-13 | 4.60e-16 | 1.34e-13  |      0.650325 | 1.64308e+00 |      8.70e-13 | 0.4703-1.3663 | -   [79 s, peak 4.67 GB]
+     4.20 | 1.700 |    0.6244 |        20 | 6.12e-14 | 3.08e-13 | 4.92e-16 | 3.08e-13  |      0.616187 | 2.29335e+00 |      7.55e-13 | 0.3706-1.4724 | -   [59 s, peak 4.74 GB]
+     8.50 | 3.440 |    1.2637 |        34 | 6.12e-14 | 3.25e-13 | 3.92e-15 | 3.25e-13  |      0.468376 | 1.06423e+01 |      5.60e-13 | 0.0489-2.2850 | -   [94 s, peak 4.75 GB]
+  [PASS] gmres: largest residual at the finest grid 3.5e-13 (target 1e-10)
+  [PASS] identity: worst relative |G + int T| at the finest grid 1.0e-12
+  [PASS] fl_bound: rho(T1) sqrt3 v_c = 0.6363 at the finest grid (FL: <= 1)
+peak resident memory 4.75 GB
+all checks passed
+  wall time 741.67 s
+  maximum resident set size 4.80 GiB
+
+######## python notes/warp/frank_loss.py --part=scan
+== scan: sigma R = 2.0, L = 8.0, N = 64, v_c = 3.74490; top 24 eigenvalues of T1 times v_c (16 s):
+    -0.0270-0.4085i, -0.0270+0.4085i, +0.0270-0.4085i, +0.0270+0.4085i, +0.0270-0.4085i, -0.0270-0.4085i
+    -0.0270+0.4085i, +0.0270+0.4085i, +0.0270+0.4085i, -0.0270-0.4085i, +0.0270+0.4085i, +0.0270-0.4085i
+    -0.0270-0.4085i, -0.0270+0.4085i, -0.0270+0.4085i, +0.0270-0.4085i, +0.0048-0.2989i, +0.0048+0.2989i
+    -0.0048+0.2989i, -0.0048-0.2989i, +0.0048-0.2989i, +0.0048+0.2989i, -0.0048+0.2989i, -0.0048-0.2989i
+  no real eigenvalue among the top 24, so no real zero-mode speed below 12.5264 = 3.345 v_c
+  v/v_c | v       | s_min(D~ D^-1)
+   0.25 |  0.9362 | 0.904854
+   0.50 |  1.8724 | 0.822257
+   0.75 |  2.8087 | 0.751551
+   1.00 |  3.7449 | 0.691615
+   1.25 |  4.6811 | 0.641057
+   1.50 |  5.6173 | 0.598415
+   1.75 |  6.5536 | 0.562310
+   2.00 |  7.4898 | 0.531532
+   2.25 |  8.4260 | 0.505072
+   2.50 |  9.3622 | 0.482111
+   2.75 | 10.2985 | 0.462000
+   3.00 | 11.2347 | 0.444224
+   3.25 | 12.1709 | 0.428382
+   3.50 | 13.1071 | 0.414153
+   3.75 | 14.0434 | 0.401285
+   4.00 | 14.9796 | 0.389574
+  peak 1.54 GB
+== scan: sigma R = 4.0, L = 5.0, N = 64, v_c = 2.47097; top 24 eigenvalues of T1 times v_c (16 s):
+    -0.0154+0.3670i, +0.0154+0.3670i, +0.0154+0.3670i, -0.0154+0.3670i, +0.0154-0.3670i, -0.0154-0.3670i
+    -0.0154-0.3670i, +0.0154-0.3670i, -0.0154+0.3670i, -0.0154+0.3670i, -0.0154-0.3670i, +0.0154-0.3670i
+    +0.0154+0.3670i, -0.0154-0.3670i, +0.0154+0.3670i, +0.0154-0.3670i, +0.0028+0.2885i, +0.0028-0.2885i
+    -0.0028-0.2885i, -0.0028+0.2885i, +0.0028+0.2885i, +0.0028-0.2885i, -0.0028-0.2885i, -0.0028+0.2885i
+  no real eigenvalue among the top 24, so no real zero-mode speed below 8.5648 = 3.466 v_c
+  v/v_c | v       | s_min(D~ D^-1)
+   0.25 |  0.6177 | 0.918223
+   0.50 |  1.2355 | 0.846359
+   0.75 |  1.8532 | 0.783876
+   1.00 |  2.4710 | 0.729964
+   1.25 |  3.0887 | 0.683649
+   1.50 |  3.7065 | 0.643899
+   1.75 |  4.3242 | 0.609718
+   2.00 |  4.9419 | 0.580202
+   2.25 |  5.5597 | 0.554564
+   2.50 |  6.1774 | 0.532145
+   2.75 |  6.7952 | 0.512395
+   3.00 |  7.4129 | 0.494870
+   3.25 |  8.0307 | 0.479207
+   3.50 |  8.6484 | 0.465113
+   3.75 |  9.2661 | 0.452348
+   4.00 |  9.8839 | 0.440720
+  peak 1.55 GB
+peak resident memory 1.55 GB
+all checks passed
+  wall time 238.79 s
+  maximum resident set size 1.55 GiB
+
+######## python notes/warp/frank_loss.py --part=krylov --sigmas=2 --Ns=96 --vs=6.3,13.0 --L=12
+== krylov: sigma R = 2.0, L = 12.0, v_c = 3.74490, sqrt3 v_c = 6.48636
+  N = 96: rho(T1) v_c = 0.40949 (FL: <= 1/sqrt3 = 0.57735), ||T1|| v_c = 0.84133 (contraction: <= 1), 23 s
+    top eigenvalues of T1 times v_c: -0.0272-0.4086i, +0.0272-0.4086i, +0.0272+0.4086i, -0.0272+0.4086i, -0.0272+0.4086i, +0.0272-0.4086i, -0.0272-0.4086i, +0.0272+0.4086i
+    no real eigenvalue among the top 8: any real zero-mode speed is above 9.1452
+     v    | v/v_c | v rho(T1) | GMRES its | r_pre    | r_phys   | k=0 part | k!=0 part | s_min(D~D^-1) | G           | rel. identity | |eps|^2 range   | Picard its
+     6.30 | 1.682 |    0.6889 |        21 | 5.74e-14 | 1.68e-11 | 1.68e-11 | 1.94e-13  |      0.556114 | 3.21586e+00 |      1.11e-06 | 0.2598-1.9306 | 56 (9e-12)   [35 s, peak 2.30 GB]
+    13.00 | 3.471 |    1.4215 |        36 | 8.79e-14 | 4.35e-10 | 4.35e-10 | 3.67e-13  |      0.399741 | 1.63941e+01 |      2.36e-07 | 0.0124-3.2150 | 53 (1e+06)   [48 s, peak 2.30 GB]
+  [FAIL] gmres: largest residual at the finest grid 4.3e-10 (target 1e-10)
+  [FAIL] identity: worst relative |G + int T| at the finest grid 1.1e-06
+  [PASS] fl_bound: rho(T1) sqrt3 v_c = 0.7093 at the finest grid (FL: <= 1)
+peak resident memory 2.30 GB
+FAILED: gmres, identity
+  wall time 107.20 s
+  maximum resident set size 2.30 GiB
+
+######## python notes/warp/frank_loss.py --part=krylov --sigmas=2 --Ns=128 --vs=6.3,13.0 --L=16
+== krylov: sigma R = 2.0, L = 16.0, v_c = 3.74490, sqrt3 v_c = 6.48636
+  N = 128: rho(T1) v_c = 0.40952 (FL: <= 1/sqrt3 = 0.57735), ||T1|| v_c = 0.85638 (contraction: <= 1), 64 s
+    top eigenvalues of T1 times v_c: +0.0273-0.4086i, -0.0273-0.4086i, +0.0273+0.4086i, -0.0273+0.4086i, -0.0273+0.4086i, +0.0273+0.4086i, +0.0273-0.4086i, -0.0273-0.4086i
+    no real eigenvalue among the top 8: any real zero-mode speed is above 9.1446
+     v    | v/v_c | v rho(T1) | GMRES its | r_pre    | r_phys   | k=0 part | k!=0 part | s_min(D~D^-1) | G           | rel. identity | |eps|^2 range   | Picard its
+     6.30 | 1.682 |    0.6889 |        21 | 5.53e-14 | 8.20e-12 | 8.20e-12 | 1.92e-13  |      0.548888 | 3.21664e+00 |      1.11e-06 | 0.2598-1.9313 | 55 (8e-12)   [95 s, peak 4.85 GB]
+    13.00 | 3.471 |    1.4216 |        36 | 8.73e-14 | 2.12e-10 | 2.12e-10 | 3.64e-13  |      0.392369 | 1.63995e+01 |      2.35e-07 | 0.0124-3.2163 | 54 (1e+06)   [131 s, peak 4.85 GB]
+  [FAIL] gmres: largest residual at the finest grid 2.1e-10 (target 1e-10)
+  [FAIL] identity: worst relative |G + int T| at the finest grid 1.1e-06
+  [PASS] fl_bound: rho(T1) sqrt3 v_c = 0.7093 at the finest grid (FL: <= 1)
+peak resident memory 4.85 GB
+FAILED: gmres, identity
+  wall time 290.95 s
+  maximum resident set size 4.85 GiB
+
+######## python notes/warp/frank_loss.py --controls
+== controls: each --mutate makes its target checks fail; the same run without it passes them
+  g0block  (flips the sign of the lower block of g0; --part=reduce): baseline exit 0, mutated exit 1, failed ['reduction', 'divxi', 'clifford'], 1 s -> fired
+  gamma    (scales gamma^1 and sigma_1 by 11/10; --part=reduce): baseline exit 0, mutated exit 1, failed ['clifford', 'penrose'], 1 s -> fired
+  ly       (scales the Loss-Yau vector potential by 11/10; --part=fl,vc): baseline exit 0, mutated exit 1, failed ['loss_yau', 'loss_yau_norm'], 1 s -> fired
+  sobolev  (uses 21/20 of the sharp Sobolev constant; --part=fl,vc): baseline exit 0, mutated exit 1, failed ['S_3', 'loss_yau_norm', 'fl_scalar_extremal', 'v_c'], 1 s -> fired
+  half     (drops the 1/2 in B1 = (1/2) tr K g0 in the FFT operator; --part=planted,krylov --sigmas=2 --Ns=96 --vs=4.5): baseline exit 0, mutated exit 1, failed ['planted', 'identity', 'fl_bound'], 160 s -> fired
+  vscale   (solves with 1.001 v and checks the residual with v; --part=krylov --sigmas=2 --Ns=96 --vs=4.5): baseline exit 0, mutated exit 1, failed ['gmres'], 56 s -> fired
+  Jsign    (flips the sign of J.xi in the Witten identity; --part=krylov --sigmas=2 --Ns=96 --vs=4.5): baseline exit 0, mutated exit 1, failed ['identity'], 56 s -> fired
+  [PASS] controls: every control fired
+peak resident memory 0.09 GB
+all checks passed
+  wall time 407.13 s
+  maximum resident set size 2.86 GiB
