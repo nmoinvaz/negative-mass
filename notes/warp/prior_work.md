@@ -66,8 +66,8 @@ The result. Over splits T = T₊ − T₋ with μ± ≥ |J±|, the pointwise min
 integral E₋ grows like v at small v, driven by the wall's momentum density, while the Eulerian ∫μ dV grows like v².
 
 What prior work has.
-- The momentum density: [SSV22] Eqs. 4.7–4.8, f_i = (1/16π)(∇×∇×v)_i with v = −β, which is J_i of mass_bounds.md
-  item 1 exactly. The Eulerian energy integral: [PF97] Eq. 26 and [LV04a], −(v²/12)∫r²f′²dr.
+- The momentum density: [SSV22] Eqs. 4.7–4.8, f_i = (1/16π)(∇×∇×w)_i with the flow w = −β, which is J_i of
+  mass_bounds.md item 1 exactly. The Eulerian energy integral: [PF97] Eq. 26 and [LV04a], −(v²/12)∫r²f′²dr.
 - Local energy-condition violation at O(v): [LV04a] Eqs. 15–19 (exact NEC along ± the direction of motion and
   transverse to it, with a term linear in v that dominates at small v), [LV04b] Eq. 8 (boosted observers see ρ < 0 at
   O(v)), repeated in [AL17]. [Le26] proves ρ_n, S_ij ∝ v² and |j| ∝ v exactly, and that the null witness deficit
@@ -105,9 +105,9 @@ standard one that [FL22] recall for Dirac zero modes. The statement for flat war
 A possible sharpening, not checked here. A decaying kernel element ε = (a, b) of D̃ in mass_bounds.md's
 representation gives σ·∇a = (i/2) tr K b and σ·∇b = −(i/2) tr K a. So ψ = a + ib solves σ·∇ψ = ½ (tr K) ψ and
 χ = a − ib solves σ·∇χ = −½ (tr K) χ, and ψ and χ vanish together only if ε does. If they lie in L³, [FL22] Remark 4
-with |A| = ½|tr K| excludes the kernel
-for ‖tr K‖_{L³} < 2√(3S), a factor √3 above the contraction threshold. Multiplication by tr K ∈ L³ is compact from Ḣ¹
-to L², so D̃ is Fredholm of index 0 and the absence of a kernel would give existence. The reduction, the L³ decay and
+with |A| = ½|tr K| excludes the kernel for ‖tr K‖_{L³} < 2√(3S), a factor √3 above the contraction threshold.
+Multiplication by tr K ∈ L³ is compact from Ḣ¹ to L², so D̃ is Fredholm of index 0 and the absence of a kernel would
+give existence. The reduction, the L³ decay and
 the Fredholm step are this note's reading, not checked. If they hold, each v_c of item 5 grows by √3 for existence,
 while the contraction bound keeps κ_K < 1.
 
@@ -147,7 +147,13 @@ INSPIRE-HEP API (`inspirehep.net/api/literature`):
 - Full text: `"Alcubierre metric"` with `"phantom scalar"`: 0. `"warp drive"` with `"ghost scalar"`: 15, none a warp
   source. `"Alcubierre"` with `"Segre type"`: 7; Mattingly et al. 2020 (arXiv:2010.13693) leave the Segre type for
   later work. `"warp drive"` with `"rank one"`: 2 ([Le26] and arXiv:2606.22531, not about sources). `"warp drive"`
-  with `"Witten spinor"`: 1, unrelated.
+  with `"Witten spinor"`: 1, unrelated. `"warp drive"` with `"Klein-Gordon"` and `"shift vector"`: 9, none a source.
+  `"Alcubierre"` with `"Hawking-Ellis type IV"`: 1 ([Rod26]).
+- Titles: `t "Witten equation"`: 16, all Seiberg–Witten or Landau–Ginzburg. `t "Sen-Witten"`: 3, on closed slices
+  (arXiv:1112.2966, arXiv:0712.2785, the latter assuming the DEC) or on Sen–Witten frames (Pelykh,
+  arXiv:gr-qc/0408063, CQG 20, 1115); abstracts only. A web search on Pelykh's frame papers found existence only under
+  the DEC. `t warp and a Garattini`: 4, warp bubbles on Schwarzschild, wormhole and de Sitter backgrounds (abstracts
+  read), none a matter source.
 - Forward trails, `refersto:recid:` of [SAR20] 1811921, [SAR21a] 1843032, [SAR21b] 1912085, [ABV23] 2637024, [SSV22]
   1862524, [SSV23] 2089890, [LV04a] 652763, [BBV26] 3121358, [Rod26] 3094802, [Le26] 3122171, [Fu24] 2782713, Warp
   Factory 2774121 and [CDK24] 2794423: 325 records, 63 not already among Alcubierre's citers. None treats warp-drive
