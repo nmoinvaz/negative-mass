@@ -1,0 +1,26 @@
+conventions.py, issue #62. sympy 1.14.0, python 3.14.7. mutation: none
+
+== 1. The gammas ==
+[PASS] clifford: {g^a, g^b} = 2 eta^ab for the note's g^a and for G = (-g^0, g^j); g^0 anti-Hermitian and unitary, g^j Hermitian
+[PASS] causal: a_j = g^0 g^j Hermitian, {a_i, a_j} = 2 delta_ij (so |xi| <= |eps|^2), and <eps, g^0 g^0 eps> = -|eps|^2
+
+== 2. Planted truth: de Sitter in flat slicing ==
+[PASS] planted_desitter: omega_0j(e_i) = -H delta_ij, omega_j0(e_i) = H delta_ij, omega_jk(e_i) = 0, as for comoving observers
+
+== 3. The flat slice with lapse 1 and a general shift b^i(t, x, y, z) ==
+[PASS] orthonormal: g(e_a, e_b) = eta_ab for e_0 = d_t - b^i d_i, e_i = d_i
+[PASS] omega_slice: omega_ab antisymmetric; on the slice omega_0j(e_i) = K_ij = (d_i b_j + d_j b_i)/2 and omega_jk(e_i) = 0
+[PASS] clifford_parallel: (1/4) omega_ab G^a G^b keeps Clifford multiplication parallel, on every e_c
+[PASS] restriction: nabla_{e_i} = d_i + (1/4) omega_ab(e_i) G^a G^b with G^0 = -g^0 equals the stated nabla~_i = d_i + (1/2) K_ij g^j g^0
+[PASS] note_gammas: in the note's gammas themselves it is d_i - (1/2) K_ij g^j g^0
+[PASS] dirac: g^i (stated K term)_i = (1/2)(tr K) g^0, so D~ = D + (1/2)(tr K) g^0
+
+checks: 9 passed, 0 failed []. 0 s
+
+== Controls: each mutation must make its target checks fail ==
+[FIRED] --mutate=sign (writes the stated nabla~ with the other sign, d_i - (1/2) K_ij g^j g^0): exit 1, failed ['restriction', 'dirac']
+[FIRED] --mutate=christoffel (flips the sign of the Christoffel term in nabla_X Y): exit 1, failed ['planted_desitter', 'omega_slice', 'clifford_parallel', 'restriction', 'note_gammas']
+[FIRED] --mutate=spin-sign (uses -(1/4) omega_ab G^a G^b for the spin connection): exit 1, failed ['clifford_parallel', 'restriction', 'note_gammas']
+[FIRED] --mutate=frame (takes e_0 = d_t + b^i d_i, the wrong sign of the shift): exit 1, failed ['planted_desitter', 'orthonormal', 'omega_slice', 'clifford_parallel', 'restriction', 'note_gammas']
+[FIRED] --mutate=gamma (scales g^1 by 11/10): exit 1, failed ['clifford', 'causal', 'clifford_parallel', 'dirac']
+controls: all fired
