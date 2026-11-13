@@ -125,8 +125,8 @@ def section_sobolev():
     check("sobolev_const", abs(at / S_USED - 1) < 1e-10 and min(others) > S_USED,
           "extremal ratio %.12f vs S = %.12f; other trial functions give more" % (at, S_USED))
     # Hoelder is an equality for |tr K| proportional to |psi|^2, and Sobolev for the Aubin-Talenti bubble. So for
-    # psi = u chi and tr K = c u^2, (1/2) ||tr K psi||_2 = kappa_K ||grad psi||_2 with kappa_K = ||tr K||_3 / (2 sqrt S):
-    # the one-step bound of item 5 is attained and cannot be improved.
+    # psi = u chi and tr K = c u^2, (1/2) ||tr K psi||_2 = kappa_K ||grad psi||_2, kappa_K = ||tr K||_3 / (2 sqrt S).
+    # The one-step bound of item 5 is attained and cannot be improved.
     u = trial["Aubin-Talenti (1 + r^2)^(-1/2)"][0]
     du = trial["Aubin-Talenti (1 + r^2)^(-1/2)"][1]
     c = 0.37
