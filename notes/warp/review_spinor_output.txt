@@ -1,0 +1,44 @@
+review_spinor.py, issue #59. numpy 2.5.4, scipy 1.18.1, sympy 1.14.0, python 3.14.7. mutation: none
+
+== 1. Clifford algebra, the reduction K_ij g^i g^j = tr K, and the spin connection's sign ==
+[PASS] clifford: {g^a, g^b} = 2 eta^ab, g0 anti-Hermitian and unitary, g^j Hermitian, a_j = g0 g^j Hermitian with {a_i, a_j} = 2 delta_ij (so |xi| <= |eps|^2), K_ij g^i g^j = tr K for symmetric K
+[PASS] spin_restriction: Gamma = (1/4) omega_ab g^a g^b keeps Clifford multiplication parallel, and on the slice it is Gamma_i = -(1/2) K_ij g^j g^0 in these gammas (mass_bounds.md writes +; see review.md)
+
+== 2. Sobolev constant S = 3 (pi/2)^(4/3) and the one-step contraction bound ==
+  Aubin-Talenti (1 + r^2)^(-1/2)   ||grad u||^2 / ||u||_6^2 = 5.477904089531
+  Gaussian exp(-r^2)               ||grad u||^2 / ||u||_6^2 = 8.162097139054
+  (1 + r^2)^(-1)                   ||grad u||^2 / ||u||_6^2 = 6.060946880971
+  sech(r)                          ||grad u||^2 / ||u||_6^2 = 6.953133360268
+[PASS] sobolev_const: extremal ratio 5.477904089531 vs S = 5.477904089531; other trial functions give more
+[PASS] contraction_sharp: (1/2) ||tr K psi||_2 = 0.290597320457, kappa_K ||grad psi||_2 = 0.290597320457 (equality expected)
+
+== 3. v_c where kappa_K = 1, tanh profile, R = 1 ==
+  sigma R =  2: v_c = 3.74490 (note 3.745), thin-wall formula 3.94113
+  sigma R =  4: v_c = 2.47097 (note 2.471), thin-wall formula 2.48276
+  sigma R =  8: v_c = 1.56243 (note 1.562), thin-wall formula 1.56404
+  sigma R = 16: v_c = 0.98503 (note 0.985), thin-wall formula 0.98528
+[PASS] v_c: every v_c agrees with the note to its printed 3 decimals (worst 0e+00)
+
+== 4. Integrated Weitzenbock identity on the Alcubierre slice, analytic derivatives ==
+    with -K in nabla~ and D~: int|nabla~ eps|^2 - int|D~ eps|^2 + 4 pi int(mu|eps|^2 + J.xi), relative -4.0e-10
+  sigma R = 2, v = 1.0, L = 8, N =  80: int|nabla~ eps|^2 = 33.1481630361, int|D~ eps|^2 = 31.8535481373, 4 pi int(mu|eps|^2 - J.xi) = -1.2946148866, rel. resid 3.7e-10; int J.xi = +2.577e-02; (||D psi||^2 - ||grad psi||^2)/||grad psi||^2 = -2.4e-16; one-step bound ratio 0.417
+    with -K in nabla~ and D~: int|nabla~ eps|^2 - int|D~ eps|^2 + 4 pi int(mu|eps|^2 + J.xi), relative -5.2e-13
+  sigma R = 2, v = 1.0, L = 8, N = 112: int|nabla~ eps|^2 = 33.1481630460, int|D~ eps|^2 = 31.8535481544, 4 pi int(mu|eps|^2 - J.xi) = -1.2946148916, rel. resid 4.8e-13; int J.xi = +2.577e-02; (||D psi||^2 - ||grad psi||^2)/||grad psi||^2 = 2.4e-16; one-step bound ratio 0.417
+    with -K in nabla~ and D~: int|nabla~ eps|^2 - int|D~ eps|^2 + 4 pi int(mu|eps|^2 + J.xi), relative -5.7e-09
+  sigma R = 4, v = 0.5, L = 5, N =  80: int|nabla~ eps|^2 = 31.4187714946, int|D~ eps|^2 = 30.8760435969, 4 pi int(mu|eps|^2 - J.xi) = -0.5427277266, rel. resid 5.4e-09; int J.xi = +7.720e-03; (||D psi||^2 - ||grad psi||^2)/||grad psi||^2 = 0.0e+00; one-step bound ratio 0.406
+    with -K in nabla~ and D~: int|nabla~ eps|^2 - int|D~ eps|^2 + 4 pi int(mu|eps|^2 + J.xi), relative 2.6e-12
+  sigma R = 4, v = 0.5, L = 5, N = 112: int|nabla~ eps|^2 = 31.4187716178, int|D~ eps|^2 = 30.8760436936, 4 pi int(mu|eps|^2 - J.xi) = -0.5427279242, rel. resid -2.5e-12; int J.xi = +7.720e-03; (||D psi||^2 - ||grad psi||^2)/||grad psi||^2 = 1.2e-16; one-step bound ratio 0.406
+[PASS] isometry: ||D psi||_2 = ||grad psi||_2 on every grid (worst 2.4e-16)
+[PASS] weitzenbock: int|nabla~ eps|^2 - int|D~ eps|^2 + 4 pi int(mu|eps|^2 - J.xi) = 0 at the finest grids, relative ['4.8e-13', '-2.5e-12']; int J.xi is not 0, so the J term's sign is tested
+[PASS] weitzenbock_flip: with -K in nabla~ and D~ the same integrand holds with + J.xi, relative ['-5.2e-13', '2.6e-12']
+[PASS] one_step_bound: (1/2) ||tr K psi|| / (kappa_K ||grad psi||) = ['0.417', '0.417', '0.406', '0.406'] <= 1
+
+checks: 9 passed, 0 failed []. 5 s
+
+== Controls: each mutation must make its target checks fail ==
+[FIRED] --mutate=sobolev (uses 21/20 of the sharp Sobolev constant): exit 1, failed ['sobolev_const', 'contraction_sharp']
+[FIRED] --mutate=gamma (scales gamma^1 by 11/10): exit 1, failed ['clifford', 'spin_restriction', 'isometry', 'weitzenbock', 'weitzenbock_flip']
+[FIRED] --mutate=Jsign (flips the sign of J.xi in the identity): exit 1, failed ['weitzenbock', 'weitzenbock_flip']
+[FIRED] --mutate=musign (flips the sign of mu in the identity): exit 1, failed ['weitzenbock', 'weitzenbock_flip']
+[FIRED] --mutate=vc-angle (uses 2 pi for the angular integral of |cos theta|^3, not pi): exit 1, failed ['v_c']
+controls: all fired

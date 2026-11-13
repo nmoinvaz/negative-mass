@@ -172,6 +172,7 @@ def cartan_ricci(E, D, simp=sp.expand):
                     ww = sum(om[a][k][c] * om[k][b][d] - om[a][k][d] * om[k][b][c] for k in range(n))
                     Riem[a, b, c, d] = dom + sgn * ww
     Ric = sp.Matrix(n, n, lambda b, d: simp(sum(Riem[a, b, a, d] for a in range(n))))
+    cartan_ricci.omega = om
     return Ric, bad, e
 
 
@@ -212,6 +213,10 @@ def main():
     K = sp.Matrix(3, 3, lambda i, j: (int(j == 0) * db[i] + int(i == 0) * db[j]) / 2)
     trK = K.trace()
     KK = sum(K[i, j] ** 2 for i in range(3) for j in range(3))
+    # omega_0j(e_i) = eta_00 omega^0_ji = K_ij fixes the sign of the K term in the spin connection (review.md).
+    om = cartan_ricci.omega
+    conn = [sp.expand(-om[0][j + 1][i + 1] - K[i, j]) for i in range(3) for j in range(3)]
+    check("connection_K", conn == [0] * 9, "omega_0j(e_i) - K_ij = %s" % conn)
     nK = lambda g: e(0, g)  # n = e_0 = d_t - b d_x
     want00 = nK(trK) - KK
     want0 = [J.total(trK, i + 1) - sum(J.total(K[j, i], j + 1) for j in range(3)) for i in range(3)]
