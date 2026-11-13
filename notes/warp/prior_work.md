@@ -172,16 +172,17 @@ were read. Google Scholar was not used. Results posted after 2026-11-13 are not 
 
 ## Not read, or read only in part
 
-- [GD07] and González-Díaz, "Superluminal warp drive", Phys. Lett. B 653, 129 (2007): paywalled, no arXiv version,
+- [GD07] and González-Díaz, "Superluminal warp drive", Phys. Lett. B 653, 129 (2007): not fetched, no arXiv version,
   abstracts from INSPIRE only.
 - [FL22]'s journal version: the arXiv version was read. Its journal reference comes from a web-search snippet.
-- Read in abstract and setup only: [SAR] charged dust (arXiv:2102.05119), [ABV] spherical warps (arXiv:2305.03736),
-  Lentz 2021 and 2023, Fell & Heisenberg 2021, Bobrick & Martire 2021, Buchert & Frackowiak 2026, Bolívar et al. 2026,
-  Celmaster & Rubin 2025, and Warp Factory (grep only).
-- Not read: Parker–Taubes 1982, Reula 1982 and Bartnik–Chruściel 2005 (existence under the DEC, standard); the
-  Hawking–Ellis classification papers of Martín-Moruno and Visser; Olum 1998, Low 1999 and Coule 1998 (superluminal
-  travel and energy); Hiscock 1997 (quantum effects); McMonigal et al. 2012 and Carneiro et al. 2022, whose PDF text did
-  not extract.
+- Read in abstract and setup only: Santos-Pereira et al. on charged dust (arXiv:2102.05119), Abellán et al. on
+  spherical warps (arXiv:2305.03736), Lentz 2021 and 2023, Fell & Heisenberg 2021, Bobrick & Martire 2021, Buchert &
+  Frackowiak 2026, Bolívar et al. 2026, Celmaster & Rubin 2025, and Warp Factory (grep only).
+- Not read: Parker–Taubes 1982, Reula 1982 and Bartnik–Chruściel 2005 on existence under the DEC (named from memory,
+  details *(unverified)*); Martín-Moruno & Visser on the Hawking–Ellis types (arXiv:1802.00865, CQG 35, 125003, from
+  [Le26]'s reference list); Olum 1998 (arXiv:gr-qc/9805003) and Low 1999 (arXiv:gr-qc/9812067) on superluminal travel;
+  Hiscock 1997 (arXiv:gr-qc/9707024) on quantum effects; McMonigal et al. 2012 (arXiv:1202.5708) and Carneiro et al.
+  2022 (arXiv:2201.05684), whose PDF text did not extract.
 
 ## References
 
