@@ -1,0 +1,67 @@
+== sym: mu and J by two routes
+  [PASS] 3+1 mu = closed form
+  [PASS] 3+1 J = closed form
+  [PASS] 4D mu = closed form
+  [PASS] 4D J = closed form
+  [PASS] spherical J_x, J_y
+  [PASS] tr K = -v f' cos(theta)
+  on the x axis: mu = 0, J_x = -F1*v/(8*pi*x)
+  [PASS] K_ij g^i g^j = tr K
+  [PASS] gamma algebra: g0^2 = -1 anti-Hermitian, g^i Hermitian, anticommuting
+== adm: E and P as surface integrals
+  Alcubierre (sigma R = 4, v = 1), R = 2.0: E = 0.000e+00, P = [ 1.789e-03  2.785e-21 -4.786e-21]
+  Alcubierre (sigma R = 4, v = 1), R = 4.0: E = 0.000e+00, P = [ 8.059e-10  1.215e-27 -1.414e-27]
+  Alcubierre (sigma R = 4, v = 1), R = 8.0: E = 0.000e+00, P = [0. 0. 0.]
+  [PASS] Alcubierre E = 0 and |P| < 1e-12 at R = 8
+  control, Schwarzschild m = 0.7, R = 5.0: E = 0.85753010, exact m psi(R)^3 = 0.85753010
+  control, Schwarzschild m = 0.7, R = 20.0: E = 0.73739688, exact m psi(R)^3 = 0.73739688
+  [PASS] control: Schwarzschild E = m psi(R)^3
+  control, Bowen-York P = [ 0.3 -0.2  0.5]: surface integral [ 0.3 -0.2  0.5]
+  [PASS] control: Bowen-York P returned
+== split: minimal mu_- against a numerical minimisation
+  300 random (mu, J), 55 with -mu > |J|: max relative difference 1.95e-13
+  [PASS] minimal mu_- = max(0, -mu, (|J| - mu)/2)
+  [PASS] the named split is admissible
+== energy: quadrature control, then the tanh profile
+  control, f = exp(-r^2), v = 0.8: quadrature -0.025066282746, exact -(v^2/12) int f'^2 r^2 dr = -0.025066282746
+  [PASS] control: Gaussian Eulerian energy
+  [PASS] tanh profile f', f'' against finite differences
+  sigma R |   v  | E_Eulerian   | E_- (= W-)   | int(|J|-mu)+ | E_-/(v R^2 sigma) | rel. change, 2x nodes
+      2.0 |  0.1 | -6.43690e-04 |  3.13857e-02 |  6.27712e-02 |       1.56928e-01 | 1.3e-06
+      2.0 |  0.5 | -1.60923e-02 |  1.63404e-01 |  3.26730e-01 |       1.63404e-01 | 3.2e-06
+      2.0 |  1.0 | -6.43690e-02 |  3.43418e-01 |  6.85644e-01 |       1.71709e-01 | 1.3e-06
+      2.0 |  2.0 | -2.57476e-01 |  7.58310e-01 |  1.50003e+00 |       1.89578e-01 | 2.4e-06
+      2.0 |  5.0 | -1.60923e+00 |  2.54925e+00 |  4.71560e+00 |       2.54925e-01 | 5.8e-06
+      4.0 |  0.1 | -1.13502e-03 |  4.64617e-02 |  9.29229e-02 |       1.16154e-01 | 2.7e-06
+      4.0 |  0.5 | -2.83756e-02 |  2.43782e-01 |  4.87315e-01 |       1.21891e-01 | 2.8e-06
+      4.0 |  1.0 | -1.13502e-01 |  5.17484e-01 |  1.03138e+00 |       1.29371e-01 | 1.4e-05
+      4.0 |  2.0 | -4.54009e-01 |  1.16676e+00 |  2.28977e+00 |       1.45845e-01 | 1.8e-05
+      4.0 |  5.0 | -2.83756e+00 |  4.12653e+00 |  7.42695e+00 |       2.06326e-01 | 5.2e-06
+      8.0 |  0.1 | -2.23342e-03 |  8.37146e-02 |  1.67428e-01 |       1.04643e-01 | 1.1e-05
+      8.0 |  0.5 | -5.58355e-02 |  4.41349e-01 |  8.81808e-01 |       1.10337e-01 | 2.1e-05
+      8.0 |  1.0 | -2.23342e-01 |  9.43211e-01 |  1.87529e+00 |       1.17901e-01 | 3.7e-05
+      8.0 |  2.0 | -8.93368e-01 |  2.15558e+00 |  4.19726e+00 |       1.34723e-01 | 1.6e-05
+      8.0 |  5.0 | -5.58355e+00 |  7.83452e+00 |  1.38433e+01 |       1.95863e-01 | 5.9e-06
+     16.0 |  0.1 | -4.45004e-03 |  1.61736e-01 |  3.23465e-01 |       1.01085e-01 | 1.0e-05
+     16.0 |  0.5 | -1.11251e-01 |  8.54566e-01 |  1.70633e+00 |       1.06821e-01 | 2.3e-05
+     16.0 |  1.0 | -4.45004e-01 |  1.83220e+00 |  3.63515e+00 |       1.14512e-01 | 2.1e-05
+     16.0 |  2.0 | -1.78002e+00 |  4.21039e+00 |  8.16031e+00 |       1.31575e-01 | 1.0e-05
+     16.0 |  5.0 | -1.11251e+01 |  1.54462e+01 |  2.70758e+01 |       1.93077e-01 | 3.2e-05
+  [PASS] E_- converged (relative change < 1e-4 on doubling)
+== spinor: existence constant kappa_K = ||tr K||_L3 / (2 sqrt(S)), S = 3 (pi/2)^(4/3) = 5.477904
+  sigma R | v_c (kappa_K = 1) | kappa_K at v = 0.5, 1, 2
+      2.0 |           3.74490 | 0.1335, 0.2670, 0.5341
+      4.0 |           2.47097 | 0.2023, 0.4047, 0.8094
+      8.0 |           1.56243 | 0.3200, 0.6400, 1.2801
+     16.0 |           0.98503 | 0.5076, 1.0152, 2.0304
+  Witten spinor by FFT (eps0 = (1,0,0,0)); identity G + int T(xi, n) = E - P.xi0 = 0
+  sigma R |  v  |  L  |  N  | kappa_K | iters | |D~eps|/|B eps0| |      G      |  int T(xi,n) | rel. resid | int T-(xi,n) | int T+(xi,n) |   E_-   | |eps|^2 range
+      2.0 | 0.5 |   8 |  64 |  0.1335 |     8 |         5.97e-11 | 1.61341e-02 | -1.61341e-02 |   9.79e-07 |  1.63494e-01 |  1.47360e-01 | 0.16339 | 0.9904-1.0087
+      2.0 | 0.5 |   8 |  96 |  0.1335 |     8 |         5.97e-11 | 1.61341e-02 | -1.61341e-02 |   8.96e-11 |  1.63579e-01 |  1.47445e-01 | 0.16346 | 0.9904-1.0087
+      2.0 | 0.5 |   8 | 128 |  0.1335 |     8 |         5.97e-11 | 1.61341e-02 | -1.61341e-02 |   4.52e-14 |  1.63533e-01 |  1.47399e-01 | 0.16341 | 0.9904-1.0087
+      2.0 | 1.0 |   8 |  96 |  0.2670 |    10 |         1.79e-10 | 6.50304e-02 | -6.50304e-02 |   9.36e-11 |  3.44461e-01 |  2.79430e-01 | 0.34334 | 0.9622-1.0343
+      2.0 | 1.0 |   8 | 128 |  0.2670 |    10 |         1.79e-10 | 6.50304e-02 | -6.50304e-02 |   4.42e-14 |  3.44564e-01 |  2.79534e-01 | 0.34341 | 0.9622-1.0343
+      4.0 | 0.5 |   5 |  96 |  0.2023 |     9 |         4.75e-11 | 2.84619e-02 | -2.84619e-02 |   9.68e-09 |  2.44272e-01 |  2.15810e-01 | 0.24386 | 0.9840-1.0085
+      4.0 | 0.5 |   5 | 128 |  0.2023 |     9 |         4.75e-11 | 2.84619e-02 | -2.84619e-02 |   1.03e-12 |  2.44144e-01 |  2.15682e-01 | 0.24376 | 0.9840-1.0085
+  [PASS] Witten identity G + int T(xi, n) = 0 at the finest grid (relative 1e-4): worst 1.03e-12
+all checks passed
