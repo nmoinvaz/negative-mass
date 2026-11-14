@@ -9,7 +9,8 @@ below 1e-3. s_min(v) = 0 on the grid exactly when -1/v is an eigenvalue of M = B
     python notes/warp/zero_modes.py [--part=adjoint,dense,vc,regress63,sectors,lanczos,planted,ly]   planted truth first
     python notes/warp/zero_modes.py --part=scan --sigma=2 --L=8 --N=64 [--tmax=10] [--out=raw/scan.jsonl]
     python notes/warp/zero_modes.py --part=table --raw=DIR       merge the jsonl of the scan runs into the tables
-    python notes/warp/zero_modes.py --controls [--raw=DIR]       every --mutate control, each must make its check fail
+    python notes/warp/zero_modes.py --controls [--raw=DIR] [--only=a,b]   every --mutate control, each must make its check
+                                                                 fail; gridperturb needs --raw
 
 Operators (grid: periodic box [-L, L)^3, spectral D^-1 with k = 0 set to zero, A(v) = I + v M, M = B D^-1):
   witten4   4-spinors, D = g.grad, B = (1/2) tau1 g0, tau1 = tr K / v = -f'(r) cos(theta). The literal D~ D^-1.
@@ -56,6 +57,7 @@ ap.add_argument("--out", default="", help="jsonl file the scan appends its recor
 ap.add_argument("--raw", default="", help="directory of scan jsonl files, for --part=table")
 ap.add_argument("--confirm", action="store_true", help="planted and ly: also the box and grid convergence of the zero")
 ap.add_argument("--controls", action="store_true")
+ap.add_argument("--only", default="", help="with --controls: run only these mutations, comma separated")
 args = ap.parse_args()
 MUT = args.mutate
 PARTS = args.part.split(",")
@@ -596,8 +598,9 @@ def part_scan():
         print(f"  CANDIDATE: s_min = {c[1]:.3e} at v = {c[0]:.6f} = {c[0] / vc:.4f} v_c; box and grid test:")
         rows, conv = confirm_zero(kind, 1.0, c[0], GRIDS[sig], sig)
         print(f"  CANDIDATE at {c[0] / vc:.4f} v_c: " + ("converges as a zero mode" if conv else "does not converge"))
-    check("scan_resolved", all(v_[3] == "certified" for v_ in verdicts) or bool(cands),
-          f"{len(cands)} candidate(s), {sum(v_[3] != 'certified' for v_ in verdicts)} intervals not certified")
+    nres = sum(v_[3] == "unresolved" for v_ in verdicts)  # certified, or bisected and refined to a located minimum
+    check("scan_resolved", nres == 0, f"{sum(v_[3] == 'certified' for v_ in verdicts)} of {len(verdicts)} intervals "
+          f"certified, {sum(v_[3] in ('candidate', 'dip') for v_ in verdicts)} refined to a minimum, {nres} unresolved")
     check("lanczos_converged", LANCZOS["unconverged"] == 0, f"{LANCZOS['unconverged']} of {LANCZOS['runs']} runs")
 
 
@@ -667,6 +670,8 @@ def run_controls():
     print("== controls: each --mutate makes its target checks fail; the same run without it passes them")
     bad, base = [], {}
     for name, (what, opts, targets) in MUTATIONS.items():
+        if args.only and name not in args.only.split(","):
+            continue
         if name == "gridperturb" and not args.raw:
             print(f"  {name:11s} skipped, needs --raw")
             continue
