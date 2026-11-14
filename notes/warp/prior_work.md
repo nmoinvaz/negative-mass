@@ -109,7 +109,8 @@ with |A| = ½|tr K| excludes the kernel for ‖tr K‖_{L³} < 2√(3S), a facto
 Multiplication by tr K ∈ L³ is compact from Ḣ¹ to L², so D̃ is Fredholm of index 0 and the absence of a kernel would
 give existence. The reduction, the L³ decay and
 the Fredholm step are this note's reading, not checked. If they hold, each v_c of item 5 grows by √3 for existence,
-while the contraction bound keeps κ_K < 1.
+while the contraction bound keeps κ_K < 1. #63 checked them ([frank_loss.md](frank_loss.md)) and #68 confirmed them
+independently ([review_fl.md](review_fl.md)), so the √3 holds (*proved*, given [FL22]).
 
 ## Other items checked
 
@@ -128,7 +129,8 @@ while the contraction bound keeps κ_K < 1.
    Ribeiro (INSPIRE and the PDFs).
 2. [FL22] would raise the existence threshold of mass_bounds.md item 5 by √3, if the reduction above holds. #63
    checked the reduction symbolically and wrote out the L³ and Fredholm steps ([frank_loss.md](frank_loss.md)), so the
-   √3 holds, pending an independent review.
+   √3 holds. #68's independent review confirmed every step ([review_fl.md](review_fl.md)), with two gaps in [FL22]'s
+   own exposition (G1, G2) and none in #63.
 3. [LV04a] call the net NEC violation O(v²), while mass_bounds.md item 4 calls E₋ O(v). The quantities differ (§3);
    the notes should say so when they cite [LV04a].
 4. [Rod26] find the equatorial wall annulus Type I, while [Le26] find the Alcubierre wall 98.7 % non-Type-I at

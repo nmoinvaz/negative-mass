@@ -8,8 +8,9 @@ every `--mutate=` control (`g0block`, `gamma`, `ly`, `sobolev`, `half`, `vscale`
 
 The √3 extension holds. On a flat slice with tr K ∈ L² ∩ L³, D̃ = D + ½(tr K)γ⁰ has no kernel in Ḣ¹ when
 ‖tr K‖_{L³} < 2√(3S), that is κ_K < √3, and the Witten spinor then exists and is unique in ε₀ + Ḣ¹. Status: *proved*,
-by hand, from the inequality of Frank and Loss [FL22, Section 3], which is cited and not re-proved; not yet
-independently reviewed. The 4-to-2 reduction it rests on is *checked symbolically*. Every v_c of
+by hand, from the inequality of Frank and Loss [FL22, Section 3], which is cited and not re-proved. #68 reviewed it
+independently and confirmed every step ([review_fl.md](review_fl.md)). The 4-to-2 reduction it rests on is *checked
+symbolically*. Every v_c of
 [mass_bounds.md](mass_bounds.md) item 5 grows by √3 for existence, while the contraction (and its uniqueness and
 convergence estimate) stays at κ_K < 1.
 
@@ -264,8 +265,8 @@ restart 20; 1.55 GiB for the scan.
 
 ## What this does and does not show
 
-- The existence threshold of item 5 rises from κ_K < 1 to κ_K < √3, *proved* by hand from [FL22], and not yet
-  independently reviewed. The reduction and the pointwise identities are *checked symbolically*. FL's own inequality
+- The existence threshold of item 5 rises from κ_K < 1 to κ_K < √3, *proved* by hand from [FL22], and confirmed
+  by #68's independent review. The reduction and the pointwise identities are *checked symbolically*. FL's own inequality
   is cited, not re-derived.
 - Existence and uniqueness hold for every real v outside a discrete set E ⊂ {|v| ≥ √3 v_c}, *proved* by hand. For the
   tanh profile at σR = 2 and 4 the grid operator has no real zero mode up to 4 v_c, and none of its 24 largest

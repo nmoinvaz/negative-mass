@@ -60,8 +60,9 @@ with lapse 1, shift β_x = −v f and K_ij = ½(∂_iβ_j + ∂_jβ_i). It is th
    ‖tr K‖_{L³} ∝ v, and κ_K = 1 at v_c = 3.745, 2.471, 1.562 and 0.985 for σR = 2, 4, 8 and 16 (thin walls:
    v_c ≈ 2√S (15/(2πR²σ²))^{1/3}). The contraction says nothing beyond v_c. #63 ([frank_loss.md](frank_loss.md))
    extends existence and uniqueness with [FL22] to κ_K < √3, and beyond it to every real v outside a discrete set,
-   which is empty when tr K has one sign (*proved*, by hand, not yet independently reviewed). GMRES solves converge to
-   1e-13 at up to 3.47 v_c for σR = 2 and 4 (*numerical evidence*).
+   which is empty when tr K has one sign (*proved*, by hand, given [FL22], and confirmed step by step by #68's
+   independent review, [review_fl.md](review_fl.md)). GMRES solves converge to 1e-13 at up to 3.47 v_c for σR = 2
+   and 4 (*numerical evidence*).
 6. **The identity at E = P = 0** (*numerical evidence*). In these conventions, with ξ^j = ⟨ε, γ⁰γ^jε⟩, it reads
    (1/4π)∫|∇̃ε|² dV + ∫(μ|ε|² − J·ξ) dV = E − P·ξ₀ = 0. Its boundary terms need more decay than ε − ε₀ ∈ Ḣ¹ gives in
    general. Here the source of ψ decays exponentially, so ψ = O(r⁻²) and they vanish ([review.md](review.md) gap 2).
