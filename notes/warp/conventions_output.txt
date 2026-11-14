@@ -1,4 +1,4 @@
-conventions.py, issue #62. sympy 1.14.0, python 3.14.7. mutation: none
+conventions.py, issues #62 and #67. sympy 1.14.0, python 3.14.10. mutation: none
 
 == 1. The gammas ==
 [PASS] clifford: {g^a, g^b} = 2 eta^ab for the note's g^a and for G = (-g^0, g^j); g^0 anti-Hermitian and unitary, g^j Hermitian
@@ -15,12 +15,31 @@ conventions.py, issue #62. sympy 1.14.0, python 3.14.7. mutation: none
 [PASS] note_gammas: in the note's gammas themselves it is d_i - (1/2) K_ij g^j g^0
 [PASS] dirac: g^i (stated K term)_i = (1/2)(tr K) g^0, so D~ = D + (1/2)(tr K) g^0
 
-checks: 9 passed, 0 failed []. 0 s
+== 4. Planted truth with a lapse and a conformal factor ==
+[PASS] planted_ds_rescaled: de Sitter in x = s(t) x', t = tau(u): omega_0j(e_i) = -H delta_ij, omega_jk = 0, K_ij = -H delta_ij, for arbitrary tau, s
+[PASS] planted_conf: g = Omega^2 eta: omega_ab(e_c) = Omega^-1 (phi_b eta_ac - phi_a eta_bc), phi = ln Omega, K_ij = -(d_t Omega / Omega^2) delta_ij
+[PASS] planted_static: static N(x), psi(x): omega_0j(e_0) = -e_j ln N, omega_jk(e_i) = psi^-2 (delta_ij phi_k - delta_ik phi_j), K = 0
+[PASS] planted_flrw: N(t), psi(t): omega_0j(e_i) = K_ij = -(2 psi'/(N psi)) delta_ij, every other omega zero
+
+== 5. A general slice: lapse N, conformal factor psi, shift b^i, all of (t, x, y, z) ==
+[PASS] orthonormal_general: g(e_a, e_b) = eta_ab for e_0 = (d_t - b^i d_i)/N, e_i = psi^-2 d_i
+[PASS] omega_general: omega_ab antisymmetric; K_ij = -g(nabla_{e_i} n, e_j) equals the ADM K; omega_0j(e_i) = K_ij; omega_jk(e_i) is the slice's own
+[PASS] clifford_parallel_general: (1/4) omega_ab G^a G^b keeps Clifford multiplication parallel on every e_c, for the general metric
+[PASS] restriction_general: nabla_{e_i} = d_i + (1/4) omega_ab(e_i) G^a G^b with G^0 = -g^0 equals nabla_i + (1/2) K_ij g^j g^0, nabla_i the slice's spin connection
+[PASS] note_gammas_general: in the note's gammas themselves it is nabla_i - (1/2) K_ij g^j g^0
+[PASS] dirac_general: g^i (stated K term)_i = (1/2)(tr K) g^0, so D~ = D + (1/2)(tr K) g^0
+
+checks: 19 passed, 0 failed []. 5 s
 
 == Controls: each mutation must make its target checks fail ==
-[FIRED] --mutate=sign (writes the stated nabla~ with the other sign, d_i - (1/2) K_ij g^j g^0): exit 1, failed ['restriction', 'dirac']
-[FIRED] --mutate=christoffel (flips the sign of the Christoffel term in nabla_X Y): exit 1, failed ['planted_desitter', 'omega_slice', 'clifford_parallel', 'restriction', 'note_gammas']
-[FIRED] --mutate=spin-sign (uses -(1/4) omega_ab G^a G^b for the spin connection): exit 1, failed ['clifford_parallel', 'restriction', 'note_gammas']
-[FIRED] --mutate=frame (takes e_0 = d_t + b^i d_i, the wrong sign of the shift): exit 1, failed ['planted_desitter', 'orthonormal', 'omega_slice', 'clifford_parallel', 'restriction', 'note_gammas']
-[FIRED] --mutate=gamma (scales g^1 by 11/10): exit 1, failed ['clifford', 'causal', 'clifford_parallel', 'dirac']
+[FIRED] --mutate=sign (writes the stated nabla~ with the other sign, d_i - (1/2) K_ij g^j g^0): exit 1, failed ['restriction', 'dirac', 'restriction_general', 'dirac_general']
+[FIRED] --mutate=christoffel (flips the sign of the Christoffel term in nabla_X Y): exit 1, failed ['planted_desitter', 'omega_slice', 'clifford_parallel', 'restriction', 'note_gammas', 'planted_ds_rescaled', 'planted_conf', 'planted_static', 'planted_flrw', 'omega_general', 'clifford_parallel_general', 'restriction_general', 'note_gammas_general']
+[FIRED] --mutate=spin-sign (uses -(1/4) omega_ab G^a G^b for the spin connection): exit 1, failed ['clifford_parallel', 'restriction', 'note_gammas', 'clifford_parallel_general', 'restriction_general', 'note_gammas_general']
+[FIRED] --mutate=frame (takes e_0 = d_t + b^i d_i, the wrong sign of the shift): exit 1, failed ['planted_desitter', 'orthonormal', 'omega_slice', 'clifford_parallel', 'restriction', 'note_gammas', 'planted_ds_rescaled', 'orthonormal_general', 'omega_general', 'clifford_parallel_general', 'restriction_general', 'note_gammas_general']
+[FIRED] --mutate=gamma (scales g^1 by 11/10): exit 1, failed ['clifford', 'causal', 'clifford_parallel', 'dirac', 'clifford_parallel_general', 'dirac_general']
+[FIRED] --mutate=adm-sign (takes the ADM formula with the other sign, K_ij = (1/2N)(d_t g_ij - D_i b_j - D_j b_i)): exit 1, failed ['planted_ds_rescaled', 'planted_conf', 'planted_flrw', 'omega_general', 'restriction_general', 'note_gammas_general']
+[FIRED] --mutate=lapse-K (drops the 1/N of the ADM formula for K_ij): exit 1, failed ['planted_ds_rescaled', 'planted_conf', 'planted_flrw', 'omega_general', 'restriction_general', 'note_gammas_general']
+[FIRED] --mutate=lapse-frame (takes e_0 = d_t - b^i d_i without the 1/N): exit 1, failed ['planted_ds_rescaled', 'planted_conf', 'planted_static', 'planted_flrw', 'orthonormal_general', 'omega_general', 'clifford_parallel_general', 'restriction_general', 'note_gammas_general']
+[FIRED] --mutate=psi-frame (takes e_i = psi^-1 d_i instead of psi^-2 d_i): exit 1, failed ['planted_ds_rescaled', 'planted_conf', 'planted_static', 'planted_flrw', 'orthonormal_general', 'omega_general', 'clifford_parallel_general', 'restriction_general', 'note_gammas_general']
+[FIRED] --mutate=psi-slice (gives the slice's own spin connection the conformal factor psi^2 instead of psi^4): exit 1, failed ['omega_general', 'restriction_general', 'note_gammas_general']
 controls: all fired
