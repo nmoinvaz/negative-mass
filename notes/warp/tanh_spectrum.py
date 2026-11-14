@@ -509,7 +509,7 @@ def solve_sector(wt, m, dK, p, Lmap, npan, diag=False, nsel=24):
             if "W2" in A:
                 res = math.sqrt(max(0.0, abs(v) ** 2 * quad_form(A["W2"], x) / Kx - 1.0))
             # every eigenvector of the same eigenvalue, from all blocks: the identity holds on the whole eigenspace
-            X = [xfull(bb, l) for bb in blocks for l in np.where(np.abs(bb["mu"] - mu[k]) < 1e-6 * abs(mu[k]))[0]]
+            X = [xfull(bb, l) for bb in blocks for l in np.where(np.abs(bb["mu"] - mu[k]) < 1e-10 * abs(mu[k]))[0]]
             X = np.array(X).T
             gram = X.conj().T @ (A["G"] @ X)
             gab = (X.conj() * (A["Gabs"] @ X)).sum(axis=0).real
@@ -595,6 +595,10 @@ def sector_task(t):
     return t["sig"], t["m"], out, time.time() - t0, peak_gb()
 
 
+def pfor(cfg, sig):
+    return cfg["p"][sig] if isinstance(cfg["p"], dict) else cfg["p"]
+
+
 def match_stable(muA, muB, tol=1e-5, lo=1e-3):
     """Largest |mu| above which every eigenvalue of A matches one of B to relative tol (A sorted by |mu|)."""
     cut = 0.0
@@ -624,11 +628,12 @@ def part_tanh(cfg, args):
     for sig in sigmas:
         for m in ms:
             tasks.append({"sig": sig, "m": m, "mut": MUT,
-                          "A": {"dK": cfg["dK"], "p": cfg["p"], "L": 2.0, "npan": cfg["npan"]},
-                          "B": {"dK": cfg["dK"] + cfg["dKB"], "p": cfg["p"] + cfg["pB"], "L": 3.0,
+                          "A": {"dK": cfg["dK"], "p": pfor(cfg, sig), "L": 2.0, "npan": cfg["npan"]},
+                          "B": {"dK": cfg["dK"] + cfg["dKB"], "p": pfor(cfg, sig) + cfg["pB"], "L": 3.0,
                                 "npan": int(cfg["npan"] * 1.5)}})
     print(f"== tanh: sigmas {sigmas}, m = {ms}, discretisation A dK = {cfg['dK']}, p = {cfg['p']}, Lmap = 2, "
-          f"npan = {cfg['npan']}; B dK + {cfg['dKB']}, p + {cfg['pB']}, Lmap = 3, npan x 1.5", flush=True)
+          f"npan = {cfg['npan']}; B dK + {cfg['dKB']}, p + {cfg['pB']}, Lmap = 3, npan x 1.5 (p per sigma R)",
+          flush=True)
     res = {}
     with ProcessPoolExecutor(max_workers=args.procs) as ex:
         for sig, m, out, dt, pk in ex.map(sector_task, tasks):
@@ -655,7 +660,7 @@ def part_tanh(cfg, args):
             cut = match_stable(muA, muB)
             cuts[(sig, m)] = cut
             win = muA[np.abs(muA) >= max(cut, 1e-3)]
-            asym = max((np.abs(win + z).min() / abs(z) for z in win), default=0.0)
+            asym = max((np.abs(muA + z).min() / abs(z) for z in win), default=0.0)
             lead = " ".join(f"{z.real:+.6f}{z.imag:+.6f}i" for z in muA[:4])
             print(f"   {m:4.1f} | {lead} | {abs(muA[0]):.8f} / {abs(muB[0]):.8f} | {cut:20.4f} | {asym:.1e}")
         rho_all[sig] = (rho, rhoB)
@@ -739,7 +744,7 @@ def run_controls():
 
 
 # ------------------------------------------------------------------------------------------------ main
-FULL = {"dK": 28, "p": 80, "npan": 160, "dKB": 10, "pB": 20, "ms": "0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5",
+FULL = {"dK": 28, "p": {2.0: 80, 4.0: 100}, "npan": 160, "dKB": 10, "pB": 10, "ms": "0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5",
         "planted_ms": [0.5, 1.5, 2.5], "pdK": 12, "sdK": 22, "pp": 60, "pnpan": 120, "pn": 4, "ptol": 1e-9,
         "stol": 1e-9, "Lw": 26}
 QUICK = {"dK": 8, "p": 40, "npan": 60, "dKB": 4, "pB": 12, "ms": "0.5,1.5",
