@@ -100,7 +100,8 @@ def fin(x):
 
 
 def peak_gb():
-    return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 2**20  # kB on Linux
+    m = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss  # kB on Linux, bytes on macOS
+    return m / (2**30 if sys.platform == "darwin" else 2**20)
 
 
 def emit(rec):
