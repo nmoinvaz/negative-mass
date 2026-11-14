@@ -55,9 +55,43 @@ and conversely u = (R₁ − R₂)/(2i), w = (R₁ + R₂)/2 for R₁, R₂ the 
 and |ψ|² + |χ|² = 2|ε|², so ε = 0 iff ψ = χ = 0. Both are identities in sympy for an arbitrary real τ(x, y, z) and
 arbitrary complex a, b (`reduction`, `norms`). Flipping the sign of the lower block of γ⁰ (`--mutate=g0block`) makes
 `reduction` fail: then w + iu = σ·∇ψ − ½τχ, and the two equations couple. The reduction is the one #60 wrote by hand
-([prior_work.md](prior_work.md) §4). It parallels the 2-spinor Witten operator of [FNS11], the intrinsic Dirac operator
-plus ½(tr K)t (their Eq. 2.1, as recorded in [../literature.md](../literature.md)); that paper was not re-read here and
-the correspondence was not checked.
+([prior_work.md](prior_work.md) §4). Its two blocks are the 2-spinor Witten operator of [FNS11], as mapped next.
+
+### The correspondence with [FNS11] Eq. 2.1 (*proved*, by hand; #76)
+
+[FNS11] Eq. (2.1) is 𝒟_{A'A}λ^A = D_{A'A}λ^A + ½χ_F t_{A'A}λ^A, with signature (+, −, −, −), t^a the future unit
+normal, D the intrinsic derivative and χ_F the trace of the extrinsic curvature. The paper writes χ_F as χ, which §2
+uses for a − ib. Only the trace enters. The conventions are as read from the paper's arXiv source, except the spin
+matrices of the bent-plane case in item 4, which are the standard ones, recalled and not re-read *(unverified)*.
+
+1. The paper's conformal law χ_ab ↦ Ωχ_ab + t^e∇_eΩ h_ab, below Eq. (2.2), holds for χ_ab = +P^c_aP^d_b∇_c t_d and
+   fails for its negative, so χ_F = ∇_a t^a, the expansion of the future normal. The K_ij = −g(∇_{e_i}n, e_j) of
+   [mass_bounds.md](mass_bounds.md) "Conventions" has tr K = −∇_a n^a, so χ_F = −tr K = −τ. For lapse 1 and shift β on
+   a flat slice, χ_F = −∂_iβ_i.
+2. In a Cartesian spin frame G_{AA'} = √2 t_{AA'} is the identity, so t_{A'A}λ^A is λ/√2, and D_{A'A}λ^A is the Pauli
+   operator over √2 ([FNS11] Section 3.1: the σ^A_{iB} are the Pauli matrices divided by √2). The paper's flat
+   equation with χ_F = 0, its Eq. (3.1), is σ̄·∇λ = 0 with σ̄ = (σ_x, −σ_y, σ_z), and its explicit solution satisfies
+   it. So Eq. (2.1) on a flat slice is σ̄·∇λ + ½χ_Fλ = 0, with the sign of the second term as item 4 checks it, and
+   ψ_F := σ_yλ obeys σ·∇ψ_F = ½χ_Fψ_F = −½τψ_F. That is the second block of this section, σ·∇χ = −½τχ, with the same
+   real coefficient ½ and no further factor.
+3. The first block is its conjugate. The antilinear map C: ψ ↦ iσ_yψ̄ takes solutions of σ·∇ψ = ½τψ to solutions of
+   σ·∇ψ = −½τψ, for real τ. So ker D̃ ≅ K ⊕ C(K), with K the solutions of Eq. (2.1) (through ψ_F), and
+   dim_ℂ ker D̃ = 2 dim_ℂ K. On a flat slice D̃ has a kernel in Ḣ¹ if and only if Eq. (2.1) has a nonzero 2-spinor
+   solution in Ḣ¹.
+4. The sign is a convention and nothing here depends on it. The opposite orientation of the Pauli matrices, or the
+   opposite sign of K, makes Eq. (2.1) the first block. The blocks are exchanged by C and by τ → −τ, so the kernel, the
+   threshold κ_K < √3 of §5 and the symmetry of E under v → −v in §7 are the same for either. The + sign of the χ_F
+   term itself agrees with a constant 4D spinor on the bent plane t′ = sinh η, x′ = cosh η of Minkowski space
+   (intrinsically flat, χ_F = η′): its components in the slice's adapted frame are exp(−ησ_x/2)λ₀, and
+   σ_x∂_sλ′ + ½χ_Fλ′ = 0.
+
+The earlier sentence here, that Eq. (2.1) is the intrinsic Dirac operator plus ½(tr K)t, identified the paper's χ_F with
+this note's tr K. In the notes' convention it is plus ½χ_F t with χ_F = −tr K. The notes' D̃ = D + ½(tr K)γ⁰ follows
+the sign choice of mass_bounds.md "Conventions", and with the other choice, D̃ = D − ½(tr K)γ⁰, Eq. (2.1) is the first
+block instead of the second. Not done here: Eq. (2.1) is not re-derived from the 4D spin connection in general, only
+for the bent plane, and [FNS11] has no 4-component operator, so the split of D̃ into blocks rests on item 3 alone. The
+identities of items 1–4 were re-run in a scratch sympy script with mutations, posted on #76 and not part of
+[frank_loss.py](frank_loss.py).
 
 If ε ∈ Ḣ¹, then ψ, χ ∈ Ḣ¹(ℝ³, ℂ²) and, a.e., |σ·∇ψ| = ½|τ||ψ| and |σ·∇χ| = ½|τ||χ|. These are the pointwise
 inequalities of [FL22] Remark 4 with |A| = ½|τ|, for the Pauli matrices that [FL22] use in d = 3 (N = 2^{[3/2]} = 2).
@@ -300,7 +334,11 @@ restart 20; 1.55 GiB for the scan.
 - [FL22] R. L. Frank, M. Loss, "A sharp criterion for zero modes of the Dirac equation", arXiv:2201.03610 (2022);
   Theorem 1, Remark 4, Proposition 7 and Section 3 read from the arXiv source on 2026-11-13. Journal version
   *(unverified)*, as in [prior_work.md](prior_work.md).
-- [FNS11] J. Frauendiener, J. M. Nester, L. B. Szabados, arXiv:1105.5008, CQG 28, 185004 (2011), as recorded in
-  [../literature.md](../literature.md).
+- [FNS11] J. Frauendiener, J. M. Nester, L. B. Szabados, "Witten spinors on maximal, conformally flat hypersurfaces",
+  Class. Quantum Grav. 28, 185004 (2011), doi:10.1088/0264-9381/28/18/185004, arXiv:1105.5008v2 (INSPIRE 901256).
+  Title, authors, journal, volume, article number and DOI checked against the arXiv API, INSPIRE and Crossref (IOP
+  Publishing) on 2026-11-13. Eq. (2.1), the conformal law below Eq. (2.2), Eq. (3.1) and Section 3.1 read from the
+  arXiv source. Equations are numbered by section, so the TeX labels `eq:2.1.1` and `eq:3.1.1` print as (2.1) and (3.1),
+  which the arXiv PDF confirms.
 - Hardy–Littlewood–Sobolev, Rellich–Kondrachov, Riesz–Schauder and Gelfand's formula are standard and were recalled, not
   re-read (for example E. H. Lieb, M. Loss, *Analysis*, 2nd ed., AMS 2001, Theorem 4.3 for HLS *(unverified)*).
