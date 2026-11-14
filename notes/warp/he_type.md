@@ -15,9 +15,9 @@ Type I, II or III (**proved**). For every profile f and speed v,
 
     D = v⁶ (p₆ + p₈ v² + p₁₀ v⁴ + p₁₂ v⁶),    p₆ v⁶ = −4|j|⁶ < 0,    p₁₂ ≥ 0,
 
-with each p explicit in f, f′, f″, r_s and θ (**checked symbolically**). So the wall is Type IV at small speed and turns
-Type I as v grows. On the axis D < 0 wherever f′ ≠ 0, and on the equator the point is Type I exactly where
-v r_s f′² > |(r_s f′)′|.
+with each p explicit in f, f′, f″, r_s and θ (**checked symbolically**). So almost every wall point is Type IV at small
+speed and Type I at large speed. On the axis D < 0 wherever f′ ≠ 0, and on the equator the point is Type I exactly
+where v r_s f′² > |(r_s f′)′|.
 
 Le and Rodal describe the same map (**numerical evidence**, quadrature of the exact indicator). At Le's parameters and
 v = 0.5 the Type I fraction of the wall is 1.15 %, against Le's 1.3 %, whose grid ladder gives 1.1, 1.3 and 1.0 %. At
@@ -56,7 +56,7 @@ is that hypothesis, with ẑ = e_ϕ, at every point.
 `he_type_exact` implements the lemma, and the planted tensors test it (`planted`). A perfect fluid with
 (μ, p) = (3/2, 1/5), dust, an anisotropic fluid, two canonical Type IV tensors, null dust with and without a pressure,
 [Le26]'s Type III example ℓm + mℓ and λη are each written in a frame boosted twice and rotated, with a decoupled fourth
-axis. All nine get their type, the fluids through D = 0 and the rank test. numpy's eigenvalues agree on the four with
+axis. All nine get their type, the fluids through D = 0 and the rank test. numpy's eigenvalues agree on the three with
 D ≠ 0.
 
 ## The closed form
@@ -69,7 +69,7 @@ the powers v⁶ to v¹² (`structure`, he_type_output.txt §2).
 - **Static stress.** p₁₂ = s⁴F²Q₁²Q₂/(16r⁶), with Q₁ = −c²F(a − rb)² − 4ra³ and
   Q₂ = a²(F + ra)² + c²F(a + rb)[F(rb − a) − 2ra²]. It equals χ(λ₀)²[(S₁₁ − S_ρρ)² + 4S_1ρ²] ≥ 0, the discriminant of
   the v² part, which is block diagonal, with λ₀ = −R_00, S its spatial block and χ the characteristic polynomial of S.
-- **Mixed.** p₈ and p₁₀ have 160 and 347 terms. They are printed in he_type_output.txt §2.
+- **Mixed.** p₈ and p₁₀ are long polynomials, printed in he_type_output.txt §2.
 - **Equator**, c = 0. D = v⁶[r²v²a⁴ − (a + rb)²] Q_eq²/(16r⁶), with Q_eq = 4v²a²F(F + ra) + (a + rb)². Where
   Q_eq ≠ 0 the point is Type I exactly when v r f′² > |(r f′)′|. There j is along E_1, a principal axis of the stress,
   and the rule is [Le26]'s momentum criterion 2|j| < |ρ_n + S_∥|.
@@ -83,8 +83,10 @@ What follows for every profile, from these forms.
 - As v → ∞ a point is Type I wherever p₁₂ > 0, which excludes the axis, the centre and the surfaces Q₁ = 0 and Q₂ = 0.
 - In between, the cubic p₁₂V³ + p₁₀V² + p₈V + p₆ in V = v² has one or three positive roots. The point is Type IV below
   the lowest, V₁. With three roots V₁ < V₂ < V₃ it is Type I on (V₁, V₂), Type IV again on (V₂, V₃) and Type I above
-  V₃. For the tanh profile, three roots occur on PCT3LE % of Le's wall and PCT3RO % of Rodal's (he_type_output.txt §7,
-  **numerical evidence**), and route N confirms the four bands at the widest window.
+  V₃. For the tanh profile, three roots occur on 29.4 % of Le's wall and 54.9 % of Rodal's (he_type_output.txt §7,
+  **numerical evidence**), and the re-entrant Type IV band starts as low as v = 0.02 at some points. Route N confirms
+  the four bands, IV, I, IV and I, at the point with the widest Type I window on each wall. The Type I fraction still
+  grows with v at every sampled speed, from 0.04 % at v = 0.1 to 59 % at v = 10 on Le's wall.
 
 ## Le's setup
 
@@ -148,20 +150,23 @@ A minimally coupled scalar has a stress tensor of Type I or II, and a perfect fl
 
 ## Checks and controls
 
-The script runs every control after the checks and confirms that its target checks fail. CHECKSUMMARY
+The script runs every control after the checks and confirms that its target checks fail. All 8 checks pass and all 7
+controls fire (`he_type_output.txt`).
 
 | check | what it tests | control `--mutate=` | the control's change |
 |---|---|---|---|
 | `planted` | nine tensors of known type, I, II, III and IV, get their type from D and the rank test | `disc-sign`, `no-rank` | D → −D; every D = 0 tensor labelled II |
 | `decouple` | R(e_ϕ, ·) = 0 and (I2) on route C's components with w = v(1 − f) | `alc-drop-w2` | the shift's square dropped from g_tt in route C |
-| `structure` | the powers v⁶ to v¹², p₆, p₁₂ and the equator and axis factorizations | `alc-drop-w2` | the same |
+| `structure` | the powers v⁶ to v¹², p₆, p₁₂ and the equator and axis factorizations, first at 9 exact points, then symbolically | `alc-drop-w2` | the same |
 | `jets` | the tanh jets against mpmath's numerical derivatives at 8 radii | `jets-f2` | f″ × (1 + 1/1000) |
 | `numN` | route N's G(n, n)/8π equals Alcubierre's Eq. (19), and its axis eigenvalues equal −R_00 ± iR_01 | `num-drop-w2` | the shift's square dropped from g_tt in route N |
 | `closed_vs_numeric` | the sign of D gives route N's eigenvalue type at every grid point | `alc-drop-w2`, `num-drop-w2` | as above |
 | `le_fraction` | the Type I fraction at Le's v = 0.5 is within 2 points of 1.3 % | `le-speed` | v = 1 |
 | `rodal_cuts` | the axis is Type IV, and the equatorial Type I set is one annulus about ρ of width within a factor 2 of 2∆ | `rodal-speed` | v = 1/4 |
 
-Under `alc-drop-w2` the map changes, from 1.15 % Type I at Le's v = 0.5 to DROPW2 % (he_type_output.txt, Controls).
+Under `alc-drop-w2` the map changes, from 1.15 % Type I at Le's v = 0.5 to 0.04 %, and the equatorial annulus at
+Rodal's parameters is no longer one interval about ρ (he_type_output.txt, Controls). Each control also fails other
+checks downstream of the one it targets, which the output lists.
 
 The grids of `closed_vs_numeric` are Le's wall at 240² points in (r_s, θ) for each of v = 0.5, 1, 2 and 2.5, the cells
 of a uniform 100³ grid on ±3 inside Le's mask at v = 0.5, Rodal's band at 240² and Rodal's axis at 602 points, 304 778
@@ -173,12 +178,13 @@ From the repository root, in the environment of [`setup.md`](../../setup.md):
     python3 notes/warp/he_type.py
 
 It exits 1 if a check fails or a control does not fire. `--no-controls` runs the checks alone, and `--mutate=NAME` one
-control. It takes about a minute without the controls.
+control. It takes under a minute without the controls and about ten minutes with them, on one core.
 
 ## What the code proves, and what is assumed
 
 Checked symbolically: the decoupling, the powers of v in D, the forms of p₆ and p₁₂ and the equator and axis
-factorizations, each as an exact identity in (v, f, f′, f″, r, cos θ), with sin² θ reduced to 1 − cos² θ. By hand: the
+factorizations, each as an exact identity in (v, f, f′, f″, r, cos θ), with sin² θ reduced to 1 − cos² θ. The same
+identities are first tested at 9 exact rational points, which is what fails fast under `alc-drop-w2`. By hand: the
 lemma, which turns the sign of D and the rank test into the type.
 
 Numerical evidence: the agreement with route N at 304 778 points, the fractions, which are midpoint quadratures of the
