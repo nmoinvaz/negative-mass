@@ -23,12 +23,12 @@ and #58's item 5 has been reviewed. Any change of status word is for the coordin
 | #57 | metric, scalar field equation R_ab = 8π(ε ∂_aφ ∂_bφ + V g_ab) | confirmed, by hand |
 | #57 | Eulerian energy density ρ_E = −(v²/32π)(ρ²/r_s²) f′² | confirmed, by hand and `alc_wall` |
 | #57 | every row of the frame Ricci table | confirmed, `alc_table`, and R_00, R_11, R_ρρ by hand |
-| #57 | (I1) R(e_ϕ, ·) = 0 | confirmed, by hand and `axi_I1`; holds more generally (gap 6) |
-| #57 | (I2) R_00 + R_11 + 2R_ρρ = 0 | confirmed, by hand and `axi_I2`; holds more generally (gap 6) |
+| #57 | (I1) R(e_ϕ, ·) = 0 | confirmed, by hand and `axi_I1`; holds more generally (gap 6, addressed by #61) |
+| #57 | (I2) R_00 + R_11 + 2R_ρρ = 0 | confirmed, by hand and `axi_I2`; holds more generally (gap 6, addressed by #61) |
 | #57 | the identities on the axis | confirmed, by hand and `axi_axis` |
 | #57 | wall curvature, R_ρρ off the axis and R_01 = v f′/r_s on it | confirmed, by hand and `alc_wall` |
 | #57 | the lemma | confirmed, by hand |
-| #57 | its application, off and on the axis, and the verdict | confirmed; the centre r_s = 0 needs a word (gap 5) |
+| #57 | its application, off and on the axis, and the verdict | confirmed; the centre r_s = 0 needs a word (gap 5, addressed by #61) |
 | #57 | perfect-fluid corollary (algebra only) | confirmed; literature comparison still open (#60) |
 | #57 | complex pair −R_00 ± i R_01 on the axis, 16 ± 4i | confirmed, by hand to the printed digits |
 | #57 | Ellis–Bronnikov control, R_ll = −2a²/(l² + a²)², φ = −arctan(l/a)/(2√π) | confirmed, by hand and `planted_eb` |
@@ -201,6 +201,10 @@ The note's statement is confirmed.
 ## 6. Gaps
 
 None of these changes a verdict. They are reported, not fixed, in the notes under review.
+
+*Coordinator, after the review:* #62 addressed gaps 1–4 and 7 in mass_bounds.md, phantom_source.md and phase4/RESULTS.md
+§1. #61 addressed gap 5 (phantom_source.md, "Setup") and gap 6 (phantom_source.md, "An accelerating bubble"). Gap 8 is
+corrected on #59.
 
 1. **#58 item 5, the sign of ∇̃.** In the note's own gammas, the spacetime spin connection restricts to the slice as
    ∂_i − ½K_ij γ^j γ⁰, not ∂_i + ½K_ij γ^j γ⁰. The note's choice is that connection after γ⁰ ↦ −γ⁰, and its
