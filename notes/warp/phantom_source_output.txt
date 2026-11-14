@@ -1,4 +1,4 @@
-phantom_source.py, issue #57. sympy 1.14.0, mpmath 1.3.0, python 3.14.7. mutation: none
+phantom_source.py, issues #57 and #61. sympy 1.14.0, mpmath 1.3.0, python 3.14.7. mutation: none
 
 == 1. Eulerian energy density ==
 [PASS] rho_einstein: G_ab n^a n^b / 8 pi - expected reduces to 0 (0 s)
@@ -45,7 +45,23 @@ phantom_source.py, issue #57. sympy 1.14.0, mpmath 1.3.0, python 3.14.7. mutatio
 [PASS] eb_potential: phi = -atan(l/a)/(2*sqrt(pi)), d phi = u: True, V = 0, dV ^ d phi = [0, 0, 0, 0, 0, 0]
 [PASS] eb_residual: G_ab - 8 pi T_ab with (phi, V) substituted back: 0
 
-checks: 13 passed, 0 failed []. 14 s
+== 6. Accelerating bubble b = -v_s(t) f(r_s), r_s^2 = (x - x_s(t))^2 + rho^2, and any b(t, x, rho) ==
+  ds^2 = -dt^2 + (dx + b dt)^2 + dy^2 + dz^2, frame (E_0 = n, E_1 = d_x, e_rho, e_varphi). v_s and x_s are
+  independent free functions, so v_s = x_s' is a special case.
+  info: jets in R_ab, general b: ['b000', 'b001', 'b002', 'b010', 'b011', 'b020', 'b101', 'b110']; bubble: ['vs0', 'vs1', 'xs1']
+  info: jets in R_00, general b: ['b000', 'b001', 'b010', 'b020', 'b110']; bubble: ['vs0', 'vs1', 'xs1']
+  route E: f = 1/(r**3 + 1), v_s = (t + 1)/(t**2 + 1), x_s = t**3/3 + t/2; b(t, x, rho) = rho*(t**2 + x)/(rho**2 + t*x**2 + 2)
+[PASS] gen_xcheck: route D for b(t, x, rho) differs from route E at 0 of 6 exact points
+[PASS] accel_xcheck: route D for the accelerating bubble differs from route E at 0 of 6 exact points
+[PASS] gen_I1: b(t, x, rho): rho R(e_varphi, E_0), rho R(e_varphi, E_1), rho^2 R_rho,varphi, rho^2 R_varphi,varphi reduce to [0, 0, 0, 0]
+[PASS] gen_I2: b(t, x, rho): rho^2 (R_00 + R_11 + 2 R_rho,rho) reduces to 0
+[PASS] gen_Rrr: b(t, x, rho): rho^2 (R_rho,rho - (d_rho b)^2 / 2) reduces to 0
+[PASS] accel_I1: bubble: rho R(e_varphi, E_0), rho R(e_varphi, E_1), rho^2 R_rho,varphi, rho^2 R_varphi,varphi reduce to [0, 0, 0, 0]
+[PASS] accel_I2: bubble: rho^2 (R_00 + R_11 + 2 R_rho,rho) reduces to 0
+[PASS] accel_axis: bubble on the axis y = z = 0: R(E_2, .), R(E_3, .), R_00 + R_11 reduce to [0, 0, 0, 0, 0, 0, 0, 0, 0]
+[PASS] accel_wall: R_rho,rho = v_s^2 f'^2 rho^2 / (2 r_s^2) [residue 0] and, on the axis, R_01 = v_s f' / r_s [residue 0]. So R_ab != 0 wherever v_s(t) f'(r_s) != 0.
+
+checks: 22 passed, 0 failed []. 31 s
 
 == Controls: each mutation must make its target checks fail ==
 [FIRED] --mutate=rho-v2 (doubles v in the expected energy density): exit 1, failed ['rho_einstein', 'rho_3p1']
@@ -58,4 +74,8 @@ checks: 13 passed, 0 failed []. 14 s
 [FIRED] --mutate=eb-unclosed (multiplies the extracted gradient u by 1 + cos(theta)^2): exit 1, failed ['eb_closed']
 [FIRED] --mutate=eb-potential (adds t/(8 pi a^3) to V): exit 1, failed ['eb_potential', 'eb_residual']
 [FIRED] --mutate=eb-residual (scales phi by 11/10 before substituting it back): exit 1, failed ['eb_residual']
+[FIRED] --mutate=accel-static (drops every t-derivative of b, v_s and x_s in section 6's jets): exit 1, failed ['gen_xcheck', 'accel_xcheck']
+[FIRED] --mutate=accel-lapse (gives section 6's slicing the lapse 1 + b, not 1): exit 1, failed ['gen_I1', 'gen_I2', 'gen_Rrr', 'accel_I1', 'accel_I2', 'accel_axis', 'accel_wall']
+[FIRED] --mutate=accel-rotate (rotates section 6's (e_rho, e_varphi) by alpha, tan(alpha/2) = 1/20): exit 1, failed ['gen_I1', 'gen_I2', 'gen_Rrr', 'accel_I1', 'accel_I2', 'accel_wall']
+[FIRED] --mutate=accel-wall-v2 (doubles d_rho b and v_s in section 6's expected wall curvature): exit 1, failed ['gen_Rrr', 'accel_wall']
 controls: all fired

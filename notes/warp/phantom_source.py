@@ -305,7 +305,8 @@ def ricci_at_point(bexpr, p, lapse):
                    + gi[k, d] * (ddg[a][b][d][c] + ddg[a][c][d][b] - ddg[a][d][b][c]) for d in range(n)) / 2
                for c in range(n)] for b in range(n)] for k in range(n)] for a in range(n)]  # d_a Gamma^k_bc
     Ric = sp.Matrix(n, n, lambda b, c: sum(dGam[a][a][b][c] - dGam[c][a][a][b] for a in range(n))
-                    + sum(Gam[a][a][d] * Gam[d][b][c] - Gam[a][c][d] * Gam[d][a][b] for a in range(n) for d in range(n)))
+                    + sum(Gam[a][a][d] * Gam[d][b][c] - Gam[a][c][d] * Gam[d][a][b]
+                          for a in range(n) for d in range(n)))
     E0 = E.applyfunc(val)
     return (E0.T * Ric * E0).applyfunc(sp.cancel)
 
@@ -313,6 +314,7 @@ def ricci_at_point(bexpr, p, lapse):
 def cylinder(Rt, tau):
     """rho^2 R_rho,rho, rho^2 R_rho,varphi, rho^2 R_varphi,varphi and [rho R(e_varphi, E_0), rho R(e_varphi, E_1)],
     with (e_rho, e_varphi) rotated by alpha, tan(alpha/2) = tau. tau = 0 is the true frame."""
+    tau = sp.Rational(tau)  # exact, so tau = 0 gives the integers 1 and 0, not floats
     ca, sa = (1 - tau**2) / (1 + tau**2), 2 * tau / (1 + tau**2)
     P = sp.Matrix([[ca, sa], [-sa, ca]]) * sp.Matrix([[y, z], [-z, y]])  # rows: rho e_rho, rho e_varphi
     T = Rt[2:, 2:]
@@ -496,6 +498,7 @@ def main():
     Rg = shift_tetrad_ricci(bjet(0, 0, 0), general_rule(static), lapse)
     Ra = shift_tetrad_ricci(-VS[0] * F[0], bubble_rule(static), lapse)
     jets_of = lambda E: sorted((str(s) for s in E.free_symbols if s in BJ or s in VS or s in XS), key=str)
+    print(f"  info: jets in R_ab, general b: {jets_of(Rg)}; bubble: {jets_of(Ra)}")
     print(f"  info: jets in R_00, general b: {jets_of(Rg[0, 0])}; bubble: {jets_of(Ra[0, 0])}")
 
     # Planted truth for route D: explicit functions differentiated by sympy itself (route E), at exact points.
