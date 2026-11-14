@@ -1,0 +1,443 @@
+# notes/warp/zero_modes.py output, issue #69
+# dh610 (dh610-fedora, Fedora Linux, Intel Core i7-12700, 20 threads shared with other work), 2026-11-13; Python 3.14.10,
+# numpy 2.5.4, scipy 1.18.1, sympy 1.14.0
+# Each section is one run from the repository root under `nice -n 10 /usr/bin/time`, with OMP_NUM_THREADS=1,
+# OPENBLAS_NUM_THREADS=1 and MKL_NUM_THREADS=1, at most four processes at a time:
+#   python notes/warp/zero_modes.py <options>
+# Of the time block only the wall time and the maximum resident set size (kB) are kept. The raw logs and jsonl are in
+# negative-mass-raw, folder I69-dh610, commit c48ec66. Script commits: the planted-truth section 59aeb22, the
+# controls 9d23de0 to 3c670b4 (they differ in the planted print and the gridperturb target), the scans 7058016 (the three
+# largest) and 583f3f3 (the other five), the N = 160 points 9d23de0. The commits after 7058016 changed the controls, the
+# `scan_resolved` count and added parts, not the scan code.
+# The eight scan sections keep their header and summary lines, the 40 s_min rows are in the table section and in the
+# raw logs.
+# The agree_N check FAILS in the table section, on the data: see zero_modes.md, section 4.
+
+
+######## python notes/warp/zero_modes.py --confirm
+== adjoint: T = M^H for the three operators (dot test with random fields)
+  witten4  |<x, My> - <Tx, y>| / (|x| |My|) = 6.8e-18
+  witten2  |<x, My> - <Tx, y>| / (|x| |My|) = 7.1e-18
+  ly       |<x, My> - <Tx, y>| / (|x| |My|) = 2.6e-17
+  [PASS] adjoint: worst 2.6e-17
+== dense: Lanczos s_min against a dense SVD built from explicit DFT matrices and gammas (N = 8)
+  witten2  v = 3.0: full dense 0.484259896 Lanczos 0.484259896; free dense 0.485341719 Lanczos 0.485341719
+  witten2  v = (0.7+0.4j): full dense 0.732261753 Lanczos 0.732261753; free dense 0.732922837 Lanczos 0.732922837
+  witten2  v = -2.0: full dense 0.588969117 Lanczos 0.588969117; free dense 0.589331887 Lanczos 0.589331887
+  witten4  v = 3.0: full dense 0.484022090 Lanczos 0.484022090; free dense 0.485020148 Lanczos 0.485020148
+  witten4  v = (0.7+0.4j): full dense 0.732248207 Lanczos 0.732248207; free dense 0.732898941 Lanczos 0.732898941
+  witten4  v = -2.0: full dense 0.588939880 Lanczos 0.588939880; free dense 0.589322898 Lanczos 0.589322898
+  [PASS] dense: largest |dense - Lanczos| 1.9e-15
+== vc: v_c = 1/kappa_K(1), S = 5.477904090
+  sigma R =  2.0: v_c = 3.74490 (#58: 3.74490)
+  sigma R =  4.0: v_c = 2.47097 (#58: 2.47097)
+  sigma R =  8.0: v_c = 1.56243 (#58: 1.56243)
+  sigma R = 16.0: v_c = 0.98503 (#58: 0.98503)
+  [PASS] vc: equal to #58's printed values, max difference 3.7e-06
+== regress63: the mean-free s_min at N = 64 against #63's scan table, with the full-space value beside it
+  sigma R = 2, v/v_c = 1: mean-free 0.691615 (#63: 0.691615), full space 0.691615
+  sigma R = 2, v/v_c = 2: mean-free 0.531532 (#63: 0.531532), full space 0.531532
+  sigma R = 2, v/v_c = 4: mean-free 0.389574 (#63: 0.389574), full space 0.389574
+  sigma R = 4, v/v_c = 1: mean-free 0.729964 (#63: 0.729964), full space 0.729964
+  sigma R = 4, v/v_c = 2: mean-free 0.580202 (#63: 0.580202), full space 0.580202
+  sigma R = 4, v/v_c = 4: mean-free 0.440720 (#63: 0.440720), full space 0.440720
+  [PASS] regress63: largest difference from #63's table 4.9e-07
+== sectors: s_min(witten4) = s_min(witten2, +v) = s_min(witten2, -v) (sigma R = 2, L = 8, N = 64)
+  v/v_c = 2: witten4 0.53153234, witten2 +v 0.53153234, witten2 -v 0.53153234
+  v/v_c = 4: witten4 0.38957436, witten2 +v 0.38957436, witten2 -v 0.38957436
+  [PASS] sectors: largest difference 2.7e-14
+== lanczos: s_min is the same from three random starting vectors, and every run converged
+  v/v_c = 3: 0.444224387, 0.444224387, 0.444224387
+  v/v_c = 7: 0.300363630, 0.300363630, 0.300363630
+  v/v_c = 10: 0.253710626, 0.253710626, 0.253710626
+  [PASS] lanczos: seed spread 3.8e-14, unconverged runs 0 of 39
+== planted: tau1 = 6/(1 + r^2), zero modes at v = +-i; L = 10.0, N = 64
+  top |lambda| = 0.9910, 0.9910, 0.9910, 0.9910, 0.6000, 0.6000, 0.6000, 0.6000  [8 s]
+  zero-mode speeds v* = -1/lambda: -0.0000+1.0091i, -0.0000-1.0091i; s_min there 1.3e-08, 8.2e-09; s_min(+i), s_min(-i) = 0.0071, 0.0071
+  mean-free s_min at v* (#63's definition, lifted by the k = 0 mode of B psi): 0.0355, 0.0355
+  refine along +i t: minimum s_min = 6.9e-06 at t = 1.00912
+  [PASS] planted_pm_i: |lambda| = 0.9910 (exact 1), |Re|/|lambda| = 6.2e-16, s_min at v* <= 1.3e-08, s_min(+-i) <= 0.0071, refined |v*| = 1.0091
+  the zero-mode speed 1/|lambda| against box and grid (eigenvalue route):
+    (L, N) = (10, 64): 1/|lambda| = 1.00911
+    (L, N) = (14, 64): 1/|lambda| = 1.00403
+    (L, N) = (20, 64): 1/|lambda| = 1.00134
+  [PASS] planted_conv: |v*| = 1.0091, 1.0040, 1.0013 at L = 10, 14, 20, tending to the exact 1
+  real scan of the planted tau up to 10 v_c, v_c = 1/sqrt(3):
+  ||M|| = 1.53541, ||M|| v_c = 0.88647 (the certificate uses 1.02 ||M||)
+  t = v/v_c =  0.250  v =    0.1443  s_min = 0.941367  [50 apps, 2.6 s, peak 0.77 GB]
+  t = v/v_c =  0.500  v =    0.2887  s_min = 0.902430  [50 apps, 3.0 s, peak 0.77 GB]
+  t = v/v_c =  0.750  v =    0.4330  s_min = 0.879376  [50 apps, 2.2 s, peak 0.77 GB]
+  t = v/v_c =  1.000  v =    0.5774  s_min = 0.867689  [50 apps, 2.2 s, peak 0.77 GB]
+  t = v/v_c =  1.250  v =    0.7217  s_min = 0.863236  [50 apps, 2.5 s, peak 0.77 GB]
+  t = v/v_c =  1.500  v =    0.8660  s_min = 0.862938  [50 apps, 2.0 s, peak 0.77 GB]
+  t = v/v_c =  1.750  v =    1.0104  s_min = 0.864826  [50 apps, 2.0 s, peak 0.77 GB]
+  t = v/v_c =  2.000  v =    1.1547  s_min = 0.867750  [50 apps, 2.9 s, peak 0.77 GB]
+  t = v/v_c =  2.250  v =    1.2990  s_min = 0.871070  [74 apps, 5.4 s, peak 0.77 GB]
+  t = v/v_c =  2.500  v =    1.4434  s_min = 0.874435  [74 apps, 3.0 s, peak 0.77 GB]
+  t = v/v_c =  2.750  v =    1.5877  s_min = 0.877661  [74 apps, 4.7 s, peak 0.77 GB]
+  t = v/v_c =  3.000  v =    1.7321  s_min = 0.880658  [98 apps, 4.8 s, peak 0.77 GB]
+  t = v/v_c =  3.250  v =    1.8764  s_min = 0.883385  [98 apps, 4.6 s, peak 0.77 GB]
+  t = v/v_c =  3.500  v =    2.0207  s_min = 0.885835  [122 apps, 6.7 s, peak 0.77 GB]
+  t = v/v_c =  3.750  v =    2.1651  s_min = 0.888017  [122 apps, 5.7 s, peak 0.77 GB]
+  t = v/v_c =  4.000  v =    2.3094  s_min = 0.889947  [170 apps, 11.9 s, peak 0.77 GB]
+  t = v/v_c =  4.250  v =    2.4537  s_min = 0.891647  [194 apps, 10.8 s, peak 0.77 GB]
+  t = v/v_c =  4.500  v =    2.5981  s_min = 0.893137  [266 apps, 17.6 s, peak 0.77 GB]
+  t = v/v_c =  4.750  v =    2.7424  s_min = 0.891595  [338 apps, 19.3 s, peak 0.77 GB]
+  t = v/v_c =  5.000  v =    2.8868  s_min = 0.888302  [338 apps, 19.7 s, peak 0.77 GB]
+  t = v/v_c =  5.250  v =    3.0311  s_min = 0.885153  [338 apps, 22.2 s, peak 0.77 GB]
+  t = v/v_c =  5.500  v =    3.1754  s_min = 0.882142  [362 apps, 19.9 s, peak 0.77 GB]
+  t = v/v_c =  5.750  v =    3.3198  s_min = 0.879260  [362 apps, 20.8 s, peak 0.77 GB]
+  t = v/v_c =  6.000  v =    3.4641  s_min = 0.876500  [386 apps, 21.2 s, peak 0.77 GB]
+  t = v/v_c =  6.250  v =    3.6084  s_min = 0.873855  [386 apps, 20.9 s, peak 0.77 GB]
+  t = v/v_c =  6.500  v =    3.7528  s_min = 0.871320  [410 apps, 26.3 s, peak 0.77 GB]
+  t = v/v_c =  6.750  v =    3.8971  s_min = 0.868888  [410 apps, 20.2 s, peak 0.77 GB]
+  t = v/v_c =  7.000  v =    4.0415  s_min = 0.866554  [434 apps, 20.5 s, peak 0.77 GB]
+  t = v/v_c =  7.250  v =    4.1858  s_min = 0.864312  [458 apps, 29.1 s, peak 0.77 GB]
+  t = v/v_c =  7.500  v =    4.3301  s_min = 0.862159  [482 apps, 33.1 s, peak 0.77 GB]
+  t = v/v_c =  7.750  v =    4.4745  s_min = 0.860089  [506 apps, 31.7 s, peak 0.77 GB]
+  t = v/v_c =  8.000  v =    4.6188  s_min = 0.858099  [506 apps, 35.7 s, peak 0.77 GB]
+  t = v/v_c =  8.250  v =    4.7631  s_min = 0.856184  [506 apps, 35.6 s, peak 0.77 GB]
+  t = v/v_c =  8.500  v =    4.9075  s_min = 0.854341  [554 apps, 39.8 s, peak 0.77 GB]
+  t = v/v_c =  8.750  v =    5.0518  s_min = 0.852567  [554 apps, 32.9 s, peak 0.77 GB]
+  t = v/v_c =  9.000  v =    5.1962  s_min = 0.850858  [602 apps, 35.9 s, peak 0.77 GB]
+  t = v/v_c =  9.250  v =    5.3405  s_min = 0.849211  [602 apps, 35.3 s, peak 0.77 GB]
+  t = v/v_c =  9.500  v =    5.4848  s_min = 0.847623  [602 apps, 38.0 s, peak 0.77 GB]
+  t = v/v_c =  9.750  v =    5.6292  s_min = 0.846092  [650 apps, 43.0 s, peak 0.77 GB]
+  t = v/v_c = 10.000  v =    5.7735  s_min = 0.844615  [650 apps, 38.5 s, peak 0.77 GB]
+  [PASS] planted_real: no zero-mode candidate, every one of 40 intervals certified, smallest s_min 0.8446 at 10 v_c
+== ly: Loss-Yau potential, a real zero mode at v = 1 (to test the real scan); L = 10.0, N = 32
+  ||M|| = 1.53837, ||M|| v_c = 0.88818 (the certificate uses 1.02 ||M||)
+  t = v/v_c =  0.250  v =    0.1443  s_min = 0.835103  [50 apps, 0.2 s, peak 0.77 GB]
+  t = v/v_c =  0.500  v =    0.2887  s_min = 0.676979  [50 apps, 0.2 s, peak 0.77 GB]
+  t = v/v_c =  0.750  v =    0.4330  s_min = 0.525899  [50 apps, 0.2 s, peak 0.77 GB]
+  t = v/v_c =  1.000  v =    0.5774  s_min = 0.382035  [50 apps, 0.2 s, peak 0.77 GB]
+  t = v/v_c =  1.250  v =    0.7217  s_min = 0.245607  [74 apps, 0.4 s, peak 0.77 GB]
+  t = v/v_c =  1.500  v =    0.8660  s_min = 0.117298  [74 apps, 0.4 s, peak 0.77 GB]
+  t = v/v_c =  1.750  v =    1.0104  s_min = 0.000358  [146 apps, 1.2 s, peak 0.77 GB]
+  t = v/v_c =  2.000  v =    1.1547  s_min = 0.097156  [122 apps, 1.0 s, peak 0.77 GB]
+  t = v/v_c =  2.250  v =    1.2990  s_min = 0.138345  [122 apps, 1.1 s, peak 0.77 GB]
+  t = v/v_c =  2.500  v =    1.4434  s_min = 0.108291  [146 apps, 0.8 s, peak 0.77 GB]
+  t = v/v_c =  2.750  v =    1.5877  s_min = 0.051758  [194 apps, 1.1 s, peak 0.77 GB]
+  t = v/v_c =  3.000  v =    1.7321  s_min = 0.007652  [242 apps, 1.4 s, peak 0.77 GB]
+    bisect [1.5000, 1.7500] at 1.6250: s_min = 0.056816
+    bisect [1.6250, 1.7500] at 1.6875: s_min = 0.027747
+    bisect [1.6875, 1.7500] at 1.7188: s_min = 0.013563
+    bisect [1.7188, 1.7500] at 1.7344: s_min = 0.006568
+    refined [1.7344, 1.7500]: minimum s_min = 4.989e-06 at v = 1.009888 (1.74918 units)
+    bisect [1.7500, 2.0000] at 1.8750: s_min = 0.052722
+    bisect [1.7500, 1.8750] at 1.8125: s_min = 0.027284
+    bisect [1.7500, 1.8125] at 1.7812: s_min = 0.013985
+    bisect [1.7500, 1.7812] at 1.7656: s_min = 0.007210
+    refined [1.7500, 1.7656]: minimum s_min = 3.791e-04 at v = 1.010391 (1.75005 units)
+    bisect [2.5000, 2.7500] at 2.6250: s_min = 0.081301
+    bisect [2.7500, 3.0000] at 2.8750: s_min = 0.021236
+    bisect [2.7500, 2.8750] at 2.8125: s_min = 0.036595
+    bisect [2.8750, 3.0000] at 2.9375: s_min = 0.004869
+    bisect [2.8750, 2.9375] at 2.9062: s_min = 0.013279
+    bisect [2.9062, 2.9375] at 2.9219: s_min = 0.009129
+    refined [2.9219, 2.9375]: minimum s_min = 4.890e-03 at v = 1.695921 (2.93742 units)
+    bisect [2.9375, 3.0000] at 2.9688: s_min = 0.000254
+    bisect [2.9375, 2.9688] at 2.9531: s_min = 0.000540
+    refined [2.9375, 2.9531]: minimum s_min = 5.622e-04 at v = 1.704942 (2.95305 units)
+    refined [2.9531, 2.9688]: minimum s_min = 2.298e-05 at v = 1.706157 (2.95515 units)
+    bisect [2.9688, 3.0000] at 2.9844: s_min = 0.003974
+    refined [2.9688, 2.9844]: minimum s_min = 2.730e-04 at v = 1.714054 (2.96883 units)
+  refined zero-mode speed v* = 1.00989 with s_min = 5.0e-06
+  [PASS] ly_real: 2 distinct candidate(s); the one within 5 % of the exact v = 1 has s_min < 1e-3
+  box and grid convergence of the zero near v = 1:
+    (L, N) = (10, 32): v* = 1.00991, s_min there 8.4e-06
+    (L, N) = (10, 48): v* = 1.00996, s_min there 5.4e-06
+    (L, N) = (14, 48): v* = 1.00423, s_min there 3.1e-06
+    (L, N) = (14, 64): v* = 1.00430, s_min there 8.2e-06
+    spread of v* 5.7e-03 (limit 2e-2), all s_min < 1e-3: True
+  [PASS] ly_converged: v* = 1.00991 at L = 10 and 1.00430 at L = 14, settling toward the exact 1; every s_min below 1e-3
+peak resident memory 0.77 GB
+  [PASS] memory: peak 0.77 GB, limit 8.0 GB
+all checks passed
+  wall time 2047.54 s
+  maximum resident set size 805776 kB
+  exit status 0
+
+######## python notes/warp/zero_modes.py --part=scan --sigma=2 --L=8 --N=64 --out=/home/nathan/Source/negative-mass-raw/I69-dh610/scan-2-L8-N64.jsonl
+== scan: witten2, sigma R = 2.0, L = 8.0, N = 64, v_c = 3.74490, up to 10.0 v_c in steps of 0.25
+  ||M|| = 0.21651, ||M|| v_c = 0.81080 (the certificate uses 1.02 ||M||)
+  smallest s_min 0.253711 at v/v_c = 10; certificate: 40 of 40 intervals certified, smallest lower bound 0.1519
+  [PASS] scan_resolved: 40 of 40 intervals certified, 0 refined to a minimum, 0 unresolved
+  [PASS] lanczos_converged: 0 of 40 runs
+peak resident memory 0.35 GB
+  [PASS] memory: peak 0.35 GB, limit 8.0 GB
+all checks passed
+  wall time 622.05 s
+  maximum resident set size 372000 kB
+  exit status 0
+
+######## python notes/warp/zero_modes.py --part=scan --sigma=2 --L=8 --N=96 --out=/home/nathan/Source/negative-mass-raw/I69-dh610/scan-2-L8-N96.jsonl
+== scan: witten2, sigma R = 2.0, L = 8.0, N = 96, v_c = 3.74490, up to 10.0 v_c in steps of 0.25
+  ||M|| = 0.21651, ||M|| v_c = 0.81079 (the certificate uses 1.02 ||M||)
+  smallest s_min 0.253712 at v/v_c = 10; certificate: 40 of 40 intervals certified, smallest lower bound 0.1519
+  [PASS] scan_resolved: 40 of 40 intervals certified, 0 refined to a minimum, 0 unresolved
+  [PASS] lanczos_converged: 0 of 40 runs
+peak resident memory 1.02 GB
+  [PASS] memory: peak 1.02 GB, limit 8.0 GB
+all checks passed
+  wall time 2288.05 s
+  maximum resident set size 1067904 kB
+  exit status 0
+
+######## python notes/warp/zero_modes.py --part=scan --sigma=2 --L=16 --N=96 --out=/home/nathan/Source/negative-mass-raw/I69-dh610/scan-2-L16-N96.jsonl
+== scan: witten2, sigma R = 2.0, L = 16.0, N = 96, v_c = 3.74490, up to 10.0 v_c in steps of 0.25
+  ||M|| = 0.22871, ||M|| v_c = 0.85648 (the certificate uses 1.02 ||M||)
+  smallest s_min 0.237040 at v/v_c = 10; certificate: 40 of 40 intervals certified, smallest lower bound 0.1292
+  [PASS] scan_resolved: 0 candidate(s), 0 intervals not certified
+  [PASS] lanczos_converged: 0 of 40 runs
+peak resident memory 1.02 GB
+  [PASS] memory: peak 1.02 GB, limit 8.0 GB
+all checks passed
+  wall time 2008.57 s
+  maximum resident set size 1068100 kB
+  exit status 0
+
+######## python notes/warp/zero_modes.py --part=scan --sigma=2 --L=16 --N=128 --out=/home/nathan/Source/negative-mass-raw/I69-dh610/scan-2-L16-N128.jsonl
+== scan: witten2, sigma R = 2.0, L = 16.0, N = 128, v_c = 3.74490, up to 10.0 v_c in steps of 0.25
+  ||M|| = 0.22868, ||M|| v_c = 0.85638 (the certificate uses 1.02 ||M||)
+  smallest s_min 0.236173 at v/v_c = 10; certificate: 40 of 40 intervals certified, smallest lower bound 0.1284
+  [PASS] scan_resolved: 0 candidate(s), 0 intervals not certified
+  [PASS] lanczos_converged: 0 of 40 runs
+peak resident memory 2.26 GB
+  [PASS] memory: peak 2.26 GB, limit 8.0 GB
+all checks passed
+  wall time 4560.75 s
+  maximum resident set size 2374704 kB
+  exit status 0
+
+######## python notes/warp/zero_modes.py --part=scan --sigma=4 --L=5 --N=64 --out=/home/nathan/Source/negative-mass-raw/I69-dh610/scan-4-L5-N64.jsonl
+== scan: witten2, sigma R = 4.0, L = 5.0, N = 64, v_c = 2.47097, up to 10.0 v_c in steps of 0.25
+  ||M|| = 0.29446, ||M|| v_c = 0.72761 (the certificate uses 1.02 ||M||)
+  smallest s_min 0.304150 at v/v_c = 10; certificate: 40 of 40 intervals certified, smallest lower bound 0.2130
+  [PASS] scan_resolved: 40 of 40 intervals certified, 0 refined to a minimum, 0 unresolved
+  [PASS] lanczos_converged: 0 of 40 runs
+peak resident memory 0.36 GB
+  [PASS] memory: peak 0.36 GB, limit 8.0 GB
+all checks passed
+  wall time 613.67 s
+  maximum resident set size 372388 kB
+  exit status 0
+
+######## python notes/warp/zero_modes.py --part=scan --sigma=4 --L=5 --N=96 --out=/home/nathan/Source/negative-mass-raw/I69-dh610/scan-4-L5-N96.jsonl
+== scan: witten2, sigma R = 4.0, L = 5.0, N = 96, v_c = 2.47097, up to 10.0 v_c in steps of 0.25
+  ||M|| = 0.29446, ||M|| v_c = 0.72760 (the certificate uses 1.02 ||M||)
+  smallest s_min 0.304151 at v/v_c = 10; certificate: 40 of 40 intervals certified, smallest lower bound 0.2130
+  [PASS] scan_resolved: 40 of 40 intervals certified, 0 refined to a minimum, 0 unresolved
+  [PASS] lanczos_converged: 0 of 40 runs
+peak resident memory 1.02 GB
+  [PASS] memory: peak 1.02 GB, limit 8.0 GB
+all checks passed
+  wall time 2300.41 s
+  maximum resident set size 1068028 kB
+  exit status 0
+
+######## python notes/warp/zero_modes.py --part=scan --sigma=4 --L=10 --N=96 --out=/home/nathan/Source/negative-mass-raw/I69-dh610/scan-4-L10-N96.jsonl
+== scan: witten2, sigma R = 4.0, L = 10.0, N = 96, v_c = 2.47097, up to 10.0 v_c in steps of 0.25
+  ||M|| = 0.31884, ||M|| v_c = 0.78785 (the certificate uses 1.02 ||M||)
+  smallest s_min 0.275082 at v/v_c = 10; certificate: 40 of 40 intervals certified, smallest lower bound 0.1761
+  [PASS] scan_resolved: 40 of 40 intervals certified, 0 refined to a minimum, 0 unresolved
+  [PASS] lanczos_converged: 0 of 40 runs
+peak resident memory 1.02 GB
+  [PASS] memory: peak 1.02 GB, limit 8.0 GB
+all checks passed
+  wall time 2234.41 s
+  maximum resident set size 1068412 kB
+  exit status 0
+
+######## python notes/warp/zero_modes.py --part=scan --sigma=4 --L=10 --N=128 --out=/home/nathan/Source/negative-mass-raw/I69-dh610/scan-4-L10-N128.jsonl
+== scan: witten2, sigma R = 4.0, L = 10.0, N = 128, v_c = 2.47097, up to 10.0 v_c in steps of 0.25
+  ||M|| = 0.31907, ||M|| v_c = 0.78842 (the certificate uses 1.02 ||M||)
+  smallest s_min 0.275173 at v/v_c = 10; certificate: 40 of 40 intervals certified, smallest lower bound 0.1761
+  [PASS] scan_resolved: 0 candidate(s), 0 intervals not certified
+  [PASS] lanczos_converged: 0 of 40 runs
+peak resident memory 2.26 GB
+  [PASS] memory: peak 2.26 GB, limit 8.0 GB
+all checks passed
+  wall time 5111.96 s
+  maximum resident set size 2374820 kB
+  exit status 0
+
+######## python notes/warp/zero_modes.py --part=points --sigma=2 --L=16 --N=160 --ts=4,7,10 --out=/home/nathan/Source/negative-mass-raw/I69-dh610/conv-2-L16-N160.jsonl
+== points: witten2, sigma R = 2.0, L = 16.0, N = 160, v_c = 3.74490
+  t = v/v_c =  4.000  v =   14.9796  s_min = 0.366744  [122 apps, 222 s, peak 4.35 GB]
+  t = v/v_c =  7.000  v =   26.2143  s_min = 0.280558  [194 apps, 369 s, peak 4.35 GB]
+  t = v/v_c = 10.000  v =   37.4490  s_min = 0.236170  [314 apps, 612 s, peak 4.35 GB]
+  [PASS] lanczos_converged: 0 of 3 runs
+peak resident memory 4.35 GB
+  [PASS] memory: peak 4.35 GB, limit 8.0 GB
+all checks passed
+  wall time 1204.41 s
+  maximum resident set size 4563104 kB
+  exit status 0
+
+######## python notes/warp/zero_modes.py --part=points --sigma=4 --L=10 --N=160 --ts=4,7,10 --out=/home/nathan/Source/negative-mass-raw/I69-dh610/conv-4-L10-N160.jsonl
+== points: witten2, sigma R = 4.0, L = 10.0, N = 160, v_c = 2.47097
+  t = v/v_c =  4.000  v =    9.8839  s_min = 0.405394  [122 apps, 231 s, peak 4.35 GB]
+  t = v/v_c =  7.000  v =   17.2968  s_min = 0.319669  [194 apps, 368 s, peak 4.35 GB]
+  t = v/v_c = 10.000  v =   24.7097  s_min = 0.275172  [290 apps, 556 s, peak 4.35 GB]
+  [PASS] lanczos_converged: 0 of 3 runs
+peak resident memory 4.35 GB
+  [PASS] memory: peak 4.35 GB, limit 8.0 GB
+all checks passed
+  wall time 1155.72 s
+  maximum resident set size 4562968 kB
+  exit status 0
+
+######## python notes/warp/zero_modes.py --part=table --raw=/home/nathan/Source/negative-mass-raw/I69-dh610
+== table: s_min(v) from the scan runs in /home/nathan/Source/negative-mass-raw/I69-dh610
+-- sigma R = 2, v_c = 3.74490; columns are (L, N), dx = 2L/N; extrap is 2 s(2L1, N2) - s(L1, N1)
+  v/v_c |    L=8,N=64 |    L=8,N=96 |   L=16,N=96 |  L=16,N=128 |  extrap  | s sqrt(v/v_c)
+   0.25 |    0.904854 |    0.904854 |    0.898499 |    0.898492 | 0.892129 | 0.4492
+   0.50 |    0.822257 |    0.822257 |    0.810767 |    0.810758 | 0.799258 | 0.5733
+   0.75 |    0.751551 |    0.751551 |    0.736088 |    0.736082 | 0.720613 | 0.6375
+   1.00 |    0.691615 |    0.691615 |    0.673207 |    0.673208 | 0.654801 | 0.6732
+   1.25 |    0.641057 |    0.641057 |    0.620554 |    0.620563 | 0.600070 | 0.6938
+   1.50 |    0.598415 |    0.598415 |    0.576485 |    0.576500 | 0.554586 | 0.7061
+   1.75 |    0.562310 |    0.562310 |    0.539454 |    0.539474 | 0.516639 | 0.7137
+   2.00 |    0.531532 |    0.531532 |    0.508119 |    0.508140 | 0.484747 | 0.7186
+   2.25 |    0.505072 |    0.505072 |    0.481364 |    0.481383 | 0.457693 | 0.7221
+   2.50 |    0.482111 |    0.482111 |    0.458295 |    0.458309 | 0.434506 | 0.7246
+   2.75 |    0.462000 |    0.461999 |    0.438203 |    0.438212 | 0.414424 | 0.7267
+   3.00 |    0.444224 |    0.444224 |    0.420536 |    0.420540 | 0.396856 | 0.7284
+   3.25 |    0.428382 |    0.428382 |    0.404859 |    0.404862 | 0.381342 | 0.7299
+   3.50 |    0.414153 |    0.414154 |    0.390834 |    0.390839 | 0.367524 | 0.7312
+   3.75 |    0.401285 |    0.401286 |    0.378194 |    0.378203 | 0.355121 | 0.7324
+   4.00 |    0.389574 |    0.389576 |    0.366724 |    0.366742 | 0.343910 | 0.7335
+   4.25 |    0.378857 |    0.378860 |    0.356254 |    0.356285 | 0.333713 | 0.7345
+   4.50 |    0.369000 |    0.369003 |    0.346647 |    0.346692 | 0.324385 | 0.7354
+   4.75 |    0.359891 |    0.359895 |    0.337790 |    0.337851 | 0.315811 | 0.7363
+   5.00 |    0.351441 |    0.351446 |    0.329589 |    0.329667 | 0.307892 | 0.7372
+   5.25 |    0.343573 |    0.343577 |    0.321969 |    0.322061 | 0.300550 | 0.7379
+   5.50 |    0.336221 |    0.336226 |    0.314863 |    0.314969 | 0.293717 | 0.7387
+   5.75 |    0.329331 |    0.329336 |    0.308218 |    0.308333 | 0.287335 | 0.7394
+   6.00 |    0.322856 |    0.322861 |    0.301986 |    0.302107 | 0.281358 | 0.7400
+   6.25 |    0.316754 |    0.316760 |    0.296129 |    0.296249 | 0.275743 | 0.7406
+   6.50 |    0.310992 |    0.310998 |    0.290611 |    0.290723 | 0.270455 | 0.7412
+   6.75 |    0.305537 |    0.305544 |    0.285402 |    0.285500 | 0.265463 | 0.7418
+   7.00 |    0.300364 |    0.300371 |    0.280476 |    0.280552 | 0.260740 | 0.7423
+   7.25 |    0.295448 |    0.295456 |    0.275811 |    0.275855 | 0.256262 | 0.7428
+   7.50 |    0.290768 |    0.290777 |    0.271384 |    0.271389 | 0.252010 | 0.7432
+   7.75 |    0.286307 |    0.286316 |    0.267179 |    0.267135 | 0.247963 | 0.7437
+   8.00 |    0.282046 |    0.282056 |    0.263178 |    0.263077 | 0.244107 | 0.7441
+   8.25 |    0.277973 |    0.277983 |    0.259367 |    0.259199 | 0.240426 | 0.7445
+   8.50 |    0.274072 |    0.274083 |    0.255733 |    0.255490 | 0.236908 | 0.7449
+   8.75 |    0.270333 |    0.270343 |    0.252264 |    0.251937 | 0.233541 | 0.7452
+   9.00 |    0.266744 |    0.266754 |    0.248949 |    0.248529 | 0.230314 | 0.7456
+   9.25 |    0.263296 |    0.263305 |    0.245777 |    0.245257 | 0.227218 | 0.7459
+   9.50 |    0.259980 |    0.259987 |    0.242741 |    0.242112 | 0.224244 | 0.7462
+   9.75 |    0.256787 |    0.256792 |    0.239831 |    0.239086 | 0.221386 | 0.7465
+  10.00 |    0.253711 |    0.253712 |    0.237040 |    0.236173 | 0.218635 | 0.7468
+  grid change at L = 8, N = 64 to 96: max |ds| = 1.0e-05
+  grid change at L = 16, N = 96 to 128: max |ds| = 8.7e-04
+  N = 160 at L = 16, v/v_c = 4: s_min = 0.366744, N = 128: 0.366742, change 1.7e-06
+  N = 160 at L = 16, v/v_c = 7: s_min = 0.280558, N = 128: 0.280552, change 6.1e-06
+  N = 160 at L = 16, v/v_c = 10: s_min = 0.236170, N = 128: 0.236173, change 2.3e-06
+  (L, N) = (8, 64): ||M|| v_c = 0.81080, smallest s_min 0.253711 at 10 v_c, intervals 40, not certified 0, candidates 0, peak 0.35 GB, 5746 applications
+  (L, N) = (8, 96): ||M|| v_c = 0.81079, smallest s_min 0.253712 at 10 v_c, intervals 40, not certified 0, candidates 0, peak 1.02 GB, 6202 applications
+  (L, N) = (16, 96): ||M|| v_c = 0.85648, smallest s_min 0.237040 at 10 v_c, intervals 40, not certified 0, candidates 0, peak 1.02 GB, 6202 applications
+  (L, N) = (16, 128): ||M|| v_c = 0.85638, smallest s_min 0.236173 at 10 v_c, intervals 40, not certified 0, candidates 0, peak 2.27 GB, 5986 applications
+-- sigma R = 4, v_c = 2.47097; columns are (L, N), dx = 2L/N; extrap is 2 s(2L1, N2) - s(L1, N1)
+  v/v_c |    L=5,N=64 |    L=5,N=96 |   L=10,N=96 |  L=10,N=128 |  extrap  | s sqrt(v/v_c)
+   0.25 |    0.918223 |    0.918225 |    0.909777 |    0.909760 | 0.901298 | 0.4549
+   0.50 |    0.846359 |    0.846361 |    0.830912 |    0.830898 | 0.815437 | 0.5875
+   0.75 |    0.783876 |    0.783877 |    0.762812 |    0.762813 | 0.741750 | 0.6606
+   1.00 |    0.729964 |    0.729965 |    0.704532 |    0.704553 | 0.679141 | 0.7046
+   1.25 |    0.683649 |    0.683649 |    0.654916 |    0.654955 | 0.626262 | 0.7323
+   1.50 |    0.643899 |    0.643898 |    0.612739 |    0.612793 | 0.581687 | 0.7505
+   1.75 |    0.609718 |    0.609717 |    0.576823 |    0.576884 | 0.544049 | 0.7631
+   2.00 |    0.580202 |    0.580201 |    0.546105 |    0.546166 | 0.512129 | 0.7724
+   2.25 |    0.554564 |    0.554565 |    0.519669 |    0.519724 | 0.484883 | 0.7796
+   2.50 |    0.532145 |    0.532146 |    0.496752 |    0.496797 | 0.461449 | 0.7855
+   2.75 |    0.512395 |    0.512398 |    0.476728 |    0.476760 | 0.441125 | 0.7906
+   3.00 |    0.494870 |    0.494875 |    0.459093 |    0.459111 | 0.423352 | 0.7952
+   3.25 |    0.479207 |    0.479213 |    0.443440 |    0.443444 | 0.407681 | 0.7994
+   3.50 |    0.465113 |    0.465120 |    0.429442 |    0.429433 | 0.393754 | 0.8034
+   3.75 |    0.452348 |    0.452357 |    0.416838 |    0.416818 | 0.381287 | 0.8072
+   4.00 |    0.440720 |    0.440730 |    0.405416 |    0.405385 | 0.370050 | 0.8108
+   4.25 |    0.430070 |    0.430080 |    0.395003 |    0.394964 | 0.359859 | 0.8142
+   4.50 |    0.420266 |    0.420277 |    0.385458 |    0.385414 | 0.350562 | 0.8176
+   4.75 |    0.411200 |    0.411211 |    0.376667 |    0.376619 | 0.342038 | 0.8208
+   5.00 |    0.402781 |    0.402793 |    0.368533 |    0.368482 | 0.334183 | 0.8240
+   5.25 |    0.394935 |    0.394946 |    0.360975 |    0.360924 | 0.326914 | 0.8270
+   5.50 |    0.387596 |    0.387607 |    0.353928 |    0.353878 | 0.320160 | 0.8299
+   5.75 |    0.380710 |    0.380721 |    0.347334 |    0.347286 | 0.313863 | 0.8328
+   6.00 |    0.374230 |    0.374240 |    0.341144 |    0.341100 | 0.307971 | 0.8355
+   6.25 |    0.368116 |    0.368125 |    0.335318 |    0.335278 | 0.302441 | 0.8382
+   6.50 |    0.362333 |    0.362342 |    0.329818 |    0.329785 | 0.297237 | 0.8408
+   6.75 |    0.356851 |    0.356859 |    0.324616 |    0.324589 | 0.292327 | 0.8433
+   7.00 |    0.351643 |    0.351650 |    0.319683 |    0.319663 | 0.287683 | 0.8457
+   7.25 |    0.346686 |    0.346692 |    0.314995 |    0.314983 | 0.283281 | 0.8481
+   7.50 |    0.341959 |    0.341964 |    0.310533 |    0.310529 | 0.279100 | 0.8504
+   7.75 |    0.337444 |    0.337449 |    0.306278 |    0.306283 | 0.275121 | 0.8527
+   8.00 |    0.333125 |    0.333129 |    0.302212 |    0.302227 | 0.271328 | 0.8548
+   8.25 |    0.328988 |    0.328991 |    0.298323 |    0.298347 | 0.267706 | 0.8569
+   8.50 |    0.325018 |    0.325021 |    0.294597 |    0.294630 | 0.264241 | 0.8590
+   8.75 |    0.321205 |    0.321207 |    0.291022 |    0.291064 | 0.260923 | 0.8610
+   9.00 |    0.317538 |    0.317540 |    0.287588 |    0.287640 | 0.257741 | 0.8629
+   9.25 |    0.314008 |    0.314009 |    0.284285 |    0.284347 | 0.254686 | 0.8648
+   9.50 |    0.310605 |    0.310605 |    0.281105 |    0.281176 | 0.251748 | 0.8666
+   9.75 |    0.307321 |    0.307322 |    0.278039 |    0.278121 | 0.248920 | 0.8684
+  10.00 |    0.304150 |    0.304151 |    0.275082 |    0.275173 | 0.246195 | 0.8702
+  grid change at L = 5, N = 64 to 96: max |ds| = 1.2e-05
+  grid change at L = 10, N = 96 to 128: max |ds| = 9.1e-05
+  N = 160 at L = 10, v/v_c = 4: s_min = 0.405394, N = 128: 0.405385, change 8.3e-06
+  N = 160 at L = 10, v/v_c = 7: s_min = 0.319669, N = 128: 0.319663, change 6.1e-06
+  N = 160 at L = 10, v/v_c = 10: s_min = 0.275172, N = 128: 0.275173, change 5.6e-07
+  (L, N) = (5, 64): ||M|| v_c = 0.72761, smallest s_min 0.304150 at 10 v_c, intervals 40, not certified 0, candidates 0, peak 0.35 GB, 6418 applications
+  (L, N) = (5, 96): ||M|| v_c = 0.72760, smallest s_min 0.304151 at 10 v_c, intervals 40, not certified 0, candidates 0, peak 1.02 GB, 6274 applications
+  (L, N) = (10, 96): ||M|| v_c = 0.78785, smallest s_min 0.275082 at 10 v_c, intervals 40, not certified 0, candidates 0, peak 1.02 GB, 6490 applications
+  (L, N) = (10, 128): ||M|| v_c = 0.78842, smallest s_min 0.275173 at 10 v_c, intervals 40, not certified 0, candidates 0, peak 2.27 GB, 6466 applications
+  [PASS] complete: all eight runs present with their summaries
+  [FAIL] agree_N: largest change in s_min between the two grids of one box 8.7e-04
+  [PASS] agree_N160: N = 160 against N = 128 at the large boxes, 6 points, largest change 8.3e-06
+  [PASS] zero_candidates: 0 zero-mode candidate(s) in the scans
+peak resident memory 0.07 GB
+  [PASS] memory: peak 0.07 GB, limit 8.0 GB
+FAILED: agree_N
+Command exited with non-zero status 1
+  wall time 0.75 s
+  maximum resident set size 73964 kB
+  exit status 1
+
+######## python notes/warp/zero_modes.py --controls --only=half
+== controls: each --mutate makes its target checks fail; the same run without it passes them
+  half        (drops the 1/2 in B (witten2 and witten4) in the FFT operator; --part=dense,regress63,planted --L=10 --N=40): baseline exit 0, mutated exit 1, failed ['dense', 'regress63', 'planted_pm_i'], 1288 s -> fired
+  [PASS] controls: every control fired
+peak resident memory 0.07 GB
+all checks passed
+  wall time 1965.79 s
+  maximum resident set size 805124 kB
+  exit status 0
+
+######## python notes/warp/zero_modes.py --controls --only=rot,adj,bscale,lip,lyscale,lowiter,lipbig,mem,conj
+== controls: each --mutate makes its target checks fail; the same run without it passes them
+  conj        (Gram operator uses v instead of conj(v); only dense sees it, a zero of A is a zero of any (I + w T) A; --part=dense): baseline exit 0, mutated exit 1, failed ['dense'], 207 s -> fired
+  adj         (treats the anti-Hermitian B of ly as Hermitian in M^H; --part=adjoint): baseline exit 0, mutated exit 1, failed ['adjoint'], 1 s -> fired
+  bscale      (scales B of witten2 by 11/10; --part=sectors): baseline exit 0, mutated exit 1, failed ['sectors'], 72 s -> fired
+  rot         (scans the planted tau along the imaginary axis; --part=planted --L=10 --N=40 --tmax=3): baseline exit 0, mutated exit 1, failed ['planted_real'], 1326 s -> fired
+  lip         (uses a tenth of ||M|| in the certificate; --part=ly --L=10 --N=32): baseline exit 0, mutated exit 1, failed ['ly_real'], 11 s -> fired
+  lyscale     (scales the Loss-Yau potential A by 11/10 in the operator; --part=ly --L=10 --N=32): baseline exit 0, mutated exit 1, failed ['ly_real'], 184 s -> fired
+  lowiter     (stops Lanczos after two restarts; --part=lanczos): baseline exit 0, mutated exit 1, failed ['lanczos'], 60 s -> fired
+  lipbig      (uses 50 ||M|| in the certificate; --part=scan --sigma=2 --L=8 --N=32 --tmax=1 --step=1): baseline exit 0, mutated exit 1, failed ['scan_resolved'], 36 s -> fired
+  mem         (sets the memory limit to 0.05 GB; --part=vc): baseline exit 0, mutated exit 1, failed ['memory'], 0 s -> fired
+  [PASS] controls: every control fired
+peak resident memory 0.07 GB
+all checks passed
+  wall time 2615.44 s
+  maximum resident set size 804708 kB
+  exit status 0
+
+######## python notes/warp/zero_modes.py --controls --raw=/home/nathan/Source/negative-mass-raw/I69-dh610 --only=gridperturb
+== controls: each --mutate makes its target checks fail; the same run without it passes them
+  gridperturb (scales the (2 L1, 128) column of the table by 1.01; agree_N already fails on the data; --part=table): baseline exit 1, mutated exit 1, failed ['agree_N', 'agree_N160'], 1 s -> fired
+  [PASS] controls: every control fired
+peak resident memory 0.07 GB
+all checks passed
+  wall time 2.00 s
+  maximum resident set size 74280 kB
+  exit status 0
