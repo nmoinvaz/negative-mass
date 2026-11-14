@@ -1,0 +1,85 @@
+nonaxisymmetric.py, issue #70. sympy 1.14.0, mpmath 1.3.0, python 3.14.10. mutation: none
+
+== 1. Frame Ricci tensor of b = -v f(q), q = X**2 + y**2 + 2*z**2, and two independent routes ==
+  R_(0,0) = -2*v**2*(G0*G1 + 2*G0*G2*X**2 + 2*G1**2*X**2 + G1**2*y**2 + 4*G1**2*z**2 - G1 - 2*G2*X**2)
+  R_(0,1) = v*(3*G1 + 2*G2*y**2 + 8*G2*z**2)
+  R_(0,2) = -2*G2*X*v*y
+  R_(0,3) = -4*G2*X*v*z
+  R_(1,1) = -2*v**2*(-G0*G1 - 2*G0*G2*X**2 - 2*G1**2*X**2 + G1**2*y**2 + 4*G1**2*z**2 + G1 + 2*G2*X**2)
+  R_(1,2) = 2*X*v**2*y*(G0*G2 + 2*G1**2 - G2)
+  R_(1,3) = 4*X*v**2*z*(G0*G2 + 2*G1**2 - G2)
+  R_(2,2) = 2*G1**2*v**2*y**2
+  R_(2,3) = 4*G1**2*v**2*y*z
+  R_(3,3) = 8*G1**2*v**2*z**2
+  (frame: E_0 = n, E_1 = d_x, E_2 = d_y, E_3 = d_z. G_k = f^(k)(q).)
+[PASS] xcheck_E: route D differs from route E (Christoffel at a point) at 0 of 8 exact points (random v, point and jets)
+[PASS] xcheck_T: route D differs from route T (3+1 equations) at 0 of 8 exact points
+
+== 2. (I1) R(e_3, .) = 0 and (I2) R_00 + R_11 + 2 R_22 = 0, e_2 along grad_perp q, e_3 normal to it ==
+[PASS] identity_I1: R(wp, E_0), R(wp, E_1), R(wp, w), R(wp, wp) with w = (2*y, 4*z), wp = (-w_1, w_0), general jets: [0, 0, 0, 0]
+[PASS] identity_I2: |w|^2 (R_00 + R_11) + 2 R(w, w) = 0
+[PASS] identity_axis: on the axis y = z = 0, where w = 0: R(E_2, .), R(E_3, .), R_00 + R_11 = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+[PASS] wall_curvature: R(w, w) - v^2 f'^2 |w|^4 / 2 = 0 and R_01 - v (f' lap_perp q + f'' |w|^2) / 2 = 0, with w = grad_perp q
+  info: in the circular frame w = (y, z) the same residues are R(wp, .) = [-2*G2*X*v*y*z, 2*X*v**2*y*z*(G0*G2 + 2*G1**2 - G2), 2*G1**2*v**2*y*z*(y**2 + 2*z**2), 2*G1**2*v**2*y**2*z**2] and (I2) = -4*G1**2*v**2*y**2*z**2, so (I1) and (I2) as stated for (e_rho, e_varphi) fail for this shift.
+  Lemma (by hand, phantom_source.md): in any orthonormal frame, R(e_3, .) = 0 and R_00 + R_11 + 2 R_22 = 0
+  force R_ab = lam eta_ab + s u_a u_b to have R_ab = 0. Here R_ab != 0 wherever v f'(q) != 0, since off
+  the axis R(w, w) = 8*G1**2*v**2*(y**2 + 4*z**2)**2 and on the axis R_01 = 3*G1*v.
+
+== 3. The same identities for any b(t, x, sigma(y, z)), in the frame adapted to grad sigma ==
+[PASS] sigma_xcheck: route D for b(t, x, sigma(y, z)) differs from route E at 0 of 6 exact points
+[PASS] sigma_I1: R(wp, .) with w = grad sigma = (sy, sz): [0, 0, 0, 0]
+[PASS] sigma_I2: |w|^2 (R_00 + R_11) + 2 R(w, w) = 0
+[PASS] sigma_Rperp: R(w, w) - (d_sigma B)^2 |w|^4 / 2 = 0
+
+== 4. Planted control at the sample points: R = lam eta - 8 pi u u passes, a deformed one fails ==
+[PASS] planted_pass: lam eta - 8 pi u u, eps = -1: status 'pass' with lam and u u recovered exactly at 27 of 27 points
+[PASS] planted_sign: the same form with eps = +1: status 'sign' at 27 of 27 points
+[PASS] planted_deform: the form plus mu E_3 E_3 (rank 2): status 'algebraic' at 27 of 27 points
+[PASS] planted_premise: the planted form violates (I1) or (I2) of the adapted frame at 27 of 27 points (the lemma's contrapositive)
+
+== 5. Scalar-form test at exact points, eps = -1 and +1 (phantom_source.scalar_form) ==
+   #  profile                  kind             v      X      y      z     q         f_q  R!=0  (I1),(I2)  eps=-1     eps=+1
+   1  tanh, sigma = 8, R = 1   axis             1      1      0      0     1          -2  True       True  algebraic  algebraic
+   2  tanh, sigma = 8, R = 1   axis             1     -1      0      0     1          -2  True       True  algebraic  algebraic
+   3  tanh, sigma = 8, R = 1   y-axis           1      0      1      0     1          -2  True       True  algebraic  algebraic
+   4  tanh, sigma = 8, R = 1   z = 0 plane    1/2    3/5    4/5      0     1          -2  True       True  algebraic  algebraic
+   5  tanh, sigma = 8, R = 1   y = 0 plane      3    1/3      0    2/3     1          -2  True       True  algebraic  algebraic
+   6  tanh, sigma = 8, R = 1   X = 0 plane      1      0    1/3    2/3     1          -2  True       True  algebraic  algebraic
+   7  tanh, sigma = 8, R = 1   general          3    1/2    1/2    1/2     1          -2  True       True  algebraic  algebraic
+   8  tanh, sigma = 8, R = 1   general          1    4/5    1/5    2/5     1          -2  True       True  algebraic  algebraic
+   9  tanh, sigma = 8, R = 1   general        1/2   -1/5    4/5    2/5     1          -2  True       True  algebraic  algebraic
+  10  tanh, sigma = 8, R = 1   general          1    5/6    1/2    1/6     1          -2  True       True  algebraic  algebraic
+  11  tanh, sigma = 8, R = 1   general          3   -4/7    1/7    4/7     1          -2  True       True  algebraic  algebraic
+  12  bump (1 - q / 4)^3       axis           7/4      1      0      0     1     -0.4219  True       True  algebraic  algebraic
+  13  bump (1 - q / 4)^3       z = 0 plane    7/4    3/5    4/5      0     1     -0.4219  True       True  algebraic  algebraic
+  14  bump (1 - q / 4)^3       y = 0 plane    7/4    1/3      0    2/3     1     -0.4219  True       True  algebraic  algebraic
+  15  bump (1 - q / 4)^3       general        7/4    1/2    1/2    1/2     1     -0.4219  True       True  algebraic  algebraic
+  16  bump (1 - q / 4)^3       general        7/4   -1/5    4/5    2/5     1     -0.4219  True       True  algebraic  algebraic
+  17  bump (1 - q / 4)^3       general        7/4    3/2    1/3   -1/2 103/36     -0.0608  True       True  algebraic  algebraic
+  18  1 / (1 + q^2)            axis             2     -1      0      0     1        -0.5  True       True  algebraic  algebraic
+  19  1 / (1 + q^2)            X = 0 plane      2      0    1/3    2/3     1        -0.5  True       True  algebraic  algebraic
+  20  1 / (1 + q^2)            general          2    4/5    1/5    2/5     1        -0.5  True       True  algebraic  algebraic
+  21  1 / (1 + q^2)            general        3/2    1/3   -2/5    3/4 2513/1800      -0.321  True       True  algebraic  algebraic
+  22  random jets              axis           2/3      1      0      0     1         0.5  True       True  algebraic  algebraic
+  23  random jets              z = 0 plane    7/3    3/5    4/5      0     1      0.2222  True       True  algebraic  algebraic
+  24  random jets              general        8/3    1/2    1/2    1/2     1      -1.333  True       True  algebraic  algebraic
+  25  random jets              general        5/3    5/6    1/2    1/6     1      0.6667  True       True  algebraic  algebraic
+  26  random jets, f' = 0      general        5/2    4/5    1/5    2/5     1           0  True       True  algebraic  algebraic
+  27  bump, beyond it (f = 0)  general        7/4      2      1    1/2  11/2           0 False       True  trivial    trivial
+[PASS] points_fail: 27 points, both signs (54 tests). R != 0 gives 'algebraic' (no lam makes R - lam eta of rank <= 1) and R = 0 gives 'trivial'. 25 points with f'(q) != 0 fail algebraically at both signs, 0 points differ from that
+[PASS] lemma_premises: (I1) and (I2) of the adapted frame hold at 27 of 27 points
+[PASS] lemma_agree: where the premises hold the lemma's prediction ('algebraic' if R != 0, 'trivial' if R = 0) agrees with scalar_form at 27 of 27 points, both signs
+
+checks: 17 passed, 0 failed []. 13 s
+
+== Controls: each mutation must make its target checks fail ==
+[FIRED] --mutate=static (drops every t-derivative in route D's jets): exit 1, failed ['xcheck_E', 'xcheck_T', 'sigma_xcheck']
+[FIRED] --mutate=lapse (gives the slicing the lapse 1 + b in routes D and E): exit 1, failed ['xcheck_T', 'identity_I1', 'identity_I2', 'identity_axis', 'wall_curvature', 'sigma_I1', 'sigma_I2', 'sigma_Rperp', 'lemma_premises']
+[FIRED] --mutate=circular (tests (I1), (I2) in the circular frame (e_rho, e_varphi), not the frame adapted to the shift): exit 1, failed ['identity_I1', 'identity_I2', 'sigma_I1', 'sigma_I2', 'sigma_Rperp', 'lemma_premises']
+[FIRED] --mutate=shear (adds X y / 2 to q, so grad_perp d_x b is no longer along grad_perp b): exit 1, failed ['identity_I1', 'identity_axis', 'lemma_premises']
+  info: under --mutate=shear, points_fail: 27 points, both signs (54 tests). R != 0 gives 'algebraic' (no lam makes R - lam eta of rank <= 1) and R = 0 gives 'trivial'. 25 points with f'(q) != 0 fail algebraically at both signs, 0 points differ from that
+[FIRED] --mutate=wall-v2 (doubles v in the expected wall curvature): exit 1, failed ['wall_curvature']
+[FIRED] --mutate=planted-sign (plants lam eta + 8 pi u u, the wrong sign for eps = -1): exit 1, failed ['planted_pass', 'planted_sign']
+[FIRED] --mutate=planted-null (deforms the planted form by zero): exit 1, failed ['planted_deform']
+[FIRED] --mutate=planted-in-data (replaces the Ricci tensor at the sample points by a planted scalar form): exit 1, failed ['points_fail', 'lemma_premises']
+controls: all fired
