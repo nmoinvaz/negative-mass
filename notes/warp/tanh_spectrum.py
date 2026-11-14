@@ -62,17 +62,17 @@ FAILED = []
 D = 2  # the radial basis decays as r^-D
 VC58 = {2.0: 3.74490, 4.0: 2.47097, 8.0: 1.56243, 16.0: 0.98503}  # mass_bounds.md item 5
 REF63 = {2.0: 0.4094, 4.0: 0.3674}  # frank_loss.md section 9, rho(T1) v_c
-MUTATIONS = {  # name: (what it breaks, the run's options, the checks that must fail)
-    "g0block": ("flips the sign of the lower block of g0", "--part=reduce", ["reduction"]),
-    "ladder": ("flips the sign of the sigma.L ladder term", "--part=angular", ["angular_dirac", "angular_u"]),
-    "dterm": ("drops (1 + kappa) f/r from the radial operator", "--part=radial", ["radial_op", "radial_int"]),
-    "sobolev": ("uses 21/20 of the sharp Sobolev constant", "--part=vc", ["v_c"]),
-    "half": ("drops the 1/2 in M = tau1/2", "--part=planted,tanh --quick --sigmas=2", ["planted", "ref63"]),
-    "lscale": ("scales the l = 1 Legendre term of the shifted weight by 11/10", "--part=shift --quick", ["shift"]),
-    "rot": ("solves with N times i, so the planted eigenvalues are real", "--part=planted --quick",
-            ["real_identity"]),
-    "trunc": ("keeps 2 angular levels and 8 radial functions", "--part=tanh --quick --sigmas=2",
-              ["converged"]),
+MUTATIONS = {  # name: (what it breaks, [(the run's options, the checks that must fail)])
+    "g0block": ("flips the sign of the lower block of g0", [("--part=reduce", ["reduction"])]),
+    "ladder": ("flips the sign of the sigma.L ladder term", [("--part=angular", ["angular", "angular_dirac"])]),
+    "dterm": ("drops (1 + kappa) f/r from the radial operator", [("--part=radial", ["radial_op", "radial_int"])]),
+    "sobolev": ("uses 21/20 of the sharp Sobolev constant", [("--part=vc", ["v_c"])]),
+    "half": ("drops the 1/2 in M = tau1/2", [("--part=planted --quick", ["planted"]),
+                                              ("--part=tanh --quick --sigmas=2", ["ref63"])]),
+    "lscale": ("scales the l = 1 Legendre term of the shifted weight by 11/10", [("--part=shift --quick", ["shift"])]),
+    "rot": ("solves with N times i, so the planted eigenvalues are real", [("--part=planted --quick",
+                                                                           ["real_identity"])]),
+    "trunc": ("keeps 3 angular levels and 8 radial functions", [("--part=tanh --quick --sigmas=2", ["converged"])]),
 }
 
 
@@ -467,11 +467,12 @@ def assemble(wt, m, dK, p, Lmap, npan, diag=False):
 
 
 def solve_sector(wt, m, dK, p, Lmap, npan, diag=False, nsel=24):
-    """All eigenvalues mu of N x = mu K x, block by block, with diagnostics of the nsel largest of each block."""
+    """All eigenvalues mu of N x = mu K x, block by block. With diag, for the nsel largest and every real eigenvalue
+    above 1e-8: q_rel = <psi, M psi> / <psi, |M| psi>, the Gram of M over the degenerate cluster, and the L^2 residual."""
     A = assemble(wt, m, dK, p, Lmap, npan, diag)
     ang, K, N, pat, nch = A["ang"], A["K"], A["N"], A["pat"], A["nch"]
     ncomp, lab = connected_components(ssp.csr_matrix(pat | pat.T), directed=False)
-    rec = []
+    blocks = []
     for cidx in range(ncomp):
         chs = [i for i in range(nch) if lab[i] == cidx]
         idx = np.concatenate([np.arange(i * p, (i + 1) * p) for i in chs])
@@ -479,25 +480,42 @@ def solve_sector(wt, m, dK, p, Lmap, npan, diag=False, nsel=24):
         Lc = np.linalg.cholesky(Kb)
         C = sla.solve_triangular(Lc, Nb, lower=True)
         C = sla.solve_triangular(Lc, C.conj().T, lower=True).conj().T
-        mu, Z = np.linalg.eig(C)
-        order = np.argsort(-np.abs(mu))
-        mu, Z = mu[order], Z[:, order]
-        sel = list(range(min(nsel, len(mu))))
-        d = {"mu": mu, "chs": [ang.ch[i].kappa for i in chs], "diag": []}
         if diag:
-            for k in sel:
-                x = sla.solve_triangular(Lc.conj().T, Z[:, k], lower=False)
-                Kx = (x.conj() @ Kb @ x).real
-                Gm = (x.conj() @ A["G"][np.ix_(idx, idx)] @ x).real
-                Ga = (x.conj() @ A["Gabs"][np.ix_(idx, idx)] @ x).real
-                qrel = Gm / Ga if Ga > 0 else float("nan")
-                v = 1 / mu[k]
-                res = float("nan")
-                if "W2" in A:
-                    W2 = (x.conj() @ A["W2"][np.ix_(idx, idx)] @ x).real
-                    res = math.sqrt(max(0.0, abs(v) ** 2 * W2 / Kx - 1.0))
-                d["diag"].append({"k": k, "qrel": qrel, "res": res})
-        rec.append(d)
+            mu, Z = np.linalg.eig(C)
+        else:
+            mu, Z = np.linalg.eigvals(C), None
+        order = np.argsort(-np.abs(mu))
+        blocks.append({"mu": mu[order], "Z": None if Z is None else Z[:, order], "Lc": Lc, "idx": idx,
+                       "chs": [ang.ch[i].kappa for i in chs]})
+    rec = [{"mu": b_["mu"], "chs": b_["chs"], "diag": []} for b_ in blocks]
+    if not diag:
+        return rec
+    ntot = K.shape[0]
+
+    def xfull(b_, k):
+        x = np.zeros(ntot, complex)
+        x[b_["idx"]] = sla.solve_triangular(b_["Lc"].conj().T, b_["Z"][:, k], lower=False)
+        return x
+
+    quad_form = lambda Mx, x: float((x.conj() @ (Mx @ x)).real)  # noqa: E731
+    for bi, b_ in enumerate(blocks):
+        mu = b_["mu"]
+        sel = set(range(min(nsel, len(mu)))) | set(np.where((np.abs(mu.imag) < 1e-9 * np.abs(mu)) & (np.abs(mu) > 1e-8))[0])
+        for k in sorted(sel):
+            x = xfull(b_, k)
+            Kx, Gm, Ga = quad_form(K, x), quad_form(A["G"], x), quad_form(A["Gabs"], x)
+            v = 1 / mu[k]
+            res = float("nan")
+            if "W2" in A:
+                res = math.sqrt(max(0.0, abs(v) ** 2 * quad_form(A["W2"], x) / Kx - 1.0))
+            # every eigenvector of the same eigenvalue, from all blocks: the identity holds on the whole eigenspace
+            X = [xfull(bb, l) for bb in blocks for l in np.where(np.abs(bb["mu"] - mu[k]) < 1e-6 * abs(mu[k]))[0]]
+            X = np.array(X).T
+            gram = X.conj().T @ (A["G"] @ X)
+            gab = (X.conj() * (A["Gabs"] @ X)).sum(axis=0).real
+            rec[bi]["diag"].append({"k": k, "qrel": Gm / Ga if Ga > 0 else float("nan"), "res": res,
+                                    "clus": X.shape[1], "grel": float(np.abs(gram).max() / gab.max()),
+                                    "real": bool(abs(mu[k].imag) < 1e-9 * abs(mu[k]) and abs(mu[k]) > 1e-8)})
     return rec
 
 
@@ -573,8 +591,7 @@ def sector_task(t):
     out = {}
     for tag in ("A", "B"):
         c = t[tag]
-        rec = solve_sector(wt, t["m"], c["dK"], c["p"], c["L"], c["npan"], diag=(tag == "A"))
-        out[tag] = rec
+        out[tag] = solve_sector(wt, t["m"], c["dK"], c["p"], c["L"], c["npan"], diag=(tag == "A"))
     return t["sig"], t["m"], out, time.time() - t0, peak_gb()
 
 
@@ -588,6 +605,16 @@ def match_stable(muA, muB, tol=1e-5, lo=1e-3):
             cut = abs(z)
             break
     return cut
+
+
+def persisting(muA_real, muB, tol=1e-4):
+    """Real eigenvalues of A that B reproduces, as a real eigenvalue, to relative tol."""
+    n = 0
+    for z in muA_real:
+        j = int(np.argmin(np.abs(muB - z)))
+        if abs(muB[j] - z) < tol * abs(z) and abs(muB[j].imag) < 1e-9 * abs(muB[j]):
+            n += 1
+    return n
 
 
 def part_tanh(cfg, args):
@@ -607,32 +634,37 @@ def part_tanh(cfg, args):
         for sig, m, out, dt, pk in ex.map(sector_task, tasks):
             res[(sig, m)] = out
             print(f"  sigma R = {sig:g}, m = {m:4.1f}: done in {dt:.0f} s, peak resident {pk:.2f} GiB", flush=True)
-    rho_all = {}
+            if args.raw:
+                vc = v_c(sig)
+                np.savez_compressed(f"{args.raw}/tanh_sigma{sig:g}_m{m:g}.npz", vc=vc,
+                                    muA=np.concatenate([d["mu"] for d in out["A"]]),
+                                    muB=np.concatenate([d["mu"] for d in out["B"]]))
+    rho_all, cuts = {}, {}
     for sig in sigmas:
         vc = v_c(sig)
-        print(f"-- sigma R = {sig:g}, v_c = {vc:.6f}")
+        print(f"-- sigma R = {sig:g}, v_c = {vc:.6f}; eigenvalues of S^-1 M times v_c; T1 has them and their negatives")
+        print("   m    | the four leading eigenvalues of block A                       | |mu| v_c, A / B         "
+              "| stable to 1e-5 above | spectrum symmetric under mu -> -mu")
         rho, rhoB = 0.0, 0.0
-        print("   m    | leading eigenvalues of S^-1 M times v_c (a quadruple +-a +-ib is two conjugate pairs of "
-              "blocks)    | |mu| v_c A / B          | stable above | eigenfunction diagnostics")
         for m in ms:
             A, B = res[(sig, m)]["A"], res[(sig, m)]["B"]
             muA = np.concatenate([d["mu"] for d in A]) * vc
             muB = np.concatenate([d["mu"] for d in B]) * vc
-            muA = muA[np.argsort(-np.abs(muA))]
-            muB = muB[np.argsort(-np.abs(muB))]
-            rho = max(rho, abs(muA[0]))
-            rhoB = max(rhoB, abs(muB[0]))
+            muA, muB = muA[np.argsort(-np.abs(muA))], muB[np.argsort(-np.abs(muB))]
+            rho, rhoB = max(rho, abs(muA[0])), max(rhoB, abs(muB[0]))
             cut = match_stable(muA, muB)
-            lead = " ".join(f"{z.real:+.5f}{z.imag:+.5f}i" for z in muA[:4])
-            dg = [x for d in A for x in d["diag"][:4]]
-            qmax = max((abs(x["qrel"]) for x in dg if np.isfinite(x["qrel"])), default=float("nan"))
-            rmax = max((x["res"] for x in dg if np.isfinite(x["res"])), default=float("nan"))
-            print(f"   {m:4.1f} | {lead} | {abs(muA[0]):.8f} / {abs(muB[0]):.8f} | {cut:11.4f}  | "
-                  f"max |q_rel| {qmax:.1e}, max residual {rmax:.1e}")
-            res[(sig, m)]["cut"] = cut
+            cuts[(sig, m)] = cut
+            win = muA[np.abs(muA) >= max(cut, 1e-3)]
+            asym = max((np.abs(win + z).min() / abs(z) for z in win), default=0.0)
+            lead = " ".join(f"{z.real:+.6f}{z.imag:+.6f}i" for z in muA[:4])
+            print(f"   {m:4.1f} | {lead} | {abs(muA[0]):.8f} / {abs(muB[0]):.8f} | {cut:20.4f} | {asym:.1e}")
         rho_all[sig] = (rho, rhoB)
-        print(f"   rho(T1) v_c = {rho:.8f} (A), {rhoB:.8f} (B); sqrt(3) rho v_c = {math.sqrt(3) * rho:.4f} "
-              f"(FL: <= 1), the quadruple is +-Re +-Im i")
+        print(f"   rho(T1) v_c = {rho:.8f} (A), {rhoB:.8f} (B), sqrt(3) rho v_c = {math.sqrt(3) * rho:.4f} (FL: <= 1)")
+        top_last = max(np.abs(d["mu"]).max() for d in res[(sig, ms[-1])]["A"]) * vc
+        cstar = max(max(cuts[(sig, m)] for m in ms), top_last)
+        print(f"   window: every eigenvalue with |mu| v_c >= {cstar:.4f} is converged in every m listed, and the "
+              f"leading one of m = {ms[-1]} is {top_last:.4f}; so a real zero mode needs "
+              f"|v| > {1 / cstar:.2f} v_c = {vc / cstar:.2f}")
     for sig in sigmas:
         rho, rhoB = rho_all[sig]
         check("converged", abs(rho - rhoB) < 1e-6 * rho,
@@ -643,26 +675,37 @@ def part_tanh(cfg, args):
             check("ref63", rel < 1e-3,
                   f"sigma R = {sig:g}: {rho:.5f} against frank_loss.md {ref} (relative difference {rel:.1e}; "
                   f"three-digit roundings {rho:.3f} and {ref:.3f})")
-    # the real eigenvalues, and the identity Re(v) q = 0 on every one
-    print("== real: real eigenvalues of S^-1 M (real zero-mode speeds v = 1/mu) and the identity")
+    print("== real: the real eigenvalues of S^-1 M (a real zero-mode speed is v = 1/mu) and the identity")
+    print("   sigma R | m    | window |mu| v_c >= | eigenvalues in it (A / B) | real in it (A / B) | real anywhere, "
+          "|mu| v_c > 1e-8 (A / B), largest, persisting in B | identity")
     for sig in sigmas:
         vc = v_c(sig)
         for m in ms:
             r = res[(sig, m)]
             muA = np.concatenate([d["mu"] for d in r["A"]]) * vc
             muB = np.concatenate([d["mu"] for d in r["B"]]) * vc
-            cut = r["cut"]
-            winA, winB = muA[np.abs(muA) >= max(cut, 1e-3)], muB[np.abs(muB) >= max(cut, 1e-3)]
-            realA, realB = real_cands(winA), real_cands(winB)
-            print(f"   sigma R = {sig:g}, m = {m:4.1f}: eigenvalues with |mu| v_c >= {max(cut, 1e-3):.4f}: "
-                  f"{len(winA)} (A), {len(winB)} (B); real: {len(realA)} (A), {len(realB)} (B); "
-                  f"all real below that, any size: {len(real_cands(muA[np.abs(muA) > 1e-8]))} (A), "
-                  f"{len(real_cands(muB[np.abs(muB) > 1e-8]))} (B)")
-            qs = [abs(x["qrel"]) * abs(d["mu"][x["k"]].real) / abs(d["mu"][x["k"]])
-                  for d in r["A"] for x in d["diag"] if np.isfinite(x["qrel"])]
-            check("real_identity", len(realA) == 0 and len(realB) == 0 and (max(qs, default=0.0) < 1e-8),
-                  f"sigma R = {sig:g}, m = {m}: real candidates {len(realA)} (A) {len(realB)} (B); "
-                  f"max |Re mu|/|mu| |q_rel| over the leading eigenfunctions {max(qs, default=0.0):.1e}")
+            lo = max(cuts[(sig, m)], 1e-3)
+            winA, winB = muA[np.abs(muA) >= lo], muB[np.abs(muB) >= lo]
+            anyA = real_cands(muA[np.abs(muA) > 1e-8])
+            anyB = real_cands(muB[np.abs(muB) > 1e-8])
+            dg = [x for d in r["A"] for x in d["diag"]]
+            ident = max((max(abs(x["qrel"]), x["grel"]) * abs(d_mu.real) / abs(d_mu)
+                         for d in r["A"] for x in d["diag"] for d_mu in (d["mu"][x["k"]] * vc,)), default=0.0)
+            nreal_dg = sum(x["real"] for x in dg)
+            print(f"   {sig:7g} | {m:4.1f} | {lo:17.4f} | {len(winA):3d} / {len(winB):3d} | "
+                  f"{len(real_cands(winA))} / {len(real_cands(winB))} | {len(anyA):3d} / {len(anyB):3d}, "
+                  f"{(np.abs(anyA).max() if len(anyA) else 0):.1e}, {persisting(anyA, muB)} | max |Re mu|/|mu| "
+                  f"max(|q_rel|, cluster Gram) {ident:.1e} on {len(dg)} eigenfunctions, {nreal_dg} real")
+            check("no_real_in_window", len(real_cands(winA)) == 0 and len(real_cands(winB)) == 0,
+                  f"sigma R = {sig:g}, m = {m}: no real eigenvalue with |mu| v_c >= {lo:.4f}")
+            check("real_identity", ident < 1e-8, f"sigma R = {sig:g}, m = {m}: Re(v) <psi, tau1 psi> = 0 on the "
+                  f"{len(dg)} evaluated eigenfunctions ({nreal_dg} with a real eigenvalue), worst {ident:.1e}")
+    for sig in sigmas:
+        for m in ms:
+            r = res[(sig, m)]
+            rs = [x["res"] for d in r["A"] for x in d["diag"][:8] if np.isfinite(x["res"])]
+            print(f"   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = {sig:g}, "
+                  f"m = {m}: worst {max(rs):.1e}")
     return res
 
 
@@ -670,30 +713,33 @@ def part_tanh(cfg, args):
 def run_controls():
     print("== controls: each --mutate makes its target checks fail; the same run without it passes them")
     bad, base = [], {}
-    for name, (what, opts, targets) in MUTATIONS.items():
-        res = {}
-        for mut in ("", name):
-            if mut == "" and opts in base:
-                res[mut] = base[opts]
-                continue
-            cmd = [sys.executable, __file__] + ([f"--mutate={mut}"] if mut else []) + opts.split()
-            t0 = time.time()
-            pr = subprocess.run(cmd, capture_output=True, text=True)
-            fl = [ln.split("] ")[1].split(":")[0] for ln in pr.stdout.splitlines() if ln.strip().startswith("[FAIL]")]
-            res[mut] = (pr.returncode, fl, time.time() - t0)
-            if mut == "":
-                base[opts] = res[mut]
-        hit = lambda fl: [t_ for t_ in targets if t_ in fl]  # noqa: E731
-        fired = res[name][0] == 1 and len(hit(res[name][1])) == len(targets) and not hit(res[""][1])
-        print(f"  {name:8s} ({what}; {opts}): baseline exit {res[''][0]}, mutated exit {res[name][0]}, failed "
-              f"{res[name][1]}, {res[name][2]:.0f} s -> {'fired' if fired else 'DID NOT FIRE'}", flush=True)
-        if not fired:
-            bad.append(name)
+    for name, (what, runs) in MUTATIONS.items():
+        for opts, targets in runs:
+            res = {}
+            for mut in ("", name):
+                if mut == "" and opts in base:
+                    res[mut] = base[opts]
+                    continue
+                cmd = [sys.executable, __file__] + ([f"--mutate={mut}"] if mut else []) + opts.split()
+                t0 = time.time()
+                pr = subprocess.run(cmd, capture_output=True, text=True)
+                fl = [ln.split("] ")[1].split(":")[0] for ln in pr.stdout.splitlines()
+                      if ln.strip().startswith("[FAIL]")]
+                res[mut] = (pr.returncode, fl, time.time() - t0)
+                if mut == "":
+                    base[opts] = res[mut]
+            hit = lambda fl: [t_ for t_ in targets if t_ in fl]  # noqa: E731
+            fired = res[name][0] == 1 and len(hit(res[name][1])) == len(targets) and not hit(res[""][1])
+            print(f"  {name:8s} ({what}; {opts}): baseline exit {res[''][0]}, mutated exit {res[name][0]}, failed "
+                  f"{sorted(set(res[name][1]))}, {res[name][2]:.0f} s -> {'fired' if fired else 'DID NOT FIRE'}",
+                  flush=True)
+            if not fired:
+                bad.append(f"{name} {opts}")
     check("controls", not bad, "every control fired" if not bad else f"not fired: {bad}")
 
 
 # ------------------------------------------------------------------------------------------------ main
-FULL = {"dK": 20, "p": 100, "npan": 160, "dKB": 6, "pB": 30, "ms": "0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5",
+FULL = {"dK": 28, "p": 80, "npan": 160, "dKB": 10, "pB": 20, "ms": "0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5",
         "planted_ms": [0.5, 1.5, 2.5], "pdK": 12, "sdK": 22, "pp": 60, "pnpan": 120, "pn": 4, "ptol": 1e-9,
         "stol": 1e-9, "Lw": 26}
 QUICK = {"dK": 8, "p": 40, "npan": 60, "dKB": 4, "pB": 12, "ms": "0.5,1.5",
@@ -709,6 +755,7 @@ def main():
     ap.add_argument("--sigmas", default="2,4")
     ap.add_argument("--ms", default="")
     ap.add_argument("--procs", type=int, default=4)
+    ap.add_argument("--raw", default="", help="directory for the eigenvalue arrays (npz)")
     ap.add_argument("--quick", action="store_true")
     ap.add_argument("--controls", action="store_true")
     args = ap.parse_args()
