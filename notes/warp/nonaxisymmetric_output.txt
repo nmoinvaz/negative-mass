@@ -78,8 +78,11 @@ checks: 17 passed, 0 failed []. 13 s
 [FIRED] --mutate=circular (tests (I1), (I2) in the circular frame (e_rho, e_varphi), not the frame adapted to the shift): exit 1, failed ['identity_I1', 'identity_I2', 'sigma_I1', 'sigma_I2', 'sigma_Rperp', 'lemma_premises']
 [FIRED] --mutate=shear (adds X y / 2 to q, so grad_perp d_x b is no longer along grad_perp b): exit 1, failed ['identity_I1', 'identity_axis', 'lemma_premises']
   info: under --mutate=shear, points_fail: 27 points, both signs (54 tests). R != 0 gives 'algebraic' (no lam makes R - lam eta of rank <= 1) and R = 0 gives 'trivial'. 25 points with f'(q) != 0 fail algebraically at both signs, 0 points differ from that
+  info: under --mutate=shear, lemma_premises: (I1) and (I2) of the adapted frame hold at 11 of 27 points
 [FIRED] --mutate=wall-v2 (doubles v in the expected wall curvature): exit 1, failed ['wall_curvature']
 [FIRED] --mutate=planted-sign (plants lam eta + 8 pi u u, the wrong sign for eps = -1): exit 1, failed ['planted_pass', 'planted_sign']
 [FIRED] --mutate=planted-null (deforms the planted form by zero): exit 1, failed ['planted_deform']
+[FIRED] --mutate=planted-flat (plants R = 0, which satisfies the lemma's premises): exit 1, failed ['planted_pass', 'planted_sign', 'planted_deform', 'planted_premise']
+[FIRED] --mutate=broken-test (replaces scalar_form by a test that always returns 'pass'): exit 1, failed ['planted_pass', 'planted_sign', 'planted_deform', 'points_fail', 'lemma_agree']
 [FIRED] --mutate=planted-in-data (replaces the Ricci tensor at the sample points by a planted scalar form): exit 1, failed ['points_fail', 'lemma_premises']
 controls: all fired

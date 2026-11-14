@@ -55,11 +55,14 @@ MUTATIONS = {
     "wall-v2": (["wall_curvature"], "doubles v in the expected wall curvature"),
     "planted-sign": (["planted_pass"], "plants lam eta + 8 pi u u, the wrong sign for eps = -1"),
     "planted-null": (["planted_deform"], "deforms the planted form by zero"),
+    "planted-flat": (["planted_premise"], "plants R = 0, which satisfies the lemma's premises"),
+    "broken-test": (["points_fail", "lemma_agree", "planted_sign", "planted_deform"],
+                    "replaces scalar_form by a test that always returns 'pass'"),
     "planted-in-data": (["points_fail", "lemma_premises"],
                         "replaces the Ricci tensor at the sample points by a planted scalar form"),
 }
 
-ECHO = {"shear": ["points_fail"]}  # checks whose line of a mutation's run the controls section echoes
+ECHO = {"shear": ["points_fail", "lemma_premises"]}  # checks whose line of a mutation's run the controls section echoes
 
 RESULTS = []
 
@@ -372,12 +375,16 @@ def main():
 
     def test(Rm, eps):
         """The test, as one function for the planted and the real data."""
+        if mut == "broken-test":
+            return "pass", 0, sp.zeros(4, 4), sp.zeros(4, 1)
         return ps.scalar_form(Rm, ETA, eps)
 
     planted = []
     for (prof, kind, p, vv, jets) in pts:
         lam_p = rat(random.randint(-9, 9), random.randint(1, 9))
         u_p = sp.Matrix([rat(random.choice([-1, 1]) * random.randint(1, 9), random.randint(1, 9)) for _ in range(4)])
+        if mut == "planted-flat":
+            lam_p, u_p = sp.Integer(0), sp.zeros(4, 1)
         sgn = 1 if mut == "planted-sign" else -1
         planted.append((lam_p, u_p, lam_p * ETA + sgn * 8 * sp.pi * u_p * u_p.T))
     bad_pass = bad_sign = bad_def = bad_prem = 0
