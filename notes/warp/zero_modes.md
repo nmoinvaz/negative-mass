@@ -128,15 +128,16 @@ certified, no bisection was needed, no candidate appeared, and no Lanczos run fa
 | 4 | 10 | 96 | 0.208 | 0.7879 | 0.275082 | 0.1761 | 6490 | 2234 s | 1.02 GiB |
 | 4 | 10 | 128 | 0.156 | 0.7884 | 0.275173 | 0.1761 | 6466 | 5112 s | 2.27 GiB |
 
-In every run the smallest value is at 10 v_c, the end of the range, so s_min is still falling there. It falls roughly
-as v^(−1/2): s_min √(v/v_c) is 0.67 at v_c and 0.75 at 10 v_c for σR = 2, and 0.70 and 0.87 for σR = 4 (last column of
-the full table), which rises slowly, so the fall is a little slower than v^(−1/2). If s_min √(v/v_c) stayed at its value at
-10 v_c, s_min would reach 0.1 at 56 v_c (σR = 2) and 76 v_c (σR = 4). This is arithmetic on a trend, not a claim about
-v > 10 v_c.
+In every run the smallest value is at 10 v_c, the end of the range, so s_min is still falling there. It falls roughly as
+v^(−1/2): s_min √(v/v_c) is 0.67 at v_c and 0.75 at 10 v_c for σR = 2, and 0.70 and 0.87 for σR = 4 (last column of the
+full table), which rises slowly, so the fall is a little slower than v^(−1/2). If s_min √(v/v_c) stayed at its value at
+10 v_c, s_min would reach 0.1 at 56 v_c (σR = 2) and 76 v_c (σR = 4). This is arithmetic on a trend, not a claim about speeds
+above 10 v_c.
 
-**Peak memory.** One process peaked at 2.27 GiB at N = 128 in the scans and at 4.35 GiB at N = 160 (§4), by the
-script's `ru_maxrss` (`time` reports 2.37 GB resident for the N = 128 runs). The script labels GiB as GB, as #63's did.
-Up to four processes ran at once, so the sum of their peaks was at most about 11 GiB (two N = 160 runs and two control runs), on a machine with 62 GB.
+**Peak memory.** One process peaked at 2.27 GiB at N = 128 in the scans and at 4.35 GiB at N = 160 (§4), by the script's
+`ru_maxrss` (`time` reports 2.37 GB resident for the N = 128 runs). The script labels GiB as GB, as #63's did. Up to
+four processes ran at once, so the sum of their peaks was at most about 11 GiB (two N = 160 runs and two control runs),
+on a machine with 62 GB.
 
 ## 4. Box and grid
 
@@ -210,18 +211,18 @@ the zero in place, so `planted_pm_i` cannot see it. `dense` at complex v can.
 
 ## Discrepancies and reading notes
 
-1. `agree_N` fails at σR = 2, L = 16 (§4), by 8.7×10⁻⁴ at 10 v_c. It is reported, not loosened, so the table run exits 1.
-   The coarse (16, 96) grid has dx = 1/3 and is under-resolved at large v, and N = 160 shows N = 128 is converged
+1. `agree_N` fails at σR = 2, L = 16 (§4), by 8.7×10⁻⁴ at 10 v_c. It is reported, not loosened, so the table run exits
+   1. The coarse (16, 96) grid has dx = 1/3 and is under-resolved at large v, and N = 160 shows N = 128 is converged
    (`agree_N160`). Its control is `gridperturb` on `agree_N160`, since `agree_N` already fails on the data. Whether the
    (16, 96) column should be dropped from the table is the coordinator's call.
 2. #63 took s_min on mean-free fields, this script on the full space. They agree to the printed digits for the tanh
    profile and differ for 6/(1 + r²) at its zero (§2). Nothing in #63 changes.
-3. The first control run (`controls-noraw.log` in the raw folder, script commit 7058016) did not fire for two
-   mutations. `conj` was aimed at `planted_pm_i` as well as `dense`, but a wrong conjugate cannot move a zero of A. And
-   `lipbig` passed because a bisected interval that stayed uncertified was counted as resolved when any candidate had been
+3. The first control run (`controls-noraw.log` in the raw folder, script commit 7058016) did not fire for two mutations.
+   `conj` was aimed at `planted_pm_i` as well as `dense`, but a wrong conjugate cannot move a zero of A. And `lipbig`
+   passed because a bisected interval that stayed uncertified was counted as resolved when any candidate had been
    refined. The targets of `conj` and the `scan_resolved` condition were changed, and both controls then fired. The
-   scans of σR = 2 at (16, 96), (16, 128) and σR = 4 at (10, 128) ran before the `scan_resolved` change and print its old
-   wording, with the same verdict, since all of their intervals were certified.
+   scans of σR = 2 at (16, 96), (16, 128) and σR = 4 at (10, 128) ran before the `scan_resolved` change and print its
+   old wording, with the same verdict, since all of their intervals were certified.
 4. #63 §9 wrote that no real zero-mode speed lies below 3.35 v_c, from the top 24 eigenvalues of T₁. The present range
    is larger and uses s_min, not eigenvalues, and is consistent with it.
 
