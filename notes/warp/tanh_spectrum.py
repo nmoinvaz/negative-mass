@@ -16,7 +16,7 @@ so f ~ r^l at 0 (regular) and f ~ r^-2 at infinity (the free decaying solution),
 S (f Om_kappa) = (f' + (1 + kappa) f / r) (sigma.rhat Om_kappa), so K is block diagonal in kappa and every radial integral
 is a polynomial or a smooth weight in y. The matrices are real, so eigenvalues are real or in conjugate pairs.
 
-    python notes/warp/tanh_spectrum.py [--part=reduce,angular,radial,vc,planted,shift,tanh,real] [--sigmas=2,4]
+    python notes/warp/tanh_spectrum.py [--part=reduce,angular,radial,vc,planted,shift,tanh,conv] [--sigmas=2,4]
                                        [--ms=0.5,1.5,...] [--procs=4] [--raw=DIR] [--quick]
     python notes/warp/tanh_spectrum.py --controls          every --mutate control, each must make its checks fail
 
@@ -30,7 +30,7 @@ Parts:
   shift    the same weight translated and dilated (axisymmetric, not spherical): the same spectrum.
   tanh     the tanh profile per m and sigma R: rho(T1) v_c, the leading eigenvalues, convergence in every parameter,
            the real candidates, the identity Re(v) int tau1 |psi|^2 = 0 and the residual of each eigenfunction.
-  real     the converged window and the real eigenvalues in it (part of tanh's output).
+  conv     the leading eigenvalues of m = 1/2 and 3/2 with one discretisation parameter changed at a time.
 
 Mutations (each must make its checks fail): g0block, ladder, dterm, half, lscale, sobolev, rot, trunc.
 Exits 1 when any check fails.
@@ -714,6 +714,49 @@ def part_tanh(cfg, args):
     return res
 
 
+def conv_task(t):
+    global MUT
+    MUT = t["mut"]
+    t0 = time.time()
+    rec = solve_sector(Weight("tanh", sig=t["sig"]), t["m"], t["dK"], t["p"], t["L"], t["npan"])
+    mu = np.sort(np.abs(np.concatenate([d["mu"] for d in rec])))[::-1] * v_c(t["sig"])
+    return t, mu[0], mu[4], time.time() - t0
+
+
+def part_conv(cfg, args):
+    sigmas = [float(s_) for s_ in args.sigmas.split(",")]
+    print("== conv: |mu| v_c of the leading eigenvalue and of the fifth (the next quadruple), one parameter changed "
+          "at a time from the base dK = 20, p, Lmap = 2, npan = 160", flush=True)
+    tasks = []
+    for sig in sigmas:
+        p0 = pfor(cfg, sig)
+        base = {"dK": 20, "p": p0, "L": 2.0, "npan": 160}
+        var = [("base", {}), ("dK = 12", {"dK": 12}), ("dK = 28", {"dK": 28}), (f"p = {p0 - 20}", {"p": p0 - 20}),
+               (f"p = {p0 + 20}", {"p": p0 + 20}), ("Lmap = 1", {"L": 1.0}), ("Lmap = 4", {"L": 4.0}),
+               ("npan = 80", {"npan": 80}), ("npan = 320", {"npan": 320})]
+        for m in (0.5, 1.5):
+            for name, ch in var:
+                tasks.append({"sig": sig, "m": m, "mut": MUT, "name": name, **{**base, **ch}})
+    out = {}
+    with ProcessPoolExecutor(max_workers=args.procs) as ex:
+        for t, lam1, lam5, dt in ex.map(conv_task, tasks):
+            out[(t["sig"], t["m"], t["name"])] = (lam1, lam5, dt)
+    worst = 0.0
+    for sig in sigmas:
+        for m in (0.5, 1.5):
+            b1, b5, _ = out[(sig, m, "base")]
+            print(f"  sigma R = {sig:g}, m = {m}")
+            print("    variant    | leading |mu| v_c | change from base | fifth |mu| v_c | change from base | s")
+            for name in [t["name"] for t in tasks if t["sig"] == sig and t["m"] == m]:
+                l1, l5, dt = out[(sig, m, name)]
+                print(f"    {name:10s} | {l1:.10f}   | {l1 - b1:+.1e}         | {l5:.8f}   | {l5 - b5:+.1e}"
+                      f"         | {dt:.0f}")
+                if name != "dK = 12":
+                    worst = max(worst, abs(l1 - b1) / b1)
+    check("conv", worst < 1e-7, f"leading eigenvalue moves by at most {worst:.1e} (relative) under every change but "
+          "the deliberately coarse dK = 12")
+
+
 # ------------------------------------------------------------------------------------------------ controls
 def run_controls():
     print("== controls: each --mutate makes its target checks fail; the same run without it passes them")
@@ -780,6 +823,8 @@ def main():
         for name, fn in order:
             if name in parts:
                 fn()
+        if "conv" in parts:
+            part_conv(cfg, args)
         if "tanh" in parts:
             if any(f in FAILED for f in ("planted", "shift", "angular", "radial_op", "radial_int")):
                 print("== tanh skipped: a planted-truth or basis check failed, so real data are not computed")
