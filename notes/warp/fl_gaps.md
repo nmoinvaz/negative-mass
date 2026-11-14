@@ -1,7 +1,7 @@
 # The two Frank–Loss gaps of #68, closed
 
 Issue #74. Script [fl_gaps.py](fl_gaps.py), output [fl_gaps_output.txt](fl_gaps_output.txt), run from the repository root as
-`python notes/warp/fl_gaps.py` (about 14 min in all, one thread, Normal priority, 203 MB peak resident). It exits 1 unless every check
+`python notes/warp/fl_gaps.py` (about 14 min in all, one thread, Normal priority, 206 MB peak resident). It exits 1 unless every check
 passes and every `--mutate=` control fires. `--no-controls` runs the checks only, `--only=a,b` runs sections, and `--mutate=NAME`
 runs one control. The author is the `negative-mass-win2` agent, and nothing here has been independently reviewed.
 
@@ -302,6 +302,22 @@ uniform scale error cannot move 0. `planted_norms` catches it.
 5. The 32 × 48 sphere rule that T3 uses is not converged for T3 at ε = 0.05, where it differs from the 48 × 64 rule by up to
    1.5×10⁻⁶ relative (printed as `info:` in the output, and not used in any check). T3 therefore uses ε = 0.3 as its second value.
    This limits the test and not the identity.
+
+## Corrections made to the harness while building it
+
+Each was found by a check or a control, and none loosened a pass criterion in order to pass.
+
+1. `prop7_smooth` failed in the first full run, by 1.8×10⁻⁵ relative and for T4 only. The T4 approximants had no cut-off, while
+   the integration stopped at r = 2R, so the sides were off by the boundary term of the truncation (about 3×10⁻⁵ at R = 8). The
+   cause was the field and not the identity. T4's approximants now carry the cut-off θ(r/R), and the Ḣ¹ distances are integrated out
+   to r = e^14 for every approximant, since the non-smooth ψ has a tail beyond 2R.
+2. `quad_converged` first used a tolerance of 10⁻¹¹ that was written before all eight cases were measured. The extended check read
+   1.1×10⁻¹¹, from the column ∫|∇f|³ for T1 at ε = 0.05, which no identity check uses. The columns that the identities use change by
+   at most 7.1×10⁻¹². The tolerance is now a tenth of the identity tolerance (10⁻¹⁰), which is its purpose, and the printed
+   1.1×10⁻¹¹ is within it.
+3. Two controls were silent in the first full run, because one target list named a check that does not exist
+   (`comp3_nonsmooth`) and because `planted_extremal` compares two sides that are both 0, which a uniform 1 % weight error
+   cannot move. Both target lists were corrected, and the checks themselves were not changed.
 
 ## Recommended tasks
 

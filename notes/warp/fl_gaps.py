@@ -668,7 +668,7 @@ def section_planted():
                 a, _ = radial_quad(components(f, eps), segs_for(0.0, np.inf), rule=RULE[name])
                 b, _ = radial_quad(components(f, eps), segs_for(0.0, np.inf), rule=big)
                 worst_sph = max(worst_sph, np.max(np.abs(a - b)[keep] / np.abs(b)[keep]))
-    check("quad_converged", worst < 1e-10 and worst_sph < 1e-10,
+    check("quad_converged", worst < IDENT_TOL / 10 and worst_sph < IDENT_TOL / 10,  # a tenth of the identity checks' tolerance
           "doubling the radial panels changes every integral of T1 to T4 (both values of eps, non-smooth psi) by at most %.1e "
           "relative; 32x48 against 48x64 sphere rule for T3 and T4 at both values of eps: %.1e" % (worst, worst_sph))
     # information, not a check: why T3 does not use eps = 0.05
@@ -682,7 +682,7 @@ def section_planted():
 # ---- the identity on smooth psi_n and on the non-smooth psi, and the limit along psi_n -> psi in H^1-dot --------------------
 SIDES = [("P7L", "P7R"), ("S3L", "S3R"), ("C3L", "C3R")]
 ALL_SIDES = ["P7L", "P7R", "S3L", "S3R", "C3L", "C3R"]
-IDENT_TOL = 1e-9  # relative: the quadrature is good to 1e-12 (quad_converged), this leaves room for the sphere rule at small eps
+IDENT_TOL = 1e-9  # relative: quad_converged requires the quadrature to be good to a tenth of this
 PROP7_DATA = {}
 
 

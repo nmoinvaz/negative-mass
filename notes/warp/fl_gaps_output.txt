@@ -116,7 +116,7 @@
 == G2.2 Step 3 as printed: f = chi |psi|_eps^(-2/(d-1)) needs grad f in L^d. T4 is in H^1-dot and its grad f is not in L^3 ==
 [PASS] gradf_Ld: int_{10^-(i+1) < r < 10^-i} |grad f|^3 dx for i = 1..8: ['0.58528', '0.58122', '0.58118', '0.58118', '0.58118', '0.58118', '0.58118', '0.58118']. Equal increments per decade mean int_{s<r<1} |grad f|^3 ~ (0.2524) ln(1/s) diverges, so grad f is not in L^3, while ||grad psi||_2^2 = 51.985576 is finite (psi is homogeneous of degree 0 at the origin)
 
-checks: 17 passed, 0 failed []. 239 s, peak resident memory 203 MB
+checks: 17 passed, 0 failed []. 238 s, peak resident memory 206 MB
 
 == Controls: each mutation must make its target checks fail ==
 [FIRED] --mutate=mtranspose (M = g psi^T/|psi|^2 (transpose, no conjugate) in place of g psi^+/|psi|^2): exit 1, failed ['m_matrix', 'integral_equation']
@@ -164,5 +164,5 @@ checks: 17 passed, 0 failed []. 239 s, peak resident memory 203 MB
       [FAIL] planted_extremal: extremal, eps = 0: LHS = 2.4e-30, RHS = 1.7e-04 (both 0 by the twistor equation and the integrals above); eps = 0.3: LHS = 6.2118491326, RHS = 6.2122557467
       [FAIL] quad_converged: doubling the radial panels changes every integral of T1 to T4 (both values of eps, non-smooth psi) by at most 1.2e-02 relative; 32x48 against 48x64 sphere rule for T3 and T4 at both values of eps: 2.0e-12
 controls: all fired
-total 848 s, peak resident memory of the main process 203 MB
+total 848 s, peak resident memory of the main process 206 MB
 # exit status 0
