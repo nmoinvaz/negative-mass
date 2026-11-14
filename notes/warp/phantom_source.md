@@ -255,7 +255,10 @@ Up to "An accelerating bubble", v is constant. There the shift b is C², with un
 Not covered: a bubble whose path is not a straight line, a shift that is not axisymmetric about the direction of
 motion, a lapse other than 1 or curved slices (with the lapse 1 + b, (I1) and (I2) fail), two or more scalars,
 non-minimal coupling, and matter whose Ricci tensor is not of the form λ g_ab + s u_a u_b. A normal plus a phantom
-scalar give R_ab − λ g_ab of rank 2 with mixed signs, which the lemma does not exclude.
+scalar give R_ab − λ g_ab of rank 2 with mixed signs, which the lemma does not exclude. #65 excludes that pair on
+every open set of the wall, for constant v and the accelerating bubble ([two_scalars.md](two_scalars.md), *checked
+symbolically*). #70 shows that (I1) and (I2) hold for every shift b(t, x, σ(y, z)) with unit lapse, in the frame
+adapted to ∇⊥σ, so the lemma covers some shifts that are not axisymmetric ([nonaxisymmetric.md](nonaxisymmetric.md)).
 
 The answer rests on computer algebra, so it should get an independent review before it is relied on.
 
