@@ -1,0 +1,168 @@
+# notes/warp/fl_gaps.py output, issue #74
+# win2 (Windows desktop), 2026-11-13; D:\negative-mass-venv314 (Python 3.14, the pinned requirements.txt)
+# One run from the repository root, one thread (OMP_NUM_THREADS=1), Normal priority, beside choptuik-large-d's jobs:
+#   python notes/warp/fl_gaps.py
+# The checks come first, then each control as a subprocess. Peak resident memory is the script's own report
+# (PeakWorkingSetSize of the process that prints it).
+
+# fl_gaps.py, issue #74. NATHAN-PC, 2026-11-13, python 3.14.10, numpy 2.5.4, mpmath 1.3.0. mutation: none
+
+== G1.1 The matrix M = g psi^+/|psi|^2: M psi = g, |M| = |g|/|psi| <= |A|, for complex psi and g ==
+[PASS] m_matrix: M psi = g to 4.1e-16 and |M|_op = |g|/|psi| to 7.5e-16 over 2000 complex samples; M is not Hermitian (median |M - M^+|/|M| = 1.42), so the proof cannot use M = M^+
+
+== G1.2 The exponent bookkeeping of FL21's regularity proof (d = 3), exact rational arithmetic ==
+[PASS] exponents: 6754 admissible (p, r) pairs, p and r in (3/2, 12]: s > 1, s <= p, both HLS pairs admissible, the duals consistent; violations 0. At p = 3, r = 6 are admissible, and 1/2 = 1/3 + 1/6, 2/3 = 1/3 + 1/3 give g in L^2 and L^(3/2)
+
+== G1.3 Hermiticity of the Pauli matrices: where it enters (kernel and symbol) ==
+[PASS] kernel: Gamma(z)^+ = Gamma(-z) (0.0e+00), |Gamma(z)| = 1/(4 pi |z|^2) (6.7e-16), |sigma.k v| = |k||v| (1.8e-15): three uses of sigma_j^+ = sigma_j, none of them involves the coefficient
+
+== G1.4 The duality step: int <phi, Gamma*(G psi)> = int <G^+(Gamma* phi), psi>, G a general complex matrix field ==
+[PASS] duality: chi := G^+ (Gamma* phi): relative defect 6.4e-16 for a general G, 4.4e-16 for Hermitian G (point cloud, 40 nodes, random weights). With G in place of G^+ the general G gives 1.2e+00: the adjoint is what the step needs
+
+== G1.5 The norm bound |chi| <= |G||Gamma* phi| with chi = G^+ v ==
+[PASS] norm_bound: |G^+ v| <= |G|_op |v| over 3000 complex matrices (worst ratio - 1 = -2.8e-05), attained at the top singular vector (1.000000000000001). |G^+| = |G| for the operator norm, so only |G_eps| <= |M| <= |A| enters
+
+== G1.6 The integral equation psi = Gamma*(M psi), planted: psi smooth with g = sigma.(-i grad)psi known ==
+[PASS] integral_equation: (Gamma*(M psi))(x0) = psi(x0) at x0 = (0.3, -0.2, 0.5), relative error: extremal, g = Lambda psi 4.0e-15; generic, M not Hermitian 5.7e-15. For the generic spinor M is visibly non-Hermitian (max |M - M^+| = 6.36); psi ~ r^-2 is in L^p for every p > 3/2
+
+== G1.7 The last step: psi in L^6 and g in L^2 give grad psi in L^2, since |sigma.k v| = |k||v| ==
+[PASS] h1_step: int |sigma.grad psi|^2 = int |grad psi|^2 (name, delta, int|grad psi|^2, int|sigma.grad psi|^2, relative difference): T3, 0, 13.6024635005, 13.6024635005, 0.0e+00; T4, 0, 51.9855755874, 51.9855755874, 0.0e+00; T3, 0.01, 13.4491682338, 13.4491682338, 2.6e-16
+
+== G1.8 Audit: which steps of the regularity proof need the coefficient to be Hermitian ==
+  step                                                           general M, adjoint used  general M, Hermitian-case formula
+  duality identity, eq. (decomp)                                 passes                   fails
+  pointwise bound |chi| <= |G||Gamma* phi|                       passes                   passes
+  split M = F + G with |G| <= |M| (F bounded, compact support)   passes                   passes
+  kernel norm, Gamma(x)^+ = Gamma(-x), symbol norm (gammas only) passes                   passes
+[PASS] audit: steps that fail for a general matrix field: none. Steps that pass only with the adjoint: ['duality identity, eq. (decomp)']. So the coefficient is used through its adjoint in exactly one step, the duality identity; the norm bound sees G and G^+ alike
+
+== G2.0 Planted truth before real data: quadrature against closed forms, and the Frank-Loss extremal ==
+[PASS] planted_norms: T1: int|grad psi|^2 = 7.728546877334, mpmath 7.728546877334 (relative 1.1e-16). Extremal at eps = 0: int|grad s^(1/2)|^2 = 7.4022033008 (3pi^2/4 = 7.4022033008), int|sigma.grad Psi|^2/s = 22.2066099025 (9pi^2/4 = 22.2066099025), int|grad Psi|^2 = 11.1033049512 (9pi^2/8 = 11.1033049512), worst relative 8.4e-16
+[PASS] planted_extremal: extremal, eps = 0: LHS = 2.4e-30, RHS = -2.2e-15 (both 0 by the twistor equation and the integrals above); eps = 0.3: LHS = 6.2110792866, RHS = 6.2110792866
+[PASS] quad_converged: doubling the radial panels changes every integral of T1 to T4 (both values of eps, non-smooth psi) by at most 1.1e-11 relative; 32x48 against 48x64 sphere rule for T3 and T4 at both values of eps: 2.0e-12
+  info: T3 at eps = 0.05, 32x48 against 48x64 sphere rule, largest relative difference 1.5e-06 (not used in any check)
+
+== G2.1 Proposition 7, Step 3 (with chi) and Step 4 (chi = 1), along smooth psi_n -> psi in H^1-dot ==
+  T1, eps = 0.5: psi (non-smooth) P7L = 1.9769262240, P7R = 1.9769262240, ||grad psi||_2 = 2.780026; Lipschitz ratio max gap/dist = 0.019
+       delta_n    R_n ||psi_n-psi||    P7 LHS(psi_n)    P7 RHS(psi_n)    max gap
+         1e-02      8   3.7089e-01     1.9685432671     1.9685432671   7.14e-03
+         1e-04     16   1.1728e-01     1.9766197154     1.9766197154   2.23e-04
+         1e-06     32   3.7086e-02     1.9769163545     1.9769163545   7.06e-06
+         1e-08     64   1.1728e-02     1.9769259110     1.9769259110   2.23e-07
+         1e-10    128   3.7086e-03     1.9769262141     1.9769262141   7.06e-09
+         1e-12    256   1.1728e-03     1.9769262237     1.9769262237   2.23e-10
+  T1, eps = 0.05: psi (non-smooth) P7L = 2.7359331181, P7R = 2.7359331181, ||grad psi||_2 = 2.780026; Lipschitz ratio max gap/dist = 0.012
+       delta_n    R_n ||psi_n-psi||    P7 LHS(psi_n)    P7 RHS(psi_n)    max gap
+         1e-02      8   3.7089e-01     2.7266779632     2.7266779632   4.52e-03
+         1e-04     16   1.1728e-01     2.7356401376     2.7356401376   1.39e-04
+         1e-06     32   3.7086e-02     2.7359236538     2.7359236538   4.40e-06
+         1e-08     64   1.1728e-02     2.7359328143     2.7359328143   1.39e-07
+         1e-10    128   3.7086e-03     2.7359331084     2.7359331084   4.40e-09
+         1e-12    256   1.1728e-03     2.7359331178     2.7359331178   1.39e-10
+  T2, eps = 0.5: psi (non-smooth) P7L = 5.7830572485, P7R = 5.7830572485, ||grad psi||_2 = 3.879198; Lipschitz ratio max gap/dist = 0.012
+       delta_n    R_n ||psi_n-psi||    P7 LHS(psi_n)    P7 RHS(psi_n)    max gap
+         1e-02      8   3.7740e-01     5.7825569356     5.7825569356   4.38e-03
+         1e-04     16   1.1912e-01     5.7834535567     5.7834535567   1.37e-04
+         1e-06     32   3.7602e-02     5.7831098941     5.7831098941   9.10e-06
+         1e-08     64   1.1872e-02     5.7830624699     5.7830624699   9.03e-07
+         1e-10    128   3.7490e-03     5.7830577280     5.7830577280   8.29e-08
+         1e-12    256   1.1841e-03     5.7830572915     5.7830572915   7.43e-09
+  T2, eps = 0.05: psi (non-smooth) P7L = 2.7877172896, P7R = 2.7877172896, ||grad psi||_2 = 3.879198; Lipschitz ratio max gap/dist = 0.064
+       delta_n    R_n ||psi_n-psi||    P7 LHS(psi_n)    P7 RHS(psi_n)    max gap
+         1e-02      8   3.7740e-01     2.8548094195     2.8548094195   2.41e-02
+         1e-04     16   1.1912e-01     2.7944462384     2.7944462384   2.41e-03
+         1e-06     32   3.7602e-02     2.7883329521     2.7883329521   2.21e-04
+         1e-08     64   1.1872e-02     2.7877723296     2.7877723296   1.97e-05
+         1e-10    128   3.7490e-03     2.7877221736     2.7877221736   1.75e-06
+         1e-12    256   1.1841e-03     2.7877177219     2.7877177219   1.55e-07
+  T3, eps = 0.5: psi (non-smooth) P7L = 7.5246040727, P7R = 7.5246040727, ||grad psi||_2 = 3.688152; Lipschitz ratio max gap/dist = 0.012
+       delta_n    R_n ||psi_n-psi||    P7 LHS(psi_n)    P7 RHS(psi_n)    max gap
+         1e-02      8   3.1867e-01     7.5264557676     7.5264557676   3.80e-03
+         1e-04     16   1.0048e-01     7.5251372218     7.5251372218   1.19e-04
+         1e-06     32   3.1685e-02     7.5246658901     7.5246658901   8.22e-06
+         1e-08     64   9.9948e-03     7.5246100138     7.5246100138   7.90e-07
+         1e-10    128   3.1536e-03     7.5246046129     7.5246046129   7.18e-08
+         1e-12    256   9.9529e-04     7.5246041209     7.5246041209   6.41e-09
+  T3, eps = 0.3: psi (non-smooth) P7L = 8.7763119484, P7R = 8.7763119484, ||grad psi||_2 = 3.688152; Lipschitz ratio max gap/dist = 0.010
+       delta_n    R_n ||psi_n-psi||    P7 LHS(psi_n)    P7 RHS(psi_n)    max gap
+         1e-02      8   3.1867e-01     8.7828909088     8.7828909088   3.17e-03
+         1e-04     16   1.0048e-01     8.7773669902     8.7773669902   1.20e-04
+         1e-06     32   3.1685e-02     8.7764204849     8.7764204849   1.24e-05
+         1e-08     64   9.9948e-03     8.7763220252     8.7763220252   1.15e-06
+         1e-10    128   3.1536e-03     8.7763128543     8.7763128543   1.03e-07
+         1e-12    256   9.9529e-04     8.7763120290     8.7763120290   9.18e-09
+  T4, eps = 0.5: psi (non-smooth) P7L = 11.7726856566, P7R = 11.7726856566, ||grad psi||_2 = 7.210102; Lipschitz ratio max gap/dist = 0.027
+       delta_n    R_n ||psi_n-psi||    P7 LHS(psi_n)    P7 RHS(psi_n)    max gap
+         1e-02      8   4.9838e-01    11.6146648183    11.6146648183   1.34e-02
+         1e-04     16   4.9953e-02    11.7711193276    11.7711193276   1.33e-04
+         1e-06     32   5.0303e-03    11.7726711330    11.7726711330   1.23e-06
+         1e-08     64   5.1381e-04    11.7726855471    11.7726855471   9.31e-09
+         1e-10    128   5.4614e-05    11.7726856567    11.7726856567   8.95e-11
+         1e-12    256   6.3667e-06    11.7726856567    11.7726856567   2.97e-12
+  T4, eps = 0.05: psi (non-smooth) P7L = 14.9366611641, P7R = 14.9366611641, ||grad psi||_2 = 7.210102; Lipschitz ratio max gap/dist = 0.021
+       delta_n    R_n ||psi_n-psi||    P7 LHS(psi_n)    P7 RHS(psi_n)    max gap
+         1e-02      8   4.9838e-01    14.7821221341    14.7821221341   1.03e-02
+         1e-04     16   4.9953e-02    14.9354609688    14.9354609688   8.04e-05
+         1e-06     32   5.0303e-03    14.9366605801    14.9366605801   7.98e-07
+         1e-08     64   5.1381e-04    14.9366615149    14.9366615149   2.35e-08
+         1e-10    128   5.4614e-05    14.9366611788    14.9366611787   9.81e-10
+         1e-12    256   6.3667e-06    14.9366611646    14.9366611646   3.31e-11
+[PASS] prop7_smooth: Proposition 7: LHS = RHS on every smooth psi_n (4 cases, 2 values of eps, 6 approximants each), worst relative difference 1.1e-12
+[PASS] prop7_nonsmooth: Proposition 7: LHS = RHS on the non-smooth psi itself, worst relative difference 1.1e-12
+[PASS] step3_smooth: Step 3 (chi = theta(r), with the cut-off term) and its limit chi = 1 (comp3): LHS = RHS on every smooth psi_n, worst 7.1e-12
+[PASS] step3_nonsmooth: Step 3 and comp3: LHS = RHS on the non-smooth psi, worst 7.1e-12
+[PASS] prop7_limit: psi_n -> psi in H^1-dot (distance decreasing to under 2 % of ||grad psi||), and all six sides of Proposition 7, Step 3 and comp3 at psi_n converge to their values at psi (max relative gap decreasing, ending under 2 %, and bounded by 0.06 x the distance, a Lipschitz ratio)
+
+== G2.2 Step 3 as printed: f = chi |psi|_eps^(-2/(d-1)) needs grad f in L^d. T4 is in H^1-dot and its grad f is not in L^3 ==
+[PASS] gradf_Ld: int_{10^-(i+1) < r < 10^-i} |grad f|^3 dx for i = 1..8: ['0.58528', '0.58122', '0.58118', '0.58118', '0.58118', '0.58118', '0.58118', '0.58118']. Equal increments per decade mean int_{s<r<1} |grad f|^3 ~ (0.2524) ln(1/s) diverges, so grad f is not in L^3, while ||grad psi||_2^2 = 51.985576 is finite (psi is homogeneous of degree 0 at the origin)
+
+checks: 17 passed, 0 failed []. 239 s, peak resident memory 203 MB
+
+== Controls: each mutation must make its target checks fail ==
+[FIRED] --mutate=mtranspose (M = g psi^T/|psi|^2 (transpose, no conjugate) in place of g psi^+/|psi|^2): exit 1, failed ['m_matrix', 'integral_equation']
+      [FAIL] m_matrix: M psi = g to 2.0e+00 and |M|_op = |g|/|psi| to 7.2e-16 over 2000 complex samples; M is not Hermitian (median |M - M^+|/|M| = 1.41), so the proof cannot use M = M^+
+      [FAIL] integral_equation: (Gamma*(M psi))(x0) = psi(x0) at x0 = (0.3, -0.2, 0.5), relative error: extremal, g = Lambda psi 1.5e+00; generic, M not Hermitian 1.2e+00. For the generic spinor M is visibly non-Hermitian (max |M - M^+| = 5.93); psi ~ r^-2 is in L^p for every p > 3/2
+[FIRED] --mutate=adjoint_drop (chi_eps := G (Gamma*phi) (G taken Hermitian) in place of G^+ (Gamma*phi)): exit 1, failed ['duality', 'audit']
+      [FAIL] duality: chi := G (Gamma* phi): relative defect 2.0e+00 for a general G, 4.4e-16 for Hermitian G (point cloud, 40 nodes, random weights). With G in place of G^+ the general G gives 1.2e+00: the adjoint is what the step needs
+      [FAIL] audit: steps that fail for a general matrix field: ['duality identity, eq. (decomp)']. Steps that pass only with the adjoint: none. Expected: none fail, and the duality identity alone needs the adjoint.
+[FIRED] --mutate=hermpart (bounds |G^+ v| by the norm of the Hermitian part of G): exit 1, failed ['norm_bound']
+      [FAIL] norm_bound: |G^+ v| <= |G|_op |v| over 3000 complex matrices (worst ratio - 1 = 6.7e+00), attained at the top singular vector (1.000000000000001). |G^+| = |G| for the operator norm, so only |G_eps| <= |M| <= |A| enters
+[FIRED] --mutate=gamma_nonherm (replaces sigma_1 by the non-Hermitian sigma_1 + 0.4 i sigma_3): exit 1, failed ['kernel', 'duality', 'h1_step']
+      [FAIL] kernel: Gamma(z)^+ = Gamma(-z) (9.3e-01), |Gamma(z)| = 1/(4 pi |z|^2) (4.0e-01), |sigma.k v| = |k||v| (3.0e+00): three uses of sigma_j^+ = sigma_j, none of them involves the coefficient
+      [FAIL] duality: chi := G^+ (Gamma* phi): relative defect 1.6e-01 for a general G, 2.6e-01 for Hermitian G (point cloud, 40 nodes, random weights). With G in place of G^+ the general G gives 1.3e+00: the adjoint is what the step needs
+      [FAIL] h1_step: int |sigma.grad psi|^2 = int |grad psi|^2 (name, delta, int|grad psi|^2, int|sigma.grad psi|^2, relative difference): T3, 0, 13.6024635005, 13.2078415566, 2.9e-02; T4, 0, 51.9855755874, 50.9334083885, 2.0e-02; T3, 0.01, 13.4491682338, 13.0715195230, 2.8e-02
+[FIRED] --mutate=hls_exp (uses 1/s = 1/r + 1/2 in place of 1/r + 1/3): exit 1, failed ['exponents']
+      [FAIL] exponents: 6754 admissible (p, r) pairs, p and r in (3/2, 12]: s > 1, s <= p, both HLS pairs admissible, the duals consistent; violations 6754. At p = 3, r = 6 are admissible, and 1/2 = 1/3 + 1/6, 2/3 = 1/3 + 1/3 give g in L^2 and L^(3/2)
+[FIRED] --mutate=gamma_i (drops the factor i of the Green's function Gamma = (i/4 pi) sigma.x/|x|^3): exit 1, failed ['integral_equation']
+      [FAIL] integral_equation: (Gamma*(M psi))(x0) = psi(x0) at x0 = (0.3, -0.2, 0.5), relative error: extremal, g = Lambda psi 1.4e+00; generic, M not Hermitian 1.4e+00. For the generic spinor M is visibly non-Hermitian (max |M - M^+| = 6.36); psi ~ r^-2 is in L^p for every p > 3/2
+[FIRED] --mutate=prop7coef (uses 4.1 in place of 4 in the bracket of Proposition 7): exit 1, failed ['planted_extremal', 'prop7_smooth', 'prop7_nonsmooth']
+      [FAIL] planted_extremal: extremal, eps = 0: LHS = 2.4e-30, RHS = -1.5e+00 (both 0 by the twistor equation and the integrals above); eps = 0.3: LHS = 6.2110792866, RHS = 5.9692421910
+      [FAIL] prop7_smooth: Proposition 7: LHS = RHS on every smooth psi_n (4 cases, 2 values of eps, 6 approximants each), worst relative difference 3.6e-01
+      [FAIL] prop7_nonsmooth: Proposition 7: LHS = RHS on the non-smooth psi itself, worst relative difference 3.6e-01
+[FIRED] --mutate=step3coef (uses 1.05 in place of 1 on the cross term of Step 3): exit 1, failed ['step3_smooth', 'step3_nonsmooth']
+      [FAIL] step3_smooth: Step 3 (chi = theta(r), with the cut-off term) and its limit chi = 1 (comp3): LHS = RHS on every smooth psi_n, worst 4.9e-02
+      [FAIL] step3_nonsmooth: Step 3 and comp3: LHS = RHS on the non-smooth psi, worst 4.9e-02
+[FIRED] --mutate=dropt5 (drops the cut-off term (sum over j != k of ... d_j chi) of Step 3): exit 1, failed ['step3_smooth', 'step3_nonsmooth']
+      [FAIL] step3_smooth: Step 3 (chi = theta(r), with the cut-off term) and its limit chi = 1 (comp3): LHS = RHS on every smooth psi_n, worst 3.8e-01
+      [FAIL] step3_nonsmooth: Step 3 and comp3: LHS = RHS on the non-smooth psi, worst 3.7e-01
+[FIRED] --mutate=weakonly (approximants converge to psi in L^p and weakly, not in H^1-dot (an added oscillation of fixed energy)): exit 1, failed ['prop7_limit']
+        T1, eps = 0.5: psi (non-smooth) P7L = 1.9769262240, P7R = 1.9769262240, ||grad psi||_2 = 2.780026; Lipschitz ratio max gap/dist = 0.150
+             delta_n    R_n ||psi_n-psi||    P7 LHS(psi_n)    P7 RHS(psi_n)    max gap
+               1e-02      8   1.0799e+00     2.1710529584     2.1710529584   1.26e-01
+               1e-04     16   1.0048e+00     2.1735634841     2.1735634841   1.51e-01
+               1e-06     32   9.9429e-01     2.1729990449     2.1729990449   1.49e-01
+               1e-08     64   9.9258e-01     2.1728374416     2.1728374416   1.49e-01
+               1e-10    128   9.9224e-01     2.1727990685     2.1727990685   1.49e-01
+               1e-12    256   9.9217e-01     2.1727908033     2.1727908033   1.49e-01
+      [FAIL] prop7_limit: psi_n -> psi in H^1-dot (distance decreasing to under 2 % of ||grad psi||), and all six sides of Proposition 7, Step 3 and comp3 at psi_n converge to their values at psi (max relative gap decreasing, ending under 2 %, and bounded by 0.15 x the distance, a Lipschitz ratio)
+[FIRED] --mutate=smoothf (evaluates grad f for the smooth psi_delta in place of the singular psi): exit 1, failed ['gradf_Ld']
+      [FAIL] gradf_Ld: int_{10^-(i+1) < r < 10^-i} |grad f|^3 dx for i = 1..8: ['0.11314', '0.00057', '0.00000', '0.00000', '0.00000', '0.00000', '0.00000', '0.00000']. Equal increments per decade mean int_{s<r<1} |grad f|^3 ~ (0.0000) ln(1/s) diverges, so grad f is not in L^3, while ||grad psi||_2^2 = 51.985576 is finite (psi is homo
+[FIRED] --mutate=quadbug (weights of the sphere rule off by 1 %): exit 1, failed ['planted_norms']
+      [FAIL] planted_norms: T1: int|grad psi|^2 = 7.805832346108, mpmath 7.728546877334 (relative 1.0e-02). Extremal at eps = 0: int|grad s^(1/2)|^2 = 7.4762253338 (3pi^2/4 = 7.4022033008), int|sigma.grad Psi|^2/s = 22.4286760015 (9pi^2/4 = 22.2066099025), int|grad Psi|^2 = 11.2143380007 (9pi^2/8 = 11.1033049512), worst relative 1.0e-
+[FIRED] --mutate=coarse (4 Gauss nodes per radial panel in place of 16): exit 1, failed ['planted_norms', 'planted_extremal', 'quad_converged']
+      [FAIL] planted_norms: T1: int|grad psi|^2 = 7.728666296843, mpmath 7.728546877334 (relative 1.5e-05). Extremal at eps = 0: int|grad s^(1/2)|^2 = 7.4021839298 (3pi^2/4 = 7.4022033008), int|sigma.grad Psi|^2/s = 22.2068037466 (9pi^2/4 = 22.2066099025), int|grad Psi|^2 = 11.1034018733 (9pi^2/8 = 11.1033049512), worst relative 8.7e-
+      [FAIL] planted_extremal: extremal, eps = 0: LHS = 2.4e-30, RHS = 1.7e-04 (both 0 by the twistor equation and the integrals above); eps = 0.3: LHS = 6.2118491326, RHS = 6.2122557467
+      [FAIL] quad_converged: doubling the radial panels changes every integral of T1 to T4 (both values of eps, non-smooth psi) by at most 1.2e-02 relative; 32x48 against 48x64 sphere rule for T3 and T4 at both values of eps: 2.0e-12
+controls: all fired
+total 848 s, peak resident memory of the main process 203 MB
+# exit status 0

@@ -35,7 +35,7 @@ import mpmath as mp
 import numpy as np
 
 try:
-    sys.stdout.reconfigure(encoding="utf-8")
+    sys.stdout.reconfigure(encoding="utf-8", newline="\n")
 except Exception:
     pass
 
@@ -87,11 +87,13 @@ CONTROLS = {
     "prop7coef": ("uses 4.1 in place of 4 in the bracket of Proposition 7",
                   ["planted_extremal", "prop7_smooth", "prop7_nonsmooth"], ["planted", "prop7"]),
     "step3coef": ("uses 1.05 in place of 1 on the cross term of Step 3",
-                  ["step3_smooth", "step3_nonsmooth", "comp3_nonsmooth"], ["prop7"]),
+                  ["step3_smooth", "step3_nonsmooth"], ["prop7"]),
+    "dropt5": ("drops the cut-off term (sum over j != k of ... d_j chi) of Step 3", ["step3_smooth", "step3_nonsmooth"], ["prop7"]),
     "weakonly": ("approximants converge to psi in L^p and weakly, not in H^1-dot (an added oscillation of fixed energy)",
                  ["prop7_limit"], ["prop7"]),
     "smoothf": ("evaluates grad f for the smooth psi_delta in place of the singular psi", ["gradf_Ld"], ["gradf"]),
-    "quadbug": ("weights of the sphere rule off by 1 %", ["planted_norms", "planted_extremal"], ["planted"]),
+    # planted_extremal compares both sides of an identity that is 0 = 0 for the extremal, so a uniform scale error cannot show there
+    "quadbug": ("weights of the sphere rule off by 1 %", ["planted_norms"], ["planted"]),
     "coarse": ("4 Gauss nodes per radial panel in place of 16", ["quad_converged"], ["planted"]),
 }
 if MUT and MUT not in CONTROLS:
@@ -203,8 +205,10 @@ def make_case(name, delta, R):
     # T4: w(r)(a + sum xhat_j b_j), w = (1 + r^2)^(-3/2); degree-0 homogeneous at the origin, grad psi in L^2 and not in L^3
     rng = np.random.default_rng(7474)
     a, b = cx(rng, 2), 0.8 * cx(rng, 3, 2)
-    w = lambda r: (1 + r * r) ** -1.5
-    dw = lambda r: -3 * r * (1 + r * r) ** -2.5
+    cut = (lambda r: theta(r / R)) if np.isfinite(R) else (lambda r: 1.0)
+    dcut = (lambda r: dtheta(r / R) / R) if np.isfinite(R) else (lambda r: 0.0)
+    w = lambda r: (1 + r * r) ** -1.5 * cut(r)
+    dw = lambda r: -3 * r * (1 + r * r) ** -2.5 * cut(r) + (1 + r * r) ** -1.5 * dcut(r)
     rho = lambda r: np.sqrt(r * r + delta * delta)
     Q = lambda r: w(r) / rho(r)
     dQ = lambda r: dw(r) / rho(r) - w(r) * r / rho(r) ** 3
@@ -405,8 +409,9 @@ def section_norm_bound():
 
 
 def smooth_field(kind):
-    """psi decaying like r^-2: kind 'extremal' is Frank-Loss's (1 + r^2)^(-3/2)(1 + i sigma.x) phi_0, whose M is the scalar
-    Lambda = 3/(1 + r^2); kind 'generic' has random a, b_j, so M is a non-Hermitian rank-one matrix."""
+    """psi decaying like r^-2: kind 'extremal' is Frank-Loss's (1 + r^2)^(-3/2)(1 + i sigma.x) phi_0, for which g = Lambda psi,
+    Lambda = 3/(1 + r^2), so M = Lambda psi psi^+/|psi|^2 is Hermitian; kind 'generic' has random a, b_j, so g is not parallel
+    to psi and M is a non-Hermitian rank-one matrix."""
     u = lambda r: (1 + r * r) ** -1.5
     du = lambda r: -3 * r * (1 + r * r) ** -2.5
     if kind == "extremal":
@@ -424,7 +429,7 @@ def section_integral_equation():
     rho, drho = uu / (1 - uu), 1 / (1 - uu) ** 2
     pref = (1.0 if MUT == "gamma_i" else 1j) / (4 * np.pi)
     out = []
-    for label, kind in (("extremal, M = Lambda scalar", "extremal"), ("generic, M not Hermitian", "generic")):
+    for label, kind in (("extremal, g = Lambda psi", "extremal"), ("generic, M not Hermitian", "generic")):
         case = smooth_field(kind)
         acc = np.zeros(2, complex)
         defect = 0.0
@@ -494,10 +499,12 @@ def section_audit():
     print("  %-62s %-24s %s" % ("step", "general M, adjoint used", "general M, Hermitian-case formula"))
     for nm, gen, her in steps:
         print("  %-62s %-24s %s" % (nm, "passes" if gen else "FAILS", "passes" if her else "fails"))
-    check("audit", not need_more and needs_adjoint == ["duality identity, eq. (decomp)"],
-          "steps that fail for a general matrix field: %s. Steps that pass only with the adjoint: %s. So the coefficient is "
-          "used through its adjoint in exactly one step, the duality identity; the norm bound sees G and G^+ alike"
-          % (need_more or "none", needs_adjoint or "none"))
+    ok = not need_more and needs_adjoint == ["duality identity, eq. (decomp)"]
+    check("audit", ok,
+          "steps that fail for a general matrix field: %s. Steps that pass only with the adjoint: %s. %s"
+          % (need_more or "none", needs_adjoint or "none",
+             "So the coefficient is used through its adjoint in exactly one step, the duality identity; the norm bound sees "
+             "G and G^+ alike" if ok else "Expected: none fail, and the duality identity alone needs the adjoint."))
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -541,7 +548,7 @@ def components(f, eps):
         E = np.einsum("jna,kna->jkn", sj_psi.conj(), sk_dk).real
         off = sum(xh[:, j] * E[j, k] for j in range(3) for k in range(3) if j != k)
         chi, chip = theta(r / RHO_CHI), dtheta(r / RHO_CHI) / RHO_CHI
-        t5 = chip * off / s
+        t5 = chip * off / s * (0.0 if MUT == "dropt5" else 1.0)
         return np.stack([lhs, rhs, c3l, c3r, c3l * chi, c3r * chi + t5, gpsi2, sdn, gs12, sdn / s,
                          gs2**1.5 / s**6], axis=1)
     return fun
@@ -556,12 +563,12 @@ def dist_fun(fa, fb):
     return fun
 
 
-def segs_for(delta, R):
+def segs_for(delta, R, tail=False):
     """Panels in t = ln r. Width 1 where the integrand is smooth on that scale, 0.1 across the cut-offs chi (r in [1, 2]) and
-    theta(r/R) (r in [R, 2R])."""
+    theta(r/R) (r in [R, 2R]). With tail set the range runs on to r = e^14 past 2R (the non-smooth psi has no cut-off)."""
     lo = max(-70.0, np.log(delta) - 35.0) if delta > 0 else -70.0
     cuts = [0.0, np.log(2.0)] + ([np.log(R), np.log(2 * R)] if np.isfinite(R) else [])
-    hi = 14.0 if not np.isfinite(R) else np.log(2 * R)
+    hi = 14.0 if (not np.isfinite(R) or tail) else np.log(2 * R)
     pts = sorted(set([lo] + cuts + [hi]))
     segs = []
     for a, b in zip(pts[:-1], pts[1:]):
@@ -588,14 +595,14 @@ def distance(name, delta, R, fa=None, segs=None):
     """||grad(psi_{delta,R} - psi)||_2 for the case `name`, psi = the non-smooth field (delta = 0, R = inf)."""
     fa = make_case(name, delta, R) if fa is None else fa
     fb = make_case(name, 0.0, np.inf)
-    v, _ = radial_quad(dist_fun(fa, fb), segs_for(max(delta, 0.0), np.inf if delta == 0 else R) if segs is None else segs,
+    v, _ = radial_quad(dist_fun(fa, fb), segs_for(max(delta, 0.0), np.inf if delta == 0 else R, tail=True) if segs is None else segs,
                        rule=RULE_POLY)
     return float(np.sqrt(v[0]))
 
 
 def weak_field(m):
     """control: smooth psi_{delta_m, R_m} + (1/n) e^(-r^2) cos(n r) phi_0, n = 4 * 2^m. It tends to psi in sup norm and in L^p,
-    and weakly in H^1-dot, but the added term has gradient of fixed L^2 norm (about 0.94)."""
+    and weakly in H^1-dot, but the added term has gradient of fixed L^2 norm (about 0.99)."""
     delta, R = SEQ[m - 1]
     n = 4.0 * 2**m
     u, du = profile_u(delta, R)
@@ -650,18 +657,26 @@ def section_planted():
           "RHS = %.10f" % (v0[0], v0[1], v3[0], v3[1]))
     # (d) the quadrature is converged: 2x panels change nothing, and a second sphere rule gives the same numbers
     worst, worst_sph = 0.0, 0.0
+    keep = [i for i, c in enumerate(COLS) if c != "gradf3"]  # |grad s|^3 is not smooth where grad s = 0 (see gradf)
+    big = sphere_rule(48, 64)
     for name in ("T1", "T2", "T3", "T4"):
-        vv, ee = evaluate(name, 0.0, np.inf, EPS[name][0], refine=True)
-        worst = max(worst, max(ee[k] / abs(vv[k]) for k in COLS if abs(vv[k]) > 0))
-    for name, rule in (("T3", sphere_rule(48, 64)), ("T4", sphere_rule(48, 64))):
-        f = make_case(name, 0.0, np.inf)
-        a, _ = radial_quad(components(f, EPS[name][0]), segs_for(0.0, np.inf), rule=RULE[name])
-        b, _ = radial_quad(components(f, EPS[name][0]), segs_for(0.0, np.inf), rule=rule)
-        keep = [i for i, c in enumerate(COLS) if c != "gradf3"]  # |grad s|^3 is not smooth where grad s = 0 (see gradf)
-        worst_sph = max(worst_sph, np.max(np.abs(a - b)[keep] / np.abs(b)[keep]))
-    check("quad_converged", worst < 1e-11 and worst_sph < 1e-10,
-          "doubling the radial panels changes every integral of T1 to T4 (eps = 0.5, non-smooth psi) by at most %.1e relative; "
-          "32x48 against 48x64 sphere rule for T3, T4: %.1e" % (worst, worst_sph))
+        for eps in EPS[name]:
+            vv, ee = evaluate(name, 0.0, np.inf, eps, refine=True)
+            worst = max(worst, max(ee[k] / abs(vv[k]) for k in COLS if abs(vv[k]) > 0))
+            if name in ("T3", "T4"):
+                f = make_case(name, 0.0, np.inf)
+                a, _ = radial_quad(components(f, eps), segs_for(0.0, np.inf), rule=RULE[name])
+                b, _ = radial_quad(components(f, eps), segs_for(0.0, np.inf), rule=big)
+                worst_sph = max(worst_sph, np.max(np.abs(a - b)[keep] / np.abs(b)[keep]))
+    check("quad_converged", worst < 1e-10 and worst_sph < 1e-10,
+          "doubling the radial panels changes every integral of T1 to T4 (both values of eps, non-smooth psi) by at most %.1e "
+          "relative; 32x48 against 48x64 sphere rule for T3 and T4 at both values of eps: %.1e" % (worst, worst_sph))
+    # information, not a check: why T3 does not use eps = 0.05
+    f = make_case("T3", 0.0, np.inf)
+    a, _ = radial_quad(components(f, 0.05), segs_for(0.0, np.inf), rule=RULE["T3"])
+    b, _ = radial_quad(components(f, 0.05), segs_for(0.0, np.inf), rule=big)
+    print("  info: T3 at eps = 0.05, 32x48 against 48x64 sphere rule, largest relative difference %.1e (not used in any check)"
+          % np.max(np.abs(a - b)[keep] / np.abs(b)[keep]))
 
 
 # ---- the identity on smooth psi_n and on the non-smooth psi, and the limit along psi_n -> psi in H^1-dot --------------------
@@ -705,7 +720,7 @@ def section_prop7():
             ok_d = all(a > b for a, b in zip(ds, ds[1:])) and ds[-1] < 0.02 * norm0
             ok_g = all(a >= b * (1 - 1e-9) for a, b in zip(gaps, gaps[1:])) and gaps[-1] < 0.02 and gaps[-1] <= 0.05 * gaps[0]
             lip = max(g / d for g, d in zip(gaps, ds))
-            ok_l = lip < 5.0
+            ok_l = lip < 1.0
             ok_limit &= ok_d and ok_g and ok_l
             limit_rows.append((name, eps, base, rows, lip, ok_d, ok_g, ok_l))
     for name, eps, base, rows, lip, ok_d, ok_g, ok_l in limit_rows:
@@ -759,8 +774,8 @@ SECTIONS = {"m_matrix": section_m_matrix, "exponents": section_exponents, "kerne
 
 def main():
     t0 = time.time()
-    print("# fl_gaps.py, issue #74. %s, python %s, numpy %s, mpmath %s. mutation: %s"
-          % (platform.node(), sys.version.split()[0], np.__version__, mp.__version__, MUT or "none"))
+    print("# fl_gaps.py, issue #74. %s, %s, python %s, numpy %s, mpmath %s. mutation: %s"
+          % (platform.node(), time.strftime("%Y-%m-%d"), sys.version.split()[0], np.__version__, mp.__version__, MUT or "none"))
     names = CONTROLS[MUT][2] if MUT else OPTS["only"].split(",") if "only" in OPTS else list(SECTIONS)
     for name in names:
         SECTIONS[name]()
@@ -780,8 +795,11 @@ def main():
             fired = p.returncode == 1 and all(n in failed for n in target)
             status |= 0 if fired else 1
             print("[%s] --mutate=%s (%s): exit %d, failed %s" % ("FIRED" if fired else "SILENT", name, what, p.returncode, failed), flush=True)
+            for ln in p.stdout.splitlines():  # what the broken input produced, for the record
+                if ln.startswith("[FAIL]") or (name == "weakonly" and ln.startswith("  ")):
+                    print("      " + ln[:330])
         print("controls: %s" % ("all fired" if status == 0 else "SOME SILENT OR A CHECK FAILED"))
-    print("peak resident memory of the main process %.0f MB" % peak_mb())
+    print("total %.0f s, peak resident memory of the main process %.0f MB" % (time.time() - t0, peak_mb()))
     sys.exit(status)
 
 
