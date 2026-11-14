@@ -1,6 +1,7 @@
 # Can a phantom scalar source the Alcubierre metric?
 
-November 2026, issue [#57](https://github.com/nmoinvaz/negative-mass/issues/57). Script
+November 2026, issues [#57](https://github.com/nmoinvaz/negative-mass/issues/57) and
+[#61](https://github.com/nmoinvaz/negative-mass/issues/61) (the accelerating bubble). Script
 [`phantom_source.py`](phantom_source.py), its stdout [`phantom_source_output.txt`](phantom_source_output.txt).
 
 Status words: **proved** (by hand), **checked symbolically** (sympy, exact, with a control that fails), **numerical
@@ -14,16 +15,29 @@ and for any value of V. The test fails at its first, algebraic stage, since no �
 sign, closure and potential conditions are never reached.
 
 Every C² profile with f(0) = 1 that decays at infinity has f′ ≠ 0 on an open interval of r_s. So no (φ, V) sources
-the metric, and the conditions fail at every point of the bubble wall, the set where f′(r_s) ≠ 0.
+the metric, and the conditions fail at every point of the bubble wall, the set where f′(r_s) ≠ 0. A C² profile means
+that f(r_s) is C² on ℝ³, which forces f′(0) = 0 (**proved**, in "Setup"), so the centre r_s = 0 is not in the wall.
+
+The answer is the same for an accelerating bubble, b = −v_s(t) f(r_s) with r_s² = (x − x_s(t))² + y² + z² and any
+v_s(t) and x_s(t) (**checked symbolically**, in "An accelerating bubble"). There the test fails wherever
+v_s(t) f′(r_s) ≠ 0. Off the axis, the identities and so the lemma hold for any shift b(t, x, ρ) axisymmetric about the
+direction of motion, and the test fails wherever its R_ab ≠ 0.
 
 The obstruction is two identities of the Ricci tensor that hold for every profile, and a five-line lemma. Prior work
 that overlaps, the Type IV maps of [Rod26] and [Le26] and the fluid results for u = n, is cited after the lemma.
 
 ## Setup
 
-The metric is Alcubierre's Eq. (8) [Alc94], with constant v = v_s,
+The metric is Alcubierre's Eq. (8) [Alc94]. There the bubble's centre follows x_s(t), with v_s(t) = dx_s/dt and
+r_s² = (x − x_s(t))² + y² + z². Up to "An accelerating bubble", v = v_s is constant and x_s = v t,
 
     ds² = −dt² + (dx − v f(r_s) dt)² + dy² + dz²,    r_s² = (x − v t)² + y² + z².
+
+A profile is C² when f(r_s) is C² on ℝ³. Then f′(0) = 0, meaning f′(r) → 0 as r → 0⁺ (**proved**). On the axis,
+g(s) = f(|s|) is C¹, with g′(s) = f′(s) for s > 0 and g′(s) = −f′(−s) for s < 0. Continuity of g′ at s = 0 gives
+f′(0) = −f′(0), so f′(0) = 0. Only C¹ is used. So the centre r_s = 0, where θ and the table's s and c below are
+undefined, is never a point where f′(r_s) ≠ 0. Alcubierre's tanh profile and the bump of "Explicit profiles" are even
+in r and C² on ℝ³.
 
 The scalar has T_ab = ε(∂_aφ ∂_bφ − ½ g_ab (∇φ)²) − g_ab V(φ), and G_ab = 8π T_ab gives
 R_ab = 8π(ε ∂_aφ ∂_bφ + V g_ab). A cosmological constant is a constant in V.
@@ -61,7 +75,8 @@ With w(r) = v(1 − f(r)), the shift in the comoving coordinate ξ = x − v t, 
 The lab-coordinate computation and the comoving spherical one agree at 24 exact rational points, with random v and
 jets (`ricci_xcheck`).
 
-Two identities follow, for every C² profile and every v.
+Two identities follow, for every C² profile and every v. "An accelerating bubble" extends both to a time-dependent
+v_s(t) and x_s(t).
 
 - **(I1)** R(e_ϕ, ·) = 0.
 - **(I2)** R_00 + R_11 + 2 R_ρρ = 0.
@@ -113,6 +128,44 @@ of the equatorial cut Type I ([prior_work.md](prior_work.md), discrepancy 4). A 
 fluid (Type I, or II for a null flow) cannot be the source at a Type IV point, so these maps already exclude both at
 their Type IV points ([prior_work.md](prior_work.md) §1–2).
 
+## An accelerating bubble
+
+[Alc94]'s journey starts and ends at rest, v_s = 0, so its bubble accelerates. Section 6 of the script (#61) takes
+
+    ds² = −dt² + (dx + b dt)² + dy² + dz²,    b = −v_s(t) f(r_s),    r_s² = (x − x_s(t))² + y² + z²,
+
+with v_s(t) and x_s(t) independent free functions. Alcubierre's v_s = dx_s/dt is a special case. It also takes a
+general shift b(t, x, ρ), not assumed even in ρ, off the axis. The frame is the one above, E_0 = ∂_t − b ∂_x = n,
+E_1 = ∂_x, e_ρ and e_ϕ. The Ricci tensor comes from `ricci` with the jets of v_s, x_s and f, or of b, as free symbols
+(route D). Time derivatives enter it. For the bubble the frame Ricci tensor contains v_s′ and x_s′, both already in
+R_00, and for the general shift it contains ∂_t∂_x b and ∂_t∂_ρ b.
+
+The results, each an exact identity in the jets and the point (**checked symbolically**), are these.
+
+- (I1) and (I2) hold for the general shift (`gen_I1`, `gen_I2`) and for the bubble (`accel_I1`, `accel_I2`).
+- R_ρρ = ½(∂_ρb)² for the general shift (`gen_Rrr`), which for the bubble is v_s² f′² ρ²/(2r_s²).
+- On the axis, R(E_2, ·) = R(E_3, ·) = 0, R_00 + R_11 = 0 (`accel_axis`) and R_01 = v_s(t) f′(r_s)/r_s
+  (`accel_wall`, with R_ρρ off the axis).
+
+#59 derived the same by hand from Cartan's structure equations, for any b(t, x, y, z) and then any axisymmetric one
+([review.md](review.md) §1 and gap 6). Its `review_cartan.py` checks (I1) and (I2) for b = G(t, x, y² + z²) with
+code that shares only sympy with this script (`axi_I1`, `axi_I2`, `axi_axis`).
+
+The lemma is pointwise, so its application carries over unchanged. At every point where R_ab ≠ 0, no (φ, V) of
+either sign, and no perfect fluid, gives the Ricci tensor. For the bubble, R_ab ≠ 0 wherever v_s(t) f′(r_s) ≠ 0,
+off the axis through R_ρρ and on it through R_01.
+
+Route D's time derivatives are tested on planted truth. Route E evaluates g and its first and second derivatives
+with sympy's own diff of explicit functions, then the Christoffel formula in exact rationals, at a point. It shares
+only the metric's definition, `shift_metric`, with route D. For f = 1/(1 + r³), v_s = (1 + t)/(1 + t²),
+x_s = t³/3 + t/2 and b = (t² + x) ρ/(2 + ρ² + t x²), the two routes agree in every frame component at 6 exact points
+each (`accel_xcheck`, `gen_xcheck`).
+
+The controls fire. Dropping every t-derivative from the jets breaks both cross-checks (`--mutate=accel-static`). A
+lapse 1 + b breaks (I1), (I2), the axis identities and the wall curvature (`--mutate=accel-lapse`). Rotating
+(e_ρ, e_ϕ) by α, tan(α/2) = 1/20, breaks (I1), (I2) and R_ρρ (`--mutate=accel-rotate`). Doubling ∂_ρb and v_s on the
+expected side breaks `gen_Rrr` and `accel_wall` (`--mutate=accel-wall-v2`).
+
 ## Explicit profiles, through the control's code path
 
 The same function that passes the control, `scalar_form`, was run at exact points of three kinds, with ε = −1 and
@@ -141,7 +194,7 @@ deformed by a⁴/(l² + a²), the algebraic check fires (`--mutate=eb-deform`).
 ## Checks and controls
 
 Each check has a control that breaks its input once. The script runs every control after the checks and confirms that
-its target check fails. All 13 checks pass and all 10 controls fire (`phantom_source_output.txt`).
+its target check fails. All 22 checks pass and all 14 controls fire (`phantom_source_output.txt`).
 
 | check | what it tests | control `--mutate=` | the control's change |
 |---|---|---|---|
@@ -158,6 +211,15 @@ its target check fails. All 13 checks pass and all 10 controls fire (`phantom_so
 | `eb_closed` | du = 0 | `eb-unclosed` | u times 1 + cos²θ |
 | `eb_potential` | dφ = u and dV ∧ dφ = 0 | `eb-potential` | V + t/(8π a³) |
 | `eb_residual` | G_ab − 8π T_ab = 0 | `eb-residual` | φ times 11/10 |
+| `gen_xcheck` | route D for b(t, x, ρ) equals route E at 6 points | `accel-static` | no t-derivatives in the jets |
+| `accel_xcheck` | route D for the bubble equals route E at 6 points | `accel-static` | the same |
+| `gen_I1` | (I1) for b(t, x, ρ) | `accel-rotate`, `accel-lapse` | (e_ρ, e_ϕ) rotated; lapse 1 + b |
+| `gen_I2` | (I2) for b(t, x, ρ) | `accel-rotate`, `accel-lapse` | the same |
+| `gen_Rrr` | R_ρρ = ½(∂_ρb)² | `accel-wall-v2`, and both above | 2∂_ρb in the expected value |
+| `accel_I1` | (I1) for the accelerating bubble | `accel-rotate`, `accel-lapse` | (e_ρ, e_ϕ) rotated; lapse 1 + b |
+| `accel_I2` | (I2) for the accelerating bubble | `accel-rotate`, `accel-lapse` | the same |
+| `accel_axis` | the bubble's identities on the axis | `accel-lapse` | lapse 1 + b |
+| `accel_wall` | the bubble's R_ρρ off the axis and R_01 on it | `accel-wall-v2`, and both above | 2v_s in the expected values |
 
 From the repository root, in the environment of [`setup.md`](../../setup.md):
 
@@ -174,15 +236,24 @@ the jets (w, w′, w″) or (f, f′, f″). A rational expression is shown to v
 irreducible, so a zero remainder is exact vanishing. The lemma is by hand. The step from the two to the answer is the
 paragraph after the lemma.
 
-Trusted: sympy 1.14.0 and the routine `ricci`, which the lab and spherical routes share. It is tested by the 3+1
-route's agreement on ρ_E, by the cross-check between the two coordinate systems and by the control's R_ll. The 3+1 route
-shares only the chain-rule derivative `D` with the lab route.
+For the accelerating bubble, the code proves (I1), (I2), the axis identities and the two wall-curvature formulas as
+exact identities in the point and the jets v_s, v_s′, x_s′, f, f′ and f″, the only ones its Ricci tensor contains, by
+the same remainder modulo r_s² − (x − x_s)² − y² − z². For b(t, x, ρ) it proves (I1), (I2) and R_ρρ = ½(∂_ρb)² at
+ρ > 0, as identities in the jets of b up to second order, by the remainder modulo ρ² − y² − z², which is irreducible
+too.
 
-Assumed: one real, minimally coupled scalar with T_ab as above, G_ab = 8π T_ab, a C² profile and a constant v.
+Trusted: sympy 1.14.0 and the routine `ricci`, which the lab, spherical and section 6 routes share. It is tested by
+the 3+1 route's agreement on ρ_E, by the cross-check between the two coordinate systems, by the control's R_ll and by
+route E. The 3+1 route shares only the chain-rule derivative `D` with the lab route. Route E shares only the metric's
+definition `shift_metric` with route D, and neither `ricci` nor the jet derivative `JetD`.
 
-Not covered: a time-dependent v_s(t), two or more scalars, non-minimal coupling, and matter whose Ricci tensor is
-not of the form λ g_ab + s u_a u_b. A normal plus a
-phantom scalar give R_ab − λ g_ab of rank 2 with mixed signs, which the lemma does not exclude.
+Assumed: one real, minimally coupled scalar with T_ab as above, G_ab = 8π T_ab, and a profile with f(r_s) C² on ℝ³.
+Up to "An accelerating bubble", v is constant. There the shift b is C², with unit lapse and flat slices.
+
+Not covered: a bubble whose path is not a straight line, a shift that is not axisymmetric about the direction of
+motion, a lapse other than 1 or curved slices (with the lapse 1 + b, (I1) and (I2) fail), two or more scalars,
+non-minimal coupling, and matter whose Ricci tensor is not of the form λ g_ab + s u_a u_b. A normal plus a phantom
+scalar give R_ab − λ g_ab of rank 2 with mixed signs, which the lemma does not exclude.
 
 The answer rests on computer algebra, so it should get an independent review before it is relied on.
 
@@ -195,7 +266,9 @@ fluid, not a scalar.
 
 - [Alc94] M. Alcubierre, "The warp drive: hyper-fast travel within general relativity", Class. Quantum Grav. 11, L73
   (1994), arXiv:gr-qc/0009013, doi:10.1088/0264-9381/11/5/001. Checked on 2026-11-13 against the arXiv abstract page
-  and PDF (Eqs. (6), (8), (10) and (19) read there) and IOP's article page.
+  and PDF (Eqs. (6), (8), (10) and (19) read there) and IOP's article page. For #61, the unnumbered definitions of
+  v_s(t) = dx_s/dt and r_s(t) after Eqs. (2)–(5), and the journey that starts and ends with v_s = 0, were read in the
+  arXiv source on 2026-11-13.
 
 The entries below are those of [`../literature.md`](../literature.md), "Warp drives", whose journal data were checked
 against INSPIRE and arXiv identifiers against arXiv for #60.
