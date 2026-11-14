@@ -67,7 +67,8 @@ LY_CFG = "--part=ly --L=10 --N=32"
 MUTATIONS = {  # name: (what it breaks, the run's options, the checks that must fail)
     "half": ("drops the 1/2 in B (witten2 and witten4) in the FFT operator",
              "--part=dense,regress63,planted --L=10 --N=40", ["dense", "regress63", "planted_pm_i"]),
-    "conj": ("Gram operator uses v instead of conj(v)", "--part=dense,planted --L=10 --N=40", ["dense", "planted_pm_i"]),
+    "conj": ("Gram operator uses v instead of conj(v); only dense sees it, a zero of A is a zero of any (I + w T) A",
+             "--part=dense", ["dense"]),
     "adj": ("treats the anti-Hermitian B of ly as Hermitian in M^H", "--part=adjoint", ["adjoint"]),
     "bscale": ("scales B of witten2 by 11/10", "--part=sectors", ["sectors"]),
     "rot": ("scans the planted tau along the imaginary axis", "--part=planted --L=10 --N=40 --tmax=3", ["planted_real"]),
