@@ -44,6 +44,35 @@ def lower_priority():
 
 lower_priority()
 
+
+def peak_mb():
+    """Peak resident memory of this process in MB (reported, never acted on)."""
+    try:
+        if os.name == "nt":
+            import ctypes
+            from ctypes import wintypes
+
+            class PMC(ctypes.Structure):
+                _fields_ = [("cb", wintypes.DWORD), ("PageFaultCount", wintypes.DWORD),
+                            ("PeakWorkingSetSize", ctypes.c_size_t), ("WorkingSetSize", ctypes.c_size_t),
+                            ("QuotaPeakPagedPoolUsage", ctypes.c_size_t), ("QuotaPagedPoolUsage", ctypes.c_size_t),
+                            ("QuotaPeakNonPagedPoolUsage", ctypes.c_size_t), ("QuotaNonPagedPoolUsage", ctypes.c_size_t),
+                            ("PagefileUsage", ctypes.c_size_t), ("PeakPagefileUsage", ctypes.c_size_t)]
+
+            pmc = PMC()
+            pmc.cb = ctypes.sizeof(PMC)
+            k32 = ctypes.windll.kernel32
+            k32.GetCurrentProcess.restype = wintypes.HANDLE
+            ctypes.windll.psapi.GetProcessMemoryInfo.argtypes = [wintypes.HANDLE, ctypes.POINTER(PMC), wintypes.DWORD]
+            ctypes.windll.psapi.GetProcessMemoryInfo(k32.GetCurrentProcess(), ctypes.byref(pmc), pmc.cb)
+            return pmc.PeakWorkingSetSize / 2**20
+        import resource
+        r = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        return r / 2**20 if sys.platform == "darwin" else r / 2**10
+    except Exception:
+        return float("nan")
+
+
 OPTS = dict(a[2:].split("=", 1) if "=" in a else (a[2:], "1") for a in sys.argv[1:] if a.startswith("--"))
 MUT = OPTS.get("mutate", "")
 # name: (what it breaks, checks that must fail, sections it runs)
@@ -484,7 +513,8 @@ def main():
     for name in names:
         SECTIONS[name]()
     fails = [n for n, ok in RESULTS if not ok]
-    print("\nchecks: %d passed, %d failed %s. %.0f s" % (len(RESULTS) - len(fails), len(fails), fails, time.time() - t0))
+    print("\nchecks: %d passed, %d failed %s. %.0f s, peak resident memory %.0f MB"
+          % (len(RESULTS) - len(fails), len(fails), fails, time.time() - t0, peak_mb()))
     if MUT:
         target = CONTROLS[MUT][1]
         print("control %s: targets %s %s" % (MUT, target, "FIRED" if all(n in fails for n in target) else "SILENT"))

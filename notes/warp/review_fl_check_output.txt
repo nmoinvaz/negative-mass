@@ -1,0 +1,73 @@
+# notes/warp/review_fl_check.py output, issue #68
+# win (Windows laptop, surface-laptop-4), 2026-11-13; Python 3.14.10, numpy 2.5.4, scipy 1.18.1, sympy 1.14.0
+# One run from the repository root, one thread (OMP_NUM_THREADS=1), below-normal priority, no other load of mine:
+#   python notes/warp/review_fl_check.py
+# The checks took 125 s, the eight controls the rest (about 6 min in all). Peak resident memory is the script's own
+# report (PeakWorkingSetSize of the main process).
+
+review_fl_check.py, issue #68. numpy 2.5.4, scipy 1.18.1, sympy 1.14.0, python 3.14.10. mutation: none
+
+== 1. Reduction of D~ on C^4 to two Pauli equations (section 2), random complex data ==
+[PASS] reduction: w + iu = sigma.grad psi - tau psi/2 and w - iu = sigma.grad chi + tau chi/2, and the inverse map, 400 samples, real and complex tau (worst 2.0e-15, 1.3e-15)
+[PASS] reduction_norms: |psi|^2 + |chi|^2 = 2|eps|^2 (worst 7.1e-15)
+[PASS] block_form: in the coordinates (w + iu, w - iu), D = diag(S, S) and B_1 = diag(-M, +M) with S = sigma.grad and M = tau_1/2, so T_1 = D^-1 B_1 is -S^-1 M on psi and +S^-1 M on chi (worst 1.8e-15)
+
+== 2. Pointwise identity of section 8, and D E = delta for E = gamma.x/(4 pi |x|^3) (section 3) ==
+[PASS] clifford: g0 anti-Hermitian with g0^2 = -1, g^j Hermitian, {g0, g^j} = 0, {g^i, g^j} = 2 delta, g0 g^j Hermitian
+[PASS] divxi: 2 Re<eps, g0 D~ eps> = d_j xi^j - tau|eps|^2 at 40 points, residual 7.5e-15 of size 1.6e+01
+[PASS] greens_kernel: d_j(x_k/r^3) is symmetric and div(x/r^3) = 0 off the origin; the flux of the kernel through a sphere is 1.000, so D E = delta (D^2 = Laplacian by the Clifford relations)
+[PASS] kernel_norm: the operator norm of gamma.x is |x|, so |E(x)| = 1/(4 pi |x|^2)
+
+== 3. S_3, the Frank-Loss appendix pair, ||A||_3^2 = 3 S, kappa_K(tau_1 = 6/(1+r^2)) = sqrt(3) ==
+[PASS] sobolev_const: Aubin-Talenti ratio 5.477904089531, (3/4)|S^3|^(2/3) = 5.477904089531, 3 (pi/2)^(4/3) used = 5.477904089531; other trial functions give ['8.1621', '6.0609', '6.5369']
+[PASS] fl_pair: sigma.(-i grad) Psi = (3 s/(1+r^2)) Psi for Psi = (1+r^2)^(-3/2)(1 + i s sigma.x) phi0, s = +-1, phi0 arbitrary: so sigma.grad Psi = (i s tau_1/2) Psi, a zero mode of the psi equation at v = i s with tau_1 = 6/(1+r^2)
+[PASS] fl_norm: ||3/(1+r^2)||_3^2 = 16.4337122686, 3 S = 16.4337122686; kappa_K(v = 1) = 1.7320508076, sqrt 3 = 1.7320508076, so sqrt3 v_c = 1
+
+== 4. Frank-Loss Proposition 7 at d = 3, as quoted in section 4, for 2- and 4-component spinors ==
+[PASS] prop7: Pauli, N = 2: LHS = 13.1688008462, RHS = 13.1688008462, relative difference at N = 64 and 88: ['-2.7e-10', '1.1e-12']
+[PASS] prop7_4x4: 4x4 gammas of mass_bounds.md, N = 4: LHS = 28.2747184016, RHS = 28.2747184017, relative difference at N = 64 and 88: ['-3.1e-11', '-4.8e-12']
+
+== 5. Planted case tau_1 = 6/(1+r^2): eigenvalues of T_1 from the radial ODE, no grid ==
+   T_1 is -S^-1 M on psi and +S^-1 M on chi (section 1), so lambda = i/ell for sigma.(-i grad) psi = ell W psi,
+   W = tau_1/2 = 3/(1+r^2), and |lambda| = 1/|ell|. Roots ell of the matching determinant, sectors k = j + 1/2.
+  k = 1: ell = 1.0000000000, 1.6666666667, 2.3333333333, 3.0000000000, 3.6666666667
+        (2k + 1 + 2m)/3 = 1.0000000000, 1.6666666667, 2.3333333333, 3.0000000000, 3.6666666667
+  k = 2: ell = 1.6666666667, 2.3333333333, 3.0000000000, 3.6666666667
+        (2k + 1 + 2m)/3 = 1.6666666667, 2.3333333333, 3.0000000000, 3.6666666667
+  k = 3: ell = 2.3333333333, 3.0000000000, 3.6666666667
+        (2k + 1 + 2m)/3 = 2.3333333333, 3.0000000000, 3.6666666667
+  k = 4: ell = 3.0000000000   ((2k + 1)/3 = 3.0000000000)
+  k = 5: ell = 3.6666666667   ((2k + 1)/3 = 3.6666666667)
+  k = 6: ell = 4.3333333333   ((2k + 1)/3 = 4.3333333333)
+[PASS] planted_ode: real roots ell_{k,m} = (2k + 1 + 2m)/3 in sectors k = 1..6 to 1.4e-12 (the Dirac eigenvalues +-(3/2 + n) of the round S^3, ell = (2/3)(3/2 + n)); smallest |ell| = 1.000000000000, so rho(T_1) = 1/min|ell| = 1.000000000000
+  winding numbers of the matching determinant: k = 1, |ell| = 0.95 -> 0.0000, 1.3 -> 2.0000; k = 2, |ell| = 1.4 -> 0.0000, 1.95 -> 2.0000
+[PASS] planted_nocomplex: argument principle: no root of the k = 1 determinant in |ell| < 0.95 and two (ell = +-1) in |ell| < 1.3; none of the k = 2 determinant in |ell| < 1.4 and two (+-5/3) in |ell| < 1.95, so no complex eigenvalue in these discs
+
+== 6. T_1 eps = lambda eps for the planted zero mode, D^-1 = convolution with E = gamma.x/(4 pi|x|^3) ==
+[PASS] planted_greens: D^-1(B_1 eps)(x0) = E*(B_1 eps)(x0) = lambda eps(x0), lambda = 0.0000000000+1.0000000000i (expected +1i), residual 5.5e-16; eps = Frank-Loss zero mode, in H^1-dot and L^3, x0 = [ 0.3 -0.2  0.5]
+
+== 7. Section 8 sector by sector ==
+[PASS] sector_identity: for real v and tau_1: 2 Re<psi, (sigma.grad - v tau_1/2) psi> = d_j(psi^+ sigma_j psi) - v tau_1 |psi|^2, so a Pauli zero mode with psi in L^3 has v int tau_1 |psi|^2 = 0, for psi and for chi separately (residual 1.8e-15)
+
+== 8. The v_c table of frank_loss.md with the sqrt 3 extension ==
+  sigma R =  2: v_c = 3.74490 (note 3.74490), sqrt3 v_c = 6.48636 (note 6.48636), thin wall x sqrt3 = 6.82624 (note 6.82624)
+  sigma R =  4: v_c = 2.47097 (note 2.47097), sqrt3 v_c = 4.27985 (note 4.27985), thin wall x sqrt3 = 4.30026 (note 4.30026)
+  sigma R =  8: v_c = 1.56243 (note 1.56243), sqrt3 v_c = 2.70621 (note 2.70621), thin wall x sqrt3 = 2.70900 (note 2.70900)
+  sigma R = 16: v_c = 0.98503 (note 0.98503), sqrt3 v_c = 1.70612 (note 1.70612), thin wall x sqrt3 = 1.70656 (note 1.70656)
+[PASS] v_c: v_c, sqrt3 v_c and the thin-wall column agree with the table to its printed digits (worst difference 4.6e-06)
+
+== 9. Frank-Loss inequality near the extremal (Remark 4 form): ||a||_3^2 vs 3 S, a = |sigma.grad psi|/|psi| ==
+[PASS] fl_local_min: ||a||_3^2 - 3 S at delta = 0, +-0.05, +-0.1: ['+0.00e+00', '+1.34e-01', '+1.34e-01', '+5.31e-01', '+5.34e-01'] (3 S = 16.433712). Zero at the extremal, positive on both sides, quadratic: excess(0.1)/excess(0.05) = 3.97, excess(0.05)/excess(-0.05) = 1.00
+
+checks: 18 passed, 0 failed []. 125 s, peak resident memory 781 MB
+
+== Controls: each mutation must make its target checks fail ==
+[FIRED] --mutate=g0block (flips the lower block of gamma^0): exit 1, failed ['reduction', 'block_form', 'clifford', 'divxi']
+[FIRED] --mutate=half (drops the 1/2 of B = (1/2) tau gamma^0): exit 1, failed ['planted_ode', 'planted_greens']
+[FIRED] --mutate=ode (uses (2 + k)/r in place of (1 + k)/r in the radial system): exit 1, failed ['planted_ode']
+[FIRED] --mutate=sobolev (uses 21/20 of the sharp Sobolev constant): exit 1, failed ['sobolev_const', 'fl_norm']
+[FIRED] --mutate=greens (uses 1/(2 pi) in the kernel gamma.x/(4 pi |x|^3)): exit 1, failed ['greens_kernel', 'planted_greens']
+[FIRED] --mutate=prop7 (replaces 4 - 3|psi|^2/|psi|_eps^2 by 4.1 - 3|psi|^2/|psi|_eps^2): exit 1, failed ['prop7', 'prop7_4x4']
+[FIRED] --mutate=vcthree (uses 2 pi int r^2 |f'|^3 in place of pi int r^2 |f'|^3): exit 1, failed ['v_c']
+[FIRED] --mutate=extremal (drops the derivative of (1 + i sigma.x) from the extremal's gradient): exit 1, failed ['fl_local_min']
+controls: all fired
