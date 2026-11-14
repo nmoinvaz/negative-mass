@@ -124,9 +124,11 @@ G^a_b differs from R^a_b by a multiple of the identity, so it has the same compl
 Hawking–Ellis Type IV there. [Rod26] finds Type IV along the whole axis, numerically, for one parameter set. On the
 axis ρ_n = S_∥ = 0, so [Le26]'s criterion 2|j| > |ρ_n + S_∥| holds wherever j ≠ 0. Off the axis, [Le26] finds the
 sampled wall Type IV except at 1.3 % of points at v = 0.5 and 24.9 % at v = 2.5, while [Rod26] finds the wall annulus
-of the equatorial cut Type I ([prior_work.md](prior_work.md), discrepancy 4). A scalar (Type I or II) or a perfect
-fluid (Type I, or II for a null flow) cannot be the source at a Type IV point, so these maps already exclude both at
-their Type IV points ([prior_work.md](prior_work.md) §1–2).
+of the equatorial cut Type I ([prior_work.md](prior_work.md), discrepancy 4). The two agree: #64
+([he_type.md](he_type.md)) gives the type in closed form, and the Type I set is a thin band at the equator in the
+middle of the wall, whose equatorial cut is Rodal's annulus and whose volume is Le's fraction. A scalar (Type I or
+II) or a perfect fluid (Type I, or II for a null flow) cannot be the source at a Type IV point, so these maps already
+exclude both at their Type IV points ([prior_work.md](prior_work.md) §1–2).
 
 ## An accelerating bubble
 

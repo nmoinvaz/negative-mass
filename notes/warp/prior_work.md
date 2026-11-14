@@ -133,9 +133,11 @@ while the contraction bound keeps κ_K < 1.
    the notes should say so when they cite [LV04a].
 4. [Rod26] find the equatorial wall annulus Type I, while [Le26] find the Alcubierre wall 98.7 % non-Type-I at
    v = 0.5. Their parameters and wall masks differ, and neither gives a closed form. An analytic type map from (I1)
-   and (I2) would settle it (recommended task C in the #60 summary).
+   and (I2) would settle it (recommended task C in the #60 summary). Settled by #64 ([he_type.md](he_type.md)): the
+   Type I set is a thin band at the equator in the middle of the wall. Rodal's annulus is its equatorial cut, and
+   Le's 1.3 % its volume at Le's speed and wall (closed form 1.15 %, *numerical evidence*).
 5. phantom_source.md says the perfect-fluid corollary "has not been compared with the literature", and mass_bounds.md
-   says the prior work "has not been read". Both are now out of date. This task does not edit those files.
+   says the prior work "has not been read". Both were updated after #60, at b962f65.
 
 ## Search log
 
