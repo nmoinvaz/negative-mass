@@ -183,6 +183,8 @@ finite multiplicity that accumulate only at 0, and λ ≠ 0 is an eigenvalue iff
 
 Whether E is empty for the tanh profile is not proved. The numerics of §9 find no real eigenvalue among the largest ones,
 and #75's box-free spectrum ([tanh_spectrum.md](tanh_spectrum.md) §5) finds none in a window about three times wider.
+#69's s_min scan of the grid operator ([zero_modes.md](zero_modes.md)) finds no real zero mode up to 10 v_c at two boxes,
+inside that window.
 
 ## 8. A zero mode at real v has ∫ tr K |ε|² = 0 (*proved*, by hand; the pointwise identity *checked symbolically*)
 
@@ -200,7 +202,7 @@ kernel at any real v, and the Witten spinor exists and is unique for every ampli
 
 The same identity explains why FL's extremal τ = 6/(1 + r²) > 0 reaches the bound only at imaginary v (§4). For real v
 and sign-changing τ the first zero-mode speed, if there is one, can lie above √3 v_c. For the tanh profile the grid
-operator has none up to 4 v_c (§9).
+operator has none up to 4 v_c (§9), and none up to 10 v_c in #69's longer scan ([zero_modes.md](zero_modes.md)).
 
 ## 9. Numerics (*numerical evidence*)
 
@@ -309,7 +311,8 @@ restart 20; 1.55 GiB for the scan.
   is cited, not re-derived.
 - Existence and uniqueness hold for every real v outside a discrete set E ⊂ {|v| ≥ √3 v_c}, *proved* by hand. For the
   tanh profile at σR = 2 and 4 the grid operator has no real zero mode up to 4 v_c, and none of its 24 largest
-  eigenvalues is real (*numerical evidence*). #75 widens this without a box to about 12 v_c and 10 v_c, given that the
+  eigenvalues is real (*numerical evidence*). #69's grid scan finds none up to 10 v_c ([zero_modes.md](zero_modes.md)),
+  and #75 widens this without a box to about 12 v_c and 10 v_c, given that the
   leading eigenvalue keeps falling with J_z ([tanh_spectrum.md](tanh_spectrum.md) §5). That E is empty for the tanh
   profile is a *conjecture*.
 - The √3 is the best this route gives for complex amplitudes (the planted case attains it), but not necessarily for
