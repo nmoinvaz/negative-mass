@@ -1,0 +1,259 @@
+# notes/warp/tanh_spectrum.py output, issue #75
+# dh170 (Fedora Linux, 8 cores, 31 GiB), 2026-11-13; Python 3.14.10, numpy 2.5.4, scipy 1.18.1, sympy 1.14.0
+# Each section is one run from the repository root under `nice -n 10 /usr/bin/time -v`, OMP_NUM_THREADS=1 and at most four
+# processes, with the command below. Of the time -v block only the wall time and the maximum resident set size of the main
+# process are kept; the per-sector peak resident memory of the workers is in the lines of the tanh part.
+# The first section ran at script commit a0040eb, the other two at a1d0578, which only adds the `conv` part and the
+# docstring lines that name it. --raw writes the eigenvalue arrays of the tanh and conv parts to negative-mass-raw,
+# folder I75-dh170, where the logs, the arrays and the runs of frank_loss.py quoted in tanh_spectrum.md also are.
+# The first full run, whose real_identity check failed in six sectors, is kept there as first-run/ and described in
+# tanh_spectrum.md.
+
+######## python notes/warp/tanh_spectrum.py --raw=../negative-mass-raw/I75-dh170
+== reduce: D~ = D + v B1 in the coordinates (psi, chi) = (a + ib, a - ib) (symbolic)
+  [PASS] reduction: W' D W^-1 = diag(S, S) and W' B1 W^-1 = diag(-M, +M), M = tau1/2
+  so spec(T1) = Sigma union -Sigma with Sigma = spec(S^-1 M), and a real zero mode at speed v is a real mu = 1/v
+== angular: spin-angular basis of J_z = m
+  [PASS] angular: Om orthonormal (worst 3.7e-14), |<Om_i|sigma.rhat|Om_j>| = delta_(i, -j) (worst 3.7e-14)
+  [PASS] angular_u: <Om_i|cos theta|Om_j> against the Gaunt formula, worst 3.6e-14
+  [PASS] angular_dirac: sigma.grad (f Om_kappa) = (f' + (1 + kappa) f/r) sigma.rhat Om_kappa, relative worst 9.6e-10
+== radial: the radial operator and the y-integrals against direct quadrature in r
+  [PASS] radial_op: D f = ((1 - y)^(D+1)/L) y^e H against finite differences, worst 1.1e-10
+  [PASS] radial_int: K, N, G integrals in y against quadrature in r, worst relative 9.0e-08
+== vc: v_c by quadrature, S = 5.477904090
+  sigma R =  2.0: v_c = 3.744900  (mass_bounds.md 3.74490)
+  sigma R =  4.0: v_c = 2.470971  (mass_bounds.md 2.47097)
+  sigma R =  8.0: v_c = 1.562434  (mass_bounds.md 1.56243)
+  sigma R = 16.0: v_c = 0.985030  (mass_bounds.md 0.98503)
+  [PASS] v_c: equal to mass_bounds.md's printed values, max difference 3.7e-06
+== planted: tau1 = 6/(1 + r^2), mu = +-i/l_n, l_n = 1 + 2n/3, the first levels of each m > 0
+  FL m = 0.5: top |mu| = 1.0000000000, worst error over levels n <= 4 7.3e-15, max |Re mu|/|mu| 1.0e-16
+  FL m = 1.5: top |mu| = 0.6000000000, worst error over levels n <= 4 5.2e-15, max |Re mu|/|mu| 1.0e-16
+  FL m = 2.5: top |mu| = 0.4285714286, worst error over levels n <= 4 2.5e-15, max |Re mu|/|mu| 1.0e-16
+  [PASS] planted: rho(T1) = 1.000000000000 (exact 1), worst error over the levels 7.3e-15
+  [PASS] real_identity: Re(v) int tau1 |psi|^2 = 0 with int tau1 |psi|^2 > 0 forces Re mu = 0: max |Re mu|/|mu| 1.0e-16, real candidates 0
+== shift: tau1 = 6 s/(1 + s^2 |x - a e_z|^2), the Mobius image of the planted weight, same spectrum
+  s = 1.2, a = 0.5 m = 0.5: top |mu| = 1.0000000000, worst error over levels n <= 4 1.6e-11, max |Re mu|/|mu| 7.7e-12
+  s = 1.2, a = 0.5 m = 1.5: top |mu| = 0.6000000000, worst error over levels n <= 4 4.3e-15, max |Re mu|/|mu| 7.7e-12
+  s = 1.2, a = 0.5 m = 2.5: top |mu| = 0.4285714286, worst error over levels n <= 4 3.0e-15, max |Re mu|/|mu| 7.7e-12
+  [PASS] shift: worst error over the levels 1.6e-11, rho = 1.0000000000, max |Re mu|/|mu| 7.7e-12
+== tanh: sigmas [2.0, 4.0], m = [0.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5], discretisation A dK = 28, p = {2.0: 80, 4.0: 100}, Lmap = 2, npan = 160; B dK + 10, p + 10, Lmap = 3, npan x 1.5 (p per sigma R)
+  sigma R = 2, m =  0.5: done in 278 s, peak resident 1.67 GiB
+  sigma R = 2, m =  1.5: done in 272 s, peak resident 1.67 GiB
+  sigma R = 2, m =  2.5: done in 278 s, peak resident 1.67 GiB
+  sigma R = 2, m =  3.5: done in 279 s, peak resident 1.67 GiB
+  sigma R = 2, m =  4.5: done in 257 s, peak resident 1.68 GiB
+  sigma R = 2, m =  5.5: done in 280 s, peak resident 1.68 GiB
+  sigma R = 2, m =  6.5: done in 285 s, peak resident 1.68 GiB
+  sigma R = 2, m =  7.5: done in 285 s, peak resident 1.68 GiB
+  sigma R = 2, m =  8.5: done in 265 s, peak resident 1.68 GiB
+  sigma R = 2, m =  9.5: done in 276 s, peak resident 1.68 GiB
+  sigma R = 2, m = 10.5: done in 279 s, peak resident 1.68 GiB
+  sigma R = 4, m =  0.5: done in 479 s, peak resident 2.56 GiB
+  sigma R = 4, m =  1.5: done in 468 s, peak resident 2.56 GiB
+  sigma R = 4, m =  2.5: done in 490 s, peak resident 2.56 GiB
+  sigma R = 4, m =  3.5: done in 490 s, peak resident 2.56 GiB
+  sigma R = 4, m =  4.5: done in 480 s, peak resident 2.56 GiB
+  sigma R = 4, m =  5.5: done in 482 s, peak resident 2.56 GiB
+  sigma R = 4, m =  6.5: done in 486 s, peak resident 2.56 GiB
+  sigma R = 4, m =  7.5: done in 494 s, peak resident 2.56 GiB
+  sigma R = 4, m =  8.5: done in 447 s, peak resident 2.56 GiB
+  sigma R = 4, m =  9.5: done in 345 s, peak resident 2.56 GiB
+  sigma R = 4, m = 10.5: done in 305 s, peak resident 2.56 GiB
+-- sigma R = 2, v_c = 3.744900; eigenvalues of S^-1 M times v_c; T1 has them and their negatives
+   m    | the four leading eigenvalues of block A                       | |mu| v_c, A / B         | stable to 1e-5 above | spectrum symmetric under mu -> -mu
+    0.5 | -0.027300-0.408645i -0.027300+0.408645i +0.027300-0.408645i +0.027300+0.408645i | 0.40955601 / 0.40955601 |               0.0777 | 1.7e-06
+    1.5 | +0.004832-0.298955i +0.004832+0.298955i -0.004832+0.298955i -0.004832-0.298955i | 0.29899381 / 0.29899381 |               0.0803 | 1.6e-07
+    2.5 | -0.001063-0.232980i -0.001063+0.232980i +0.001063-0.232980i +0.001063+0.232980i | 0.23298221 / 0.23298221 |               0.0751 | 2.5e-07
+    3.5 | +0.000261-0.190371i +0.000261+0.190371i -0.000261-0.190371i -0.000261+0.190371i | 0.19037110 / 0.19037110 |               0.0711 | 3.7e-07
+    4.5 | -0.000068+0.160798i -0.000068-0.160798i +0.000068-0.160798i +0.000068+0.160798i | 0.16079846 / 0.16079846 |               0.0667 | 5.6e-07
+    5.5 | +0.000019-0.139127i +0.000019+0.139127i -0.000019-0.139127i -0.000019+0.139127i | 0.13912707 / 0.13912707 |               0.0688 | 4.0e-08
+    6.5 | -0.000005-0.122581i -0.000005+0.122581i +0.000005+0.122581i +0.000005-0.122581i | 0.12258077 / 0.12258077 |               0.0649 | 6.2e-08
+    7.5 | +0.000002-0.109541i +0.000002+0.109541i -0.000002-0.109541i -0.000002+0.109541i | 0.10954052 / 0.10954052 |               0.0611 | 9.4e-08
+    8.5 | -0.000000-0.099002i -0.000000+0.099002i +0.000000-0.099002i +0.000000+0.099002i | 0.09900175 / 0.09900175 |               0.0578 | 1.4e-07
+    9.5 | +0.000000+0.090309i +0.000000-0.090309i -0.000000-0.090309i -0.000000+0.090309i | 0.09030921 / 0.09030921 |               0.0595 | 8.2e-09
+   10.5 | -0.000000-0.083018i -0.000000+0.083018i +0.000000+0.083018i +0.000000-0.083018i | 0.08301764 / 0.08301764 |               0.0563 | 1.3e-08
+   rho(T1) v_c = 0.40955601 (A), 0.40955601 (B), sqrt(3) rho v_c = 0.7094 (FL: <= 1)
+   window: every eigenvalue with |mu| v_c >= 0.0830 is converged in every m listed, and the leading one of m = 10.5 is 0.0830; so a real zero mode needs |v| > 12.05 v_c = 45.11
+-- sigma R = 4, v_c = 2.470971; eigenvalues of S^-1 M times v_c; T1 has them and their negatives
+   m    | the four leading eigenvalues of block A                       | |mu| v_c, A / B         | stable to 1e-5 above | spectrum symmetric under mu -> -mu
+    0.5 | +0.015900-0.367313i +0.015900+0.367313i -0.015900+0.367313i -0.015900-0.367313i | 0.36765732 / 0.36765732 |               0.0969 | 1.2e-07
+    1.5 | +0.002784-0.288517i +0.002784+0.288517i -0.002784-0.288517i -0.002784+0.288517i | 0.28853074 / 0.28853074 |               0.0910 | 2.4e-07
+    2.5 | -0.000601-0.235378i -0.000601+0.235378i +0.000601-0.235378i +0.000601+0.235378i | 0.23537840 / 0.23537840 |               0.0858 | 3.5e-07
+    3.5 | +0.000145+0.198480i +0.000145-0.198480i -0.000145+0.198480i -0.000145-0.198480i | 0.19848002 / 0.19848002 |               0.0806 | 4.7e-07
+    4.5 | -0.000038-0.171512i -0.000038+0.171512i +0.000038+0.171512i +0.000038-0.171512i | 0.17151190 / 0.17151190 |               0.0840 | 2.6e-08
+    5.5 | +0.000010-0.150969i +0.000010+0.150969i -0.000010+0.150969i -0.000010-0.150969i | 0.15096930 / 0.15096930 |               0.0790 | 3.4e-08
+    6.5 | -0.000003+0.134809i -0.000003-0.134809i +0.000003-0.134809i +0.000003+0.134809i | 0.13480852 / 0.13480852 |               0.0745 | 4.6e-08
+    7.5 | -0.000001+0.121766i -0.000001-0.121766i +0.000001-0.121766i +0.000001+0.121766i | 0.12176594 / 0.12176594 |               0.0705 | 6.6e-08
+    8.5 | +0.000000+0.111020i +0.000000-0.111020i -0.000000-0.111020i -0.000000+0.111020i | 0.11102005 / 0.11102005 |               0.0727 | 6.3e-08
+    9.5 | -0.000000-0.102014i -0.000000+0.102014i +0.000000-0.102014i +0.000000+0.102014i | 0.10201419 / 0.10201419 |               0.0688 | 8.6e-08
+   10.5 | -0.000000-0.094358i -0.000000+0.094358i +0.000000+0.094358i +0.000000-0.094358i | 0.09435789 / 0.09435789 |               0.0653 | 1.2e-07
+   rho(T1) v_c = 0.36765732 (A), 0.36765732 (B), sqrt(3) rho v_c = 0.6368 (FL: <= 1)
+   window: every eigenvalue with |mu| v_c >= 0.0969 is converged in every m listed, and the leading one of m = 10.5 is 0.0944; so a real zero mode needs |v| > 10.32 v_c = 25.50
+  [PASS] converged: sigma R = 2: rho(T1) v_c = 0.40955601, A and B differ by 5.3e-12
+  [PASS] ref63: sigma R = 2: 0.40956 against frank_loss.md 0.4094 (relative difference 3.8e-04; three-digit roundings 0.410 and 0.409)
+  [PASS] converged: sigma R = 4: rho(T1) v_c = 0.36765732, A and B differ by 4.7e-10
+  [PASS] ref63: sigma R = 4: 0.36766 against frank_loss.md 0.3674 (relative difference 7.0e-04; three-digit roundings 0.368 and 0.367)
+== real: the real eigenvalues of S^-1 M (a real zero-mode speed is v = 1/mu) and the identity
+   sigma R | m    | window |mu| v_c >= | eigenvalues in it (A / B) | real in it (A / B) | real anywhere, |mu| v_c > 1e-8 (A / B), largest, persisting in B | identity
+         2 |  0.5 |            0.0777 |  94 /  96 | 0 / 0 |  34 /  30, 1.3e-03, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 80 eigenfunctions, 32 real
+  [PASS] no_real_in_window: sigma R = 2, m = 0.5: no real eigenvalue with |mu| v_c >= 0.0777
+  [PASS] real_identity: sigma R = 2, m = 0.5: Re(v) <psi, tau1 psi> = 0 on the 80 evaluated eigenfunctions (32 with a real eigenvalue), worst 0.0e+00
+         2 |  1.5 |            0.0803 |  74 /  76 | 0 / 0 |  38 /  34, 9.3e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 84 eigenfunctions, 36 real
+  [PASS] no_real_in_window: sigma R = 2, m = 1.5: no real eigenvalue with |mu| v_c >= 0.0803
+  [PASS] real_identity: sigma R = 2, m = 1.5: Re(v) <psi, tau1 psi> = 0 on the 84 evaluated eigenfunctions (36 with a real eigenvalue), worst 0.0e+00
+         2 |  2.5 |            0.0751 |  74 /  76 | 0 / 0 |  37 /  34, 8.6e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 82 eigenfunctions, 34 real
+  [PASS] no_real_in_window: sigma R = 2, m = 2.5: no real eigenvalue with |mu| v_c >= 0.0751
+  [PASS] real_identity: sigma R = 2, m = 2.5: Re(v) <psi, tau1 psi> = 0 on the 82 evaluated eigenfunctions (34 with a real eigenvalue), worst 0.0e+00
+         2 |  3.5 |            0.0711 |  70 /  72 | 0 / 0 |  43 /  40, 8.0e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 89 eigenfunctions, 41 real
+  [PASS] no_real_in_window: sigma R = 2, m = 3.5: no real eigenvalue with |mu| v_c >= 0.0711
+  [PASS] real_identity: sigma R = 2, m = 3.5: Re(v) <psi, tau1 psi> = 0 on the 89 evaluated eigenfunctions (41 with a real eigenvalue), worst 0.0e+00
+         2 |  4.5 |            0.0667 |  70 /  72 | 0 / 0 |  46 /  41, 7.6e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 92 eigenfunctions, 44 real
+  [PASS] no_real_in_window: sigma R = 2, m = 4.5: no real eigenvalue with |mu| v_c >= 0.0667
+  [PASS] real_identity: sigma R = 2, m = 4.5: Re(v) <psi, tau1 psi> = 0 on the 92 evaluated eigenfunctions (44 with a real eigenvalue), worst 0.0e+00
+         2 |  5.5 |            0.0688 |  54 /  56 | 0 / 0 |  46 /  41, 7.0e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 91 eigenfunctions, 43 real
+  [PASS] no_real_in_window: sigma R = 2, m = 5.5: no real eigenvalue with |mu| v_c >= 0.0688
+  [PASS] real_identity: sigma R = 2, m = 5.5: Re(v) <psi, tau1 psi> = 0 on the 91 evaluated eigenfunctions (43 with a real eigenvalue), worst 0.0e+00
+         2 |  6.5 |            0.0649 |  50 /  52 | 0 / 0 |  45 /  39, 6.7e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 90 eigenfunctions, 42 real
+  [PASS] no_real_in_window: sigma R = 2, m = 6.5: no real eigenvalue with |mu| v_c >= 0.0649
+  [PASS] real_identity: sigma R = 2, m = 6.5: Re(v) <psi, tau1 psi> = 0 on the 90 evaluated eigenfunctions (42 with a real eigenvalue), worst 0.0e+00
+         2 |  7.5 |            0.0611 |  48 /  52 | 0 / 0 |  50 /  40, 6.2e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 96 eigenfunctions, 48 real
+  [PASS] no_real_in_window: sigma R = 2, m = 7.5: no real eigenvalue with |mu| v_c >= 0.0611
+  [PASS] real_identity: sigma R = 2, m = 7.5: Re(v) <psi, tau1 psi> = 0 on the 96 evaluated eigenfunctions (48 with a real eigenvalue), worst 0.0e+00
+         2 |  8.5 |            0.0578 |  50 /  52 | 0 / 0 |  48 /  43, 6.0e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 92 eigenfunctions, 44 real
+  [PASS] no_real_in_window: sigma R = 2, m = 8.5: no real eigenvalue with |mu| v_c >= 0.0578
+  [PASS] real_identity: sigma R = 2, m = 8.5: Re(v) <psi, tau1 psi> = 0 on the 92 evaluated eigenfunctions (44 with a real eigenvalue), worst 0.0e+00
+         2 |  9.5 |            0.0595 |  34 /  36 | 0 / 0 |  46 /  44, 5.6e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 92 eigenfunctions, 44 real
+  [PASS] no_real_in_window: sigma R = 2, m = 9.5: no real eigenvalue with |mu| v_c >= 0.0595
+  [PASS] real_identity: sigma R = 2, m = 9.5: Re(v) <psi, tau1 psi> = 0 on the 92 evaluated eigenfunctions (44 with a real eigenvalue), worst 0.0e+00
+         2 | 10.5 |            0.0563 |  34 /  36 | 0 / 0 |  45 /  44, 5.3e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 91 eigenfunctions, 43 real
+  [PASS] no_real_in_window: sigma R = 2, m = 10.5: no real eigenvalue with |mu| v_c >= 0.0563
+  [PASS] real_identity: sigma R = 2, m = 10.5: Re(v) <psi, tau1 psi> = 0 on the 91 evaluated eigenfunctions (43 with a real eigenvalue), worst 0.0e+00
+         4 |  0.5 |            0.0969 |  50 /  52 | 0 / 0 |  55 /  43, 1.2e-03, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 99 eigenfunctions, 51 real
+  [PASS] no_real_in_window: sigma R = 4, m = 0.5: no real eigenvalue with |mu| v_c >= 0.0969
+  [PASS] real_identity: sigma R = 4, m = 0.5: Re(v) <psi, tau1 psi> = 0 on the 99 evaluated eigenfunctions (51 with a real eigenvalue), worst 0.0e+00
+         4 |  1.5 |            0.0910 |  48 /  52 | 0 / 0 |  60 /  53, 1.0e-03, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 105 eigenfunctions, 57 real
+  [PASS] no_real_in_window: sigma R = 4, m = 1.5: no real eigenvalue with |mu| v_c >= 0.0910
+  [PASS] real_identity: sigma R = 4, m = 1.5: Re(v) <psi, tau1 psi> = 0 on the 105 evaluated eigenfunctions (57 with a real eigenvalue), worst 0.0e+00
+         4 |  2.5 |            0.0858 |  46 /  44 | 0 / 0 |  63 /  54, 9.2e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 109 eigenfunctions, 61 real
+  [PASS] no_real_in_window: sigma R = 4, m = 2.5: no real eigenvalue with |mu| v_c >= 0.0858
+  [PASS] real_identity: sigma R = 4, m = 2.5: Re(v) <psi, tau1 psi> = 0 on the 109 evaluated eigenfunctions (61 with a real eigenvalue), worst 0.0e+00
+         4 |  3.5 |            0.0806 |  44 /  48 | 0 / 0 |  62 /  55, 8.7e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 109 eigenfunctions, 61 real
+  [PASS] no_real_in_window: sigma R = 4, m = 3.5: no real eigenvalue with |mu| v_c >= 0.0806
+  [PASS] real_identity: sigma R = 4, m = 3.5: Re(v) <psi, tau1 psi> = 0 on the 109 evaluated eigenfunctions (61 with a real eigenvalue), worst 0.0e+00
+         4 |  4.5 |            0.0840 |  34 /  36 | 0 / 0 |  65 /  52, 8.0e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 111 eigenfunctions, 63 real
+  [PASS] no_real_in_window: sigma R = 4, m = 4.5: no real eigenvalue with |mu| v_c >= 0.0840
+  [PASS] real_identity: sigma R = 4, m = 4.5: Re(v) <psi, tau1 psi> = 0 on the 111 evaluated eigenfunctions (63 with a real eigenvalue), worst 0.0e+00
+         4 |  5.5 |            0.0790 |  34 /  36 | 0 / 0 |  62 /  54, 7.6e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 108 eigenfunctions, 60 real
+  [PASS] no_real_in_window: sigma R = 4, m = 5.5: no real eigenvalue with |mu| v_c >= 0.0790
+  [PASS] real_identity: sigma R = 4, m = 5.5: Re(v) <psi, tau1 psi> = 0 on the 108 evaluated eigenfunctions (60 with a real eigenvalue), worst 0.0e+00
+         4 |  6.5 |            0.0745 |  32 /  36 | 0 / 0 |  64 /  53, 7.1e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 110 eigenfunctions, 62 real
+  [PASS] no_real_in_window: sigma R = 4, m = 6.5: no real eigenvalue with |mu| v_c >= 0.0745
+  [PASS] real_identity: sigma R = 4, m = 6.5: Re(v) <psi, tau1 psi> = 0 on the 110 evaluated eigenfunctions (62 with a real eigenvalue), worst 0.0e+00
+         4 |  7.5 |            0.0705 |  32 /  36 | 0 / 0 |  66 /  54, 6.8e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 112 eigenfunctions, 64 real
+  [PASS] no_real_in_window: sigma R = 4, m = 7.5: no real eigenvalue with |mu| v_c >= 0.0705
+  [PASS] real_identity: sigma R = 4, m = 7.5: Re(v) <psi, tau1 psi> = 0 on the 112 evaluated eigenfunctions (64 with a real eigenvalue), worst 0.0e+00
+         4 |  8.5 |            0.0727 |  24 /  28 | 0 / 0 |  66 /  54, 6.3e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 112 eigenfunctions, 64 real
+  [PASS] no_real_in_window: sigma R = 4, m = 8.5: no real eigenvalue with |mu| v_c >= 0.0727
+  [PASS] real_identity: sigma R = 4, m = 8.5: Re(v) <psi, tau1 psi> = 0 on the 112 evaluated eigenfunctions (64 with a real eigenvalue), worst 0.0e+00
+         4 |  9.5 |            0.0688 |  26 /  28 | 0 / 0 |  64 /  55, 6.1e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 110 eigenfunctions, 62 real
+  [PASS] no_real_in_window: sigma R = 4, m = 9.5: no real eigenvalue with |mu| v_c >= 0.0688
+  [PASS] real_identity: sigma R = 4, m = 9.5: Re(v) <psi, tau1 psi> = 0 on the 110 evaluated eigenfunctions (62 with a real eigenvalue), worst 0.0e+00
+         4 | 10.5 |            0.0653 |  26 /  28 | 0 / 0 |  64 /  54, 5.7e-04, 0 | max |Re mu|/|mu| max(|q_rel|, cluster Gram) 0.0e+00 on 110 eigenfunctions, 62 real
+  [PASS] no_real_in_window: sigma R = 4, m = 10.5: no real eigenvalue with |mu| v_c >= 0.0653
+  [PASS] real_identity: sigma R = 4, m = 10.5: Re(v) <psi, tau1 psi> = 0 on the 110 evaluated eigenfunctions (62 with a real eigenvalue), worst 0.0e+00
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 2, m = 0.5: worst 1.4e-06
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 2, m = 1.5: worst 1.7e-06
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 2, m = 2.5: worst 2.8e-06
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 2, m = 3.5: worst 4.4e-06
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 2, m = 4.5: worst 6.6e-06
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 2, m = 5.5: worst 9.6e-06
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 2, m = 6.5: worst 1.4e-05
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 2, m = 7.5: worst 1.9e-05
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 2, m = 8.5: worst 2.5e-05
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 2, m = 9.5: worst 3.3e-05
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 2, m = 10.5: worst 5.0e-05
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 4, m = 0.5: worst 2.2e-04
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 4, m = 1.5: worst 2.9e-04
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 4, m = 2.5: worst 3.6e-04
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 4, m = 3.5: worst 4.4e-04
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 4, m = 4.5: worst 5.4e-04
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 4, m = 5.5: worst 6.4e-04
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 4, m = 6.5: worst 7.6e-04
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 4, m = 7.5: worst 8.9e-04
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 4, m = 8.5: worst 1.0e-03
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 4, m = 9.5: worst 1.2e-03
+   residual ||S psi - v M psi|| / ||S psi|| of the leading eigenfunctions, sigma R = 4, m = 10.5: worst 1.4e-03
+peak resident memory 0.58 GiB, wall 2177 s
+all checks passed
+  wall time 2177.16 s
+  maximum resident set size 0.58 GiB
+
+######## python notes/warp/tanh_spectrum.py --part=conv --raw=../negative-mass-raw/I75-dh170
+== conv: |mu| v_c of the leading eigenvalue and of the fifth (the next quadruple), one parameter changed at a time from the base dK = 20, p, Lmap = 2, npan = 160
+  sigma R = 2, m = 0.5
+    variant    | leading |mu| v_c | change from base | fifth |mu| v_c | change from base | s
+    base       | 0.4095560070   | +0.0e+00         | 0.25719463   | +0.0e+00         | 10
+    dK = 12    | 0.4095560070   | +2.9e-14         | 0.25719463   | -6.6e-09         | 4
+    dK = 28    | 0.4095560070   | +1.1e-16         | 0.25719463   | +6.7e-16         | 26
+    p = 60     | 0.4095560074   | +4.1e-10         | 0.25719463   | -1.5e-11         | 5
+    p = 100    | 0.4095560070   | -5.8e-12         | 0.25719463   | -7.0e-12         | 24
+    Lmap = 1   | 0.4095560070   | -5.8e-12         | 0.25719463   | -7.0e-12         | 12
+    Lmap = 4   | 0.4095560070   | -5.2e-12         | 0.25719463   | -7.2e-12         | 15
+    npan = 80  | 0.4095560070   | -3.9e-16         | 0.25719463   | +1.2e-15         | 11
+    npan = 320 | 0.4095560070   | -1.1e-16         | 0.25719463   | +2.2e-16         | 17
+  sigma R = 2, m = 1.5
+    variant    | leading |mu| v_c | change from base | fifth |mu| v_c | change from base | s
+    base       | 0.2989938058   | +0.0e+00         | 0.20740594   | +0.0e+00         | 10
+    dK = 12    | 0.2989938058   | -9.3e-12         | 0.20740570   | -2.4e-07         | 4
+    dK = 28    | 0.2989938058   | -1.1e-16         | 0.20740594   | +3.3e-16         | 26
+    p = 60     | 0.2989938058   | -2.4e-12         | 0.20740594   | -2.1e-11         | 6
+    p = 100    | 0.2989938058   | +3.9e-16         | 0.20740594   | +2.7e-15         | 23
+    Lmap = 1   | 0.2989938058   | +5.6e-16         | 0.20740594   | +1.9e-15         | 14
+    Lmap = 4   | 0.2989938058   | -3.7e-14         | 0.20740594   | -6.2e-13         | 14
+    npan = 80  | 0.2989938058   | +1.7e-16         | 0.20740594   | +3.3e-16         | 8
+    npan = 320 | 0.2989938058   | +5.6e-16         | 0.20740594   | -5.6e-17         | 17
+  sigma R = 4, m = 0.5
+    variant    | leading |mu| v_c | change from base | fifth |mu| v_c | change from base | s
+    base       | 0.3676573205   | +0.0e+00         | 0.25008276   | +0.0e+00         | 21
+    dK = 12    | 0.3676573205   | -1.2e-12         | 0.25008262   | -1.4e-07         | 8
+    dK = 28    | 0.3676573205   | +1.1e-15         | 0.25008276   | +2.8e-16         | 49
+    p = 80     | 0.3676573193   | -1.2e-09         | 0.25008275   | -4.1e-09         | 12
+    p = 120    | 0.3676573205   | +4.7e-12         | 0.25008276   | +2.2e-11         | 39
+    Lmap = 1   | 0.3676573211   | +6.0e-10         | 0.25008276   | +4.3e-10         | 25
+    Lmap = 4   | 0.3676573202   | -3.4e-10         | 0.25008276   | -1.3e-09         | 27
+    npan = 80  | 0.3676573205   | +7.2e-16         | 0.25008276   | +3.9e-16         | 13
+    npan = 320 | 0.3676573205   | +5.6e-16         | 0.25008276   | +1.1e-16         | 31
+  sigma R = 4, m = 1.5
+    variant    | leading |mu| v_c | change from base | fifth |mu| v_c | change from base | s
+    base       | 0.2885307432   | +0.0e+00         | 0.21176528   | +0.0e+00         | 21
+    dK = 12    | 0.2885307430   | -2.4e-10         | 0.21176358   | -1.7e-06         | 7
+    dK = 28    | 0.2885307432   | -2.2e-16         | 0.21176528   | +4.6e-15         | 48
+    p = 80     | 0.2885307412   | -2.0e-09         | 0.21176527   | -6.1e-09         | 13
+    p = 120    | 0.2885307432   | +9.1e-12         | 0.21176528   | +3.7e-11         | 39
+    Lmap = 1   | 0.2885307432   | +7.2e-12         | 0.21176528   | +2.9e-11         | 22
+    Lmap = 4   | 0.2885307426   | -6.3e-10         | 0.21176528   | -2.3e-09         | 27
+    npan = 80  | 0.2885307432   | -5.6e-17         | 0.21176528   | +5.8e-16         | 18
+    npan = 320 | 0.2885307432   | +3.9e-16         | 0.21176528   | +2.5e-16         | 23
+  [PASS] conv: leading eigenvalue moves by at most 7.0e-09 (relative) under every change but the deliberately coarse dK = 12
+peak resident memory 0.12 GiB, wall 188 s
+all checks passed
+  wall time 188.50 s
+  maximum resident set size 0.12 GiB
+
+######## python notes/warp/tanh_spectrum.py --controls
+== controls: each --mutate makes its target checks fail; the same run without it passes them
+  g0block  (flips the sign of the lower block of g0; --part=reduce): baseline exit 0, mutated exit 1, failed ['reduction'], 1 s -> fired
+  ladder   (flips the sign of the sigma.L ladder term; --part=angular): baseline exit 0, mutated exit 1, failed ['angular', 'angular_dirac'], 1 s -> fired
+  dterm    (drops (1 + kappa) f/r from the radial operator; --part=radial): baseline exit 0, mutated exit 1, failed ['radial_int', 'radial_op'], 1 s -> fired
+  sobolev  (uses 21/20 of the sharp Sobolev constant; --part=vc): baseline exit 0, mutated exit 1, failed ['v_c'], 1 s -> fired
+  half     (drops the 1/2 in M = tau1/2; --part=planted --quick): baseline exit 0, mutated exit 1, failed ['planted'], 1 s -> fired
+  half     (drops the 1/2 in M = tau1/2; --part=tanh --quick --sigmas=2): baseline exit 0, mutated exit 1, failed ['ref63'], 4 s -> fired
+  lscale   (scales the l = 1 Legendre term of the shifted weight by 11/10; --part=shift --quick): baseline exit 0, mutated exit 1, failed ['shift'], 2 s -> fired
+  rot      (solves with N times i, so the planted eigenvalues are real; --part=planted --quick): baseline exit 0, mutated exit 1, failed ['planted', 'real_identity'], 1 s -> fired
+  trunc    (keeps 3 angular levels and 8 radial functions; --part=tanh --quick --sigmas=2): baseline exit 0, mutated exit 1, failed ['converged', 'ref63'], 1 s -> fired
+  [PASS] controls: every control fired
+peak resident memory 0.12 GiB, wall 20 s
+all checks passed
+  wall time 20.83 s
+  maximum resident set size 0.18 GiB
