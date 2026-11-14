@@ -209,22 +209,22 @@ arXiv:2609.17207 (2026); μ = −0.448 and Eq. (66) δ_Q = (D − 2 − μ)γ co
 New here (read for this note through arXiv/ar5iv pages via a summarizing fetch tool, so quotes are close but not
 guaranteed byte-exact):
 - [H94] S. A. Hayward, "General laws of black-hole dynamics", PRD 49, 6467 (1994), arXiv:gr-qc/9303006. Theorem 2.
-- [H99] S. A. Hayward, "Dynamic wormholes", IJMPD 8, 373 (1999), arXiv:gr-qc/9805019 (journal from citations).
+- [H99] S. A. Hayward, "Dynamic wormholes", IJMPD 8, 373 (1999), arXiv:gr-qc/9805019.
 - [H02] S. A. Hayward, "Black holes and traversible wormholes: a synthesis", arXiv:gr-qc/0203051 (conference
   contribution; journal not found).
 - [H09] S. A. Hayward, "Wormhole dynamics in spherical symmetry", PRD 79, 124001 (2009), arXiv:0903.5438. Sec. V: the
   null energy condition is violated on every wormhole mouth (T₊₊ < 0); its Eqs. (21), (24) give the slope formula of §1.
 - [HK04] S. A. Hayward, H. Koyama, "How to make a traversable wormhole from a Schwarzschild black hole", PRD 70, 101502
-  (2004), arXiv:gr-qc/0406080 (journal from [H09]'s reference list).
+  (2004), arXiv:gr-qc/0406080.
 - [KH04] H. Koyama, S. A. Hayward, "Construction and enlargement of traversable wormholes from Schwarzschild black
   holes", PRD 70, 084001 (2004), arXiv:gr-qc/0406113, doi:10.1103/PhysRevD.70.084001.
-- [HKL01] S. A. Hayward, S.-W. Kim, H. Lee, arXiv:gr-qc/0110080 (2D dilaton gravity; journal *(unverified)*).
+- [HKL01] S. A. Hayward, S.-W. Kim, H. Lee, PRD 65, 064003 (2002), arXiv:gr-qc/0110080 (2D dilaton gravity).
 - [GMG96] C. Gundlach, J. M. Martín-García, "Charge scaling and universality in critical collapse", PRD 54, 7353 (1996),
   arXiv:gr-qc/9606072, doi:10.1103/PhysRevD.54.7353. Sec. VI: λ₁ = −2.674 ± 0.009, μ₁ = 0.362 ± 0.012 with
   τ = ln(t/r₀), γ = −1/λ₁, δ = −(μ₁ + 2)/λ₁.
 - [SMMV19] A. Simpson, P. Martín-Moruno, M. Visser, CQG 36, 145007 (2019), arXiv:1902.04232.
 - [CK21] S. Chakrabarti, S. Kar, PRD 104, 024071 (2021), arXiv:2106.14761.
-- [Ter22] D. R. Terno, arXiv:2203.03770 (journal not found).
+- [Ter22] D. R. Terno, PRD 106, 044035 (2022), arXiv:2203.03770.
 - [NM08] M. Nozawa, H. Maeda, "Dynamical black holes with symmetry in Einstein–Gauss–Bonnet gravity", CQG 25, 055009
   (2008), arXiv:0710.2709, doi:10.1088/0264-9381/25/5/055009 (journal and DOI from the arXiv page). Proposition 10 read
   through ar5iv via a summarizing fetch.

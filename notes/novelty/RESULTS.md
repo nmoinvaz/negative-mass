@@ -65,13 +65,13 @@ Note on INSPIRE: `refersto:arxiv:<id>` returns garbage for some IDs (about 25k u
    - Negative-mass SdS is unstable; for SAdS the answer depends on boundary conditions.
    - No matter interior and no finite-radius cut.
 5. **Dotti, Gleiser, Pullin, Ranea-Sandoval, Vucetich 2008 review**, arXiv:0810.0025: summarizes; nothing on stars.
-6. **Gibbons, Hartnoll & Ishibashi 2004**, PTP 113, 963, hep-th/0409307: a one-parameter family of boundary conditions at the singularity. They do not tie the boundary condition to any resolution by matter.
+6. **Gibbons, Hartnoll & Ishibashi 2004**, PTP 113, 963 (2005), hep-th/0409307: a one-parameter family of boundary conditions at the singularity. They do not tie the boundary condition to any resolution by matter.
 7. **Giveon, Kol, Ori & Sever 2004**, JHEP 0408:014, hep-th/0401209.
    - Resolution of the negative-mass Schwarzschild singularity for *scalar* waves by smoothing. Negative-mass Schwarzschild is "fully reflecting".
    - Same philosophy as our observation that "the DG extension is the R → 0 limit of a regular cut-off". Cite as precedent for the scalar case.
 8. **Regular negative-mass stars: radial only.**
    - Mbarek & Paranjape 2014, PRD 90, 101502, arXiv:1407.1457: existence; DEC must fail.
-   - Johnson, Paranjape, Savard & Tapia-Arellano 2020, GRG 52, arXiv:1910.01774: thin-wall bubbles in dS, stable against *radial wall motion only*.
+   - Johnson, Paranjape, Savard & Tapia-Arellano 2020, GRG 52, 80, arXiv:1910.01774: thin-wall bubbles in dS, stable against *radial wall motion only*.
    - Novikov, Bisnovatyi-Kogan & Novikov 2018, PRD 98, 063528, arXiv:1807.06468: negative-density, positive-pressure stars. The paper says: "We did not consider here the issues of the stability."
    - **de Aguiar Alves, Landulfo & Arderucio Costa 2025**, PRD 111, 044027, arXiv:2408.00154: "any barotropic negative-mass star must be dynamically unstable". The analysis is radial (Chandrasekhar variational); non-radial instability is only heuristic. It does not cite Gleiser–Dotti.
    - Paranjape 2025, "Puzzles with Negative Mass" (Springer proceedings, ISBN 9783031912665, pp. 167–173): calls dynamical stability of the smoothed star "possible", i.e. open.
@@ -123,7 +123,7 @@ Note on INSPIRE: `refersto:arxiv:<id>` returns garbage for some IDs (about 25k u
    - Their predecessor: Jaramillo, Jiménez-Vázquez & Núñez, PRD 107, 064061 (2023), arXiv:2302.07889 (real ghost in a boson star).
 6. **Turning-point / catastrophe literature** (all with ordinary G > 0):
    - Gleiser & Watkins 1989; Lee & Pang 1989; Kusmartsev, Mielke & Schunck 1991; Jetzer; Kain 2021.
-   - Tamaki & Sakai 2011, arXiv:1105.1498: criterion in Q; κ = m²G/λ is assumed positive, and negative κ is never considered.
+   - Tamaki & Sakai 2011, PRD 81, 124041 (2010), arXiv:1105.1498: criterion in Q; κ = m²G/λ is assumed positive, and negative κ is never considered.
    - Sorkin 1982 (ApJ 257, 847) for the general turning-point theorem.
 
 **Verdict: apparently new.** No paper was found that does linear radial stability of complex boson stars with a sign-flipped gravitational coupling, or states dM = εω dN, or notes that the turning-point rule is ε-invariant only in N. The first-law and turning-point observations are close to a corollary of standard proofs (Sorkin; Lee–Pang) once ε is kept. A referee may call them "expected". The numerical stability result for the campaign and strong-field stars is the solid new content.
@@ -240,4 +240,4 @@ Note on INSPIRE: `refersto:arxiv:<id>` returns garbage for some IDs (about 25k u
 - de Aguiar Alves et al. 2025 and Ivanov 2012 were read through tool summaries of the PDFs. The equations quoted for Ivanov were checked for internal consistency (one typo found in his text).
 - Russian-language follow-ups to Ivanov (UFN) and Chinese-language follow-ups to Cao may exist outside INSPIRE.
 - Results posted after about 2026-10-21 are not covered.
-- Some journal references were filled in from memory and not checked against the publisher: DG08 CQG 26, 215002; GD06 CQG 23, 5063; Cardoso–Cavaglià PRD 74, 024027; Dzhunushaliev et al. JHEP 0807:094; Bičák–Kofroň GRG 41, 153; Mbarek–Paranjape PRD 90, 101502. Check them before submission. The arXiv IDs were all verified.
+- The journal references of this note were checked on 2026-11-13 against INSPIRE, arXiv and Crossref (#49, [references_check.md](../references_check.md)). DG08 CQG 26, 215002; GD06 CQG 23, 5063; Cardoso–Cavaglià PRD 74, 024027; Dzhunushaliev et al. JHEP 0807:094; Bičák–Kofroň GRG 41, 153; Mbarek–Paranjape PRD 90, 101502 are correct. The arXiv IDs were all verified.
