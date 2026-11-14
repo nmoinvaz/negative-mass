@@ -1,0 +1,159 @@
+== sym: mu and J by two routes, and against [Nat02]
+  [PASS] X is divergence free
+  [PASS] X = [Nat02] Sec. 2 field + v e_x
+  [PASS] closed-form mu = [Nat02] rho
+  tr K = 0 identically: True
+  [PASS] 3+1 mu = closed form
+  [PASS] 3+1 J = closed form
+  [PASS] 4D mu = closed form
+  [PASS] 4D J = closed form
+  [PASS] numeric spherical fields = symbolic Cartesian fields: max relative difference 5.9e-16 at 359 points
+  on the x axis (theta = 0): mu = -3*N1**2*v**2/(8*pi)
+  [PASS] tanh profile f', f'', f''' against finite differences and #58's
+  [PASS] gamma algebra: sum_i |K_ij g^j g0 e|^2 = |K|^2 |e|^2
+== adm: E and P as surface integrals
+  Natario (sigma R = 4, v = 1), R = 2.0: E = 0.000e+00, P = [-1.073e-02 -5.055e-21 -3.451e-20]
+  Natario (sigma R = 4, v = 1), R = 4.0: E = 0.000e+00, P = [-1.128e-08  6.557e-27 -3.548e-26]
+  Natario (sigma R = 4, v = 1), R = 8.0: E = 0.000e+00, P = [0. 0. 0.]
+  [PASS] Natario E = 0 and |P| < 1e-12 at R = 8
+  control, Schwarzschild m = 0.7, R = 5: E = 0.85753010, exact m psi(R)^3 = 0.85753010
+  [PASS] control: Schwarzschild E = m psi(R)^3
+  control, Bowen-York P = [ 0.3 -0.2  0.5]: surface integral [ 0.3 -0.2  0.5]
+  [PASS] control: Bowen-York P returned
+== split: minimal mu_- against a numerical minimisation
+  150 random (mu, J), 31 with -mu > |J|: max relative difference 1.62e-16
+  [PASS] minimal mu_- = max(0, -mu, (|J| - mu)/2) at random (mu, J)
+  150 Natario (mu, J), sigma R in 4, 8, 16, v in 0.01-10, 8 with -mu > |J|: max relative difference 9.16e-16
+  [PASS] minimal mu_- at Natario (mu, J)
+  [PASS] the named split is admissible
+== energy: quadrature controls, then the tanh profile
+  control, f = exp(-r^2), v = 0.8: quadrature -0.054832493508, exact -(v^2/8) int r^2 [4 n'^2 + (2/3)(2n' + r n'')^2] dr = -0.054832493508
+  [PASS] control: Gaussian Eulerian energy
+  control, Alcubierre fields through this quadrature, 20 rows of alcubierre_bounds_output.txt: max relative difference 3.2e-06
+  [PASS] control: this quadrature reproduces #58's table
+  sigma R |   v   | E_Eulerian   | E_- (= W-)   | int(|J|-mu)+ | E_-/(v sigma^2) | E_-/|E_Eul| | E_- of #58   | ratio Nat/Alc | rel. change, nodes doubled
+      2.0 | 0.001 | -1.75158e-07 |  6.09428e-04 |  1.21886e-03 |     1.52357e-01 |  3.4793e+03 |  3.10670e-04 |    1.9617e+00 | 1.3e-08
+      2.0 | 0.010 | -1.75158e-05 |  6.10216e-03 |  1.22043e-02 |     1.52554e-01 |  3.4838e+02 |  3.10959e-03 |    1.9624e+00 | 1.3e-08
+      2.0 | 0.100 | -1.75158e-03 |  6.18099e-02 |  1.23620e-01 |     1.54525e-01 |  3.5288e+01 |  3.13857e-02 |    1.9694e+00 | 1.4e-07
+      2.0 | 0.500 | -4.37894e-02 |  3.26590e-01 |  6.53130e-01 |     1.63295e-01 |  7.4582e+00 |  1.63404e-01 |    1.9987e+00 | 6.9e-07
+      2.0 | 1.000 | -1.75158e-01 |  6.97368e-01 |  1.39384e+00 |     1.74342e-01 |  3.9814e+00 |  3.43418e-01 |    2.0307e+00 | 1.2e-08
+      2.0 | 2.000 | -7.00630e-01 |  1.57813e+00 |  3.13799e+00 |     1.97266e-01 |  2.2524e+00 |  7.58310e-01 |    2.0811e+00 | 2.3e-07
+      2.0 | 5.000 | -4.37894e+00 |  5.76578e+00 |  1.04723e+01 |     2.88289e-01 |  1.3167e+00 |  2.54925e+00 |    2.2618e+00 | 3.1e-07
+      4.0 | 0.001 | -5.81211e-07 |  1.49635e-03 |  2.99271e-03 |     9.35222e-02 |  2.5745e+03 |  4.58996e-04 |    3.2601e+00 | 3.7e-08
+      4.0 | 0.010 | -5.81211e-05 |  1.49897e-02 |  2.99794e-02 |     9.36856e-02 |  2.5790e+02 |  4.59507e-03 |    3.2621e+00 | 4.0e-08
+      4.0 | 0.100 | -5.81211e-03 |  1.52514e-01 |  3.05025e-01 |     9.53212e-02 |  2.6241e+01 |  4.64617e-02 |    3.2826e+00 | 7.0e-07
+      4.0 | 0.500 | -1.45303e-01 |  8.21493e-01 |  1.64137e+00 |     1.02687e-01 |  5.6537e+00 |  2.43782e-01 |    3.3698e+00 | 2.3e-06
+      4.0 | 1.000 | -5.81211e-01 |  1.79805e+00 |  3.57334e+00 |     1.12378e-01 |  3.0936e+00 |  5.17484e-01 |    3.4746e+00 | 1.9e-06
+      4.0 | 2.000 | -2.32484e+00 |  4.29808e+00 |  8.30910e+00 |     1.34315e-01 |  1.8488e+00 |  1.16676e+00 |    3.6838e+00 | 6.1e-07
+      4.0 | 5.000 | -1.45303e+01 |  1.75577e+01 |  2.94909e+01 |     2.19471e-01 |  1.2084e+00 |  4.12653e+00 |    4.2548e+00 | 4.1e-06
+      8.0 | 0.001 | -3.28804e-06 |  5.13859e-03 |  1.02772e-02 |     8.02904e-02 |  1.5628e+03 |  8.26084e-04 |    6.2204e+00 | 3.5e-07
+      8.0 | 0.010 | -3.28804e-04 |  5.15338e-02 |  1.03068e-01 |     8.05216e-02 |  1.5673e+02 |  8.27089e-03 |    6.2307e+00 | 3.5e-07
+      8.0 | 0.100 | -3.28804e-02 |  5.30207e-01 |  1.06027e+00 |     8.28448e-02 |  1.6125e+01 |  8.37146e-02 |    6.3335e+00 | 1.6e-06
+      8.0 | 0.500 | -8.22011e-01 |  3.00610e+00 |  5.95895e+00 |     9.39408e-02 |  3.6570e+00 |  4.41349e-01 |    6.8112e+00 | 3.4e-06
+      8.0 | 1.000 | -3.28804e+00 |  7.03439e+00 |  1.35619e+01 |     1.09912e-01 |  2.1394e+00 |  9.43211e-01 |    7.4579e+00 | 7.6e-06
+      8.0 | 2.000 | -1.31522e+01 |  1.88941e+01 |  3.36999e+01 |     1.47610e-01 |  1.4366e+00 |  2.15558e+00 |    8.7652e+00 | 2.6e-06
+      8.0 | 5.000 | -8.22011e+01 |  9.05422e+01 |  1.33571e+02 |     2.82944e-01 |  1.1015e+00 |  7.83452e+00 |    1.1557e+01 | 4.1e-06
+     16.0 | 0.001 | -2.36397e-05 |  1.96809e-02 |  3.93619e-02 |     7.68787e-02 |  8.3254e+02 |  1.59530e-03 |    1.2337e+01 | 1.2e-05
+     16.0 | 0.010 | -2.36397e-03 |  1.97873e-01 |  3.95746e-01 |     7.72942e-02 |  8.3704e+01 |  1.59730e-02 |    1.2388e+01 | 1.1e-05
+     16.0 | 0.100 | -2.36397e-01 |  2.08801e+00 |  4.17022e+00 |     8.15629e-02 |  8.8327e+00 |  1.61736e-01 |    1.2910e+01 | 1.3e-05
+     16.0 | 0.500 | -5.90992e+00 |  1.32993e+01 |  2.55790e+01 |     1.03900e-01 |  2.2503e+00 |  8.54566e-01 |    1.5563e+01 | 8.9e-06
+     16.0 | 1.000 | -2.36397e+01 |  3.53440e+01 |  6.29779e+01 |     1.38063e-01 |  1.4951e+00 |  1.83220e+00 |    1.9290e+01 | 7.2e-06
+     16.0 | 2.000 | -9.45587e+01 |  1.11308e+02 |  1.73235e+02 |     2.17399e-01 |  1.1771e+00 |  4.21039e+00 |    2.6437e+01 | 5.2e-06
+     16.0 | 5.000 | -5.90992e+02 |  6.14809e+02 |  7.87683e+02 |     4.80320e-01 |  1.0403e+00 |  1.54462e+01 |    3.9803e+01 | 6.9e-06
+     32.0 | 0.001 | -1.83811e-04 |  7.78278e-02 |  1.55656e-01 |     7.60037e-02 |  4.2341e+02 |  3.15623e-03 |    2.4658e+01 | 1.1e-05
+     32.0 | 0.010 | -1.83811e-02 |  7.86563e-01 |  1.57310e+00 |     7.68128e-02 |  4.2792e+01 |  3.16024e-02 |    2.4889e+01 | 1.0e-05
+     32.0 | 0.100 | -1.83811e+00 |  8.75715e+00 |  1.73853e+01 |     8.55190e-02 |  4.7642e+00 |  3.20037e-01 |    2.7363e+01 | 1.0e-05
+     32.0 | 0.500 | -4.59528e+01 |  6.94758e+01 |  1.23689e+02 |     1.35695e-01 |  1.5119e+00 |  1.69271e+00 |    4.1044e+01 | 6.7e-06
+     32.0 | 1.000 | -1.83811e+02 |  2.18102e+02 |  3.39283e+02 |     2.12991e-01 |  1.1866e+00 |  3.63378e+00 |    6.0021e+01 | 6.2e-06
+     32.0 | 2.000 | -7.35245e+02 |  7.82213e+02 |  1.04619e+03 |     3.81940e-01 |  1.0639e+00 |  8.36574e+00 |    9.3502e+01 | 6.0e-06
+     32.0 | 5.000 | -4.59528e+03 |  4.66251e+03 |  5.37264e+03 |     9.10646e-01 |  1.0146e+00 |  3.07743e+01 |    1.5151e+02 | 1.5e-06
+  [PASS] E_- converged (relative change < 1e-4 on doubling the nodes): worst 1.3e-05
+  for reference, the nodes (40, 16, 64) of #58's protocol differ from the reported (80, 24, 96) by up to 1.7e-04
+  [PASS] int J dV = 0 (quadrature): max |int J_x dV| / int |J| dV = 3.2e-14
+  local exponent p = d ln E_- / d ln v between successive v
+  sigma R | 0.001-0.01 | 0.01-0.1 | 0.1-0.5 | 0.5-1 | 1-2 | 2-5
+      2.0 | 1.001 | 1.006 | 1.034 | 1.094 | 1.178 | 1.414
+      4.0 | 1.001 | 1.008 | 1.046 | 1.130 | 1.257 | 1.536
+      8.0 | 1.001 | 1.012 | 1.078 | 1.227 | 1.425 | 1.710
+     16.0 | 1.002 | 1.023 | 1.150 | 1.410 | 1.655 | 1.865
+     32.0 | 1.005 | 1.047 | 1.287 | 1.650 | 1.843 | 1.948
+  thin wall, sigma R = 128: E_eul / (-v^2 sigma^3 / 180) = 1.0006, E_- / (pi v sigma^2 / (24 sqrt 3)) at v = 1e-4 = 1.0008
+  [PASS] thin-wall hand estimates (sigma R = 128)
+== identity: the Witten solve with #58's solver, ported with K as an argument
+  control, Alcubierre (sigma R = 2, v = 0.5, L = 8, N = 64): #58's G = 1.613407e-02, ported 1.613407e-02, iterations 8 and 8, max relative difference 0.0e+00
+  [PASS] control: ported solver reproduces #58's
+  Natario data, eps0 = e1 (xi = 0) and the null spinors with xi = -+ e_x; the grid is offset by half a cell
+  sigma R |  v   |  L | N   | eps0 | iters | |D~eps0|/|K| | |eps-eps0| | pointwise |      G      | int T(xi,n) | |G+int T|/G | |G+int T|/terms | |int J|/int|J| | int T-(xi,n) | int T+(xi,n) | min T+
+      2.0 | 0.50 |  8 |  64 | e1   |     1 |    1.19e-17 |   3.34e-20 |  3.62e-16 | 4.37902e-02 | -4.37902e-02 |    0.00e+00 |       0.00e+00 |       1.83e-06 |  3.25431e-01 |  2.81640e-01 | 0.0e+00
+      2.0 | 0.50 |  8 |  64 | e+   |     1 |    1.19e-17 |   3.34e-20 |  3.62e-16 | 4.37902e-02 | -4.37891e-02 |    2.53e-05 |       1.70e-06 |       1.83e-06 |  3.22790e-01 |  2.79001e-01 | 0.0e+00
+      2.0 | 0.50 |  8 |  64 | e-   |     1 |    1.19e-17 |   3.34e-20 |  3.62e-16 | 4.37902e-02 | -4.37913e-02 |    2.53e-05 |       1.70e-06 |       1.83e-06 |  3.28071e-01 |  2.84280e-01 | 0.0e+00
+          xi(e+) = [-1.0000e+00  1.1755e-37  0.0000e+00], xi(e-) = [1.0000e+00 1.1755e-37 0.0000e+00], max|tr K| = 5.6e-17, E_- grid 3.254307e-01 vs quadrature 3.265899e-01, E_Eul grid -4.37902168e-02 vs -4.37893864e-02, G/|E_Eul| = 1.0000189628
+      2.0 | 0.50 |  8 |  96 | e1   |     1 |    1.50e-17 |   2.79e-20 |  8.01e-16 | 4.37894e-02 | -4.37894e-02 |    0.00e+00 |       0.00e+00 |       1.77e-10 |  3.26324e-01 |  2.82535e-01 | 0.0e+00
+      2.0 | 0.50 |  8 |  96 | e+   |     1 |    1.50e-17 |   2.79e-20 |  5.72e-16 | 4.37894e-02 | -4.37894e-02 |    2.46e-09 |       1.65e-10 |       1.77e-10 |  3.23781e-01 |  2.79992e-01 | 0.0e+00
+      2.0 | 0.50 |  8 |  96 | e-   |     1 |    1.50e-17 |   2.79e-20 |  5.72e-16 | 4.37894e-02 | -4.37894e-02 |    2.46e-09 |       1.65e-10 |       1.77e-10 |  3.28868e-01 |  2.85078e-01 | 0.0e+00
+          xi(e+) = [-1.0000e+00  1.0122e-38  0.0000e+00], xi(e-) = [1.0000e+00 1.0122e-38 0.0000e+00], max|tr K| = 8.3e-17, E_- grid 3.263244e-01 vs quadrature 3.265899e-01, E_Eul grid -4.37893866e-02 vs -4.37893864e-02, G/|E_Eul| = 1.0000000051
+      2.0 | 0.50 |  8 | 128 | e1   |     1 |    1.27e-17 |   2.01e-20 |  5.60e-16 | 4.37894e-02 | -4.37894e-02 |    3.17e-16 |       3.17e-16 |       3.38e-11 |  3.26545e-01 |  2.82756e-01 | 0.0e+00
+      2.0 | 0.50 |  8 | 128 | e+   |     1 |    1.27e-17 |   2.01e-20 |  5.60e-16 | 4.37894e-02 | -4.37894e-02 |    4.70e-10 |       3.15e-11 |       3.38e-11 |  3.23882e-01 |  2.80093e-01 | 0.0e+00
+      2.0 | 0.50 |  8 | 128 | e-   |     1 |    1.27e-17 |   2.01e-20 |  5.60e-16 | 4.37894e-02 | -4.37894e-02 |    4.70e-10 |       3.15e-11 |       3.38e-11 |  3.29208e-01 |  2.85419e-01 | 0.0e+00
+          xi(e+) = [-1.0000e+00 -1.7518e-38  0.0000e+00], xi(e-) = [ 1.0000e+00 -1.7518e-38  0.0000e+00], max|tr K| = 5.6e-17, E_- grid 3.265452e-01 vs quadrature 3.265899e-01, E_Eul grid -4.37893864e-02 vs -4.37893864e-02, G/|E_Eul| = 1.0000000000
+      2.0 | 1.00 |  8 |  96 | e1   |     1 |    1.50e-17 |   5.57e-20 |  8.01e-16 | 1.75158e-01 | -1.75158e-01 |    0.00e+00 |       0.00e+00 |       1.77e-10 |  6.96834e-01 |  5.21677e-01 | 0.0e+00
+      2.0 | 1.00 |  8 |  96 | e+   |     1 |    1.50e-17 |   5.57e-20 |  5.72e-16 | 1.75158e-01 | -1.75158e-01 |    1.23e-09 |       1.54e-10 |       1.77e-10 |  6.86603e-01 |  5.11446e-01 | -1.1e-19
+      2.0 | 1.00 |  8 |  96 | e-   |     1 |    1.50e-17 |   5.57e-20 |  5.72e-16 | 1.75158e-01 | -1.75158e-01 |    1.23e-09 |       1.54e-10 |       1.77e-10 |  7.07066e-01 |  5.31908e-01 | 0.0e+00
+          xi(e+) = [-1.0000e+00  2.0245e-38  0.0000e+00], xi(e-) = [1.0000e+00 2.0245e-38 0.0000e+00], max|tr K| = 1.7e-16, E_- grid 6.968344e-01 vs quadrature 6.973681e-01, E_Eul grid -1.75157546e-01 vs -1.75157546e-01, G/|E_Eul| = 1.0000000051
+      2.0 | 1.00 |  8 | 128 | e1   |     1 |    1.27e-17 |   4.03e-20 |  5.60e-16 | 1.75158e-01 | -1.75158e-01 |    3.17e-16 |       3.17e-16 |       3.38e-11 |  6.97368e-01 |  5.22211e-01 | 0.0e+00
+      2.0 | 1.00 |  8 | 128 | e+   |     1 |    1.27e-17 |   4.03e-20 |  5.60e-16 | 1.75158e-01 | -1.75158e-01 |    2.35e-10 |       2.95e-11 |       3.38e-11 |  6.86708e-01 |  5.11550e-01 | -2.2e-19
+      2.0 | 1.00 |  8 | 128 | e-   |     1 |    1.27e-17 |   4.03e-20 |  5.60e-16 | 1.75158e-01 | -1.75158e-01 |    2.35e-10 |       2.95e-11 |       3.38e-11 |  7.08029e-01 |  5.32871e-01 | 0.0e+00
+          xi(e+) = [-1.0000e+00 -3.5035e-38  0.0000e+00], xi(e-) = [ 1.0000e+00 -3.5035e-38  0.0000e+00], max|tr K| = 1.1e-16, E_- grid 6.973684e-01 vs quadrature 6.973681e-01, E_Eul grid -1.75157546e-01 vs -1.75157546e-01, G/|E_Eul| = 1.0000000000
+      4.0 | 0.50 |  5 |  96 | e1   |     1 |    1.35e-17 |   6.55e-20 |  6.63e-16 | 1.45303e-01 | -1.45303e-01 |    0.00e+00 |       0.00e+00 |       2.82e-08 |  8.20893e-01 |  6.75590e-01 | 0.0e+00
+      4.0 | 0.50 |  5 |  96 | e+   |     1 |    1.35e-17 |   6.55e-20 |  8.29e-16 | 1.45303e-01 | -1.45303e-01 |    2.90e-07 |       2.57e-08 |       2.82e-08 |  8.13135e-01 |  6.67832e-01 | -3.5e-18
+      4.0 | 0.50 |  5 |  96 | e-   |     1 |    1.35e-17 |   6.55e-20 |  8.29e-16 | 1.45303e-01 | -1.45303e-01 |    2.90e-07 |       2.57e-08 |       2.82e-08 |  8.28650e-01 |  6.83348e-01 | -1.7e-18
+          xi(e+) = [-1.0000e+00 -1.6544e-38  0.0000e+00], xi(e-) = [ 1.0000e+00 -1.6544e-38  0.0000e+00], max|tr K| = 2.2e-16, E_- grid 8.208926e-01 vs quadrature 8.214932e-01, E_Eul grid -1.45302686e-01 vs -1.45302770e-01, G/|E_Eul| = 0.9999994249
+      4.0 | 0.50 |  5 | 128 | e1   |     1 |    1.36e-17 |   3.95e-20 |  6.61e-16 | 1.45303e-01 | -1.45303e-01 |    0.00e+00 |       0.00e+00 |       9.22e-12 |  8.21357e-01 |  6.76054e-01 | 0.0e+00
+      4.0 | 0.50 |  5 | 128 | e+   |     1 |    1.36e-17 |   3.95e-20 |  8.26e-16 | 1.45303e-01 | -1.45303e-01 |    9.49e-11 |       8.40e-12 |       9.22e-12 |  8.13586e-01 |  6.68283e-01 | -8.7e-19
+      4.0 | 0.50 |  5 | 128 | e-   |     1 |    1.36e-17 |   3.95e-20 |  8.26e-16 | 1.45303e-01 | -1.45303e-01 |    9.49e-11 |       8.40e-12 |       9.22e-12 |  8.29128e-01 |  6.83825e-01 | -3.5e-18
+          xi(e+) = [-1.0000e+00  2.7803e-38  0.0000e+00], xi(e-) = [1.0000e+00 2.7803e-38 0.0000e+00], max|tr K| = 2.2e-16, E_- grid 8.213567e-01 vs quadrature 8.214932e-01, E_Eul grid -1.45302770e-01 vs -1.45302770e-01, G/|E_Eul| = 0.9999999999
+      4.0 | 2.00 |  5 | 128 | e1   |     1 |    1.36e-17 |   1.58e-19 |  6.61e-16 | 2.32484e+00 | -2.32484e+00 |    0.00e+00 |       0.00e+00 |       9.22e-12 |  4.29768e+00 |  1.97283e+00 | 0.0e+00
+      4.0 | 2.00 |  5 | 128 | e+   |     1 |    1.36e-17 |   1.58e-19 |  8.26e-16 | 2.32484e+00 | -2.32484e+00 |    2.37e-11 |       6.64e-12 |       9.22e-12 |  4.18519e+00 |  1.86035e+00 | -5.6e-17
+      4.0 | 2.00 |  5 | 128 | e-   |     1 |    1.36e-17 |   1.58e-19 |  8.26e-16 | 2.32484e+00 | -2.32484e+00 |    2.37e-11 |       6.64e-12 |       9.22e-12 |  4.41016e+00 |  2.08531e+00 | -5.6e-17
+          xi(e+) = [-1.0000e+00  1.1121e-37  0.0000e+00], xi(e-) = [1.0000e+00 1.1121e-37 0.0000e+00], max|tr K| = 8.9e-16, E_- grid 4.297676e+00 vs quadrature 4.298080e+00, E_Eul grid -2.32484432e+00 vs -2.32484432e+00, G/|E_Eul| = 0.9999999999
+      8.0 | 0.10 |  3 | 128 | e1   |     1 |    1.32e-17 |   2.85e-20 |  6.94e-16 | 3.28804e-02 | -3.28804e-02 |    0.00e+00 |       0.00e+00 |       8.05e-10 |  5.30014e-01 |  4.97134e-01 | 0.0e+00
+      8.0 | 0.10 |  3 | 128 | e+   |     1 |    1.32e-17 |   2.85e-20 |  7.80e-16 | 3.28804e-02 | -3.28804e-02 |    2.52e-08 |       7.80e-10 |       8.05e-10 |  5.27359e-01 |  4.94478e-01 | 0.0e+00
+      8.0 | 0.10 |  3 | 128 | e-   |     1 |    1.32e-17 |   2.85e-20 |  7.80e-16 | 3.28804e-02 | -3.28804e-02 |    2.52e-08 |       7.80e-10 |       8.05e-10 |  5.32670e-01 |  4.99790e-01 | -8.7e-19
+          xi(e+) = [-1.0000e+00 -1.0322e-37  0.0000e+00], xi(e-) = [ 1.0000e+00 -1.0322e-37  0.0000e+00], max|tr K| = 1.4e-16, E_- grid 5.300144e-01 vs quadrature 5.302067e-01, E_Eul grid -3.28804375e-02 vs -3.28804368e-02, G/|E_Eul| = 1.0000000188
+  [PASS] solver returns eps0, residual at rounding level: worst |eps - eps0|/|K| 8.7e-19, |D~ eps0|/|K| 1.4e-17
+  [PASS] pointwise |D~eps0|^2/4pi + mu |eps0|^2 = 0 at every node: worst 8.3e-16 of max |mu|
+  [PASS] Witten identity G + int T = E - P.xi0 = 0: worst |G + int T| / (G + |xi0| int|J|) 7.8e-10 at the finest grid
+  [PASS] int J dV = 0 on the grid: worst 8.1e-10
+  [PASS] split sectors T+ >= 0 pointwise
+  [PASS] grid E_Eulerian = quadrature E_Eulerian: worst 1.9e-08
+  [PASS] grid E_- = quadrature E_-: worst 3.6e-04
+== mutations: each must make its named checks fail, and the unmutated quick runs must pass
+  [PASS] every check is named by a mutation: 29 checks, unnamed []
+  [PASS] unmutated identity --quick passes: exit 0, 0 failed
+  [PASS] unmutated energy --quick passes: exit 0, 0 failed
+  [PASS] --mutate=div (sym) fails its 6 named check(s): exit 1, 6 failed
+  [PASS] --mutate=div (identity) fails its 3 named check(s): exit 1, 3 failed
+  [PASS] --mutate=beta2 (sym) fails its 2 named check(s): exit 1, 2 failed
+  [PASS] --mutate=Jsign (sym) fails its 1 named check(s): exit 1, 1 failed
+  [PASS] --mutate=nusign (sym) fails its 2 named check(s): exit 1, 2 failed
+  [PASS] --mutate=natX (sym) fails its 1 named check(s): exit 1, 1 failed
+  [PASS] --mutate=natrho (sym) fails its 1 named check(s): exit 1, 1 failed
+  [PASS] --mutate=rw1 (sym) fails its 1 named check(s): exit 1, 1 failed
+  [PASS] --mutate=mu6 (sym) fails its 1 named check(s): exit 1, 1 failed
+  [PASS] --mutate=mu6 (identity) fails its 1 named check(s): exit 1, 2 failed
+  [PASS] --mutate=prof3 (sym) fails its 1 named check(s): exit 1, 1 failed
+  [PASS] --mutate=gamdup (sym) fails its 1 named check(s): exit 1, 1 failed
+  [PASS] --mutate=gamdup (identity) fails its 1 named check(s): exit 1, 3 failed
+  [PASS] --mutate=adm_tail (adm) fails its 1 named check(s): exit 1, 1 failed
+  [PASS] --mutate=adm_m (adm) fails its 1 named check(s): exit 1, 1 failed
+  [PASS] --mutate=adm_p (adm) fails its 1 named check(s): exit 1, 1 failed
+  [PASS] --mutate=split_old (split) fails its 3 named check(s): exit 1, 3 failed
+  [PASS] --mutate=split_old (identity) fails its 1 named check(s): exit 1, 2 failed
+  [PASS] --mutate=quad (energy) fails its 3 named check(s): exit 1, 3 failed
+  [PASS] --mutate=coarse (energy) fails its 1 named check(s): exit 1, 2 failed
+  [PASS] --mutate=thin (energy) fails its 1 named check(s): exit 1, 1 failed
+  [PASS] --mutate=port (identity) fails its 1 named check(s): exit 1, 1 failed
+  [PASS] --mutate=musign (identity) fails its 2 named check(s): exit 1, 3 failed
+  [PASS] --mutate=norm (identity) fails its 3 named check(s): exit 1, 3 failed
+  [PASS] --mutate=Jgrid (identity) fails its 2 named check(s): exit 1, 3 failed
+all checks passed
