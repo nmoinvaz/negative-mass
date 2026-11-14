@@ -95,7 +95,8 @@ Read for #60 on 2026-11-13. Journal data checked against INSPIRE, arXiv identifi
 - **Pfenning & Ford 1997**, arXiv:gr-qc/9702026, CQG 14, 1743. Total Eulerian energy E = −(v²/12)∫ r² f′² dr (Eq. 26),
   with a thin-wall estimate (Eq. 28), and quantum-inequality bounds. No momentum density.
 - **Natário 2002**, arXiv:gr-qc/0110086, CQG 19, 1157. Theorem 1.7: a non-flat warp drive (unit lapse, flat slices)
-  violates the WEC or the SEC. Introduces the zero-expansion drive.
+  violates the WEC or the SEC. Introduces the zero-expansion drive. Secs. 1 and 2 read in the arXiv v3 text for #66,
+  whose closed-form μ equals Sec. 2's ρ ([warp/natario.md](warp/natario.md)).
 - **Lobo & Visser 2004a**, arXiv:gr-qc/0406083, CQG 21, 5871, and **2004b**, arXiv:gr-qc/0412065 (Spanish Relativity
   Meeting proceedings). For null k along ± the direction of motion, the exact T_ab k^a k^b is −(v²/8π)|∇⊥f|² ±
   (v/8π)∇⊥²f (2004a Eq. 15), so the NEC fails at arbitrarily small v. The ± average is 4ρ (Eq. 16), which is T_zz = 3ρ
