@@ -181,7 +181,8 @@ finite multiplicity that accumulate only at 0, and λ ≠ 0 is an eigenvalue iff
   swap). For v ∉ E the Witten spinor exists and is unique (§6). At v ∈ E uniqueness fails, and existence depends on
   whether Bε₀ lies in the range.
 
-Whether E is empty for the tanh profile is not proved. The numerics of §9 find no real eigenvalue among the largest ones.
+Whether E is empty for the tanh profile is not proved. The numerics of §9 find no real eigenvalue among the largest ones,
+and #75's box-free spectrum ([tanh_spectrum.md](tanh_spectrum.md) §5) finds none in a window about three times wider.
 
 ## 8. A zero mode at real v has ∫ tr K |ε|² = 0 (*proved*, by hand; the pointwise identity *checked symbolically*)
 
@@ -231,6 +232,10 @@ speeds of modulus 2.44 v_c (σR = 2) and 2.72 v_c (σR = 4). The next quadruple 
 ±0.0028 ± 0.2885i. None of the top 24 is real, so no real zero-mode speed of the discrete operator lies below 3.35 v_c
 (σR = 2) or 3.47 v_c (σR = 4). FL's bound holds with room: ρ√3 v_c ≈ 0.71 and 0.64, against the contraction norm
 0.81 and 0.73. ρ moves by 1.4×10⁻⁴ from L = 8 to 16, while ‖T₁‖ moves by 6 % (the box, below).
+
+#75 recomputed ρ(T₁)v_c and the leading quadruples without a box, by a Galerkin method in J_z sectors
+([tanh_spectrum.md](tanh_spectrum.md) §4). The rows above lie below its values by 3.8×10⁻⁴ (σR = 2) and 7.0×10⁻⁴
+(σR = 4) relative, and rise toward them as L grows at fixed spacing (its §6), so the difference is the box.
 
 **GMRES solves at N = 128.** The residual is the RMS of D̃ε = Dψ + vB₁(ε₀ + ψ), with D by spectral differentiation,
 over that of vB₁ε₀. It includes the box mean (k = 0), which a periodic box cannot set to zero. That mean is a
@@ -304,7 +309,9 @@ restart 20; 1.55 GiB for the scan.
   is cited, not re-derived.
 - Existence and uniqueness hold for every real v outside a discrete set E ⊂ {|v| ≥ √3 v_c}, *proved* by hand. For the
   tanh profile at σR = 2 and 4 the grid operator has no real zero mode up to 4 v_c, and none of its 24 largest
-  eigenvalues is real (*numerical evidence*). That E is empty for the tanh profile is a *conjecture*.
+  eigenvalues is real (*numerical evidence*). #75 widens this without a box to about 12 v_c and 10 v_c, given that the
+  leading eigenvalue keeps falling with J_z ([tanh_spectrum.md](tanh_spectrum.md) §5). That E is empty for the tanh
+  profile is a *conjecture*.
 - The √3 is the best this route gives for complex amplitudes (the planted case attains it), but not necessarily for
   real ones (§8). For the tanh profile, the first complex zero mode is at 2.44 v_c and 2.72 v_c.
 - The contraction threshold v_c keeps its role for the quantitative bound ‖∇ψ‖₂ ≤ ‖Bε₀‖₂/(1 − κ_K). Beyond it, the
@@ -312,7 +319,8 @@ restart 20; 1.55 GiB for the scan.
   3.47 v_c, σR = 2).
 - Nothing changes in #58's conclusions on the mass: flat slices have E = P = 0, and the identity of item 6 is a
   statement at E = 0. The new range only says the spinor in that identity exists for faster bubbles.
-- The numerics use #58's box per σR, with the box error estimated from L = 12 and 16 at σR = 2 only.
+- The numerics use #58's box per σR, with the box error estimated from L = 12 and 16 at σR = 2 only. #75 measured it at
+  σR = 4 as well, against its box-free values.
 - No novelty is claimed. The analytic core is [FL22]'s, and the Fredholm and spectral steps are standard.
 
 ## Discrepancies and reading notes
