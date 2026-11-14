@@ -534,6 +534,9 @@ def part_planted():
     print(f"  zero-mode speeds v* = -1/lambda: " + ", ".join(f"{z.real:+.4f}{z.imag:+.4f}i" for z in vstar)
           + "; s_min there " + ", ".join(f"{s:.1e}" for s in sv) + "; s_min(+i), s_min(-i) = "
           + ", ".join(f"{s:.4f}" for s in spm))
+    sfree = [smin(W, vs, free=True)[0] for vs in vstar]
+    print(f"  mean-free s_min at v* (#63's definition, lifted by the k = 0 mode of B psi): "
+          + ", ".join(f"{s_:.4f}" for s_ in sfree))
     tt, ss = refine(W, 1j, 0.9, 1.1)
     print(f"  refine along +i t: minimum s_min = {ss:.1e} at t = {tt:.5f}")
     ok = abs(rho - 1) < 0.03 and im < 1e-3 and max(sv) < 1e-3 and max(spm) < 0.05 and abs(tt - 1) < 0.03 and ss < 1e-3
