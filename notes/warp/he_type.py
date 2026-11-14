@@ -275,10 +275,11 @@ def compare(cf, sig, Rb, v, r, c, label):
         Gm, _, _, _ = numN_points(sig, Rb, v, X[k:k + 20000], y[k:k + 20000], z[k:k + 20000])
         ivN[k:k + 20000] = numeric_type(Gm)
     near = np.abs(D) < 1e-10 * scale**6
-    redo = np.where((ivC != ivN) | near)[0]
-    unresolved = []
+    closest = np.argsort(np.abs(D) / scale**6)[:3]  # the three points nearest the boundary are always rechecked
+    redo = np.union1d(closest, np.where((ivC != ivN) | near)[0])
+    unresolved = [None] * max(0, redo.size - 100)  # beyond 100 rechecks, count the rest as unresolved
     mp.mp.dps = 50
-    for i in redo:
+    for i in redo[:100]:
         rm, cm, ph = mp.mpf(float(r[i])), mp.mpf(float(c[i])), mp.mpf(float(phi[i]))
         sm = mp.sqrt(1 - cm**2)
         Dm, scm, _ = cf.D(mp.mpf(v), sig, Rb, rm, cm, mpm=True)
@@ -294,7 +295,7 @@ def compare(cf, sig, Rb, v, r, c, label):
     mp.mp.dps = 15
     nd = int((ivC != ivN).sum())
     print(f"  {label}: {r.size} points, Type IV by D < 0 at {int(ivC.sum())}, by eigenvalues at {int(ivN.sum())}; "
-          f"float64 disagreements {nd}, near D = 0 {int(near.sum())}, rechecked at 50 digits {redo.size}, "
+          f"float64 disagreements {nd}, near D = 0 {int(near.sum())}, rechecked at 50 digits {min(redo.size, 100)}, "
           f"unresolved {len(unresolved)}")
     return r.size, nd, unresolved
 
@@ -372,15 +373,6 @@ def main():
     dec = [reduce_s(Rc[a, 3]) for a in range(4)] + [reduce_s(Rc[0, 0] + Rc[1, 1] + 2 * Rc[2, 2])]
     check("decouple", all(e == 0 for e in dec), f"R(e_varphi, .) and R_00 + R_11 + 2 R_rho,rho reduce to {dec}")
 
-    M = mixed_block([[Rc[a, b] for b in range(3)] for a in range(3)])
-    c2, c1, c0 = [reduce_s(e) for e in cubic(M)]
-    print(f"  c2 = {sp.factor(c2)}")
-    D = reduce_s(disc(c2, c1, c0))
-    num, den = sp.fraction(sp.together(D))
-    Pv = sp.Poly(sp.expand(num), V_)
-    powers = sorted(mm[0] for mm in Pv.monoms())
-    p = {k: sp.expand(Pv.coeff_monomial(V_**k)) / den for k in powers}
-    print(f"  D has the powers v^{powers} (numerator {len(sp.expand(num).args)} terms, denominator {den})")
     a_, b_, F_ = F1, F2, 1 - F0
     s2 = 1 - C_**2
     J2 = s2 * (a_ + r_ * b_)**2 + 4 * C_**2 * a_**2
@@ -388,29 +380,64 @@ def main():
     Q1 = -C_**2 * F_ * (a_ - r_ * b_)**2 - 4 * r_ * a_**3
     Q2 = a_**2 * (F_ + r_ * a_)**2 + C_**2 * F_ * (a_ + r_ * b_) * (F_ * (r_ * b_ - a_) - 2 * r_ * a_**2)
     p12 = s2**2 * F_**2 * Q1**2 * Q2 / (16 * r_**6)
-    jj = reduce_s(Rc[0, 1]**2 + Rc[0, 2]**2)
-    # Static part: the v^2 terms. At v = 1 it is block diagonal, so its D is chi(lam0)^2 (mu1 - mu2)^2 >= 0.
-    st = Rc.applyfunc(lambda e: sp.expand(e).coeff(V_, 2))
-    lam0, S11, S12, S22 = -st[0, 0], st[1, 1], st[1, 2], st[2, 2]
-    chi = lam0**2 - (S11 + S22) * lam0 + S11 * S22 - S12**2
     Qeq = 4 * V_**2 * a_**2 * F_ * (F_ + r_ * a_) + (a_ + r_ * b_)**2
     Qax = a_**2 + r_**2 * V_**2 * (F_ * b_ - a_**2)**2
-    res = {
-        "powers": powers == [6, 8, 10, 12],
-        "p6 = -(J^2)^3/(16 r^6)": sp.expand(p.get(6, 0) - p6) == 0,
-        "p6 = -4 |j|^6 / v^6": sp.expand(reduce_s(p.get(6, 0) * V_**6 + 4 * jj**3)) == 0,
-        "p12 = s^4 F^2 Q1^2 Q2/(16 r^6)": sp.expand(p.get(12, 0) - p12) == 0,
-        "p12 = chi(lam0)^2 [(S11 - S22)^2 + 4 S12^2]":
-            sp.expand(reduce_s(p.get(12, 0) - chi**2 * ((S11 - S22)**2 + 4 * S12**2))) == 0,
-        "equator": sp.expand(D.subs(C_, 0) - V_**6 * (r_**2 * V_**2 * a_**4 - (a_ + r_ * b_)**2) * Qeq**2
-                             / (16 * r_**6)) == 0,
-        "axis": sp.expand(D.subs(C_, 1) + 4 * a_**2 * V_**6 * Qax**2 / r_**6) == 0,
-    }
+    eqD = V_**6 * (r_**2 * V_**2 * a_**4 - (a_ + r_ * b_)**2) * Qeq**2 / (16 * r_**6)
+    axD = -4 * a_**2 * V_**6 * Qax**2 / r_**6
+
+    # Screen at exact rational points, with cos and sin from tan(theta / 2) = t. D / v^6 at v = 1..5 must be one cubic in
+    # v^2 with the expected p6 and p12, and D must equal the equator and axis forms. The symbolic proof runs only after.
+    Qr = sp.Rational
+    bad = []
+    for (fv, f1v, f2v, rv, tv) in [(Qr(1, 3), Qr(-5, 2), Qr(7, 4), Qr(9, 10), Qr(2, 7)),
+                                   (Qr(4, 5), Qr(-1, 3), Qr(-2, 9), Qr(6, 5), Qr(5, 3)),
+                                   (Qr(1, 9), Qr(-3), Qr(11, 2), Qr(1), Qr(1, 4))]:
+        for (cv, sv) in [((1 - tv**2) / (1 + tv**2), 2 * tv / (1 + tv**2)), (0, 1), (1, 0)]:
+            pt = {F0: fv, F1: f1v, F2: f2v, r_: rv, C_: cv, S_: sv}
+            Dv = []
+            for vv in range(1, 6):
+                Rn = Rc.subs(pt).subs(V_, vv)
+                Dv.append(disc(*cubic(mixed_block([[Rn[a, b] for b in range(3)] for a in range(3)]))) / vv**6)
+            co = sp.Matrix([[vv**(2 * k) for k in range(4)] for vv in range(1, 5)]).solve(sp.Matrix(Dv[:4]))
+            ok = sum(co[k] * 25**k for k in range(4)) == Dv[4] and co[0] == p6.subs(pt) and co[3] == p12.subs(pt)
+            if cv == 0:
+                ok = ok and Dv[1] * 2**6 == eqD.subs(pt).subs(V_, 2)
+            if cv == 1:
+                ok = ok and Dv[1] * 2**6 == axD.subs(pt).subs(V_, 2)
+            bad += [] if ok else [(fv, f1v, f2v, rv, cv)]
+    print(f"  screen at 9 exact points (f, f', f'', r, cos theta): failures at {bad}")
+    p = None
+    res = {"exact-point screen": not bad}
+    if not bad:
+        M = mixed_block([[Rc[a, b] for b in range(3)] for a in range(3)])
+        c2, c1, c0 = [reduce_s(e) for e in cubic(M)]
+        print(f"  c2 = {sp.factor(c2)}")
+        D = reduce_s(disc(c2, c1, c0))
+        num, den = sp.fraction(sp.together(D))
+        Pv = sp.Poly(sp.expand(num), V_)
+        powers = sorted(mm[0] for mm in Pv.monoms())
+        p = {k: sp.expand(Pv.coeff_monomial(V_**k)) / den for k in powers}
+        print(f"  D has the powers v^{powers} (numerator {len(sp.expand(num).args)} terms, denominator {den})")
+        jj = reduce_s(Rc[0, 1]**2 + Rc[0, 2]**2)
+        # Static part: the v^2 terms. At v = 1 it is block diagonal, so its D is chi(lam0)^2 (mu1 - mu2)^2 >= 0.
+        st = Rc.applyfunc(lambda e: sp.expand(e).coeff(V_, 2))
+        lam0, S11, S12, S22 = -st[0, 0], st[1, 1], st[1, 2], st[2, 2]
+        chi = lam0**2 - (S11 + S22) * lam0 + S11 * S22 - S12**2
+        res.update({
+            "powers": powers == [6, 8, 10, 12],
+            "p6 = -(J^2)^3/(16 r^6)": sp.expand(p.get(6, 0) - p6) == 0,
+            "p6 = -4 |j|^6 / v^6": sp.expand(reduce_s(p.get(6, 0) * V_**6 + 4 * jj**3)) == 0,
+            "p12 = s^4 F^2 Q1^2 Q2/(16 r^6)": sp.expand(p.get(12, 0) - p12) == 0,
+            "p12 = chi(lam0)^2 [(S11 - S22)^2 + 4 S12^2]":
+                sp.expand(reduce_s(p.get(12, 0) - chi**2 * ((S11 - S22)**2 + 4 * S12**2))) == 0,
+            "equator": sp.expand(D.subs(C_, 0) - eqD) == 0,
+            "axis": sp.expand(D.subs(C_, 1) - axD) == 0,
+        })
     for k, ok in res.items():
         print(f"  {k}: {ok}")
     print(f"  Q1 = {Q1}\n  Q2 = {Q2}\n  Q_eq = {Qeq}\n  Q_ax = {Qax}")
     for k in (8, 10):
-        if k in p:
+        if p is not None and k in p:
             print(f"  p{k} (coefficient of v^{k} in D) = {sp.factor(p[k])}")
     check("structure", all(res.values()), "D = v^6 (p6 + p8 v^2 + p10 v^4 + p12 v^6) with p6 = -4|j|^6/v^6 < 0, "
           "p12 >= 0, and the equator and axis factorizations: " + ", ".join(k for k, ok in res.items() if not ok))
@@ -425,7 +452,7 @@ def main():
             jn = tanh_jets(np.array([r0]), sig, Rb)
             for kk in range(3):
                 ex = mp.diff(fm, mp.mpf(r0), kk)
-                worst = max(worst, float(abs(jn[kk][0] - ex) / (abs(ex) + 1e-300)) if abs(ex) > 1e-12 else 0)
+                worst = max(worst, float(abs(jn[kk][0] - ex)) / sig**kk)  # relative to the jet's scale sig^k
     mp.mp.dps = 15
     check("jets", worst < 1e-9, f"tanh_jets against mpmath's numerical derivatives at 8 radii, worst relative error "
           f"{worst:.1e}")
@@ -440,13 +467,16 @@ def main():
     err_rho = float(np.max(np.abs(Gnn / (8 * np.pi) - rhoE)) / np.max(np.abs(rhoE)))
     _, Rax, _, _ = numN_points(8, 1, 1.0, np.array([1.0, -1.0]), np.array([0.0, 0.0]), np.array([0.0, 0.0]))
     evs = [np.sort_complex(np.linalg.eigvals(Rax[i])) for i in range(2)]
-    want = np.sort_complex(np.array([0, 0, 16 - 4j, 16 + 4j]))
-    err_ax = float(max(np.max(np.abs(e - want)) for e in evs))
-    print(f"  R^a_b on the axis at x - v t = +-1 (sig = 8, R = 1, v = 1): {np.round(evs[0], 6)}, "
-          f"{np.round(evs[1], 6)}")
-    check("numN", err_rho < 1e-8 and err_ax < 1e-6,
+    fa, fa1, fa2 = tanh_jets(np.array([1.0]), 8, 1)
+    mR00, R01 = float(fa1[0]**2 - (1 - fa[0]) * fa2[0]), float(fa1[0])  # -R_00 and R_01 on the axis, v = r_s = 1
+    want = np.sort_complex(np.array([0, 0, mR00 - 1j * R01, mR00 + 1j * R01]))
+    err_ax = float(max(np.max(np.abs(e - want)) for e in evs)) / 16
+    print(f"  R^a_b on the axis at x - v t = +-1 (sig = 8, R = 1, v = 1): {evs[0]}, {evs[1]}; the closed form's "
+          f"-R_00 +- i R_01 = {mR00:.9f} +- {abs(R01):.9f} i")
+    check("numN", err_rho < 1e-8 and err_ax < 1e-10,
           f"route N's G(n, n)/8pi equals -(v^2/32pi)(rho^2/r_s^2) f'^2 at 40 points (relative error {err_rho:.1e}), "
-          f"and its R^a_b on the axis has phantom_source's eigenvalues 16 +- 4i, 0, 0 (error {err_ax:.1e})")
+          f"and its R^a_b on the axis has eigenvalues 0, 0, -R_00 +- i R_01 (v^2 (f'^2 - (1 - f) f'') +- i v f'/r_s, "
+          f"phantom_source's 16 +- 4i to 6 digits; relative error {err_ax:.1e})")
 
     # 4. The closed form against numerical eigenvalues at every grid point.
     print("\n== 4. Closed form (sign of D) against route N's eigenvalues at every grid point ==")
@@ -475,9 +505,10 @@ def main():
                         "Rodal's axis, theta = 0 and pi")
     total, nd_tot, unres = total + n, nd_tot + nd, unres + un
     if unres:
-        print(f"  unresolved at 50 digits (r, cos theta, D, max|Im lam|), first 5: {unres[:5]}")
+        print(f"  unresolved at 50 digits (r, cos theta, D, max|Im lam|), first 5 rechecked: "
+              f"{[u for u in unres if u is not None][:5]}")
     check("closed_vs_numeric", not unres, f"the sign of D gives the eigenvalues' type at all {total} grid points "
-          f"({nd_tot} float64 disagreements, each settled at 50 digits; {len(unres)} unresolved)")
+          f"({nd_tot} float64 disagreements; {len(unres)} unresolved after up to 100 rechecks per grid at 50 digits)")
 
     # 5. Type I fractions for Le's setup.
     print("\n== 5. Le's setup: R_b = 1, sig = 8, t = 0, wall f in [0.1, 0.9], proper-volume weighted ==")
@@ -535,18 +566,40 @@ def main():
           f"Type IV on the whole axis, and one equatorial Type I annulus about r = rho of width {width:.4f}, within a "
           f"factor 2 of Rodal's 2 Delta = {2 * Delta:.2f}")
 
-    # 7. The critical speed: D / v^6 is a cubic in v^2 with p6 < 0 and p12 >= 0.
-    print("\n== 7. The critical speed v*(r, theta): Type IV for v < v*, Type I above, where the cubic has one positive "
-          "root ==")
-    pf = {k: sp.lambdify((F0, F1, F2, r_, C_), p[k] * 16 * r_**6, "numpy", cse=True) for k in p}
-    for lab, (sig, Rb), (a1, a2) in (("Le", le, (r1, r2)), ("Rodal", ro, wall_radii(*ro))):
+    # 7. The speed structure: D / v^6 is a cubic in V = v^2 with p6 < 0 and p12 >= 0, so it has one or three positive
+    # roots V1 <= V2 <= V3. Type IV for v^2 < V1, Type I above V1 with one root; with three, Type I on (V1, V2), Type IV
+    # again on (V2, V3) and Type I above V3.
+    print("\n== 7. Speed structure: the positive roots of p12 V^3 + p10 V^2 + p8 V + p6, V = v^2 (numerical evidence) ==")
+    pf = {k: sp.lambdify((F0, F1, F2, r_, C_), p[k] * 16 * r_**6, "numpy", cse=True) for k in p} if p else {}
+    for lab, (sig, Rb), (a1, a2) in (("Le", le, (r1, r2)), ("Rodal", ro, wall_radii(*ro))) if p else ():
         rr, cc, ww = polar_grid(a1, a2, 400)
         f, f1, f2 = tanh_jets(rr, sig, Rb)
         co = np.array([pf[k](f, f1, f2, rr, cc) * np.ones_like(rr) for k in sorted(p)])
-        changes = (np.diff(np.sign(co), axis=0) != 0).sum(axis=0)
-        one = ww[changes == 1].sum() / ww.sum()
-        print(f"  {lab}'s wall: the coefficients (p6, p8, p10, p12) change sign once, so one positive root v*^2, "
-              f"on {100 * one:.3f} % of the wall's volume (Descartes)")
+        cm = np.zeros((rr.size, 3, 3))  # companion matrix of V^3 + (p10 V^2 + p8 V + p6) / p12
+        cm[:, 0, :] = -(co[[2, 1, 0]] / co[3]).T
+        cm[:, 1, 0] = cm[:, 2, 1] = 1
+        roots = np.linalg.eigvals(cm)
+        isreal = np.abs(roots.imag) <= 1e-9 * np.abs(roots).max(axis=1, keepdims=True)
+        npos = ((roots.real > 0) & isreal).sum(axis=1)
+        posr = np.sort(np.where((roots.real > 0) & isreal, roots.real, np.inf), axis=1)
+        v1 = np.sqrt(posr[npos >= 1, 0])
+        i3 = np.flatnonzero(npos == 3)
+        print(f"  {lab}'s wall, polar 400^2: one positive root on {100 * ww[npos == 1].sum() / ww.sum():.3f} % of the "
+              f"volume, three on {100 * ww[npos == 3].sum() / ww.sum():.3f} %, none resolved by the companion matrix at "
+              f"{int((npos == 0).sum())} points next to the axis, where p12 is of order sin(theta)^4. The lowest root "
+              f"v1 = sqrt(V1) ranges over [{v1.min():.4f}, {v1.max():.3g}], and the re-entrant Type IV band, where "
+              f"there is one, starts at v2 = sqrt(V2) >= {np.sqrt(posr[i3, 1]).min() if i3.size else np.nan:.3f}")
+        if i3.size:
+            k = i3[np.argmax(posr[i3, 1] - posr[i3, 0])]  # the widest first Type I window
+            vv = np.sqrt(posr[k])
+            probes = [vv[0] / 2, (vv[0] + vv[1]) / 2, (vv[1] + vv[2]) / 2, 2 * vv[2]]
+            s_ = np.sqrt(1 - cc[k]**2)
+            labs = []
+            for x in probes:
+                Gm, _, _, _ = numN_points(sig, Rb, x, np.array([rr[k] * cc[k]]), np.array([rr[k] * s_]), np.array([0.0]))
+                labs.append("IV" if numeric_type(Gm)[0] else "I")
+            print(f"    at r = {rr[k]:.5f}, cos theta = {cc[k]:.5f}: roots v = {np.round(vv, 4)}; route N's type at "
+                  f"v = {np.round(probes, 4)} is {labs}")
         vs = np.array([0.1, 0.25, 0.5, 0.75, 1, 1.5, 2, 2.5, 3, 5, 10])
         fI = [fraction_I(cf, x, sig, Rb, a1, a2, 600) for x in vs]
         print("    v:        " + " ".join(f"{x:6g}" for x in vs))
@@ -572,6 +625,8 @@ if __name__ == "__main__":
             controls_ok &= fired
             print(f"[{'FIRED' if fired else 'SILENT'}] --mutate={name} ({what}): exit {pr.returncode}, failed {fails}",
                   flush=True)
+            shown = [ln.split(": ", 1)[1] for ln in pr.stdout.splitlines() if "] le_fraction: " in ln]
+            print(f"    its map: {shown[0] if shown else 'no le_fraction line'}")
             if pr.returncode not in (0, 1):
                 print(pr.stderr[-2000:])
         print(f"controls: {'all fired' if controls_ok else 'SOME DID NOT FIRE'}")
