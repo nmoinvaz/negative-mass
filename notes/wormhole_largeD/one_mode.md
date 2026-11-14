@@ -156,9 +156,9 @@ This shares Paper III's master equation but not its integration codes, master va
   arXiv:1911.13103 (journal from the DOI on the arXiv page).
 - [TS13] T. Torii, H. Shinkai, PRD 88, 064027 (2013), arXiv:1309.2058 (see `README.md`).
 - [Wei87] J. Weidmann, *Spectral Theory of Ordinary Differential Operators*, Lecture Notes in Math. 1258, Springer,
-  Berlin, 1987 (as cited in [CPS20]; *(unverified)* against the publisher).
+  Berlin, 1987 (as cited in [CPS20]; checked against Crossref and zbMATH).
 - [BS91] F. A. Berezin, M. A. Shubin, *The Schrödinger Equation*, Springer (Kluwer), Dordrecht, 1991 (as cited in
-  [CPS20]; *(unverified)* against the publisher).
+  [CPS20]; checked against Crossref and Open Library).
 - [Sim05] B. Simon, "Sturm oscillation and comparison theorems", in W. O. Amrein, A. M. Hinz, D. B. Pearson (eds.),
-  *Sturm–Liouville Theory: Past and Present*, Birkhäuser, Basel, 2005 (as cited in [CPS20]; *(unverified)* against the
-  publisher).
+  *Sturm–Liouville Theory: Past and Present*, Birkhäuser, Basel, 2005, pp. 29–43 (as cited in [CPS20]; checked against
+  Crossref).

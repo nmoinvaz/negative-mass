@@ -486,7 +486,8 @@ signs ε_i (ε₁ = +1, ε₂ = −1) give:
   - the GMG96 perturbation section (only its abstract and the LRR summary);
   - [MGM26] (quoted from choptuik-large-d);
   - the results sections of [CDK24] and [NRM12]'s figures.
-- **Journal references** marked *(unverified)* were not checked against the publisher. All arXiv ids were opened.
+- **Journal references** were checked on 2026-11-13 against INSPIRE, arXiv and Crossref (#49,
+  [references_check.md](references_check.md)). All arXiv ids were opened.
 - **Coverage:** results posted after about 2026-10-21.
 - **AI-directed text:** none was found in the pages read.
 
@@ -497,23 +498,23 @@ signs ε_i (ε₁ = +1, ε₂ = −1) give:
 - [GGS09a] J. A. González, F. S. Guzmán, O. Sarbach, "Instability of wormholes supported by a ghost scalar field. I. Linear
   stability analysis", CQG 26, 015010 (2009), arXiv:0806.0608.
 - [GGS09b] J. A. González, F. S. Guzmán, O. Sarbach, "… II. Nonlinear evolution", CQG 26, 015011 (2009), arXiv:0806.1370.
-- [GGS09c] J. A. González, F. S. Guzmán, O. Sarbach, "On the instability of charged wormholes supported by a ghost scalar
-  field", arXiv:0906.0420 (PRD 80, 024023 (2009) *(unverified)*).
+- [GGS09c] J. A. González, F. S. Guzmán, O. Sarbach, "Instability of charged wormholes supported by a ghost scalar field",
+  PRD 80, 024023 (2009), arXiv:0906.0420.
 - [DHNS09] A. Doroshkevich, J. Hansen, I. Novikov, A. Shatskiy, "Passage of radiation through wormholes", arXiv:0812.0702
-  (IJMPD 18, 1665 (2009) *(unverified)*). A companion, arXiv:0811.2558, is withdrawn.
+  (IJMPD 18, 1665 (2009)). A companion, arXiv:0811.2558, is withdrawn.
 - [TS13] T. Torii, H. Shinkai, "Wormholes in higher dimensional space-time: exact solutions and their linear stability
   analysis", PRD 88, 064027 (2013), arXiv:1309.2058.
-- [ST17] H. Shinkai, T. Torii, "Nonlinear dynamics in the Einstein–Gauss–Bonnet gravity", arXiv:1706.02070 (PRD 2017;
-  volume *(unverified)*).
+- [ST17] H. Shinkai, T. Torii, "Nonlinear dynamics in the Einstein–Gauss–Bonnet gravity", PRD 96, 044009 (2017),
+  arXiv:1706.02070.
 - [BFZ11] K. A. Bronnikov, J. C. Fabris, A. Zhidenko, "On the stability of scalar-vacuum space-times", arXiv:1109.6576
-  (EPJC 71, 1791 (2011) *(unverified)*).
+  (EPJC 71, 1791 (2011)).
 - [BKZ12] K. A. Bronnikov, R. A. Konoplya, A. Zhidenko, "Instabilities of wormholes and regular black holes supported by a
-  phantom scalar field", arXiv:1205.2224 (PRD 86, 024028 (2012) *(unverified)*).
+  phantom scalar field", arXiv:1205.2224 (PRD 86, 024028 (2012)).
 - [CPS20] F. Cremona, L. Pizzocchero, O. Sarbach, "Gauge-invariant spherical linear perturbations of wormholes in Einstein
   gravity minimally coupled to a self-interacting phantom scalar field", arXiv:1911.13103, PRD 101, 104061 (2020)
   (journal from the DOI on the arXiv page).
 - [DFKKR13] V. Dzhunushaliev, V. Folomeev, B. Kleihaus, J. Kunz, E. Radu, "Rotating wormholes in five dimensions",
-  arXiv:1309.2448 (journal *(unverified)*).
+  arXiv:1309.2448 (PRD 88, 124028 (2013)).
 - [DFKK13] V. Dzhunushaliev, V. Folomeev, B. Kleihaus, J. Kunz, "Mixed neutron-star-plus-wormhole systems: linear stability
   analysis", PRD 87, 104036 (2013), arXiv:1302.5217.
 - [Kai26] B. Kain, "Dynamical wormholes", arXiv:2602.18231 (2026).
@@ -529,15 +530,15 @@ signs ε_i (ε₁ = +1, ε₂ = −1) give:
   massless matter fields", PRD 100, 104010 (2019), arXiv:1908.05971.
 - [Mae09] H. Maeda, "Simple analytic model of wormhole formation", PRD 79, 024030 (2009), arXiv:0811.2962.
 - [Fro97] A. V. Frolov, "Perturbations and critical behavior in the self-similar gravitational collapse of a massless
-  scalar field", arXiv:gr-qc/9704040 (PRD 56, 6433 (1997) *(unverified)*).
+  scalar field", arXiv:gr-qc/9704040 (PRD 56, 6433 (1997)).
 - [HK04] S. A. Hayward, H. Koyama, "How to make a traversable wormhole from a Schwarzschild black hole",
-  arXiv:gr-qc/0406080 (journal *(unverified)*).
+  arXiv:gr-qc/0406080 (PRD 70, 101502 (2004)).
 - [Ber26] A. Bernal, V. Jaramillo, N. A. Montiel-Hernández, D. Núñez, N. Sanchis-Gual, "Gravitational confinement of ghost
-  scalar fields in neutron stars", arXiv:2603.04400 (2026; PRD *(unverified)*).
-- [JJN23] V. Jaramillo, Jiménez-Vázquez, D. Núñez, "Confinement of exotic matter. I. Static solutions",
-  arXiv:2302.07889 (PRD 107, 064061 (2023), as recorded in `notes/novelty`).
-- [DMW23] P.-B. Ding, T.-X. Ma, Y.-Q. Wang, "Study of boson stars with wormhole", arXiv:2305.19819 (JHEP 04 (2024) 033
-  *(unverified)*).
+  scalar fields in neutron stars", arXiv:2603.04400 (PRD 113, 104041 (2026)).
+- [JJN23] V. Jaramillo, E. Jiménez-Vázquez, D. Núñez, "Confinement of exotic matter: static solutions",
+  arXiv:2302.07889 (PRD 107, 064061 (2023)).
+- [DMW23] P.-B. Ding, T.-X. Ma, T.-F. Fang, Y.-Q. Wang, "Study of boson stars with wormhole", arXiv:2305.19819
+  (JHEP 04 (2024) 033).
 - [CDK24] K. Clough, T. Dietrich, S. Khan, "What no one has seen before: gravitational waveforms from warp drive
   collapse", arXiv:2406.02466, doi:10.33232/001c.121868 (Open J. Astrophys., 2024).
 - [GHMG25] C. Gundlach, D. Hilditch, J. M. Martín-García, "Critical phenomena in gravitational collapse",
