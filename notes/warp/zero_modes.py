@@ -8,6 +8,7 @@ below 1e-3. s_min(v) = 0 on the grid exactly when -1/v is an eigenvalue of M = B
 
     python notes/warp/zero_modes.py [--part=adjoint,dense,vc,regress63,sectors,lanczos,planted,ly]   planted truth first
     python notes/warp/zero_modes.py --part=scan --sigma=2 --L=8 --N=64 [--tmax=10] [--out=raw/scan.jsonl]
+    python notes/warp/zero_modes.py --part=points --sigma=2 --L=16 --N=160 --ts=4,7,10 [--out=...]   s_min at a few v
     python notes/warp/zero_modes.py --part=table --raw=DIR       merge the jsonl of the scan runs into the tables
     python notes/warp/zero_modes.py --controls [--raw=DIR] [--only=a,b]   every --mutate control, each must make its check
                                                                  fail; gridperturb needs --raw
@@ -56,6 +57,7 @@ ap.add_argument("--step", type=float, default=0.25, help="scan step in units of 
 ap.add_argument("--out", default="", help="jsonl file the scan appends its records to")
 ap.add_argument("--raw", default="", help="directory of scan jsonl files, for --part=table")
 ap.add_argument("--confirm", action="store_true", help="planted and ly: also the box and grid convergence of the zero")
+ap.add_argument("--ts", default="4,7,10", help="--part=points: the v/v_c values")
 ap.add_argument("--controls", action="store_true")
 ap.add_argument("--only", default="", help="with --controls: run only these mutations, comma separated")
 args = ap.parse_args()
@@ -79,7 +81,8 @@ MUTATIONS = {  # name: (what it breaks, the run's options, the checks that must 
     "lowiter": ("stops Lanczos after two restarts", "--part=lanczos", ["lanczos"]),
     "lipbig": ("uses 50 ||M|| in the certificate", "--part=scan --sigma=2 --L=8 --N=32 --tmax=1 --step=1", ["scan_resolved"]),
     "mem": ("sets the memory limit to 0.05 GB", "--part=vc", ["memory"]),
-    "gridperturb": ("scales the second grid's s_min by 1.01 in the table", "--part=table", ["agree_N"]),
+    "gridperturb": ("scales the (L1, 96) and (2 L1, 128) columns of the table by 1.01", "--part=table",
+                    ["agree_N", "agree_N160"]),
 }
 if MUT and MUT not in MUTATIONS:
     sys.exit(f"unknown mutation {MUT}")
@@ -479,7 +482,7 @@ REF63 = {(2.0, 1.0): 0.691615, (2.0, 2.0): 0.531532, (2.0, 4.0): 0.389574,
 
 
 def part_regress63():
-    print("== regress63: the mean-free s_min at N = 64 equals #63's scan table, and the full-space value is below it")
+    print("== regress63: the mean-free s_min at N = 64 against #63's scan table, with the full-space value beside it")
     worst = 0.0
     for (sig, t), ref in REF63.items():
         W, vc = make_op("witten2", BOX[sig], 64, sig)
@@ -604,6 +607,22 @@ def part_scan():
     check("lanczos_converged", LANCZOS["unconverged"] == 0, f"{LANCZOS['unconverged']} of {LANCZOS['runs']} runs")
 
 
+def part_points():
+    """s_min at a few v on one (L, N), without the certificate: a finer grid for the convergence of the table."""
+    sig = args.sigma
+    L, N = args.L or BOX[sig], args.N or 64
+    W, vc = make_op("witten2", L, N, sig)
+    print(f"== points: witten2, sigma R = {sig}, L = {L}, N = {N}, v_c = {vc:.5f}")
+    for t in [float(t_) for t_ in args.ts.split(",")]:
+        t0 = time.time()
+        sm, na, ok = smin(W, t * vc)
+        emit({"rec": "conv", "sigma": sig, "L": L, "N": N, "t": t, "smin": sm, "napply": na, "ok": ok,
+              "peak_gb": round(peak_gb(), 3)})
+        print(f"  t = v/v_c = {t:6.3f}  v = {t * vc:9.4f}  s_min = {sm:.6f}  [{na} apps, {time.time() - t0:.0f} s, "
+              f"peak {peak_gb():.2f} GB]", flush=True)
+    check("lanczos_converged", LANCZOS["unconverged"] == 0, f"{LANCZOS['unconverged']} of {LANCZOS['runs']} runs")
+
+
 GRIDS = {2.0: [(8.0, 64), (8.0, 96), (16.0, 96), (16.0, 128)], 4.0: [(5.0, 64), (5.0, 96), (10.0, 96), (10.0, 128)]}
 
 
@@ -612,7 +631,9 @@ def load_raw(path):
     for fn in sorted(glob.glob(os.path.join(path, "*.jsonl"))):
         for ln in open(fn):
             rec = json.loads(ln)
-            if rec.get("rec") == "start":
+            if rec.get("rec") == "conv":
+                out.setdefault(("conv", rec["sigma"], rec["L"], rec["N"]), {})[round(rec["t"], 6)] = rec["smin"]
+            elif rec.get("rec") == "start":
                 cur = out.setdefault((rec["sigma"], rec["L"], rec["N"]), {"start": rec, "s": {}, "sum": None, "file": fn})
             elif rec.get("rec") == "sample":
                 cur["s"][round(rec["t"], 6)] = rec
@@ -625,6 +646,7 @@ def part_table():
     print(f"== table: s_min(v) from the scan runs in {args.raw}")
     data = load_raw(args.raw)
     worst, missing, cand = 0.0, [], 0
+    worst160, n160 = 0.0, 0
     for sig in (2.0, 4.0):
         cols = GRIDS[sig]
         have = [c for c in cols if (sig,) + c in data]
@@ -638,7 +660,7 @@ def part_table():
         print("  v/v_c | " + " | ".join(f"{n:>11s}" for n in names) + " |  extrap  | s sqrt(v/v_c)")
         s = {}
         for c in have:
-            pert = 1.01 if MUT == "gridperturb" and c == cols[1] else 1.0
+            pert = 1.01 if MUT == "gridperturb" and c in (cols[1], cols[3]) else 1.0
             s[c] = {t: data[(sig,) + c]["s"][t]["smin"] * pert for t in ts}
         for t in ts:
             ext = ""
@@ -652,6 +674,12 @@ def part_table():
                 d = max(abs(s[ns[0]][t] - s[ns[1]][t]) for t in ts)
                 worst = max(worst, d)
                 print(f"  grid change at L = {box:g}, N = {ns[0][1]} to {ns[1][1]}: max |ds| = {d:.1e}")
+        fine = data.get(("conv", sig, cols[3][0], 160), {})
+        for t, sf in sorted(fine.items()):
+            d = abs(sf - s[cols[3]][t]) if cols[3] in have and t in s[cols[3]] else float("inf")
+            worst160, n160 = max(worst160, fin(d)), n160 + 1
+            print(f"  N = 160 at L = {cols[3][0]:g}, v/v_c = {t:g}: s_min = {sf:.6f}, N = 128: {s[cols[3]][t]:.6f}, "
+                  f"change {d:.1e}")
         for c in have:
             sm = data[(sig,) + c]["sum"]
             if sm is None:
@@ -663,6 +691,8 @@ def part_table():
                   f"{sm['candidates']}, peak {sm['peak_gb']:.2f} GB, {sm['napply']} applications")
     check("complete", not missing, "all eight runs present with their summaries" if not missing else f"missing {missing}")
     check("agree_N", worst < 2e-4, f"largest change in s_min between the two grids of one box {worst:.1e}")
+    check("agree_N160", n160 > 0 and worst160 < 2e-4, f"N = 160 against N = 128 at the large boxes, {n160} points, "
+          f"largest change {worst160:.1e}")
     check("zero_candidates", cand == 0, f"{cand} zero-mode candidate(s) in the scans")
 
 
@@ -700,7 +730,7 @@ def run_controls():
 if args.controls:
     run_controls()
 else:
-    for name, fn in (("adjoint", part_adjoint), ("dense", part_dense), ("vc", part_vc), ("regress63", part_regress63),
+    for name, fn in (("points", part_points), ("adjoint", part_adjoint), ("dense", part_dense), ("vc", part_vc), ("regress63", part_regress63),
                      ("sectors", part_sectors), ("lanczos", part_lanczos), ("planted", part_planted), ("ly", part_ly),
                      ("scan", part_scan), ("table", part_table)):
         if name in PARTS:
