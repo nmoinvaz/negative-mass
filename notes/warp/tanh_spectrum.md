@@ -267,7 +267,8 @@ would fail, since no real candidate exists to give it one.
 #63's σR = 4 value, 0.36732 to 0.36736, is the box L = 5. At σR = 2 its own runs show the box error, ρ(T₁)v_c rising
 with L from 0.40938 at L = 8 to 0.40949 at L = 12 and 0.40952 at L = 16 at one spacing, dx = 0.25. For σR = 4 the
 unmodified `frank_loss.py` was run at L = 7.5, N = 96 and L = 10, N = 128, both at the spacing dx = 0.15625 of L = 5,
-N = 64 (`--part=krylov --sigmas=4 --Ns=<N> --L=<L> --vs=0.5`, logs in the raw folder).
+N = 64, as `python notes/warp/frank_loss.py --part=krylov --sigmas=4 --Ns=96 --L=7.5 --vs=0.5` and the same with
+`--Ns=128 --L=10`, at `nice -n 10` and one thread. The logs are in the raw folder.
 
 | σR | L | N | dx | ρ(T₁)v_c, box | here | here − box |
 |---|---|---|---|---|---|---|
