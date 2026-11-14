@@ -81,8 +81,8 @@ MUTATIONS = {  # name: (what it breaks, the run's options, the checks that must 
     "lowiter": ("stops Lanczos after two restarts", "--part=lanczos", ["lanczos"]),
     "lipbig": ("uses 50 ||M|| in the certificate", "--part=scan --sigma=2 --L=8 --N=32 --tmax=1 --step=1", ["scan_resolved"]),
     "mem": ("sets the memory limit to 0.05 GB", "--part=vc", ["memory"]),
-    "gridperturb": ("scales the (L1, 96) and (2 L1, 128) columns of the table by 1.01", "--part=table",
-                    ["agree_N", "agree_N160"]),
+    "gridperturb": ("scales the (2 L1, 128) column of the table by 1.01; agree_N already fails on the data",
+                    "--part=table", ["agree_N160"]),
 }
 if MUT and MUT not in MUTATIONS:
     sys.exit(f"unknown mutation {MUT}")
@@ -663,7 +663,7 @@ def part_table():
         print("  v/v_c | " + " | ".join(f"{n:>11s}" for n in names) + " |  extrap  | s sqrt(v/v_c)")
         s = {}
         for c in have:
-            pert = 1.01 if MUT == "gridperturb" and c in (cols[1], cols[3]) else 1.0
+            pert = 1.01 if MUT == "gridperturb" and c == cols[3] else 1.0
             s[c] = {t: data[(sig,) + c]["s"][t]["smin"] * pert for t in ts}
         for t in ts:
             ext = ""
