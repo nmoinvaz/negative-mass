@@ -1,0 +1,76 @@
+two_scalars.py, issue #65. sympy 1.14.0, python 3.14.10. mutation: none
+
+== 1. Planted truth: R = lam eta + a a - b b passes, other signatures fail ==
+[PASS] planted_pass: 12 random lam eta + a a - b b, transformed: lam recovered and the form split in all but 0 []
+[PASS] planted_fail: 12 random forms with signs (+,+), (-,-), (+,-,+), (+,-,-): all fail the algebraic stage but 0 []
+
+== 2. Lemma: with (I1), (I2), the form holds iff lam = 0 and det R_3 = 0 (R_3 the (0, 1, 2) block) ==
+[PASS] lemma_samples: 12 pass with lam = 0 (det R_3 = 0), 12 fail (det R_3 != 0), 0 disagree with the lemma []
+
+== 3. Control: ds^2 = -dt^2 + dl^2 + r(l)^2 dOmega^2, r^2 = (1 - beta cos 2 kappa l) / (2 kappa^2) ==
+  nonzero R_ab: R_ll = 2*beta*kappa**2*(beta*sin(2*kappa*l)**2 + 2*beta*cos(2*kappa*l)**2 - 2*cos(2*kappa*l))/(beta*cos(2*kappa*l) - 1)**2, R_thetatheta = -beta*cos(2*kappa*l) + 1, R_phiphi = (2*beta*sin(kappa*l)**2 - beta + 1)*sin(theta)**2
+  status pass, lam = 2*kappa**2, a = [sqrt(2)*kappa, 0, 0, 0], b = [0, 2*kappa*(beta**2 - 1)*(2*beta*cos(kappa*l)**2 - beta - 1)/(sqrt(2 - 2*beta)*sqrt(beta + 1)*(-2*beta*cos(kappa*l)**2 + beta + 1)**2), 0, 0]
+[PASS] eb2_algebraic: lam = 2*kappa**2 (2 kappa^2 for the solution), one normal and one phantom square: True
+[PASS] eb2_closed: omega = [0, 0, 0, 0]: omega closed
+[PASS] eb2_potential: d lam ^ a ^ b = [0, 0, 0, 0]
+  phi_1 = kappa*t/(2*sqrt(pi)), phi_2 = atan(sqrt(beta + 1)*sqrt(1/(1 - beta))*tan(kappa*l))/(2*sqrt(pi)) (|kappa l| < pi/2), V = kappa**2/(4*pi); d phi_i - u_i = [0, 0, 0, 0, 0, 0, 0, 0]
+[PASS] eb2_residual: d phi_i = u_i: True; G_ab - 8 pi T_ab = 0
+  (6 s)
+
+== 4. Alcubierre, constant v: D = det R_3 on (E_0 = n, E_1 = d_x, e_rho), general profile ==
+  (15 s) identities from phantom_source.py: R(e_varphi, .) = [0, 0, 0, 0], R_00 + R_11 + 2 R_rho,rho = 0
+  16 r^3 D is a polynomial of degree 6 in c = cos(theta), odd terms []. Coefficients:
+    c^0: 2*W1**2*r*(-4*W0**2*W1**2 + W1**4*r**2 - W1**2 - 2*W1*W2*r - W2**2*r**2)
+    c^2: 2*(2*W0**3*W1**3 - 4*W0**3*W1**2*W2*r + 2*W0**3*W1*W2**2*r**2 + 5*W0**2*W1**4*r - 2*W0**2*W1**3*W2*r**2 + W0**2*W1**2*W2**2*r**3 - 4*W0*W1**5*r**2 + 4*W0*W1**4*W2*r**3 - 4*W0*W1**3 + 6*W0*W1**2*W2*r - 2*W0*W2**3*r**3 + W1**6*r**3 + 4*W1**4*r)
+    c^4: 2*(-4*W0**3*W1**3 + 10*W0**3*W1**2*W2*r - 8*W0**3*W1*W2**2*r**2 + 2*W0**3*W2**3*r**3 + 4*W0**2*W1**4*r - 8*W0**2*W1**3*W2*r**2 + 4*W0**2*W1**2*W2**2*r**3 + 4*W0*W1**3 - 6*W0*W1**2*W2*r + 2*W0*W2**3*r**3 - W1**6*r**3 - 3*W1**4*r + 2*W1**3*W2*r**2 + W1**2*W2**2*r**3)
+    c^6: -2*(-2*W0*W1 + 2*W0*W2*r + W1**2*r)*(-W0*W1 + W0*W2*r + W1**2*r)**2
+[PASS] det_axis: D on the axis (c = 1 and c = -1) = [0, 0], odd terms []
+  (16 s) grevlex basis of the coefficients, elements free of zz: [(2*W0*W2 + W1**2)**2, 4*W0*W1*W2 + 2*W0*W2**2*r + W1**3, 4*W0*W2 + W1**2 + W2**2*r**2, -2*W0 + W1*r]
+[PASS] det_jets: with W1 r != 0 the coefficients generate the same ideal as 2 W0 - r W1 and (W1 + r W2)^2: each coefficient lies in the latter [True, True, True, True], each relation in the former [True, True]. So D(r, .) = 0 for all theta, with w'(r) != 0, exactly where 2 w = r w' and r w'' = -w'
+  relations solved from the two generators: [{W0: W1*r/2, W2: -W1/r}]
+  differentiating W0 = g(W1, r) along r with W2 = h(W1, r) leaves W1 = 0, so W1 is one of []
+[PASS] no_open_set: relations that hold on an interval of r with w' != 0: none. So D vanishes on no open set of the wall
+
+== 5. Two-scalar test at exact points (lab route of phantom_source.py, same code as the control) ==
+         bump Rb=2, off the axis: 3 points, outcomes ['algebraic']
+         bump Rb=2, on the axis: 1 points, outcomes ['form']
+       random jets, off the axis: 4 points, outcomes ['algebraic']
+   tanh sig=8 Rb=1, off the axis: 9 points, outcomes ['algebraic']
+   tanh sig=8 Rb=1, on the axis: 6 points, outcomes ['form']
+  info: x - v t = 1, v = 1 (tanh sig=8 Rb=1): a = [0, 4.1231, 0, 0], b = [-4.0000, -1.0000, 0, 0], eigenvalues of eta (a a - b b): [16.0 - 4.0*I, 16.0 + 4.0*I, 0]
+  info: x - v t = 1, v = 1/2 (tanh sig=8 Rb=1): a = [0, 2.2361, 0, 0], b = [-2.0000, -1.0000, 0, 0], eigenvalues of eta (a a - b b): [4.0 - 2.0*I, 4.0 + 2.0*I, 0]
+[PASS] alc_points: 16 off-axis points fail the algebraic stage with D != 0, 7 on-axis points pass it with lam = 0 and D = 0; 0 disagree
+
+== 6. Accelerating bubble b = -v_s(t) f(r_s), r_s^2 = (x - x_s(t))^2 + rho^2, at v_s(t) != 0 ==
+  Jets: w~ = x_s' - v_s f(r_s) (the comoving shift), w~' = -v_s f', w~'' = -v_s f'', A = v_s' / v_s.
+[PASS] acc_jets: the frame R_3 of route D depends on x_s', v_s, v_s', f, f', f'' only through w~, w~', w~'' and A: True
+[PASS] acc_static_limit: at A = 0, 16 r^3 D of route D equals section 4's (route C), difference 0
+  16 r^3 D has degree 6 in c and the odd powers [1, 3, 5]. Odd coefficients: [-4*A*R*W1*(A**2*R**2*W1**2 + R**2*W0*W1**2*W2 + 2*R**2*W1**4 - R**2*W2**2 + 2*R*W0**2*W1*W2 - R*W0*W1**3 - 2*W0**2*W1**2 + W1**2), 4*A*R*W1*(A**2*R**2*W1**2 - 3*R**2*W0**2*W2**2 - 4*R**2*W0*W1**2*W2 - R**2*W2**2 + 8*R*W0**2*W1*W2 + 4*R*W0*W1**3 - 5*W0**2*W1**2 + W1**2), 4*A*R*W1*(R*W0*W2 + R*W1**2 - W0*W1)*(3*R*W0*W2 + 2*R*W1**2 - 3*W0*W1)]
+[PASS] acc_det_jets: with A W1 r != 0 the coefficients of c^k have no common zero (Groebner basis [1]). So D(r_s, .) = 0 for all theta needs v_s' = 0 at that t, and then section 4's relations, which hold on no interval
+
+== 7. A shift b(rho) alone (no t or x dependence): D = h (h^2 - Q^2), h = b'^2/2, Q = -(b'' + b'/rho)/2 ==
+  R_3 = [[-b001**2/2, -(b001 + b002*rho)/(2*rho), 0], [-(b001 + b002*rho)/(2*rho), -b001**2/2, 0], [0, 0, b001**2/2]]
+  eps = +1, b = -log(-log(rho)) (0 < rho < 1): status closure, lam = 0, a = [0, 0, sqrt(2)/(2*rho*log(rho)), 0], b = [sqrt(2)*(-log(-log(rho))**2 + 2*log(-log(rho)) - 1)/(2*rho*(log(-log(rho)) - 1)*log(rho)), sqrt(2)/(2*rho*log(rho)), 0, 0]; no chi: omega ^ k = -dk and omega ^ m = dm have no common solution
+  eps = -1, b = log(log(rho)) (rho > 1): status closure, lam = 0, a = [0, 0, sqrt(2)/(2*rho*log(rho)), 0], b = [sqrt(2)*(-log(log(rho))**2 + 2*log(log(rho)) - 1)/(2*rho*(log(log(rho)) - 1)*log(rho)), sqrt(2)*(1 - log(log(rho)))/(2*rho*(log(log(rho)) - 1)*log(rho)), 0, 0]; no chi: omega ^ k = -dk and omega ^ m = dm have no common solution
+[PASS] brho_det: det R_3 - h (h^2 - Q^2) = 0; the two shifts solve b'' + b'/rho = eps b'^2: [0, 0]. So D = 0 on an open set exactly where b' = 0 or b'' + b'/rho = +-b'^2
+[PASS] brho_closed: both pass the algebraic stage with lam = 0 on an open set and fail closure: [(1, 'closure', 0), (-1, 'closure', 0)]
+
+checks: 16 passed, 0 failed []. 20 s
+
+== Controls: each mutation must make its target checks fail ==
+[FIRED] --mutate=planted-sign (builds the planted two-scalar forms as lam eta + a a + b b): exit 1, failed ['planted_pass']
+[FIRED] --mutate=planted-fail-sign (builds the planted failures with one normal and one phantom square): exit 1, failed ['planted_fail']
+[FIRED] --mutate=lemma-weight (builds the lemma's samples with R_00 - R_11 + 2 R_22 = 0 in place of (I2)): exit 1, failed ['lemma_samples']
+[FIRED] --mutate=alc-drop-w2 (drops the shift's square from g_tt in route C (as in phantom_source.py)): exit 1, failed ['det_axis', 'det_jets', 'alc_points', 'acc_static_limit']
+[FIRED] --mutate=ode-sign (flips the sign of the W2 relation before the ODE step): exit 1, failed ['no_open_set']
+[FIRED] --mutate=alc-planted (replaces R at the off-axis sample points by a planted two-scalar form): exit 1, failed ['alc_points']
+[FIRED] --mutate=eb2-ads (takes the two-phantom metric, cos(2 kappa l) -> cosh(2 kappa l), beta > 1): exit 1, failed ['eb2_algebraic']
+[FIRED] --mutate=eb2-deform (adds (1 - beta) cos(4 kappa l) / (20 kappa^2) to the control's r(l)^2): exit 1, failed ['eb2_closed']
+[FIRED] --mutate=eb2-unclosed (multiplies the extracted b by 1 + cos(theta)^2): exit 1, failed ['eb2_closed']
+[FIRED] --mutate=eb2-potential (adds kappa^2 cos(theta) / 10 to lam in the potential stage): exit 1, failed ['eb2_potential']
+[FIRED] --mutate=eb2-residual (scales the phantom gradient by 11/10 before substituting it back): exit 1, failed ['eb2_residual']
+[FIRED] --mutate=acc-static (drops every t-derivative in the accelerating bubble's jets (route D)): exit 1, failed ['acc_jets']
+[FIRED] --mutate=acc-drop-odd (keeps only the even powers of c in the accelerating bubble's D): exit 1, failed ['acc_det_jets']
+[FIRED] --mutate=brho-drop-b2 (drops b^2 from g_tt in the b(rho) metrics): exit 1, failed ['brho_closed']
+[FIRED] --mutate=brho-h2 (doubles h = b'^2/2 in the expected det R_3 of a shift b(rho)): exit 1, failed ['brho_det']
+controls: all fired
