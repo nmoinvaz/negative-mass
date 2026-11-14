@@ -11,8 +11,9 @@ has four stages.
     potential   d lam ^ a ^ b = 0, so that V is a function of (phi_1, phi_2)
     residual    G_ab - 8 pi T_ab = 0 with the fields substituted back
 
-The script applies the test to Alcubierre's metric (the frame Ricci tensor of phantom_source.py, issues #57 and #61)
-and to a control, the Ellis-Bronnikov wormhole with an added normal scalar.
+The script applies the test to a control, the Ellis-Bronnikov wormhole with an added normal scalar, then to
+Alcubierre's metric at constant velocity and to the accelerating bubble of issue #61 (with the frame Ricci tensors of
+phantom_source.py), and to the shifts b(rho) whose det R_3 vanishes on an open set.
 
     python3 notes/warp/two_scalars.py                 all checks, then every control (exit 1 if any check fails)
     python3 notes/warp/two_scalars.py --mutate=NAME   one control (its target checks must fail, exit 1)
@@ -39,7 +40,8 @@ MUTATIONS = {
     "planted-sign": (["planted_pass"], "builds the planted two-scalar forms as lam eta + a a + b b"),
     "planted-fail-sign": (["planted_fail"], "builds the planted failures with one normal and one phantom square"),
     "lemma-weight": (["lemma_samples"], "builds the lemma's samples with R_00 - R_11 + 2 R_22 = 0 in place of (I2)"),
-    "alc-drop-w2": (["det_axis", "det_jets"], "drops the shift's square from g_tt (as in phantom_source.py)"),
+    "alc-drop-w2": (["det_axis", "det_jets", "alc_points", "acc_static_limit"],
+                    "drops the shift's square from g_tt in route C (as in phantom_source.py)"),
     "ode-sign": (["no_open_set"], "flips the sign of the W2 relation before the ODE step"),
     "alc-planted": (["alc_points"], "replaces R at the off-axis sample points by a planted two-scalar form"),
     "eb2-ads": (["eb2_algebraic"], "takes the two-phantom metric, cos(2 kappa l) -> cosh(2 kappa l), beta > 1"),
@@ -47,6 +49,10 @@ MUTATIONS = {
     "eb2-unclosed": (["eb2_closed"], "multiplies the extracted b by 1 + cos(theta)^2"),
     "eb2-potential": (["eb2_potential"], "adds kappa^2 cos(theta) / 10 to lam in the potential stage"),
     "eb2-residual": (["eb2_residual"], "scales the phantom gradient by 11/10 before substituting it back"),
+    "acc-static": (["acc_jets"], "drops every t-derivative in the accelerating bubble's jets (route D)"),
+    "acc-drop-odd": (["acc_det_jets"], "keeps only the even powers of c in the accelerating bubble's D"),
+    "brho-drop-b2": (["brho_closed"], "drops b^2 from g_tt in the b(rho) metrics"),
+    "brho-h2": (["brho_det"], "doubles h = b'^2/2 in the expected det R_3 of a shift b(rho)"),
 }
 
 RESULTS = []
@@ -373,104 +379,9 @@ def main():
     check("lemma_samples", not mism, f"{npass} pass with lam = 0 (det R_3 = 0), {nfail} fail (det R_3 != 0), "
           f"{len(mism)} disagree with the lemma {mism[:2]}")
 
-    # 3. Alcubierre, constant v: det R_3 in the comoving spherical frame, as a cubic in c^2 = cos(theta)^2.
-    print("\n== 3. Alcubierre, constant v: D = det R_3 on (E_0 = n, E_1 = d_x, e_rho), general profile ==")
-    Rsph = ps.sph_tetrad_ricci("alc-drop-w2" if mut == "alc-drop-w2" else None)
-    W0, W1, W2 = ps.W
-    r, th = ps.r_, ps.th
-    c = sp.Symbol("c", real=True)
-    R3 = Rsph[:3, :3]
-    print(f"  ({time.time() - t0:.0f} s) identities from phantom_source.py: R(e_varphi, .) = "
-          f"{[sp.simplify(Rsph[i, 3]) for i in range(4)]}, R_00 + R_11 + 2 R_rho,rho = "
-          f"{sp.simplify(R3[0, 0] + R3[1, 1] + 2 * R3[2, 2])}")
-    S = sp.Symbol("S", real=True)  # S = sin(theta), reduced by S^2 = 1 - c^2
-    Dth = sp.expand(sp.simplify(R3.det()) * 16 * r**3)
-    D = sp.expand(sp.expand_trig(Dth).subs({sp.sin(th): S, sp.cos(th): c}))
-    D = sp.expand(sp.rem(sp.Poly(D, S).as_expr(), S**2 + c**2 - 1, S))
-    P0, P1 = sp.Poly(D.coeff(S, 0), c), sp.Poly(D.coeff(S, 1), c)
-    odd = [f"c^{k}" for (k,) in P0.monoms() if k % 2] + [f"S c^{k}" for (k,) in P1.monoms() if not P1.is_zero]
-    coef = {f"c^{k}": sp.factor(P0.coeff_monomial(c**k)) for k in range(0, P0.degree() + 1)
-            if P0.coeff_monomial(c**k) != 0}
-    coef.update({f"S c^{k}": sp.factor(P1.coeff_monomial(c**k)) for (k,) in P1.monoms() if not P1.is_zero})
-    print(f"  16 r^3 D is a polynomial of degree {P0.degree()} in c = cos(theta), odd terms {odd}. Coefficients:")
-    for k, v in coef.items():
-        print(f"    {k}: {v}")
-    on_axis = [sp.factor(D.subs({S: 0, c: cv})) for cv in (1, -1)]
-    check("det_axis", on_axis == [0, 0] and not odd, f"D on the axis (c = 1 and c = -1) = {on_axis}, odd terms {odd}")
-    zz = sp.Symbol("zz")
-    G = sp.groebner(list(coef.values()) + [1 - zz * W1 * r], zz, W0, W2, W1, r, order="lex")
-    Gs = [g for g in G.exprs if not g.has(zz)]
-    print(f"  Groebner basis (lex, zz W1 r = 1 enforces W1 != 0, r != 0), elements free of zz: "
-          f"{[sp.factor(g) for g in Gs]}")
-    want = [2 * W0 - r * W1, (W1 + r * W2)**2]
-    contains = [G.contains(p) for p in want]
-    sol = {W0: r * W1 / 2, W2: -W1 / r}
-    kills = [sp.simplify(v.subs(sol)) for v in coef.values()]
-    check("det_jets", all(contains) and all(x == 0 for x in kills),
-          f"2 W0 - r W1 and (W1 + r W2)^2 lie in the ideal {contains}, and W0 = r W1 / 2, W2 = -W1 / r kill every "
-          f"coefficient {kills}. So D(r, .) = 0 for all theta, with w'(r) != 0, only where 2 w = r w' and "
-          f"r w'' = -w'")
-
-    # The ODE step: on an interval of r, those two relations force w' = 0.
-    rel = sp.solve(Gs, [W0, W2], dict=True)
-    print(f"  relations solved from the basis: {rel}")
-    if mut == "ode-sign":
-        rel = [{W0: s[W0], W2: -s[W2]} for s in rel]
-    found, notes = interval_profiles(rel, (W0, W1, W2), r)
-    for e, br in notes:
-        print(f"  differentiating W0 = g(W1, r) along r with W2 = h(W1, r) leaves {e} = 0, so W1 is one of {br}")
-    check("no_open_set", not found, f"relations that hold on an interval of r with w' != 0: {found or 'none'}. "
-          "So D vanishes on no open set of the wall")
-
-    # 4. The test itself at exact points of Alcubierre's wall, through the same code as the control.
-    print("\n== 4. Two-scalar test at exact points (lab route of phantom_source.py, same code as the control) ==")
-    Rt = ps.lab_tetrad_ricci(None)
-    random.seed(57)  # phantom_source.py's sample points; its random jets differ, since its seed feeds more draws first
-    samples = []
-    for (x0, y0, z0, r0) in [(12, 3, 4, 13), (-12, 4, 3, 13), (13, 0, 0, 13), (-13, 0, 0, 13), (0, 5, 12, 13)]:
-        p = [sp.Rational(q, 13) for q in (x0, y0, z0, r0)]
-        for vv in (sp.Integer(1), sp.Rational(1, 2), sp.Integer(3)):
-            samples.append(("tanh sig=8 Rb=1", p, vv, ps.tanh_jets(p[3], 8, 1)))
-    for (x0, y0, z0, r0) in [(4, 3, 0, 5), (-3, 0, 4, 5), (5, 0, 0, 5), (0, 3, 4, 5)]:
-        p = [sp.Rational(q, 5) for q in (x0, y0, z0, r0)]
-        samples.append(("bump Rb=2", p, sp.Rational(7, 4), ps.bump_jets(p[3], 2)))
-    for (x0, y0, z0, r0) in [(12, 3, 4, 13), (-12, 4, 3, 13), (4, 3, 0, 5), (-3, 0, 4, 5)]:
-        p = [sp.Rational(q, 7) for q in (x0, y0, z0, r0)]
-        samples.append(("random jets", p, sp.Rational(random.randint(1, 9), 3),
-                        [sp.Rational(random.randint(-9, 9), random.randint(1, 9)) for _ in range(3)]))
-    random.seed(650)
-    out, axis_info = [], []
-    for (lab_, p, vv, jets) in samples:
-        sub = {ps.X: p[0], ps.y: p[1], ps.z: p[2], ps.R: p[3], ps.v: vv, ps.F[0]: jets[0], ps.F[1]: jets[1],
-               ps.F[2]: jets[2]}
-        Rm = Rt.subs(sub)
-        axis = p[1] == 0 and p[2] == 0
-        if mut == "alc-planted" and not axis:
-            a, b = vec4(), vec4()
-            Rm = a * a.T - b * b.T
-        Dv = D.subs({W0: vv * (1 - jets[0]), W1: -vv * jets[1], W2: -vv * jets[2], r: p[3], c: p[0] / p[3],
-                     S: sp.sqrt(p[1]**2 + p[2]**2) / p[3]})
-        res = two_scalar_form(Rm, eta)
-        ok = (res["status"] == "form" and res["lam"] == 0) if axis else res["status"] == "algebraic"
-        ok = ok and ((Dv == 0) == axis)
-        out.append((lab_, axis, res["status"], ok))
-        if axis and res["status"] == "form" and len(axis_info) < 2:
-            ab = (res["a"] * res["a"].T - res["b"] * res["b"].T)
-            ev = [sp.N(e, 6) for e in (eta * ab).eigenvals()]
-            axis_info.append(f"x - v t = {p[0]}, v = {vv} ({lab_}): a = {[sp.N(x, 5) for x in res['a']]}, "
-                             f"b = {[sp.N(x, 5) for x in res['b']]}, eigenvalues of eta (a a - b b): {ev}")
-    for key in sorted(set((o[0], o[1]) for o in out)):
-        sts = [o[2] for o in out if (o[0], o[1]) == key]
-        print(f"  {key[0]:>16}, {'on the axis' if key[1] else 'off the axis'}: {len(sts)} points, outcomes "
-              f"{sorted(set(sts))}")
-    for s in axis_info:
-        print(f"  info: {s}")
-    nax = sum(o[1] for o in out)
-    check("alc_points", all(o[3] for o in out), f"{len(out) - nax} off-axis points fail the algebraic stage with "
-          f"D != 0, {nax} on-axis points pass it with lam = 0 and D = 0; {sum(not o[3] for o in out)} disagree")
-
-    # 5. Control: Ellis-Bronnikov with an added normal scalar, ultrastatic, with a constant potential.
-    print("\n== 5. Control: ds^2 = -dt^2 + dl^2 + r(l)^2 dOmega^2, r^2 = (1 - beta cos 2 kappa l) / (2 kappa^2) ==")
+    # 3. Control, the planted truth for the closure, potential and residual stages: Ellis-Bronnikov with an added
+    # normal scalar, ultrastatic, with a constant potential.
+    print("\n== 3. Control: ds^2 = -dt^2 + dl^2 + r(l)^2 dOmega^2, r^2 = (1 - beta cos 2 kappa l) / (2 kappa^2) ==")
     t, l, the, phv = sp.symbols("t l theta phi", real=True)
     ka, be = sp.symbols("kappa beta", positive=True)
     Xe = [t, l, the, phv]
@@ -533,6 +444,180 @@ def main():
               f"d phi_i = u_i: {all(x == 0 for x in grad)}; G_ab - 8 pi T_ab = "
               f"{'0' if all(x == 0 for x in resid) else list(resid)}")
     print(f"  ({time.time() - t0:.0f} s)")
+
+    # 4. Alcubierre, constant v: det R_3 in the comoving spherical frame, as a cubic in c^2 = cos(theta)^2.
+    print("\n== 4. Alcubierre, constant v: D = det R_3 on (E_0 = n, E_1 = d_x, e_rho), general profile ==")
+    Rsph = ps.sph_tetrad_ricci("alc-drop-w2" if mut == "alc-drop-w2" else None)
+    W0, W1, W2 = ps.W
+    r, th = ps.r_, ps.th
+    c = sp.Symbol("c", real=True)
+    R3 = Rsph[:3, :3]
+    print(f"  ({time.time() - t0:.0f} s) identities from phantom_source.py: R(e_varphi, .) = "
+          f"{[sp.simplify(Rsph[i, 3]) for i in range(4)]}, R_00 + R_11 + 2 R_rho,rho = "
+          f"{sp.simplify(R3[0, 0] + R3[1, 1] + 2 * R3[2, 2])}")
+    S = sp.Symbol("S", real=True)  # S = sin(theta), reduced by S^2 = 1 - c^2
+    R3s = R3.applyfunc(lambda e: sp.expand_trig(e).subs({sp.sin(th): S, sp.cos(th): c}))
+    # 16 r^3 det R_3 is a polynomial here (the entries' denominators are r and 2 r). Its numerator has the same zeros
+    # whenever the denominator cannot vanish, as for the control alc-drop-w2, whose denominator is a power of 1 + w^2.
+    D, Dden = sp.fraction(sp.cancel(16 * r**3 * R3s.det(method="berkowitz")))
+    D = sp.expand(sp.rem(sp.Poly(sp.expand(D), S).as_expr(), S**2 + c**2 - 1, S))
+    if Dden != 1:
+        print(f"  denominator of 16 r^3 D, dropped: {sp.factor(Dden)}")
+    P0, P1 = sp.Poly(D.coeff(S, 0), c), sp.Poly(D.coeff(S, 1), c)
+    odd = [f"c^{k}" for (k,) in P0.monoms() if k % 2] + [f"S c^{k}" for (k,) in P1.monoms() if not P1.is_zero]
+    coef = {f"c^{k}": sp.factor(P0.coeff_monomial(c**k)) for k in range(0, P0.degree() + 1)
+            if P0.coeff_monomial(c**k) != 0}
+    coef.update({f"S c^{k}": sp.factor(P1.coeff_monomial(c**k)) for (k,) in P1.monoms() if not P1.is_zero})
+    print(f"  16 r^3 D is a polynomial of degree {P0.degree()} in c = cos(theta), odd terms {odd}. Coefficients:")
+    for k, v in coef.items():
+        print(f"    {k}: {v}")
+    on_axis = [sp.factor(D.subs({S: 0, c: cv})) for cv in (1, -1)]
+    check("det_axis", on_axis == [0, 0] and not odd, f"D on the axis (c = 1 and c = -1) = {on_axis}, odd terms {odd}")
+    # Equal ideals, shown by inclusion both ways with grevlex bases: the coefficients with zz W1 r = 1, which
+    # enforces W1 != 0 and r != 0, against the two relations with the same.
+    zz = sp.Symbol("zz")
+    gens, sat = (zz, W0, W2, W1, r), 1 - zz * W1 * r
+    want = [2 * W0 - r * W1, (W1 + r * W2)**2]
+    Gw = sp.groebner(want + [sat], *gens, order="grevlex")
+    Gc = sp.groebner(list(coef.values()) + [sat], *gens, order="grevlex")
+    sub = [Gw.contains(p) for p in coef.values()]
+    sup = [Gc.contains(p) for p in want]
+    print(f"  ({time.time() - t0:.0f} s) grevlex basis of the coefficients, elements free of zz: "
+          f"{[sp.factor(g) for g in Gc.exprs if not g.has(zz)]}")
+    check("det_jets", all(sub) and all(sup), f"with W1 r != 0 the coefficients generate the same ideal as "
+          f"2 W0 - r W1 and (W1 + r W2)^2: each coefficient lies in the latter {sub}, each relation in the former "
+          f"{sup}. So D(r, .) = 0 for all theta, with w'(r) != 0, exactly where 2 w = r w' and r w'' = -w'")
+
+    # The ODE step: on an interval of r, those two relations force w' = 0.
+    rel = sp.solve(want, [W0, W2], dict=True)
+    print(f"  relations solved from the two generators: {rel}")
+    if mut == "ode-sign":
+        rel = [{W0: s[W0], W2: -s[W2]} for s in rel]
+    found, notes = interval_profiles(rel, (W0, W1, W2), r)
+    for e, br in notes:
+        print(f"  differentiating W0 = g(W1, r) along r with W2 = h(W1, r) leaves {e} = 0, so W1 is one of {br}")
+    check("no_open_set", not found, f"relations that hold on an interval of r with w' != 0: {found or 'none'}. "
+          "So D vanishes on no open set of the wall")
+
+    # 5. The test itself at exact points of Alcubierre's wall, through the same code as the control.
+    print("\n== 5. Two-scalar test at exact points (lab route of phantom_source.py, same code as the control) ==")
+    Rt = ps.lab_tetrad_ricci(None)
+    random.seed(57)  # phantom_source.py's sample points; its random jets differ, since its seed feeds more draws first
+    samples = []
+    for (x0, y0, z0, r0) in [(12, 3, 4, 13), (-12, 4, 3, 13), (13, 0, 0, 13), (-13, 0, 0, 13), (0, 5, 12, 13)]:
+        p = [sp.Rational(q, 13) for q in (x0, y0, z0, r0)]
+        for vv in (sp.Integer(1), sp.Rational(1, 2), sp.Integer(3)):
+            samples.append(("tanh sig=8 Rb=1", p, vv, ps.tanh_jets(p[3], 8, 1)))
+    for (x0, y0, z0, r0) in [(4, 3, 0, 5), (-3, 0, 4, 5), (5, 0, 0, 5), (0, 3, 4, 5)]:
+        p = [sp.Rational(q, 5) for q in (x0, y0, z0, r0)]
+        samples.append(("bump Rb=2", p, sp.Rational(7, 4), ps.bump_jets(p[3], 2)))
+    for (x0, y0, z0, r0) in [(12, 3, 4, 13), (-12, 4, 3, 13), (4, 3, 0, 5), (-3, 0, 4, 5)]:
+        p = [sp.Rational(q, 7) for q in (x0, y0, z0, r0)]
+        samples.append(("random jets", p, sp.Rational(random.randint(1, 9), 3),
+                        [sp.Rational(random.randint(-9, 9), random.randint(1, 9)) for _ in range(3)]))
+    random.seed(650)
+    out, axis_info = [], []
+    for (lab_, p, vv, jets) in samples:
+        sub = {ps.X: p[0], ps.y: p[1], ps.z: p[2], ps.R: p[3], ps.v: vv, ps.F[0]: jets[0], ps.F[1]: jets[1],
+               ps.F[2]: jets[2]}
+        Rm = Rt.subs(sub)
+        axis = p[1] == 0 and p[2] == 0
+        if mut == "alc-planted" and not axis:
+            a, b = vec4(), vec4()
+            Rm = a * a.T - b * b.T
+        Dv = D.subs({W0: vv * (1 - jets[0]), W1: -vv * jets[1], W2: -vv * jets[2], r: p[3], c: p[0] / p[3],
+                     S: sp.sqrt(p[1]**2 + p[2]**2) / p[3]})
+        res = two_scalar_form(Rm, eta)
+        ok = (res["status"] == "form" and res["lam"] == 0) if axis else res["status"] == "algebraic"
+        ok = ok and ((Dv == 0) == axis)
+        out.append((lab_, axis, res["status"], ok))
+        if axis and res["status"] == "form" and len(axis_info) < 2:
+            ab = (res["a"] * res["a"].T - res["b"] * res["b"].T)
+            ev = [sp.N(e, 6) for e in (eta * ab).eigenvals()]
+            axis_info.append(f"x - v t = {p[0]}, v = {vv} ({lab_}): a = {[sp.N(x, 5) for x in res['a']]}, "
+                             f"b = {[sp.N(x, 5) for x in res['b']]}, eigenvalues of eta (a a - b b): {ev}")
+    for key in sorted(set((o[0], o[1]) for o in out)):
+        sts = [o[2] for o in out if (o[0], o[1]) == key]
+        print(f"  {key[0]:>16}, {'on the axis' if key[1] else 'off the axis'}: {len(sts)} points, outcomes "
+              f"{sorted(set(sts))}")
+    for s in axis_info:
+        print(f"  info: {s}")
+    nax = sum(o[1] for o in out)
+    check("alc_points", all(o[3] for o in out), f"{len(out) - nax} off-axis points fail the algebraic stage with "
+          f"D != 0, {nax} on-axis points pass it with lam = 0 and D = 0; {sum(not o[3] for o in out)} disagree")
+
+    # 6. The accelerating bubble of phantom_source.py section 6 (issue #61), with v_s(t) != 0.
+    print("\n== 6. Accelerating bubble b = -v_s(t) f(r_s), r_s^2 = (x - x_s(t))^2 + rho^2, at v_s(t) != 0 ==")
+    print("  Jets: w~ = x_s' - v_s f(r_s) (the comoving shift), w~' = -v_s f', w~'' = -v_s f'', A = v_s' / v_s.")
+    Ra = ps.shift_tetrad_ricci(-ps.VS[0] * ps.F[0], ps.bubble_rule(mut == "acc-static"), False)
+    A, U, Vs, R = sp.Symbol("A", real=True), sp.Symbol("U", real=True), sp.Symbol("V", real=True), ps.R
+    jsub = {ps.F[0]: (U - W0) / Vs, ps.F[1]: -W1 / Vs, ps.F[2]: -W2 / Vs, ps.VS[1]: A * Vs, ps.XS[1]: U,
+            ps.VS[0]: Vs}
+    R3a = sp.zeros(3, 3)
+    for i in range(3):  # on the half-plane z = 0, y = rho > 0, where e_rho = E_2
+        for j in range(i, 3):
+            e = Ra[i, j].subs(ps.z, 0).subs(jsub).subs({ps.X: R * c, ps.y: R * S})
+            R3a[i, j] = R3a[j, i] = sp.factor(sp.expand(e))
+    free = all(not (e.has(U) or e.has(Vs)) for e in R3a)
+    check("acc_jets", free, f"the frame R_3 of route D depends on x_s', v_s, v_s', f, f', f'' only through w~, w~', "
+          f"w~'' and A: {free}")
+    if free:
+        num, den = sp.fraction(sp.together(sp.expand(R3a.det())))
+        num = sp.expand(sp.rem(sp.Poly(sp.expand(num), S).as_expr(), S**2 + c**2 - 1, S))
+        Da = sp.expand(sp.cancel(16 * R**3 * num / den))  # 16 r_s^3 det R_3, as in section 4
+        diff0 = sp.expand(Da.subs(A, 0) - D.subs(r, R))
+        check("acc_static_limit", diff0 == 0, f"at A = 0, 16 r^3 D of route D equals section 4's (route C), "
+              f"difference {diff0}")
+        Pa = sp.Poly(Da, c)
+        ca = [sp.factor(Pa.coeff_monomial(c**k)) for k in range(Pa.degree() + 1)]
+        print(f"  16 r^3 D has degree {Pa.degree()} in c and the odd powers {[k for k in range(1, len(ca), 2)]}. "
+              f"Odd coefficients: {[ca[k] for k in range(1, len(ca), 2)]}")
+
+        def strip(p):  # A, W1 and r are nonzero here, so they may be divided out of each coefficient
+            _, fl = sp.factor_list(p)
+            return sp.Mul(*[f**m for f, m in fl if f not in (A, W1, R)])
+        used = ca[0::2] if mut == "acc-drop-odd" else ca
+        stripped = [strip(x) for x in used if x != 0]
+        Ga = sp.groebner(stripped + [1 - zz * A * W1 * R], zz, W0, W2, W1, A, R, order="grevlex")
+        check("acc_det_jets", list(Ga.exprs) == [1], f"with A W1 r != 0 the coefficients of c^k have no common zero "
+              f"(Groebner basis {list(Ga.exprs)[:3]}{' ...' if len(Ga.exprs) > 3 else ''}). So D(r_s, .) = 0 for all "
+              f"theta needs v_s' = 0 at that t, and then section 4's relations, which hold on no interval")
+    else:
+        print("  skipped: R_3 is not a function of the reduced jets")
+
+    # 7. A shift b(rho) alone: D can vanish on an open set, and then closure decides.
+    print("\n== 7. A shift b(rho) alone (no t or x dependence): D = h (h^2 - Q^2), h = b'^2/2, "
+          "Q = -(b'' + b'/rho)/2 ==")
+    Rg = ps.shift_tetrad_ricci(ps.bjet(0, 0, 0), ps.general_rule(False), False)
+    kill = {s: 0 for s in list(ps.BJ) if isinstance(s, sp.Symbol) and (ps.BJ[s][0] or ps.BJ[s][1])}
+    rho = ps.RHO
+    R3g = Rg[:3, :3].subs(kill).subs({ps.z: 0, ps.y: rho})
+    b1, b2 = ps.bjet(0, 0, 1), ps.bjet(0, 0, 2)
+    h, Q = b1**2 / (1 if mut == "brho-h2" else 2), -(b2 + b1 / rho) / 2
+    dg = sp.simplify(R3g.det() - h * (h**2 - Q**2))
+    print(f"  R_3 = {R3g.applyfunc(sp.factor).tolist()}")
+    tt, xx, ph = sp.symbols("t x varphi", real=True)
+    Xc = [tt, xx, rho, ph]
+    sols, outs = [], []
+    for eps in (1, -1):  # b'' + b'/rho = eps b'^2, up to rho -> const rho and x -> x + const t
+        bb = -eps * sp.log(-eps * sp.log(rho))
+        sols.append(sp.simplify(sp.diff(bb, rho, 2) + sp.diff(bb, rho) / rho - eps * sp.diff(bb, rho)**2))
+        gtt = -1 if mut == "brho-drop-b2" else -1 + bb**2
+        gc = sp.Matrix([[gtt, bb, 0, 0], [bb, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, rho**2]])
+        Rc = ps.ricci(gc, Xc, lambda E, k: sp.diff(E, Xc[k]), sp.simplify)
+        lo, hi = (5, 95) if eps == 1 else (105, 500)
+
+        def samp(lo=lo, hi=hi):
+            return {rho: sp.Rational(random.randint(lo, hi), 100), tt: rq(), xx: rq()}
+        res = two_scalar_form(Rc, gc, Xc, sampler=samp)
+        outs.append((eps, res["status"], res["lam"]))
+        print(f"  eps = {eps:+d}, b = {bb} ({'0 < rho < 1' if eps == 1 else 'rho > 1'}): status {res['status']}, "
+              f"lam = {res['lam']}, a = {list(res['a']) if res['a'] is not None else None}, "
+              f"b = {list(res['b']) if res['b'] is not None else None}; {res.get('closure_why', '')}")
+    check("brho_det", dg == 0 and all(x == 0 for x in sols), f"det R_3 - h (h^2 - Q^2) = {dg}; the two shifts solve "
+          f"b'' + b'/rho = eps b'^2: {sols}. So D = 0 on an open set exactly where b' = 0 or b'' + b'/rho = +-b'^2")
+    check("brho_closed", all(o[1] == "closure" and o[2] == 0 for o in outs),
+          f"both pass the algebraic stage with lam = 0 on an open set and fail closure: {outs}")
 
     failed = [n for n, ok in RESULTS if not ok]
     print(f"\nchecks: {len(RESULTS) - len(failed)} passed, {len(failed)} failed {failed}. {time.time() - t0:.0f} s")
