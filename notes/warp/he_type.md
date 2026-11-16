@@ -1,7 +1,8 @@
 # The Hawking–Ellis type of the Alcubierre wall
 
 November 2026, issue [#64](https://github.com/nmoinvaz/negative-mass/issues/64). Script [`he_type.py`](he_type.py), its
-stdout [`he_type_output.txt`](he_type_output.txt).
+stdout [`he_type_output.txt`](he_type_output.txt). Reviewed independently in [review_he.md](review_he.md) (#71), which
+confirms the four identities below by two routes of its own and finds no error.
 
 Status words: **proved** (by hand), **checked symbolically** (sympy, exact, with a control that fails), **numerical
 evidence**.
@@ -13,7 +14,7 @@ The type of G^a_b at a point of the Alcubierre spacetime is the sign of one poly
 (E_0, E_1, e_ρ) block decides. The point is Type I where D > 0 and Type IV where D < 0, and on D = 0 a rank test picks
 Type I, II or III (**proved**). For every profile f and speed v,
 
-    D = v⁶ (p₆ + p₈ v² + p₁₀ v⁴ + p₁₂ v⁶),    p₆ v⁶ = −4|j|⁶ < 0,    p₁₂ ≥ 0,
+    D = v⁶ (p₆ + p₈ v² + p₁₀ v⁴ + p₁₂ v⁶),    p₆ v⁶ = −4|j|⁶ ≤ 0,    p₁₂ ≥ 0,
 
 with each p explicit in f, f′, f″, r_s and θ (**checked symbolically**). So almost every wall point is Type IV at small
 speed and Type I at large speed. On the axis D < 0 wherever f′ ≠ 0, and on the equator the point is Type I exactly
@@ -65,13 +66,14 @@ The momentum entries R_01 and R_0ρ are linear in v, the others quadratic, and D
 the powers v⁶ to v¹² (`structure`, he_type_output.txt §2).
 
 - **Pure momentum.** p₆ = −(J²)³/(16r⁶) with J² = s²(a + rb)² + 4c²a². This is the discriminant of the momentum part
-  alone, p₆v⁶ = −4|j|⁶ with |j|² = R_01² + R_0ρ² = v²J²/(4r²).
+  alone, p₆v⁶ = −4|j|⁶ with |j|² = R_01² + R_0ρ² = v²J²/(4r²). It is negative wherever j ≠ 0.
 - **Static stress.** p₁₂ = s⁴F²Q₁²Q₂/(16r⁶), with Q₁ = −c²F(a − rb)² − 4ra³ and
   Q₂ = a²(F + ra)² + c²F(a + rb)[F(rb − a) − 2ra²]. It equals χ(λ₀)²[(S₁₁ − S_ρρ)² + 4S_1ρ²] ≥ 0, the discriminant of
   the v² part, which is block diagonal, with λ₀ = −R_00, S its spatial block and χ the characteristic polynomial of S.
 - **Mixed.** p₈ and p₁₀ are long polynomials, printed in he_type_output.txt §2.
-- **Equator**, c = 0. D = v⁶[r²v²a⁴ − (a + rb)²] Q_eq²/(16r⁶), with Q_eq = 4v²a²F(F + ra) + (a + rb)². Where
-  Q_eq ≠ 0 the point is Type I exactly when v r f′² > |(r f′)′|. There j is along E_1, a principal axis of the stress,
+- **Equator**, c = 0. D = v⁶[r²v²a⁴ − (a + rb)²] Q_eq²/(16r⁶), with Q_eq = 4v²a²F(F + ra) + (a + rb)². The
+  point is Type I exactly when v r f′² > |(r f′)′|, and Type II on equality, also where Q_eq = 0
+  ([review_he.md](review_he.md) gap 2). There j is along E_1, a principal axis of the stress,
   and the rule is [Le26]'s momentum criterion 2|j| < |ρ_n + S_∥|.
 - **Axis**, c = ±1. D = −4a²v⁶Q_ax²/r⁶, with Q_ax = a² + r²v²(Fb − a²)². So the axis is Type IV wherever f′ ≠ 0, with
   the pair −R_00 ± iR_01 = v²(f′² − (1 − f)f″) ± i v f′/r_s of phantom_source.md, 16 ± 4i at its sample point.
@@ -79,8 +81,9 @@ the powers v⁶ to v¹² (`structure`, he_type_output.txt §2).
 What follows for every profile, from these forms.
 
 - As v → 0 the wall is Type IV wherever J ≠ 0, which is everywhere f′ ≠ 0 except on the equatorial circle where
-  (r f′)′ = 0. That circle is Type I at every speed, where Q_eq ≠ 0.
-- As v → ∞ a point is Type I wherever p₁₂ > 0, which excludes the axis, the centre and the surfaces Q₁ = 0 and Q₂ = 0.
+  (r f′)′ = 0. That circle is Type I at every speed.
+- As v → ∞ a point is Type I wherever p₁₂ > 0, which excludes the axis, the surface F = 0 (the centre, for the tanh
+  profile) and the surfaces Q₁ = 0 and Q₂ = 0.
 - In between, the cubic p₁₂V³ + p₁₀V² + p₈V + p₆ in V = v² has one or three positive roots. The point is Type IV below
   the lowest, V₁. With three roots V₁ < V₂ < V₃ it is Type I on (V₁, V₂), Type IV again on (V₂, V₃) and Type I above
   V₃. For the tanh profile, three roots occur on 29.4 % of Le's wall and 54.9 % of Rodal's (he_type_output.txt §7,
@@ -145,8 +148,8 @@ A minimally coupled scalar has a stress tensor of Type I or II, and a perfect fl
   a perfect fluid, with any flow.
 - At Type I points, the band above, and on the surface D = 0, where the points are Type II or degenerate, the type
   allows both. There only the lemma of [phantom_source.md](phantom_source.md) excludes them. On the equator the edges of
-  the annulus have 2|j| = |ρ_n + S_∥| with j ≠ 0, which is Type II by [Le26] Eq. 12. Off the equator the type on D = 0
-  was not checked.
+  the annulus have 2|j| = |ρ_n + S_∥| with j ≠ 0, which is Type II by [Le26] Eq. 12. Off the equator, 200 sampled points
+  of D = 0 are all Type II ([review_he.md](review_he.md) §5, numerical evidence). Which points there are Type I is #72.
 
 ## Checks and controls
 
@@ -199,7 +202,7 @@ Assumed: constant v, as in phantom_source.md up to its accelerating bubble. The 
 profile, and the numbers use the tanh profile on the slice t = 0, which any other t translates.
 
 Not covered: the accelerating bubble of phantom_source.md. (I1) holds there, so the cubic still decides, but its D was
-not computed. The type on D = 0 off the equator. Le's graded grid.
+not computed (#73). The type on D = 0 off the equator, beyond #71's 200 sampled points (#72). Le's graded grid.
 
 ## References
 
