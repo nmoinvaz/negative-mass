@@ -1,0 +1,10 @@
+PASS  A chi coefficients = common.chi_poly, l = 2..8 (exact)
+PASS  B psi0_xx = V_Zerilli psi0, l = 2..12  [worst rel 2.01e-38]
+PASS  C g^2 - g_x = 2 g^2 - V_Zerilli, l = 2..12  [worst rel 5.8e-35]
+PASS  D (-d/dx + g) Psi_DG = 2^k e^{-omega x} r^4 Pi/chi, l = 2..12  [worst |ratio-1| 6.6e-36]
+PASS  E (H + omega^2) Psihat = 0, l = 2..12  [worst |res|/omega^2 1.95e-35]
+PASS  F Pi and chi/r have no root in [0, oo), l = 2..40 (exact Sturm)  [bad l: []]
+PASS  G Psihat ~ r^3 at 0 (Psihat/r^3 at 1e-9, 1e-10 agree to 1e-5, and are not 0), l = 2..12
+PASS  H L^2(dx) norm, quadrature in r vs in x, l = 2, 3, 5, 8  [worst 0.0]
+
+8/8 checks passed
