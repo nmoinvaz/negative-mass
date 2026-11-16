@@ -94,8 +94,9 @@ which on this slice is +½(∂_iβ_j + ∂_jβ_i), and J_i = −n^a T_ai. With t
 ¼ω_ab γ^aγ^b, restricted to the slice, after γ⁰ ↦ −γ⁰. That is, it is written in the gammas (−γ⁰, γ^j), which obey
 the same Clifford relations, with ω_ab(X) = g(e_a, ∇_X e_b), e_0 = n and e_j = ∂_j. In the gammas above, the same
 connection restricts to ∂_i − ½K_ij γ^jγ⁰ ([review.md](review.md) §3). [conventions.py](conventions.py) checks both
-statements for lapse 1 and any shift β(t, x, y, z), and since #67 for any lapse N, shift and conformally flat slice
-ψ⁴δ with e_j = ψ⁻²∂_j (*checked symbolically*, output [conventions_output.txt](conventions_output.txt)). Its control
+statements for lapse 1 and any shift β(t, x, y, z), since #67 for any lapse N, shift and conformally flat slice ψ⁴δ
+with e_j = ψ⁻²∂_j, and since #86 for a diagonal slice diag(A², B², C²) with e_j = ∂_j/A_j and in that frame rotated
+about z by any α(t, x, y, z) (*checked symbolically*, output [conventions_output.txt](conventions_output.txt)). Its control
 `--mutate=sign`, the other sign in ∇̃, fails.
 With the other sign throughout, D̃ = D − ½(tr K)γ⁰ and item 6 holds with +J·ξ ([review.md](review.md) §4).
 
