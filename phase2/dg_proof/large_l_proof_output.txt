@@ -1,0 +1,46 @@
+== 1. coefficient bound |a_n(eps) - alpha_n| <= eps beta_n, l >= LMIN = 10 ==
+PASS  1: |a_n(1/c) - alpha_n| <= beta_n/c for l = 10..240, 3 <= n <= l+12; beta_n <= 3 n^5/(2^n (n-1)!^2) for n <= 400
+   largest actual/bound ratio seen: 1
+
+== 2. limit roots ==
+   rho_*   = 8.485700967373530   rho_neg = 9.635989442586144  (certified brackets of width 6.8e-34)
+
+== 3. N window: mu_N and eta_N ==
+   -N_inf' >= 2.83609 on [8, 9],  eta_N = 259.515,  K_* = eta_N/mu_N = 91.5045
+PASS  3: -N_inf' > 0 on the N window and rho_* inside it
+   eps_N = mu_N delta / eta_N = 0.00530795
+
+== 4. Psi window: mu_Psi and eta_Psi ==
+   Psi_inf'(rho_neg) in [33523.3, 33523.3],  |Psi_inf''| <= 130553 on the window (half-width 0.0259894)
+   mean-value lower bound: Psi_inf' >= 30130.3 on [9.61, 9.66]
+PASS  4: closed form of Psi_inf' agrees with a symmetric difference quotient of Psi_inf at rho_neg (relative 1e-6)
+PASS  4: closed form of Psi_inf'' agrees with a difference quotient of Psi_inf' at rho_neg (relative 1e-6)
+PASS  4: the mean-value lower bound of Psi_inf' is positive on the Psi window, rho_neg inside it
+   Psi_inf(rho_neg) enclosure: [-1.241e-29, -1.241e-29] (rho_neg from the S bracket)
+PASS  4: Psi_inf vanishes at the S-root rho_neg (|Psi_inf| < 1e-8 there; Psi and S have the same root)
+PASS  4: DPsi reproduces (Psi_l - Psi_inf)/eps exactly at 20 random rational points
+   C_0 = 508.005,  eta_N(Psi window) = 502.764,  eta_Psi = 6.92602e+06,  K_neg = eta_Psi/mu_Psi = 229.868,  eps_Psi = 0.000104453
+
+   eps0 = 5.22267e-05  ->  l0 = 138  (c(l0) = 19180, LMIN = 10)
+PASS  5: the Psi window shrunk to rho_neg +- K_neg eps0 lies beyond rho_* + K_* eps0 (so it lies in (r_*, oo))
+   THEOREM L: for every integer l >= 138:  |c r_* - 8.4857009674| <= 91.5045/c   and   |c r_neg - 9.6359894426| <= 229.868/c
+
+== 5. the theorem against certified brackets ==
+   l =   138:  c r_* - rho_* = +1.833e-04 (bound 4.771e-03)   c r_neg - rho_neg = +3.044e-04 (bound 1.198e-02)
+   l =   139:  c r_* - rho_* = +1.807e-04 (bound 4.703e-03)   c r_neg - rho_neg = +3.001e-04 (bound 1.181e-02)
+   l =   145:  c r_* - rho_* = +1.661e-04 (bound 4.323e-03)   c r_neg - rho_neg = +2.758e-04 (bound 1.086e-02)
+   l =   276:  c r_* - rho_* = +4.598e-05 (bound 1.197e-03)   c r_neg - rho_neg = +7.638e-05 (bound 3.007e-03)
+   l =   690:  c r_* - rho_* = +7.373e-06 (bound 1.919e-04)   c r_neg - rho_neg = +1.225e-05 (bound 4.821e-04)
+   l =  1000:  c r_* - rho_* = +3.512e-06 (bound 9.141e-05)   c r_neg - rho_neg = +5.834e-06 (bound 2.296e-04)
+   l =  2000:  c r_* - rho_* = +8.784e-07 (bound 2.286e-05)   c r_neg - rho_neg = +1.459e-06 (bound 5.744e-05)
+   l =  3000:  c r_* - rho_* = +3.905e-07 (bound 1.016e-05)   c r_neg - rho_neg = +6.486e-07 (bound 2.553e-05)
+PASS  5: certified brackets of r_*, r_neg satisfy the Theorem L bounds at the l listed
+
+== 6. spot checks of the perturbation constants and of Psi against S ==
+PASS  6: |Psi_l - Psi_inf|/eps <= eta_Psi at 9 points of the Psi window for l in {l0, l0+3, 2 l0, 1000}
+   largest |Psi_l - Psi_inf|/eps seen: 2.081e+05  vs eta_Psi = 6.926e+06
+PASS  6: |N_l - N_inf|/eps <= eta_N at 9 points of the N window for the same l
+   largest |N_l - N_inf|/eps seen: 41.59  vs eta_N = 259.5
+PASS  6: Psi_l < 0 at the lower end and > 0 at the upper end of the certified S bracket of r_neg (Psi and S share the root)
+
+10 s

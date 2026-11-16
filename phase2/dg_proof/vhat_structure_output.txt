@@ -1,0 +1,42 @@
+== (Z) psi0 = chi/(c r - 6) solves psi_xx = V psi with this V (exact, l = 2..14) ==
+PASS  Z: f (f psi_r)_r - V psi = 0 identically in r for l = 2..14 (so V^ = 2 g^2 - V)
+
+== (P1) V > 0 for r > r_s ==
+   numerator of V at r = (3+sigma)/lam, mu = 1/lam: mu*sigma**3 + 9*mu*sigma**2 + 27*mu*sigma + 27*mu + sigma**3 + 6*sigma**2 + 18*sigma + 18
+PASS  P1: the numerator of V is a polynomial in (sigma, mu) with all coefficients positive, so it is > 0 for lam r >= 3
+   f > 0 and (lam r - 3)^2 > 0 off r_s, so V > 0 on (r_s, oo).
+
+== (P2) V_r < 0 for r > r_s ==
+   denominator of V_r: r**5*(l**2*r + l*r - 2*r - 6)**3
+   Q(tau, m) = c^5 Q((6+tau)/c) with l = 2+m: 64 coefficients, min = 1
+PASS  P2: denominator of V_r is r^5 (c r - 6)^3 > 0 on r > r_s
+PASS  P2: every coefficient of Q(tau, m) is positive, so V_r = -2Q/(r^5 (c r - 6)^3) < 0 for all real l >= 2, r > r_s
+
+== (S) sign V^ = sign S: identity for a generic X(rho) ==
+PASS  S: V^ = c^4 (2 + rho/c) S / (rho^3 (rho-6) X^2) for generic X (symbolic in c)
+
+== (S) against chi_poly: V^ = g^2 - g_x computed from chi directly, l = 2..9 ==
+PASS  S: the polynomial S built from rescaled.a_dict reproduces V^ from chi_poly exactly, l = 2..9
+
+== (Psi) V^ = 2 g^2 - V with g = -c f N/((rho-6) X): the quadratic form Psi used in large_l_proof.py ==
+PASS  Psi1: V(r = rho/c) = 8 c^4 (2 + rho/c) N_Z / (rho^4 (rho-6)^2) with N_Z = (1+2/c) rho^3/8 - 3 rho^2/4 + 9 rho/2 - 9
+PASS  Psi1: N_Z(rho = 6 + tau) is a polynomial in (tau, 1/c) with positive coefficients, so N_Z > 0 for rho >= 6
+PASS  Psi2: g = psi0_x/psi0 = -phi0_x/phi0 = -c f N / ((rho-6) X) for a generic X
+PASS  Psi3: 2 g^2 - V = 2 c^4 (2 + rho/c) Psi / (rho^4 (rho-6)^2 X^2), Psi = rho^2 (2+rho/c) N^2 - 4 N_Z X^2 (generic X)
+PASS  Psi4: V^ computed from chi_poly equals 2 c^4 (2+rho/c) Psi / (rho^4 (rho-6)^2 X^2) exactly, l = 2..9
+   Hence sign V^ = sign Psi on rho > 6, and at a zero of N (r_*) Psi = -4 N_Z X^2 < 0, so V^(r_*) < 0 without any root counting.
+
+== planted truth for the barrier lemma: psi = x^2 + b (V = 2/psi, V^ = 2 (3x^2 - b)/(x^2+b)^2) ==
+   V = 2/(x**2 + 3)  V^ = 6*(x - 1)*(x + 1)/(x**2 + 3)**2  zeros of V^ on x > 0: [1]
+PASS  toy: V_t is decreasing on x > 0 (hypothesis of the lemma)
+PASS  toy: V^ has exactly one zero on x > 0, at sqrt(b/3) = 1, as the lemma predicts
+PASS  toy: u_x > 0 at the zero (transversal, upward)
+
+== exact zero counts of S for l = 2..16 (S built from rescaled.a_dict, sympy Sturm) ==
+PASS  count: for l = 2..16, N has one root beyond rho = 6 and S has exactly one root in [rho_*, oo) (Theorem 3)
+PASS  count: S(rho_*) < 0 and the leading coefficient of S is positive, l = 2..16 (V^ < 0 at r_*, V^ > 0 at infinity)
+   (S has exactly 3 positive roots for l = 2..16: rho = 6, the lower edge of {V^ < 0}, and r_neg c.  Only the root beyond r_*
+    is proved for all l; the count 3 is exact for the l listed and not claimed beyond them.)
+
+== independent check: largest zero of V^ from the numerator of phi0_xx (chi_poly), l = 2..12 ==
+PASS  indep: largest root of S/c equals the largest root of the numerator of phi0_xx (chi_poly route), l = 2..12

@@ -5,10 +5,11 @@ Leading order of c_n r^n with r = rho/c:  c_n ~ (n-2)(n-4) l^(2n-2)/(2^n (n-1)!^
 phi0 -> (rho - 6)/X(rho);  near the singularity x = r^2/4 + O(r^3) = y/c^2, y = rho^2/4, H^ = c^4 [-d_y^2 + V~(y)].
 Limit eigenvalue: E c^-4 -> -(1/12)^2 (k = c(c+2)/6).  r_* c -> rho_*, r_neg c -> rho_neg.
 """
+import os
 import sys
 import mpmath as mp
 import sympy as sp
-sys.path.insert(0, '/home/claude/negative-mass/phase2/dg_spectrum')
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dg_spectrum'))
 from common import chi_poly, rs_ as r
 mp.mp.dps = 30
 

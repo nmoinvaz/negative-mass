@@ -5,9 +5,10 @@ All-l lemmas for the thresholds (l symbolic):
                                                                obtained in closed form from the chi-ODE at its singular point r_s)
  T3  large-R coefficient a2(l) of kappa_c = -(l+1)/R + a2/R^2 + ...
 """
+import os
 import sys
 import sympy as sp
-sys.path.insert(0, '/home/claude/negative-mass/phase2/dg_spectrum')
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dg_spectrum'))
 from common import chi_poly, rs_
 l, r, u = sp.symbols('l r u', positive=True)
 c = (l + 2)*(l - 1); K = c*(c + 2); rs = 6/c
