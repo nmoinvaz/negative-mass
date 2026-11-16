@@ -73,7 +73,17 @@ def judge(fd, shoot, ns):
     rel = abs(extrap - shoot) / abs(shoot)
     conv = abs(v[-1] - v[-2]) < abs(v[-2] - v[-3])
     plain = {n: abs(fd[n] - shoot) / abs(shoot) for n in ns}
-    return rel <= REL_TOL and conv, dict(extrap=extrap, rel_extrap=rel, converging=conv, rel_plain=plain)
+    info = dict(extrap=extrap, rel_extrap=rel, converging=conv, rel_plain=plain)
+    try:                       # recorded, not judged: the order p of the three values and the extrapolation with it
+        from scipy.optimize import brentq
+        n0, v0 = ns[-3], v[-3]
+        ratio = (v0 - v[-2]) / (v[-2] - v[-1])
+        p = brentq(lambda q: (n0 ** -q - n1 ** -q) / (n1 ** -q - n2 ** -q) - ratio, 0.2, 6.0)
+        ext_p = v[-1] - (v[-2] - v[-1]) * n2 ** -p / (n1 ** -p - n2 ** -p)
+        info.update(order=p, extrap_fitted=ext_p, rel_extrap_fitted=(ext_p - shoot) / abs(shoot))
+    except ValueError:
+        pass
+    return rel <= REL_TOL and conv, info
 
 
 def check_star(P, shoot, ns):
@@ -140,6 +150,9 @@ def rejudge_json(path):
         print(f"alpha_c={r['alpha_c']}: F1 {'PASS' if j else 'FAIL'} (extrapolated {info['extrap']:.6e} against shooting "
               f"{r['shoot']:.6e}, rel {info['rel_extrap']:.2e}, plain {{{', '.join(f'{n}: {v:.3f}' for n, v in info['rel_plain'].items())}}}), "
               f"F2 {'PASS' if f2 else 'FAIL'}")
+        if "order" in info:
+            print(f"    fitted order p = {info['order']:.2f}, extrapolated with it {info['extrap_fitted']:.6e}, "
+                  f"relative to shooting {info['rel_extrap_fitted']:+.2e}")
         ok &= j and f2
     return ok
 
