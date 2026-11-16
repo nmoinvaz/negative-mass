@@ -1,0 +1,36 @@
+== CA1  overlap exponent of the unit mode with the indicator of [0.020, 0.050]
+    l      omega   -ln a_l / omega   (m_l/x_1 - 1)   w (m_l - x_1)   ln w
+    2        2.0          3.940983      +196.0491         7.84       0.69
+    4       30.0          0.068994        +2.4497         1.47       3.40
+    8      420.0          0.026653        +0.3327         2.79       6.04
+   12     2002.0          0.021973        +0.0987         3.95       7.60
+   16     6120.0          0.020754        +0.0377         4.62       8.72
+   24    29900.0          0.020183        +0.0092         5.48      10.31
+   32    92752.0          0.020065        +0.0033         6.07      11.44
+   40   223860.0          0.020029        +0.0014         6.49      12.32
+PASS  CA1 m_l = -ln a_l/omega_l > x_1, decreasing for l >= 4, 0 < omega (m_l - x_1) <= ln omega for l >= 8 (so m_l -> x_1)
+
+== CA2  time domain, bump on [0.004, 0.006], T = 2.5 x_1
+  l = 12  omega =   2002.0  ln a_l =    -9.29   max_(t<=0.9x1) G = 0.7585   ln G(T) =     10.04   w (T - x_1) =     12.01
+  l = 16  omega =   6120.0  ln a_l =   -28.49   max_(t<=0.9x1) G = 0.7655   ln G(T) =     32.02   w (T - x_1) =     36.72
+  l = 20  omega =  14630.0  ln a_l =   -66.43   max_(t<=0.9x1) G = 0.7722   ln G(T) =     79.20   w (T - x_1) =     87.78
+  l = 24  omega =  29900.0  ln a_l =  -132.30   max_(t<=0.9x1) G = 0.7718   ln G(T) =    166.05   w (T - x_1) =    179.40
+
+   time series, l = 20:  t/x_1   ln G    w (t - x_1)
+          0.12    -0.398       -51.21
+          0.38    -0.473       -36.57
+          0.62    -0.347       -21.95
+          0.88    -0.258        -7.31
+          1.12    -0.378         7.31
+          1.38    13.350        21.95
+          1.62    27.978        36.57
+          1.88    42.617        51.21
+          2.12    57.244        65.83
+          2.38    71.884        80.47
+PASS  CA2i spectral bracket a_l cosh(w_l t) <= G_l(t) <= sqrt(a_l^2 cosh^2 + 1), l = 12, 16, 20, 24
+PASS  CA2ii for t <= 0.9 x_1 every l has G_l(t) <= 1.05 (the signal has not reached the singularity)
+
+   onset time -ln(a_l)/w_l / x_1 for l = 12, 16, 20, 24: 1.161, 1.164, 1.135, 1.106
+PASS  CA2iii slope of ln G after 1.5 x_1 = w_l within 1%; onset time -ln(a_l)/w_l <= 1.2 x_1 at l = 24 and decreasing from l = 16
+
+4/4 checks passed

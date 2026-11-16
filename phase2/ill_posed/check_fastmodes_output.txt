@@ -1,0 +1,7 @@
+PASS  A x(r) float against mp, relative 1e-12  [worst 3.1e-15]
+PASS  A r(x(r)) = r, relative 1e-11  [worst 8.9e-16]
+PASS  B Vhat float vs mp, l = 2, 5, 12, 30, 60  [worst 1.3e-12]
+PASS  C Psihat float vs mp  [worst 9.7e-13]
+PASS  D kappa_c float vs mp (|r - r_s| > 5%)  [worst 1.9e-14]
+
+5/5 checks passed

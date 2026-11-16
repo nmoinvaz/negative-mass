@@ -1,0 +1,67 @@
+== P1  ill-posed toy V = 3/(4x^2) - 3w/x, data (x^1.5 e^{-wx}, 0), npw = 40
+   w      w t    ln G_num   ln cosh(w t)   diff
+   5.0    5.00     4.3079       4.3069   +0.0010
+   5.0   10.00     9.3089       9.3069   +0.0020
+   5.0   15.00    14.3099      14.3069   +0.0030
+   5.0   20.00    19.3109      19.3069   +0.0040
+  10.0    5.00     4.3079       4.3069   +0.0010
+  10.0   10.00     9.3089       9.3069   +0.0020
+  10.0   15.00    14.3099      14.3069   +0.0030
+  10.0   20.00    19.3109      19.3069   +0.0040
+  20.0    5.00     4.3079       4.3069   +0.0010
+  20.0   10.00     9.3089       9.3069   +0.0020
+  20.0   15.00    14.3099      14.3069   +0.0030
+  20.0   20.00    19.3109      19.3069   +0.0040
+  40.0    5.00     4.3079       4.3069   +0.0010
+  40.0   10.00     9.3089       9.3069   +0.0020
+  40.0   15.00    14.3099      14.3069   +0.0030
+  40.0   20.00    19.3109      19.3069   +0.0040
+  80.0    5.00     4.3079       4.3069   +0.0010
+  80.0   10.00     9.3089       9.3069   +0.0020
+  80.0   15.00    14.3099      14.3069   +0.0030
+  80.0   20.00    19.3109      19.3069   +0.0040
+ 160.0    5.00     4.3079       4.3069   +0.0010
+ 160.0   10.00     9.3089       9.3069   +0.0020
+ 160.0   15.00    14.3099      14.3069   +0.0030
+ 160.0   20.00    19.3109      19.3069   +0.0040
+PASS  P1 growth of the exact toy mode = cosh(w t), w = 5..160, 4 times each  [worst |diff|/TOL = 0.20]
+
+== P1b convergence at w = 1, w t = 20
+   npw =  20   |ln G - ln cosh| = 1.385e-02
+   npw =  40   |ln G - ln cosh| = 3.999e-03
+   npw =  80   |ln G - ln cosh| = 1.135e-03
+PASS  P1b second-order convergence (error ratio >= 3 per halving of h)  [ratios 3.46, 3.52]
+
+== P2  well-posed toy V = 3/(4x^2)
+   w =    5.0   max ln G = -3.38e-01
+   w =   10.0   max ln G = -3.38e-01
+   w =   20.0   max ln G = -3.38e-01
+   w =   40.0   max ln G = -3.38e-01
+   w =   80.0   max ln G = -3.38e-01
+   w =  160.0   max ln G = -3.38e-01
+PASS  P2 G <= 1 + 1e-3 for every w  [max ln G = -3.38e-01]
+
+== P3  Robin end, V = 0, x >= 0, u_x = kappa u, data e^{-w x}
+   w =   5.0 kappa = -w  worst |ln G - ln cosh| = 0.0016
+   w =   5.0 kappa = +w  max ln G = -3.47e-01
+   w =  10.0 kappa = -w  worst |ln G - ln cosh| = 0.0016
+   w =  10.0 kappa = +w  max ln G = -3.47e-01
+   w =  20.0 kappa = -w  worst |ln G - ln cosh| = 0.0016
+   w =  20.0 kappa = +w  max ln G = -3.47e-01
+   w =  40.0 kappa = -w  worst |ln G - ln cosh| = 0.0016
+   w =  40.0 kappa = +w  max ln G = -3.47e-01
+PASS  P3a kappa = -w grows as cosh(w t)
+PASS  P3b kappa = +w stays bounded (G <= 1 + 1e-3)
+
+== P4  sequence at fixed t0 = 0.1
+   w =    5.0  ln(data norm) =     -0.120  ln(solution norm) =  +0.0000   well-posed family: ln G = -1.14e-01
+   w =   10.0  ln(data norm) =     -0.434  ln(solution norm) =  +0.0002   well-posed family: ln G = -3.67e-01
+   w =   20.0  ln(data norm) =     -1.325  ln(solution norm) =  +0.0004   well-posed family: ln G = -5.73e-01
+   w =   40.0  ln(data norm) =     -3.307  ln(solution norm) =  +0.0008   well-posed family: ln G = -3.49e-01
+   w =   80.0  ln(data norm) =     -7.307  ln(solution norm) =  +0.0016   well-posed family: ln G = -3.45e-01
+   w =  160.0  ln(data norm) =    -15.307  ln(solution norm) =  +0.0032   well-posed family: ln G = -3.46e-01
+PASS  P4a ill-posed family: data norm -> 0 (strictly decreasing, < 1e-6), solution norm stays in [0.9, 1.1]  [solution norms [1.0, 1.0, 1.0, 1.001, 1.002, 1.003]]
+PASS  P4b well-posed family: G_n(t0) <= 1.001 for all n
+PASS  P4c the two families are told apart by sup G (>1e3 vs <= 1.001)  [sup ln G ill = 15.31, well = -1.1e-01]
+
+8/8 checks passed

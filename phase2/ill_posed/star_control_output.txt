@@ -1,0 +1,98 @@
+== SC0  R -> 0 limit: Dirichlet / Neumann at c r = 0.2 has one negative eigenvalue, -omega_l^2 to 1e-2, l = 2..60
+PASS  SC0 one negative eigenvalue, E_0 = -omega_l^2 (1e-2), Dirichlet and Neumann at c r = 0.2, l = 2..60  [worst rel 5.8e-04]
+== SC1  count of negative eigenvalues vs Theorem 2, l = 2..60
+   R =  0.05  kappa =    D  unstable l: 2..10    (9), Omega =    657.341, contiguous: True
+   R =  0.05  kappa =  0.0  unstable l: 2..12    (11), Omega =   2620.121, contiguous: True
+   R =  0.05  kappa =  1.0  unstable l: 2..12    (11), Omega =   2619.424, contiguous: True
+   R =  0.05  kappa = 10.0  unstable l: 2..12    (11), Omega =   2613.154, contiguous: True
+   R =  0.12  kappa =    D  unstable l: 2..6     (5), Omega =    117.664, contiguous: True
+   R =  0.12  kappa =  0.0  unstable l: 2..8     (7), Omega =    395.518, contiguous: True
+   R =  0.12  kappa =  1.0  unstable l: 2..8     (7), Omega =    395.113, contiguous: True
+   R =  0.12  kappa = 10.0  unstable l: 2..8     (7), Omega =    391.492, contiguous: True
+   R =  0.30  kappa =    D  unstable l: 2..4     (3), Omega =     19.634, contiguous: True
+   R =  0.30  kappa =  0.0  unstable l: 2..5     (4), Omega =     43.684, contiguous: True
+   R =  0.30  kappa =  1.0  unstable l: 2..5     (4), Omega =     42.391, contiguous: True
+   R =  0.30  kappa = 10.0  unstable l: 2..5     (4), Omega =     38.260, contiguous: True
+   R =  1.00  kappa =    D  unstable l: 2..2     (1), Omega =      1.853, contiguous: True
+   R =  1.00  kappa =  0.0  unstable l: 2..2     (1), Omega =      2.239, contiguous: True
+   R =  1.00  kappa =  1.0  unstable l: 2..2     (1), Omega =      2.183, contiguous: True
+   R =  1.00  kappa = 10.0  unstable l: 2..2     (1), Omega =      1.994, contiguous: True
+   R =  3.00  kappa =    D  unstable l: none     (0), Omega =      0.000, contiguous: True
+   R =  3.00  kappa =  0.0  unstable l: none     (0), Omega =      0.000, contiguous: True
+   R =  3.00  kappa =  1.0  unstable l: none     (0), Omega =      0.000, contiguous: True
+   R =  3.00  kappa = 10.0  unstable l: none     (0), Omega =      0.000, contiguous: True
+PASS  SC1 negative-eigenvalue count = [R < r_s] + [kappa < kappa_c(R)] in every case  [1180 cases, 0 skipped near thresholds; first mismatches []]
+PASS  SC1b for kappa >= 0 or Dirichlet the unstable l are finitely many and form {l <= l_U} inside the tested range (l_U < 60)
+
+   Omega(R, kappa = 0) * R^2 (the cap scales like 1/R^2): R=0.05: 6.55, R=0.12: 5.70, R=0.3: 3.93, R=1.0: 2.24, R=3.0: 0.00
+
+== SC2  Vhat >= 0 on [R, 50] where 10.7/c < R (the sufficient condition)
+PASS  SC2 min Vhat on [R, 50] >= 0 whenever 10.7/c < R (R in [0.05, 0.12, 0.3, 1.0, 3.0], l <= 60, 268 cases)  [smallest min = 5.357e-03]
+
+== SC3  r_*, r_neg (float) against the certified brackets
+   l =    2  c r_* = 9.1151217018 (table 9.1151217018)   c r_neg = 10.6962859357 (table 10.6962859357)
+   l =    3  c r_* = 8.7890412697 (table 8.7890412697)   c r_neg = 10.1435189210 (table 10.1435189210)
+   l =    5  c r_* = 8.6045033086 (table 8.6045033086)   c r_neg = 9.8339099117 (table 9.8339099117)
+   l =   10  c r_* = 8.5177789725 (table 8.5177789725)   c r_neg = 9.6893159194 (table 9.6893159194)
+   l =   20  c r_* = 8.4940793113 (table 8.4940793112)   c r_neg = 9.6499092507 (table 9.6499092507)
+   l =   40  c r_* = 8.4878450897 (table 8.4878450897)   c r_neg = 9.6395511287 (table 9.6395511287)
+   l =   80  c r_* = 8.4862435148 (table 8.4862435148)   c r_neg = 9.6368906526 (table 9.6368906526)
+   l =  100  c r_* = 8.4860490493 (table 8.4860490493)   c r_neg = 9.6365676288 (table 9.6365676288)
+PASS  SC3 float r_*, r_neg = certified table, l = 2..100  [worst rel 1.2e-13]
+
+== SC4  same data, point mass vs star, R = 0.12, t0 = 0.01
+   x_R = 0.003462  (t0 - x_R = 0.006538)
+   kappa =    D   Omega = 117.66   star: max_l ln G(t0) = 0.568   bound ln cosh(Omega t0) = 0.574
+      l    ln a_l   ln G_pm(t0)   [lower, upper]            ln G_star(t0)
+       2      0.00        0.000   [    0.000,     0.347]        0.000
+       4     -0.00        0.044   [    0.044,     0.369]        0.044
+       6     -0.00        0.764   [    0.763,     0.861]        0.568
+       8     -0.40        3.104   [    3.103,     3.104]       -0.345
+      10     -3.00        6.208   [    6.207,     6.207]       -0.347
+      12     -6.95       12.380   [   12.376,    12.376]       -0.347
+      16    -21.57       38.945   [   38.935,    38.935]       -0.501
+      20    -51.19       94.443   [   94.420,    94.420]       -0.347
+      24   -104.10      194.250   [  194.203,   194.203]       -0.347
+PASS  SC4a star (kappa = D): ln G_l(t) <= ln cosh(Omega t) for all l = 2..24, 4 times
+PASS  SC4b point mass (kappa = D data): spectral bracket a_l cosh(w_l t) <= G_l(t) <= sqrt(a_l^2 cosh^2 + 1), all l
+PASS  SC4c uniform in l for the star, unbounded for the point mass (kappa = D): max_l G^star <= cosh(Omega t0), G^pm_24 > 1e6 cosh(Omega t0)  [max ln G^star = 0.568, ln G^pm_24 = 194.2]
+   kappa =  0.0   Omega = 395.52   star: max_l ln G(t0) = 3.231   bound ln cosh(Omega t0) = 3.262
+      l    ln a_l   ln G_pm(t0)   [lower, upper]            ln G_star(t0)
+       2      0.00        0.000   [    0.000,     0.347]        0.000
+       4     -0.00        0.044   [    0.044,     0.369]        0.045
+       6     -0.00        0.764   [    0.763,     0.861]        1.025
+       8     -0.40        3.104   [    3.103,     3.104]        1.452
+      10     -3.00        6.208   [    6.207,     6.207]       -0.349
+      12     -6.95       12.380   [   12.376,    12.376]       -0.348
+      16    -21.57       38.945   [   38.935,    38.935]       -0.265
+      20    -51.19       94.443   [   94.420,    94.420]       -0.322
+      24   -104.10      194.250   [  194.203,   194.203]       -0.355
+PASS  SC4a star (kappa = 0.0): ln G_l(t) <= ln cosh(Omega t) for all l = 2..24, 4 times
+PASS  SC4b point mass (kappa = 0.0 data): spectral bracket a_l cosh(w_l t) <= G_l(t) <= sqrt(a_l^2 cosh^2 + 1), all l
+PASS  SC4c uniform in l for the star, unbounded for the point mass (kappa = 0.0): max_l G^star <= cosh(Omega t0), G^pm_24 > 1e6 cosh(Omega t0)  [max ln G^star = 3.231, ln G^pm_24 = 194.2]
+   kappa = 10.0   Omega = 391.49   star: max_l ln G(t0) = 3.192   bound ln cosh(Omega t0) = 3.222
+      l    ln a_l   ln G_pm(t0)   [lower, upper]            ln G_star(t0)
+       2      0.00        0.000   [    0.000,     0.347]        0.000
+       4     -0.00        0.044   [    0.044,     0.369]        0.045
+       6     -0.00        0.764   [    0.763,     0.861]        1.014
+       8     -0.40        3.104   [    3.103,     3.104]        1.299
+      10     -3.00        6.208   [    6.207,     6.207]       -0.349
+      12     -6.95       12.380   [   12.376,    12.376]       -0.348
+      16    -21.57       38.945   [   38.935,    38.935]       -0.263
+      20    -51.19       94.443   [   94.420,    94.420]       -0.323
+      24   -104.10      194.250   [  194.203,   194.203]       -0.354
+PASS  SC4a star (kappa = 10.0): ln G_l(t) <= ln cosh(Omega t) for all l = 2..24, 4 times
+PASS  SC4b point mass (kappa = 10.0 data): spectral bracket a_l cosh(w_l t) <= G_l(t) <= sqrt(a_l^2 cosh^2 + 1), all l
+PASS  SC4c uniform in l for the star, unbounded for the point mass (kappa = 10.0): max_l G^star <= cosh(Omega t0), G^pm_24 > 1e6 cosh(Omega t0)  [max ln G^star = 3.192, ln G^pm_24 = 194.2]
+
+== SC5  caveat: kappa_l = -l^2 (l-dependent, negative), R = 0.3
+   l = 20  kappa = -400  sqrt(-E_0) = 332.30   ratio to |kappa| = 0.831
+   l = 30  kappa = -900  sqrt(-E_0) = 842.46   ratio to |kappa| = 0.936
+   l = 40  kappa = -1600  sqrt(-E_0) = 1546.09   ratio to |kappa| = 0.966
+   l = 60  kappa = -3600  sqrt(-E_0) = 3546.72   ratio to |kappa| = 0.985
+PASS  SC5 growth tracks |kappa_l|: ratio >= 0.8 at l = 20..60, ratio at l = 60 >= 0.98, growth strictly increasing
+
+total 79 s
+
+15/15 checks passed
+exit 0
