@@ -8,8 +8,8 @@ Section 4 repeats this for ds^2 = -N^2 dt^2 + psi^4 sum_i (dx^i + b^i dt)^2, wit
 functions of (t, x, y, z), where nabla~_i = nabla_i + (1/2) K_ij g^j g^0 and nabla_i is the spin connection of the
 slice itself (#67). Planted metrics with a known spin connection pass first.
 Sections 6 to 8 repeat this for a diagonal slice g_ij = diag(A^2, B^2, C^2)(t, x, y, z) with e_i = d_i / A_i, and for the
-same slice in the orthonormal frame rotated by an angle alpha(t, x, y, z) about z (#86). Planted Bianchi I, Kasner and
-Cartan-formula metrics pass first.
+same slice in the orthonormal frame rotated by an angle alpha(t, x, y, z) about z (#86). Planted Bianchi I, Kasner,
+Cartan-formula and rotated Bianchi I metrics, each with a spin connection known by hand, pass first.
 
 The Levi-Civita connection comes from the Christoffel symbols of the coordinate metric, with
 omega_ab(X) = g(e_a, nabla_X e_b), e_0 = n and e_i = psi^-2 d_i. It shares no code with review_cartan.py, which solves
@@ -25,7 +25,7 @@ relation used beyond expanding Laurent polynomials in the jets of the unknown fu
     python3 notes/warp/conventions.py --no-controls    checks only
     python3 notes/warp/conventions.py --mutate=NAME    one control (its target checks must fail, exit 1)
 
-Exit status is 1 if a check fails or a control does not fire. A minute or two, one process.
+Exit status is 1 if a check fails or a control does not fire. Under four minutes, one process.
 """
 import subprocess
 import sys
@@ -42,7 +42,8 @@ CONTROLS = {
     "christoffel": ("flips the sign of the Christoffel term in nabla_X Y",
                     ["planted_desitter", "omega_slice", "planted_ds_rescaled", "planted_conf", "planted_static",
                      "omega_general", "restriction_general", "planted_bianchi", "planted_kasner",
-                     "planted_diag_cartan", "omega_diag", "restriction_diag", "omega_rot", "restriction_rot"]),
+                     "planted_diag_cartan", "planted_rot_bianchi", "omega_diag", "restriction_diag", "omega_rot",
+                     "restriction_rot"]),
     "spin-sign": ("uses -(1/4) omega_ab G^a G^b for the spin connection",
                   ["clifford_parallel", "restriction", "note_gammas", "clifford_parallel_general",
                    "restriction_general", "note_gammas_general", "clifford_parallel_diag", "restriction_diag",
@@ -54,27 +55,31 @@ CONTROLS = {
                                       "clifford_parallel_diag", "dirac_diag", "clifford_parallel_rot", "dirac_rot"]),
     "adm-sign": ("takes the ADM formula with the other sign, K_ij = (1/2N)(d_t g_ij - D_i b_j - D_j b_i)",
                  ["planted_ds_rescaled", "planted_conf", "planted_flrw", "omega_general", "restriction_general",
-                  "note_gammas_general", "planted_bianchi", "planted_kasner", "planted_diag_cartan", "omega_diag",
-                  "restriction_diag", "note_gammas_diag", "omega_rot", "restriction_rot", "note_gammas_rot"]),
+                  "note_gammas_general", "planted_bianchi", "planted_kasner", "planted_diag_cartan",
+                  "planted_rot_bianchi", "omega_diag", "restriction_diag", "note_gammas_diag", "omega_rot",
+                  "restriction_rot", "note_gammas_rot"]),
     "lapse-K": ("drops the 1/N of the ADM formula for K_ij",
                 ["planted_ds_rescaled", "planted_conf", "planted_flrw", "omega_general", "restriction_general",
-                 "planted_bianchi", "planted_diag_cartan", "omega_diag", "restriction_diag", "omega_rot",
-                 "restriction_rot"]),
+                 "planted_bianchi", "planted_diag_cartan", "planted_rot_bianchi", "omega_diag", "restriction_diag",
+                 "omega_rot", "restriction_rot"]),
     "lapse-frame": ("takes e_0 = d_t - b^i d_i without the 1/N",
                     ["orthonormal_general", "restriction_general", "planted_bianchi", "planted_diag_cartan",
-                     "orthonormal_diag", "restriction_diag", "orthonormal_rot", "restriction_rot"]),
+                     "planted_rot_bianchi", "orthonormal_diag", "restriction_diag", "orthonormal_rot",
+                     "restriction_rot"]),
     "psi-frame": ("takes e_i = psi^-1 d_i instead of psi^-2 d_i", ["orthonormal_general", "restriction_general"]),
     "psi-slice": ("gives the slice's own spin connection the metric A_i instead of A_i^2 (psi^2 for psi^4)",
                   ["omega_general", "restriction_general", "omega_diag", "restriction_diag", "omega_rot",
                    "restriction_rot"]),
     "aniso-frame": ("takes e_1 = d_1 / A_2, the scale of the wrong axis",
-                    ["planted_bianchi", "planted_kasner", "planted_diag_cartan", "orthonormal_diag",
-                     "restriction_diag", "orthonormal_rot", "restriction_rot"]),
+                    ["planted_bianchi", "planted_kasner", "planted_diag_cartan", "planted_rot_bianchi",
+                     "orthonormal_diag", "restriction_diag", "orthonormal_rot", "restriction_rot"]),
     "kasner": ("takes the exponents (1/2, 1/2, 1/2), which are not vacuum, for the Kasner metric",
                ["planted_kasner"]),
-    "rot-ortho": ("rotates e_1 only and leaves e_2, so the frame is not orthonormal", ["orthonormal_rot"]),
+    "rot-ortho": ("rotates e_1 only and leaves e_2, so the frame is not orthonormal",
+                  ["planted_rot_bianchi", "orthonormal_rot"]),
+    "rot-reverse": ("rotates by -alpha instead of alpha on both routes", ["planted_rot_bianchi"]),
     "rot-k": ("takes K_ij in the unrotated frame on the slice route",
-              ["omega_rot", "restriction_rot", "note_gammas_rot"]),
+              ["planted_rot_bianchi", "omega_rot", "restriction_rot", "note_gammas_rot"]),
     "rot-dalpha": ("drops the derivatives of alpha in the slice's own spin connection",
                    ["omega_rot", "restriction_rot", "note_gammas_rot"]),
 }
@@ -193,6 +198,8 @@ def metric4(b, N, A):
 def rotate(Es, al):
     """The frame (Es[0], Es[1], Es[2]) rotated by the angle al about the third axis."""
     c, s = sp.cos(al), sp.sin(al)
+    if MUT == "rot-reverse":
+        s = -s
     if MUT == "rot-ortho":
         return [c * Es[0] + s * Es[1], Es[1], Es[2]]
     return [c * Es[0] + s * Es[1], -s * Es[0] + c * Es[1], Es[2]]
@@ -336,10 +343,10 @@ def same(om, want):
     return all(zero(om[a][bb][c] - want[a][bb][c]) for a in range(4) for bb in range(4) for c in range(4))
 
 
-def planted(name, N, psi, b, want, wantK, text, A=None):
+def planted(name, N, psi, b, want, wantK, text, A=None, alpha=None):
     """Passes if the 4-metric's omega equals the known table and the ADM K equals the known K."""
-    inv_ok, frame, om = connection(b, N, psi, A)
-    om3, K = slice_data(N, psi, b, A)
+    inv_ok, frame, om = connection(b, N, psi, A, alpha)
+    om3, K = slice_data(N, psi, b, A, alpha)
     check(name, inv_ok and is_zero(frame - ETA) and same(om, want) and is_zero(K - wantK), text)
 
 
@@ -499,6 +506,23 @@ def section_planted_diag():
             -sp.diag(*[sp.diff(Ai, T) / (Ns * Ai) for Ai in A]),
             "diag(A^2, B^2, C^2), N, all of (t, x, y, z): omega_jk(e_i) by Cartan's formula, omega_0j(e_0) = -e_j ln N, "
             "omega_0j(e_i) = K_ij = -d_t A_i/(N A_i) delta_ij", A=A)
+    # (d) The Bianchi I of (a) in the frame e'_1 = c e_1 + s e_2, e'_2 = -s e_1 + c e_2, e'_3 = e_3, c = cos(alpha) and
+    #     s = sin(alpha) for alpha(t, x, y, z). Now omega'_21(X) = g(e'_2, nabla_X e'_1) = X(alpha), since omega_jk = 0 and
+    #     -s X(c) + c X(s) = X(alpha), and omega'_12 = -omega'_21. The frame of (a) is geodesic, so omega'_21(e_0) =
+    #     e_0(alpha). K is a tensor, K'_ij = K(e'_i, e'_j) = -sum_k H_k R_ik R_jk with R the rows of the rotation, and
+    #     omega'_0j(e'_i) = K'_ij = -omega'_j0(e'_i).
+    c, s_ = sp.cos(ALPHA), sp.sin(ALPHA)
+    R = sp.Matrix([[c, s_, 0], [-s_, c, 0], [0, 0, 1]])
+    Kr = sp.Matrix(3, 3, lambda i, j: -sum(H[k] * R[i, k] * R[j, k] for k in range(3)))
+    eal = [sum(R[i, k] * sp.diff(ALPHA, CRD[k + 1]) / a[k] for k in range(3)) for i in range(3)]
+    nz = {(2, 1, 0): sp.diff(ALPHA, T) / Nt, (1, 2, 0): -sp.diff(ALPHA, T) / Nt}
+    for i in range(1, 4):
+        nz[(2, 1, i)], nz[(1, 2, i)] = eal[i - 1], -eal[i - 1]
+        for j in range(1, 4):
+            nz[(0, j, i)], nz[(j, 0, i)] = Kr[i - 1, j - 1], -Kr[i - 1, j - 1]
+    planted("planted_rot_bianchi", Nt, 1, [0, 0, 0], table(nz), Kr,
+            "Bianchi I in the frame rotated by alpha(t, x, y, z): omega'_21(e'_i) = e'_i(alpha), "
+            "omega'_0j(e'_i) = K'_ij = -sum_k H_k R_ik R_jk", A=a, alpha=ALPHA)
 
 
 def diag_fields():
