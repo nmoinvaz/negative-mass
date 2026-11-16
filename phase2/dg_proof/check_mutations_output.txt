@@ -1,0 +1,24 @@
+vhat_structure.py            unmutated: exit 0  OK
+vhat_structure.py            --mutate=vcoef   : exit 1  fires
+vhat_structure.py            --mutate=qsign   : exit 1  fires
+vhat_structure.py            --mutate=ssign   : exit 1  fires
+vhat_structure.py            --mutate=toy     : exit 1  fires
+threshold_isolation.py       unmutated: exit 0  OK
+threshold_isolation.py       --mutate=coef    : exit 1  fires
+threshold_isolation.py       --mutate=sterm   : exit 1  fires
+threshold_isolation.py       --mutate=ntail   : exit 1  fires
+threshold_isolation.py       --mutate=mono    : exit 1  fires
+threshold_isolation.py       --mutate=planted : exit 1  fires
+large_l_proof.py             unmutated: exit 0  OK
+large_l_proof.py             --mutate=beta    : exit 1  fires
+large_l_proof.py             --mutate=eta     : exit 1  fires
+large_l_proof.py             --mutate=dsign   : exit 1  fires
+large_l_proof.py             --mutate=poly    : exit 1  fires
+large_l_proof.py             --mutate=window  : exit 1  fires
+monotone_proof.py            unmutated: exit 0  OK
+monotone_proof.py            --mutate=omega   : exit 1  fires
+monotone_proof.py            --mutate=n1sign  : exit 1  fires
+monotone_proof.py            --mutate=s1sign  : exit 1  fires
+monotone_proof.py            --mutate=eta2    : exit 1  fires
+monotone_proof.py            --mutate=window  : exit 1  fires
+all mutations fire and every unmutated run passes

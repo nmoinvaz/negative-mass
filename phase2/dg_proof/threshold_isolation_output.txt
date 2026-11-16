@@ -1,0 +1,63 @@
+== P: planted truth through the same certification code (X = rho^2, eps = 0) ==
+PASS  P: the certified bracket of the root of N for X = rho^2 contains 12
+PASS  P: the certified bracket of the root of S for X = rho^2 contains 16
+
+== A: rescaled coefficients against common.chi_poly (exact) ==
+PASS  A: a_n(1/c) = c * [r^n]chi / c^n for l = 2..30, every n
+
+== B: eps = 0 roots against the Bessel closed form ==
+  rho_*   in [8.485700967373530340930500, 8.485700967373530340930500]   Bessel 8.485700967373530340930500822
+  rho_neg in [9.635989442586144020696157, 9.635989442586144020696157]   Bessel 9.6359894425861440206961577
+PASS  B: certified eps = 0 bracket of rho_* contains the Bessel-form root (to 1e-18)
+PASS  B: certified eps = 0 bracket of rho_neg contains the Bessel-form root (to 1e-18)
+
+== C: independent isolation by sympy Sturm sequences, l = 2..24 ==
+PASS  C: certified brackets lie inside sympy's isolating intervals (N from chi_poly, S as phi0_xx numerator), l = 2..24
+
+== D: stored large_l_limit_output.txt ==
+PASS  D: c r_* and c r_neg agree with the stored table to its 5 printed decimals, l in [2, 3, 5, 10, 20, 40, 80]
+
+== E: l = 2..3000, certified brackets (c r_* [lo, hi], c r_neg [lo, hi]) ==
+   ... l = 500 done, 111s
+   ... l = 1000 done, 219s
+   ... l = 1500 done, 332s
+   ... l = 2000 done, 447s
+   ... l = 2500 done, 564s
+   ... l = 3000 done, 682s
+   l     c r_*                 c r_neg                l^2 r_*       l^2 r_neg   (brackets certified, printed lo)
+    2  9.115121701849  10.696285935664  9.11512170  10.69628593
+    3  8.789041269692  10.143518920960  7.91013714  9.12916702
+    5  8.604503308637  9.833909911707  7.68259223  8.78027670
+   10  8.517778972489  9.689315919387  7.88683238  8.97158881
+   20  8.494079311249  9.649909250673  8.12830556  9.23436291
+   40  8.487845089691  9.639551128745  8.29093537  9.41592295
+   80  8.486243514779  9.636890652647  8.38406275  9.52085522
+   81  8.486230281102  9.636868670267  8.38526458  9.52221315
+  100  8.486049049339  9.636567628766  8.40369285  9.54304578
+  150  8.485856179257  9.636247258081  8.43040286  9.57327637
+  200  8.485788418157  9.636134702908  8.44399066  9.58867078
+  300  8.485739898732  9.636054109527  8.45773539  9.60425335
+  500  8.485715001271  9.636012753581  8.46884506  9.61685597
+ 1000  8.485704479348  9.635995276148  8.47724418  9.62638814
+ 2000  8.485701845805  9.635990901704  8.48146535  9.63118012
+ 3000  8.485701357852  9.635990091191  8.48287561  9.63278130
+PASS  E1: r_* < r_neg for every l = 2..3000 (hi of r_* below lo of r_neg)
+PASS  E2: c r_* strictly decreasing for l = 2..3000
+PASS  E3: c r_neg strictly decreasing for l = 2..3000
+PASS  E4: c r_* > rho_* (limit bracket) for every l, c r_neg > rho_neg for every l (approach from above)
+   l^2 r_* increasing for l >= 5 (checked to 3000); l^2 r_neg increasing for l >= 5
+PASS  E5: l^2 r_* and l^2 r_neg are strictly increasing in l from l = 5 on, up to LMAX (both have their minimum at l = 5)
+PASS  E6: l^2 r_* < rho_* and l^2 r_neg < rho_neg for every l = 3..LMAX (approach from below)
+   widest bracket in the table: 2e-13
+
+== F: sparse larger l (brackets refined by exact bisection to 1e-22) ==
+      l          c r_* - rho_*            (c r_* - rho_*) c      c r_neg - rho_neg       (c r_neg - rho_neg) c
+     4000   2.196630e-07        3.515486      3.648708e-07         5.839392
+    10000   3.515134e-08        3.515486      5.838809e-08         5.839393
+    30000   3.905965e-09        3.515486      6.487998e-09         5.839393
+   100000   3.515451e-10        3.515486      5.839334e-10         5.839393
+  1000000   3.515482e-12        3.515486      5.839387e-12         5.839393
+ 10000000   3.515485e-14        3.515486      5.839392e-14         5.839393
+PASS  F: c r_* > rho_* and c r_neg > rho_neg also at l = 4000 .. 10^7
+
+718 s
