@@ -8,9 +8,11 @@ Claims, each of which exits 1 when it fails:
   C1  alpha_c increases along the rows and the rows reach the stop record.
   C2  N has no extremum: every difference quotient dN/dalpha_c is positive. A sign change is reported with the
       parabola vertex of the three rows around it (the turning point the stability rule needs).
-  C3  The first law dM = -w dN of the signed source holds on every step, M_{i+1} - M_i = -(w_i + w_{i+1})/2 (N_{i+1} - N_i)
-      to FIRST_LAW_TOL of |dM| (the trapezoid rule has an O(h^2) error, which is far smaller; the earlier fine scans held
-      to about 8e-5).
+  C3  The first law dM = -w dN of the signed source holds on every step, M_{i+1} - M_i = -integral of w dN over the step,
+      to FIRST_LAW_TOL of |dM| (the earlier fine scans held to about 8e-5). The integral is of the cubic through the four
+      nearest rows (three at the ends of the range). The trapezoid rule is not used: its error, (dN)^2 w_NN / 12 relative,
+      was 2e-4 on the first step (dN = 0.4 near N = 2, where w(N) bends), larger than the limit, and has nothing to do
+      with the stars.
   C4  w(alpha_c) has exactly one fold in the rows (the known one, between alpha_c = 1.15 and 1.20), so N(w) is
       single-valued beyond it.
   C5  (with --modes) no radial mode has sigma^2 < 0 on any listed star, with the grid and the roots recorded.
@@ -23,6 +25,8 @@ recovered, and a monotone family must report none), then every mutation.
 import json
 import math
 import sys
+
+import numpy as np
 
 FIRST_LAW_TOL = 1e-4
 
@@ -82,10 +86,10 @@ def claims(rows, stop, modes=None, verbose=True):
     worst, at = 0.0, None
     for i in range(len(rows) - 1):
         a, b = rows[i], rows[i + 1]
-        dM, dN = b["M"] - a["M"], b["N"] - a["N"]
+        dM = b["M"] - a["M"]
         if dM == 0:
             continue
-        e = abs(dM + 0.5 * (a["w"] + b["w"]) * dN) / abs(dM)
+        e = abs(dM + w_dN(rows, i)) / abs(dM)
         if e > worst:
             worst, at = e, a["alpha_c"]
     add("C3 first law dM = -w dN", worst <= FIRST_LAW_TOL, f"worst relative residual {worst:.2e} at alpha_c {at:.4f}, "
@@ -101,6 +105,17 @@ def claims(rows, stop, modes=None, verbose=True):
         add("C5 no negative sigma^2", not neg and len(modes) > 0,
             f"{len(modes)} stars, {sum(len(m['roots']) for m in modes)} roots, negative: {neg}")
     return all(ok for _, ok in res), res
+
+
+def w_dN(rows, i):
+    """Integral of w dN over step i, from the cubic through rows i-1..i+2 (shifted to stay inside the range)."""
+    j = min(max(i - 1, 0), len(rows) - 4)
+    pts = rows[j:j + 4]
+    n0 = rows[i]["N"]
+    x = [p["N"] - n0 for p in pts]
+    c = np.polyfit(x, [p["w"] for p in pts], 3)
+    P = np.polyint(c)
+    return float(np.polyval(P, rows[i + 1]["N"] - n0) - np.polyval(P, 0.0))
 
 
 def mutate_rows(rows, how):
@@ -126,7 +141,7 @@ def planted(turn=True):
         w = 0.42 + 0.3 * (a - 1.17) ** 2 / (1 + 0.5 * (a - 1.17))
         n = 100 + (-50 * (a - a_star) ** 2 if turn else 80 * (a - 1.1))
         if prev is not None:
-            M -= 0.5 * (w + prev[0]) * (n - prev[1])
+            M -= 0.5 * (w + prev[0]) * (n - prev[1])  # trapezoid, so the planted M carries its own O(h^2) error
         prev = (w, n)
         rows.append({"alpha_c": round(a, 6), "w": w, "N": n, "M": M})
     return rows, a_star

@@ -76,15 +76,22 @@ def load_checkpoint(path):
     return Guess(z["x"], z["y"], z["yp"], z["p"], float(z["R"])), float(z["alpha_c"])
 
 
-def bcs_lapse(ya, yb, p, r0, R, eps, nuc, mutate=None):
+def bcs_lapse(ya, yb, p, r0, R, eps, nuc, mutate=None, tail="yukawa"):
     res = B.bcs_lapse(ya, yb, p, r0, R, eps, nuc)
     if mutate == "matching":                       # drop the Schwarzschild matching of nu(R)
         res = res.copy()
         res[3] = yb[3]
+    if tail == "wkb":
+        # diagnostic only (phantom_stop.py): u(R) = -kappa - 1/R with the local kappa = a sqrt(1 - w^2/alpha^2), which
+        # has no k = sqrt(1 - w^2) in it and so no branch point at w = 1 (alpha^2 = 1 - 2m/R > 1 for m < 0)
+        res = res.copy()
+        a2 = 1.0 / (1.0 - 2.0 * yb[2] / R)
+        kap = np.sqrt(a2 * (1.0 - p[0] ** 2 / np.exp(yb[3])))
+        res[2] = yb[1] + kap + 1.0 / R
     return res
 
 
-def solve_lapse(alpha_c, eps, guess, R, r0=1e-3, tol=1e-8, max_nodes=200000, mutate=None):
+def solve_lapse(alpha_c, eps, guess, R, r0=1e-3, tol=1e-8, max_nodes=200000, mutate=None, tail="yukawa"):
     """Like background.solve_star_lapse, with the outer radius R free. A larger R than the guess's extends the
     mesh and the Yukawa tail (psi falling as e^{-k r}, u = -k - 1/r, m constant, nu = ln(1 - 2m/r))."""
     xo = guess.sol.x
@@ -99,7 +106,7 @@ def solve_lapse(alpha_c, eps, guess, R, r0=1e-3, tol=1e-8, max_nodes=200000, mut
     elif x[-1] < R:
         x = np.append(x, R)
     y0 = guess.sol.sol(np.minimum(x, guess.R))[:4]
-    k = math.sqrt(1.0 - guess.w ** 2)
+    k = math.sqrt(1.0 - guess.w ** 2) if guess.w < 1 else 1e-3
     far = x > guess.R
     if far.any():
         y0[1, far] = -k - 1.0 / x[far]
@@ -107,7 +114,7 @@ def solve_lapse(alpha_c, eps, guess, R, r0=1e-3, tol=1e-8, max_nodes=200000, mut
         y0[2, far] = y0[2, ~far][-1]
         y0[3, far] = np.log(1 - 2 * y0[2, far] / x[far])
     sol = solve_bvp(lambda r, y, p: B.odes(r, y, p[0], eps),
-                    lambda ya, yb, p: bcs_lapse(ya, yb, p, r0, R, eps, 2 * np.log(alpha_c), mutate),
+                    lambda ya, yb, p: bcs_lapse(ya, yb, p, r0, R, eps, 2 * np.log(alpha_c), mutate, tail),
                     x, y0, p=[guess.w], tol=tol, max_nodes=max_nodes, bc_tol=1e-10)
     if sol.status != 0:
         err = RuntimeError(f"bvp(alpha_c) failed alpha_c={alpha_c} R={R:.1f}: {sol.message}")
