@@ -1,0 +1,23 @@
+[PASS] R_(0,0) as printed by he_type.py equals the entry derived here
+[PASS] R_(0,1) as printed by he_type.py equals the entry derived here
+[PASS] R_(0,rho) as printed by he_type.py equals the entry derived here
+[PASS] R_(0,varphi) as printed by he_type.py equals the entry derived here
+[PASS] R_(1,1) as printed by he_type.py equals the entry derived here
+[PASS] R_(1,rho) as printed by he_type.py equals the entry derived here
+[PASS] R_(1,varphi) as printed by he_type.py equals the entry derived here
+[PASS] R_(rho,rho) as printed by he_type.py equals the entry derived here
+[PASS] R_(rho,varphi) as printed by he_type.py equals the entry derived here
+[PASS] R_(varphi,varphi) as printed by he_type.py equals the entry derived here
+[PASS] c2 as printed equals the derived c2
+[PASS] p8 as printed equals the derived p8 (71 terms)
+[PASS] p10 as printed equals the derived p10 (88 terms)
+all 13 comparisons passed
+
+controls (each is the same script with --mutate=NAME and must make a comparison fail)
+[FIRED] --mutate=c-no-nshift: my route C loses the shift in E_0 = d_t - w d_x; exit 1; 6 comparisons fail
+[FIRED] --mutate=perturb-p8: the parsed p8 gains the term a^2 u^2; exit 1; 1 comparisons fail
+[FIRED] --mutate=perturb-R01: the parsed R_01 gains the term v a u / 7; exit 1; 1 comparisons fail
+
+real	0m13.123s
+user	0m12.868s
+sys	0m0.222s
