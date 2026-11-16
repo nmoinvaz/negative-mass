@@ -64,6 +64,8 @@ CONTROLS = {
     'lemma-diag': ('classification of every D = 0 tensor skips the rank test and answers Type II',
                    ['planted_types', 'Qeq0_and_edges']),
     'crit-factor': ('the equatorial criterion becomes v r a^2 > 2 |a + r b|', ['T4_equator']),
+    'import-work': ('he_type.py is imported, standing in for sharing code with the work under review',
+                    ['independence']),
     'tgt-p6': ('the target p6 = -J^6/(16 r^6) becomes -J^6/(8 r^6)', ['T1_structure']),
     'tgt-p12': ('the target Q2 loses its -2 r a^2 term', ['T2_p12']),
     'tgt-axis': ('the target Q_ax = a^2 + r^2 v^2 (F b - a^2)^2 becomes a^2 + r^2 v^2 (F b + a^2)^2', ['T3_axis']),
@@ -478,9 +480,11 @@ def main_checks():
     rng = random.Random(71)
 
     # ---- independence ------------------------------------------------------------------------------------------
+    if mut('import-work'):
+        import he_type  # noqa: F401  (the control, allowed only because it runs after the derivation)
     bad = [m for m in ('he_type', 'phantom_source') if m in sys.modules]
-    ck.add('independence', not bad, 'imports: stdlib, sympy %s, mpmath %s; he_type and phantom_source are not '
-           'imported' % (sp.__version__, mp.__version__))
+    ck.add('independence', not bad, 'imports: stdlib, sympy %s, mpmath %s; modules of the work under review '
+           '(he_type, phantom_source) imported: %s' % (sp.__version__, mp.__version__, bad or 'none'))
 
     # ---- planted truth for the two engines ---------------------------------------------------------------------
     A = Function('A')(tt)
@@ -804,7 +808,7 @@ def main_checks():
             if cfp['Qeq'] != 0:
                 crit.append((Dv > 0) == (lhs > rhs))
     ck.add('T4_equator', all(t4) and all(crit), '; '.join(detail4) + ('; ' if detail4 else '') +
-           f'{len(crit)} exact random equatorial points per route: D > 0 iff v r a^2 > |a + r b| ({all(crit)}) '
+           f'{len(crit) // 2} exact random equatorial points, both routes: D > 0 iff v r a^2 > |a + r b| ({all(crit)}) '
            f'(Q_eq = 0 and D = 0 points are in Qeq0_and_edges)')
 
     # ---- the lemma against the definition, at random points of the whole wall ----------------------------------
@@ -827,7 +831,7 @@ def main_checks():
     ck.add('type_direct', all(td) and nI > 0 and nIV > 0,
            f'the sign of D against a direct look at the eigenvectors (mpmath, 60 digits): D > 0 gives three real '
            f'eigenvalues, a timelike eigenvector and no null one ({nI} points); D < 0 gives one real eigenvalue with a '
-           f'spacelike eigenvector, so no timelike or null eigenvector ({nIV} points)')
+           f'spacelike eigenvector, so no timelike or null eigenvector ({nIV} points); counted over both routes')
 
     # ---- D = 0 points: Q_eq = 0 and the edges of the equatorial annulus -----------------------------------------
     e0 = []
@@ -878,11 +882,11 @@ def main_checks():
             e0.append(got == got2 == 'II')
     # the point of he_type.md section 'Checks': a worked Q_eq = 0 example with exact numbers
     ck.add('Qeq0_and_edges', all(e0) and len(e0) > 100,
-           f'D = 0 on the equator: {len(e0)} exact points per route. At Q_eq = 0 (a != 0, r a + 2F != 0) the point is '
-           f'Type I and v r a^2 > |a + r b| holds ({typesq}); on the edge v r a^2 = |a + r b| with j != 0 it is '
-           f'Type II ({edges}); lemma and definition agree at every point')
+           f'D = 0 on the equator, {len(e0) // 2} exact points, both routes. At Q_eq = 0 (a != 0, r a + 2F != 0) the point '
+           f'is Type I and v r a^2 > |a + r b| holds ({typesq}, counted over both routes); on the edge '
+           f'v r a^2 = |a + r b| with j != 0 it is Type II ({edges}); lemma and definition agree at every point')
 
-    ck.add('timing', True, f'{time.time() - t0:.1f} s')
+    print(f'  elapsed {time.time() - t0:.1f} s', flush=True)
     if symbolic and not MUT:
         print_results(ringC)
     return ck

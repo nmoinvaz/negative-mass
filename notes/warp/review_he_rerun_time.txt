@@ -1,0 +1,7 @@
+# /usr/bin/time -v of: nice -n 10 python3 -u notes/warp/he_type.py --no-controls  (issue #71, rpi5, one core, 2026-11-16)
+	User time (seconds): 105.41
+	System time (seconds): 6.45
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:52.62
+	Maximum resident set size (kbytes): 1535828
+	Exit status: 0
+exit 0
