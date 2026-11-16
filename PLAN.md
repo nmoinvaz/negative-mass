@@ -18,7 +18,10 @@ independent reproduction of the DG08 spectrum (cheap with the Phase 0 code).
 - Compute their even-parity linear spectrum for l = 0, 1, 2, 3, ….
 - Test the heuristic: no unstable l ≥ 2 mode for k ≳ 8(|M|/R)²; find the critical compactness where one appears.
 - Check convergence of the unstable spectrum to the Gleiser–Dotti modes as R → 0.
-- Question: is the point-singularity problem ill-posed (growth unbounded in l), and does any regular star cure it?
+- ✅ Question: is the point-singularity problem ill-posed (growth unbounded in l), and does any regular star cure it?
+  Answered in phase2/ill_posed (#3): Hadamard ill-posed in every angular Sobolev norm, proved for the DG variable Ψ̂
+  (the transfer to metric data is #108), and a truncated star with an l-independent Robin κ ≥ 0 caps the growth at
+  cosh Ωt. Whether a real star's κ_eff(l) stays in that class for all l is #110.
 
 ## Phase 3 — Conservation and the third law ✅ (see phase3/RESULTS.md)
 Result: the phantom particle is Bondi's all-negative mass (μ = s·m in every role; gravity alone cannot tell
