@@ -18,6 +18,6 @@ controls (each is the same script with --mutate=NAME and must make a comparison 
 [FIRED] --mutate=perturb-p8: the parsed p8 gains the term a^2 u^2; exit 1; 1 comparisons fail
 [FIRED] --mutate=perturb-R01: the parsed R_01 gains the term v a u / 7; exit 1; 1 comparisons fail
 
-real	0m13.123s
-user	0m12.868s
-sys	0m0.222s
+real	0m13.330s
+user	0m13.072s
+sys	0m0.227s

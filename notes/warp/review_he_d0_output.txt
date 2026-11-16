@@ -7,6 +7,6 @@ controls (each is the same script with --mutate=NAME and must fail its target ch
 [FIRED] --mutate=rank-tol: the rank threshold is 10^6, so every matrix has rank 0; exit 1; checks that fail: D0_off_equator_type, planted_rank
 [FIRED] --mutate=off-root: b is moved by 10^-6 off the root of D; exit 1; checks that fail: D0_is_zero, D0_off_equator_type
 
-real	0m10.775s
-user	0m10.596s
-sys	0m0.156s
+real	0m10.761s
+user	0m10.570s
+sys	0m0.164s
