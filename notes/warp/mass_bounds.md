@@ -103,7 +103,10 @@ With the other sign throughout, D̃ = D − ½(tr K)γ⁰ and item 6 holds with 
 **The causal vector.** With ξ^j = ⟨ε, γ⁰γ^jε⟩, X = |ε|² n + ξ^j e_j is future causal, |ξ| ≤ |ε|², because the
 γ⁰γ^j are Hermitian and anticommute. Then T(X, n) = μ|ε|² − J·ξ, which is item 6's integrand. Its time component
 |ε|² is not ⟨ε, γ⁰γ⁰ε⟩, which is −|ε|² in these gammas. Flipping the sign of the J·ξ term (`--mutate=Jsign`) breaks
-the identity, at 1.8×10⁻³ against 10⁻¹². phase4/RESULTS.md §1 uses these conventions.
+the identity, at 1.8×10⁻³ against 10⁻¹². Pointwise, |∇̃ε|² − |D̃ε|² + 4π(μ|ε|² − J·ξ) = ∇·V with
+V^i = Re⟨ε, ∇^iε − γ^iDε⟩ − ½(K_ij − δ_ij tr K)ξ^j, on any conformally flat slice ψ⁴δ with any K_ij and ε
+([weitzenbock_conf.py](weitzenbock_conf.py), *checked symbolically*, #87). Its `--mutate=Jsign` and `--mutate=sign`
+fail. phase4/RESULTS.md §1 uses these conventions.
 
 ## References
 
