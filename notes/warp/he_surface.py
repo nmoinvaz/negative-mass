@@ -45,10 +45,13 @@ phi_, X_, gm_, y_, w_ = sp.symbols("phi X gamma y w")  # effective variables of 
 # name: (what it changes, checks that must fail)
 CONTROLS = {
     "table-typo": ("R_(0,rho) of the typed table has the wrong factor, -v/2 becomes -v",
-                   ["frame_ricci", "null_points"]),
+                   ["frame_ricci", "rotated_frame", "elimination"]),
     "tgt-tau": ("the target R'_(r,theta) = -c v F j_theta becomes -v F j_theta", ["rotated_frame"]),
     "tgt-cert": ("the certificate of necessity has (1 - v^2 F^2) for (1 + v^2 F^2)", ["necessity_T1"]),
     "tgt-DT1": ("the target D on T1 has 3 c^2 for 4 c^2", ["D_on_T1"]),
+    "tgt-suff": ("the target B' = v^2 a (a + F u) of the split on T1 becomes v^2 a (a - F u)", ["sufficiency_T1"]),
+    "tgt-axis": ("the target Q_ax = a^2 + r^2 v^2 (F b - a^2)^2 becomes a^2 + r^2 v^2 (F b + a^2)^2", ["axis"]),
+    "locus-T2-shift": ("the Type I points have a scaled by 101/100, so T2 fails by 1%", ["locus_points"]),
     "tgt-ideal": ("the quadratic of the elimination has w phi^2 for w (phi^2 + 1)", ["elimination"]),
     "loosen-T1": ("the description drops T1", ["elimination", "outside_description"]),
     "loosen-T2": ("the description drops T2", ["elimination", "outside_description"]),
@@ -57,11 +60,15 @@ CONTROLS = {
                 ["planted", "locus_points"]),
     "planted-deform": ("the planted Type I tensor is deformed before the check", ["planted"]),
     "null-nonnull": ("the eigenvector of the D = 0 sample is (1, 1/2, 1/2), not null", ["null_points"]),
+    "nf-modulus": ("the constant term of the field's modulus is shifted by 1, so the algebraic points are not on D = 0",
+                   ["number_field_points", "outside_description"]),
+    "tanh-off-root": ("the Type III solve on the tanh wall moves v by 1e-6 off its root", ["tanh_type3"]),
     "tanh-sign": ("the scan tests F - r f' for F + r f'", ["tanh_scan"]),
 }
 MUT = set()
 RESULTS = []
 NSIMP = {"points": 0, "value_changed": 0}
+RF_GLOBAL = [None]
 
 
 def check(name, ok, detail):
@@ -173,6 +180,147 @@ def classify(RF, pt):
 
 
 # ---------------------------------------------------------------------------------------------------------------
+# Exact arithmetic in a number field Q[x]/(m(x)), for points whose coordinates are algebraic
+# ---------------------------------------------------------------------------------------------------------------
+def number_field(mod):
+    """A class of elements of Q[x]/(m), m monic with coefficients `mod` (low degree first, leading 1 omitted).
+    Elements are tuples of Fractions. Only +, -, *, **, scalar / and exact zero tests are needed."""
+    n = len(mod)
+    mod = tuple(Fr(x) for x in mod)
+
+    class NF:
+        deg = n
+        modulus = mod
+        __slots__ = ("c",)
+
+        def __init__(self, c):
+            c = [Fr(x) for x in c]
+            self.c = tuple(c + [Fr(0)] * (n - len(c)))
+
+        @classmethod
+        def gen(cls):
+            return cls([Fr(0), Fr(1)] if n > 1 else [-mod[0]])
+
+        @staticmethod
+        def _co(o):
+            return o if isinstance(o, NF) else NF([Fr(o)])
+
+        def __add__(self, o):
+            o = self._co(o)
+            return NF([x + y for x, y in zip(self.c, o.c)])
+
+        __radd__ = __add__
+
+        def __sub__(self, o):
+            o = self._co(o)
+            return NF([x - y for x, y in zip(self.c, o.c)])
+
+        def __rsub__(self, o):
+            return self._co(o) - self
+
+        def __neg__(self):
+            return NF([-x for x in self.c])
+
+        def __mul__(self, o):
+            o = self._co(o)
+            prod = [Fr(0)] * (2 * n - 1)
+            for i, x in enumerate(self.c):
+                if x:
+                    for j, y in enumerate(o.c):
+                        if y:
+                            prod[i + j] += x * y
+            for k in range(2 * n - 2, n - 1, -1):
+                pk = prod[k]
+                if pk:
+                    for i in range(n):
+                        prod[k - n + i] -= pk * mod[i]
+                    prod[k] = Fr(0)
+            return NF(prod[:n])
+
+        __rmul__ = __mul__
+
+        def __pow__(self, e):
+            r, base = NF([Fr(1)]), self
+            while e:
+                if e & 1:
+                    r = r * base
+                base, e = base * base, e >> 1
+            return r
+
+        def __truediv__(self, o):
+            assert not isinstance(o, NF), "only scalar division"
+            return NF([x / Fr(o) for x in self.c])
+
+        def __eq__(self, o):
+            return self.c == self._co(o).c
+
+        def __ne__(self, o):
+            return not self == o
+
+        __hash__ = None
+
+        def approx(self, root):
+            return sum(float(x) * root ** i for i, x in enumerate(self.c))
+
+        def __repr__(self):
+            return "NF" + str(tuple(str(x) for x in self.c))
+
+    return NF
+
+
+def classify_generic(R3):
+    """(type, rank, multiplicity) of a tensor with D = 0 whose entries are in any exact commutative arithmetic
+    (Fractions or number-field elements), by the lemma of he_type.md and minors. D = 0 is asserted, not assumed."""
+    M = M_of(R3)
+    c2, c1, c0 = ht.cubic(M)
+    assert ht.disc(c2, c1, c0) == 0, "D != 0"
+    den = 2 * c2 * c2 - 6 * c1
+    if den == 0:
+        mult, num, den = 3, -c2, 3          # lam = -c2/3
+    else:
+        mult, num = 2, 9 * c0 - c1 * c2     # lam = num/den
+    # M - lam has the rank of den * M - num * I (den != 0)
+    A = [[den * M[i][j] - (num if i == j else 0) for j in range(3)] for i in range(3)]
+    if all(x == 0 for row in A for x in row):
+        rk = 0
+    else:
+        minors = [A[i][k] * A[j][l] - A[i][l] * A[j][k] for i in range(3) for j in range(i + 1, 3)
+                  for k in range(3) for l in range(k + 1, 3)]
+        det = (A[0][0] * (A[1][1] * A[2][2] - A[1][2] * A[2][1]) - A[0][1] * (A[1][0] * A[2][2] - A[1][2] * A[2][0])
+               + A[0][2] * (A[1][0] * A[2][1] - A[1][1] * A[2][0]))
+        rk = 1 if all(x == 0 for x in minors) else (3 if det != 0 else 2)
+    return type_from_rank(mult, rk), rk, mult
+
+
+def null_ray(cc, ss, m1, m2, ph):
+    """The ray (X, gamma, y, lam) with (R - lam eta) e = 0 for e = (1, m1, m2), at fixed c, s, phi, in any exact
+    arithmetic, by the 3x3 cofactors of the 3x4 coefficient matrix. R_00 = phi (gamma + w y) - X (1 + w)/2,
+    R_0x = gamma + (1 - w) y/2, R_0rho = -y c s/2, R_xx = -phi (gamma + w y) + X (3 w - 1)/2,
+    R_xrho = c s (X - phi y/2), R_rr = X (1 - w)/2, with w = c^2."""
+    w, cs_ = cc * cc, cc * ss
+    rows = [[-(1 + w) / 2, ph + m1, ph * w + m1 * (1 - w) / 2 - m2 * cs_ / 2, Fr(1)],
+            [m1 * (3 * w - 1) / 2 + m2 * cs_, 1 - ph * m1, (1 - w) / 2 - ph * w * m1 - m2 * cs_ * ph / 2, -m1],
+            [cs_ * m1 + m2 * (1 - w) / 2, Fr(0), -cs_ / 2 - cs_ * ph * m1 / 2, -m2]]
+
+    def det3(cols):
+        m = [[rows[i][j] for j in cols] for i in range(3)]
+        return (m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0])
+                + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]))
+    return [(-1) ** j * det3([k for k in range(4) if k != j]) for j in range(4)]
+
+
+def point_from_ray(z, ph, cc, ss, kk, vv):
+    """The physical point of the ray z = (X0, gamma0, y0, lam0), scaled by tau = X0 k^2 so X = (X0 k)^2:
+    alpha = X0 k, u = gamma/alpha = k gamma0, F = phi/v, a = alpha/v, b = y/v + a u."""
+    X0, g0, y0, l0 = z
+    tau = X0 * kk * kk
+    alpha = X0 * kk
+    uu = kk * g0
+    aa = alpha / vv
+    return {v: vv, F: ph / vv, a: aa, b: (tau * y0) / vv + aa * uu, u: uu, c: cc, s: ss}
+
+
+# ---------------------------------------------------------------------------------------------------------------
 # The typed closed forms
 # ---------------------------------------------------------------------------------------------------------------
 def typed_table():
@@ -204,13 +352,13 @@ def T1_val(p):
 
 
 def T2_val(p):
-    r = 1 / p[u]
-    return p[v] ** 2 * (r * p[a] + p[F]) * (r * p[a] + p[c] ** 2 * p[F]) + p[c] ** 2
+    """T2 times u^2 (u != 0): v^2 (a + F u)(a + c^2 F u) + c^2 u^2, a polynomial, so it holds for field elements."""
+    return p[v] ** 2 * (p[a] + p[F] * p[u]) * (p[a] + p[c] ** 2 * p[F] * p[u]) + p[c] ** 2 * p[u] ** 2
 
 
 def T3_val(p):
-    r = 1 / p[u]
-    return 2 * r * p[a] + (1 + p[c] ** 2) * p[F]
+    """T3 times u: 2 a + (1 + c^2) F u."""
+    return 2 * p[a] + (1 + p[c] ** 2) * p[F] * p[u]
 
 
 def in_description(p):
@@ -368,7 +516,7 @@ def check_sufficiency(RF):
     ids = {}
     ids["j_theta = R'_(r,theta) = 0 on T1"] = red_sp(JTH.subs(sub)) == 0 and red_sp(PRT.subs(sub)) == 0
     ids["A = -v^2 a (a + F u c^2)"] = red_sp(A_.subs(sub) + v ** 2 * a * (a + F * u * c ** 2)) == 0
-    ids["B' = v^2 a (a + F u)"] = red_sp(Bp.subs(sub) - v ** 2 * a * (a + F * u)) == 0
+    ids["B' = v^2 a (a + F u)"] = red_sp(Bp.subs(sub) - v ** 2 * a * (a + (-1 if "tgt-suff" in MUT else 1) * F * u)) == 0
     ids["A B' - j_r^2 = -v^2 a^2 u^2 P2"] = red_sp(sp.cancel(sp.together(
         (A_ * Bp - JR ** 2).subs(sub) + v ** 2 * a ** 2 * u ** 2 * P2))) == 0
     # the other five minors vanish identically on T1 at lam = R'_(theta,theta)
@@ -606,35 +754,154 @@ def check_null_points(RF):
     return not bad
 
 
-def check_designated(RF):
+def check_designated(RF, Rr):
     """Type II points outside the description that satisfy all but one condition, so loosening it is caught."""
     out = []
-    rng = random.Random(3)
     # (a) T1, T3, not T2: on T1 with v F s^2 = 2 c the (n, rhat) pair is a Jordan block, D = 0
     for mc, vv, aa, r in [(Fr(1, 3), Fr(2), Fr(-1, 2), Fr(3, 2)), (Fr(1, 2), Fr(3), Fr(-3, 5), Fr(2)),
                           (Fr(2, 3), Fr(1), Fr(1, 4), Fr(1, 3))]:
         cc, ss = pyth(mc)
         Fv = 2 * cc / (vv * ss * ss)
-        pt = {v: vv, F: Fv, a: aa, b: -aa / r, u: 1 / r, c: cc, s: ss}
-        out.append(("T1, T3, not T2", pt))
+        out.append(("T1, T3, not T2", {v: vv, F: Fv, a: aa, b: -aa / r, u: 1 / r, c: cc, s: ss}, False))
     # (b) T1, T2, not T3: k = 1, the double root of the (n, rhat) pair meets the thetahat eigenvalue
     for mc, vv, r in [(Fr(1, 3), Fr(2), Fr(3, 2)), (Fr(1, 2), Fr(3), Fr(1)), (Fr(2, 3), Fr(1), Fr(5, 2))]:
-        pt = locus_point(mc, vv, Fr(1), r, 1)
-        out.append(("T1, T2, not T3", pt))
+        out.append(("T1, T2, not T3", locus_point(mc, vv, Fr(1), r, 1), False))
+    # (c) T2, T3, not T1: a real root of the irreducible quartic factor of D(b), a point of a quartic field
+    try:
+        NF4, pt4, root4, q4 = quartic_point(Rr)
+        out.append(("T2, T3, not T1 (quartic field)", pt4, True))
+        qinfo = f"q4 = {q4.as_expr()}, real root b = {root4:.6f}"
+    except AssertionError as e:
+        qinfo = f"quartic failed: {e}"
     rows, bad = [], []
-    for label, pt in out:
-        typ, D, rk, mult, lm = classify(RF, pt)
+    for label, pt, field in out:
+        try:
+            if field:
+                typ, rk, mult = classify_generic(R3_at(RF, pt))
+                D0 = True
+            else:
+                typ, D, rk, mult, lm = classify(RF, pt)
+                D0 = D == 0
+        except AssertionError:
+            typ, rk, mult, D0 = "?", None, None, False
         t = (T1_val(pt) == 0, T2_val(pt) == 0, T3_val(pt) != 0)
-        ok = D == 0 and typ == "II" and in_description(pt) is False
+        ok = D0 and typ == "II" and in_description(pt) is False
         rows.append((label, typ, rk, mult, t))
         if not ok:
-            bad.append((label, typ, D, rk, mult, t, in_description(pt)))
-    check("outside_description", not bad,
-          "Type II points on D = 0 that satisfy two of T1, T2, T3 and fail the third, exact rational points: "
+            bad.append((label, typ, rk, mult, t, in_description(pt)))
+    check("outside_description", not bad and len(out) == 7,
+          "Type II points on D = 0 that satisfy two of T1, T2, T3 and fail the third, exact points: "
           + "; ".join(f"[{lb}] type {ty}, rank {rk}, multiplicity {mu}, (T1, T2, T3) = {t}" for lb, ty, rk, mu, t in rows)
+          + f". The T1-violating point is exact in the quartic field of {qinfo}"
           + ". The description rejects each, and fails if the failed condition is dropped"
           + (f". Violations: {bad}" if bad else ""))
     return not bad
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Algebraic points: Type III, and a Type II point that satisfies T2 and T3 but not T1
+# ---------------------------------------------------------------------------------------------------------------
+def nf_fix(mod):
+    """The modulus, with the control `nf-modulus` shifting its constant term."""
+    mod = [Fr(x) for x in mod]
+    if "nf-modulus" in MUT:
+        mod[0] += 1
+    return mod
+
+
+def type3_point(RF):
+    """A point in Q(sqrt 113) on the triple-root locus with rank 2. The null direction is e = (1, m1, m2) with
+    tan(psi/2) = 4/3, c = 3/5, s = 4/5, and phi = (-9 + sqrt 113)/16, a root of 8 phi^2 + 9 phi - 1, found by a search of
+    the quadratic that tr M - 3 lam leaves on the ray, then fixed here."""
+    NF = number_field(nf_fix([-113, 0]))
+    x = NF.gen()
+    cc, ss = pyth(Fr(1, 2))
+    tu = Fr(4, 3)
+    m1, m2 = (1 - tu * tu) / (1 + tu * tu), 2 * tu / (1 + tu * tu)
+    ph = (-9 + x) / 16
+    z = null_ray(cc, ss, m1, m2, ph)
+    pt = point_from_ray(z, ph, cc, ss, Fr(1), Fr(2))
+    return NF, pt, math.sqrt(113)
+
+
+def D_poly_in_b(Dring, pt):
+    """D of the ring as a polynomial in b, coefficients Fractions at the point pt (b ignored)."""
+    vals = vals_of(pt)
+    co = {}
+    for mon, cf in Dring.terms():
+        tt = Fr(int(cf.numerator), int(cf.denominator))
+        for i, (xv, e) in enumerate(zip(vals, mon)):
+            if i != 3 and e:
+                tt *= xv ** e
+        co[mon[3]] = co.get(mon[3], Fr(0)) + tt
+    return co
+
+
+def quartic_point(Rr):
+    """On a point of T1 and T2 the polynomial D(b) is (b + a u)^2 q4(b). A real root of the irreducible quartic q4 is a
+    point of D = 0 with T2 and T3 but not T1. Returns (field, point, real root, q4)."""
+    base = locus_point(Fr(1, 2), Fr(1), Fr(2), Fr(1), 1)
+    co = D_poly_in_b(rd.red(rd.Dof(Rr)), base)
+    bs = sp.Symbol("bb")
+    P = sp.Poly(sum(sp.Rational(cf.numerator, cf.denominator) * bs ** k for k, cf in co.items()), bs)
+    au = sp.Rational(base[a].numerator, base[a].denominator) * sp.Rational(base[u].numerator, base[u].denominator)
+    q4, rem = sp.div(P, sp.Poly((bs + au) ** 2, bs))
+    fl = sp.factor_list(q4.as_expr())
+    assert rem.is_zero and q4.degree() == 4 and len(fl[1]) == 1 and fl[1][0][1] == 1, "q4 is not an irreducible quartic"
+    q4 = sp.Poly(q4.as_expr() / q4.LC(), bs)
+    reals = sp.real_roots(q4)
+    assert reals, "q4 has no real root"
+    NF = number_field(nf_fix([Fr(int(cf.p), int(cf.q)) for cf in reversed(q4.all_coeffs())][:-1]))
+    pt = dict(base)
+    pt[b] = NF.gen()
+    return NF, pt, float(reals[0]), q4
+
+
+def check_number_field():
+    """Planted truth for the arithmetic first, then the Type III point."""
+    NF5 = number_field([Fr(-5), Fr(0)])
+    x5 = NF5.gen()
+    g, gb = NF5([Fr(3, 2)]), x5 / 2        # gamma = 3/2, beta = sqrt(5)/3: a boost over Q(sqrt 5), L^T eta L = eta
+    L = [[g, gb, NF5([0])], [gb, g, NF5([0])], [NF5([0]), NF5([0]), NF5([1])]]
+    eta = [-1, 1, 1]
+    iso = all(sum(L[k][i] * eta[k] * L[k][j] for k in range(3)) == (eta[i] if i == j else 0)
+              for i in range(3) for j in range(3))
+    bad, rows = [], []
+    for name, (R3, want, rk_want, mult_want) in planted_tensors().items():
+        Rq = [[NF5([Fr(int(R3[i, j].p), int(R3[i, j].q))]) for j in range(3)] for i in range(3)]
+        Rt = [[sum(L[k][i] * Rq[k][l] * L[l][j] for k in range(3) for l in range(3)) for j in range(3)] for i in range(3)]
+        try:
+            res = classify_generic(Rt)
+        except AssertionError:
+            res = ("D != 0", None, None)
+        rows.append(f"{name} -> {res[0]}")
+        if res != (want, rk_want, mult_want):
+            bad.append(name)
+        R3d = R3.copy()
+        R3d[0, 0] += sp.Rational(1, 7)
+        Rd = [[NF5([Fr(int(R3d[i, j].p), int(R3d[i, j].q))]) for j in range(3)] for i in range(3)]
+        Rdt = [[sum(L[k][i] * Rd[k][l] * L[l][j] for k in range(3) for l in range(3)) for j in range(3)] for i in range(3)]
+        try:
+            classify_generic(Rdt)
+            bad.append("deformed " + name)      # a deformed tensor must leave D = 0
+        except AssertionError:
+            pass
+    NF, pt, root = type3_point(RF_GLOBAL[0])
+    try:
+        res = classify_generic(R3_at(RF_GLOBAL[0], pt))
+    except AssertionError:
+        res = ("D != 0", None, None)
+    ap = {k_: (pt[k_].approx(root) if isinstance(pt[k_], NF) else float(pt[k_])) for k_ in pt}
+    t1 = T1_val(pt) != 0
+    ok = iso and not bad and res == ("III", 2, 3) and t1 and ap[u] > 0 and ap[F] > 0
+    check("number_field_points", ok,
+          f"field arithmetic first on planted tensors boosted over Q(sqrt 5) (L^T eta L = eta {iso}): "
+          + "; ".join(rows) + f", and each deformed copy leaves D = 0 (wrong: {bad}). Then a point of Q(sqrt 113), "
+          f"c = 3/5, s = 4/5, v = 2, phi = vF = (-9 + sqrt 113)/16, from the null direction e = (1, -7/25, 24/25): "
+          f"D = 0, multiplicity {res[2]}, rank {res[1]}, so Type {res[0]}; in the embedding sqrt 113 = {root:.6f}, "
+          f"F = {ap[F]:.5f}, a = {ap[a]:.5f}, b = {ap[b]:.5f}, u = 1/r = {ap[u]:.5f}, and T1 fails (b + a u = "
+          f"{ap[b] + ap[a] * ap[u]:.5f})")
+    return ok, pt, ap
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -699,6 +966,54 @@ def check_tanh_scan():
     return empty
 
 
+def frame_block_mp(vv, Fv, av, bv, uv, cv):
+    """The typed frame Ricci block at mpmath numbers (the table of `typed_table`, checked equal to route C)."""
+    sv = mp.sqrt(1 - cv ** 2)
+    R00 = vv ** 2 * (Fv * (bv * cv ** 2 + av * uv * sv ** 2) - av ** 2 * (cv ** 2 + sv ** 2 / 2))
+    R0x = vv / 2 * (av * uv * (1 + cv ** 2) + bv * sv ** 2)
+    Rxx = vv ** 2 * (-Fv * (bv * cv ** 2 + av * uv * sv ** 2) + av ** 2 * (cv ** 2 - sv ** 2 / 2))
+    Rrr = vv ** 2 * av ** 2 * sv ** 2 / 2
+    R0r = -vv / 2 * (bv - av * uv) * cv * sv
+    Rxr = vv ** 2 * cv * sv * (av ** 2 - Fv * (bv - av * uv) / 2)
+    return [[R00, R0x, R0r], [R0x, Rxx, Rxr], [R0r, Rxr, Rrr]]
+
+
+def check_tanh_type3():
+    """Points of the tanh wall with a triple root and rank 2 (Type III), at 50 digits. Numerical evidence."""
+    mp.mp.dps = 50
+    rows, ok_all = [], True
+    for sg, r_s, v0, c0 in [(1, "2.0656", 1.12824, 0.77675), (4, "0.898", 2.20346, 0.21137),
+                            (8, "0.916", 2.01955, 0.64370)]:
+        sg, r = mp.mpf(sg), mp.mpf(r_s)
+        f, f1, f2 = ht.tanh_jets(r, sg, mp.mpf(1), lib=mp)
+        Fv, av, bv, uv = 1 - f, f1, f2, 1 / r
+
+        def eqs(vv, cv):
+            c2, c1, c0_ = ht.cubic(ht.mixed_block(frame_block_mp(vv, Fv, av, bv, uv, cv)))
+            return [c2 ** 2 - 3 * c1, 27 * c0_ - c2 ** 3]
+        vv, cv = mp.findroot(eqs, (mp.mpf(v0), mp.mpf(c0)), tol=mp.mpf(10) ** -40, maxsteps=100)
+        if "tanh-off-root" in MUT:
+            vv += mp.mpf(10) ** -6
+        M = mp.matrix(ht.mixed_block(frame_block_mp(vv, Fv, av, bv, uv, cv)))
+        c2, c1, c0_ = ht.cubic([[M[i, j] for j in range(3)] for i in range(3)])
+        lm = -c2 / 3
+        N = M - lm * mp.eye(3)
+        sv = sorted(mp.svd_r(N, compute_uv=False), reverse=True)
+        N2, N3 = N * N, N * N * N
+        mx = lambda A_: max(abs(A_[i, j]) for i in range(3) for j in range(3))
+        res = (abs(c2 ** 2 - 3 * c1) + abs(27 * c0_ - c2 ** 3)) / (1 + abs(c2)) ** 3
+        ok = (res < mp.mpf(10) ** -30 and sv[2] / sv[0] < mp.mpf(10) ** -30 and sv[1] / sv[0] > mp.mpf(10) ** -3
+              and mx(N3) < mp.mpf(10) ** -30 * (1 + mx(N)) ** 3 and mx(N2) > mp.mpf(10) ** -6 and 0 < vv and 0 < cv < 1)
+        ok_all = ok_all and ok
+        rows.append(f"sigma R_b = {int(sg)}, r = {r_s} (f = {mp.nstr(f, 3)}): v = {mp.nstr(vv, 8)}, c = {mp.nstr(cv, 8)}, residual "
+                    f"{mp.nstr(res, 2)}, singular values of M - lam {mp.nstr(sv[0], 4)}, {mp.nstr(sv[1], 4)}, "
+                    f"{mp.nstr(sv[2], 2)}, |N^2| = {mp.nstr(mx(N2), 3)}, |N^3| = {mp.nstr(mx(N3), 2)}")
+    check("tanh_type3", ok_all,
+          "triple root of the cubic with rank 2 (nilpotent M - lam with N^2 != 0, N^3 = 0, Type III) on the tanh wall, "
+          "solved for (v, cos theta) at fixed r by Newton at 50 digits: " + "; ".join(rows))
+    return ok_all
+
+
 # ---------------------------------------------------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser()
@@ -712,7 +1027,11 @@ def main():
         if args.mutate == "no-rank":
             ht.MUT = "no-rank"
     t0 = time.time()
+    print(f"he_surface.py, issue #72. sympy {sp.__version__}, mpmath {mp.__version__}, python "
+          f"{sys.version.split()[0]}. mutation: {args.mutate or 'none'}. Rank test: he_type.he_type_exact (#64). "
+          f"Frame Ricci: review_he_derive.build_C, route C (#71).\n", flush=True)
     Rr = rd.ring_frame(rd.build_C())
+    RF_GLOBAL[0] = Rr
     check_planted()
     check_frame_ricci(Rr)
     check_rotated()
@@ -723,8 +1042,13 @@ def main():
     check_elimination()
     check_locus_points(Rr)
     check_null_points(Rr)
-    check_designated(Rr)
+    check_designated(Rr, Rr)
+    check_number_field()
     check_tanh_scan()
+    check_tanh_type3()
+    print(f"note: he_type_exact applies sp.nsimplify to the exact D. At {NSIMP['value_changed']} of {NSIMP['points']} "
+          f"points it returned a value different from the exact D (a nearby radical), with the sign and zero-ness "
+          f"unchanged; sp.nsimplify(Rational(1, 10**60)) = {sp.nsimplify(sp.Rational(1, 10 ** 60))}. Not fixed here.")
     bad = sorted(n for n, ok in RESULTS if not ok)
     print(("FAILED: " + ",".join(bad)) if bad else f"all {len(RESULTS)} checks passed in {time.time() - t0:.0f} s")
     if args.mutate or args.no_controls:
