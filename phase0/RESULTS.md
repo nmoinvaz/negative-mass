@@ -44,3 +44,5 @@ modes with width ≲ R, i.e. all l ≥ 2 once k ≳ 8(|M|/R)². For weak compact
 |M|/R ≈ 3×10⁻³) no singular mode survives outside the matter — consistent with his lone phantom
 star lasting to t = 1000. Open: the growth rate is unbounded in l, which for the point singularity
 looks closer to ill-posedness than an ordinary instability.
+Resolved in [phase2/ill_posed/RESULTS.md](../phase2/ill_posed/RESULTS.md): Hadamard ill-posed in every angular Sobolev norm (proved for the DG variable Ψ̂),
+and a star with κ ≥ 0 caps the rate (well-posed, exponential bound).
