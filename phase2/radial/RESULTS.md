@@ -191,7 +191,7 @@ Low-ω / strong-field phantom (`lowscan.py` via N-continuation, `strongfield.py`
 | α₀ = 1.40 | 0.4479 | 24.91 | −10.84 | 1.36e-2 |
 | α₀ = 1.50 | 0.4653 | 36.65 | −16.20 | 1.27e-2 |
 
-Over the whole range reached (max |2m/r| ≈ 0.4 at α₀ = 1.5), no extremum of N or M was found on the
+Over the whole range reached (max |2m/r| ≈ 0.69 at α₀ = 1.5), no extremum of N or M was found on the
 phantom low-ω side, and no unstable radial mode.
 
 ## 5. Conclusions
@@ -215,7 +215,7 @@ phantom low-ω side, and no unstable radial mode.
 3. **Physical caveat on the high-ω result.** At ω ≈ 0.93 the stars have |M|/R ~ 10⁻³. The instability there
    is essentially the flat-space Vakhitov–Kolokolov (Q-ball) instability, dN/dω > 0, and gravity is a
    perturbation. That is why the two signs give almost the same numbers: σ² crosses at 0.92584 vs 0.92891.
-   It is a weak test of how ε enters. The strong-field phantom branch (|2m/r| up to ~0.4) is the more
+   It is a weak test of how ε enters. The strong-field phantom branch (|2m/r| up to 0.69 at α₀ = 1.5, and 7.5 at ω → 1 in §7) is the more
    meaningful test, and it is stable with no turning point within the range reached.
 
 ## 6. Caveats / open items
@@ -380,7 +380,7 @@ Checks on this scan:
 
 - **§4 and §5.3 say "max |2m/r| ≈ 0.4 at α₀ = 1.5"; the value is 0.690** (0.381 at α₀ = 1.3, where it is about 0.4). The
   phantom star at α₀ = 1.5 is already as strong as the canonical turning point (0.66), and the field here grows to 7.5.
-  Not edited in §4 and §5, for the coordinator.
+  Corrected in §4 and §5.3 by the coordinator after review.
 - The first run of the first-law check (C3) failed at the first step (2.0×10⁻⁴, limit 1×10⁻⁴). The cause was the
   trapezoid rule in the check (error (ΔN)² ω_NN / 12 where ω(N) bends near N = 2), not the stars, so the integral is now
   a cubic through four rows, with the limit unchanged. The result is 1.1×10⁻⁵.
