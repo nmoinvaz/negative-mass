@@ -13,8 +13,8 @@ PY = sys.executable
 PLAN = {
     # script: (extra args for the unmutated run, [mutations])
     'vhat_structure.py': ([], ['vcoef', 'qsign', 'ssign', 'toy']),
-    'threshold_isolation.py': (['--lmax', '60'], ['coef', 'sterm', 'ntail', 'mono']),
-    'large_l_proof.py': ([], ['beta', 'eta', 'dsign', 't2', 'window']),
+    'threshold_isolation.py': (['--lmax', '60'], ['coef', 'sterm', 'ntail', 'mono', 'planted']),
+    'large_l_proof.py': ([], ['beta', 'eta', 'dsign', 'poly', 'window']),
     'monotone_proof.py': ([], ['omega', 'n1sign', 's1sign', 'eta2', 'window']),
 }
 

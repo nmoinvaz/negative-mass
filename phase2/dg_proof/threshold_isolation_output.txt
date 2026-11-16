@@ -1,3 +1,7 @@
+== P: planted truth through the same certification code (X = rho^2, eps = 0) ==
+PASS  P: the certified bracket of the root of N for X = rho^2 contains 12
+PASS  P: the certified bracket of the root of S for X = rho^2 contains 16
+
 == A: rescaled coefficients against common.chi_poly (exact) ==
 PASS  A: a_n(1/c) = c * [r^n]chi / c^n for l = 2..30, every n
 
@@ -15,11 +19,11 @@ PASS  D: c r_* and c r_neg agree with the stored table to its 5 printed decimals
 
 == E: l = 2..3000, certified brackets (c r_* [lo, hi], c r_neg [lo, hi]) ==
    ... l = 500 done, 111s
-   ... l = 1000 done, 220s
+   ... l = 1000 done, 219s
    ... l = 1500 done, 332s
    ... l = 2000 done, 447s
    ... l = 2500 done, 564s
-   ... l = 3000 done, 683s
+   ... l = 3000 done, 682s
    l     c r_*                 c r_neg                l^2 r_*       l^2 r_neg   (brackets certified, printed lo)
     2  9.115121701849  10.696285935664  9.11512170  10.69628593
     3  8.789041269692  10.143518920960  7.91013714  9.12916702

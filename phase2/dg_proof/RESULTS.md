@@ -17,6 +17,15 @@ Scripts are in this directory. Each `X.py` writes `X_output.txt`.
 | `closed_form_F.py` | partial-fraction structure of the E = 0 solution, l = 2..15 |
 | `large_l_limit.py` | l → ∞ limit (Bessel closed form), ρ_* and ρ_neg |
 | `numeric_check.py` | numerical spectra at l = 9, 10, plus 108 truncated cases at l = 6, 8, 10 |
+| `rescaled.py` | module: the rescaled coefficients a_n(ε) of §4.1 and exact rational interval arithmetic (series plus tail enclosure) |
+| `vhat_structure.py` | Theorem 3 (§4.2): V_Z > 0 and V_Z′ < 0 beyond r_s, the quadratic form Ψ, planted toy, zero counts |
+| `threshold_isolation.py` | certified isolation of c·r_* and c·r_neg for every l = 2..3000, sympy Sturm cross-check, monotonicity tables |
+| `large_l_proof.py` | Theorem L (§4.4): explicit constants for the limits ρ_*, ρ_neg |
+| `monotone_proof.py` | Theorem M (§4.5): monotone approach for every l ≥ 500 |
+| `check_mutations.py` | runs every new script unmutated and once per `--mutate=...`, which must exit non-zero |
+
+The new scripts run from this directory as `OMP_NUM_THREADS=1 python3 -u X.py > X_output.txt` (`threshold_isolation.py` takes
+12 min on one core of a Raspberry Pi 5, the others under a minute each). `check_mutations.py` writes `check_mutations_output.txt`.
 
 ## 1. Lemmas (all l ≥ 2; algebra checked symbolically in l)
 
@@ -135,20 +144,144 @@ These hold for all l. They were previously only numerical, for l ≤ 20.
   c_{l+1}/c_{l+2} = (l+1)(l²−2l−2)/(l(l−1)).
 - κ_c = −2/R² − (l²+l+1)/(3R) + O(1) as R → 0, i.e. κ_c·x_R = −1/2 − (l²+l−1)R/12 + O(R²).
 
-## 4. Large-l thresholds (derived; limit not proven rigorously)
+## 4. Large-l thresholds: r_* < r_neg for every l, and the limits
 
-With ρ = c·r, the expansion of c·χ(ρ/c) converges coefficient by coefficient to X(ρ) = Σ(n−2)(n−4)(ρ/2)ⁿ/(n−1)!². In
-closed form, X = s[(s+3)I₀(2√s) − 4√s I₁(2√s)] with s = ρ/2 (checked numerically against the series). So
-φ₀ → (ρ − 6)/X(ρ) on the scale r ∼ 1/l². The limiting values are:
-- **c·r_* → ρ_* = 8.48570097**
-- **c·r_neg → ρ_neg = 9.63598944**
-- the lower edge of the V̂ < 0 region tends to ρ = 6.16881.
+Notation: ρ = c·r, ε = 1/c, X(ρ) = cχ(ρ/c), N(ρ) = X − (ρ−6)X′ (the N of §3 in the variable ρ), φ₀ = c(ρ−6)/X. r_* is
+the root of N beyond r_s (§3). **r_neg is the largest zero of V̂ on (0,∞)**, the upper edge of {V̂ < 0}. Theorem 3 shows it is the only
+zero of V̂ beyond r_*.
 
-Finite-l values of c·r_neg, from exact polynomial roots: 10.696 (l=2), 9.834 (5), 9.689 (10), 9.650 (20), 9.637 (80).
-So **r_neg ≈ 9.636/((l+2)(l−1))**. The observed "9/l²" is this law seen at moderate l: l²r_neg = 8.78 at l = 5,
-9.23 at l = 20 and 9.52 at l = 80, approaching 9.636 slowly from below. Likewise r_* ≈ 8.486/((l+2)(l−1)).
-Not proven: that the root locations converge (this would need uniform convergence plus simple limit roots, which is
-plausible but not written out), and that r_* < r_neg for all l (it holds for l ≤ 80 and in the limit).
+### 4.1 Rescaled coefficients
+
+With L = l(l+1) = c + 2, pairing the factors l−a and l+1+a gives (l−n+3)₍₂ₙ₋₄₎ = Π_{a=0}^{n−3}(L − a(a+1)), and
+L − a(a+1) = c − (a−1)(a+2). Hence X = Σ_{n=1}^{l+2} aₙ(ε)ρⁿ with a₁ = 3/2, a₂ = 0 and, for n ≥ 3,
+
+  aₙ(ε) = (n−2)[(n−4) + 3(n−3)ε] / (2ⁿ(n−1)!²) · Π_{a=0}^{n−3} (1 − (a−1)(a+2)ε).
+
+The product vanishes at a = l, so the sum stops at n = l+2. At ε = 0 it is X_∞ = Σ(n−2)(n−4)(ρ/2)ⁿ/(n−1)!², which equals
+s[(s+3)I₀(2√s) − 4√s I₁(2√s)] with s = ρ/2 (`large_l_limit.py`, and the roots agree to 18 digits in `threshold_isolation.py` B). Checked
+exactly against `common.chi_poly` for l = 2..30, every n (`threshold_isolation.py` A).
+
+### 4.2 Theorem 3: the shape of V̂ beyond r_*
+
+**Theorem 3.** For every l ≥ 2, V̂ has exactly one zero r_neg in (r_*, ∞). It is simple, V̂ < 0 on [r_*, r_neg) and V̂ > 0 on
+(r_neg, ∞). In particular **r_* < r_neg for every l ≥ 2**.
+
+*Proof.* Let V = 2f[λ²r²((λ+1)r−3) + 9(λr−1)]/(r³(λr−3)²), λ = c/2, be the static Zerilli potential for M = −1,
+g = ψ₀′/ψ₀ (′ = d/dx) and h = √(V/2).
+- (Z) ψ₀,ₓₓ = Vψ₀ (Lemma A(ii), and checked exactly with this V for l = 2..14). So g′ = V − g² and
+  **V̂ = g² − g′ = 2g² − V**.
+- (P1) V > 0 on (r_s, ∞). With λr = 3 + σ and μ = 1/λ, the numerator of V is a polynomial in (σ, μ) with positive
+  coefficients. Also f > 0.
+- (P2) V_x < 0 on (r_s, ∞). V_r = −2Q/(r⁵(cr−6)³) with Q a quintic in r. With r = (6+τ)/c and l = 2+m, c⁵Q is a polynomial in (τ, m)
+  whose 64 coefficients are all positive, so Q > 0 for τ ≥ 0, m ≥ 0, that is for every real l ≥ 2. And dx = dr/f.
+- (B) On (r_*, ∞), κ_c < 0 (§3), so g = −κ_c > 0, and g(r_*) = 0. Since V̂ = 2(g−h)(g+h), sign V̂ = sign(g−h). At a zero z of
+  g − h we have g′ = V − g² = V/2 > 0 and h′ = V_x/(4h) < 0, so (g−h)′(z) > 0. A C¹ function whose every zero is a strict upward
+  crossing has at most one zero. At r_*, g − h = −h < 0. At infinity V̂ ≃ (l+1)(l+2)/r² > 0 (L3; the leading coefficient of Ψ below gives
+  the same sign). So there is exactly one zero. ∎
+
+The quadratic form used from here on: with g = −κ_c = −c f N/((ρ−6)X), f = c(2+ερ)/ρ and V = 8c⁴(2+ερ)N_Z/(ρ⁴(ρ−6)²),
+
+  **V̂ = 2c⁴(2+ερ) Ψ / (ρ⁴(ρ−6)²X²),  Ψ = ρ²(2+ερ)N² − 4N_Z X²,  N_Z = (1+2ε)ρ³/8 − 3ρ²/4 + 9ρ/2 − 9.**
+
+N_Z > 0 on ρ ≥ 6 (positive coefficients in ρ = 6+τ). So sign V̂ = sign Ψ on ρ > 6, and at r_*, Ψ = −4N_ZX² < 0.
+(`vhat_structure.py`: the identities symbolic in c for a generic X and exact against `chi_poly` for l = 2..9; P1, P2 as coefficient
+positivity; a planted toy ψ = x²+3 whose V̂ has the known single zero x = 1; exact Sturm counts: for l = 2..16, N has one root beyond ρ = 6
+and S, an equivalent polynomial of V̂, has exactly one root in [ρ_*, ∞) and three positive roots in all.) Status: *proved* (by hand), with the
+polynomial positivity and the identities *checked symbolically*.
+
+### 4.3 Certified isolation, l = 2..3000
+
+For each l the sign of N (and of V̂ through the polynomial S = ρX[εN+(2+ερ)N′] − (2+ερ)N(X+2ρX′), which has the sign of V̂ by an identity
+checked in `vhat_structure.py`) is evaluated in exact rational arithmetic on a bracket of width 2·10⁻¹³ (series truncated at 90
+terms, omitted terms enclosed by a ratio test). Uniqueness of the root is T2 and Theorem 3, so each bracket contains r_* c, r_neg c.
+Cross-checks that share no machinery: sympy Sturm isolation of the polynomials built from `chi_poly` (l = 2..24, brackets inside
+sympy's intervals), the stored table of `large_l_limit_output.txt` (l = 2, 3, 5, 10, 20, 40, 80), and the Bessel closed form for the
+limits. Output: `threshold_isolation_output.txt`. Status: *certified* (trusted code: `rescaled.py`, `threshold_isolation.py`).
+
+| l | c·r_* | c·r_neg | l²·r_* | l²·r_neg |
+|---|---|---|---|---|
+| 2 | 9.115122 | 10.696286 | 9.115122 | 10.696286 |
+| 3 | 8.789041 | 10.143519 | 7.910137 | 9.129167 |
+| 5 | 8.604503 | 9.833910 | 7.682592 | 8.780277 |
+| 10 | 8.517779 | 9.689316 | 7.886832 | 8.971589 |
+| 20 | 8.494079 | 9.649909 | 8.128306 | 9.234363 |
+| 80 | 8.486244 | 9.636891 | 8.384063 | 9.520855 |
+| 100 | 8.486049 | 9.636568 | 8.403693 | 9.543046 |
+| 500 | 8.485715 | 9.636013 | 8.468845 | 9.616856 |
+| 1000 | 8.485704 | 9.635995 | 8.477244 | 9.626388 |
+| 3000 | 8.485701 | 9.635990 | 8.482876 | 9.632781 |
+| ∞ | 8.485700967 | 9.635989443 | 8.485700967 | 9.635989443 |
+
+For every l = 2..3000 (interval separation of consecutive brackets):
+- r_* < r_neg;
+- c·r_* and c·r_neg decrease strictly with l and stay above their limits;
+- l²·r_* and l²·r_neg both have their minimum at l = 5 (7.6826 and 8.7803), increase strictly from l = 5 on, and stay below the limits for l ≥ 3.
+
+So the old "9/l²" is l²·r_neg seen at moderate l, approaching 9.636 slowly from below, and it is non-monotone only below l = 5. Sparse larger l
+(refined to 10⁻²²): (c·r_* − ρ_*)·c = 3.515486 and (c·r_neg − ρ_neg)·c = 5.839393 at l = 10⁷, so c·r_* ≈ ρ_* + 3.5155/c and
+c·r_neg ≈ ρ_neg + 5.8394/c (*numerical evidence* for the coefficients, *proved* as bounds in 4.4–4.5).
+
+### 4.4 Theorem L: the limits, with a rate
+
+**Theorem L.** For every integer l ≥ 138,
+  |c·r_* − ρ_*| ≤ 91.51/c  and  |c·r_neg − ρ_neg| ≤ 229.87/c,
+with ρ_* = 8.485700967373530… and ρ_neg = 9.635989442586144…, the simple roots of N_∞ = X_∞ − (ρ−6)X_∞′ and Ψ_∞ = 2ρ²N_∞² − 4N_Z⁰X_∞².
+Hence c·r_* → ρ_* and c·r_neg → ρ_neg, i.e. **r_* ≈ 8.486/((l+2)(l−1))** and **r_neg ≈ 9.636/((l+2)(l−1))** as limits, not only as fits.
+
+*Proof.* Four steps, the constants from `large_l_proof_output.txt`.
+- Coefficients. For n ≥ 3, aₙ = (αₙ + εα′ₙ)Pₙ(ε), αₙ = (n−2)(n−4)/(2ⁿ(n−1)!²), α′ₙ = 3(n−2)(n−3)/(2ⁿ(n−1)!²) and
+  Pₙ = Π(1 − qₐε), q_a = (a−1)(a+2). For n ≤ l+2 every factor with a ≥ 1 lies in [0,1] (q_a ≤ c) and the a = 0 factor is 1+2ε, so
+  0 < Pₙ ≤ 1+2ε, and by Weierstrass' inequality Pₙ ≥ (1+2ε)(1 − εSₙ), Sₙ = (n−2)(n²−4n−3)/3 + 2. Hence |aₙ − αₙ| ≤ ε βₙ with
+  βₙ = α′ₙ(1+2ε₀) + |αₙ|max(2, Sₙ(1+2ε₀)), ε₀ = 1/108 (l ≥ 10). For n ≥ l+3, aₙ = 0 and c < n², so |aₙ − αₙ| ≤ ε n²|αₙ|. Checked against the exact aₙ for
+  l = 10..240 (`large_l_proof.py` 1).
+- Perturbation. N_l − N_∞ = Σ(aₙ − αₙ)ρ^{n−1}(6n − (n−1)ρ), bounded coefficientwise: |N_l − N_∞| ≤ 259.5 ε on [8, 9], and
+  (Ψ_l − Ψ_∞)/ε is an explicit polynomial in X, N and their ε-differences (checked exactly at 20 random rational points),
+  enclosed by rational interval arithmetic: |Ψ_l − Ψ_∞| ≤ 6.93·10⁶ ε on [9.61, 9.66].
+- Slopes. −N_∞′ = (ρ−6)X_∞″ ≥ 2.836 on [8, 9]. Ψ_∞′(ρ_neg) = 33523 and |Ψ_∞″| ≤ 1.31·10⁵ on [9.61, 9.66], so Ψ_∞′ ≥ 30130 there
+  (the closed forms of Ψ_∞′, Ψ_∞″ are checked against difference quotients).
+- Localisation. If F is C¹ with F′ ≥ μ on [ρ̄−δ, ρ̄+δ], F(ρ̄) = 0, and |F_l − F| ≤ ηε < μδ there, then F_l changes sign inside
+  [ρ̄ − ηε/μ, ρ̄ + ηε/μ]. For N the root in that interval is r_*c (T2: unique root). For Ψ it lies beyond r_*c once ε ≤ 5.2·10⁻⁵, so it is
+  r_neg c (Theorem 3: unique zero beyond r_*). K_* = 259.5/2.836, K_neg = 6.93·10⁶/30130, valid for ε < 5.2·10⁻⁵, which is l ≥ 138. ∎
+
+The constants are rigorous but 25 to 40 times the true coefficients 3.5155 and 5.8394. Status: *certified*. What the code proves: the
+inequalities listed (coefficient bound at the l tested, interval enclosures with tail bounds, the final constants). It assumes T2,
+Theorem 3, the identity Ψ ↔ V̂, and the hand-proved coefficient bound beyond l = 240. It checks the final inequalities against the certified
+brackets of 4.3 for l = 138, 139, 145, 276, 690, 1000, 2000, 3000.
+
+### 4.5 Theorem M: monotone approach
+
+**Theorem M.** For every integer l ≥ 500: c·r_*(l+1) < c·r_*(l) and c·r_neg(l+1) < c·r_neg(l), with
+0 < c·r_*(l) − ρ_* ≤ 3.709/c and 0 < c·r_neg(l) − ρ_neg ≤ 6.101/c, and l²·r_*(l+1) > l²·r_*(l), l²·r_neg(l+1) > l²·r_neg(l).
+
+*Proof.* Expand to second order: aₙ = αₙ + εα¹ₙ + ε²ωₙ with α¹ₙ = α′ₙ − αₙe₁(n), e₁(n) = Σqₐ = (n−2)(n²−4n−3)/3 and
+|ωₙ| ≤ (|αₙ| + εα′ₙ)·½(e₁+4)²(1+2ε) + α′ₙ|e₁| (Taylor remainder of Pₙ, using |Pₙ″| ≤ (Σ|qₐ|)²(1+2ε) and Σ|qₐ| = e₁+4).
+So N_l = N_∞ + εν + ε²ζ and Ψ_l = Ψ_∞ + εΨ₁ + ε²E, with explicit ν, Ψ₁ (entire functions) and |ζ| ≤ 1488, |E| ≤ 4.67·10⁷ on the windows
+ρ_* ± 92/c₅₀₀, ρ_neg ± 230/c₅₀₀ (c₅₀₀ = c(500)).
+- ν ≥ 19.61 on the N window, and Ψ₁ ≤ −1.89·10⁵ on the Ψ window.
+- By Theorem L, ρ_l = c·r_*(l) lies in the N window (and c·r_neg(l) in the Ψ window) for l ≥ 138. Since N_l(ρ_l) = 0, N_{l+1}(ρ_l) = (ε′−ε)ν + ε′²ζ′ − ε²ζ, with ε′ = ε_{l+1} and ε − ε′ = (2l+2)εε′. This is < 0 as soon as
+  (l+1)ν_min/2 > |ζ|max, which is 501·19.61/2 = 4913 > 1488. So ρ_*(l+1) < ρ_*(l). The same computation for Ψ: Ψ_{l+1}(ρ_neg(l)) > 0 since
+  501·1.89·10⁵/2 = 4.74·10⁷ > 4.67·10⁷. So ρ_neg(l+1) < ρ_neg(l).
+- Localisation: N_l(ρ_*) = εν + ε²ζ > 0 gives ρ_*(l) > ρ_*, and N_l(ρ_* + sε) < 0 for s = 3.709, since −N_∞′ ≥ 5.599 on the narrow
+  window and 1.05(ν_max + εζ_max)/5.599 = 3.709. The same for Ψ with Ψ_∞′ ≥ 33523 − 20ε|Ψ_∞″|/2 and s = 6.101.
+- The decrease of l²r: l²r_{l+1} > l²r_l iff ρ_l − ρ_{l+1} < ρ_l(l²−3l−2)/((l+1)²c_l). Since ρ_{l+1} > ρ_∞, the left side is below
+  s/c_l, and s < ρ_∞(l²−3l−2)/(l+1)² (3.709 < 8.40, 6.101 < 9.54, increasing in l). ∎
+
+With 4.3 (consecutive brackets to l = 3000) this gives: **c·r_* and c·r_neg decrease strictly for every l ≥ 2, so they approach ρ_* and ρ_neg
+from above; l²·r_* and l²·r_neg increase strictly for every l ≥ 5.** Status: *certified*, with the same reading as 4.4. `monotone_proof.py`
+also checks the expansions at l = 500, 501, 502, 1000, 1001 against exact evaluation, and N_{l+1} < 0 at the lower end of r_*(l)'s
+bracket (Ψ_{l+1} > 0 at the lower end of r_neg(l)'s) for l = 500..502.
+
+### 4.6 What is not proved here
+
+- The shape of V̂ on (0, r_*]: V̂ → +∞ at 0 and V̂(r_*) < 0, so there is a zero below r_*, and exact Sturm counts give exactly one zero in
+  (r_s, r_*) for l = 2..16 (three positive roots of S in all), but this is not proved for all l. The lower edge ρ → 6.16881 of the limit
+  is *numerical evidence* (`large_l_limit.py`).
+- What the code proves, apart from the theorems: the coefficient identity of 4.1 (exact, l ≤ 30), the polynomial identities and coefficient
+  positivity (sympy 1.14.0, exact), and the numerical inequalities of 4.3–4.5 (exact rational arithmetic, `fractions.Fraction`; floating point
+  only guesses brackets, every bracket is certified in rationals). The facts assumed beyond that: T1, T2 and Lemma A(ii) of this file, L3 (the
+  sign of V̂ at infinity, also seen from the leading coefficient of Ψ), the hand-proved coefficient and tail bounds (stated in the proofs,
+  tested numerically for n ≤ 400), and elementary analysis (intermediate value, Taylor, Weierstrass' product inequality).
+- None of 4.2–4.5 has had an independent review. Per AGENTS.md they should not be relied on until one has been done.
 
 ## 5. Verification summary
 
@@ -160,6 +293,12 @@ plausible but not written out), and that r_* < r_neg for all l (it holds for l �
   - Ψ̂ has no pole at r_s and ĤΨ̂/Ψ̂ = −(k/2)² exactly. Ψ̂ ∼ r³.
   - N has exactly one root on (r_s, ∞).
 - **Exact root isolation of N for l = 2..50:** no root in (0, r_s), one root in (r_s, ∞), one Descartes sign change.
+- **Certified, exact rational arithmetic (§4):**
+  - c·r_* and c·r_neg bracketed for every l = 2..3000 (`threshold_isolation_output.txt`), with the cross-checks of 4.3.
+  - Theorem 3's polynomial positivity (V_Z > 0 and V_Z′ < 0 beyond r_s, 64 coefficients), the identities V̂ ↔ Ψ and V̂ ↔ S, exact against
+    `chi_poly` for l = 2..9 (`vhat_structure_output.txt`).
+  - Theorem L (l ≥ 138) and Theorem M (l ≥ 500) (`large_l_proof_output.txt`, `monotone_proof_output.txt`).
+  - Every check can fail: `check_mutations_output.txt` lists each script run unmutated (exit 0) and once per `--mutate=...` (exit 1).
 - **Numerical:** at l = 9 and 10 the full problem has exactly one negative eigenvalue, E₀ = −(k/2)² to displayed
   precision, at two (N, a) settings. The truncated count formula holds in 108/108 cases at l = 6, 8, 10, which adds to
   the earlier 1000-case scan for l = 2..5.
@@ -172,7 +311,15 @@ plausible but not written out), and that r_* < r_neg for all l (it holds for l �
   l) plus textbook theorems: Weyl limit-point/limit-circle; Kato's representation theorem; Glazman's lemma.
 - **Corrected relative to dg_spectrum:** "χ > 0 for l ≤ 20 by root counting" is now a proof for all l (DG's argument,
   verified). "ψ₀ solves static Zerilli", previously checked for l ≤ 5, now holds for all l.
-- **Not proven:** the l → ∞ limits ρ_* and ρ_neg as rigorous limits; r_* < r_neg for all l; any statement about the
-  shape of V̂ (number of sign changes) for general l.
+- **Proved in §4 (status words as there):**
+  - *proved*: r_* < r_neg for every l ≥ 2, from Theorem 3 (V̂ has exactly one zero beyond r_*, simple, from − to +).
+  - *certified*: c·r_* → ρ_* = 8.485700967… and c·r_neg → ρ_neg = 9.635989443… (Theorem L, rates 91.5/c and 229.9/c for l ≥ 138);
+    both sequences decrease strictly in l for every l ≥ 2 and stay above their limits, and l²·r_* and l²·r_neg increase strictly for
+    every l ≥ 5 (certified brackets to l = 3000, Theorem M beyond l = 500). So r_neg ≈ 9.636/((l+2)(l−1)) and r_* ≈ 8.486/((l+2)(l−1)) are limits.
+  - *numerical evidence*: the next coefficients, c·r_* ≈ ρ_* + 3.5155/c and c·r_neg ≈ ρ_neg + 5.8394/c (certified only as the bounds 3.709/c and
+    6.101/c for l ≥ 500).
+- **Not proven:** the number of zeros of V̂ on (0, r_*) for general l (exactly one in (r_s, r_*) is exact for l = 2..16 only), and the
+  convergence of its lower edge to 6.16881. The certified parts have had no independent review (computer-assisted proofs are relied on only
+  after one).
 - **Caveat on scope:** these are statements about Ĥ. Their meaning for Zerilli/metric perturbations relies on DG's
   intertwining equivalence, which is not re-proved here.

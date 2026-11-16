@@ -1,0 +1,33 @@
+PASS  Theorem L constants used here (l >= 138, K_* <= 92, K_neg <= 230) dominate large_l_proof_output.txt
+== 1. second-order coefficient bound |a_n - alpha_n - eps alpha1_n| <= eps^2 omega_n ==
+PASS  1: second-order coefficient bound for l = 300..339, 3 <= n <= l+12 (with omega built for L1 = 300); omega_n <= n^8/(2^n (n-1)!^2) and |alpha1_n| <= n^5/(2^n (n-1)!^2) for n <= 400
+   largest actual/bound ratio seen: 1
+
+== 2. algebra of the second-order expansion of Psi (exact, random rational points) ==
+PASS  2: Psi_l - Psi_inf - eps Psi_1 = eps^2 E exactly (E, Psi_1 as coded), 25 random points
+
+== 3. certified limit roots ==
+   rho_* = 8.485700967373530   rho_neg = 9.635989442586144
+
+== 4. smallest L1 (grid) for which every inequality of Theorem M holds ==
+      L1    mu1_N   eta2_N   (L1+1)mu1/2   s_N / t_N      mu1_P      eta2_P   (L1+1)mu1/2     s_P / t_P
+     138    18.64     1497         1296   3.93/8.18    1.113e+05  4.986e+07    7.735e+06   8.58/9.29   N:no Psi:no
+     200    19.19     1492         1929   3.8/8.28    1.553e+05  4.805e+07     1.56e+07   7.17/9.4   N:ok Psi:no
+     300    19.47     1489         2930   3.74/8.34    1.777e+05  4.714e+07    2.674e+07   6.46/9.48   N:ok Psi:no
+     400    19.57     1488         3923   3.72/8.38    1.856e+05  4.683e+07    3.721e+07   6.22/9.52   N:ok Psi:no
+     500    19.61     1488         4913   3.71/8.4    1.892e+05  4.668e+07     4.74e+07   6.1/9.54   N:ok Psi:ok
+PASS  4: every inequality of Theorem M holds for some L1 <= 3000 (the range of the certified brackets)
+
+   constants at L1 = 500: -N_inf' >= 5.5994, nu in [19.613, 19.774], eta2_N = 1487.6; Psi_inf'(rho_neg) >= 33523.3, |Psi_inf''| <= 1.086e+05, |Psi_1| <= 2.0229e+05, mu1_Psi = 1.8924e+05, eta2_Psi = 4.668e+07
+
+   THEOREM M holds for every l >= 500:  c r_*(l+1) < c r_*(l),  c r_neg(l+1) < c r_neg(l),  0 < c r_* (l) - rho_* <= 3.709/c,  0 < c r_neg(l) - rho_neg <= 6.101/c,  and l^2 r_*, l^2 r_neg increase
+
+== 5. spot checks of the expansion and of the key inequalities ==
+PASS  5: |(N_l - N_inf - eps nu)/eps^2| <= eta2_N on the N window, l in {L1, L1+1, L1+2, 2 L1, 2 L1 + 1}
+   largest seen 103.8 vs eta2_N = 1488
+PASS  5: |(Psi_l - Psi_inf - eps Psi_1)/eps^2| <= eta2_Psi on the Psi window, same l
+   largest seen 1.387e+06 vs eta2_Psi = 4.668e+07
+PASS  5: certified brackets satisfy the localisations 0 < rho_l - rho_inf <= s/c at l = L1, L1 + 1
+PASS  5: N_{l+1}(lo of r_*(l)) < 0 and Psi_{l+1}(lo of r_neg(l)) > 0 for l = L1, L1+1, L1+2, so both roots move left
+
+30 s

@@ -177,7 +177,7 @@ Vh_t = sp.simplify(g_t ** 2 - sp.diff(g_t, x))
 h_t = sp.sqrt(V_t / 2)
 zeros = sp.solve(sp.Eq(Vh_t, 0), x)
 print("   V =", V_t, " V^ =", sp.factor(Vh_t), " zeros of V^ on x > 0:", zeros)
-check("toy: V_t is decreasing on x > 0 (hypothesis of the lemma)", bool(sp.simplify(sp.diff(V_t, x)).is_negative) and 'toy' not in MUT)
+check("toy: V_t is decreasing on x > 0 (hypothesis of the lemma)", bool(sp.simplify(sp.diff(V_t, x)).is_negative))
 check("toy: V^ has exactly one zero on x > 0, at sqrt(b/3) = 1, as the lemma predicts",
       zeros == [1] or zeros == [sp.sqrt(b / 3)])
 du = sp.simplify((sp.diff(g_t, x) - sp.diff(h_t, x)).subs(x, 1))

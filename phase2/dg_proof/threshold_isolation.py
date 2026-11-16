@@ -8,6 +8,7 @@ rational interval (truncated series at 90 terms plus a rigorous tail enclosure, 
 root is the theorem, so the bracket contains THE root.  No floating point enters a certificate.
 
 Checks (each prints PASS/FAIL, the exit status is non-zero if any fails):
+  P  planted truth: X = rho^2 has N = rho(12 - rho) and S = 6 rho^3 (rho - 16), so the certified brackets must contain 12 and 16
   A  the rescaled coefficient formula equals common.chi_poly (exact), l = 2..30
   B  the eps = 0 roots agree with the Bessel closed form X = s[(s+3)I0(2 sqrt s) - 4 sqrt(s) I1(2 sqrt s)], s = rho/2
   C  independent root isolation (sympy Sturm on chi_poly and on the numerator of phi0_xx), l = 2..24
@@ -15,7 +16,7 @@ Checks (each prints PASS/FAIL, the exit status is non-zero if any fails):
   E  r_* < r_neg, strict monotone decrease of c r_* and c r_neg in l, approach from above to the eps = 0 roots,
      l^2 r_* and l^2 r_neg increasing from some l and below the limit, for every l = 2..LMAX (interval separation)
   F  a sparse set of larger l
-Mutations: --mutate=coef | sterm | ntail | mono.
+Mutations: --mutate=coef | sterm | ntail | mono | planted.
 """
 import argparse
 import os
@@ -66,7 +67,22 @@ def isolate(l, refine_steps=0):
 
 
 t0 = time.time()
-print("== A: rescaled coefficients against common.chi_poly (exact) ==")
+print("== P: planted truth through the same certification code (X = rho^2, eps = 0) ==")
+planted = dict(a={2: Fr(1), 3: (Fr(1, 1000) if 'planted' in R.MUT else Fr(0))}, eps=Fr(0), n1=90, has_tail=False, l=None)
+try:
+    lo12, hi12 = R.certify_root(planted, 'N', Fr(12), +1)
+    okP1 = lo12 <= 12 <= hi12
+except RuntimeError:
+    okP1 = False
+try:
+    lo16, hi16 = R.certify_root(planted, 'S', Fr(16), -1)
+    okP2 = lo16 <= 16 <= hi16
+except RuntimeError:
+    okP2 = False
+check("P: the certified bracket of the root of N for X = rho^2 contains 12", okP1)
+check("P: the certified bracket of the root of S for X = rho^2 contains 16", okP2)
+
+print("\n== A: rescaled coefficients against common.chi_poly (exact) ==")
 import sympy as sp
 from common import chi_poly, rs_
 okA = True
