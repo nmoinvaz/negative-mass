@@ -16,7 +16,8 @@ Data supported away from the singularity: x >= x_1 > 0 (tortoise distance x_1 fr
              (First version: ln G_20 >= 0.9 w (t - x_1) for t >= 1.5 x_1.  It failed: ln G = w (t - x_1) - 8.6 at l = 20, the offset being
              the O(sqrt(w)) shift of the edge of a smooth bump.  Replaced by the slope and onset statements, which are what the spectral
              theorem implies.  Reported in RESULTS.md.)
-Mutations: --mutate=x1 (predict with 2 x_1 in CA1) | omega (1.05 w in CA2) | bound (CA2 (ii) with 1.0001) | thr (CA2 (iii) onset test with t_on - 0.5 x_1).
+Mutations: --mutate=x1 (predict with 2 x_1 in CA1) | omega (1.05 w in CA2) | near (CA2 data moved to [0.001, 0.003], inside the
+  window of (ii)) | far (CA2 data moved to [0.008, 0.010], onset far beyond (iii)).
 """
 import argparse
 import os
@@ -69,6 +70,7 @@ ck("CA1 m_l = -ln a_l/omega_l > x_1, decreasing for l >= 4, 0 < omega (m_l - x_1
 # ------------------------------------------------------------------ CA2
 print("\n== CA2  time domain, bump on [0.004, 0.006], T = 2.5 x_1")
 X1, X2 = 0.004, 0.006
+D1, D2 = {'near': (0.001, 0.003), 'far': (0.008, 0.010)}.get(MU, (X1, X2))   # where the data actually sit
 T = 2.5 * X1
 NPW = 40
 okb = oku = okg = True
@@ -79,12 +81,12 @@ tons = []
 for l in (12, 16, 20, 24):
     w = float(M.omega(l))
     h = 1.0 / (NPW * w)
-    n = int(round((X2 + T) / h))
+    n = int(round((D2 + T) / h))
     x = h * np.arange(n + 1)
     V = np.zeros_like(x)
     V[1:] = FM.vhat(l, FM.r_of_x(x[1:]))
     op = Op(x, V, 'dirichlet')
-    s = (op.xs - X1) / (X2 - X1)
+    s = (op.xs - D1) / (D2 - D1)
     g = np.zeros_like(s)
     inside = (s > 0) & (s < 1)
     g[inside] = np.exp(-1.0 / (s[inside] * (1 - s[inside])))
@@ -99,12 +101,11 @@ for l in (12, 16, 20, 24):
     hi = 0.5 * np.log(a * a * np.exp(2 * ln_cosh(wp * t)) + 1.0)
     okb &= bool(np.all(ln >= lo - TOL(w * t)) and np.all(ln <= hi + TOL(w * t)))
     early = t <= 0.9 * X1
-    bnd = 1.0001 if MU == 'bound' else 1.05
-    oku &= bool(np.all(np.exp(ln[early]) <= bnd))
+    oku &= bool(np.all(np.exp(ln[early]) <= 1.05))
     late = t >= 1.5 * X1
     slope = (ln[-1] - ln[late][0]) / (t[-1] - t[late][0])
     okg &= abs(slope / w - 1) <= 0.01
-    ton = -np.log(a) / w - (0.5 * X1 if MU == 'thr' else 0.0)
+    ton = -np.log(a) / w
     tons.append(ton)
     res[l] = (t, ln, a)
     print(f"  l = {l:2d}  omega = {w:8.1f}  ln a_l = {np.log(a):8.2f}   max_(t<=0.9x1) G = {np.exp(ln[early]).max():.4f}   ln G(T) = {ln[-1]:9.2f}   w (T - x_1) = {w * (T - X1):9.2f}")

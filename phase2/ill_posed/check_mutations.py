@@ -18,7 +18,7 @@ PLAN = {
     'planted.py': ([], ['omega', 'signV', 'label', 'kappa', 'dt']),
     'hadamard_sequence.py': (['--lfd', '14'], ['omega', 'vhat', 'sign', 'data', 'dt']),
     'star_control.py': (['--lmax', '24', '--lpm', '16'], ['omega0', 'kappa', 'rs', 'sign', 'bound', 'nodes', 'kl']),
-    'causal.py': ([], ['x1', 'omega', 'bound', 'thr']),
+    'causal.py': ([], ['x1', 'omega', 'near', 'far']),
 }
 
 want = sys.argv[1:] or list(PLAN)
