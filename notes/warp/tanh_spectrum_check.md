@@ -169,6 +169,11 @@ the windows and v_c agree. The narrower windows and the larger A–B differences
 script's docstring expects for the windows, and the failed `AB` checks are the one place the script's own threshold was
 not met.
 
+The coordinator's review (#94's closing comment) found the cause of the `AB` failures with a third, finer discretisation
+at σR = 4, m = 9/2, `--part=solve --sigma=4 --disc=A --ms=4.5 --hfac=0.75 --nth=34`. Its leading |μ|v_c is
+0.171511885, with B 4.9×10⁻⁷ and A 1.7×10⁻⁶ below it, so the eigenvalue converges from below. The failures are A's own
+discretisation error, about 2×10⁻⁶. The threshold stays as written.
+
 ## What this does and does not show
 
 Status words of AGENTS.md. These are *numerical evidence*. A Galerkin eigenvalue of a non-normal operator is not a bound

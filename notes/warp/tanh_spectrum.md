@@ -27,6 +27,9 @@ No real eigenvalue of S⁻¹M, that is no real zero-mode speed, lies in a conver
 |μ|v_c ≥ 0.0830 (σR = 2) and ≥ 0.0969 (σR = 4) is converged in every J_z sector computed, m = ½ to 21/2, and the leading
 eigenvalue of m = 21/2 is below that, so a real zero mode of D̃ has |v| > 12.05 v_c at σR = 2 and |v| > 10.32 v_c at
 σR = 4. #63 reached 4 v_c with the grid operator. That E is empty for the tanh profile stays a *conjecture*.
+#94 recomputed every sector's leading eigenvalue with B-splines in (r, θ), a basis that shares nothing with this one,
+and matched this note's tables to 6×10⁻⁶ ([tanh_spectrum_check.md](tanh_spectrum_check.md)). That basis converges
+narrower windows, so it confirms the absence of real eigenvalues only down to |v| ≈ 5.5 v_c and 5.2 v_c.
 
 The identity ∫τ₁|ψ|² = ∫τ₁|χ|² = 0 has nothing to evaluate on, since there is no real candidate, and for this profile it
 would hold without one (§5).
