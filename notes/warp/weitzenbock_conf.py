@@ -35,11 +35,20 @@ coordinates and compared with the 4-metric's G_ab. Complex conjugation is the st
 expressions in the real functions u_a, v_a, psi and K_ij. Zero is tested by sp.expand, which is canonical for Laurent
 polynomials in the jets, and sp.simplify only on the planted cases with sqrt.
 
+What the code proves (*checked symbolically*): at every point, for all psi, K_ij and eps, the two sides above are equal as
+polynomials in the jets, to second order, of psi, K_ij, u_a and v_a, in the note's gammas with the stated sign of nabla~
+and with mu and J_i the constraints' values. It does not prove the integrated identity, whose boundary term is div V and
+needs decay (review.md gap 2), or that D~ eps = 0 has a solution (item 5). The hand derivation above uses only the
+Levi-Civita connection, the Clifford relations and Hermiticity, so it holds on any slice (*proved* by hand). The script
+checks only g = psi^4 delta. Assumed: sp.expand is canonical on these Laurent polynomials, and the constraints define mu
+and J_i with K_ij = -g(nabla_{e_i} n, e_j), which `constraints_4d` ties to G_ab on this class of slices.
+
     python3 notes/warp/weitzenbock_conf.py                  checks, then every control
     python3 notes/warp/weitzenbock_conf.py --no-controls    checks only
     python3 notes/warp/weitzenbock_conf.py --mutate=NAME    one control (its target checks must fail, exit 1)
 
-Exit status is 1 if a check fails or a control does not fire. One process.
+Exit status is 1 if a check fails or a control does not fire. One process, 10 s for the checks and about 4 minutes with
+the controls, 71 MB.
 """
 import importlib.util
 import pathlib
@@ -88,6 +97,11 @@ CONTROLS = {
     "no-conj": ("takes <a, b> = a^T b, without the complex conjugate", ["dagger"] + IDENT),
     "adm-K": ("takes the 4-metric with the other sign of K, g_ij = psi^4 (delta_ij + 2 t K_ij)", ["constraints_4d"]),
     "J4d": ("takes J_i = +G_ti / 8 pi from the 4-metric", ["constraints_4d"]),
+    "inv-typo": ("types the inverse metric as psi^-2 delta", ["inverse"]),
+    "ricci-sign": ("takes the Gamma Gamma terms of R_ab with the other sign",
+                   ["planted_R", "planted_K0", "planted_schwarzschild", "constraints_4d"]),
+    "schwarzschild-power": ("takes psi = 1 + m1/2|x|^2 + m2/2|x - c|^2, which is not harmonic",
+                            ["planted_schwarzschild"]),
 }
 if MUT and MUT not in CONTROLS:
     sys.exit(f"unknown mutation {MUT}")
@@ -207,9 +221,10 @@ def christoffel(g, gi, crd):
 def ricci(Chr, crd):
     """R_ab = d_c Gamma^c_ab - d_b Gamma^c_ac + Gamma^c_cd Gamma^d_ab - Gamma^c_bd Gamma^d_ac."""
     n = len(crd)
+    sg = -1 if MUT == "ricci-sign" else 1
     return sp.Matrix(n, n, lambda a, b: sp.expand(sum(
         sp.diff(Chr[c][a][b], crd[c]) - sp.diff(Chr[c][a][c], crd[b])
-        + sum(Chr[c][c][e] * Chr[e][a][b] - Chr[c][b][e] * Chr[e][a][c] for e in range(n)) for c in range(n))))
+        + sg * sum(Chr[c][c][e] * Chr[e][a][b] - Chr[c][b][e] * Chr[e][a][c] for e in range(n)) for c in range(n))))
 
 
 class Geo:
@@ -218,7 +233,7 @@ class Geo:
 
     def __init__(self, psi):
         self.psi = psi
-        self.g, self.gi = psi**4 * I3, psi**-4 * I3  # typed in
+        self.g, self.gi = psi**4 * I3, (psi**-2 if MUT == "inv-typo" else psi**-4) * I3  # typed in
         self.inv_ok = is_zero(self.g * self.gi - I3)
         self.Chr = christoffel(self.g, self.gi, X3)
         Rab = ricci(self.Chr, X3)
@@ -291,7 +306,8 @@ def section_planted():
               for i in range(3) for l in range(3))
     check("clifford_parallel", par, "[(1/4) omega_jk g^j g^k, g^l] = omega_jl g^j: Clifford multiplication is parallel")
     K = sym_K()
-    A = [sum((K[i, j] * gj[j] * g0 for j in range(3)), sp.zeros(4)) / 2 for i in range(3)]
+    sK = -1 if MUT == "sign" else 1  # the stated term is mutable, the expected D~ = D + (1/2)(tr K) g^0 is not
+    A = [sK * sum((K[i, j] * gj[j] * g0 for j in range(3)), sp.zeros(4)) / 2 for i in range(3)]
     check("dirac", is_zero(sum((gj[i] * A[i] for i in range(3)), sp.zeros(4)) - K.trace() * g0 / 2),
           "g^i (the stated K term)_i = (1/2)(tr K) g^0, so D~ = D + (1/2)(tr K) g^0, with the stated sign")
 
@@ -338,7 +354,10 @@ def section_constraints():
     #     punctures, so mu = 0. The mu of (b), generic in psi, is evaluated at exact points with psi replaced, since
     #     running the constraints on an explicit psi with square roots is far slower than the points are.
     m1, m2 = sp.symbols("m1 m2", positive=True)
-    ps = 1 + m1 / (2 * sp.sqrt(X**2 + Y**2 + Z**2)) + m2 / (2 * sp.sqrt((X - 3)**2 + Y**2 + Z**2))
+    r1, r2 = sp.sqrt(X**2 + Y**2 + Z**2), sp.sqrt((X - 3)**2 + Y**2 + Z**2)
+    if MUT == "schwarzschild-power":
+        r1, r2 = r1**2, r2**2
+    ps = 1 + m1 / (2 * r1) + m2 / (2 * r2)
     mu, J = constraints(psi, Kz, geo)
     mus = mu.subs(psi, ps).doit()
     pts = [(1, 2, 2), (2, 3, 6), (-1, 5, 7), (4, -2, 1)]
