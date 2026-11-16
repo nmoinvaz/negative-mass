@@ -243,8 +243,153 @@ phantom low-ω side, and no unstable radial mode.
 - Masses here are true ADM masses; the +2 % difference from the paper is the paper's 5 %-radius mass
   convention (see ../mass_check/RESULTS.md). Does not affect the stability statements.
 - Only l = 0. The phantom star could still be unstable to l ≥ 1 or to non-linear perturbations.
-- Not checked: the full (unfolded) phantom family beyond α₀ = 1.5, and whether it eventually develops an
-  N-extremum.
+- The full (unfolded) phantom family beyond α₀ = 1.5 and whether it develops an N-extremum: checked in §7 (#10),
+  to where the solver stops at ω → 1. Still not checked: l ≥ 1, non-linear perturbations, and anything past ω = 1.
+
+## 7. Phantom family beyond α₀ = 1.5, to ω = 1 (#10, rpi5)
+
+**N and |M| rise strictly along the whole branch, from the ω-fold at α₀ = 1.172 to where the solver stops, and there is
+no extremum of N.** The solver stops where ω reaches 1 (ω = 0.99994 at α₀ = 4.017906, N = 801.96, M = −610.49). That is
+a limit of the boundary condition, not of the star: with a tail condition that has no k the star continues smoothly
+through ω = 1, at N = 802.084, M = −610.617. The turning-point rule therefore predicts no change of radial stability on
+this branch, and none of the ten stars scanned has a negative σ² (status: *numerical evidence*).
+
+Raw output is in `negative-mass-raw/I10-rpi5` (commit 2feb44d), the code is `phantom_follow.py`,
+`phantom_checks.py`, `phantom_modes.py`, `phantom_converge.py`, `phantom_fd.py`, `phantom_stop.py` and
+`phantom_graph.py`, all written on rpi5 (one process at a time, `nice -n 10`). The table `phantom_family.txt` and the
+figure `phantom_family.svg` are made from `follow.jsonl` and `modes.jsonl` by `phantom_graph.py`.
+
+![N, |M|, σ² and the size of the star along the branch](phantom_family.svg)
+
+### Reruns first
+
+`fold_scan.py` was rerun over its stored range before anything was extended (`fold_rerun_check.py`, raw
+`fold_rerun_p.log`, `fold_rerun_m.log`).
+- ε = +1, `fold_scan.py 1 0.33 43` against `fold_p.txt`: all 40 rows equal to the printed digits (the mesh node counts
+  differ
+  in every row, by 1 to 152 nodes), and the same final failure ("maximum number of mesh nodes", N = 42.7327).
+- ε = −1, `fold_scan.py -1 0.5 40`, against the 11 stored phantom rows of `strong_m.txt` and `low_m.txt`, interpolated in
+  ln N: worst relative difference 1.4×10⁻⁵ (the printed precision).
+- σ² of the lowest mode at α₀ = 1.10, 1.20 and 1.50 against `strong_m.txt`: worst relative difference 1.2×10⁻⁵ (the
+  5 printed digits), though R is now 60, 64 and 87 instead of 60.
+
+### The branch (`phantom_follow.py`, 295 stars)
+
+The family is continued in the central lapse α₀ with ω free (as `strongfield.py` does), from α₀ = 1.10, with the outer
+radius R = rs + 30/k at every star (rs where φ = 10⁻³φ_c, k = √(1−ω²)). `strongfield.py` kept R = 60, which leaves
+R − rs = 6.7 at α₀ = 1.5 and none beyond. Every star has BVP tolerance 1×10⁻⁸ and a maximum rms residual below 1.0×10⁻⁸ on
+2000 to 5400 mesh nodes. The star is a thin-wall bubble: φ ≈ φ_c = 0.0187 inside and a wall a few units wide at r_half
+(r_half = 158 at the end).
+
+| α₀ | ω | N | M | max abs 2m/r | rs | R |
+|---|---|---|---|---|---|---|
+| 1.10 | 0.431253 | 2.0373 | −0.9504 | 0.110 | 22.5 | 60 |
+| 1.17 (fold) | 0.422264 | 5.4600 | −2.4039 | 0.200 | 29.5 | 62 |
+| 1.30 | 0.432827 | 15.0674 | −6.5015 | 0.381 | 39.9 | 72 |
+| 1.50 | 0.465340 | 36.6533 | −16.1991 | 0.690 | 53.3 | 87 |
+| 2.00 | 0.564546 | 120.1487 | −59.4357 | 1.614 | 81.6 | 117 |
+| 2.50 | 0.670180 | 240.1079 | −133.7659 | 2.751 | 106.7 | 147 |
+| 3.00 | 0.777898 | 393.2877 | −244.9464 | 4.099 | 130.6 | 178 |
+| 3.50 | 0.886646 | 578.1103 | −399.0392 | 5.659 | 153.6 | 217 |
+| 3.90 | 0.974103 | 748.1340 | −557.3624 | 7.060 | 171.8 | 299 |
+| 4.00 | 0.996015 | 793.6764 | −602.2265 | 7.432 | 176.3 | 446 |
+| 4.015 | 0.999304 | 800.6119 | −609.1458 | 7.488 | 177.0 | 678 |
+| 4.0179 (last) | 0.999941 | 801.9588 | −610.4921 | 7.499 | 177.1 | 1919 |
+
+(`phantom_family.txt` has every tenth star.) ω has the one fold, ω_min = 0.42226 at α₀ = 1.172 (`phantom_checks.py` C4),
+and then rises monotonically to 1, with dω/dα₀ ≈ 0.22 throughout the last stretch. dN/dα₀ rises from 40 (α₀ = 1.1) to
+464 and is positive on every step (C2). dM = −ω dN holds on every step to 1.1×10⁻⁵ of |dM| (C3, limit 1×10⁻⁴).
+
+**No horizon.** m < 0 throughout, so a² = 1/(1 + |2m/r|) ≤ 1, and g_rr = 0.12 at the largest field (|2m/r| = 7.5).
+
+### Where the solver stops, and why
+
+`phantom_follow.py` stops at α₀ = 4.017906 (k = 0.0109, R = 1919): the next solve (R = 2933) reports "A singular Jacobian
+encountered when solving the collocation system" (scipy status 2, not the node limit). An earlier run of the same
+code on a different step sequence stopped at α₀ = 4.018025, k = 0.0082, R = 3851, with the same message, so the point
+depends on the steps and not on the star. `phantom_stop.py` (raw `stop.log`) tells the cause apart from the alternatives:
+
+| test | result | verdict |
+|---|---|---|
+| S1 ω(α₀) over the 8 rows with k < 0.15 is a quadratic (residual 7×10⁻¹⁰), and reaches 1 at α₀* = 4.0181766 | the stop is 2.7×10⁻⁴ below α₀* | PASS |
+| S2 the last star on R = 600 instead of R = 1919 | ω, N, M differ by 1×10⁻¹¹, 2×10⁻¹⁰, 3×10⁻¹⁰ | PASS |
+| S3 Yukawa tail on a fixed R = 600 goes on to α₀ = 4.0181764 (ω = 0.99999997, k = 2.5×10⁻⁴), N = 802.0840, M = −610.6174 | fails 1.5×10⁻⁷ below α₀*, where ω ≥ 1 has no real k | PASS |
+| S4 a tail u(R) = −κ − 1/R with κ = a√(1 − ω²/α²) (no k) agrees with the Yukawa star at α₀ = 4.0 to 3×10⁻¹⁰, and goes on through ω = 1 to ω = 1.0026 | N rising, second differences ≤ 5×10⁻⁴ of the first; N(ω=1) = 802.0841, M(ω=1) = −610.6175 | PASS |
+
+The mutation of S1 (ω shifted by 0.05) and of S4 (the Yukawa condition put back) each fail, and the S1 planted family
+recovers its α₀* to 10⁻⁹ (`phantom_stop.py --selftest`).
+
+So the cause is the loss of the Yukawa branch of the far field at ω = 1:
+- The tail condition u(R) = −k − 1/R has k = √(1 − ω²), which has a square-root branch point at ω = 1, and the rule
+  R = rs + 30/k then sends R to infinity. The collocation Jacobian becomes singular at R of a few thousand (S1, S3).
+- It is not stiffness (mesh below 5400 nodes, residuals at tolerance on all 295 stars, S3 reaches k = 2.5×10⁻⁴ on
+  R = 600) and not a horizon (m < 0).
+- It is not the star: N, M and ω are independent of R to 3×10⁻¹⁰ at k = 0.011 (S2), and the core is smooth through ω = 1
+  (S4). A wrong-sign κ in the tail condition gives the same star, because the BVP core does not feel its outer condition.
+- The family of bound stars does end at ω = 1: for ω > 1 the field oscillates at infinity, so no static decaying star
+  exists there, and N and M have finite limits (802.084, −610.617) at ω = 1. Reasoning, not checked: with m < 0 the
+  tail κ² = 1 − ω²/α² stays positive at ω = 1, so the exact ω = 1 star decays like e^{−2√(2|M|r)}, and the end of the
+  bound family is the mass threshold, not a loss of normalizability.
+
+### Radial stability along the branch (`phantom_modes.py`, raw `modes.jsonl`)
+
+Same `lowest_modes` as `strongfield.py`, on σ² ∈ [−0.2, (1−ω)²) with 24 points below 0 and 32 above (57 grid points).
+
+| α₀ | ω | (1−ω)² | σ² roots | R / rm |
+|---|---|---|---|---|
+| 1.10 | 0.431253 | 3.235e-01 | 3.5940e-02, 1.4917e-01 | 60 / 23 |
+| 1.20 | 0.422999 | 3.329e-01 | 1.9926e-02, 7.6515e-02, 1.7287e-01 | 64 / 32 |
+| 1.50 | 0.465340 | 2.859e-01 | 1.2704e-02, 4.2725e-02, 9.3272e-02 | 87 / 53 |
+| 2.00 | 0.564546 | 1.896e-01 | 1.2843e-02, 3.7466e-02, 7.8791e-02 | 117 / 82 |
+| 2.50 | 0.670180 | 1.088e-01 | 1.5289e-02, 4.0335e-02, 8.2368e-02 | 147 / 107 |
+| 3.00 | 0.777898 | 4.933e-02 | 1.8685e-02, 4.5649e-02 | 178 / 131 |
+| 3.50 | 0.886646 | 1.285e-02 | none | 217 / 154 |
+| 3.90 | 0.974103 | 6.707e-04 | none | 299 / 172 |
+| 4.00 | 0.996015 | 1.588e-05 | none | 446 / 176 |
+| 4.015 | 0.999304 | 4.850e-07 | none | 678 / 177 |
+
+No root is negative (C5). The fundamental σ² stays between 1.27×10⁻² and 1.87×10⁻² from α₀ = 1.5 to 3.0 and then meets
+the falling continuum threshold between α₀ = 3.0 and 3.5, after which the star has no discrete mode below the
+continuum. So the **criterion at an N-extremum is vacuous: N has none, and the fundamental σ² does not cross 0 anywhere
+on the branch**, which is what the rule asks (stated for the sampled stars, not between them).
+
+Checks on this scan:
+- Planted data: `phantom_modes.py --selftest` and `--compare` (raw `modes.log`); the root at α₀ = 1.10, 1.20 and 1.50
+  agrees with the stored one to 1.2×10⁻⁵ (limit 6×10⁻⁵, the print precision), and a 10⁻³ shift fires.
+- Root grids: α₀ = 3.0 and 4.0 rerun on 113 grid points (48 below 0, 64 above) against 57: the same roots to 10⁻⁸ and
+  no extra root, none below 0 (`phantom_modes.py --grids`, raw `modes_grids.log`; the mutations drop and shift of the
+  finer grid's lowest root fail it). As in §6, a pair of roots between grid points would still be missed; the stars
+  of α₀ ≥ 3.5 have no sign change of D anywhere on [−0.2, (1−ω)²).
+- Independent discretization (`phantom_fd.py`, `fd.json`; dense QZ of the first-order system, which shares only the
+  derived equations): no negative real and no complex σ² with |σ²| < 0.3 at n = 250 and 550 for α₀ = 2.0 and 3.0 (F2,
+  PASS). The lowest FD root converges to the shooting root from above, as a second-order scheme should (plain differences
+  21%, 9.6%, 5.4% at n = 250, 400, 550 for α₀ = 2.0, and 19%, 9.7%, 5.6% for α₀ = 3.0). After Richardson extrapolation
+  in n the difference is 6.0×10⁻³ at α₀ = 2.0 (limit 1×10⁻², PASS) and **1.04×10⁻² at α₀ = 3.0 (limit 1×10⁻², FAIL by
+  a hair)**. The α₀ = 1.5 star, whose root is known from shooting, extrapolates to 2.2×10⁻³, and the ε = +1 mutation on
+  that star fires (extrapolated value 37% off). The order of the three FD values on a thin wall is below 2 (1.44 at α₀
+  = 2.0, 1.09 at α₀ = 3.0), so the
+  extrapolation is not reliable to 1%: extrapolating with the fitted order gives 2.0% and 4.2% below shooting, so the
+  shooting root lies between the two extrapolations at both stars. The FD check supports "no instability" and cannot
+  confirm σ₀² better than a few percent at α₀ ≥ 2.
+- Background convergence (`phantom_converge.py`, raw `converge.log`): at α₀ = 1.5, 2.5, 3.5, 4.0, 4.015 the same star
+  on R × 1.5 differs by at most 5×10⁻¹⁰ in ω, N and M, and at tolerance 1×10⁻⁹ and 1×10⁻¹⁰ by at most 1.8×10⁻⁸
+  (the BVP's own tolerance), against a limit of 1×10⁻⁷ set before the run. The mutation (the ν(R) matching dropped)
+  does not converge and fails the check, and the planted star at α₀ = 1.3 passes it.
+
+### Discrepancies and changes to checks
+
+- **§4 and §5.3 say "max |2m/r| ≈ 0.4 at α₀ = 1.5"; the value is 0.690** (0.381 at α₀ = 1.3, where it is about 0.4). The
+  phantom star at α₀ = 1.5 is already as strong as the canonical turning point (0.66), and the field here grows to 7.5.
+  Not edited in §4 and §5, for the coordinator.
+- The first run of the first-law check (C3) failed at the first step (2.0×10⁻⁴, limit 1×10⁻⁴). The cause was the
+  trapezoid rule in the check (error (ΔN)² ω_NN / 12 where ω(N) bends near N = 2), not the stars, so the integral is now
+  a cubic through four rows, with the limit unchanged. The result is 1.1×10⁻⁵.
+- The FD criterion F1 was changed after the α₀ = 1.5 selftest from "the plain FD value at n = 550 within 3×10⁻²"
+  (3.9×10⁻² there) to the extrapolated one above, before the α₀ = 3.0 result was seen. The plain verdicts stay in
+  `fd.json`
+  as `F1_plain`. The extrapolated limit of 1×10⁻² was set at that time; α₀ = 3.0 misses it.
+- The mutation "κ with the wrong sign" in the WKB tail did not fire (the star does not feel its outer condition), and
+  was replaced by putting the Yukawa condition back.
 
 ## Files
 | file | role |
@@ -262,3 +407,9 @@ phantom low-ω side, and no unstable radial mode.
 | `strongfield.py` → `strong_*.txt` | strong-field spectra; `strong_p_turn.txt` is `python strongfield.py 1 0.280,0.279,0.278,0.277,0.276,0.275,0.274,0.273,0.272,0.271,0.270,0.269,0.268,0.267,0.266,0.265,0.264,0.263,0.262` |
 | `cmp_lowscan.py` | compares the roots of two `lowscan.py` outputs (`--selftest`) |
 | `strong_refine.py` → `strong_refine_output.txt` | σ₀² = 0 against the maxima of N and M: `python strong_refine.py ../../../negative-mass-raw/I9-win2/strongfield_eps+1.json --selftest` |
+| `fold_rerun_check.py` | a `fold_scan.py` rerun against the stored rows: `python fold_rerun_check.py p fold_p.txt <rerun.log>`, `python fold_rerun_check.py m <rerun.log> strong_m.txt low_m.txt`, `--selftest` |
+| `phantom_follow.py` | phantom family in α₀ beyond 1.5 with a moving R: `python phantom_follow.py --alpha-start 1.1 --alpha-stop 20 --out follow.jsonl --snap-dir snap --targets 1.10,1.15,...` |
+| `phantom_checks.py` | C1 to C5 on `follow.jsonl` and `modes.jsonl`, `--table`, `--selftest`, `--mutate=bump\|eps\|fold\|sigma` |
+| `phantom_modes.py` | σ² of the snapshot stars, `--compare` with `strong_m.txt`, `--grids`, `--selftest` |
+| `phantom_converge.py`, `phantom_fd.py`, `phantom_stop.py` | R and tolerance convergence, independent FD spectrum, the reason for the stop; each has `--selftest` and `--mutate=...` |
+| `phantom_graph.py` → `phantom_family.txt`, `phantom_family.svg` | the table and figure of §7 |
