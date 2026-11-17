@@ -3,6 +3,7 @@ Exact (sympy) verification for l = 2..LMAX of every ingredient of the proofs in 
 closed-form admissible zero-energy solution and its unique zero.
 """
 import sys, time
+import os
 import sympy as sp
 import mpmath as mp
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dg_spectrum'))

@@ -1,6 +1,7 @@
 """Our Schwarzschild-gauge star: Misner-Sharp mass m(R) at the radius where phi first
 drops below 5% of phi_c (the paper's match/extraction radius) vs the full mass."""
 import sys, numpy as np
+import os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 import boson_star as bs
 

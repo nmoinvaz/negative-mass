@@ -1,5 +1,6 @@
 """True vs 5%-radius masses for the mass-ratio cells' retuned stars (trusted iso solver)."""
 import sys
+import os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'phase2', 'mass_check'))
 import iso_star as I
 csv = {('p',0.804):-0.011472499, ('c',0.81):0.010720519, ('p',0.88):-0.008573106}

@@ -1,6 +1,7 @@
 """Numerical cross-checks at l = 9, 10 (beyond the dg_spectrum runs): full-problem negative count and
 truncated count formula, reusing the dg_spectrum discretisations."""
 import sys, numpy as np
+import os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dg_spectrum'))
 import common as cm
 from full_spectrum import full_eigs

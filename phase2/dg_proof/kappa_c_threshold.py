@@ -5,6 +5,7 @@ kappa_c(R) = (d ln phi0/dx)(R) = (1 + 2/R) N(R)/((cR-6) chi(R)),  N = c chi - (c
     via Descartes' rule on N(r_s + t) and Sturm counts.
 """
 import sys
+import os
 import sympy as sp
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dg_spectrum'))
 from common import chi_poly, rs_ as r, symbolic

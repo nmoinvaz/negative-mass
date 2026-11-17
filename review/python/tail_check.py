@@ -3,6 +3,7 @@
 and quantify the alpha value jump at the seam and the matter-mass error of the painted
 Yukawa tail.  Usage: python3 -I tail_check.py STARS_DIR"""
 import sys, math, numpy as np
+import os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'phase2', 'mass_check'))
 import iso_star as I
 
