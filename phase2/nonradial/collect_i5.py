@@ -20,6 +20,7 @@ W2 = [  # (job, what it counts)
     ('t1_r40', 'threshold 1 - w, outer radius 40, l = 2'), ('t1_r80', 'threshold 1 - w, outer radius 80, l = 2'),
     ('t2_r40', 'threshold 1 + w, outer radius 40, l = 2'), ('t2_r80', 'threshold 1 + w, outer radius 80, l = 2'),
     ('s2_l2', 'strip, closer to the axis, l = 2'), ('h2_l2', 'high Im s, second range, l = 2'),
+    ('s3_l2', 'strip above Im s = 2.5, l = 2'), ('s3_l3', 'strip above Im s = 2.5, l = 3'),
 ]
 res = re.compile(r"RESULT (\S+): zeros in Re s∈\[(\S+),(\S+)\], (?:\|Im s\|≤(\S+)|Im s∈\[(\S+),(\S+)\]): "
                  r"winding = ([+-]\d+\.\d+)  \(max phase step ([\d.]+) rad, min\|D\| (\S+)\)")

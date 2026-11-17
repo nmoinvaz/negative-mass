@@ -168,9 +168,101 @@ No oscillatory
 instability with e-folding time ≤ 10 (code units) and |Im s| ≤ 2.5. This range covers the scalar
 frequencies ω ± Im s up to the continuum and beyond.
 
-**Not covered:** 0 < Re s < 0.1 off the real axis. That strip passes the scalar continuum thresholds
-k± → 0 at Im s = ±(1−ω), which makes the integration slow (R_s ∝ 1/Re k). The real axis down to
-γ = 10⁻³ is covered by the scan.
+**Not covered in the table above:** 0 < Re s < 0.1 off the real axis. That strip passes the scalar continuum
+thresholds k± → 0 at Im s = ±(1−ω) and ±(1+ω), which makes the integration slow (R_s ∝ 1/Re k). The real axis down to
+γ = 10⁻³ is covered by the scan. For the campaign star the strip, the band above |Im s| = 2.5 and the real axis are
+counted in §5.1 (#5).
+
+### 5.1 The strip, the band above |Im s| = 2.5 and the real axis (#5)
+
+Counted for the phantom campaign star (ω = 0.7603, M = −0.014580), l = 2 and 3, with the D of §2 on rpi5
+(`winding2.py` at rtol 10⁻⁸, `refine_gamma.py` at 10⁻¹⁰). Every number below is in `i5_boxes_output.txt`, which
+`collect_i5.py` builds from the raw logs (negative-mass-raw, folder I5-rpi5, at RAWCOMMIT).
+
+#### A defect in the counter
+
+The planted zero of the first strip box was not returned. The pair planted at 0.04 ± 0.25i in Re s ∈ [0.03, 0.1],
+|Im s| ≤ 2.5 gave a count of 0 instead of 2. On the left edge, one step from Im s = 0.25 to 0 had a true phase change
+of 2π − 0.37 for D times the planted factor, because D alone turns by 4.36 and the factor by 1.55. The 0.4 rad rule
+saw only the measured angle, −0.37, and accepted the step, losing 2π. Accepting a step only when its two half steps add
+up to it did not help, since both half steps wrapped (measured −2.40 and +2.03, sum −0.37). `winding2.py` now accepts a
+step of the first two bisection levels only when both half steps are at most 0.4 rad themselves and add up to it, and
+`control_winding2.py` does the same. Every count below uses the new rule. The stored box (Re s ∈ [0.1, 2], |Im s| ≤ 2.5,
+l = 2) still gives winding +0.0000, with the D(x0), D(x1), max phase step 0.39 and min|D| 6.70×10⁻⁴ of
+`winding2_output.txt` (rerun from scratch with the stored script at 478cbd9, then with the new rule).
+
+One such loss shifts the count of a symmetric box by ±2, the size of #7's −2 for ω = 0.85, l = 3. The windings of §5
+were computed with the first rule and were not recounted here. Whether the −2 is this or a pole is for #54.
+
+#### Boxes
+
+```
+Im s
+ 10 ┌──────────┬──────────┬──────────────────────┐
+    │          │          │ h2 (l = 2)           │
+  6 │ not      ├──────────┼──────────────────────┤
+    │ counted  │ s3       │ h1 (l = 2, 3)        │
+    │          │ (l = 2,3)│                      │
+2.5 ├──────────┼──────────┼──────────────────────┤
+    │ s2       │ s1       │ stored box           │
+    │ (l = 2)  │ (l = 2,3)│ (§5, l = 2, 3)       │
+0.23├──────────┴──────────┤                      │
+    │ n1 (l = 2, 3)       │                      │
+  0 └─────────────────────┴──────────────────────┘
+    0.01      0.03       0.1                      2   Re s
+```
+
+Widths are not to scale. s1 and s2 also contain |Im s| ≤ 0.23, where n1 overlaps them, and n1 reaches Re s = 10⁻⁴
+there. n3 crosses the axis (Re s ∈ [−10⁻³, 10⁻⁴], Im s ∈ [0.01, 0.23]). The threshold boxes t1 and t2 lie inside s1 and
+s2. Each row is one contour, a symmetric box (|Im s| ≤ y1, doubled from the upper half) or an upper box
+(Im s ∈ [y0, y1], its mirror has the same count). s3 was added after the first plan, since the strip above |Im s| = 2.5
+belongs to both gaps of the issue and to none of the first boxes.
+
+BOXTABLE
+
+Winding is zeros minus poles of D in the box (§5, #54), so each 0 means no zero only if D has no pole there.
+
+#### Controls
+
+- **Planted zero.** Each row's last columns give the zero planted in the same cached evaluations, as the factor
+  (s − s0)(s − s̄0) in a symmetric box and (s − s0) in an upper box, and what the count returned. The stored box has four
+  mutations of the counter, each of which must make the check fail and does: reverse the contour (−2), apply the wrong
+  doubling (+1), move the factor's zero out of the box (0) and plant s0 alone in the symmetric box (+1.72).
+- **Known QNM, strip geometry.** On the Mini BS I star (l = 2) boxes Re s ∈ [−2×10⁻⁴, 0.1] below the threshold
+  Im s = 0.1469 count the zeros of D that `polish_zero.py --mini` finds by a secant on the same D at rtol 10⁻⁸ and 10⁻¹⁰:
+  −5.35350×10⁻⁵ + 0.11951908i (the published mode, spread of Re s over rtol 2×10⁻¹⁵) and three more,
+  −2.62464×10⁻⁵ + 0.131605i, −1.35809×10⁻⁵ + 0.137308i and −7.7455×10⁻⁶ + 0.140372i. They are the zeros the winding
+  returned: Im s ∈ [0.09, 0.125] +1, [0.09, 0.14] +3, [0.1225, 0.14] +2, [0.1225, 0.1285] 0. The same counts come at a
+  doubled outer radius (R_s 419, 717 and 454 against 227, 376 and 245). The `reverse` and `shift` mutations make it fail.
+  I first expected 1 and 0 in the second and third boxes, since the published mode was the only one I knew, and
+  changed the expectation after the run returned +3 and +2. Only the first box and the published value are independent
+  of the added zeros, the others compare the counter with a root finder that shares D.
+- **Two outer radii.** Near each scalar threshold (t1 around Im s = 1 − ω = 0.2397, t2 around 1 + ω = 1.7603) the count
+  is made at R_s = r_m + 40/min Re k and at 80/min Re k with the Zerilli start radius doubled. The counts and the
+  min|D| agree (rows t1 and t2).
+- **Axis scan, not used.** `axis_scan.py` looked for a dip of |D| on Re s = 0.005, Im s ∈ [0.005, 0.235]. Its control on
+  the Mini BS fails (the known zero shows no dip, |D| varies smoothly across it), so the absence of a dip for the
+  campaign star says nothing and is not used.
+
+#### Real axis
+
+`refine_gamma.py` starts from the stored 100-point scan and adds the log-midpoints of each level, with D from the same
+`PolarProblem.D`. Three stored points recomputed agree to a relative 3×10⁻⁹ at worst.
+
+REFTABLE
+
+The planted pair (γ = 0.6035 and 0.6408 for l = 2, 1.115 and 1.184 for l = 3, 6 % apart) lies inside one level-0
+interval, is missed there, and is found in the two intervals that contain it at level 1 and level 2. With `--mutate=coarse`
+it is missed, with `--mutate=pair` an unplanted pair makes the count change between levels, and with `--mutate=stale`
+the recomputed values differ from the stored ones by 1 %, each failing its check as designed. The ratio of |D_i| to
+the geometric mean of its neighbours stays within 1.000 to 1.003, so ln |D| is smooth at every grid point. A pair of
+roots closer than about 3 % in γ is therefore excluded only by that smoothness, not by a sign change.
+
+#### Not covered
+
+- NOTCOVERED
+
+Status: numerical evidence, conditional on D having no pole in each box (#54).
 
 ## 6. Conclusions
 
@@ -195,10 +287,17 @@ k± → 0 at Im s = ±(1−ω), which makes the integration slow (R_s ∝ 1/Re k
 
 ## 7. Caveats
 
-- Real-γ scans resolve sign changes on a 100-point log grid (30 points for canonical l = 3). A pair of
-  nearby roots (an even number between grid points) would be missed. The κ_eff picture (q_int − q_ext ≈
-  2γ, far from 0) makes this implausible, but it is not a proof.
-- Complex s: the strip 0 < Re s < 0.1 off the real axis, and |Im s| > 2.5, were not counted.
+- The real-γ scans of the other stars resolve sign changes on a 100-point log grid (30 points for canonical l = 3). A
+  pair of nearby roots (an even number between grid points) would be missed there. The κ_eff picture (q_int − q_ext ≈
+  2γ, far from 0) makes this implausible, but it is not a proof. For the campaign star the grid was refined to 397
+  points (step ratio 1.032 for l = 2, 1.036 for l = 3) with no change in the sign count, so a pair closer than about 3 %
+  in γ is excluded there only by the smoothness of ln |D| (§5.1).
+- Complex s, campaign star: counted are Re s ∈ [0.1, 2] for |Im s| ≤ 6 (HMAX for l = 2), the strip down to Re s = 0.03
+  (SMIN for l = 2) for |Im s| ≤ 2.5, and Re s ∈ [−10⁻³, 0.1] for |Im s| ≤ 0.23 (§5.1). Not counted: Re s below that
+  edge for 0.24 < |Im s| ≤ 2.5, |Im s| above that bound, Re s > 2, and |Im s| < 0.01 left of Re s = 10⁻⁴. The other stars
+  have Re s ≥ 0.1, |Im s| ≤ 2.5 only.
+- The windings of §5 were computed with a step rule that can lose 2π in one step (§5.1) and were not recounted. One
+  loss shifts a symmetric-box count by ±2.
 - Only l = 2, 3. The ω = 0.7603, 0.70 and 0.85 stars have the real-γ scans, convergence variants and windings (0.70
   and 0.85 in #7). c_l and axial positivity are also checked at ω = 0.85, and axial positivity at 0.70 and 0.90.
 - The windings count zeros minus poles of D if D has poles in the box, and ω = 0.85, l = 3 shows a net pole (§5, #54).
@@ -220,7 +319,11 @@ k± → 0 at Im s = ±(1−ω), which makes the integration slow (R_s ∝ 1/Re k
 | `polar_solver.py` | determinant D(s), exterior Zerilli/KG, κ_eff helper |
 | `scan_growing.py`, `scan_*.csv/log` | real-γ scans |
 | `convergence.py` (+`convergence_l2_output.txt`) | robustness of D |
-| `winding2.py`, `winding2_output.txt`, `control_winding*.py` | complex-s argument principle + controls (`winding.py` = first version) |
+| `winding2.py`, `winding2_output.txt`, `control_winding*.py` | complex-s argument principle + controls (`winding.py` = first version). `winding2.py` takes `--y0`, `--rsmult`, `--zfac`, `--nseg`, `--cachedir`, `--plant` and `--mutate` (§5.1) |
+| `refine_gamma.py` | real-γ refinement by halving the scan step, with a planted pair and mutations (§5.1) |
+| `polish_zero.py` | secant polish of a zero of D near the axis, with the Mini BS I control |
+| `axis_scan.py` | \|D\| on a vertical line; its Mini BS control fails, not used (§5.1) |
+| `collect_i5.py`, `i5_boxes_output.txt` | the table of §5.1 from the raw logs (negative-mass-raw, I5-rpi5) |
 | `kappa_eff.py`, `kappa_eff_l2_*`, `love.py`, `love_output.txt` | κ_eff vs κ_c; static Love-type coefficient |
 | `mini_bs.py`, `mini_bs_output.txt` | validation against Macedo et al. 2013 Mini BS I polar QNM |
 | `check_bg.py`, `matter_sv.py` | background / denominator sanity checks; scalar-sector SVD diagnostic (not run) |
