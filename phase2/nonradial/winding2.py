@@ -82,8 +82,8 @@ if mutate == 'reverse':
 
 def count(F, verbose):
     """phase accumulated by F along the contour, adaptive to 0.4 rad per step.  A step of the first two bisection
-    levels is accepted only if its two half steps add up to it: a step whose true change is 2 pi n + small is
-    otherwise taken for a small one (found by the planted-zero check, see RESULTS.md)."""
+    levels is accepted only if its two half steps are small too and add up to it: a step whose true change is
+    2 pi n + small is otherwise taken for a small one (found by the planted-zero check, see RESULTS.md)."""
     total, maxstep, nmin = 0.0, 0.0, np.inf
     for a, b in zip(corners[:-1], corners[1:]):
         def step(t0, t1, depth):
@@ -93,7 +93,8 @@ def count(F, verbose):
             fine = t1 - t0 <= 1e-5
             if abs(dph) <= 0.4 and depth <= 1 and not fine:
                 dm = F(a + (b - a)*0.5*(t0 + t1))
-                if abs(np.angle(dm / da) + np.angle(db / dm) - dph) > 0.1:
+                h1, h2 = np.angle(dm / da), np.angle(db / dm)
+                if max(abs(h1), abs(h2)) > 0.4 or abs(h1 + h2 - dph) > 0.1:
                     return step(t0, 0.5*(t0 + t1), depth + 1) + step(0.5*(t0 + t1), t1, depth + 1)
             if abs(dph) > 0.4 and not fine:
                 return step(t0, 0.5*(t0 + t1), depth + 1) + step(0.5*(t0 + t1), t1, depth + 1)

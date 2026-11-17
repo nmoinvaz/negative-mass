@@ -45,15 +45,15 @@ else:
            ('strip, 0.003 above the QNM',rect(q.imag+0.003,0.14),0)]
 if mutate=='reverse': cases=[(lab,cor[::-1],ex) for lab,cor,ex in cases]
 def box_winding(cor, nseg=8):
-    """winding of Dc around the polygon cor; a step is accepted only if its two half steps add up to it
+    """winding of Dc around the polygon cor; a step is accepted only if its two half steps are small and add up to it
     (for the first two bisection levels), see winding2.py"""
     n=[0]; mx=[0.0]
     def step(a,b,t0,t1,depth):
         da,db=Dc(a+(b-a)*t0),Dc(a+(b-a)*t1); d=np.angle(db/da); n[0]+=1
         fine=t1-t0<=1e-5; tm=0.5*(t0+t1)
         if abs(d)<=0.4 and depth<=1 and not fine:
-            dm=Dc(a+(b-a)*tm)
-            if abs(np.angle(dm/da)+np.angle(db/dm)-d)>0.1: return step(a,b,t0,tm,depth+1)+step(a,b,tm,t1,depth+1)
+            dm=Dc(a+(b-a)*tm); h1,h2=np.angle(dm/da),np.angle(db/dm)
+            if max(abs(h1),abs(h2))>0.4 or abs(h1+h2-d)>0.1: return step(a,b,t0,tm,depth+1)+step(a,b,tm,t1,depth+1)
         if abs(d)>0.4 and not fine: return step(a,b,t0,tm,depth+1)+step(a,b,tm,t1,depth+1)
         mx[0]=max(mx[0],abs(d)); return d
     tot=0.0
