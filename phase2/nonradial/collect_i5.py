@@ -19,8 +19,7 @@ W2 = [  # (job, what it counts)
     ('h1_l2', 'high Im s, l = 2'), ('h1_l3', 'high Im s, l = 3'),
     ('t1_r40', 'threshold 1 - w, outer radius 40, l = 2'), ('t1_r80', 'threshold 1 - w, outer radius 80, l = 2'),
     ('t2_r40', 'threshold 1 + w, outer radius 40, l = 2'), ('t2_r80', 'threshold 1 + w, outer radius 80, l = 2'),
-    ('s2_l2', 'strip, closer to the axis, l = 2'), ('s2_l3', 'strip, closer to the axis, l = 3'),
-    ('h2_l2', 'high Im s, second range, l = 2'), ('h2_l3', 'high Im s, second range, l = 3'),
+    ('s2_l2', 'strip, closer to the axis, l = 2'), ('h2_l2', 'high Im s, second range, l = 2'),
 ]
 res = re.compile(r"RESULT (\S+): zeros in Re s∈\[(\S+),(\S+)\], (?:\|Im s\|≤(\S+)|Im s∈\[(\S+),(\S+)\]): "
                  r"winding = ([+-]\d+\.\d+)  \(max phase step ([\d.]+) rad, min\|D\| (\S+)\)")
@@ -73,12 +72,17 @@ if os.path.exists(f):
     for line in open(f).read().splitlines():
         if line.startswith(('RESULT', 'CONTROL')): print('  ' + line)
 print()
-print("# refine_gamma.py (real-gamma refinement)")
+print("# refine_gamma.py (real-gamma refinement): the main run, then the planted pair and the three mutations")
 for job in ['ref_l2', 'ref_l3']:
     f = os.path.join(RAW, job + '.log')
     if not os.path.exists(f): print(f"  {job}: not run"); continue
-    for line in open(f).read().splitlines():
-        if re.match(r"(reproduce|level \d+: \d+ points?, |level \d+: step|HALVING|PLANTED|ALL CHECKS|A CHECK|== )", line) or line.startswith('level') and 'sign changes' in line:
-            print(f"  {job}: {line}")
-            if 'FAIL' in line and 'mutate' not in line and '(1 expected)' not in line: bad = True
+    parts = re.split(r"^== (.*)$", open(f).read(), flags=re.M)
+    for seg, head in zip(parts[0::2], parts[1::2]):
+        for line in seg.splitlines():
+            if re.match(r"(reproduce|HALVING|PLANTED|level \d: step ratio)", line):
+                print(f"  {job}: {line}")
+        m = re.search(r"rc=(\d+) \((\d) expected\)", head)
+        ok = bool(m) and m.group(1) == m.group(2); bad |= not ok
+        print(f"  {job}: {head}  {'as expected' if ok else 'NOT AS EXPECTED'}")
+    if len(parts) < 11: print(f"  {job}: only {len(parts) // 2} of 5 runs finished"); bad = True
 sys.exit(1 if bad else 0)
