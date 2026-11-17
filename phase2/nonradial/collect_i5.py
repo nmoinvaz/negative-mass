@@ -6,7 +6,7 @@ number quoted in RESULTS.md comes from a file in this repository.  Usage:
 
 Reads the RESULT and PLANTED lines of the winding2.py logs, the control_winding2.py lines, the polish_zero.py
 RESULT lines and the refine_gamma.py level lines named in JOBS.  A job whose log is missing is listed as "not run".
-Exit status 1 when a planted-zero line or a control line says FAIL, or when a winding2 run has no PLANTED line.
+Exit status 1 when a planted-zero line or a control line says FAIL, or when a winding2 run has no result or no PLANTED line.
 """
 import re, sys, os
 
@@ -33,12 +33,12 @@ for job, what in W2:
     f = os.path.join(RAW, job + '.log')
     if job == 'rep_l2': f = os.path.join(RAW, 'rep_l2.log')
     if not os.path.exists(f):
-        print(f"| {job} | {what} | | | not run | | | | | |"); continue
+        print(f"| {job} | {what} | | | not run | | | | | |"); bad = True; continue
     txt = open(f).read()
     if job == 'rep_l2': txt = txt.split('## mutate=reverse')[0]       # the unmutated run
     r, p = res.search(txt), pla.search(txt)
     if not r:
-        print(f"| {job} | {what} | | | no result yet | | | | | |"); continue
+        print(f"| {job} | {what} | | | no result yet | | | | | |"); bad = True; continue
     x0, x1, y1, ya, yb, wn, ms, mn = r.group(2), r.group(3), r.group(4), r.group(5), r.group(6), r.group(7), r.group(8), r.group(9)
     im = f"abs(Im s) ≤ {y1}" if y1 else f"[{ya}, {yb}]"
     if p:
@@ -73,11 +73,16 @@ if os.path.exists(f):
         if line.startswith(('RESULT', 'CONTROL')): print('  ' + line)
 print()
 print("# refine_gamma.py (real-gamma refinement): the main run, then the planted pair and the three mutations")
+reftab = []
 for job in ['ref_l2', 'ref_l3']:
     f = os.path.join(RAW, job + '.log')
     if not os.path.exists(f): print(f"  {job}: not run"); continue
     parts = re.split(r"^== (.*)$", open(f).read(), flags=re.M)
     for seg, head in zip(parts[0::2], parts[1::2]):
+        if head.startswith('main'):
+            for m in re.finditer(r"^level (\d): step ratio (\S+), (\d+) points, sign changes (\d+)(?:, min \|D_i\|/sqrt\|D_\(i-1\) D_\(i\+1\)\| ([\d.]+), max ([\d.]+))?", seg, flags=re.M):
+                sm = f"{m.group(5)} to {m.group(6)}" if m.group(5) else "not defined"
+                reftab.append(f"| {job[-1]} | {m.group(1)} | {float(m.group(2)):.3f} | {m.group(3)} | {m.group(4)} | {sm} |")
         for line in seg.splitlines():
             if re.match(r"(reproduce|HALVING|PLANTED|level \d: step ratio)", line):
                 print(f"  {job}: {line}")
@@ -85,4 +90,9 @@ for job in ['ref_l2', 'ref_l3']:
         ok = bool(m) and m.group(1) == m.group(2); bad |= not ok
         print(f"  {job}: {head}  {'as expected' if ok else 'NOT AS EXPECTED'}")
     if len(parts) < 11: print(f"  {job}: only {len(parts) // 2} of 5 runs finished"); bad = True
+print()
+print("# refine_gamma.py, main runs, as a table")
+print("| l | level | step ratio | points | sign changes | ratio of abs(D_i) to the geometric mean of its neighbours |")
+print("|---|---|---|---|---|---|")
+print("\n".join(reftab))
 sys.exit(1 if bad else 0)
