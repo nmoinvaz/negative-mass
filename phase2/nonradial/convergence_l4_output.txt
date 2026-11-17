@@ -1,0 +1,17 @@
+base (rtol1e-10, phi_cut1e-9, R60)    : r_m=24.11
+rtol 1e-12                            : r_m=24.11
+phi_cut 1e-12 (larger r_m)            : r_m=34.21
+background R=90                       : r_m=24.11
+r0 = 3e-3                             : r_m=24.11
+
+gamma=   0.001: D_base=-9.992981e-02  signs=[np.float64(-1.0)]  rel.spread (same r_m)=1.2e-04  D(r_m~34)=-6.802e-02  q_int=+2.075665e-01 q_ext=-1.660097e-01  (15s)
+gamma=    0.03: D_base=-9.873926e-02  signs=[np.float64(-1.0)]  rel.spread (same r_m)=1.2e-04  D(r_m~34)=-6.604e-02  q_int=+2.095278e-01 q_ext=-1.690605e-01  (17s)
+gamma=     0.3: D_base=-6.862112e-02  signs=[np.float64(-1.0)]  rel.spread (same r_m)=1.9e-04  D(r_m~34)=-3.612e-02  q_int=+3.594457e-01 q_ext=-3.477130e-01  (15s)
+gamma=       1: D_base=-2.663217e-02  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-1.337e-02  q_int=+1.017819e+00 q_ext=-1.016428e+00  (15s)
+gamma=       3: D_base=-3.187563e-03  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-1.587e-03  q_int=+3.005818e+00 q_ext=-3.005660e+00  (24s)
+gamma=      10: D_base=-1.190933e-04  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-5.917e-05  q_int=+1.000173e+01 q_ext=-1.000172e+01  (50s)
+gamma=      40: D_base=-1.933586e-06  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-9.605e-07  q_int=+4.000043e+01 q_ext=-4.000043e+01  (177s)
+gamma=     137: D_base=-4.824198e-08  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-2.396e-08  q_int=+1.370001e+02 q_ext=-1.370001e+02  (595s)
+gamma=     300: D_base=-4.595154e-09  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-2.283e-09  q_int=+3.000001e+02 q_ext=-3.000001e+02  (1315s)
+gamma=   1e+03: D_base=-1.240745e-10  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-6.163e-11  q_int=+1.000000e+03 q_ext=-1.000000e+03  (4739s)
+gamma=   3e+03: D_base=-4.595367e-12  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-2.283e-12  q_int=+3.000000e+03 q_ext=-3.000000e+03  (29848s)
