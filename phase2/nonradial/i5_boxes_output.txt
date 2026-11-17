@@ -1,0 +1,124 @@
+# winding2.py boxes (phantom, omega = 0.7603)
+| job | what | Re s | Im s | winding | max step | min abs(D) | planted s0 | planted found | check |
+|---|---|---|---|---|---|---|---|---|---|
+| rep_l2 | stored box, l = 2 (#7 box of the first scans) | [0.1, 2.0] | abs(Im s) ≤ 2.5 | +0.0000 | 0.39 | 6.70e-04 | 0.3+1.76j | +2.0000 of 2 | PASS |
+| s1_l2 | strip, l = 2 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | 0.40 | 1.00e-03 | 0.04+0.25j | +2.0000 of 2 | PASS |
+| s1_l3 | strip, l = 3 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | 0.40 | 2.49e-03 | 0.04+0.25j | +2.0000 of 2 | PASS |
+| n1_l2 | below threshold, right of the axis, l = 2 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | -0.0000 | 0.33 | 2.82e-03 | 0.0005+0.12j | +2.0000 of 2 | PASS |
+| n1_l3 | below threshold, right of the axis, l = 3 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | +0.0000 | 0.35 | 3.16e-02 | 0.0005+0.12j | +2.0000 of 2 | PASS |
+| n3_l2 | below threshold, across the axis, l = 2 | [-0.001, 0.0001] | [0.01, 0.23] | +0.0000 | 0.39 | 2.75e-03 | -0.0005+0.12j | +1.0000 of 1 | PASS |
+| n3_l3 | below threshold, across the axis, l = 3 | [-0.001, 0.0001] | [0.01, 0.23] | -0.0000 | 0.38 | 3.66e-02 | -0.0005+0.12j | +1.0000 of 1 | PASS |
+| h1_l2 | high Im s, l = 2 | [0.1, 2.0] | [2.5, 6.0] | +0.0000 | 0.38 | 1.05e-04 | 0.3+2.7j | +1.0000 of 1 | PASS |
+| h1_l3 | high Im s, l = 3 | [0.1, 2.0] | [2.5, 6.0] | -0.0000 | 0.38 | 2.63e-04 | 0.3+2.7j | +1.0000 of 1 | PASS |
+| t1_r40 | threshold 1 - w, outer radius 40, l = 2 | [0.02, 0.1] | [0.15, 0.33] | +0.0000 | 0.38 | 3.73e-03 | 0.03+0.25j | +1.0000 of 1 | PASS |
+| t1_r80 | threshold 1 - w, outer radius 80, l = 2 | [0.02, 0.1] | [0.15, 0.33] | -0.0000 | 0.39 | 3.73e-03 | 0.03+0.25j | +1.0000 of 1 | PASS |
+| t2_r40 | threshold 1 + w, outer radius 40, l = 2 | [0.02, 0.1] | [1.68, 1.84] | +0.0000 | 0.40 | 9.30e-04 | 0.03+1.77j | +1.0000 of 1 | PASS |
+| t2_r80 | threshold 1 + w, outer radius 80, l = 2 | [0.02, 0.1] | [1.68, 1.84] | +0.0000 | 0.35 | 9.30e-04 | 0.03+1.77j | +1.0000 of 1 | PASS |
+| s2_l2 | strip, closer to the axis, l = 2 | [0.01, 0.03] | abs(Im s) ≤ 2.5 | +0.0000 | 0.40 | 5.30e-04 | 0.015+0.25j | +2.0000 of 2 | PASS |
+| h2_l2 | high Im s, second range, l = 2 | [0.1, 2.0] | [6.0, 10.0] | -0.0000 | 0.31 | 2.57e-05 | 0.3+6.2j | +1.0000 of 1 | PASS |
+| s3_l2 | strip above Im s = 2.5, l = 2 | [0.03, 0.1] | [2.5, 6.0] | -0.0000 | 0.39 | 9.90e-05 | 0.05+3j | +1.0000 of 1 | PASS |
+| s3_l3 | strip above Im s = 2.5, l = 3 | [0.03, 0.1] | [2.5, 6.0] | -0.0000 | 0.38 | 2.71e-04 | 0.05+3j | +1.0000 of 1 | PASS |
+
+# Mutations of the planted-zero check on the stored box (each must FAIL)
+  mutate=none: difference +2.0000 against 2 expected, PASS
+  mutate=reverse: difference -2.0000 against 2 expected, FAIL
+  mutate=wrongdouble: difference +1.0000 against 2 expected, FAIL
+  mutate=misplant: difference -0.0000 against 2 expected, FAIL
+  mutate=onesided: difference +1.7195 against 2 expected, FAIL
+
+# control_winding2.py (Mini BS I, l = 2)
+  cs_default: around QNM: winding = +1.0000  (expected 1, R_s = 207, min Re k 0.232, rsmult 40, 56 steps, max step 0.33 rad)  PASS
+  cs_default: displaced: winding = +0.0000  (expected 0, R_s = 207, min Re k 0.232, rsmult 40, 32 steps, max step 0.03 rad)  PASS
+  cs_strip2: strip, fundamental only: winding = +1.0000  (expected 1, R_s = 227, min Re k 0.208, rsmult 40, 84 steps, max step 0.38 rad)  PASS
+  cs_strip2: strip, three zeros: winding = +3.0000  (expected 3, R_s = 376, min Re k 0.117, rsmult 40, 176 steps, max step 0.39 rad)  PASS
+  cs_strip2: strip, above the QNM: winding = +2.0000  (expected 2, R_s = 376, min Re k 0.117, rsmult 40, 138 steps, max step 0.39 rad)  PASS
+  cs_strip2: strip, between the QNM and the next zero: winding = +0.0000  (expected 0, R_s = 245, min Re k 0.191, rsmult 40, 54 steps, max step 0.40 rad)  PASS
+  cs_strip2: exit 0
+  cs_strip2: strip, fundamental only: winding = -1.0000  (expected 1, R_s = 227, min Re k 0.208, rsmult 40, 84 steps, max step 0.38 rad)  FAIL  [mutate=reverse]
+  cs_strip2: strip, three zeros: winding = -3.0000  (expected 3, R_s = 376, min Re k 0.117, rsmult 40, 176 steps, max step 0.39 rad)  FAIL  [mutate=reverse]
+  cs_strip2: strip, above the QNM: winding = -2.0000  (expected 2, R_s = 376, min Re k 0.117, rsmult 40, 138 steps, max step 0.39 rad)  FAIL  [mutate=reverse]
+  cs_strip2: strip, between the QNM and the next zero: winding = -0.0000  (expected 0, R_s = 245, min Re k 0.191, rsmult 40, 54 steps, max step 0.40 rad)  PASS  [mutate=reverse]
+  cs_strip2: exit 1 (1 expected)
+  cs_strip2_r80: strip, fundamental only: winding = +1.0000  (expected 1, R_s = 419, min Re k 0.208, rsmult 80, 88 steps, max step 0.38 rad)  PASS
+  cs_strip2_r80: strip, three zeros: winding = +3.0000  (expected 3, R_s = 717, min Re k 0.117, rsmult 80, 186 steps, max step 0.40 rad)  PASS
+  cs_strip2_r80: strip, above the QNM: winding = +2.0000  (expected 2, R_s = 717, min Re k 0.117, rsmult 80, 146 steps, max step 0.40 rad)  PASS
+  cs_strip2_r80: strip, between the QNM and the next zero: winding = +0.0000  (expected 0, R_s = 454, min Re k 0.191, rsmult 80, 68 steps, max step 0.38 rad)  PASS
+  cs_strip2_shift: strip, fundamental only: winding = +0.0000  (expected 1, R_s = 143, min Re k 0.372, rsmult 40, 40 steps, max step 0.39 rad)  FAIL  [mutate=shift]
+  cs_strip2_shift: strip, three zeros: winding = +0.0000  (expected 3, R_s = 155, min Re k 0.333, rsmult 40, 46 steps, max step 0.38 rad)  FAIL  [mutate=shift]
+  cs_strip2_shift: strip, above the QNM: winding = +2.0000  (expected 2, R_s = 376, min Re k 0.117, rsmult 40, 138 steps, max step 0.39 rad)  PASS  [mutate=shift]
+  cs_strip2_shift: strip, between the QNM and the next zero: winding = +0.0000  (expected 0, R_s = 245, min Re k 0.191, rsmult 40, 54 steps, max step 0.40 rad)  PASS  [mutate=shift]
+  cs_strip2_shift: exit 1 (1 expected)
+
+# polish_zero.py --mini (Mini BS I zeros near the axis)
+  RESULT zero near 0.1195j: s = -5.353499e-05 +0.11951908 i, spread of Re s over rtol 2.1e-15: damped
+  CONTROL Mini BS I: PASS
+  RESULT zero near 0.126j: s = -2.624643e-05 +0.13160500 i, spread of Re s over rtol 3.0e-16: damped
+  RESULT zero near 0.131j: s = -2.624643e-05 +0.13160500 i, spread of Re s over rtol 3.1e-16: damped
+  RESULT zero near 0.136j: s = -1.358094e-05 +0.13730755 i, spread of Re s over rtol 1.5e-15: damped
+  RESULT zero near 0.139j: s = -7.745463e-06 +0.14037181 i, spread of Re s over rtol 9.3e-16: damped
+
+# refine_gamma.py (real-gamma refinement): the main run, then the planted pair and the three mutations
+  ref_l2: reproduce gamma=0.001: D = -5.285430616e-02, stored -5.285430616e-02, relative 2.2e-15  PASS
+  ref_l2: reproduce gamma=0.513923: D = -1.214878799e-02, stored -1.214878799e-02, relative 8.0e-15  PASS
+  ref_l2: reproduce gamma=300: D = -1.020425241e-09, stored -1.020425237e-09, relative 3.4e-09  PASS
+  ref_l2: level 0: step ratio 1.13586, 100 points, sign changes 0, min|D| 1.020e-09
+  ref_l2: level 1: step ratio 1.06577, 199 points, sign changes 0, min |D_i|/sqrt|D_(i-1) D_(i+1)| 1.000, max 1.002, min|D| 1.020e-09
+  ref_l2: level 2: step ratio 1.03236, 397 points, sign changes 0, min |D_i|/sqrt|D_(i-1) D_(i+1)| 1.000, max 1.001, min|D| 1.020e-09
+  ref_l2: HALVING sign counts by level [0, 0, 0]: halving the step changes no sign count  PASS
+  ref_l2: main rc=0 (0 expected)  as expected
+  ref_l2: level 0: step ratio 1.13586, 100 points, sign changes 0, min|D| 1.236e-05
+  ref_l2: level 1: step ratio 1.06577, 199 points, sign changes 2, min |D_i|/sqrt|D_(i-1) D_(i+1)| 0.286, max 1.454, min|D| 3.617e-06  brackets [(0.58374, 0.62214), (0.62214, 0.66305)]
+  ref_l2: level 2: step ratio 1.03236, 397 points, sign changes 2, min |D_i|/sqrt|D_(i-1) D_(i+1)| 0.051, max 8.170, min|D| 3.413e-07  brackets [(0.60263, 0.62214), (0.62214, 0.64227)]
+  ref_l2: PLANTED pair at 0.603472, 0.6408: level 0 sees 0 sign changes, finest level sees 2, intervals [(0.602634, 0.622136), (0.622136, 0.642268)]  PASS
+  ref_l2: planted pair rc=0 (0 expected)  as expected
+  ref_l2: level 0: step ratio 1.13586, 100 points, sign changes 0, min|D| 1.236e-05
+  ref_l2: PLANTED pair at 0.603472, 0.6408: level 0 sees 0 sign changes, finest level sees 0, intervals []  FAIL  [mutate=coarse]
+  ref_l2: planted pair, mutate=coarse rc=1 (1 expected)  as expected
+  ref_l2: level 0: step ratio 1.13586, 100 points, sign changes 0, min|D| 1.576e-05
+  ref_l2: level 1: step ratio 1.06577, 199 points, sign changes 2, min |D_i|/sqrt|D_(i-1) D_(i+1)| 0.025, max 3.125, min|D| 4.019e-07  brackets [(0.58374, 0.62214), (0.62214, 0.66305)]
+  ref_l2: level 2: step ratio 1.03236, 397 points, sign changes 2, min |D_i|/sqrt|D_(i-1) D_(i+1)| 0.109, max 1.458, min|D| 4.019e-07  brackets [(0.60263, 0.62214), (0.62214, 0.64227)]
+  ref_l2: HALVING sign counts by level [0, 2, 2]: halving the step changes no sign count  FAIL  [mutate=pair]
+  ref_l2: mutate=pair rc=1 (1 expected)  as expected
+  ref_l2: reproduce gamma=0.001: D = -5.285430616e-02, stored -5.338284922e-02, relative 9.9e-03  FAIL  [mutate=stale]
+  ref_l2: level 0: step ratio 1.13586, 100 points, sign changes 0, min|D| 1.020e-09
+  ref_l2: level 1: step ratio 1.06577, 199 points, sign changes 0, min |D_i|/sqrt|D_(i-1) D_(i+1)| 1.000, max 1.002, min|D| 1.020e-09
+  ref_l2: level 2: step ratio 1.03236, 397 points, sign changes 0, min |D_i|/sqrt|D_(i-1) D_(i+1)| 1.000, max 1.001, min|D| 1.020e-09
+  ref_l2: HALVING sign counts by level [0, 0, 0]: halving the step changes no sign count  PASS  [mutate=stale]
+  ref_l2: mutate=stale rc=1 (1 expected)  as expected
+  ref_l3: reproduce gamma=0.001: D = -7.562988573e-02, stored -7.562988573e-02, relative 9.2e-16  PASS
+  ref_l3: reproduce gamma=0.932603: D = -1.640628414e-02, stored -1.640628414e-02, relative 4.4e-15  PASS
+  ref_l3: reproduce gamma=1000: D = -6.891913404e-11, stored -6.891913419e-11, relative 2.2e-09  PASS
+  ref_l3: level 0: step ratio 1.14976, 100 points, sign changes 0, min|D| 6.892e-11
+  ref_l3: level 1: step ratio 1.07227, 199 points, sign changes 0, min |D_i|/sqrt|D_(i-1) D_(i+1)| 1.000, max 1.003, min|D| 6.892e-11
+  ref_l3: level 2: step ratio 1.03550, 397 points, sign changes 0, min |D_i|/sqrt|D_(i-1) D_(i+1)| 1.000, max 1.001, min|D| 6.892e-11
+  ref_l3: HALVING sign counts by level [0, 0, 0]: halving the step changes no sign count  PASS
+  ref_l3: main rc=0 (0 expected)  as expected
+  ref_l3: level 0: step ratio 1.14976, 100 points, sign changes 0, min|D| 6.212e-05
+  ref_l3: level 1: step ratio 1.07227, 199 points, sign changes 2, min |D_i|/sqrt|D_(i-1) D_(i+1)| 0.227, max 1.431, min|D| 1.445e-05  brackets [(1.0723, 1.1498), (1.1498, 1.2328)]
+  ref_l3: level 2: step ratio 1.03550, 397 points, sign changes 2, min |D_i|/sqrt|D_(i-1) D_(i+1)| 0.152, max 2.857, min|D| 4.666e-06  brackets [(1.1103, 1.1498), (1.1498, 1.1906)]
+  ref_l3: PLANTED pair at 1.11526, 1.18425: level 0 sees 0 sign changes, finest level sees 2, intervals [(1.11034, 1.14976), (1.14976, 1.19058)]  PASS
+  ref_l3: planted pair rc=0 (0 expected)  as expected
+  ref_l3: level 0: step ratio 1.14976, 100 points, sign changes 0, min|D| 6.212e-05
+  ref_l3: PLANTED pair at 1.11526, 1.18425: level 0 sees 0 sign changes, finest level sees 0, intervals []  FAIL  [mutate=coarse]
+  ref_l3: planted pair, mutate=coarse rc=1 (1 expected)  as expected
+  ref_l3: level 0: step ratio 1.14976, 100 points, sign changes 0, min|D| 6.876e-05
+  ref_l3: level 1: step ratio 1.07227, 199 points, sign changes 2, min |D_i|/sqrt|D_(i-1) D_(i+1)| 0.021, max 3.437, min|D| 1.605e-06  brackets [(1.0723, 1.1498), (1.1498, 1.2328)]
+  ref_l3: level 2: step ratio 1.03550, 397 points, sign changes 2, min |D_i|/sqrt|D_(i-1) D_(i+1)| 0.090, max 1.622, min|D| 1.605e-06  brackets [(1.1103, 1.1498), (1.1498, 1.1906)]
+  ref_l3: HALVING sign counts by level [0, 2, 2]: halving the step changes no sign count  FAIL  [mutate=pair]
+  ref_l3: mutate=pair rc=1 (1 expected)  as expected
+  ref_l3: reproduce gamma=0.001: D = -7.562988573e-02, stored -7.638618459e-02, relative 9.9e-03  FAIL  [mutate=stale]
+  ref_l3: level 0: step ratio 1.14976, 100 points, sign changes 0, min|D| 6.892e-11
+  ref_l3: level 1: step ratio 1.07227, 199 points, sign changes 0, min |D_i|/sqrt|D_(i-1) D_(i+1)| 1.000, max 1.003, min|D| 6.892e-11
+  ref_l3: level 2: step ratio 1.03550, 397 points, sign changes 0, min |D_i|/sqrt|D_(i-1) D_(i+1)| 1.000, max 1.001, min|D| 6.892e-11
+  ref_l3: HALVING sign counts by level [0, 0, 0]: halving the step changes no sign count  PASS  [mutate=stale]
+  ref_l3: mutate=stale rc=1 (1 expected)  as expected
+
+# refine_gamma.py, main runs, as a table
+| l | level | step ratio | points | sign changes | ratio of abs(D_i) to the geometric mean of its neighbours |
+|---|---|---|---|---|---|
+| 2 | 0 | 1.136 | 100 | 0 | not defined |
+| 2 | 1 | 1.066 | 199 | 0 | 1.000 to 1.002 |
+| 2 | 2 | 1.032 | 397 | 0 | 1.000 to 1.001 |
+| 3 | 0 | 1.150 | 100 | 0 | not defined |
+| 3 | 1 | 1.072 | 199 | 0 | 1.000 to 1.003 |
+| 3 | 2 | 1.036 | 397 | 0 | 1.000 to 1.001 |

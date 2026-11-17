@@ -177,7 +177,15 @@ counted in §5.1 (#5).
 
 Counted for the phantom campaign star (ω = 0.7603, M = −0.014580), l = 2 and 3, with the D of §2 on rpi5
 (`winding2.py` at rtol 10⁻⁸, `refine_gamma.py` at 10⁻¹⁰). Every number below is in `i5_boxes_output.txt`, which
-`collect_i5.py` builds from the raw logs (negative-mass-raw, folder I5-rpi5, at RAWCOMMIT).
+`collect_i5.py` builds from the raw logs (negative-mass-raw, folder I5-rpi5, at e2ebcdd).
+
+The commands of every run are the lines of `jobs.txt` there. From `phase2/nonradial` with the raw repository cloned beside
+the checkout, `python collect_i5.py ../../../negative-mass-raw/I5-rpi5 > i5_boxes_output.txt` rebuilds the file and exits
+non-zero if a check failed or a run is missing.
+
+Result: all 17 boxes count 0 (zeros minus poles), each with its planted zero returned by the same code, and the real-γ
+axis shows no sign change at 397 points (step ratio 1.032 for l = 2, 1.036 for l = 3). Where the counts stop is under
+"Not covered" below.
 
 #### A defect in the counter
 
@@ -218,7 +226,28 @@ s2. Each row is one contour, a symmetric box (|Im s| ≤ y1, doubled from the up
 (Im s ∈ [y0, y1], its mirror has the same count). s3 was added after the first plan, since the strip above |Im s| = 2.5
 belongs to both gaps of the issue and to none of the first boxes.
 
-BOXTABLE
+| job | what | Re s | Im s | winding | max step | min abs(D) | planted s0 | planted found | check |
+|---|---|---|---|---|---|---|---|---|---|
+| rep_l2 | stored box, l = 2 (#7 box of the first scans) | [0.1, 2.0] | abs(Im s) ≤ 2.5 | +0.0000 | 0.39 | 6.70e-04 | 0.3+1.76j | +2.0000 of 2 | PASS |
+| s1_l2 | strip, l = 2 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | 0.40 | 1.00e-03 | 0.04+0.25j | +2.0000 of 2 | PASS |
+| s1_l3 | strip, l = 3 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | 0.40 | 2.49e-03 | 0.04+0.25j | +2.0000 of 2 | PASS |
+| n1_l2 | below threshold, right of the axis, l = 2 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | -0.0000 | 0.33 | 2.82e-03 | 0.0005+0.12j | +2.0000 of 2 | PASS |
+| n1_l3 | below threshold, right of the axis, l = 3 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | +0.0000 | 0.35 | 3.16e-02 | 0.0005+0.12j | +2.0000 of 2 | PASS |
+| n3_l2 | below threshold, across the axis, l = 2 | [-0.001, 0.0001] | [0.01, 0.23] | +0.0000 | 0.39 | 2.75e-03 | -0.0005+0.12j | +1.0000 of 1 | PASS |
+| n3_l3 | below threshold, across the axis, l = 3 | [-0.001, 0.0001] | [0.01, 0.23] | -0.0000 | 0.38 | 3.66e-02 | -0.0005+0.12j | +1.0000 of 1 | PASS |
+| h1_l2 | high Im s, l = 2 | [0.1, 2.0] | [2.5, 6.0] | +0.0000 | 0.38 | 1.05e-04 | 0.3+2.7j | +1.0000 of 1 | PASS |
+| h1_l3 | high Im s, l = 3 | [0.1, 2.0] | [2.5, 6.0] | -0.0000 | 0.38 | 2.63e-04 | 0.3+2.7j | +1.0000 of 1 | PASS |
+| t1_r40 | threshold 1 - w, outer radius 40, l = 2 | [0.02, 0.1] | [0.15, 0.33] | +0.0000 | 0.38 | 3.73e-03 | 0.03+0.25j | +1.0000 of 1 | PASS |
+| t1_r80 | threshold 1 - w, outer radius 80, l = 2 | [0.02, 0.1] | [0.15, 0.33] | -0.0000 | 0.39 | 3.73e-03 | 0.03+0.25j | +1.0000 of 1 | PASS |
+| t2_r40 | threshold 1 + w, outer radius 40, l = 2 | [0.02, 0.1] | [1.68, 1.84] | +0.0000 | 0.40 | 9.30e-04 | 0.03+1.77j | +1.0000 of 1 | PASS |
+| t2_r80 | threshold 1 + w, outer radius 80, l = 2 | [0.02, 0.1] | [1.68, 1.84] | +0.0000 | 0.35 | 9.30e-04 | 0.03+1.77j | +1.0000 of 1 | PASS |
+| s2_l2 | strip, closer to the axis, l = 2 | [0.01, 0.03] | abs(Im s) ≤ 2.5 | +0.0000 | 0.40 | 5.30e-04 | 0.015+0.25j | +2.0000 of 2 | PASS |
+| h2_l2 | high Im s, second range, l = 2 | [0.1, 2.0] | [6.0, 10.0] | -0.0000 | 0.31 | 2.57e-05 | 0.3+6.2j | +1.0000 of 1 | PASS |
+| s3_l2 | strip above Im s = 2.5, l = 2 | [0.03, 0.1] | [2.5, 6.0] | -0.0000 | 0.39 | 9.90e-05 | 0.05+3j | +1.0000 of 1 | PASS |
+| s3_l3 | strip above Im s = 2.5, l = 3 | [0.03, 0.1] | [2.5, 6.0] | -0.0000 | 0.38 | 2.71e-04 | 0.05+3j | +1.0000 of 1 | PASS |
+
+`max step` is the largest phase step in radians and `min abs(D)` the smallest |D| on the contour (phase-normalised, so
+only comparable within a row).
 
 Winding is zeros minus poles of D in the box (§5, #54), so each 0 means no zero only if D has no pole there.
 
@@ -247,9 +276,18 @@ Winding is zeros minus poles of D in the box (§5, #54), so each 0 means no zero
 #### Real axis
 
 `refine_gamma.py` starts from the stored 100-point scan and adds the log-midpoints of each level, with D from the same
-`PolarProblem.D`. Three stored points recomputed agree to a relative 3×10⁻⁹ at worst.
+`PolarProblem.D`. Three stored points recomputed agree to a relative 3.4×10⁻⁹ at worst.
 
-REFTABLE
+| l | level | step ratio | points | sign changes | ratio of abs(D_i) to the geometric mean of its neighbours |
+|---|---|---|---|---|---|
+| 2 | 0 | 1.136 | 100 | 0 | not defined |
+| 2 | 1 | 1.066 | 199 | 0 | 1.000 to 1.002 |
+| 2 | 2 | 1.032 | 397 | 0 | 1.000 to 1.001 |
+| 3 | 0 | 1.150 | 100 | 0 | not defined |
+| 3 | 1 | 1.072 | 199 | 0 | 1.000 to 1.003 |
+| 3 | 2 | 1.036 | 397 | 0 | 1.000 to 1.001 |
+
+Both ranges give no sign change at any level (l = 2: γ ∈ [10⁻³, 300], l = 3: γ ∈ [10⁻³, 1000]).
 
 The planted pair (γ = 0.6035 and 0.6408 for l = 2, 1.115 and 1.184 for l = 3, 6 % apart) lies inside one level-0
 interval, is missed there, and is found in the two intervals that contain it at level 1 and level 2. With `--mutate=coarse`
@@ -260,7 +298,15 @@ roots closer than about 3 % in γ is therefore excluded only by that smoothness,
 
 #### Not covered
 
-- NOTCOVERED
+- Re s below the lower edges for 0.23 < |Im s| ≤ 2.5. For l = 2 that is 0 < Re s < 0.01 (the near-axis box n1 reaches
+  10⁻⁴ only below Im s = 0.23), for l = 3 it is 0 < Re s < 0.03. R_s grows as 1/Re s (3831 at 0.01), and so does the
+  cost of a box, which took 3.7 h at 0.01. A mode that close to marginal is neither shown nor excluded by these counts.
+- The strip Re s < 0.03 for 2.5 < |Im s|, and the strip Re s < 0.1 for |Im s| > 6.
+- Re s ∈ [0.1, 2] above |Im s| = 10 (l = 2) and 6 (l = 3), and Re s > 2.
+- The sliver |Im s| < 0.01 left of Re s = 10⁻⁴.
+- Poles of D (#54). Every count is zeros minus poles, and a count of 0 is not a proof that there is no zero.
+- The windings of §5, #7 and the other stars, which were made with the old step rule (above) and not recounted.
+- l ≥ 4 (#4).
 
 Status: numerical evidence, conditional on D having no pole in each box (#54).
 
@@ -292,10 +338,9 @@ Status: numerical evidence, conditional on D having no pole in each box (#54).
   2γ, far from 0) makes this implausible, but it is not a proof. For the campaign star the grid was refined to 397
   points (step ratio 1.032 for l = 2, 1.036 for l = 3) with no change in the sign count, so a pair closer than about 3 %
   in γ is excluded there only by the smoothness of ln |D| (§5.1).
-- Complex s, campaign star: counted are Re s ∈ [0.1, 2] for |Im s| ≤ 6 (HMAX for l = 2), the strip down to Re s = 0.03
-  (SMIN for l = 2) for |Im s| ≤ 2.5, and Re s ∈ [−10⁻³, 0.1] for |Im s| ≤ 0.23 (§5.1). Not counted: Re s below that
-  edge for 0.24 < |Im s| ≤ 2.5, |Im s| above that bound, Re s > 2, and |Im s| < 0.01 left of Re s = 10⁻⁴. The other stars
-  have Re s ≥ 0.1, |Im s| ≤ 2.5 only.
+- Complex s, campaign star, l = 2 (l = 3 where it differs): counted are Re s ∈ [0.1, 2] for |Im s| ≤ 10 (6 for l = 3),
+  Re s ∈ [0.03, 0.1] for |Im s| ≤ 6, Re s ∈ [0.01, 0.03] for |Im s| ≤ 2.5 (l = 2 only), and Re s ∈ [−10⁻³, 0.1] for
+  |Im s| ≤ 0.23 (§5.1). The rest is listed under "Not covered" there. The other stars have Re s ≥ 0.1, |Im s| ≤ 2.5 only.
 - The windings of §5 were computed with a step rule that can lose 2π in one step (§5.1) and were not recounted. One
   loss shifts a symmetric-box count by ±2.
 - Only l = 2, 3. The ω = 0.7603, 0.70 and 0.85 stars have the real-γ scans, convergence variants and windings (0.70
