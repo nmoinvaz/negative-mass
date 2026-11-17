@@ -2,7 +2,7 @@
 # Queue g of the pilot: more D for mu(D) (D 10, 12, 20.04, 60.00, 67.01). usage: run_pilot5.sh g PID
 set -u
 HERE=$(cd "$(dirname "$0")" && pwd)
-CLD=/Users/nathan/Source/choptuik-large-d
+CLD=${CLD:-$(cd "$(dirname "$0")/../../.." && pwd)/choptuik-large-d}
 PY=$CLD/.venv/bin/python
 export PYTHONDONTWRITEBYTECODE=1
 run() { local tag=$1; shift; echo "== $tag $(date -u '+%Y-%m-%d %H:%M') UTC" >> "$HERE/logs/$tag.log"

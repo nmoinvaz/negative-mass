@@ -1,9 +1,10 @@
 """Compare the paper's tabulated star (data) against our trusted isotropic solver
-(/home/claude/negative-mass/phase2/mass_check/iso_star.py) INCLUDING beyond the seam,
+(phase2/mass_check/iso_star.py) INCLUDING beyond the seam,
 and quantify the alpha value jump at the seam and the matter-mass error of the painted
 Yukawa tail.  Usage: python3 -I tail_check.py STARS_DIR"""
 import sys, math, numpy as np
-sys.path.insert(0, '/home/claude/negative-mass/phase2/mass_check')
+import os
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'phase2', 'mass_check'))
 import iso_star as I
 
 S = sys.argv[1]

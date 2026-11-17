@@ -8,8 +8,9 @@ Part 2: psi0 static Zerilli for ALL l: derive the ODE  P2 chi'' + P1 chi' + P0 c
 Part 3: positivity proof inequality (symbolic in l) + exact root isolation for small l.
 """
 import sys
+import os
 import sympy as sp
-sys.path.insert(0, '/home/claude/negative-mass/phase2/dg_spectrum')
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dg_spectrum'))
 from common import chi_poly, rs_
 
 l, n, r = sp.symbols('l n r', positive=True)

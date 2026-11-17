@@ -2,8 +2,8 @@
 # Queues c and d of the pilot (see run_pilot.sh). usage: run_pilot2.sh c|d [pid to wait for]
 set -u
 HERE=$(cd "$(dirname "$0")" && pwd)
-CLD=/Users/nathan/Source/choptuik-large-d
-RAW=/Users/nathan/Source/choptuik-large-d-raw
+CLD=${CLD:-$(cd "$(dirname "$0")/../../.." && pwd)/choptuik-large-d}
+RAW=${RAW:-$(cd "$(dirname "$0")/../../.." && pwd)/choptuik-large-d-raw}
 PY=$CLD/.venv/bin/python
 export PYTHONDONTWRITEBYTECODE=1
 run() { local tag=$1; shift; echo "== $tag $(date -u '+%Y-%m-%d %H:%M') UTC" >> "$HERE/logs/$tag.log"

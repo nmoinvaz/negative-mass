@@ -28,8 +28,9 @@ def parse(argv):
 def main():
     opts = parse(sys.argv[1:])
     here = os.path.dirname(os.path.abspath(__file__))
-    cld = opts.get("cld", "/Users/nathan/Source/choptuik-large-d")
-    raw = opts.get("raw", "/Users/nathan/Source/choptuik-large-d-raw")
+    beside = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..")  # the checkout's parent
+    cld = opts.get("cld", os.path.join(beside, "choptuik-large-d"))
+    raw = opts.get("raw", os.path.join(beside, "choptuik-large-d-raw"))
     gam = {}
     for f in (os.path.join(raw, "T79-win", "gamma.jsonl"), os.path.join(cld, "hp", "data", "local", "gamma_dd.jsonl")):
         for line in open(f):
