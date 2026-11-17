@@ -227,8 +227,8 @@ CLD's `matter/LITERATURE.md` §8 already lists μ(D) as a "cheap side test".
 - **Known.** [GGS09a]'s abstract claims one growing mode for every member of the D = 4 static family. Their proof, read
   through a summarizing fetch, uses the zero mode 1/Ψ₀ and covers γ₁ ≠ 0. For the symmetric member (γ₁ = 0, Paper III's
   case) that zero mode is not normalizable, and uniqueness is asserted "by continuity". CG §1.1 says the whole family is
-  proved. [CPS20] treat the symmetric case in D = 4 by a Sturm argument; that is known here from a search summary only,
-  not read. [TS13] find one negative mode numerically in D = 4–11, 20, 50 and 100.
+  proved. [CPS20] treat the symmetric case in D = 4, sketching γ₁ = 0 with a non-normalizable zero-energy solution
+  (read for §7 and [one_mode.md](wormhole_largeD/one_mode.md)). [TS13] find one negative mode numerically in D = 4–11, 20, 50 and 100.
 - **What it would add.** A proof for every D, carrying CPS20's Sturm count, or a nodal count of a static zero mode such as the
   family's dilation, over to Paper III's master equation. Two searches found no D-dimensional proof.
 - **Cost.** About a day: the D-dimensional Schrödinger form, the node count, and sympy checks with controls.
@@ -559,7 +559,7 @@ queue scripts do. The other two need only this repository's setup (numpy, sympy)
 - [GGS09a], [GGS09b], [SH02], [ST17], [TS13]: see CG.
 - [CPS20] F. Cremona, L. Pizzocchero, O. Sarbach, "Gauge-invariant spherical linear perturbations of wormholes in
   Einstein gravity minimally coupled to a self-interacting phantom scalar field", PRD 101, 104061 (2020),
-  arXiv:1911.13103 (journal from the DOI on the arXiv page). Its body was not read.
+  arXiv:1911.13103 (journal from the DOI on the arXiv page). Read for §7 and wormhole_largeD/one_mode.md.
 - [NM08] M. Nozawa, H. Maeda, "Dynamical black holes with symmetry in Einstein–Gauss–Bonnet gravity", arXiv:0710.2709
   (journal *(unverified)*). Proposition 10 read through ar5iv via a summarizing fetch.
 - [MGG99] J. M. Martín-García, C. Gundlach, "All nonspherical perturbations of the Choptuik spacetime decay", PRD 59,

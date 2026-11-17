@@ -284,7 +284,8 @@ None was found. Five obstructions, the first four **argued**, the fifth from the
     normal for 4C₁C₂ < 1, absent (Minkowski) at 4C₁C₂ = 1, and ghost for 4C₁C₂ > 1 [Mae09].
     - At fixed C₂ > 0, C₁ runs through black hole (C₁ < 0), the critical member (C₁ = 0), dispersal
       (0 < C₁ < 1/(4C₂)), Minkowski, and ghost members (C₁ > 1/(4C₂)). The sign structure is checked here. The placement
-      of the black-hole threshold at C₁ = 0 is my reading of [Mae09]'s citation of Brady 1994 for the C₁ = 0 solution;
+      of the black-hole threshold at C₁ = 0, first read off [Mae09]'s citation of Brady 1994 for the C₁ = 0 solution, is
+      checked in [bh_to_wormhole.md](bh_to_wormhole.md) §2: the horizon becomes null and shrinks to zero size there.
       Brady 1994 and Roberts 1989 were not read, and the map to [Fro97]'s parameter was not checked.
     - In the ghost members R² is positive definite, and the construction forms a wormhole [Mae09].
     - The normal-side critical member has a continuous unstable spectrum, 1/2 < Re k < 1, giving β = 1 instead of the

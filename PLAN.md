@@ -13,11 +13,14 @@ independent reproduction of the DG08 spectrum (cheap with the Phase 0 code).
 - ✅ Phantom star radially stable; no l = 2, 3 polar or axial instability; κ_eff > κ_c (phase2/nonradial).
 - ✅ Vacuum exterior cannot host an even-parity instability when |M|/R < 0.374 (Robin κ ≥ 0).
 - ✅ Shirokov's canonical and phantom stars reproduced (profiles exact; paper's masses are enclosed at φ=5 % of φ_c, ours are true ADM).
-- Build static, spherically symmetric negative-ADM-mass stars (Shirokov's sextic phantom soliton, and a
-  perfect-fluid alternative) as an ODE shooting problem.
-- Compute their even-parity linear spectrum for l = 0, 1, 2, 3, ….
-- Test the heuristic: no unstable l ≥ 2 mode for k ≳ 8(|M|/R)²; find the critical compactness where one appears.
-- Check convergence of the unstable spectrum to the Gleiser–Dotti modes as R → 0.
+- ✅ Build static, spherically symmetric negative-ADM-mass stars (Shirokov's sextic phantom soliton, and a
+  perfect-fluid alternative) as an ODE shooting problem. Done for the soliton (phase2/radial); the perfect-fluid
+  alternative was not built.
+- ✅ Compute their even-parity linear spectrum for l = 0, 1, 2, 3, …. Done for l = 0 (phase2/radial) and l = 2, 3
+  (phase2/nonradial); l ≥ 4 is #4.
+- ✅ Test the heuristic: no unstable l ≥ 2 mode for k ≳ 8(|M|/R)²; find the critical compactness where one appears.
+  Settled by the exact thresholds of phase2/dg_proof Theorem 2.
+- ✅ Check convergence of the unstable spectrum to the Gleiser–Dotti modes as R → 0 (phase2/dg_spectrum).
 - ✅ Question: is the point-singularity problem ill-posed (growth unbounded in l), and does any regular star cure it?
   Answered in phase2/ill_posed (#3): Hadamard ill-posed in every angular Sobolev norm, proved for the DG variable Ψ̂
   (the transfer to metric data is #108), and a truncated star with an l-independent Robin κ ≥ 0 caps the growth at

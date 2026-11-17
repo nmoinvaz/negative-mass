@@ -191,6 +191,10 @@ be regarded as folklore. **Do not claim novelty.** Related work:
   systems with bounded motion for all data (integrable classes); runaway in other classes. No gravity.
 - Tafel 2015, arXiv:1505.07775: a Trautman–Bondi lower bound that assumes the DEC.
 - Cline, Jeon & Moore 2004 (quantum ghost decay via gravitons), already in the notes.
+- **Caridi, Corelli & Pani 2026**, arXiv:2603.13210, "Challenging the Weak Cosmic Censorship with Phantom Fields",
+  accepted in Phys. Rev. D, doi:10.1103/3c7y-437m (from the arXiv page, verified). Spherical numerical-relativity
+  collapse of phantom scalar packets: every configuration disperses, with no trapped surface and no negative-mass end
+  state. Context for open item 1 of §4, not a bound.
 
 Not found: any analysis of whether gravitationally coupled classical ghost matter can drive the Bondi mass
 to −∞.

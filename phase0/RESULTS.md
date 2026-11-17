@@ -39,7 +39,9 @@ Negative-mass Schwarzschild is linearly unstable.
 | 6 | 140 | 0.174 | 0.169 |
 | 7 | 252 | 0.129 | 0.126 |
 
-Width shrinks ~ l⁻², growth rises ~ l⁴. **Heuristic (untested):** a regular star of radius R removes the
+Width shrinks ~ l⁻², growth rises ~ l⁴. **Heuristic** (settled since: [phase2/dg_proof](../phase2/dg_proof/RESULTS.md) Theorem 2 gives the exact
+thresholds, and [phase2/ill_posed](../phase2/ill_posed/RESULTS.md) §5 compares this estimate with them): a regular
+star of radius R removes the
 modes with width ≲ R, i.e. all l ≥ 2 once k ≳ 8(|M|/R)². For weak compactness (Shirokov's star,
 |M|/R ≈ 3×10⁻³) no singular mode survives outside the matter — consistent with his lone phantom
 star lasting to t = 1000. Open: the growth rate is unbounded in l, which for the point singularity

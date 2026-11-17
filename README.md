@@ -44,7 +44,7 @@ All three papers: AI-assisted (see each paper's "How the results were obtained")
 
 ## Repository layout
 - `PLAN.md` — phases, status, next steps
-- `paper/` — the two papers above, with `figures/make_figures.py` regenerating every figure from repo data
+- `paper/` — the three papers above, with `figures/make_figures.py` regenerating every figure from repo data
 - `notes/literature.md` — papers read, with what each establishes
 - `phase0/` — verification of published perturbation results for negative-mass Schwarzschild
 - `phase2/` — regular negative-mass (phantom boson) stars: backgrounds, Dotti–Gleiser spectrum, radial and

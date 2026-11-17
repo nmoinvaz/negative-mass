@@ -2,7 +2,8 @@
 
 ## Foundations
 - **Bondi 1957**, Rev. Mod. Phys. 29, 423 — inertial / passive / active mass; runaway pair from Weyl metrics
-  (negative-mass source cancels the conical defect). *Paywalled; not yet read in full.* Chapel Hill version:
+  (negative-mass source cancels the conical defect). *Read from a PDF copy for the novelty check
+  ([novelty/RESULTS.md](novelty/RESULTS.md) §C).* Chapel Hill version:
   https://edition-open-sources.org/sources/5/24
 - **Bonnor & Swaminarayan 1964**, Z. Phys. 177, 240 — exact uniformly accelerated pairs.
 - **Bičák, Hoenselaers & Schmidt 1983**, Proc. R. Soc. A 390, 397 & 411 — solutions without nodal singularities
