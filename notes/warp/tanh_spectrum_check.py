@@ -19,6 +19,7 @@ in #75's closing comment.
     python notes/warp/tanh_spectrum_check.py --part=report --out=DIR
     python notes/warp/tanh_spectrum_check.py --part=planted --mutate=kterm      (a control, must exit 1)
     python notes/warp/tanh_spectrum_check.py --part=report --out=DIR --mutate=next  (shifts #75's second moduli by 3e-4)
+    python notes/warp/tanh_spectrum_check.py --part=compare --out=DIR --ref=DENSE [--mutate=compare]
 
 `solve` writes DIR/s<sigma>_<disc>_m<2m>.npz per sector, one sector at a time, and skips sectors already written.
 `report` reads them all, prints the tables and exits 1 if a check fails. Run one process per (sigma, disc) with
@@ -44,12 +45,13 @@ import scipy.sparse.linalg as spl
 from scipy.interpolate import BSpline
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--part", required=True, choices=["planted", "solve", "report"])
+ap.add_argument("--part", required=True, choices=["planted", "solve", "report", "compare"])
 ap.add_argument("--mutate", default="")
 ap.add_argument("--sigma", type=float, default=2.0)
 ap.add_argument("--disc", default="A", choices=["A", "B"])
 ap.add_argument("--ms", default="0.5,1.5,2.5,3.5,4.5,5.5,6.5,7.5,8.5,9.5,10.5")
 ap.add_argument("--out", default="")
+ap.add_argument("--ref", default="")  # compare: a directory of dense spectra at the same sizes
 ap.add_argument("--nth", type=int, default=0)       # overrides of the discretisation, for convergence studies
 ap.add_argument("--rout", type=float, default=0.0)
 ap.add_argument("--hfac", type=float, default=0.0)
@@ -61,7 +63,7 @@ ap.add_argument("--solver", default="dense", choices=["dense", "arpack"])
 ap.add_argument("--floor", type=float, default=0.07)  # arpack: the |mu| v_c the computed spectrum must reach
 args = ap.parse_args()
 MUT = args.mutate
-if MUT not in ("", "kterm", "half", "next"):
+if MUT not in ("", "kterm", "half", "next", "compare"):
     sys.exit(f"unknown mutation {MUT}")
 K4, NG = 3, 6  # cubic splines, Gauss points per interval
 S_SOB = 3 * (np.pi / 2) ** (4 / 3)
@@ -343,8 +345,25 @@ def part_report():
                       f"(#75, at 1e-5 with its own basis: {ref['bound']:.2f} v_c, a window from {1 / ref['bound']:.4f})")
 
 
+def part_compare():
+    """ARPACK against dense at the same sizes: in every sector file of --out also in --ref, each eigenvalue of either
+    above the truncated spectrum's smallest modulus (with 1e-4 room) has a partner in the other within 1e-10 relative.
+    --mutate=compare scales the ARPACK eigenvalues by 1 + 1e-9."""
+    files = sorted(glob.glob(os.path.join(args.out, "s*_m*.npz")))
+    pairs = [(f, os.path.join(args.ref, os.path.basename(f))) for f in files]
+    pairs = [(f, g) for f, g in pairs if os.path.exists(g)]
+    check("compare present", len(pairs) > 0, f"{len(pairs)} sector files in both {args.out} and {args.ref}")
+    for f, g in pairs:
+        a, d = np.load(f)["mu"] * (1 + 1e-9 if MUT == "compare" else 1.0), np.load(g)["mu"]
+        floor = np.abs(a).min() * (1 + 1e-4)
+        sa, sd = a[np.abs(a) > floor], d[np.abs(d) > floor]
+        worst = max(max(np.min(np.abs(d - z)) / abs(z) for z in sa), max(np.min(np.abs(a - z)) / abs(z) for z in sd))
+        check(f"compare {os.path.basename(f)}", worst < 1e-10 and len(sa) == len(sd),
+              f"{len(sa)} and {len(sd)} eigenvalues above |mu| = {floor:.4f}, worst partner distance {worst:.1e} relative")
+
+
 t_start = time.time()
-{"planted": part_planted, "solve": part_solve, "report": part_report}[args.part]()
+{"planted": part_planted, "solve": part_solve, "report": part_report, "compare": part_compare}[args.part]()
 print(f"wall {time.time() - t_start:.0f} s")
 print("FAILED: " + ", ".join(FAILED) if FAILED else "all checks passed")
 sys.exit(1 if FAILED else 0)
