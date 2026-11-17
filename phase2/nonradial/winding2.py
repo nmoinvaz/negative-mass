@@ -14,6 +14,8 @@ Options (the defaults give the behaviour of the first version):
   --y0=Y0         lower edge. Y0 > 0 counts the upper box x0<Re s<x1, Y0<Im s<y1 on its four edges, counter-
                   clockwise, with no doubling (its mirror image has the same count). Default 0, the symmetric box.
   --rsmult=40     R_s = r_m + rsmult / (min Re k on the contour).  Two values give the "two outer radii" check.
+  --zfac=1        scales the start radius of the Zerilli Riccati integration, r_m + zfac (40 + 20 l)/|s| + 50.
+                  With --rsmult it gives the second outer radius (--rsmult=80 --zfac=2).
   --nseg=10       initial sub-segments per edge (the refinement below 0.4 rad per step follows).
   --cachedir=DIR  directory of the per-evaluation cache (default: beside this script).
   --plant=RE,IM   planted-zero check.  Counts D and D*(s-s0)[*(s-conj s0) if Y0 = 0] on the same cached
@@ -32,12 +34,12 @@ from polar_solver import PolarProblem
 
 args = [a for a in sys.argv[1:] if not a.startswith('--')]
 opts = dict(a[2:].split('=', 1) for a in sys.argv[1:] if a.startswith('--') and '=' in a)
-unknown = set(opts) - {'y0', 'rsmult', 'nseg', 'cachedir', 'plant', 'mutate'}
+unknown = set(opts) - {'y0', 'rsmult', 'zfac', 'nseg', 'cachedir', 'plant', 'mutate'}
 if unknown or len(args) != 6:
     sys.exit(__doc__ + f"\nunknown options {sorted(unknown)} or wrong argument count")
 eps, w, l = int(args[0]), float(args[1]), int(args[2])
 x0, x1, y1 = (float(a) for a in args[3:6])
-y0 = float(opts.get('y0', 0.0)); rsmult = float(opts.get('rsmult', 40.0)); nseg = int(opts.get('nseg', 10))
+y0 = float(opts.get('y0', 0.0)); rsmult = float(opts.get('rsmult', 40.0)); zfac = float(opts.get('zfac', 1.0)); nseg = int(opts.get('nseg', 10))
 cachedir = opts.get('cachedir', HERE); mutate = opts.get('mutate')
 plant = complex(*(float(a) for a in opts['plant'].split(','))) if 'plant' in opts else None
 assert mutate in (None, 'reverse', 'wrongdouble', 'misplant', 'onesided'), mutate
@@ -46,6 +48,9 @@ sym = (y0 == 0.0)
 
 st = B.solve_star(w, eps)
 P = PolarProblem(st, l, rtol=float(os.environ.get('RTOL', '1e-8')))
+if zfac != 1.0:
+    _zq = P.zerilli_q
+    P.zerilli_q = lambda s, r_start=None: _zq(s, r_start=P.rm + zfac * (40.0 + 20.0 * l) / abs(s) + 50.0)
 # fixed scalar start radius: rsmult decay lengths at the slowest-decaying point of the contour
 ks = lambda s: (np.sqrt(1 + (s - 1j*w)**2), np.sqrt(1 + (s + 1j*w)**2))
 cands = [x0 + 1j*y for y in np.linspace(y0, y1, 200)] + [x + 1j*y1 for x in np.linspace(x0, x1, 200)]
@@ -53,7 +58,7 @@ if not sym:
     cands += [x1 + 1j*y for y in np.linspace(y0, y1, 200)] + [x + 1j*y0 for x in np.linspace(x0, x1, 200)]
 kmin = min(min(k.real for k in ks(c)) for c in cands)
 P.Rs_fixed = P.rm + rsmult / kmin
-tag = f"eps{eps:+d}_w{w}_l{l}_{x0}_{x1}_{y1}" + ("" if sym else f"_y0{y0}") + ("" if rsmult == 40.0 else f"_rs{rsmult:g}")
+tag = f"eps{eps:+d}_w{w}_l{l}_{x0}_{x1}_{y1}" + ("" if sym else f"_y0{y0}") + ("" if rsmult == 40.0 else f"_rs{rsmult:g}") + ("" if zfac == 1.0 else f"_z{zfac:g}")
 cf = os.path.join(cachedir, f"winding2_cache_{tag}.pkl")
 cache = pickle.load(open(cf, 'rb')) if os.path.exists(cf) else {}
 T0 = time.time()
@@ -76,16 +81,26 @@ if mutate == 'reverse':
     corners = corners[::-1]
 
 def count(F, verbose):
-    """phase accumulated by F along the contour, adaptive to 0.4 rad per step"""
+    """phase accumulated by F along the contour, adaptive to 0.4 rad per step.  A step of the first two bisection
+    levels is accepted only if its two half steps add up to it: a step whose true change is 2 pi n + small is
+    otherwise taken for a small one (found by the planted-zero check, see RESULTS.md)."""
     total, maxstep, nmin = 0.0, 0.0, np.inf
     for a, b in zip(corners[:-1], corners[1:]):
-        seg = list(np.linspace(0, 1, nseg + 1)); i = 0
-        while i < len(seg) - 1:
-            da, db = F(a + (b - a)*seg[i]), F(a + (b - a)*seg[i + 1])
+        def step(t0, t1, depth):
+            nonlocal maxstep, nmin
+            da, db = F(a + (b - a)*t0), F(a + (b - a)*t1)
             dph = np.angle(db / da)
-            if abs(dph) > 0.4 and seg[i + 1] - seg[i] > 1e-5:
-                seg.insert(i + 1, 0.5*(seg[i] + seg[i + 1])); continue
-            total += dph; maxstep = max(maxstep, abs(dph)); nmin = min(nmin, abs(da)); i += 1
+            fine = t1 - t0 <= 1e-5
+            if abs(dph) <= 0.4 and depth <= 1 and not fine:
+                dm = F(a + (b - a)*0.5*(t0 + t1))
+                if abs(np.angle(dm / da) + np.angle(db / dm) - dph) > 0.1:
+                    return step(t0, 0.5*(t0 + t1), depth + 1) + step(0.5*(t0 + t1), t1, depth + 1)
+            if abs(dph) > 0.4 and not fine:
+                return step(t0, 0.5*(t0 + t1), depth + 1) + step(0.5*(t0 + t1), t1, depth + 1)
+            maxstep = max(maxstep, abs(dph)); nmin = min(nmin, abs(da))
+            return dph
+        for t0, t1 in zip(np.linspace(0, 1, nseg + 1)[:-1], np.linspace(0, 1, nseg + 1)[1:]):
+            total += step(t0, t1, 0)
         if verbose:
             print(f"   edge {a}->{b}: cumulative phase {total:+.4f}  ({len(cache)} evals, {time.time()-T0:.0f}s)", flush=True)
     doubled = sym != (mutate == 'wrongdouble')
