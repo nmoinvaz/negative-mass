@@ -3,8 +3,8 @@
 # beside Q once P and R had finished; a job done here is skipped by Q (step2.sh's done_ check).
 set -u
 HERE=$(cd "$(dirname "$0")" && pwd)
-CLD=/Users/nathan/Source/choptuik-large-d
-RAW=/Users/nathan/Source/choptuik-large-d-raw
+CLD=${CLD:-$(cd "$(dirname "$0")/../../.." && pwd)/choptuik-large-d}
+RAW=${RAW:-$(cd "$(dirname "$0")/../../.." && pwd)/choptuik-large-d-raw}
 PY=$CLD/.venv/bin/python
 export PYTHONDONTWRITEBYTECODE=1
 L=$HERE/logs2; S=$CLD/hp/data/states

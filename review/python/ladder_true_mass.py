@@ -2,7 +2,7 @@
 then refit the mass law a ~ M^p using the paper's own accelerations (mass_law.csv values
 copied below as data)."""
 import sys, math, numpy as np
-sys.path.insert(0, '/home/claude/negative-mass/phase2/mass_check')
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'phase2', 'mass_check'))
 import iso_star as I
 # (cell, omega_canon, omega_phantom, a_core, a_err, m_mean_paper) from campaign/mass_law.csv
 rows = [("w0850", 0.85, 0.8590975998840956, 2.34522366e-05, 1.61353642e-06, 0.0091570754),

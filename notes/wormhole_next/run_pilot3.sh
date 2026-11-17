@@ -3,8 +3,8 @@
 # choptuik-large-d's relayout.py into the scratch folder given as $3, then its real-axis zero. usage: run_pilot3.sh e PID DIR
 set -u
 HERE=$(cd "$(dirname "$0")" && pwd)
-CLD=/Users/nathan/Source/choptuik-large-d
-RAW=/Users/nathan/Source/choptuik-large-d-raw
+CLD=${CLD:-$(cd "$(dirname "$0")/../../.." && pwd)/choptuik-large-d}
+RAW=${RAW:-$(cd "$(dirname "$0")/../../.." && pwd)/choptuik-large-d-raw}
 PY=$CLD/.venv/bin/python
 export PYTHONDONTWRITEBYTECODE=1
 mkdir -p "$HERE/logs" "$3"

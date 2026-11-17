@@ -3,7 +3,7 @@
 # in the same layout and cache as box_D4, with a planted pair. Same conventions as step2.sh.
 set -u
 HERE=$(cd "$(dirname "$0")" && pwd)
-CLD=/Users/nathan/Source/choptuik-large-d
+CLD=${CLD:-$(cd "$(dirname "$0")/../../.." && pwd)/choptuik-large-d}
 PY=$CLD/.venv/bin/python
 export PYTHONDONTWRITEBYTECODE=1
 L=$HERE/logs2; C=$HERE/counts

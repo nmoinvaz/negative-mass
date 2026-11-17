@@ -3,8 +3,8 @@
 # hp/modecount_test_axis.py, output into this folder. usage: run_pilot4.sh f PID
 set -u
 HERE=$(cd "$(dirname "$0")" && pwd)
-CLD=/Users/nathan/Source/choptuik-large-d
-RAW=/Users/nathan/Source/choptuik-large-d-raw
+CLD=${CLD:-$(cd "$(dirname "$0")/../../.." && pwd)/choptuik-large-d}
+RAW=${RAW:-$(cd "$(dirname "$0")/../../.." && pwd)/choptuik-large-d-raw}
 PY=$CLD/.venv/bin/python
 export PYTHONDONTWRITEBYTECODE=1
 mkdir -p "$HERE/logs"

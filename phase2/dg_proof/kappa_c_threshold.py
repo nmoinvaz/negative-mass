@@ -6,7 +6,7 @@ kappa_c(R) = (d ln phi0/dx)(R) = (1 + 2/R) N(R)/((cR-6) chi(R)),  N = c chi - (c
 """
 import sys
 import sympy as sp
-sys.path.insert(0, '/home/claude/negative-mass/phase2/dg_spectrum')
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dg_spectrum'))
 from common import chi_poly, rs_ as r, symbolic
 
 l, R, t = sp.symbols('l R t', positive=True)

@@ -9,7 +9,7 @@ Part 3: positivity proof inequality (symbolic in l) + exact root isolation for s
 """
 import sys
 import sympy as sp
-sys.path.insert(0, '/home/claude/negative-mass/phase2/dg_spectrum')
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dg_spectrum'))
 from common import chi_poly, rs_
 
 l, n, r = sp.symbols('l n r', positive=True)

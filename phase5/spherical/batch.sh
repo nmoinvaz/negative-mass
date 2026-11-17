@@ -1,6 +1,6 @@
 #!/bin/bash
 # usage: batch.sh jobfile ; each line: NAME STAR h R T [k=v ...]; skips finished runs (final.npz present)
-cd /home/claude/negative-mass/phase5/spherical
+cd "$(dirname "$0")"
 while read -r line; do
   [ -z "$line" ] && continue
   name=$(echo $line | cut -d' ' -f1)

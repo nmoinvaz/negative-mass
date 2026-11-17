@@ -2,7 +2,7 @@
 partial fractions of psi0^2 dx/dr = r chi^2/((c r-6)^2 (r+2)):  polynomial + A/(r-r_s)^2 + B/(r-r_s) + C/(r+2).
 B = 0 (Lemma L1); check C = -1/2, i.e. chi(-2)^2 = (c+3)^2 ... and record A."""
 import sys, sympy as sp
-sys.path.insert(0, '/home/claude/negative-mass/phase2/dg_spectrum')
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'dg_spectrum'))
 from common import chi_poly, rs_ as r
 for l in range(2, 16):
     c = (l + 2)*(l - 1); chi = chi_poly(l); rs = sp.Rational(6, c)
