@@ -1,0 +1,10 @@
+cache eps-1 w0.7 l2 box [0.1,2.0] |Im s|<=2.5: 67 stored, worst relative difference of 3 recomputed points 1.87e-11 (limit 1e-06)  PASS
+cache eps-1 w0.7 l3 box [0.1,2.0] |Im s|<=2.5: 104 stored, worst relative difference of 3 recomputed points 1.12e-12 (limit 1e-06)  PASS
+cache eps-1 w0.85 l2 box [0.1,2.0] |Im s|<=2.5: 63 stored, worst relative difference of 3 recomputed points 1.48e-12 (limit 1e-06)  PASS
+cache eps-1 w0.85 l3 box [0.1,2.0] |Im s|<=2.5: 77 stored, worst relative difference of 3 recomputed points 7.98e-13 (limit 1e-06)  PASS
+exit 0
+cache eps-1 w0.7 l2 box [0.1,2.0] |Im s|<=2.5: 67 stored, worst relative difference of 3 recomputed points 1.00e-03 (limit 1e-06)  FAIL  [mutate=scale]
+cache eps-1 w0.7 l3 box [0.1,2.0] |Im s|<=2.5: 104 stored, worst relative difference of 3 recomputed points 1.00e-03 (limit 1e-06)  FAIL  [mutate=scale]
+cache eps-1 w0.85 l2 box [0.1,2.0] |Im s|<=2.5: 63 stored, worst relative difference of 3 recomputed points 1.00e-03 (limit 1e-06)  FAIL  [mutate=scale]
+cache eps-1 w0.85 l3 box [0.1,2.0] |Im s|<=2.5: 77 stored, worst relative difference of 3 recomputed points 1.00e-03 (limit 1e-06)  FAIL  [mutate=scale]
+exit 1 (1 expected)
