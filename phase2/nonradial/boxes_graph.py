@@ -76,13 +76,13 @@ for (x0, x1, y0, y1, sym), b in order:
     px0, px1, py0, py1 = xm(max(x0, XLO)), xm(x1), ym(max(y0, YLO)), ym(y1)
     tip = tip_of(b, x0, x1, y0, y1, sym)
     if b["name"] == "stored box":
-        tip += "; l = 3 was counted in section 5 with the earlier step rule and not recounted"
+        tip += "; l = 3 was counted in section 5 and recounted with the current rule in section 5.2 (#54): 0"
     svg.add(f'<rect x="{px0:.1f}" y="{py1:.1f}" width="{px1 - px0:.1f}" height="{py0 - py1:.1f}" '
             f'fill="{color}" fill-opacity="0.16" stroke="{color}" stroke-width="1.5"><title>{esc(tip)}</title></rect>')
     lx, ly = LPOS.get(b["name"], (math.sqrt(max(x0, XLO) * x1), math.sqrt(max(y0, YLO) * y1)))
     svg.text(xm(lx), ym(ly) + 4, b["name"], size=11, fill=INK, anchor="middle", weight="bold")
     if b["name"] == "stored box":
-        svg.text(xm(lx), ym(ly) + 18, "l = 3 counted in §5 only, old rule", size=10, anchor="middle")
+        svg.text(xm(lx), ym(ly) + 18, "l = 3: 0, recounted in §5.2", size=10, anchor="middle")
 for v, lab in ((1 - OMEGA, "1 − ω"), (1 + OMEGA, "1 + ω")):
     py = ym(v)
     svg.add(f'<line x1="{x}" y1="{py:.1f}" x2="{x + w}" y2="{py:.1f}" stroke="{INK_SOFT}" '

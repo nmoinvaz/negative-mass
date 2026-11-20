@@ -222,15 +222,16 @@ Mini BS I QNM, 0.0000 displaced.
 | phantom ω = 0.70 | 2 | same | **0.0000** |
 | phantom ω = 0.70 | 3 | same | **0.0000** |
 | phantom ω = 0.85 | 2 | same | **0.0000** |
-| phantom ω = 0.85 | 3 | same | **−2.0000** |
+| phantom ω = 0.85 | 3 | same | **0.0000** (§5.2; #7's −2.0000 was the first step rule) |
 
 (`winding2_output.txt` for the first three rows, #7's I7-win2 at 60553bc for the rest; max phase step 0.4 rad; D(x0),
-D(x1) have the same sign.)
+D(x1) have the same sign. §5.2 recounts every row with the corrected step rule, and only the last row changes.)
 
-**Discrepancy (#7).** A count of zeros cannot be negative, so for ω = 0.85, l = 3 D has a net pole in the box. A
-hypothesis, tested in #54: the Zerilli column (1, q/f) of `polar_solver.decaying_plane` has a pole wherever the
-decaying Zerilli solution vanishes at r_m. If so, each winding counts zeros minus poles, and a 0 alone does not exclude a
-zero. Until #54 settles it, the 0 counts are conditional on D having no pole in the box.
+**Discrepancy (#7), resolved by #54.** #7 counted −2 for ω = 0.85, l = 3. A count of zeros cannot be negative, so this
+was read as a net pole of D in the box, with a hypothesis for #54 to test: the Zerilli column (1, q/f) of
+`polar_solver.decaying_plane` has a pole wherever the decaying Zerilli solution vanishes at r_m. The recount of §5.2 gives
+0, and the −2 was the first step rule losing one 2π on the left edge. The hypothesis is untested. Each winding counts
+zeros minus poles, so the 0 counts remain conditional on D having no pole in the box.
 
 No oscillatory
 instability with e-folding time ≤ 10 (code units) and |Im s| ≤ 2.5. This range covers the scalar
@@ -268,7 +269,7 @@ l = 2) still gives winding +0.0000, with the D(x0), D(x1), max phase step 0.39 a
 `winding2_output.txt` (rerun from scratch with the stored script at 478cbd9, then with the new rule).
 
 One such loss shifts the count of a symmetric box by ±2, the size of #7's −2 for ω = 0.85, l = 3. The windings of §5
-were computed with the first rule and were not recounted here. Whether the −2 is this or a pole is for #54.
+were computed with the first rule and are recounted in §5.2 (#54), where the −2 turns out to be one such loss.
 
 #### Boxes
 
@@ -376,8 +377,8 @@ roots closer than about 3 % in γ is therefore excluded only by that smoothness,
 - The strip Re s < 0.03 for 2.5 < |Im s|, and the strip Re s < 0.1 for |Im s| > 6.
 - Re s ∈ [0.1, 2] above |Im s| = 10 (l = 2) and 6 (l = 3), and Re s > 2.
 - The sliver |Im s| < 0.01 left of Re s = 10⁻⁴.
-- Poles of D (#54). Every count is zeros minus poles, and a count of 0 is not a proof that there is no zero.
-- The windings of §5, #7 and the other stars, which were made with the old step rule (above) and not recounted.
+- Poles of D. Every count is zeros minus poles, and a count of 0 is not a proof that there is no zero. #54 found no net
+  pole (§5.2) but did not search for poles.
 - l ≥ 4 (#4).
 
 Status: numerical evidence, conditional on D having no pole in each box (#54).
@@ -456,11 +457,9 @@ The left-edge phase of the three l = 3 boxes is now +13.17 (ω = 0.85), +13.60 (
   run, as it was not needed.
 - The hypothesis that the Zerilli column (1, q/f) has a pole where ψ(r_m; s) vanishes is neither confirmed nor refuted.
   Its only evidence was the −2. A winding of 0 is still zeros minus poles, and nothing here searches for poles.
-- Superseded here and not edited, since #54 may write only this subsection and §7: the §5 table row ω = 0.85, l = 3
-  (−2.0000), the claim of the paragraph "Discrepancy (#7)" that D has a net pole there, the bullet "The windings of §5 …"
-  of the "Not covered" list in §5.1 and the clause of §6 item 2 that ω = 0.85, l = 3 gives −2, a net pole. The "conditional
-  on D having no pole" of §5 and of the "Status" line in §5.1 still holds, since poles were not searched for. The rows of §8
-  for the new files are not added: `collect_i54.py`, `check_cache_i54.py`, `replay_old_rule_i54.py` and `i54_*_output.txt`.
+- The passages this recount supersedes were edited by the coordinator at the merge: the §5 table row ω = 0.85, l = 3,
+  the paragraph "Discrepancy (#7)", the "Not covered" list of §5.1 and §6 item 2. The "conditional on D having no pole"
+  of §5 and of the "Status" line in §5.1 still holds, since poles were not searched for.
 
 ## 6. Conclusions
 
@@ -472,8 +471,8 @@ The left-edge phase of the three l = 3 boxes is now +13.17 (ω = 0.85), +13.60 (
    l = 2 and 3 (#7).
 2. **Polar, complex growth rates.** Argument-principle count (validated on a known QNM): winding **0** in
    Re s ∈ [0.1, 2], |Im s| ≤ 2.5, for phantom l = 2, phantom l = 3 and canonical l = 2, and for ω = 0.70
-   (l = 2, 3) and ω = 0.85 (l = 2). This means 0 zeros only if D has no pole in the box. ω = 0.85, l = 3
-   gives −2, a net pole, so that condition is open (§5, #54).
+   and 0.85 (l = 2, 3). #7's −2 for ω = 0.85, l = 3 was an error of the first step rule, and the recount gives 0
+   (§5.2). This means 0 zeros only if D has no pole in the box, which was not searched for.
 3. **Axial: stable for all l ≥ 2.** V_ax > 0 everywhere; positivity is exact once V_ax > 0 is checked on
    the grid (r²V_ax/(α² l(l+1)) ≥ 1 − 10⁻⁶).
 4. **κ_eff.** κ_eff − κ_c = s²/(q_int − g) exactly, and for the phantom star q_int > g, so the matter
@@ -531,6 +530,9 @@ The left-edge phase of the three l = 3 boxes is now +13.17 (ω = 0.85), +13.60 (
 | `polish_zero.py` | secant polish of a zero of D near the axis, with the Mini BS I control |
 | `axis_scan.py` | \|D\| on a vertical line; its Mini BS control fails, not used (§5.1) |
 | `collect_i5.py`, `i5_boxes_output.txt` | the table of §5.1 from the raw logs (negative-mass-raw, I5-rpi5) |
+| `collect_i54.py`, `i54_recount_output.txt` | the recount table of §5.2 from the raw logs (I54-rpi5, I5-rpi5, I7-win2) |
+| `replay_old_rule_i54.py`, `i54_replay_output.txt` | the first step rule replayed on #7's stored boxes, and the lost step (§5.2) |
+| `check_cache_i54.py`, `i54_cache_check_output.txt` | stored D values recomputed on a second machine (§5.2) |
 | `l456_graph.py` → `l456_mode_condition.svg` | the figure of §3a |
 | `boxes_graph.py` → `complex_s_boxes.svg` | the figure of §5.1 |
 | `data_graphs.py` | SVG drawing primitives of both figures, vendored unchanged (its docstring names the canonical copy) |
