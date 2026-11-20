@@ -1,0 +1,146 @@
+  [PASS] v_c sR=2: 3.744900 against #75's 3.7449
+
+== sigma R = 2, v_c = 3.744900
+  m    | n A / B       | leading mu v_c (A)  | |mu| v_c A | B        | #75      | rel. to #75 | converged above, 1e-5 / 1e-4 (#75) | eigs in window | real in window A / B | next |mu| v_c A | B        | #75      | rel. to #75 | A - B lead, next | dir
+   0.5 | 32144 / 42408 | -0.02730-0.40865i | 0.409556   | 0.409556 | 0.409556 | 1.6e-08     | 0.0680 / 0.0680 (0.0777)           |  124           | 0 / 0                | 0.257195         | 0.257195 | 0.257195 | 1.4e-06     | - -              | I111-win/eig
+  [PASS] lead sR=2 m=0.5: leading |mu| v_c 0.409556 against #75's 0.409556
+  [PASS] next sR=2 m=0.5: second |mu| v_c 0.257195 against #75's 0.257195
+  [PASS] AB sR=2 m=0.5: A and B leading differ by 2.5e-10 relative
+  [PASS] sym sR=2 m=0.5: window symmetric under mu -> -mu to 3.5e-07 relative
+  [PASS] noreal sR=2 m=0.5: no real eigenvalue with |mu| v_c above 0.0680, in A or B
+   1.5 | 35496 / 47124 | -0.00483-0.29895i | 0.298994   | 0.298994 | 0.298994 | 6.5e-07     | 0.0644 / 0.0644 (0.0803)           |  124           | 0 / 0                | 0.207406         | 0.207406 | 0.207406 | 3.1e-07     | - -              | I111-win/eig
+  [PASS] lead sR=2 m=1.5: leading |mu| v_c 0.298994 against #75's 0.298994
+  [PASS] next sR=2 m=1.5: second |mu| v_c 0.207406 against #75's 0.207406
+  [PASS] AB sR=2 m=1.5: A and B leading differ by 2.9e-10 relative
+  [PASS] sym sR=2 m=1.5: window symmetric under mu -> -mu to 2.4e-07 relative
+  [PASS] noreal sR=2 m=1.5: no real eigenvalue with |mu| v_c above 0.0644, in A or B
+   2.5 | 39590 / 52080 | -0.00106+0.23298i | 0.232982   | 0.232982 | 0.232982 | 9.2e-07     | 0.0608 / 0.0608 (0.0751)           |  124           | 0 / 0                | 0.173753         | 0.173753 | 0.173753 | 2.3e-06     | - -              | I111-win/eig
+  [PASS] lead sR=2 m=2.5: leading |mu| v_c 0.232982 against #75's 0.232982
+  [PASS] next sR=2 m=2.5: second |mu| v_c 0.173753 against #75's 0.173753
+  [PASS] AB sR=2 m=2.5: A and B leading differ by 3.2e-10 relative
+  [PASS] sym sR=2 m=2.5: window symmetric under mu -> -mu to 7.0e-08 relative
+  [PASS] noreal sR=2 m=2.5: no real eigenvalue with |mu| v_c above 0.0608, in A or B
+   3.5 | 43512 / 57720 | -0.00026-0.19037i | 0.190371   | 0.190371 | 0.190371 | 5.4e-07     | 0.0572 / 0.0572 (0.0711)           |  124           | 0 / 0                | 0.149201         | 0.149201 | 0.149201 | 3.2e-06     | - -              | I111-win/eig
+  [PASS] lead sR=2 m=3.5: leading |mu| v_c 0.190371 against #75's 0.190371
+  [PASS] next sR=2 m=3.5: second |mu| v_c 0.149201 against #75's 0.149201
+  [PASS] AB sR=2 m=3.5: A and B leading differ by 3.3e-10 relative
+  [PASS] sym sR=2 m=3.5: window symmetric under mu -> -mu to 4.5e-08 relative
+  [PASS] noreal sR=2 m=3.5: no real eigenvalue with |mu| v_c above 0.0572, in A or B
+   4.5 | 47792 / 63180 | +0.00007+0.16080i | 0.160798   | 0.160798 | 0.160798 | 2.9e-06     | 0.0697 / 0.0697 (0.0667)           |   60           | 0 / 0                | 0.130580         | 0.130580 | 0.130580 | 1.7e-06     | - -              | I111-win/eig
+  [PASS] lead sR=2 m=4.5: leading |mu| v_c 0.160798 against #75's 0.160798
+  [PASS] next sR=2 m=4.5: second |mu| v_c 0.130580 against #75's 0.130580
+  [PASS] AB sR=2 m=4.5: A and B leading differ by 3.1e-10 relative
+  [PASS] sym sR=2 m=4.5: window symmetric under mu -> -mu to 4.7e-09 relative
+  [PASS] noreal sR=2 m=4.5: no real eigenvalue with |mu| v_c above 0.0697, in A or B
+   5.5 | 52514 / 69090 | +0.00002-0.13913i | 0.139127   | 0.139127 | 0.139127 | 4.8e-07     | 0.0654 / 0.0654 (0.0688)           |   60           | 0 / 0                | 0.116022         | 0.116022 | 0.116022 | 7.1e-07     | - -              | I111-win/eig
+  [PASS] lead sR=2 m=5.5: leading |mu| v_c 0.139127 against #75's 0.139127
+  [PASS] next sR=2 m=5.5: second |mu| v_c 0.116022 against #75's 0.116022
+  [PASS] AB sR=2 m=5.5: A and B leading differ by 2.9e-10 relative
+  [PASS] sym sR=2 m=5.5: window symmetric under mu -> -mu to 3.6e-09 relative
+  [PASS] noreal sR=2 m=5.5: no real eigenvalue with |mu| v_c above 0.0654, in A or B
+   6.5 | 57204 / 75558 | -0.00001+0.12258i | 0.122581   | 0.122581 | 0.122581 | 1.8e-06     | 0.0616 / 0.0616 (0.0649)           |   60           | 0 / 0                | 0.104349         | 0.104349 | 0.104349 | 1.4e-06     | - -              | I111-win/eig
+  [PASS] lead sR=2 m=6.5: leading |mu| v_c 0.122581 against #75's 0.122581
+  [PASS] next sR=2 m=6.5: second |mu| v_c 0.104349 against #75's 0.104349
+  [PASS] AB sR=2 m=6.5: A and B leading differ by 2.6e-10 relative
+  [PASS] sym sR=2 m=6.5: window symmetric under mu -> -mu to 2.8e-09 relative
+  [PASS] noreal sR=2 m=6.5: no real eigenvalue with |mu| v_c above 0.0616, in A or B
+   7.5 | 62094 / 81472 | -0.00000-0.10954i | 0.109541   | 0.109541 | 0.109541 | 4.4e-06     | 0.0582 / 0.0582 (0.0611)           |   60           | 0 / 0                | 0.094791         | 0.094791 | 0.094791 | 1.0e-06     | - -              | I111-win/eig
+  [PASS] lead sR=2 m=7.5: leading |mu| v_c 0.109541 against #75's 0.109541
+  [PASS] next sR=2 m=7.5: second |mu| v_c 0.094791 against #75's 0.094791
+  [PASS] AB sR=2 m=7.5: A and B leading differ by 2.4e-10 relative
+  [PASS] sym sR=2 m=7.5: window symmetric under mu -> -mu to 2.2e-09 relative
+  [PASS] noreal sR=2 m=7.5: no real eigenvalue with |mu| v_c above 0.0582, in A or B
+   8.5 | 66960 / 88480 | -0.00000-0.09900i | 0.099002   | 0.099002 | 0.099002 | 2.5e-06     | 0.0552 / 0.0552 (0.0578)           |   60           | 0 / 0                | 0.086825         | 0.086825 | 0.086825 | 4.0e-06     | - -              | I111-win/eig
+  [PASS] lead sR=2 m=8.5: leading |mu| v_c 0.099002 against #75's 0.099002
+  [PASS] next sR=2 m=8.5: second |mu| v_c 0.086825 against #75's 0.086825
+  [PASS] AB sR=2 m=8.5: A and B leading differ by 2.2e-10 relative
+  [PASS] sym sR=2 m=8.5: window symmetric under mu -> -mu to 1.8e-09 relative
+  [PASS] noreal sR=2 m=8.5: no real eigenvalue with |mu| v_c above 0.0552, in A or B
+   9.5 |  9720 / 12936 | -0.00000-0.09031i | 0.090309   | 0.090309 | 0.090309 | 1.1e-06     | 0.0801 / 0.0651 (0.0595)           |   20           | 0 / 0                | 0.080086         | 0.080087 | 0.080088 | 2.0e-05     | - -              | I94-win/eig
+  [PASS] lead sR=2 m=9.5: leading |mu| v_c 0.090309 against #75's 0.090309
+  [PASS] next sR=2 m=9.5: second |mu| v_c 0.080086 against #75's 0.080088
+  [PASS] AB sR=2 m=9.5: A and B leading differ by 7.9e-07 relative
+  [PASS] sym sR=2 m=9.5: window symmetric under mu -> -mu to 3.9e-06 relative
+  [PASS] noreal sR=2 m=9.5: no real eigenvalue with |mu| v_c above 0.0651, in A or B
+  10.5 | 10286 / 13674 | -0.00000-0.08302i | 0.083018   | 0.083018 | 0.083018 | 5.5e-06     | 0.0743 / 0.0613 (0.0563)           |   20           | 0 / 0                | 0.074315         | 0.074315 | 0.074316 | 1.9e-05     | - -              | I94-win/eig
+  [PASS] lead sR=2 m=10.5: leading |mu| v_c 0.083018 against #75's 0.083018
+  [PASS] next sR=2 m=10.5: second |mu| v_c 0.074315 against #75's 0.074316
+  [PASS] AB sR=2 m=10.5: A and B leading differ by 7.8e-07 relative
+  [PASS] sym sR=2 m=10.5: window symmetric under mu -> -mu to 4.0e-06 relative
+  [PASS] noreal sR=2 m=10.5: no real eigenvalue with |mu| v_c above 0.0613, in A or B
+  tolerance 1e-05: every eigenvalue with |mu| v_c >= 0.0830 is converged in every sector computed (the leading eigenvalue of the last sector is 0.0830), so no real zero mode with |v| <= 12.05 v_c, provided the leading eigenvalue keeps falling with m (#75, at 1e-5 with its own basis: 12.05 v_c, a window from 0.0830)
+  tolerance 1e-04: every eigenvalue with |mu| v_c >= 0.0830 is converged in every sector computed (the leading eigenvalue of the last sector is 0.0830), so no real zero mode with |v| <= 12.05 v_c, provided the leading eigenvalue keeps falling with m (#75, at 1e-5 with its own basis: 12.05 v_c, a window from 0.0830)
+  [PASS] v_c sR=4: 2.470971 against #75's 2.470971
+
+== sigma R = 4, v_c = 2.470971
+  m    | n A / B       | leading mu v_c (A)  | |mu| v_c A | B        | #75      | rel. to #75 | converged above, 1e-5 / 1e-4 (#75) | eigs in window | real in window A / B | next |mu| v_c A | B        | #75      | rel. to #75 | A - B lead, next | dir
+   0.5 | 51548 / 67716 | -0.01590-0.36731i | 0.367657   | 0.367657 | 0.367657 | 8.7e-07     | 0.0712 / 0.0618 (0.0969)           |  124           | 0 / 0                | 0.250083         | 0.250083 | 0.250083 | 9.7e-07     | - -              | I111-win/eig
+  [PASS] lead sR=4 m=0.5: leading |mu| v_c 0.367657 against #75's 0.367657
+  [PASS] next sR=4 m=0.5: second |mu| v_c 0.250083 against #75's 0.250083
+  [PASS] AB sR=4 m=0.5: A and B leading differ by 1.6e-10 relative
+  [PASS] sym sR=4 m=0.5: window symmetric under mu -> -mu to 2.2e-08 relative
+  [PASS] noreal sR=4 m=0.5: no real eigenvalue with |mu| v_c above 0.0618, in A or B
+   1.5 | 53652 / 70686 | -0.00278+0.28852i | 0.288531   | 0.288531 | 0.288531 | 8.9e-07     | 0.0679 / 0.0593 (0.0910)           |  124           | 0 / 0                | 0.211765         | 0.211765 | 0.211765 | 1.3e-06     | - -              | I111-win/eig
+  [PASS] lead sR=4 m=1.5: leading |mu| v_c 0.288531 against #75's 0.288531
+  [PASS] next sR=4 m=1.5: second |mu| v_c 0.211765 against #75's 0.211765
+  [PASS] AB sR=4 m=1.5: A and B leading differ by 2.7e-10 relative
+  [PASS] sym sR=4 m=1.5: window symmetric under mu -> -mu to 9.8e-08 relative
+  [PASS] noreal sR=4 m=1.5: no real eigenvalue with |mu| v_c above 0.0593, in A or B
+   2.5 | 56282 / 73656 | +0.00060-0.23538i | 0.235378   | 0.235378 | 0.235378 | 1.7e-06     | 0.0648 / 0.0568 (0.0858)           |  124           | 0 / 0                | 0.182557         | 0.182557 | 0.182557 | 5.5e-07     | - -              | I111-win/eig
+  [PASS] lead sR=4 m=2.5: leading |mu| v_c 0.235378 against #75's 0.235378
+  [PASS] next sR=4 m=2.5: second |mu| v_c 0.182557 against #75's 0.182557
+  [PASS] AB sR=4 m=2.5: A and B leading differ by 4.2e-10 relative
+  [PASS] sym sR=4 m=2.5: window symmetric under mu -> -mu to 1.1e-07 relative
+  [PASS] noreal sR=4 m=2.5: no real eigenvalue with |mu| v_c above 0.0568, in A or B
+   3.5 | 58386 / 77220 | +0.00015-0.19848i | 0.198480   | 0.198480 | 0.198480 | 9.1e-08     | 0.0620 / 0.0543 (0.0806)           |  124           | 0 / 0                | 0.160023         | 0.160023 | 0.160023 | 2.0e-06     | - -              | I111-win/eig
+  [PASS] lead sR=4 m=3.5: leading |mu| v_c 0.198480 against #75's 0.198480
+  [PASS] next sR=4 m=3.5: second |mu| v_c 0.160023 against #75's 0.160023
+  [PASS] AB sR=4 m=3.5: A and B leading differ by 6.0e-10 relative
+  [PASS] sym sR=4 m=3.5: window symmetric under mu -> -mu to 1.0e-07 relative
+  [PASS] noreal sR=4 m=3.5: no real eigenvalue with |mu| v_c above 0.0543, in A or B
+   4.5 | 61016 / 80190 | +0.00004+0.17151i | 0.171512   | 0.171512 | 0.171512 | 6.1e-07     | 0.0685 / 0.0685 (0.0840)           |   60           | 0 / 0                | 0.142278         | 0.142278 | 0.142278 | 9.1e-07     | - -              | I111-win/eig
+  [PASS] lead sR=4 m=4.5: leading |mu| v_c 0.171512 against #75's 0.171512
+  [PASS] next sR=4 m=4.5: second |mu| v_c 0.142278 against #75's 0.142278
+  [PASS] AB sR=4 m=4.5: A and B leading differ by 7.7e-10 relative
+  [PASS] sym sR=4 m=4.5: window symmetric under mu -> -mu to 1.1e-08 relative
+  [PASS] noreal sR=4 m=4.5: no real eigenvalue with |mu| v_c above 0.0685, in A or B
+   5.5 | 63646 / 83754 | -0.00001+0.15097i | 0.150969   | 0.150969 | 0.150969 | 2.0e-06     | 0.0649 / 0.0649 (0.0790)           |   60           | 0 / 0                | 0.128000         | 0.128000 | 0.128000 | 1.5e-06     | - -              | I111-win/eig
+  [PASS] lead sR=4 m=5.5: leading |mu| v_c 0.150969 against #75's 0.150969
+  [PASS] next sR=4 m=5.5: second |mu| v_c 0.128000 against #75's 0.128000
+  [PASS] AB sR=4 m=5.5: A and B leading differ by 9.7e-10 relative
+  [PASS] sym sR=4 m=5.5: window symmetric under mu -> -mu to 6.1e-09 relative
+  [PASS] noreal sR=4 m=5.5: no real eigenvalue with |mu| v_c above 0.0649, in A or B
+   6.5 | 66276 / 87318 | -0.00000-0.13481i | 0.134809   | 0.134809 | 0.134809 | 3.6e-06     | 0.0617 / 0.0617 (0.0745)           |   60           | 0 / 0                | 0.116287         | 0.116287 | 0.116287 | 2.1e-06     | - -              | I111-win/eig
+  [PASS] lead sR=4 m=6.5: leading |mu| v_c 0.134809 against #75's 0.134809
+  [PASS] next sR=4 m=6.5: second |mu| v_c 0.116287 against #75's 0.116287
+  [PASS] AB sR=4 m=6.5: A and B leading differ by 1.2e-09 relative
+  [PASS] sym sR=4 m=6.5: window symmetric under mu -> -mu to 2.6e-09 relative
+  [PASS] noreal sR=4 m=6.5: no real eigenvalue with |mu| v_c above 0.0617, in A or B
+   7.5 | 68906 / 90288 | -0.00000+0.12177i | 0.121766   | 0.121766 | 0.121766 | 5.3e-07     | 0.0588 / 0.0588 (0.0705)           |   60           | 0 / 0                | 0.106515         | 0.106515 | 0.106515 | 2.0e-06     | - -              | I111-win/eig
+  [PASS] lead sR=4 m=7.5: leading |mu| v_c 0.121766 against #75's 0.121766
+  [PASS] next sR=4 m=7.5: second |mu| v_c 0.106515 against #75's 0.106515
+  [PASS] AB sR=4 m=7.5: A and B leading differ by 1.5e-09 relative
+  [PASS] sym sR=4 m=7.5: window symmetric under mu -> -mu to 2.2e-09 relative
+  [PASS] noreal sR=4 m=7.5: no real eigenvalue with |mu| v_c above 0.0588, in A or B
+   8.5 | 71010 / 93852 | -0.00000+0.11102i | 0.111020   | 0.111020 | 0.111020 | 4.9e-07     | 0.0562 / 0.0562 (0.0727)           |   60           | 0 / 0                | 0.098245         | 0.098245 | 0.098245 | 1.5e-06     | - -              | I111-win/eig
+  [PASS] lead sR=4 m=8.5: leading |mu| v_c 0.111020 against #75's 0.111020
+  [PASS] next sR=4 m=8.5: second |mu| v_c 0.098245 against #75's 0.098245
+  [PASS] AB sR=4 m=8.5: A and B leading differ by 1.8e-09 relative
+  [PASS] sym sR=4 m=8.5: window symmetric under mu -> -mu to 2.6e-09 relative
+  [PASS] noreal sR=4 m=8.5: no real eigenvalue with |mu| v_c above 0.0562, in A or B
+   9.5 |  9864 / 13104 | -0.00000+0.10201i | 0.102014   | 0.102014 | 0.102014 | 1.4e-06     | 0.0912 / 0.0750 (0.0688)           |   16           | 0 / 0                | 0.091156         | 0.091157 | 0.091157 | 1.6e-05     | - -              | I94-win/eig
+  [PASS] lead sR=4 m=9.5: leading |mu| v_c 0.102014 against #75's 0.102014
+  [PASS] next sR=4 m=9.5: second |mu| v_c 0.091156 against #75's 0.091157
+  [FAIL] AB sR=4 m=9.5: A and B leading differ by 1.9e-06 relative
+  [PASS] sym sR=4 m=9.5: window symmetric under mu -> -mu to 4.1e-06 relative
+  [PASS] noreal sR=4 m=9.5: no real eigenvalue with |mu| v_c above 0.0750, in A or B
+  10.5 | 10286 / 13674 | -0.00000+0.09436i | 0.094358   | 0.094358 | 0.094358 | 4.4e-06     | 0.0850 / 0.0708 (0.0653)           |   16           | 0 / 0                | 0.085016         | 0.085017 | 0.085018 | 2.1e-05     | - -              | I94-win/eig
+  [PASS] lead sR=4 m=10.5: leading |mu| v_c 0.094358 against #75's 0.094358
+  [PASS] next sR=4 m=10.5: second |mu| v_c 0.085016 against #75's 0.085018
+  [FAIL] AB sR=4 m=10.5: A and B leading differ by 1.9e-06 relative
+  [PASS] sym sR=4 m=10.5: window symmetric under mu -> -mu to 4.2e-06 relative
+  [PASS] noreal sR=4 m=10.5: no real eigenvalue with |mu| v_c above 0.0708, in A or B
+  tolerance 1e-05: every eigenvalue with |mu| v_c >= 0.0944 is converged in every sector computed (the leading eigenvalue of the last sector is 0.0944), so no real zero mode with |v| <= 10.60 v_c, provided the leading eigenvalue keeps falling with m (#75, at 1e-5 with its own basis: 10.32 v_c, a window from 0.0969)
+  tolerance 1e-04: every eigenvalue with |mu| v_c >= 0.0944 is converged in every sector computed (the leading eigenvalue of the last sector is 0.0944), so no real zero mode with |v| <= 10.60 v_c, provided the leading eigenvalue keeps falling with m (#75, at 1e-5 with its own basis: 10.32 v_c, a window from 0.0969)
+wall 1 s
+FAILED: AB sR=4 m=9.5, AB sR=4 m=10.5
