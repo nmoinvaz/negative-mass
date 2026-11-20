@@ -382,6 +382,86 @@ roots closer than about 3 % in γ is therefore excluded only by that smoothness,
 
 Status: numerical evidence, conditional on D having no pole in each box (#54).
 
+### 5.2 Recount of §5's windings with the corrected step rule (#54)
+
+#54 started from #7's winding of −2 for ω = 0.85, l = 3 and the hypothesis that D has a pole there. #5 had found that the
+first step rule can lose 2π in one step (§5.1), and one loss shifts a symmetric box's count by ±2. So the boxes of the §5
+table were recounted first, with the current `winding2.py` (the rule of §5.1, git 59d26de), each with the zero 0.3 + 1.76i
+and its conjugate planted in the same cached evaluations.
+
+Result: all seven boxes count 0. Only ω = 0.85, l = 3 changed, from −2 to 0, and the −2 was the first step rule, not a
+pole. The search for a pole (steps 1 to 3 of #54) was therefore not run.
+
+Six boxes were counted on rpi5. The seventh, phantom ω = 0.7603 with l = 2, is #5's `rep_l2` run. The ω = 0.70 and 0.85
+counts reuse #7's stored evaluations of D (byte copies of I7-win2's caches) and add the ones the new rule asks for. Every
+number below is in `i54_recount_output.txt`, which `collect_i54.py` builds from the raw logs (negative-mass-raw, folders
+I54-rpi5 at a0cfa51, I5-rpi5 and I7-win2). From `phase2/nonradial`, with the raw repository cloned beside the checkout:
+
+```
+python collect_i54.py ../../../negative-mass-raw > i54_recount_output.txt
+```
+
+It exits non-zero if a run is missing, a planted zero is not returned or a winding is not an integer. All boxes are
+Re s ∈ [0.1, 2], |Im s| ≤ 2.5. The old values are #7's logs for ω = 0.70 and 0.85 and `winding2_output.txt` for the
+others, all made with the first rule.
+
+| star | l | old winding | new winding | max step, old / new (rad) | min abs(D), old / new | planted pair found |
+|---|---|---|---|---|---|---|
+| phantom ω = 0.85 | 3 | **−2.0000** | **+0.0000** | 0.40 / 0.40 | 1.23e-03 / 1.23e-03 | +2.0000 of 2 |
+| phantom ω = 0.85 | 2 | −0.0000 | −0.0000 | 0.40 / 0.40 | 4.93e-04 / 4.93e-04 | +2.0000 of 2 |
+| phantom ω = 0.70 | 3 | −0.0000 | +0.0000 | 0.40 / 0.40 | 1.86e-03 / 1.86e-03 | +2.0000 of 2 |
+| phantom ω = 0.70 | 2 | −0.0000 | +0.0000 | 0.40 / 0.40 | 7.45e-04 / 7.45e-04 | +2.0000 of 2 |
+| phantom ω = 0.7603 | 3 | +0.0000 | +0.0000 | 0.40 / 0.40 | 1.68e-03 / 1.68e-03 | +2.0000 of 2 |
+| canonical ω = 0.75 | 2 | +0.0000 | +0.0000 | 0.40 / 0.40 | 6.88e-04 / 6.88e-04 | +2.0000 of 2 |
+| phantom ω = 0.7603 | 2 | +0.0000 | +0.0000 | 0.39 / 0.39 | 6.70e-04 / 6.70e-04 | +2.0000 of 2 |
+
+The old and new max step and min abs(D) agree in every row. Every planted pair is returned.
+
+#### The lost step
+
+`replay_old_rule_i54.py` replays the first rule on the stored evaluations of #7's four boxes without evaluating D again
+(`i54_replay_output.txt`, from `phase2/nonradial`: `python replay_old_rule_i54.py ../../../negative-mass-raw`).
+
+- It reproduces #7's logged winding, max step and min abs(D) in all four boxes, and asks for exactly the 77, 63, 104 and
+  67 points of #7's caches.
+- The cached points on each edge, sorted along it, form a dense chain whose steps are all at most 0.40 rad. Its winding
+  is 0 in all four boxes, equal to the current rule's.
+- Three boxes lose nothing. In ω = 0.85, l = 3 one step lost 2π: the left edge from Im s = 0.25 to 0 at Re s = 0.1. The
+  first rule measured −0.200 rad and the true change is +6.083 rad. The 27 stored points of that stretch have |D| between
+  2.15×10⁻² and 3.02×10⁻², and all 26 steps between them are positive, 0.199 to 0.397 rad. The old count of −2 is the
+  current 0 minus 2 for the lost turn.
+
+The left-edge phase of the three l = 3 boxes is now +13.17 (ω = 0.85), +13.60 (ω = 0.70) and +13.17 (ω = 0.7603). For
+ω = 0.85 the first rule gave +6.88. This is a plausibility check on the corrected count, not a test.
+
+#### Controls
+
+- **Planted zero.** Each rerun returns the pair planted at 0.3 + 1.76i (+2.0000 of 2, PASS), with the same code as §5.1.
+  Its four mutations were run there on the stored box and not repeated here.
+- **Same D on two machines.** #7's evaluations were made on win2 (x86, Windows) and the new ones on rpi5 (aarch64).
+  `python check_cache_i54.py ../../../negative-mass-raw/I7-win2` recomputes three stored points of each of the four caches
+  on rpi5 with the same D. The worst relative difference is 1.9×10⁻¹¹ (limit 10⁻⁶, `i54_cache_check_output.txt` keeps its
+  summary lines). With `--mutate=scale`, which multiplies the recomputed values by 1.001, it exits 1.
+- **Mutations of the new scripts.** `replay_old_rule_i54.py --mutate=thr` (threshold 0.3 instead of 0.4) asks for points
+  that are not stored and exits 1. `collect_i54.py --mutate=noplant` and `--mutate=wrongexpect` exit 1.
+- **What is shared.** The counts, the dense chain and the planted zero all use the same D and the same counter, so they
+  test the step rule and not D. The two-machine recomputation tests D at 12 points. The Mini BS I controls of §5.1 are
+  independent of the campaign stars.
+
+#### What this settles and what it does not
+
+- Status: numerical evidence that D has winding 0 in each of the seven boxes of §5. The −2 of ω = 0.85, l = 3 was the
+  first step rule, located at one step.
+- The planted-pole control of #54 (a pole-free column returning +1 for a planted zero and 0 for a planted pole) was not
+  run, as it was not needed.
+- The hypothesis that the Zerilli column (1, q/f) has a pole where ψ(r_m; s) vanishes is neither confirmed nor refuted.
+  Its only evidence was the −2. A winding of 0 is still zeros minus poles, and nothing here searches for poles.
+- Superseded here and not edited, since #54 may write only this subsection and §7: the §5 table row ω = 0.85, l = 3
+  (−2.0000), the claim of the paragraph "Discrepancy (#7)" that D has a net pole there, the bullet "The windings of §5 …"
+  of the "Not covered" list in §5.1 and the clause of §6 item 2 that ω = 0.85, l = 3 gives −2, a net pole. The "conditional
+  on D having no pole" of §5 and of the "Status" line in §5.1 still holds, since poles were not searched for. The rows of §8
+  for the new files are not added: `collect_i54.py`, `check_cache_i54.py`, `replay_old_rule_i54.py` and `i54_*_output.txt`.
+
 ## 6. Conclusions
 
 1. **Polar, real growth rates.** For the phantom campaign star (ω = 0.7603, M = −0.01458) there is
@@ -414,14 +494,17 @@ Status: numerical evidence, conditional on D having no pole in each box (#54).
 - Complex s, campaign star, l = 2 (l = 3 where it differs): counted are Re s ∈ [0.1, 2] for |Im s| ≤ 10 (6 for l = 3),
   Re s ∈ [0.03, 0.1] for |Im s| ≤ 6, Re s ∈ [0.01, 0.03] for |Im s| ≤ 2.5 (l = 2 only), and Re s ∈ [−10⁻³, 0.1] for
   |Im s| ≤ 0.23 (§5.1). The rest is listed under "Not covered" there. The other stars have Re s ≥ 0.1, |Im s| ≤ 2.5 only.
-- The windings of §5 were computed with a step rule that can lose 2π in one step (§5.1) and were not recounted. One
-  loss shifts a symmetric-box count by ±2.
+- The windings of §5 were computed with a step rule that can lose 2π in one step (§5.1). One loss shifts a symmetric-box
+  count by ±2. They were recounted with the current rule in §5.2. Only ω = 0.85, l = 3 changed, from −2 to 0, because the
+  old rule lost one 2π there.
 - l = 2, 3 for every star, and l = 4, 5, 6 only for the ω = 0.7603 phantom star (§3a, #4), with the real-γ scans,
   convergence variants and κ_eff but no windings and no c_l. The ω = 0.7603, 0.70 and 0.85 stars have the l = 2, 3
   real-γ scans, convergence variants and windings (0.70 and 0.85 in #7). c_l and axial positivity are also checked at
   ω = 0.85, and axial positivity at 0.70 and 0.90. At l = 5 and 6 the rtol 1e-12 variant is missing at the top γ
   (§3a).
-- The windings count zeros minus poles of D if D has poles in the box, and ω = 0.85, l = 3 shows a net pole (§5, #54).
+- The windings count zeros minus poles of D. The −2 that suggested a net pole at ω = 0.85, l = 3 was the old step rule
+  (§5.2), so no box shows a net pole. Poles were not searched for, and the hypothesis of #54 that the Zerilli column has
+  one where ψ(r_m; s) vanishes is untested.
 - The equations for (tt) and the angular trace are verified numerically (relative residual ≤ 7×10⁻⁷),
   not symbolically. (tθ), (tr), (rθ) are verified exactly.
 - Weak-field stars only (|M|/R ~ 3×10⁻³). Nothing here says what happens for compact phantom stars.
