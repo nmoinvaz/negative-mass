@@ -3,7 +3,9 @@ Search for growing polar modes (s = gamma > 0 real) of the phantom and canonical
 sign changes of the real matching determinant D(gamma) on a log grid, refined by brentq; a root is
 accepted only if |D| at the refined point is < 1e-6 of the bracket values (rejects jumps).
 Usage: python scan_growing.py eps w l [npts] [gmin] [gmax]
-Writes scan_eps{eps}_w{w}_l{l}.csv (gamma, D).
+Writes scan_eps{eps}_w{w}_l{l}.csv (gamma, D). NPROC (default 2) sets the worker count. The points run largest gamma
+first, one per task, and each is appended to scan_{tag}.partial.csv as it finishes, so a run that is stopped restarts
+where it left off (the points already in the partial file are not recomputed).
 """
 import sys, os, numpy as np, time
 from scipy.optimize import brentq
@@ -28,13 +30,33 @@ def init():
 def Dg(g):
     return _P.D(g)
 
+
+def _Di(i):
+    """(index, D) for the worker pool; the grid is rebuilt from argv in each worker."""
+    grid = np.logspace(np.log10(gmin), np.log10(gmax), npts)
+    return i, Dg(grid[i])
+
 if __name__ == "__main__":
     T0 = time.time()
     grid = np.logspace(np.log10(gmin), np.log10(gmax), npts)
-    with Pool(2, initializer=init) as pool:
-        vals = np.array(pool.map(Dg, grid))
-    init()
     tag = f"eps{eps:+d}_w{w}_l{l}" + (os.environ.get('TAG', ''))
+    part = os.path.join(HERE, f"scan_{tag}.partial.csv")
+    done = {}
+    if os.path.exists(part):
+        for line in open(part):
+            i, g, d = line.split(',')
+            done[int(i)] = float(d)
+    todo = [i for i in np.argsort(-grid) if int(i) not in done]
+    print(f"{tag}: {len(done)} of {npts} points already in {os.path.basename(part)}, {len(todo)} to run", flush=True)
+
+    with Pool(int(os.environ.get('NPROC', '2')), initializer=init) as pool, open(part, 'a') as fp:
+        for i, d in pool.imap_unordered(_Di, [int(i) for i in todo], chunksize=1):
+            done[i] = d
+            fp.write(f"{i},{grid[i]!r},{d!r}\n")
+            fp.flush()
+            print(f"   gamma={grid[i]:.4g}: D={d:+.6e}  ({len(done)}/{npts}, {time.time()-T0:.0f}s)", flush=True)
+    vals = np.array([done[i] for i in range(npts)])
+    init()
     np.savetxt(os.path.join(HERE, f"scan_{tag}.csv"), np.c_[grid, vals], delimiter=',', header='gamma,D', comments='')
     print(f"{tag}: rm={_P.rm:.2f} M={_P.Mext:+.6f} rtol={rtol} phi_cut={phi_cut}  {npts} pts in [{gmin},{gmax}]  ({time.time()-T0:.0f}s)")
     nchg = 0

@@ -1,0 +1,17 @@
+base (rtol1e-10, phi_cut1e-9, R60)    : r_m=24.11
+rtol 1e-12                            : r_m=24.11
+phi_cut 1e-12 (larger r_m)            : r_m=34.21
+background R=90                       : r_m=24.11
+r0 = 3e-3                             : r_m=24.11
+
+gamma=   0.001: D_base=-1.260632e-01  signs=[np.float64(-1.0)]  rel.spread (same r_m)=1.3e-04  D(r_m~34)=-8.459e-02  q_int=+2.490611e-01 q_ext=-2.075060e-01  (15s)
+gamma=    0.03: D_base=-1.254361e-01  signs=[np.float64(-1.0)]  rel.spread (same r_m)=1.3e-04  D(r_m~34)=-8.332e-02  q_int=+2.507224e-01 q_ext=-2.098937e-01  (15s)
+gamma=     0.3: D_base=-1.008582e-01  signs=[np.float64(-1.0)]  rel.spread (same r_m)=1.8e-04  D(r_m~34)=-5.434e-02  q_int=+3.849571e-01 q_ext=-3.696096e-01  (15s)
+gamma=       1: D_base=-4.099485e-02  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-2.068e-02  q_int=+1.026600e+00 q_ext=-1.024549e+00  (15s)
+gamma=       3: D_base=-4.948444e-03  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-2.466e-03  q_int=+3.008722e+00 q_ext=-3.008485e+00  (22s)
+gamma=      10: D_base=-1.852232e-04  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-9.204e-05  q_int=+1.000259e+01 q_ext=-1.000257e+01  (48s)
+gamma=      40: D_base=-3.007967e-06  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-1.494e-06  q_int=+4.000065e+01 q_ext=-4.000065e+01  (163s)
+gamma=     137: D_base=-7.504837e-08  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-3.728e-08  q_int=+1.370002e+02 q_ext=-1.370002e+02  (545s)
+gamma=     300: D_base=-7.148531e-09  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-3.551e-09  q_int=+3.000001e+02 q_ext=-3.000001e+02  (1386s)
+gamma=   1e+03: D_base=-1.930186e-10  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-9.588e-11  q_int=+1.000000e+03 q_ext=-1.000000e+03  (4250s)
+gamma=   6e+03: D_base=-8.936083e-13  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-4.439e-13  q_int=+6.000000e+03 q_ext=-6.000000e+03  (27140s)  [rtol 1e-12 not completed, stopped after its worker had run 18129s of wall time, past the 5 h cap (18000s); signs and spread are over 4 variants]
