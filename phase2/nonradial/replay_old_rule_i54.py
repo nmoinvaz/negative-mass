@@ -72,13 +72,13 @@ for job in jobs:
           f"(I7's cache {len(orig)}, same set {same_pts}); I7 log {old[0]:+.4f}, {old[1]}, {old[2]}  {'MATCH' if ok1 else 'FAIL'}"
           + (f"  [mutate={mutate}]" if mutate else ""))
     # dense chain along each edge: all cached points on it, sorted along it
-    phi, ctot, cmax, ok3 = {}, 0.0, 0.0, True
+    phi, ctot, cmax, ok3, chains = {}, 0.0, 0.0, True, {}
     for e, (a, b) in enumerate(zip(corners[:-1], corners[1:])):
         pts = []
         for s in cache:
             t = (s - a) / (b - a)
             if abs(t.imag) < 1e-9 and -1e-9 <= t.real <= 1 + 1e-9: pts.append((t.real, s))
-        pts.sort(key=lambda x: x[0])
+        pts.sort(key=lambda x: x[0]); chains[e] = pts
         acc = ctot
         for (t0, s0), (t1, s1) in zip(pts[:-1], pts[1:]):
             st = np.angle(cache[s1] / cache[s0]); cmax = max(cmax, abs(st)); acc += st
@@ -93,12 +93,19 @@ for job in jobs:
         tru = phi[(e, rk(pb))] - phi[(e, rk(pa))]
         k = (tru - dph) / (2 * np.pi)
         if abs(k - round(k)) * 2 * np.pi > 0.05: ok3 = False
-        if round(k) != 0: lost.append((names[e], pa, pb, dph, tru, round(k)))
-    for nm, pa, pb, dph, tru, k in lost:
+        if round(k) != 0: lost.append((names[e], pa, pb, dph, tru, round(k), e))
+    for nm, pa, pb, dph, tru, k, e in lost:
         print(f"   LOST: {nm} edge, s = {pa:.6f} -> {pb:.6f}: measured angle {dph:+.4f}, true change {tru:+.4f} ({k:+d} x 2 pi)")
+        a, b = corners[e], corners[e + 1]
+        ta, tb = sorted([((pa - a) / (b - a)).real, ((pb - a) / (b - a)).real])
+        inside = [s for t, s in chains[e] if ta - 1e-9 <= t <= tb + 1e-9]
+        sts = [np.angle(cache[s1] / cache[s0]) for s0, s1 in zip(inside[:-1], inside[1:])]
+        print(f"      {len(inside)} stored points on it, |D| in [{min(abs(cache[s]) for s in inside):.2e}, "
+              f"{max(abs(cache[s]) for s in inside):.2e}], step angles {min(sts):+.3f} to {max(sts):+.3f} rad "
+              f"({'all one sign' if min(sts) * max(sts) > 0 else 'mixed signs'})")
     if not lost: print("   no step of the old rule lost a multiple of 2 pi")
-    ok4 = ok3 and abs(wind + 2 * sum(k for *_, k in lost) - cwind) < 0.05
-    print(f"   old winding {wind:+.4f} + 2 x (lost multiples of 2 pi) {2 * sum(k for *_, k in lost):+d} = dense-chain winding "
+    ok4 = ok3 and abs(wind + 2 * sum(l_[5] for l_ in lost) - cwind) < 0.05
+    print(f"   old winding {wind:+.4f} + 2 x (lost multiples of 2 pi) {2 * sum(l_[5] for l_ in lost):+d} = dense-chain winding "
           f"{cwind:+.4f}  {'consistent' if ok4 else 'FAIL'}")
     bad |= not (ok1 and ok2 and ok4)
 print("RESULT: " + ("FAIL" if bad else "every replay matches #7's log and every difference is a multiple of 2 pi")
