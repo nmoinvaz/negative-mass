@@ -1,0 +1,23 @@
+# Recount of #54, stage 1: Re s in [0.1, 2], abs(Im s) <= 2.5, old step rule against the current one
+| star | l | old winding | old max step | old min abs(D) | new winding | new max step | new min abs(D) | planted s0 | planted found | check | new against old | new log |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| phantom 0.85 | 3 | -2.0000 | 0.40 | 1.23e-03 | +0.0000 | 0.40 | 1.23e-03 | 0.3+1.76j | +2.0000 of 2 | PASS | CHANGED | I54-rpi5/w085_l3.log |
+| phantom 0.85 | 2 | -0.0000 | 0.40 | 4.93e-04 | -0.0000 | 0.40 | 4.93e-04 | 0.3+1.76j | +2.0000 of 2 | PASS | unchanged | I54-rpi5/w085_l2.log |
+| phantom 0.70 | 3 | -0.0000 | 0.40 | 1.86e-03 | +0.0000 | 0.40 | 1.86e-03 | 0.3+1.76j | +2.0000 of 2 | PASS | unchanged | I54-rpi5/w070_l3.log |
+| phantom 0.70 | 2 | -0.0000 | 0.40 | 7.45e-04 | +0.0000 | 0.40 | 7.45e-04 | 0.3+1.76j | +2.0000 of 2 | PASS | unchanged | I54-rpi5/w070_l2.log |
+| phantom 0.7603 | 3 | +0.0000 | 0.40 | 1.68e-03 | +0.0000 | 0.40 | 1.68e-03 | 0.3+1.76j | +2.0000 of 2 | PASS | unchanged | I54-rpi5/w07603_l3.log |
+| canonical 0.75 | 2 | +0.0000 | 0.40 | 6.88e-04 | +0.0000 | 0.40 | 6.88e-04 | 0.3+1.76j | +2.0000 of 2 | PASS | unchanged | I54-rpi5/c075_l2.log |
+| phantom 0.7603 | 2 | +0.0000 | 0.39 | 6.70e-04 | +0.0000 | 0.39 | 6.70e-04 | 0.3+1.76j | +2.0000 of 2 | PASS | unchanged | I5-rpi5/rep_l2.log |
+
+# Phase gained along each edge of the upper half contour (rad): right (x1, 0 to y1), top (x1 to x0), left (y1 to 0)
+| star | l | old right | old top | old left | new right | new top | new left |
+|---|---|---|---|---|---|---|---|
+| phantom 0.85 | 3 | -7.7399 | -5.4259 | +6.8826 | -7.7399 | -5.4259 | +13.1658 |
+| phantom 0.85 | 2 | -5.1841 | -3.0837 | +8.2678 | -5.1841 | -3.0837 | +8.2678 |
+| phantom 0.70 | 3 | -8.6157 | -4.9875 | +13.6032 | -8.6157 | -4.9875 | +13.6032 |
+| phantom 0.70 | 2 | -6.1682 | -3.2776 | +9.4458 | -6.1682 | -3.2776 | +9.4458 |
+| phantom 0.7603 | 3 | -8.1132 | -5.0533 | +13.1665 | -8.1132 | -5.0533 | +13.1665 |
+| canonical 0.75 | 2 | -3.5329 | -3.0871 | +6.6200 | -3.5329 | -3.0871 | +6.6200 |
+
+old: first step rule (I7-win2 logs for 0.70 and 0.85, winding2_output.txt for the others); new: current rule, planted zero 0.3 + 1.76i and its conjugate.
+RESULT: all rows complete and every planted zero returned

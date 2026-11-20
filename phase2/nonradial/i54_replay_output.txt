@@ -1,0 +1,24 @@
+eps-1_w0.85_l3_0.1_2.0_2.5: old rule replayed: winding -2.0000, max step 0.40, min|D| 1.23e-03, 77 points (I7's cache 77, same set True); I7 log -2.0000, 0.40, 1.23e-03  MATCH
+   dense chain of cached points on the edges: 147 points, max step 0.40, winding +0.0000; current rule's log +0.0000  MATCH
+   LOST: left edge, s = 0.100000+0.250000j -> 0.100000+0.000000j: measured angle -0.2002, true change +6.0830 (+1 x 2 pi)
+   old winding -2.0000 + 2 x (lost multiples of 2 pi) +2 = dense-chain winding +0.0000  consistent
+eps-1_w0.85_l2_0.1_2.0_2.5: old rule replayed: winding -0.0000, max step 0.40, min|D| 4.93e-04, 63 points (I7's cache 63, same set True); I7 log -0.0000, 0.40, 4.93e-04  MATCH
+   dense chain of cached points on the edges: 109 points, max step 0.38, winding +0.0000; current rule's log -0.0000  MATCH
+   no step of the old rule lost a multiple of 2 pi
+   old winding -0.0000 + 2 x (lost multiples of 2 pi) +0 = dense-chain winding +0.0000  consistent
+eps-1_w0.7_l3_0.1_2.0_2.5: old rule replayed: winding -0.0000, max step 0.40, min|D| 1.86e-03, 104 points (I7's cache 104, same set True); I7 log -0.0000, 0.40, 1.86e-03  MATCH
+   dense chain of cached points on the edges: 146 points, max step 0.33, winding +0.0000; current rule's log +0.0000  MATCH
+   no step of the old rule lost a multiple of 2 pi
+   old winding -0.0000 + 2 x (lost multiples of 2 pi) +0 = dense-chain winding +0.0000  consistent
+eps-1_w0.7_l2_0.1_2.0_2.5: old rule replayed: winding -0.0000, max step 0.40, min|D| 7.45e-04, 67 points (I7's cache 67, same set True); I7 log -0.0000, 0.40, 7.45e-04  MATCH
+   dense chain of cached points on the edges: 114 points, max step 0.39, winding +0.0000; current rule's log +0.0000  MATCH
+   no step of the old rule lost a multiple of 2 pi
+   old winding -0.0000 + 2 x (lost multiples of 2 pi) +0 = dense-chain winding +0.0000  consistent
+RESULT: every replay matches #7's log and every difference is a multiple of 2 pi
+exit 0
+eps-1_w0.85_l3_0.1_2.0_2.5: the old rule asks for a point that is not stored: (0.1+0.296875j)  FAIL  [mutate=thr]
+eps-1_w0.85_l2_0.1_2.0_2.5: the old rule asks for a point that is not stored: (0.1+0.28125j)  FAIL  [mutate=thr]
+eps-1_w0.7_l3_0.1_2.0_2.5: the old rule asks for a point that is not stored: (0.1+0.390625j)  FAIL  [mutate=thr]
+eps-1_w0.7_l2_0.1_2.0_2.5: the old rule asks for a point that is not stored: (0.1+0.109375j)  FAIL  [mutate=thr]
+RESULT: FAIL  [mutate=thr]
+exit 1 (1 expected)
