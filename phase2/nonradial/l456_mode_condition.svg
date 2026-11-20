@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="554" viewBox="0 0 780 554" font-family="system-ui, sans-serif">
+<style>@media (prefers-color-scheme: dark){[fill="#fcfcfb"]{fill:#201f1d}[stroke="#fcfcfb"]{stroke:#201f1d}[fill="#0b0b0b"]{fill:#e8e6e3}[stroke="#0b0b0b"]{stroke:#e8e6e3}[fill="#52514e"]{fill:#a8a49d}[stroke="#52514e"]{stroke:#a8a49d}[fill="#e7e6e2"]{fill:#343230}[stroke="#e7e6e2"]{stroke:#343230}[fill="#c98500"]{fill:#d69a2d}[stroke="#c98500"]{stroke:#d69a2d}[fill="#eb6834"]{fill:#dd5c26}[stroke="#eb6834"]{stroke:#dd5c26}[fill="#eda100"]{fill:#c08800}[stroke="#eda100"]{stroke:#c08800}[fill="#e87ba4"]{fill:#d1678f}[stroke="#e87ba4"]{stroke:#d1678f}[fill="#4a3aa7"]{fill:#7263cf}[stroke="#4a3aa7"]{stroke:#7263cf}[fill="#a6339a"]{fill:#c257b5}[stroke="#a6339a"]{stroke:#c257b5}[fill="#7a7668"]{fill:#948e82}[stroke="#7a7668"]{stroke:#948e82}}</style>
+<rect width="780" height="554" fill="#fcfcfb"/>
+<text x="16.0" y="26.0" font-size="15" fill="#0b0b0b" text-anchor="start" font-weight="bold">No growing polar mode of the phantom star at l = 4, 5, 6</text>
+<text x="16.0" y="50.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">Mode condition D(γ) along the real growth-rate axis (#4)</text>
+<text x="16.0" y="66.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">A growing mode needs D = 0. All 300 scan points are negative, so the plot shows −D. Lines: 100-point scans. Markers: base variant of the convergence runs.</text>
+<line x1="84.0" y1="106.0" x2="84.0" y2="466.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="84.0" y="481.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.001</text>
+<line x1="166.2" y1="106.0" x2="166.2" y2="466.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="166.2" y="481.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.01</text>
+<line x1="248.4" y1="106.0" x2="248.4" y2="466.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="248.4" y="481.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.1</text>
+<line x1="330.5" y1="106.0" x2="330.5" y2="466.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="330.5" y="481.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">1</text>
+<line x1="412.7" y1="106.0" x2="412.7" y2="466.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="412.7" y="481.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">10</text>
+<line x1="494.9" y1="106.0" x2="494.9" y2="466.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="494.9" y="481.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">100</text>
+<line x1="577.1" y1="106.0" x2="577.1" y2="466.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="577.1" y="481.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">1000</text>
+<line x1="659.3" y1="106.0" x2="659.3" y2="466.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="659.3" y="481.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">1e4</text>
+<line x1="84.0" y1="442.0" x2="684.0" y2="442.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="78.0" y="446.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-14</text>
+<line x1="84.0" y1="394.0" x2="684.0" y2="394.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="78.0" y="398.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-12</text>
+<line x1="84.0" y1="346.0" x2="684.0" y2="346.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="78.0" y="350.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-10</text>
+<line x1="84.0" y1="298.0" x2="684.0" y2="298.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="78.0" y="302.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-8</text>
+<line x1="84.0" y1="250.0" x2="684.0" y2="250.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="78.0" y="254.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-6</text>
+<line x1="84.0" y1="202.0" x2="684.0" y2="202.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="78.0" y="206.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-4</text>
+<line x1="84.0" y1="154.0" x2="684.0" y2="154.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="78.0" y="158.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">0.01</text>
+<line x1="84.0" y1="106.0" x2="684.0" y2="106.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="78.0" y="110.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1</text>
+<line x1="84.0" y1="466.0" x2="684.0" y2="466.0" stroke="#52514e" stroke-width="1"/>
+<line x1="84.0" y1="106.0" x2="84.0" y2="466.0" stroke="#52514e" stroke-width="1"/>
+<text x="384.0" y="500.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">growth rate γ (log)</text>
+<text x="34.1" y="286.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 34.1 286.0)">−D (log)</text>
+<polyline points="84.0,130.0 89.4,130.0 94.8,130.0 100.1,130.0 105.5,130.0 110.9,130.0 116.3,130.0 121.6,130.0 127.0,130.0 132.4,130.0 137.8,130.0 143.1,130.0 148.5,130.0 153.9,130.0 159.3,130.0 164.7,130.0 170.0,130.0 175.4,130.0 180.8,130.0 186.2,130.1 191.5,130.1 196.9,130.1 202.3,130.1 207.7,130.1 213.0,130.2 218.4,130.3 223.8,130.3 229.2,130.4 234.5,130.6 239.9,130.7 245.3,130.9 250.7,131.2 256.1,131.5 261.4,131.8 266.8,132.1 272.2,132.5 277.6,133.0 282.9,133.5 288.3,134.0 293.7,134.6 299.1,135.4 304.4,136.3 309.8,137.3 315.2,138.7 320.6,140.2 326.0,142.0 331.3,144.1 336.7,146.5 342.1,149.1 347.5,151.9 352.8,154.9 358.2,158.2 363.6,161.7 369.0,165.4 374.3,169.2 379.7,173.2 385.1,177.4 390.5,181.7 395.8,186.0 401.2,190.5 406.6,195.0 412.0,199.5 417.4,204.1 422.7,208.8 428.1,213.4 433.5,218.1 438.9,222.8 444.2,227.4 449.6,232.1 455.0,236.8 460.4,241.5 465.7,246.2 471.1,250.9 476.5,255.6 481.9,260.3 487.3,265.1 492.6,269.8 498.0,274.5 503.4,279.2 508.8,283.9 514.1,288.6 519.5,293.3 524.9,298.0 530.3,302.7 535.6,307.4 541.0,312.2 546.4,316.9 551.8,321.6 557.1,326.3 562.5,331.0 567.9,335.7 573.3,340.4 578.7,345.1 584.0,349.8 589.4,354.6 594.8,359.3 600.2,364.0 605.5,368.7 610.9,373.4 616.3,378.1" fill="none" stroke="#2a78d6" stroke-width="2"/>
+<line x1="602.8" y1="106" x2="602.8" y2="466" stroke="#2a78d6" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="599.8" y="118.0" font-size="10" fill="#52514e" text-anchor="end" font-weight="normal">point-mass rate, l = 4</text>
+<g><circle cx="84.0" cy="130.0" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>l = 4, γ = 0.001: D_base = -9.992981e-02, relative spread 1.2e-04</title></g>
+<g><circle cx="205.4" cy="130.1" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>l = 4, γ = 0.03: D_base = -9.873926e-02, relative spread 1.2e-04</title></g>
+<g><circle cx="287.6" cy="133.9" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>l = 4, γ = 0.3: D_base = -6.862112e-02, relative spread 1.9e-04</title></g>
+<g><circle cx="330.5" cy="143.8" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>l = 4, γ = 1: D_base = -2.663217e-02, relative spread 2.1e-04</title></g>
+<g><circle cx="369.8" cy="165.9" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>l = 4, γ = 3: D_base = -3.187563e-03, relative spread 2.1e-04</title></g>
+<g><circle cx="412.7" cy="200.2" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>l = 4, γ = 10: D_base = -1.190933e-04, relative spread 2.1e-04</title></g>
+<g><circle cx="462.2" cy="243.1" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>l = 4, γ = 40: D_base = -1.933586e-06, relative spread 2.1e-04</title></g>
+<g><circle cx="506.1" cy="281.6" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>l = 4, γ = 137: D_base = -4.824198e-08, relative spread 2.1e-04</title></g>
+<g><circle cx="534.1" cy="306.1" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>l = 4, γ = 300: D_base = -4.595154e-09, relative spread 2.1e-04</title></g>
+<g><circle cx="577.1" cy="343.8" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>l = 4, γ = 1000: D_base = -1.240745e-10, relative spread 2.1e-04</title></g>
+<g><circle cx="616.3" cy="378.1" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>l = 4, γ = 3000: D_base = -4.595367e-12, relative spread 2.1e-04</title></g>
+<polyline points="84.0,127.6 89.6,127.6 95.3,127.6 100.9,127.6 106.5,127.6 112.1,127.6 117.8,127.6 123.4,127.6 129.0,127.6 134.6,127.6 140.3,127.6 145.9,127.6 151.5,127.6 157.1,127.6 162.8,127.6 168.4,127.6 174.0,127.6 179.7,127.6 185.3,127.6 190.9,127.6 196.5,127.6 202.2,127.6 207.8,127.6 213.4,127.7 219.0,127.7 224.7,127.7 230.3,127.8 235.9,127.9 241.5,127.9 247.2,128.0 252.8,128.2 258.4,128.3 264.1,128.5 269.7,128.8 275.3,129.1 280.9,129.4 286.6,129.8 292.2,130.3 297.8,131.0 303.4,131.8 309.1,132.8 314.7,134.1 320.3,135.7 325.9,137.6 331.6,139.7 337.2,142.2 342.8,144.9 348.4,147.9 354.1,151.1 359.7,154.6 365.3,158.3 371.0,162.2 376.6,166.3 382.2,170.5 387.8,174.9 393.5,179.5 399.1,184.1 404.7,188.8 410.3,193.5 416.0,198.3 421.6,203.2 427.2,208.0 432.8,212.9 438.5,217.8 444.1,222.7 449.7,227.6 455.4,232.5 461.0,237.5 466.6,242.4 472.2,247.3 477.9,252.2 483.5,257.2 489.1,262.1 494.7,267.0 500.4,271.9 506.0,276.9 511.6,281.8 517.2,286.7 522.9,291.7 528.5,296.6 534.1,301.5 539.8,306.4 545.4,311.4 551.0,316.3 556.6,321.2 562.3,326.2 567.9,331.1 573.5,336.0 579.1,340.9 584.8,345.9 590.4,350.8 596.0,355.7 601.6,360.7 607.3,365.6 612.9,370.5 618.5,375.5 624.2,380.4 629.8,385.3 635.4,390.2 641.0,395.2" fill="none" stroke="#eb6834" stroke-width="2"/>
+<line x1="633.1" y1="106" x2="633.1" y2="466" stroke="#eb6834" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="630.1" y="131.0" font-size="10" fill="#52514e" text-anchor="end" font-weight="normal">point-mass rate, l = 5</text>
+<g><circle cx="84.0" cy="127.6" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>l = 5, γ = 0.001: D_base = -1.260632e-01, relative spread 1.3e-04</title></g>
+<g><circle cx="205.4" cy="127.6" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>l = 5, γ = 0.03: D_base = -1.254361e-01, relative spread 1.3e-04</title></g>
+<g><circle cx="287.6" cy="129.9" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>l = 5, γ = 0.3: D_base = -1.008582e-01, relative spread 1.8e-04</title></g>
+<g><circle cx="330.5" cy="139.3" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>l = 5, γ = 1: D_base = -4.099485e-02, relative spread 2.1e-04</title></g>
+<g><circle cx="369.8" cy="161.3" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>l = 5, γ = 3: D_base = -4.948444e-03, relative spread 2.1e-04</title></g>
+<g><circle cx="412.7" cy="195.6" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>l = 5, γ = 10: D_base = -1.852232e-04, relative spread 2.1e-04</title></g>
+<g><circle cx="462.2" cy="238.5" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>l = 5, γ = 40: D_base = -3.007967e-06, relative spread 2.1e-04</title></g>
+<g><circle cx="506.1" cy="277.0" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>l = 5, γ = 137: D_base = -7.504837e-08, relative spread 2.1e-04</title></g>
+<g><circle cx="534.1" cy="301.5" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>l = 5, γ = 300: D_base = -7.148531e-09, relative spread 2.1e-04</title></g>
+<g><circle cx="577.1" cy="339.1" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>l = 5, γ = 1000: D_base = -1.930186e-10, relative spread 2.1e-04</title></g>
+<g><circle cx="641.0" cy="395.2" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>l = 5, γ = 6000: D_base = -8.936083e-13, relative spread 2.1e-04, rtol 1e-12 variant not completed</title></g>
+<polyline points="84.0,125.5 89.9,125.5 95.8,125.5 101.6,125.5 107.5,125.5 113.4,125.5 119.3,125.5 125.1,125.5 131.0,125.5 136.9,125.5 142.8,125.5 148.6,125.5 154.5,125.5 160.4,125.5 166.3,125.5 172.1,125.5 178.0,125.5 183.9,125.5 189.8,125.5 195.7,125.5 201.5,125.5 207.4,125.5 213.3,125.5 219.2,125.5 225.0,125.5 230.9,125.6 236.8,125.6 242.7,125.6 248.5,125.7 254.4,125.7 260.3,125.8 266.2,126.0 272.0,126.1 277.9,126.3 283.8,126.6 289.7,127.0 295.6,127.5 301.4,128.2 307.3,129.1 313.2,130.3 319.1,131.8 324.9,133.6 330.8,135.8 336.7,138.3 342.6,141.1 348.4,144.2 354.3,147.6 360.2,151.2 366.1,155.1 371.9,159.2 377.8,163.5 383.7,168.0 389.6,172.6 395.5,177.4 401.3,182.2 407.2,187.2 413.1,192.2 419.0,197.2 424.8,202.3 430.7,207.3 436.6,212.5 442.5,217.6 448.3,222.7 454.2,227.8 460.1,233.0 466.0,238.1 471.8,243.2 477.7,248.4 483.6,253.5 489.5,258.7 495.4,263.8 501.2,269.0 507.1,274.1 513.0,279.3 518.9,284.4 524.7,289.6 530.6,294.7 536.5,299.9 542.4,305.0 548.2,310.2 554.1,315.3 560.0,320.5 565.9,325.6 571.7,330.8 577.6,335.9 583.5,341.0 589.4,346.2 595.3,351.3 601.1,356.5 607.0,361.6 612.9,366.8 618.8,371.9 624.6,377.1 630.5,382.2 636.4,387.4 642.3,392.5 648.1,397.7 654.0,402.8 659.9,408.0 665.8,413.1" fill="none" stroke="#1baf7a" stroke-width="2"/>
+<line x1="657.8" y1="106" x2="657.8" y2="466" stroke="#1baf7a" stroke-width="1" stroke-dasharray="4 3"/>
+<text x="654.8" y="144.0" font-size="10" fill="#52514e" text-anchor="end" font-weight="normal">point-mass rate, l = 6</text>
+<g><circle cx="84.0" cy="125.5" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>l = 6, γ = 0.001: D_base = -1.542425e-01, relative spread 1.3e-04</title></g>
+<g><circle cx="205.4" cy="125.5" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>l = 6, γ = 0.03: D_base = -1.539528e-01, relative spread 1.3e-04</title></g>
+<g><circle cx="287.6" cy="126.8" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>l = 6, γ = 0.3: D_base = -1.357544e-01, relative spread 1.7e-04</title></g>
+<g><circle cx="330.5" cy="135.7" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>l = 6, γ = 1: D_base = -5.782698e-02, relative spread 2.0e-04</title></g>
+<g><circle cx="369.8" cy="157.6" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>l = 6, γ = 3: D_base = -7.051657e-03, relative spread 2.1e-04</title></g>
+<g><circle cx="412.7" cy="191.9" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>l = 6, γ = 10: D_base = -2.645347e-04, relative spread 2.1e-04</title></g>
+<g><circle cx="462.2" cy="234.8" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>l = 6, γ = 40: D_base = -4.297179e-06, relative spread 2.1e-04</title></g>
+<g><circle cx="506.1" cy="273.3" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>l = 6, γ = 137: D_base = -1.072159e-07, relative spread 2.1e-04</title></g>
+<g><circle cx="534.1" cy="297.8" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>l = 6, γ = 300: D_base = -1.021258e-08, relative spread 2.1e-04</title></g>
+<g><circle cx="577.1" cy="335.4" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>l = 6, γ = 1000: D_base = -2.757516e-10, relative spread 2.1e-04</title></g>
+<g><circle cx="665.8" cy="413.1" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>l = 6, γ = 12000: D_base = -1.595791e-13, relative spread 2.1e-04, rtol 1e-12 variant not completed</title></g>
+<circle cx="641.0" cy="395.2" r="10" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
+<line x1="631.0" y1="394.9" x2="391.0" y2="389.2" stroke="#0b0b0b" stroke-width="1"/>
+<text x="387.0" y="393.2" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="bold">l = 5, γ = 6000: rtol 1e-12 variant capped at 5 h</text>
+<circle cx="665.8" cy="413.1" r="10" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
+<line x1="655.9" y1="414.5" x2="415.8" y2="447.1" stroke="#0b0b0b" stroke-width="1"/>
+<text x="411.8" y="451.1" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="bold">l = 6, γ = 12000: rtol 1e-12 variant capped at 5 h</text>
+<text x="684.0" y="88.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">l = 6</text>
+<circle cx="642.1" cy="84" r="4.5" fill="#1baf7a"/>
+<text x="626.1" y="88.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">l = 5</text>
+<circle cx="584.2" cy="84" r="4.5" fill="#eb6834"/>
+<text x="568.2" y="88.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">l = 4</text>
+<circle cx="526.3" cy="84" r="4.5" fill="#2a78d6"/>
+<text x="16.0" y="542.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">scan_growing.py, convergence.py (#4)  ·  raw I4-win  ·  surface-laptop-4, 8 CPUs, 32 GB, Windows 11</text>
+<text x="16.0" y="526.0" font-size="10" fill="#c98500" text-anchor="start" font-weight="normal">⚠</text>
+<text x="30.0" y="526.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">the top γ of l = 5 and 6 rests on four of the five convergence variants</text>
+<a href="https://github.com/nmoinvaz/negative-mass"><text x="764" y="542" font-size="10" fill="#52514e" text-anchor="end" text-decoration="underline">github.com/nmoinvaz/negative-mass</text></a>
+</svg>

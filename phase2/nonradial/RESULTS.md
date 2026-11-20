@@ -121,6 +121,10 @@ a1f54d1, 7682c8e; κ_eff 73a9e0b (l = 4), f2ecad0 (l = 5, 6). Every status below
 do (§3), and have no sign change. The largest step of ln|D| between neighbouring points is 0.45, 0.47 and 0.49, so
 no jump is hidden on the grid (the 100-point caveat of §7 still applies).
 
+`l456_graph.py` draws the scans, the convergence base values and the point-mass rates from these files.
+
+![−D(γ) at l = 4, 5, 6 with the convergence base values and the point-mass rates](l456_mode_condition.svg)
+
 **Convergence** (`convergence_l{4,5,6}_output.txt`): the five variants of §3 (base, rtol 1e-12, φ_cut 1e-12 at
 r_m = 34.21, background R = 90, r0 = 3×10⁻³) and the q task at γ ∈ {1e-3, 0.03, 0.3, 1, 3, 10, 40, 137, 300, 1000,
 γ_max}.
@@ -290,6 +294,10 @@ s2. Each row is one contour, a symmetric box (|Im s| ≤ y1, doubled from the up
 (Im s ∈ [y0, y1], its mirror has the same count). s3 was added after the first plan, since the strip above |Im s| = 2.5
 belongs to both gaps of the issue and to none of the first boxes.
 
+`boxes_graph.py` draws the same boxes at true scale from `i5_boxes_output.txt`, with the planted zeros.
+
+![The counted boxes of the growing half plane at true scale, l = 2 and 3](complex_s_boxes.svg)
+
 | job | what | Re s | Im s | winding | max step | min abs(D) | planted s0 | planted found | check |
 |---|---|---|---|---|---|---|---|---|---|
 | rep_l2 | stored box, l = 2 (#7 box of the first scans) | [0.1, 2.0] | abs(Im s) ≤ 2.5 | +0.0000 | 0.39 | 6.70e-04 | 0.3+1.76j | +2.0000 of 2 | PASS |
@@ -440,6 +448,9 @@ Status: numerical evidence, conditional on D having no pole in each box (#54).
 | `polish_zero.py` | secant polish of a zero of D near the axis, with the Mini BS I control |
 | `axis_scan.py` | \|D\| on a vertical line; its Mini BS control fails, not used (§5.1) |
 | `collect_i5.py`, `i5_boxes_output.txt` | the table of §5.1 from the raw logs (negative-mass-raw, I5-rpi5) |
+| `l456_graph.py` → `l456_mode_condition.svg` | the figure of §3a |
+| `boxes_graph.py` → `complex_s_boxes.svg` | the figure of §5.1 |
+| `data_graphs.py` | SVG drawing primitives of both figures, vendored unchanged (its docstring names the canonical copy) |
 | `kappa_eff.py`, `kappa_eff_l2_*`, `love.py`, `love_output.txt` | κ_eff vs κ_c; static Love-type coefficient |
 | `mini_bs.py`, `mini_bs_output.txt` | validation against Macedo et al. 2013 Mini BS I polar QNM |
 | `check_bg.py`, `matter_sv.py` | background / denominator sanity checks; scalar-sector SVD diagnostic (not run) |
