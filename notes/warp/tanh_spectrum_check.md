@@ -716,7 +716,8 @@ to 4.67 at k = 512 (10 files). Free memory stayed between 10.3 and 25.7 GiB. No 
 "Before" is the same report on #118's and #111's files (floor 0.07, `I119-win/report-old-i118-i111.log`), "after" the
 wide report. The windows are the 10⁻⁵ ones, "set by" is `floor` or `match`, "real" the real eigenvalues in the window of A
 and B, k the eigenvalues ARPACK returned for A and B, down to the smallest |μ|v_c listed (`I119-win/table.log`). Residuals
-are 4×10⁻¹⁴ or less in all 36 files.
+are 4.8×10⁻¹⁴ or less in all 36 files, the largest at σR = 4, A, m = 17/2 (the run's report said 4×10⁻¹⁴; corrected in
+review).
 
 | σR | m | window 10⁻⁵ before | set by | window 10⁻⁵ after | set by | #75's own | real, A / B | k, A / B | smallest \|μ\|v_c, A / B | n, A / B |
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -811,7 +812,7 @@ conjugate pair. #94's regenerated output is untouched.
 Status words of AGENTS.md. These are *numerical evidence*. A Galerkin eigenvalue of a non-normal operator is not a bound
 on the spectrum, nor is a window, and the two discretisations agreeing is the evidence of its stability, not a proof of
 it. Nothing here is *proved*, *certified* or *checked symbolically*, and "no real zero mode below |v| ≈ 5 v_c" (#94's
-sizes) and "below 12.05 v_c and 10.60 v_c" (#111's) are *conditional* on the leading eigenvalue's decline with m. The
-#111 windows are also truncated at the ARPACK floor in 14 of 18 re-solved sectors, so they say where this basis is known
-to agree, not where it stops agreeing. That E is empty for the tanh profile is not shown by this check either, and stays
-a *conjecture*.
+sizes) and "below 12.05 v_c and 10.60 v_c" (#111's) are *conditional* on the leading eigenvalue's decline with m. A
+window set by the ARPACK floor says where this basis is known to agree, not where it stops agreeing: 14 of #111's 18
+re-solved windows were, and after #119 two are, σR = 2, m = 19/2 and 21/2 (#127). That E is empty for the tanh profile
+is not shown by this check either, and stays a *conjecture*.
