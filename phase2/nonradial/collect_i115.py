@@ -76,6 +76,7 @@ for l in LS:
             rows.append(f"| {key} | {l} | {what} | [{x0}, {x1}] | abs(Im s) ≤ {y1} | no result for {tag} | | | | | |")
             bad = True; failed.append((job, 'no RESULT line')); continue
         wind = float(r.group(5)) + (0.5 if mutate == 'shift' else 0.0)
+        winds = f"{wind:+.4f}" if mutate == 'shift' else r.group(5)          # as logged, with the sign of a rounded 0
         step, mind = r.group(6), r.group(7)
         why = []
         if abs(wind - round(wind)) >= 0.05: why.append('winding not an integer')
@@ -94,7 +95,7 @@ for l in LS:
         if rc != '0': why.append(f"job exit {rc}")
         if why: bad = True; failed.append((job, ', '.join(why)))
         ev = [int(m.group(1)) for m in edge.finditer(txt)]
-        rows.append(f"| {key} | {l} | {what} | [{x0}, {x1}] | abs(Im s) ≤ {y1} | {wind:+.4f} | {step} | {mind} | {pl} |")
+        rows.append(f"| {key} | {l} | {what} | [{x0}, {x1}] | abs(Im s) ≤ {y1} | {winds} | {step} | {mind} | {pl} |")
         t = times(job)
         wall = f"{(t[1] - t[0]).total_seconds() / 3600:.2f}" if t else "no times"
         runs.append(f"| {job} | {rc if rc is not None else 'missing'} | {ev[-1] if ev else ''} | {wall} | {t[2] if t else ''} |")
