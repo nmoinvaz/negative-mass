@@ -811,9 +811,9 @@ conjugate pair. #94's regenerated output is untouched.
 
 Issue #127. Script at 4b9a8b9 (branch `wip/i127-k512`, unmodified by this task), regenerated
 [tanh_spectrum_check_wide_output.txt](tanh_spectrum_check_wide_output.txt), raw output in negative-mass-raw folder
-`I127-win`. The two windows #119 left at the ARPACK floor (σR = 2, m = 19/2 and 21/2, both discretisations) were
-re-solved with `--floor=0.025 --k0=512 --kmax=512`, at #119's sizes. Status: *numerical evidence*. Galerkin eigenvalues of
-a non-normal operator are not bounds.
+`I127-win` (commit 3e1ccda). The two windows #119 left at the ARPACK floor (σR = 2, m = 19/2 and 21/2, both
+discretisations) were re-solved with `--floor=0.025 --k0=512 --kmax=512`, at #119's sizes. Status: *numerical
+evidence*. Galerkin eigenvalues of a non-normal operator are not bounds.
 
 Both windows are now `match`: 0.0332 (m = 19/2) and 0.0322 (m = 21/2) at the 10⁻⁵ tolerance, below #119's floors of
 0.0341 and 0.0330 and below #75's own 0.0595 and 0.0563. The wide report exits 0 with 156 of 156 checks. ARPACK stopped
