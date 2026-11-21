@@ -668,6 +668,64 @@ function, shares only r_m. The counter's step rule is a copy of §5.1's, and
 the planted zero in every box tests it. The sign with which a pole enters a winding was shown in #54 (a planted pole
 counted −2) and was not repeated.
 
+**#124: poles of D in the l = 4, 5, 6 boxes.** #124 counts the zeros of Z(r_m; s) in the nine boxes of §3a (#115: the
+stored box, s1 and n1 at l = 4, 5 and 6; phantom ω = 0.7603), each with #115's planted pair. On rpi5 (Raspberry Pi 5,
+aarch64, 4 cores shared with another project) on 2026-11-21, with the code of `wip/i124-zeros-l456` at b4c3a0a,
+`zerilli_zeros.py` and `collect_i121.py` unmodified, at the script's default step rule as in #121. Each job is
+`python -u zerilli_zeros.py <arguments> --cachedir=<raw folder>/cache`, with the 13 lines `job|arguments` that
+`python collect_i121.py --jobs --only=3a` prints (nine boxes and four controls; raw `jobs.txt`), at `nice -n 10`, one
+thread, at most two processes at a time. The four controls ran first, then the pilot `n1_l6` (R_z = 1.6×10⁶, 197 s in
+the script), then the other eight boxes. Each job ran once and none died, and the 13 took 11 min in all. Logs and caches
+are in negative-mass-raw, folder `I124-rpi5` at 68d643f. From `phase2/nonradial`, with the raw repository cloned beside
+the checkout:
+
+```
+python collect_i121.py ../../../negative-mass-raw/I124-rpi5 --only=3a > i124_zeros_output.txt
+```
+
+The collector exits 0. Its `--mutate=box` (it expects `s1_l4` at Re s up to 0.2) and `--mutate=control` (it expects
+`mut_lshift` to pass) each exit 1, as they should. The controls end as in the table above: `flat` all checks passed
+(`flatq` at most 4.6×10⁻¹³), `mut_reverse` FAILED: plant (−2.0000 of +2), `mut_nonorm` FAILED: holo (1.3×10⁻² to
+1.6×10⁻²), `mut_lshift` FAILED: column (7.0×10⁻⁴ to 1.1×10⁻²).
+
+| job | l | Re s | Im s | zeros of Z | max step | min abs(Z) | planted found | winding of D | zeros of D |
+|---|---|---|---|---|---|---|---|---|---|
+| rep_l4 | 4 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | 0.27 | 5.59e-01 | +2.0000 of 2 | -0.0000 | 0 |
+| s1_l4 | 4 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | 0.27 | 6.33e-01 | +2.0000 of 2 | +0.0000 | 0 |
+| n1_l4 | 4 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | +0.0000 | 0.22 | 2.10e+00 | +2.0000 of 2 | +0.0000 | 0 |
+| rep_l5 | 5 | [0.1, 2] | abs(Im s) ≤ 2.5 | -0.0000 | 0.26 | 5.59e-01 | +2.0000 of 2 | -0.0000 | 0 |
+| s1_l5 | 5 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | 0.27 | 6.34e-01 | +2.0000 of 2 | -0.0000 | 0 |
+| n1_l5 | 5 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | -0.0000 | 0.22 | 2.09e+00 | +2.0000 of 2 | -0.0000 | 0 |
+| rep_l6 | 6 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | 0.34 | 5.59e-01 | +2.0000 of 2 | -0.0000 | 0 |
+| s1_l6 | 6 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | 0.37 | 6.34e-01 | +2.0000 of 2 | +0.0000 | 0 |
+| n1_l6 | 6 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | +0.0000 | 0.11 | 1.94e+00 | +2.0000 of 2 | +0.0000 | 0 |
+
+`rep` is §3a's stored box, the box of §5's `p7603_l2` at l = 4, 5, 6. The winding of D is §3a's
+(`i115_boxes_output.txt`): guard 1 for eight boxes and `--guard=all` for `s1_l5`. Zeros of D = winding of D + zeros of
+Z. `i124_zeros_output.txt` also has the evaluations, the times and the two check columns. Planted at 0.3 + 1.76i
+(`rep`), 0.04 + 0.25i (`s1`) and 0.0005 + 0.12i (`n1`), each with its conjugate.
+
+**All nine boxes have 0 zeros of Z(r_m; s)**, each with its planted pair returned. So the Zerilli column gives D no pole
+in them, and the zeros of D equal the winding of D, 0, in each. No count is nonzero, so no box needs a corrected count
+of zeros of D. Status: numerical evidence, with the conditions of the 21 boxes above: that column is D's only pole
+source (#122), and the counts of Z, and the windings of D except `s1_l5`'s, use a step rule that does not exclude a lost
+2π below the first two bisection levels (#126 recounts with the half-step test at every level). The planted check
+compares two counts on the same steps, so it does not see a 2π lost by Z's own steps (§3a). In the three n1 boxes the q
+difference at Re s = 10⁻⁴ is reported and not checked (at most 9.3×10⁻¹⁰, `n1_l4`).
+
+`count`, `holo`, `column` and `plant` pass in all nine. Largest max step 0.37 rad (`s1_l6`) on a count and 0.39 rad with
+the planted pair (limit 0.45), worst Cauchy–Riemann defect 1.1×10⁻⁸ (`n1_l6`; limit 10⁻⁶), worst `column` difference
+1.0×10⁻¹² (`s1_l4`, `s1_l5`; limit 10⁻⁶). `min abs(Z)` is 5.59×10⁻¹ in the three `rep` boxes, as in §5.
+
+| acceptance criterion | verdict |
+|---|---|
+| each of the nine boxes returns its planted zero, with `count`, `holo`, `column` and `plant` passing | met in all nine |
+| `collect_i121.py` exits 0 with the nine rows, and its mutations exit 1 | met: exit 0; `--mutate=box` and `--mutate=control` exit 1 |
+| each nonzero count with its box and winding(D) + count(Z) | met; no count is nonzero, so winding(D) + count(Z) = 0 in all nine |
+
+The "#115's boxes" bullet of the list below and the last row of the acceptance table at the end of §5.3 are #121's text
+and are left as written.
+
 #### Not counted, and what this settles
 
 - `rep_l2` is the first box of §5, `p7603_l2`. `n3_l2` and `n3_l3` cross Re s = 0, where k = √(s² + V) has its cut, so
@@ -774,6 +832,7 @@ counted −2) and was not repeated.
 | `check_cache_i54.py`, `i54_cache_check_output.txt` | stored D values recomputed on a second machine (§5.2) |
 | `zerilli_zeros.py` | zeros of the decaying Zerilli solution Z(r_m; s) in a box, the poles of D's Zerilli column (§5.3) |
 | `collect_i121.py`, `i121_zeros_output.txt` | the job list and table of §5.3 from the raw logs (negative-mass-raw, I121-win) |
+| `i124_zeros_output.txt` | the table of §5.3's #124 paragraph, the nine boxes of §3a, from the raw logs (I124-rpi5), built by `collect_i121.py --only=3a` |
 | `l456_graph.py` → `l456_mode_condition.svg` | the figure of §3a |
 | `boxes_graph.py` → `complex_s_boxes.svg` | the figure of §5.1 |
 | `data_graphs.py` | SVG drawing primitives of both figures, vendored unchanged (its docstring names the canonical copy) |
