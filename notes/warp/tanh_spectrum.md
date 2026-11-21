@@ -28,12 +28,12 @@ No real eigenvalue of S⁻¹M, that is no real zero-mode speed, lies in a conver
 eigenvalue of m = 21/2 is below that, so a real zero mode of D̃ has |v| > 12.05 v_c at σR = 2 and |v| > 10.32 v_c at
 σR = 4. #63 reached 4 v_c with the grid operator. That E is empty for the tanh profile stays a *conjecture*.
 #94 recomputed every sector's leading eigenvalue with B-splines in (r, θ), a basis that shares nothing with this one,
-and matched this note's tables to 6×10⁻⁶ ([tanh_spectrum_check.md](tanh_spectrum_check.md)). #111 refined that basis
-until its windows start below this note's 0.0830 and 0.0969 in every sector, and matched the second modulus to
-2.1×10⁻⁵. It finds no real eigenvalue in any window, so it confirms the absence of real zero modes to 12.05 v_c at
-σR = 2 and to 10.60 v_c at σR = 4. The second line is set by the leading eigenvalue of m = 21/2 rather than by a
-window, so it is above this note's 10.32 v_c. Both rest on the same condition as this note's, that the leading
-eigenvalue keeps falling beyond m = 21/2.
+and matched this note's tables to 6×10⁻⁶ ([tanh_spectrum_check.md](tanh_spectrum_check.md)). #111 and #118 refined
+that basis in all 22 sectors until its windows start below this note's 0.0830 and 0.0969, and matched the second
+modulus to 5.0×10⁻⁶. It finds no real eigenvalue in any window, so it confirms the absence of real zero modes to
+12.05 v_c at σR = 2 and to 10.60 v_c at σR = 4. The second line is set by the leading eigenvalue of m = 21/2 rather
+than by a window, so it is above this note's 10.32 v_c. Both rest on the same condition as this note's, that the
+leading eigenvalue keeps falling beyond m = 21/2.
 
 The identity ∫τ₁|ψ|² = ∫τ₁|χ|² = 0 has nothing to evaluate on, since there is no real candidate, and for this profile it
 would hold without one (§5).
