@@ -21,6 +21,8 @@ Options (the defaults give the behaviour of the first version):
   --plant=RE,IM   planted-zero check.  Counts D and D*(s-s0)[*(s-conj s0) if Y0 = 0] on the same cached
                   evaluations, and exits 1 unless the two counts differ by the number of planted zeros inside
                   the box (2 for a pair in the symmetric box, 1 in an upper box, 0 outside) within 0.05.
+  --guard=1       deepest bisection level at which a step is accepted only if its two half steps agree with it;
+                  `all` applies the half-step guard at every level. The default 1 is the rule of #54.
   --mutate=NAME   breaks the counter so that the --plant check must fail:
                     reverse      traverse the contour clockwise (the sign of the count flips),
                     wrongdouble  doubling applied to an upper box, or left out of a symmetric one,
@@ -34,13 +36,14 @@ from polar_solver import PolarProblem
 
 args = [a for a in sys.argv[1:] if not a.startswith('--')]
 opts = dict(a[2:].split('=', 1) for a in sys.argv[1:] if a.startswith('--') and '=' in a)
-unknown = set(opts) - {'y0', 'rsmult', 'zfac', 'nseg', 'cachedir', 'plant', 'mutate'}
+unknown = set(opts) - {'y0', 'rsmult', 'zfac', 'nseg', 'cachedir', 'plant', 'mutate', 'guard'}
 if unknown or len(args) != 6:
     sys.exit(__doc__ + f"\nunknown options {sorted(unknown)} or wrong argument count")
 eps, w, l = int(args[0]), float(args[1]), int(args[2])
 x0, x1, y1 = (float(a) for a in args[3:6])
 y0 = float(opts.get('y0', 0.0)); rsmult = float(opts.get('rsmult', 40.0)); zfac = float(opts.get('zfac', 1.0)); nseg = int(opts.get('nseg', 10))
 cachedir = opts.get('cachedir', HERE); mutate = opts.get('mutate')
+guard = np.inf if opts.get('guard', '1') == 'all' else int(opts.get('guard', '1'))
 plant = complex(*(float(a) for a in opts['plant'].split(','))) if 'plant' in opts else None
 assert mutate in (None, 'reverse', 'wrongdouble', 'misplant', 'onesided'), mutate
 assert x0 < x1 and 0 <= y0 < y1
@@ -91,7 +94,7 @@ def count(F, verbose):
             da, db = F(a + (b - a)*t0), F(a + (b - a)*t1)
             dph = np.angle(db / da)
             fine = t1 - t0 <= 1e-5
-            if abs(dph) <= 0.4 and depth <= 1 and not fine:
+            if abs(dph) <= 0.4 and depth <= guard and not fine:
                 dm = F(a + (b - a)*0.5*(t0 + t1))
                 h1, h2 = np.angle(dm / da), np.angle(db / dm)
                 if max(abs(h1), abs(h2)) > 0.4 or abs(h1 + h2 - dph) > 0.1:
