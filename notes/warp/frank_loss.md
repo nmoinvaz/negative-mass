@@ -313,7 +313,7 @@ restart 20; 1.55 GiB for the scan.
   tanh profile at σR = 2 and 4 the grid operator has no real zero mode up to 4 v_c, and none of its 24 largest
   eigenvalues is real (*numerical evidence*). #69's grid scan finds none up to 10 v_c ([zero_modes.md](zero_modes.md)),
   and #75 widens this without a box to about 12 v_c and 10 v_c, given that the
-  leading eigenvalue keeps falling with J_z ([tanh_spectrum.md](tanh_spectrum.md) §5). That E is empty for the tanh
+  leading eigenvalue keeps falling with J_z ([tanh_spectrum.md](tanh_spectrum.md) §5; computed through J_z = 41/2 in #120). That E is empty for the tanh
   profile is a *conjecture*.
 - The √3 is the best this route gives for complex amplitudes (the planted case attains it), but not necessarily for
   real ones (§8). For the tanh profile, the first complex zero mode is at 2.44 v_c and 2.72 v_c.

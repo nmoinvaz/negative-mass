@@ -135,7 +135,7 @@ The report's last lines, the windows taken together over the sectors computed:
 The bound is set by m = ½ at both σR and both tolerances, where the window starts at 0.183 and 0.193, against #75's
 0.078 and 0.097. In all 22 sectors, at both tolerances, this basis's window starts above #75's, by a factor of 2.0 to
 2.4 at m = ½ and 1.3 at m = 21/2 (10⁻⁵). Both lines are conditional on the leading eigenvalue continuing to fall with m
-beyond 21/2, which is not computed, and are statements about the Galerkin eigenvalues, not bounds on the spectrum. At
+beyond 21/2, which #120 later computed through m = 41/2 (last section), and are statements about the Galerkin eigenvalues, not bounds on the spectrum. At
 10⁻⁵ only m = 19/2 and 21/2 have windows below 1/12.05 = 0.0830 (σR = 2) and 1/10.32 = 0.0969 (σR = 4), so this check
 confirms the absence of real eigenvalues only above 0.183 and 0.193 in |μ|v_c, and does not test #75's statement below
 them.
@@ -370,8 +370,8 @@ No window starts above the leading eigenvalue of m = 21/2 (0.0830 and 0.0944) in
 leading eigenvalue's reciprocal, 1/0.083018 and 1/0.094358. The largest window starts are 0.0801 and 0.0912, from #94's
 m = 19/2 files (re-solved in #118, which moves neither line), and 0.0697 and 0.0712 in the re-solved sectors. At σR = 2 the line equals #75's by this same definition.
 At σR = 4 it is 2.7% above #75's 10.32 v_c, because #75's line was its m = ½ window of 0.0969 and the window here is 0.0712.
-Both lines are conditional on the leading eigenvalue continuing to fall with m beyond 21/2, which is not computed, and
-are statements about the Galerkin eigenvalues. The widening reached its aim, so no memory or time limit set a smaller
+Both lines are conditional on the leading eigenvalue continuing to fall with m beyond 21/2, computed through m = 41/2 in
+#120 (last section), and are statements about the Galerkin eigenvalues. The widening reached its aim, so no memory or time limit set a smaller
 window.
 
 ### Where it differs from tanh_spectrum.md
@@ -495,7 +495,8 @@ They are the reciprocals of the leading eigenvalues of m = 21/2 (1/0.083018 and 
 them. The largest window starts in the 22 sectors are now 0.0697 (σR = 2, m = 9/2) and 0.0712 (σR = 4, m = ½), where they had
 been 0.0801 and 0.0912 in #94's m = 19/2 files, which were below the same leading eigenvalues. So re-solving the two sectors
 did not move the lines, as expected. Both stay conditional on the leading eigenvalue continuing to fall with m beyond 21/2,
-which is not computed here, and are statements about the Galerkin eigenvalues.
+which is not computed here (#120 computes it through m = 41/2, next section), and are statements about the Galerkin
+eigenvalues.
 
 #### What differs from the text above and from the previous output
 

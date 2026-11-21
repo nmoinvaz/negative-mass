@@ -33,7 +33,8 @@ that basis in all 22 sectors until its windows start below this note's 0.0830 an
 modulus to 5.0×10⁻⁶. It finds no real eigenvalue in any window, so it confirms the absence of real zero modes to
 12.05 v_c at σR = 2 and to 10.60 v_c at σR = 4. The second line is set by the leading eigenvalue of m = 21/2 rather
 than by a window, so it is above this note's 10.32 v_c. Both rest on the same condition as this note's, that the
-leading eigenvalue keeps falling beyond m = 21/2.
+leading eigenvalue keeps falling beyond m = 21/2. #120 computed it for m = 23/2 to 41/2, where it falls strictly and stays
+below both lines, so the condition now concerns m > 41/2 only.
 
 The identity ∫τ₁|ψ|² = ∫τ₁|χ|² = 0 has nothing to evaluate on, since there is no real candidate, and for this profile it
 would hold without one (§5).
@@ -245,7 +246,8 @@ unconverged tail of a dense real matrix. Taking the windows together,
     σR = 4:  no real eigenvalue with |μ|v_c ≥ 0.0969, so no real zero mode with |v| ≤ 10.32 v_c = 25.5
 
 provided the leading eigenvalue keeps falling with m beyond m = 21/2 as it does from m = ½ to 21/2 (0.083 and 0.094 at
-the last sector). That is *numerical evidence*, a statement about the Galerkin eigenvalues of the discretisation that
+the last sector). #120 computed that fall for m = 23/2 to 41/2 in the B-spline basis
+([tanh_spectrum_check.md](tanh_spectrum_check.md)), so it is assumed for m > 41/2 only. That is *numerical evidence*, a statement about the Galerkin eigenvalues of the discretisation that
 two discretisations agree on, and not a bound on the spectrum.
 
 ### The identity ∫τ₁|ψ|² = ∫τ₁|χ|² = 0
@@ -310,7 +312,8 @@ L = 12 and 16 runs. They are not the quantity used here.
   σR = 2, ±0.0159 ± 0.3673i and ±0.0028 ± 0.2885i at σR = 4, each fourfold in T₁. FL's bound ρ√3 v_c ≤ 1 holds at 0.709
   and 0.637.
 - No real eigenvalue of S⁻¹M with |μ|v_c ≥ 0.083 (σR = 2) or ≥ 0.097 (σR = 4), in sectors m = ½ to 21/2, so no real
-  zero-mode speed |v| up to 12.05 v_c and 10.32 v_c, given that the leading eigenvalue keeps falling with m. That is
+  zero-mode speed |v| up to 12.05 v_c and 10.32 v_c, given that the leading eigenvalue keeps falling with m (computed
+  through m = 41/2 in #120). That is
   two and a half to three times #63's 4 v_c. It is *numerical evidence*. That E is empty for the tanh profile is still
   a *conjecture*, and the window does not reach large v.
 - The identity ∫τ₁|ψ|² = ∫τ₁|χ|² = 0 was evaluated on 80 to 112 eigenfunctions per sector and is zero identically, by
