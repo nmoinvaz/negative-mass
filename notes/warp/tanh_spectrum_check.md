@@ -654,6 +654,158 @@ bound would remove. The text above describes the state before #120, and is left 
 - The planted check, pilot and solves took 14 min against the estimate of 30 min, and each solve peaked at 1.1 to 1.5 GiB,
   against 5.6 to 9.7 GiB at the wide sizes of #111 and #118.
 
+## Lower floor (#119)
+
+Issue #119. Script unmodified, at a123433 (branch `wip/i119-floor`), regenerated
+[tanh_spectrum_check_wide_output.txt](tanh_spectrum_check_wide_output.txt), raw output in negative-mass-raw folder
+`I119-win` (commit a89e38d). The 18 sectors whose 10⁻⁵ window #111 or #118 found equal to the ARPACK floor of 0.07
+(σR = 2, m = ½ to 21/2, and σR = 4, m = 9/2 to 21/2, both discretisations) were re-solved at `--floor=0.04`, with the
+other sizes unchanged. Status: *numerical evidence*. Galerkin eigenvalues of a non-normal operator are not bounds.
+
+Sixteen of the 18 windows are now `match`: set by an eigenvalue without a partner, no longer by the truncation. Two are
+still `floor`: σR = 2, m = 19/2 and 21/2, at 0.0341 and 0.0330, the smallest moduli ARPACK returned there, so this
+basis's own windows start lower. The wide report exits 1 on those two `match` checks and passes the other 154 of its 156.
+All 22 windows are below #75's own (`own75`), including σR = 2, m = 9/2 (0.0475 against 0.0667), no real eigenvalue lies
+in any window, and the speed lines are unchanged.
+
+### What was run
+
+Machine win (surface-laptop-4, Windows 11, 8 logical CPUs, 32 GB, shared with choptuik-large-d), Python 3.14.10 with
+numpy 2.5.4 and scipy 1.18.1, from the repository root. Thread settings and below-normal detached launches as in #111
+above. At most two solve processes ran at a time, the second started only while choptuik-large-d's processes together
+used under 4 cores (0.04 to 3.62 cores at the 18 launches made while another solve ran, and four readings of 4.0 to
+5.3 cores at 01:03 to 01:05 held the queue for two minutes). The sizes are #111's and #118's. The commands, as bash:
+
+    RAW=../negative-mass-raw/I119-win
+    OLD=../negative-mass-raw/I118-win/eig,../negative-mass-raw/I111-win/eig
+    NEW="--solver=arpack --floor=0.04 --fnth=4 --fh=0.4"
+    CHK="python notes/warp/tanh_spectrum_check.py"
+    $CHK --part=solve --sigma=4 --disc=B --ms=10.5 $NEW --out=$RAW/eig                      (the pilot)
+    $CHK --part=solve --sigma=2 --disc=A --ms=4.5 $NEW --out=$RAW/eig                       (stage 1, and B)
+    $CHK --part=solve --sigma=4 --disc=B --ms=4.5,...,10.5 $NEW --out=$RAW/eig              (and (2, B), m = 0.5,...,10.5)
+    $CHK --part=solve --sigma=2 --disc=A --ms=<one sector> $NEW --out=$RAW/eig              (17 single-sector A jobs)
+    $CHK --part=report --out=$RAW/eig,$OLD > notes/warp/tanh_spectrum_check_wide_output.txt  (exits 1)
+    $CHK --part=report --out=$RAW/eig,$OLD --mutate=floorup                                 (exits 1)
+    $CHK --part=compare --out=$RAW/eig --ref=../negative-mass-raw/I111-win/eig              (and I118-win, both exit 0)
+    $CHK --part=compare --out=$RAW/eig --ref=../negative-mass-raw/I111-win/eig --mutate=compare   (exits 1)
+
+The pilot ran alone, inside its stop condition (4 h), from 19:08. Stage 1 (σR = 2, m = 9/2, A and B) followed, then (4, B)
+and (2, B) with their full lists as slots freed, (4, B) reusing the pilot's m = 21/2 file and (2, B) stage 1's m = 9/2
+file. The 17 A sectors not yet started then ran as single-sector jobs, longest expected first, so that the two slots
+finished together and not with (2, A) alone for its last hours. The sector files are the same either way. The last solve
+exited at 06:17, 11 h 9 min after the pilot started. Peak working sets were sampled once a minute
+(`I119-win/memory-sampler.log`):
+
+| run | exit | wall | peak memory |
+|---|---|---|---|
+| pilot, σR = 4, B, m = 21/2, n = 102414 | 0 | 3095 s | 9.06 GiB |
+| stage 1, σR = 2, m = 9/2, A and B | 0, 0 | 1022 s, 2594 s | 2.98 GiB, 5.50 GiB |
+| solve σR = 4, B (6 sectors, m = 21/2 from the pilot) | 0 | 285 min | 9.68 GiB |
+| solve σR = 2, B (10 sectors, m = 9/2 from stage 1) | 0 | 351 min | 9.07 GiB |
+| 17 single-sector A jobs, n = 32144 to 78010 | 0 in all 17 | 664 to 3127 s | 2.00 to 7.95 GiB |
+| report on #118's and #111's files (the "before"), report, report `--mutate=floorup` | 1, 1, 1 | 0 s each | |
+| `compare` against #111's and #118's files, `compare --mutate=compare` | 0, 0, 1 | 0 s each | |
+
+All 22 solve jobs exited 0 and none died. The 36 solves took 20.9 h of solve time against 9.0 h for the same 36 at floor
+0.07 in #111's and #118's logs (ratio 2.33, `I119-win/cost.log`), and the whole run 11 h 9 min of wall time against the
+issue's estimate of 15 to 20 h. The ratio per sector is 1.65 to 3.01 where ARPACK stopped at k = 256 (26 files) and 2.87
+to 4.67 at k = 512 (10 files). Free memory stayed between 10.3 and 25.7 GiB. No process was stopped.
+
+### The 18 sectors
+
+"Before" is the same report on #118's and #111's files (floor 0.07, `I119-win/report-old-i118-i111.log`), "after" the
+wide report. The windows are the 10⁻⁵ ones, "set by" is `floor` or `match`, "real" the real eigenvalues in the window of A
+and B, k the eigenvalues ARPACK returned for A and B, down to the smallest |μ|v_c listed (`I119-win/table.log`). Residuals
+are 4×10⁻¹⁴ or less in all 36 files.
+
+| σR | m | window 10⁻⁵ before | set by | window 10⁻⁵ after | set by | #75's own | real, A / B | k, A / B | smallest \|μ\|v_c, A / B | n, A / B |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 2 | 0.5 | 0.0680 | floor | 0.0632 | match | 0.0777 | 0 / 0 | 512 / 512 | 0.0343 / 0.0343 | 32144/42408 |
+| 2 | 1.5 | 0.0644 | floor | 0.0586 | match | 0.0803 | 0 / 0 | 512 / 512 | 0.0332 / 0.0332 | 35496/47124 |
+| 2 | 2.5 | 0.0608 | floor | 0.0518 | match | 0.0751 | 0 / 0 | 512 / 512 | 0.0323 / 0.0323 | 39590/52080 |
+| 2 | 3.5 | 0.0572 | floor | 0.0496 | match | 0.0711 | 0 / 0 | 512 / 512 | 0.0313 / 0.0313 | 43512/57720 |
+| 2 | 4.5 | 0.0697 | floor | 0.0475 | match | 0.0667 | 0 / 0 | 512 / 512 | 0.0304 / 0.0304 | 47792/63180 |
+| 2 | 5.5 | 0.0654 | floor | 0.0426 | match | 0.0688 | 0 / 0 | 256 / 256 | 0.0394 / 0.0394 | 52514/69090 |
+| 2 | 6.5 | 0.0616 | floor | 0.0410 | match | 0.0649 | 0 / 0 | 256 / 256 | 0.0379 / 0.0379 | 57204/75558 |
+| 2 | 7.5 | 0.0582 | floor | 0.0395 | match | 0.0611 | 0 / 0 | 256 / 256 | 0.0366 / 0.0366 | 62094/81472 |
+| 2 | 8.5 | 0.0552 | floor | 0.0361 | match | 0.0578 | 0 / 0 | 256 / 256 | 0.0353 / 0.0353 | 66960/88480 |
+| 2 | 9.5 | 0.0524 | floor | 0.0341 | floor | 0.0595 | 0 / 0 | 256 / 256 | 0.0341 / 0.0341 | 72240/94866 |
+| 2 | 10.5 | 0.0499 | floor | 0.0330 | floor | 0.0563 | 0 / 0 | 256 / 256 | 0.0330 / 0.0330 | 78010/102414 |
+| 4 | 4.5 | 0.0685 | floor | 0.0553 | match | 0.0840 | 0 / 0 | 256 / 256 | 0.0384 / 0.0384 | 61016/80190 |
+| 4 | 5.5 | 0.0649 | floor | 0.0532 | match | 0.0790 | 0 / 0 | 256 / 256 | 0.0373 / 0.0373 | 63646/83754 |
+| 4 | 6.5 | 0.0617 | floor | 0.0512 | match | 0.0745 | 0 / 0 | 256 / 256 | 0.0363 / 0.0363 | 66276/87318 |
+| 4 | 7.5 | 0.0588 | floor | 0.0465 | match | 0.0705 | 0 / 0 | 256 / 256 | 0.0353 / 0.0353 | 68906/90288 |
+| 4 | 8.5 | 0.0562 | floor | 0.0449 | match | 0.0727 | 0 / 0 | 256 / 256 | 0.0344 / 0.0344 | 71010/93852 |
+| 4 | 9.5 | 0.0538 | floor | 0.0435 | match | 0.0688 | 0 / 0 | 256 / 256 | 0.0335 / 0.0335 | 73640/96822 |
+| 4 | 10.5 | 0.0516 | floor | 0.0400 | match | 0.0653 | 0 / 0 | 256 / 256 | 0.0327 / 0.0327 | 78010/102414 |
+
+The windows of the 18 are 0.0330 to 0.0632 (σR = 2) and 0.0400 to 0.0553 (σR = 4), against 0.0499 to 0.0697 and 0.0516 to
+0.0685 before. A `match` window lies above its floor by 0.0008 at σR = 2, m = 17/2 (0.0361 against 0.0353), by 0.0029 to
+0.0032 at σR = 2, m = 11/2 to 15/2, and by 0.0073 or more in the other 13 (to the printed digits), so the thinnest is a
+margin of 2%. At σR = 2 the windows fall with m (0.0475, 0.0426, 0.0410, 0.0395, 0.0361 for m = 9/2 to 17/2), and the two
+`floor` sectors are the two with the largest m, where k = 256 returned down to 0.0341 and 0.0330 without passing below
+the basis's own window. At σR = 4 the window at m = 21/2, 0.0400, is 0.0073 above its floor, 0.0327.
+
+ARPACK returned no real eigenvalue (|Im μ| ≤ 10⁻⁹|μ|, the report's tolerance) in any of the 36 files, down to
+|μ|v_c = 0.0304 to 0.0394 (`I119-win/reals.log`). So #75's unconverged real eigenvalues below its windows (30 to 66 per
+sector) are not among the ones returned here, and `noreal` passes with none to detect.
+
+### Each criterion
+
+| criterion of #119 | verdict |
+|---|---|
+| the report labels each window `floor` or `match`, from the script | met. 20 `match` and 2 `floor` of 22: 16 of the 18 re-solved are `match`, the 4 not re-solved (σR = 4, m = ½ to 7/2) are #111's `match` |
+| `--mutate=floorup` makes every window `floor` and fails a check | fires. Exit 1, `match` fails in all 22 sectors. `own75` also fails in all 22 (the floor is above #75's windows). 112 of 156 checks pass |
+| `compare` against #111's files passes above #111's floor | pass. 28 sector files (124 and 124 eigenvalues above #111's floor in 8, 60 and 60 in 20), worst partner distance 2.4×10⁻¹⁴. Against #118's files: 8 files, 2.1×10⁻¹⁴ |
+| `compare --mutate=compare` fails | fires. Exit 1, all 28 files fail at 1.0×10⁻⁹ |
+| each re-solved window is `match` and below #75's own, or is reported as it is | 16 are `match` and below #75's own. 2 are `floor` (σR = 2, m = 19/2 and 21/2, 0.0341 and 0.0330), below #75's own 0.0595 and 0.0563, reported as they are. The report exits 1 on their `match` |
+| no real eigenvalue lies in any window | pass. `noreal` in all 22 sectors, 0 / 0 |
+| `own75`, the 10⁻⁵ window below #75's own | pass in all 22, including σR = 2, m = 9/2 (0.0475 against 0.0667), which failed at #111 (0.0697) |
+
+The other checks of the 22 sectors are the same as before: `lead` worst 4.4×10⁻⁶ (σR = 2, m = 15/2), `next` worst
+5.0×10⁻⁶ (σR = 4, m = 19/2), `AB` worst 2.2×10⁻⁹ (σR = 4, m = 21/2), and `sym` worst 3.3×10⁻⁶ (σR = 2, m = ½, against
+3.5×10⁻⁷ before, in a wider window now).
+
+### The speed bound
+
+The report's last lines are those of #111 and #118:
+
+    σR = 2, tolerance 1e-05 and 1e-04: ... so no real zero mode with |v| <= 12.05 v_c
+    σR = 4, tolerance 1e-05 and 1e-04: ... so no real zero mode with |v| <= 10.60 v_c
+
+They are the reciprocals of the leading eigenvalues of m = 21/2 (1/0.083018 and 1/0.094358), because no window starts
+above them. The largest window starts are 0.0632 (σR = 2, m = ½) and 0.0712 (σR = 4, m = ½, #111's file). Lowering the
+floor moved neither line, as #120 found: they are set by the leading eigenvalue of m = 21/2, not by a window. Both stay
+conditional on the leading eigenvalue continuing to fall with m beyond 21/2, computed through m = 41/2 in #120 (previous
+section), and are statements about the Galerkin eigenvalues.
+
+### What differs from the previous output
+
+The regenerated output differs from the one at 41fee23 (main) in 105 added and 61 removed lines. They are the two table
+headers (new "set by" column), the 22 table rows (the new column, and in the 18 re-solved rows the windows, the count of
+eigenvalues in the window and the directory column), 18 `sym` and 18 `noreal` lines (the new window), 44 new check lines
+(22 `match`, 22 `own75`) and the closing line (`all checks passed` to `FAILED: match sR=2 m=9.5, match sR=2 m=10.5`).
+The 66 `lead`, `next` and `AB` lines and the speed-bound lines are identical, and in all 22 rows the |μ|v_c columns, the
+second moduli, the signs of A − B and the differences from #75 are unchanged to the printed digits. One column changes
+that carries no information: the sign of the imaginary part of the leading μ differs in 10 rows, ARPACK's pick within a
+conjugate pair. #94's regenerated output is untouched.
+
+### What it does not show, and what differs
+
+- Two windows are still the truncation floor, so for σR = 2, m = 19/2 and 21/2 the basis's own window is unknown and below
+  0.0341 and 0.0330. The doubling stops at the first k whose smallest modulus is under `--floor`, so a floor of 0.04 left
+  k = 256 there and a lower `--floor` is needed. Nothing is extrapolated from the other sectors.
+- The truncation remains in the other 16: the spectrum is known down to 0.0304 to 0.0394, and a `match` window says only
+  that an eigenvalue above its floor has no partner within 10⁻⁵ in the other discretisation. The thinnest margin is
+  0.0008 (σR = 2, m = 17/2).
+- `compare` is the same code at two values of k, so it shares the script, formulation, grids and solver with what it
+  checks, and tests that the Krylov dimension changes no eigenvalue above the older floor. It does not test the
+  formulation, which the `lead` and `next` checks against #75's spectral basis do.
+- `--mutate=floorup` fails `own75` as well as `match`, since the floor lies above #75's windows. `noreal` has no
+  mutation of its own that fires it, and with no real eigenvalue returned anywhere it has not seen one here.
+- The estimate was 15 to 20 h of wall time, and the run took 11 h 9 min. The pilot's ratio (1.95, k = 256) was below the
+  coordinator's Mac pilot's 3.4 (m = ½, k = 512), which lies in the 2.87 to 4.67 found at k = 512 here.
+
 ## What this does and does not show
 
 Status words of AGENTS.md. These are *numerical evidence*. A Galerkin eigenvalue of a non-normal operator is not a bound
