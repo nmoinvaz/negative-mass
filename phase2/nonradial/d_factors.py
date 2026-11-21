@@ -662,11 +662,12 @@ def part_pole():
         seen.add(ckey(s)); return Dbase(s)
     cor = b.corners()[::-1] if MUT == 'reverse' else b.corners()
     N0, ms0, nm0 = count_contour(Fc, cor, True)
-    Np, msp, _ = count_contour(lambda s: Dbase(s) * (s - s0) * (s - np.conj(s0)), cor, True)
+    sp = b.plant                                  # #126's planted zero, whose points the cache holds
+    Np, msp, _ = count_contour(lambda s: Dbase(s) * (s - sp) * (s - np.conj(sp)), cor, True)
     check("counter", abs(N0 - float(m.group(1))) < 0.05 and f"{ms0:.2f}" == m.group(2) and f"{nm0:.2e}" == m.group(3)
-          and len(seen) == nev and abs(Np - N0 - 2) < 0.05,
+          and len(seen) <= nev and abs(Np - N0 - 2) < 0.05,
           f"copied counter on the cached D: winding {N0:+.4f} (#126 {m.group(1)}), max step {ms0:.2f} ({m.group(2)}), min|D| "
-          f"{nm0:.2e} ({m.group(3)}), {len(seen)} points ({nev}), the planted pair on the cache gives {Np - N0:+.4f} of +2{sfx}")
+          f"{nm0:.2e} ({m.group(3)}), {len(seen)} distinct points (the log's cache held {nev} after the count), the planted pair at {sp} on the cache gives {Np - N0:+.4f} of +2{sfx}")
     stc = Store(f"pole_{b.name}_clone")
     st = stc
     kw = dict(nophase=MUT == 'nophase', nogauge=MUT == 'nogauge')
