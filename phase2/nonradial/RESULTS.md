@@ -264,16 +264,17 @@ each of the first four lists all ten rows as FAILED, `nocontrol` lists the contr
 
 **Pole caveat.** Each winding is zeros minus poles of D. D's known pole source is the Zerilli column (1, q/f). Its q has
 a pole at each zero of the Zerilli solution at r_m (#54, #121); #122 checks that there is no other source. #121 counted
-those zeros in the 21 boxes of §5 and §5.1 (§5.3), and #124 counts them in these nine. **Until #124, no box of this
-task is covered by a pole exclusion**, and a count of 0 is not a proof that there is no zero.
+those zeros in the 21 boxes of §5 and §5.1, and #124 in these nine (§5.3). #124 finds no zero of Z(r_m; s) in any of
+the nine, so the Zerilli column gives D no pole there. Each 0 above then counts zeros of D, conditional on that column
+being D's only pole source (#122).
 
 **Not covered.** Only the stored box, s1 and n1 were counted. The other boxes of §5.1 (n3, h1, h2, s2, s3 and the
 threshold boxes t1 and t2 at two outer radii) are not run for l = 4, 5, 6; Re s < 0.03 for 0.23 < |Im s| ≤ 2.5 and
 |Im s| > 2.5 are open, as in §5.1. The real-γ axis at l = 4, 5, 6 is the 100-point scan above, not refined.
 
-Status: *numerical evidence*, conditional on D having no pole in each box (#124). It is also conditional on no accepted
-step of D's count losing 2π past bisection depth 1 (#126). Eight boxes passed their planted check at guard 1; s1 at
-l = 5 failed it at guard 1 and passed it with `--guard=all`.
+Status: *numerical evidence*, conditional on the Zerilli column being D's only pole source (§5.3, #122). It is also
+conditional on no accepted step of D's count, or of #124's count of Z, losing 2π past bisection depth 1 (#126). Eight
+boxes passed their planted check at guard 1; s1 at l = 5 failed it at guard 1 and passed it with `--guard=all`.
 
 ## 4. Effective surface condition κ_eff (`kappa_eff.py`, `kappa_eff_l2_output.txt`, `love.py`, `love_output.txt`)
 
@@ -668,8 +669,10 @@ function, shares only r_m. The counter's step rule is a copy of §5.1's, and
 the planted zero in every box tests it. The sign with which a pole enters a winding was shown in #54 (a planted pole
 counted −2) and was not repeated.
 
-**#124: poles of D in the l = 4, 5, 6 boxes.** #124 counts the zeros of Z(r_m; s) in the nine boxes of §3a (#115: the
-stored box, s1 and n1 at l = 4, 5 and 6; phantom ω = 0.7603), each with #115's planted pair. On rpi5 (Raspberry Pi 5,
+#### #124: poles of D in the l = 4, 5, 6 boxes
+
+#124 counts the zeros of Z(r_m; s) in the nine boxes of §3a (#115: the stored box, s1 and n1 at l = 4, 5 and 6;
+phantom ω = 0.7603), each with #115's planted pair. On rpi5 (Raspberry Pi 5,
 aarch64, 4 cores shared with another project) on 2026-11-21, with the code of `wip/i124-zeros-l456` at b4c3a0a,
 `zerilli_zeros.py` and `collect_i121.py` unmodified, at the script's default step rule as in #121. Each job is
 `python -u zerilli_zeros.py <arguments> --cachedir=<raw folder>/cache`, with the 13 lines `job|arguments` that
@@ -723,16 +726,13 @@ the planted pair (limit 0.45), worst Cauchy–Riemann defect 1.1×10⁻⁸ (`n1_
 | `collect_i121.py` exits 0 with the nine rows, and its mutations exit 1 | met: exit 0; `--mutate=box` and `--mutate=control` exit 1 |
 | each nonzero count with its box and winding(D) + count(Z) | met; no count is nonzero, so winding(D) + count(Z) = 0 in all nine |
 
-The "#115's boxes" bullet of the list below and the last row of the acceptance table at the end of §5.3 are #121's text
-and are left as written.
-
 #### Not counted, and what this settles
 
 - `rep_l2` is the first box of §5, `p7603_l2`. `n3_l2` and `n3_l3` cross Re s = 0, where k = √(s² + V) has its cut, so
   y₁(r_m) is not holomorphic there and a count would not be a count of zeros. They need k continued across the axis (#123).
   The 14 boxes of §5.1 counted here, with §5's seven, are the 21.
-- #115's boxes (l = 4, 5, 6, #124) and #117's larger ones are not counted here. Neither are the regions §5.1 lists under "Not
-  covered" (Re s below the lower edges, above the upper ones).
+- #117's larger boxes are not counted here, and #115's nine are #124's (above). Neither are the regions §5.1 lists
+  under "Not covered" (Re s below the lower edges, above the upper ones).
 - In the 21 boxes the zeros of Z(r_m; s) are absent, so the pole of D that #54's hypothesis and `decaying_plane` allow is
   absent, and each 0 of §5 and §5.1 counts zeros of D. That the Zerilli column is D's only pole source is the
   coordinator's reading of `polar_solver.py` (the regular plane is integrated from the centre, the scalar plane's
@@ -747,7 +747,7 @@ and are left as written.
 | each §5 box (7) and §5.1 box (17 less 3) returns its planted zero with `count`, `holo`, `column`, `plant` passing | met in all 21 |
 | `--flat` passes `flat` and `flatq`; each mutation exits 1 on the stored box | met (table above) |
 | counts reported with max step, min abs(Z), star and l from the logs by a collector whose `--mutate=` fails it; each nonzero count with its box and the corrected count of zeros of D | met; no count is nonzero, so zeros of D = 0 in all 21; both mutations exit 1 |
-| #115's boxes, added as a second step | not done, #115 is not merged |
+| #115's boxes, added as a second step | moved to #124 (above), met in all nine |
 
 ## 6. Conclusions
 
@@ -762,8 +762,8 @@ and are left as written.
    and 0.85 (l = 2, 3). #7's −2 for ω = 0.85, l = 3 was an error of the first step rule, and the recount gives 0
    (§5.2). §5.3 (#121) finds no zero of the decaying Zerilli solution at r_m in these boxes, so the 0 counts zeros
    of D, conditional on that column being D's only pole source (#122). At l = 4, 5, 6 the stored box, s1 and n1
-   count 0 too (§3a, #115). Those are zeros minus poles until #124. Every count used the step rule at guard 1, which
-   #126 rechecks.
+   count 0 too (§3a, #115), and #124 (§5.3) finds no zero of the Zerilli solution there, under the same condition.
+   Every count used the step rule at guard 1, which #126 rechecks.
 3. **Axial: stable for all l ≥ 2.** V_ax > 0 everywhere; positivity is exact once V_ax > 0 is checked on
    the grid (r²V_ax/(α² l(l+1)) ≥ 1 − 10⁻⁶).
 4. **κ_eff.** κ_eff − κ_c = s²/(q_int − g) exactly, and for the phantom star q_int > g, so the matter
@@ -793,9 +793,10 @@ and are left as written.
   old rule lost one 2π there.
 - l = 2, 3 for every star, and l = 4, 5, 6 only for the ω = 0.7603 phantom star (§3a, #4), with the real-γ scans,
   convergence variants and κ_eff, windings in three boxes only (the stored box, s1 and n1; eight of the nine returned
-  their planted pair at guard 1, s1 at l = 5 did only with `--guard=all`; §3a, #115) and no c_l. The ω = 0.7603, 0.70 and 0.85 stars have the l = 2, 3
-  real-γ scans, convergence variants and windings (0.70 and 0.85 in #7). c_l and axial positivity are also checked at
-  ω = 0.85, and axial positivity at 0.70 and 0.90. At l = 5 and 6 the rtol 1e-12 variant is missing at the top γ
+  their planted pair at guard 1, s1 at l = 5 did only with `--guard=all`; §3a, #115; no pole of the Zerilli column
+  in them, §5.3, #124) and no c_l. The ω = 0.7603, 0.70 and 0.85 stars have the l = 2, 3 real-γ scans, convergence
+  variants and windings (0.70 and 0.85 in #7). c_l and axial positivity are also checked at ω = 0.85, and axial
+  positivity at 0.70 and 0.90. At l = 5 and 6 the rtol 1e-12 variant is missing at the top γ
   (§3a).
 - The windings count zeros minus poles of D. The −2 that suggested a net pole at ω = 0.85, l = 3 was the old step rule
   (§5.2), so no box shows a net pole. §5.3 (#121) finds no pole from the Zerilli column in 21 boxes. That it is D's
