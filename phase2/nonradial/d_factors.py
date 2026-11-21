@@ -910,7 +910,7 @@ def part_axis():
 # ---------------------------------------------------------------- run
 if __name__ == '__main__':
     fn = {'factors': part_factors, 'gap': part_gap, 'norm': part_norm, 'pole': part_pole, 'axis': part_axis, 'mean': part_mean}
-    print(f"d_factors.py parts {','.join(PARTS)}, RTOL {RTOL:g}, raw {RAW}" + (f", mutate={MUT}" if MUT else ""), flush=True)
+    print(f"d_factors.py parts {','.join(PARTS)}, RTOL {RTOL:g}, raw {opts['raw']}" + (f", mutate={MUT}" if MUT else ""), flush=True)
     for p in PARTS:
         print(f"\n===== part {p}", flush=True)
         try:
