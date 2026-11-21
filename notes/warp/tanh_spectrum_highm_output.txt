@@ -1,0 +1,41 @@
+== sigma R = 2
+  [PASS] repro sR=2: m = 10.5: #75's code 0.08301764 (A), 0.08301764 (B), printed 0.083018
+  [PASS] conv sR=2 m=10.5: A and B differ by 3.1e-12 relative
+   m    | #75 A      | #75 B      | A vs B  | #120 A     | #120 B     | #75 A vs #120 A / B
+   11.5 | 0.07681409 | 0.07681409 | 5.8e-12 | 0.07681400 | 0.07681406 | 1.2e-06 / 3.9e-07
+  [PASS] vc sR=2 m=11.5: #75 3.744900, #120 3.744900 / 3.744900
+  [PASS] vs120 sR=2 m=11.5: worst 1.2e-06 relative
+  [PASS] conv sR=2 m=11.5: A and B differ by 5.8e-12 relative
+   14.5 | 0.06274360 | 0.06274360 | 2.2e-11 | 0.06274354 | 0.06274358 | 9.1e-07 / 2.9e-07
+  [PASS] vc sR=2 m=14.5: #75 3.744900, #120 3.744900 / 3.744900
+  [PASS] vs120 sR=2 m=14.5: worst 9.1e-07 relative
+  [PASS] conv sR=2 m=14.5: A and B differ by 2.2e-11 relative
+   17.5 | 0.05302721 | 0.05302721 | 1.5e-10 | 0.05302717 | 0.05302720 | 8.3e-07 / 2.5e-07
+  [PASS] vc sR=2 m=17.5: #75 3.744900, #120 3.744900 / 3.744900
+  [PASS] vs120 sR=2 m=17.5: worst 8.3e-07 relative
+  [PASS] conv sR=2 m=17.5: A and B differ by 1.5e-10 relative
+   20.5 | 0.04591550 | 0.04591550 | 4.8e-09 | 0.04591547 | 0.04591549 | 6.3e-07 / 2.0e-07
+  [PASS] vc sR=2 m=20.5: #75 3.744900, #120 3.744900 / 3.744900
+  [PASS] vs120 sR=2 m=20.5: worst 6.3e-07 relative
+  [PASS] conv sR=2 m=20.5: A and B differ by 4.8e-09 relative
+== sigma R = 4
+  [PASS] repro sR=4: m = 10.5: #75's code 0.09435789 (A), 0.09435789 (B), printed 0.094358
+  [PASS] conv sR=4 m=10.5: A and B differ by 1.3e-09 relative
+   m    | #75 A      | #75 B      | A vs B  | #120 A     | #120 B     | #75 A vs #120 A / B
+   11.5 | 0.08776927 | 0.08776927 | 2.7e-09 | 0.08776901 | 0.08776917 | 3.0e-06 / 1.2e-06
+  [PASS] vc sR=4 m=11.5: #75 2.470971, #120 2.470971 / 2.470971
+  [PASS] vs120 sR=4 m=11.5: worst 3.0e-06 relative
+  [PASS] conv sR=4 m=11.5: A and B differ by 2.7e-09 relative
+   14.5 | 0.07256402 | 0.07256402 | 1.5e-08 | 0.07256388 | 0.07256397 | 2.0e-06 / 7.7e-07
+  [PASS] vc sR=4 m=14.5: #75 2.470971, #120 2.470971 / 2.470971
+  [PASS] vs120 sR=4 m=14.5: worst 2.0e-06 relative
+  [PASS] conv sR=4 m=14.5: A and B differ by 1.5e-08 relative
+   17.5 | 0.06184636 | 0.06184635 | 5.5e-08 | 0.06184627 | 0.06184633 | 1.5e-06 / 4.9e-07
+  [PASS] vc sR=4 m=17.5: #75 2.470971, #120 2.470971 / 2.470971
+  [PASS] vs120 sR=4 m=17.5: worst 1.5e-06 relative
+  [PASS] conv sR=4 m=17.5: A and B differ by 5.5e-08 relative
+   20.5 | 0.05388590 | 0.05388589 | 1.6e-07 | 0.05388585 | 0.05388589 | 8.9e-07 / 1.9e-07
+  [PASS] vc sR=4 m=20.5: #75 2.470971, #120 2.470971 / 2.470971
+  [PASS] vs120 sR=4 m=20.5: worst 8.9e-07 relative
+  [PASS] conv sR=4 m=20.5: A and B differ by 1.6e-07 relative
+all checks passed
