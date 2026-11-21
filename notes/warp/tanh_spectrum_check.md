@@ -42,7 +42,9 @@ from #94's files (0.0801, 0.0743 and 0.0912, 0.0850). No real eigenvalue lies in
 #75's to 4.0×10⁻⁶ (re-solved sectors) and 2.1×10⁻⁵ (#94's two). The speed-bound lines are 12.05 v_c (σR = 2) and
 10.60 v_c (σR = 4), against #75's 12.05 v_c and 10.32 v_c. The wide report exits 1 on two `AB` failures, in #94's files.
 #118 re-solved those two sectors at the wide sizes, and the wide report then exits 0 (last subsection of "Wider windows
-(#111)").
+(#111)"). #119 and #127 lowered the ARPACK floor until every window was set by an eigenvalue: the 22 windows now start at
+0.0322 to 0.0712, all below #75's own, and the speed-bound lines are unchanged ("Lower floor (#119)" and "k = 512 at
+σR = 2, m = 19/2 and 21/2 (#127)").
 
 ## What was run
 
@@ -941,5 +943,5 @@ on the spectrum, nor is a window, and the two discretisations agreeing is the ev
 it. Nothing here is *proved*, *certified* or *checked symbolically*, and "no real zero mode below |v| ≈ 5 v_c" (#94's
 sizes) and "below 12.05 v_c and 10.60 v_c" (#111's) are *conditional* on the leading eigenvalue's decline with m. A
 window set by the ARPACK floor says where this basis is known to agree, not where it stops agreeing: 14 of #111's 18
-re-solved windows were, and after #119 two are, σR = 2, m = 19/2 and 21/2 (#127). That E is empty for the tanh profile
-is not shown by this check either, and stays a *conjecture*.
+re-solved windows were, two were after #119 (σR = 2, m = 19/2 and 21/2), and none is after #127. That E is empty for the
+tanh profile is not shown by this check either, and stays a *conjecture*.
