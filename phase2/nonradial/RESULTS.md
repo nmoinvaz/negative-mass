@@ -174,7 +174,7 @@ s1 (Re s ∈ [0.03, 0.1], |Im s| ≤ 2.5) and #5's near-axis box n1 (Re s ∈ [1
 planted in the same cached evaluations, at 0.3 ± 1.76i, 0.04 ± 0.25i and 0.0005 ± 0.12i, so a box passes only if the
 count with the pair is 2 higher. Run on rpi5 (Raspberry Pi 5, aarch64, 4 cores shared with another project, `nice -n 10`,
 one or two processes, peak rss 90 MB). Every number below is in `i115_boxes_output.txt`, which `collect_i115.py` builds
-from the raw logs (negative-mass-raw, folder I115-rpi5 at 5e5f30f; the commands are the lines of `jobs.txt` there). From
+from the raw logs (negative-mass-raw, folder I115-rpi5 at 69c7c8b; the commands are the lines of `jobs.txt` there). From
 `phase2/nonradial`, with the raw repository cloned beside the checkout:
 
 ```
