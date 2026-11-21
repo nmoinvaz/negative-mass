@@ -20,6 +20,7 @@ in #75's closing comment.
     python notes/warp/tanh_spectrum_check.py --part=planted --mutate=kterm      (a control, must exit 1)
     python notes/warp/tanh_spectrum_check.py --part=report --out=DIR --mutate=next  (shifts #75's second moduli by 3e-4)
     python notes/warp/tanh_spectrum_check.py --part=compare --out=DIR --ref=DENSE [--mutate=compare]
+    python notes/warp/tanh_spectrum_check.py --part=highm --out=DIR --ms=11.5,...,20.5 [--mutate=bump]
 
 `solve` writes DIR/s<sigma>_<disc>_m<2m>.npz per sector, one sector at a time, and skips sectors already written.
 `report` reads them all, prints the tables and exits 1 if a check fails. Run one process per (sigma, disc) with
@@ -45,7 +46,7 @@ import scipy.sparse.linalg as spl
 from scipy.interpolate import BSpline
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--part", required=True, choices=["planted", "solve", "report", "compare"])
+ap.add_argument("--part", required=True, choices=["planted", "solve", "report", "compare", "highm"])
 ap.add_argument("--mutate", default="")
 ap.add_argument("--sigma", type=float, default=2.0)
 ap.add_argument("--disc", default="A", choices=["A", "B"])
@@ -63,7 +64,7 @@ ap.add_argument("--solver", default="dense", choices=["dense", "arpack"])
 ap.add_argument("--floor", type=float, default=0.07)  # arpack: the |mu| v_c the computed spectrum must reach
 args = ap.parse_args()
 MUT = args.mutate
-if MUT not in ("", "kterm", "half", "next", "compare"):
+if MUT not in ("", "kterm", "half", "next", "compare", "bump"):
     sys.exit(f"unknown mutation {MUT}")
 K4, NG = 3, 6  # cubic splines, Gauss points per interval
 S_SOB = 3 * (np.pi / 2) ** (4 / 3)
@@ -345,6 +346,40 @@ def part_report():
                       f"(#75, at 1e-5 with its own basis: {ref['bound']:.2f} v_c, a window from {1 / ref['bound']:.4f})")
 
 
+def part_highm():
+    """The leading eigenvalue of sectors beyond #75's m = 21/2 (#120). Each sector's leading |mu| v_c bounds every
+    eigenvalue of that sector, so a leading value below a speed-bound line means no real eigenvalue above the line there.
+    Checks per sigma R: A and B leading agree to 1e-5 relative (`ABhigh`), both lie below the line (`below`: 0.0830 at
+    sigma R = 2 and 0.0944 at 4, the leading values of m = 21/2 that set #111's lines), and the leading values fall
+    strictly with m from #75's m = 21/2 value on (`fall`). --mutate=bump sets A's leading value of the middle sector 1 %
+    above the sector before it, and `fall` must fail."""
+    LINE = {2.0: 0.0830, 4.0: 0.0944}
+    for sig in (2.0, 4.0):
+        vc, ref = v_c(sig), REF[sig]
+        print(f"\n== sigma R = {sig:g}, v_c = {vc:.6f}, line {LINE[sig]} (1/{LINE[sig]} = {1 / LINE[sig]:.2f} v_c)")
+        print("  m    | n A / B       | leading |mu| v_c A | B          | A vs B  | m |mu| v_c")
+        seq = [ref["lead"][-1]]
+        for i, m in enumerate(MS):
+            fa, fb = (os.path.join(args.out, f"s{sig:g}_{d}_m{int(2 * m)}.npz") for d in "AB")
+            if not (os.path.exists(fa) and os.path.exists(fb)):
+                check(f"present sR={sig:g} m={m:g}", False, f"{fa} or {fb} missing")
+                continue
+            A, B = np.load(fa), np.load(fb)
+            la, lb = np.abs(A["mu"][0]) * vc, np.abs(B["mu"][0]) * vc
+            if MUT == "bump" and i == len(MS) // 2:
+                la = seq[-1] * 1.01
+            rel = abs(la - lb) / la
+            seq.append(la)
+            print(f"  {m:4g} | {int(A['n']):5d} / {int(B['n']):5d} | {la:.6f}           | {lb:.6f}   | {rel:.1e} | "
+                  f"{m * la:.4f}", flush=True)
+            check(f"ABhigh sR={sig:g} m={m:g}", rel < 1e-5, f"A and B leading differ by {rel:.1e} relative")
+            check(f"below sR={sig:g} m={m:g}", max(la, lb) < LINE[sig], f"leading {max(la, lb):.6f} against {LINE[sig]}")
+        d = np.diff(seq)
+        check(f"fall sR={sig:g}", len(d) > 0 and np.all(d < 0),
+              f"leading |mu| v_c falls from #75's {ref['lead'][-1]:.6f} at m = 21/2 through every sector "
+              f"(largest step {d.max():+.2e})" if len(d) else "no sectors")
+
+
 def part_compare():
     """ARPACK against dense at the same sizes: in every sector file of --out also in --ref, each eigenvalue of either
     above the truncated spectrum's smallest modulus (with 1e-4 room) has a partner in the other within 1e-10 relative.
@@ -363,7 +398,8 @@ def part_compare():
 
 
 t_start = time.time()
-{"planted": part_planted, "solve": part_solve, "report": part_report, "compare": part_compare}[args.part]()
+{"planted": part_planted, "solve": part_solve, "report": part_report, "compare": part_compare,
+ "highm": part_highm}[args.part]()
 print(f"wall {time.time() - t_start:.0f} s")
 print("FAILED: " + ", ".join(FAILED) if FAILED else "all checks passed")
 sys.exit(1 if FAILED else 0)

@@ -1,0 +1,70 @@
+
+== sigma R = 2, v_c = 3.744900, line 0.083 (1/0.083 = 12.05 v_c)
+  m    | n A / B       | leading |mu| v_c A | B          | A vs B  | m |mu| v_c
+  11.5 | 10868 / 14344 | 0.076814           | 0.076814   | 7.6e-07 | 0.8834
+  [PASS] ABhigh sR=2 m=11.5: A and B leading differ by 7.6e-07 relative
+  [PASS] below sR=2 m=11.5: leading 0.076814 against 0.083
+  12.5 | 11544 / 15548 | 0.071472           | 0.071472   | 8.0e-07 | 0.8934
+  [PASS] ABhigh sR=2 m=12.5: A and B leading differ by 8.0e-07 relative
+  [PASS] below sR=2 m=12.5: leading 0.071472 against 0.083
+  13.5 | 12464 / 16262 | 0.066824           | 0.066824   | 5.9e-07 | 0.9021
+  [PASS] ABhigh sR=2 m=13.5: A and B leading differ by 5.9e-07 relative
+  [PASS] below sR=2 m=13.5: leading 0.066824 against 0.083
+  14.5 | 13104 / 17444 | 0.062744           | 0.062744   | 6.1e-07 | 0.9098
+  [PASS] ABhigh sR=2 m=14.5: A and B leading differ by 6.1e-07 relative
+  [PASS] below sR=2 m=14.5: leading 0.062744 against 0.083
+  15.5 | 13846 / 18300 | 0.059132           | 0.059132   | 5.9e-07 | 0.9165
+  [PASS] ABhigh sR=2 m=15.5: A and B leading differ by 5.9e-07 relative
+  [PASS] below sR=2 m=15.5: leading 0.059132 against 0.083
+  16.5 | 14520 / 19074 | 0.055914           | 0.055914   | 5.7e-07 | 0.9226
+  [PASS] ABhigh sR=2 m=16.5: A and B leading differ by 5.7e-07 relative
+  [PASS] below sR=2 m=16.5: leading 0.055914 against 0.083
+  17.5 | 15210 / 20352 | 0.053027           | 0.053027   | 5.8e-07 | 0.9280
+  [PASS] ABhigh sR=2 m=17.5: A and B leading differ by 5.8e-07 relative
+  [PASS] below sR=2 m=17.5: leading 0.053027 against 0.083
+  18.5 | 16262 / 21276 | 0.050424           | 0.050424   | 4.3e-07 | 0.9328
+  [PASS] ABhigh sR=2 m=18.5: A and B leading differ by 4.3e-07 relative
+  [PASS] below sR=2 m=18.5: leading 0.050424 against 0.083
+  19.5 | 17088 / 22624 | 0.048064           | 0.048064   | 4.4e-07 | 0.9373
+  [PASS] ABhigh sR=2 m=19.5: A and B leading differ by 4.4e-07 relative
+  [PASS] below sR=2 m=19.5: leading 0.048064 against 0.083
+  20.5 | 17836 / 23484 | 0.045915           | 0.045915   | 4.2e-07 | 0.9413
+  [PASS] ABhigh sR=2 m=20.5: A and B leading differ by 4.2e-07 relative
+  [PASS] below sR=2 m=20.5: leading 0.045915 against 0.083
+  [PASS] fall sR=2: leading |mu| v_c falls from #75's 0.083018 at m = 21/2 through every sector (largest step -2.15e-03)
+
+== sigma R = 4, v_c = 2.470971, line 0.0944 (1/0.0944 = 10.59 v_c)
+  m    | n A / B       | leading |mu| v_c A | B          | A vs B  | m |mu| v_c
+  11.5 | 10868 / 14344 | 0.087769           | 0.087769   | 1.8e-06 | 1.0093
+  [PASS] ABhigh sR=4 m=11.5: A and B leading differ by 1.8e-06 relative
+  [PASS] below sR=4 m=11.5: leading 0.087769 against 0.0944
+  12.5 | 11544 / 15548 | 0.082040           | 0.082040   | 1.7e-06 | 1.0255
+  [PASS] ABhigh sR=4 m=12.5: A and B leading differ by 1.7e-06 relative
+  [PASS] below sR=4 m=12.5: leading 0.082040 against 0.0944
+  13.5 | 12464 / 16262 | 0.077012           | 0.077012   | 1.3e-06 | 1.0397
+  [PASS] ABhigh sR=4 m=13.5: A and B leading differ by 1.3e-06 relative
+  [PASS] below sR=4 m=13.5: leading 0.077012 against 0.0944
+  14.5 | 13104 / 17444 | 0.072564           | 0.072564   | 1.2e-06 | 1.0522
+  [PASS] ABhigh sR=4 m=14.5: A and B leading differ by 1.2e-06 relative
+  [PASS] below sR=4 m=14.5: leading 0.072564 against 0.0944
+  15.5 | 13846 / 18300 | 0.068601           | 0.068602   | 1.1e-06 | 1.0633
+  [PASS] ABhigh sR=4 m=15.5: A and B leading differ by 1.1e-06 relative
+  [PASS] below sR=4 m=15.5: leading 0.068602 against 0.0944
+  16.5 | 14520 / 19074 | 0.065049           | 0.065049   | 1.0e-06 | 1.0733
+  [PASS] ABhigh sR=4 m=16.5: A and B leading differ by 1.0e-06 relative
+  [PASS] below sR=4 m=16.5: leading 0.065049 against 0.0944
+  17.5 | 15210 / 20352 | 0.061846           | 0.061846   | 9.9e-07 | 1.0823
+  [PASS] ABhigh sR=4 m=17.5: A and B leading differ by 9.9e-07 relative
+  [PASS] below sR=4 m=17.5: leading 0.061846 against 0.0944
+  18.5 | 16262 / 21276 | 0.058944           | 0.058944   | 7.9e-07 | 1.0905
+  [PASS] ABhigh sR=4 m=18.5: A and B leading differ by 7.9e-07 relative
+  [PASS] below sR=4 m=18.5: leading 0.058944 against 0.0944
+  19.5 | 17088 / 22624 | 0.056302           | 0.056302   | 7.6e-07 | 1.0979
+  [PASS] ABhigh sR=4 m=19.5: A and B leading differ by 7.6e-07 relative
+  [PASS] below sR=4 m=19.5: leading 0.056302 against 0.0944
+  20.5 | 17836 / 23484 | 0.053886           | 0.053886   | 7.0e-07 | 1.1047
+  [PASS] ABhigh sR=4 m=20.5: A and B leading differ by 7.0e-07 relative
+  [PASS] below sR=4 m=20.5: leading 0.053886 against 0.0944
+  [PASS] fall sR=4: leading |mu| v_c falls from #75's 0.094358 at m = 21/2 through every sector (largest step -2.42e-03)
+wall 0 s
+all checks passed
