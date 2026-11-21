@@ -165,6 +165,107 @@ R = r_m/|M| = 1653.57, units |M| = 1):
 - Not done for l ≥ 4: the static coefficient c_l of §4 (`love.py`), so the γ → 0 limit is covered only down to
   γ = 10⁻⁴.
 
+### Complex s at l = 4, 5, 6 (#115)
+
+The real-γ scans above leave complex s open. #115 counts the zeros of D (zeros minus poles, see below) in three of the
+boxes of §5.1, at l = 4, 5 and 6, with the current `winding2.py` (the step rule of §5.1, guard 1) at rtol 10⁻⁸ for the
+phantom campaign star (ω = 0.7603, M = −0.014580). One box was counted a second time with `--guard=all` (below). The
+boxes are the stored box of #7 (Re s ∈ [0.1, 2], |Im s| ≤ 2.5), #5's strip
+s1 (Re s ∈ [0.03, 0.1], |Im s| ≤ 2.5) and #5's near-axis box n1 (Re s ∈ [10⁻⁴, 0.1], |Im s| ≤ 0.23). Each has a pair
+planted in the same cached evaluations, at 0.3 ± 1.76i, 0.04 ± 0.25i and 0.0005 ± 0.12i, so a box passes only if the
+count with the pair is 2 higher. Run on rpi5 (Raspberry Pi 5, aarch64, 4 cores shared with another project, `nice -n 10`,
+one or two processes, peak rss 90 MB). Every number below is in `i115_boxes_output.txt`, which `collect_i115.py` builds
+from the raw logs (negative-mass-raw, folder I115-rpi5 at 832a9ad; the commands are the lines of `jobs.txt` there). From
+`phase2/nonradial`, with the raw repository cloned beside the checkout:
+
+```
+python collect_i115.py ../../../negative-mass-raw/I115-rpi5 > i115_boxes_output.txt
+```
+
+It exits 1, because s1 at l = 5 failed its planted check at the default guard (below). Its guarded rerun is a row of its
+own and passes.
+
+**Control.** `control_winding2.py --cachedir=…` on rpi5 prints PASS on both lines: +1.0000 around the Mini BS I QNM
+(max step 0.33 rad) and +0.0000 displaced (0.03 rad).
+
+| l | box | guard | winding | max step | min abs(D) | planted pair found | check | wall |
+|---|---|---|---|---|---|---|---|---|
+| 4 | stored | 1 | -0.0000 | 0.40 | 3.02e-03 | +2.0000 of 2 | PASS | 42 min |
+| 4 | s1 | 1 | +0.0000 | 0.40 | 4.43e-03 | +2.0000 of 2 | PASS | 1 h 50 min |
+| 4 | n1 | 1 | +0.0000 | 0.40 | 4.17e-02 | +2.0000 of 2 | PASS | 10 min |
+| 5 | stored | 1 | -0.0000 | 0.40 | 4.70e-03 | +2.0000 of 2 | PASS | 46 min |
+| 5 | s1 | 1 | -0.0000 | 0.40 | 7.21e-03 | **+0.0000 of 2** | **FAIL** | 1 h 44 min |
+| 5 | n1 | 1 | -0.0000 | 0.40 | 7.17e-02 | +2.0000 of 2 | PASS | 11 min |
+| 6 | stored | 1 | -0.0000 | 0.40 | 6.71e-03 | +2.0000 of 2 | PASS | 52 min |
+| 6 | s1 | 1 | +0.0000 | 0.40 | 8.69e-03 | +2.0000 of 2 | PASS | 1 h 58 min |
+| 6 | n1 | 1 | +0.0000 | 0.39 | 1.35e-01 | +2.0000 of 2 | PASS | 9 min |
+| 5 | s1, rerun | all | -0.0000 | 0.40 | 7.21e-03 | +2.0000 of 2 | PASS | 1 h 8 min |
+
+(The winding is printed as logged, so a rounded zero has either sign. `max step` is the largest phase step in radians and
+`min abs(D)` the smallest |D| on the contour, phase-normalised, so only comparable within a row. Wall is from the first
+start to the last end in `queue.log`, with one or two processes running, so it is not a clean cost.) The s1 box at l = 6
+was the pilot, the hardest case: 241 evaluations, 1 h 58 min, under the 3 h stop condition. **The other eight boxes, and
+the counts of §5 and §5.1, were counted with guard 1** (the half-step test at the first two bisection levels, the rule of
+#54); only the last row used `--guard=all`. Recounting them with `--guard=all` is not part of #115.
+
+**Acceptance.**
+
+| criterion | verdict |
+|---|---|
+| the control passes on rpi5 | **Met.** Both lines PASS |
+| each box returns its planted zero | **Not met at the default guard:** 8 of 9, s1 at l = 5 returned 0 of 2. **Met by s1 at l = 5 with `--guard=all`:** +2.0000 of 2, max step 0.40. The other eight were not recounted with `--guard=all` |
+| each winding reported with max step and min abs(D), or the box where it is not 0 named | **Met.** All nine report 0 (s1 at l = 5 at both guards), max step 0.39 to 0.40, no box has a non-zero winding |
+| a count is a count of zeros only where a pole exclusion covers it, and the summary says which boxes | **None covered.** Poles are not excluded in any box (below) |
+
+**The failed check (s1 at l = 5, guard 1).** `winding2.py` exited 1: the count with the planted pair is −0.0000 instead
+of +2.0000. **Cause, in one line:** the lost step is 0.1/4 of an edge wide, so it was accepted at bisection depth 2, where
+the half-step test of guard 1 does not run. No threshold was changed. The raw folder's `diagnose_plant.py` replays the
+counter on the 212 cached points of that box, with no new evaluation of D (`diagnose_s1.log`, `diagnose_all.log` there;
+the script is not in this repository).
+- It reproduces the logged cumulative phases of D on all three edges and the planted count of −0.0000.
+- On the left edge, Re s = 0.03, one accepted step of D times the planted factor, from Im s = 0.25 to 0.1875, measured
+  −0.3826 rad. The 14 cached points of that stretch sum to +5.9006 rad (largest step 0.73 rad), so the step lost one 2π
+  and the count lost 2. The planted zero is 0.01 from that edge, so its factor turns by about π within one step.
+  Summed over the whole contour, the dense chain of the cached points gives +6.2832 rad, a count of +2.0000.
+- D alone loses nothing in any of the nine boxes. The accepted steps and the dense chain of all cached points on each
+  edge give the same phase to 4 decimals (−22.8537, −0.5455, +23.3992 on the three edges for s1 at l = 5, summing to 0),
+  and the largest step of the dense chain is 0.40 rad. The only step of the nine boxes where the two differ is the one
+  above, in D times the factor.
+This is the defect of §5.1 in a new place: one accepted step loses 2π because the 0.4 rad rule and its half-step test
+see only principal values, and the test stops at depth 1. The dense chain shares D and its cache with the count, so it
+tests the step rule and not D.
+
+**The guarded rerun (s1 at l = 5, `--guard=all`).** `winding2.py` takes `--guard=all` (706b4c4), which applies the
+half-step test at every bisection level; the default 1 is the rule of #54. The rerun is `winding2.py -1 0.7603 5 0.03 0.1
+2.5 --plant=0.04,0.25 --guard=all` on the same cache and the same planted zero, which was not moved. It was fixed in
+advance that the PLANTED line must read +2.0000 within 0.05 with a max step under 0.45 rad, and that the winding of D is
+reported whatever it is.
+- PLANTED: count with the factor +2.0000, without −0.0000, difference **+2.0000** of 2, max step 0.40 rad, **PASS**. Exit
+  0, 1 h 8 min, 363 evaluations at the last edge (the cache goes from 212 to 387 points, none of the 212 changed).
+- RESULT: winding −0.0000, max step 0.40 rad, min abs(D) 7.21e-03. The cumulative phases of D on the three edges are
+  the same to 4 decimals as at guard 1 (−22.8537, −23.3992, −0.0000), so the guard changed the planted count and not D's.
+- The default-guard run `s1_l5.log` stays as it is. It is the mutation that shows the check can fail: the same cache
+  and plant give a count of 0 at guard 1 and +2 at guard `all`.
+So the count of D at s1, l = 5 is confirmed by its planted check, with `--guard=all`. The other eight boxes passed their
+check with guard 1 and are not recounted here.
+
+**Controls of the collector.** On a synthetic raw folder built from #5's logs (tags renamed to l = 4, 5, 6) the collector
+exits 0, and each of `--mutate=noplant`, `wrongexpect`, `wrongbox`, `shift` and `nocontrol` exits 1. On the real logs
+each of the first four lists all ten rows as FAILED, `nocontrol` lists the control and the one real failure, and
+`--mutate=wrongguard` (expects guard all everywhere) lists the nine default rows.
+
+**Pole caveat.** Each winding is zeros minus poles of D. D has one pole source, the Zerilli column (1, q/f), whose q has a
+pole at each zero of the Zerilli solution at r_m (#54, #121). #121 counts those poles in every counted box, this task's
+included. **Until then no box of this task is covered by a pole exclusion**, and a count of 0 is not a proof that there is
+no zero.
+
+**Not covered.** Only the stored box, s1 and n1 were counted. The other boxes of §5.1 (n3, h1, h2, s2, s3 and the
+threshold boxes t1 and t2 at two outer radii) are not run for l = 4, 5, 6; Re s < 0.03 for 0.23 < |Im s| ≤ 2.5 and
+|Im s| > 2.5 are open, as in §5.1. The real-γ axis at l = 4, 5, 6 is the 100-point scan above, not refined.
+
+Status: *numerical evidence*, conditional on D having no pole in each box. Eight boxes passed their planted check at
+guard 1; s1 at l = 5 failed it at guard 1 and passed it with `--guard=all`.
+
 ## 4. Effective surface condition κ_eff (`kappa_eff.py`, `kappa_eff_l2_output.txt`, `love.py`, `love_output.txt`)
 
 Map the regular interior solution, at r_m, to the DG variable Ψ̂ = (∂x − g)Z, with g = ∂x ln ψ0, units
@@ -617,7 +718,8 @@ counted −2) and was not repeated.
   count by ±2. They were recounted with the current rule in §5.2. Only ω = 0.85, l = 3 changed, from −2 to 0, because the
   old rule lost one 2π there.
 - l = 2, 3 for every star, and l = 4, 5, 6 only for the ω = 0.7603 phantom star (§3a, #4), with the real-γ scans,
-  convergence variants and κ_eff but no windings and no c_l. The ω = 0.7603, 0.70 and 0.85 stars have the l = 2, 3
+  convergence variants and κ_eff, windings in three boxes only (the stored box, s1 and n1; eight of the nine returned
+  their planted pair at guard 1, s1 at l = 5 did only with `--guard=all`; §3a, #115) and no c_l. The ω = 0.7603, 0.70 and 0.85 stars have the l = 2, 3
   real-γ scans, convergence variants and windings (0.70 and 0.85 in #7). c_l and axial positivity are also checked at
   ω = 0.85, and axial positivity at 0.70 and 0.90. At l = 5 and 6 the rtol 1e-12 variant is missing at the top γ
   (§3a).
@@ -645,12 +747,13 @@ counted −2) and was not repeated.
 | `scan_eps-1_w0.7603_l{4,5,6}.csv` | l = 4, 5, 6 real-γ scans of #4 (§3a); raw logs in negative-mass-raw `I4-win` |
 | `convergence_l{4,5,6}_output.txt` | l = 4, 5, 6 convergence variants (§3a), capped rows marked |
 | `kappa_eff_l{4,5,6}_output.txt`, `_w0.7603.csv` | l = 4, 5, 6 κ_eff against κ_c (§3a) |
-| `winding2.py`, `winding2_output.txt`, `control_winding*.py` | complex-s argument principle + controls (`winding.py` = first version). `winding2.py` takes `--y0`, `--rsmult`, `--zfac`, `--nseg`, `--cachedir`, `--plant` and `--mutate` (§5.1) |
+| `winding2.py`, `winding2_output.txt`, `control_winding*.py` | complex-s argument principle + controls (`winding.py` = first version). `winding2.py` takes `--y0`, `--rsmult`, `--zfac`, `--nseg`, `--cachedir`, `--plant`, `--guard` (§3a, #115) and `--mutate` (§5.1) |
 | `refine_gamma.py` | real-γ refinement by halving the scan step, with a planted pair and mutations (§5.1) |
 | `polish_zero.py` | secant polish of a zero of D near the axis, with the Mini BS I control |
 | `axis_scan.py` | \|D\| on a vertical line; its Mini BS control fails, not used (§5.1) |
 | `collect_i5.py`, `i5_boxes_output.txt` | the table of §5.1 from the raw logs (negative-mass-raw, I5-rpi5) |
 | `collect_i54.py`, `i54_recount_output.txt` | the recount table of §5.2 from the raw logs (I54-rpi5, I5-rpi5, I7-win2) |
+| `collect_i115.py`, `i115_boxes_output.txt` | the table of §3a's complex-s subsection from the raw logs (I115-rpi5); exits 1 because s1, l = 5 failed at guard 1; its `--guard=all` rerun is a row of its own |
 | `replay_old_rule_i54.py`, `i54_replay_output.txt` | the first step rule replayed on #7's stored boxes, and the lost step (§5.2) |
 | `check_cache_i54.py`, `i54_cache_check_output.txt` | stored D values recomputed on a second machine (§5.2) |
 | `zerilli_zeros.py` | zeros of the decaying Zerilli solution Z(r_m; s) in a box, the poles of D's Zerilli column (§5.3) |
