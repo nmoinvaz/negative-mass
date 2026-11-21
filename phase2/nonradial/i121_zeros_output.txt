@@ -1,0 +1,34 @@
+# Zeros of Z(r_m; s), the poles of D, in the boxes of RESULTS.md section 5 (#54) and section 5.1 (#5)
+| job | section | star | l | Re s | Im s | zeros of Z | max step | min abs(Z) | evaluations | time (s) | Cauchy-Riemann, worst | q against zerilli_q, worst (Re s ≥ 0.03) | planted | winding of D | zeros of D | check |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| p7603_l2 | 5 | phantom 0.7603 | 2 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | 0.36 | 5.59e-01 | 67 | 0 | 2.1e-09 | 9.5e-13 | +2.0000 of 2 | +0.0000 | +0 | PASS |
+| p7603_l3 | 5 | phantom 0.7603 | 3 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | 0.29 | 5.59e-01 | 63 | 11 | 1.4e-09 | 1.3e-12 | +2.0000 of 2 | +0.0000 | +0 | PASS |
+| c075_l2 | 5 | canonical 0.75 | 2 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | 0.36 | 5.59e-01 | 63 | 10 | 1.4e-09 | 1.3e-12 | +2.0000 of 2 | +0.0000 | +0 | PASS |
+| p070_l2 | 5 | phantom 0.70 | 2 | [0.1, 2] | abs(Im s) ≤ 2.5 | -0.0000 | 0.36 | 5.59e-01 | 63 | 10 | 3.5e-10 | 1.5e-12 | +2.0000 of 2 | +0.0000 | +0 | PASS |
+| p070_l3 | 5 | phantom 0.70 | 3 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | 0.28 | 5.59e-01 | 63 | 11 | 8.7e-10 | 8.9e-13 | +2.0000 of 2 | +0.0000 | +0 | PASS |
+| p085_l2 | 5 | phantom 0.85 | 2 | [0.1, 2] | abs(Im s) ≤ 2.5 | -0.0000 | 0.38 | 5.59e-01 | 63 | 9 | 3.7e-09 | 2.5e-12 | +2.0000 of 2 | -0.0000 | +0 | PASS |
+| p085_l3 | 5 | phantom 0.85 | 3 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | 0.32 | 5.59e-01 | 63 | 11 | 2.3e-09 | 1.6e-12 | +2.0000 of 2 | +0.0000 | +0 | PASS |
+| s1_l2 | 5.1 | phantom 0.7603 | 2 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | -0.0000 | 0.36 | 6.32e-01 | 65 | 15 | 2.1e-09 | 7.0e-12 | +2.0000 of 2 | +0.0000 | +0 | PASS |
+| s1_l3 | 5.1 | phantom 0.7603 | 3 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | 0.35 | 6.33e-01 | 65 | 17 | 1.1e-09 | 7.0e-12 | +2.0000 of 2 | +0.0000 | +0 | PASS |
+| n1_l2 | 5.1 | phantom 0.7603 | 2 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | -0.0000 | 0.23 | 2.04e+00 | 61 | 112 | 1.2e-09 | 2.5e-14 | +2.0000 of 2 | -0.0000 | +0 | PASS |
+| n1_l3 | 5.1 | phantom 0.7603 | 3 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | -0.0000 | 0.22 | 2.07e+00 | 61 | 146 | 5.4e-09 | 6.6e-14 | +2.0000 of 2 | +0.0000 | +0 | PASS |
+| h1_l2 | 5.1 | phantom 0.7603 | 2 | [0.1, 2] | [2.5, 6] | -0.0000 | 0.04 | 3.98e-01 | 80 | 9 | 2.0e-08 | 5.1e-12 | +1.0000 of 1 | +0.0000 | +0 | PASS |
+| h1_l3 | 5.1 | phantom 0.7603 | 3 | [0.1, 2] | [2.5, 6] | -0.0000 | 0.04 | 3.98e-01 | 80 | 11 | 1.6e-08 | 1.2e-11 | +1.0000 of 1 | -0.0000 | +0 | PASS |
+| t1_z1 | 5.1 | phantom 0.7603 | 2 | [0.02, 0.1] | [0.15, 0.33] | +0.0000 | 0.04 | 1.73e+00 | 80 | 24 | 3.4e-11 | 2.1e-14 | +1.0000 of 1 | +0.0000 | +0 | PASS |
+| t1_z2 | 5.1 | phantom 0.7603 | 2 | [0.02, 0.1] | [0.15, 0.33] | +0.0000 | 0.04 | 1.73e+00 | 80 | 22 | 3.8e-11 | 2.6e-14 | +1.0000 of 1 | -0.0000 | +0 | PASS |
+| t2_z1 | 5.1 | phantom 0.7603 | 2 | [0.02, 0.1] | [1.68, 1.84] | -0.0000 | 0.00 | 7.37e-01 | 80 | 30 | 5.8e-08 | 6.2e-12 | +1.0000 of 1 | +0.0000 | +0 | PASS |
+| t2_z2 | 5.1 | phantom 0.7603 | 2 | [0.02, 0.1] | [1.68, 1.84] | +0.0000 | 0.00 | 7.37e-01 | 80 | 28 | 5.6e-09 | 1.4e-11 | +1.0000 of 1 | +0.0000 | +0 | PASS |
+| s2_l2 | 5.1 | phantom 0.7603 | 2 | [0.01, 0.03] | abs(Im s) ≤ 2.5 | +0.0000 | 0.31 | 6.33e-01 | 66 | 24 | 2.4e-08 | 6.4e-12 | +2.0000 of 2 | +0.0000 | +0 | PASS |
+| h2_l2 | 5.1 | phantom 0.7603 | 2 | [0.1, 2] | [6, 10] | +0.0000 | 0.02 | 3.13e-01 | 80 | 10 | 2.7e-08 | 4.5e-12 | +1.0000 of 1 | -0.0000 | +0 | PASS |
+| s3_l2 | 5.1 | phantom 0.7603 | 2 | [0.03, 0.1] | [2.5, 6] | +0.0000 | 0.00 | 4.08e-01 | 80 | 32 | 4.0e-08 | 1.6e-09 | +1.0000 of 1 | -0.0000 | +0 | PASS |
+| s3_l3 | 5.1 | phantom 0.7603 | 3 | [0.03, 0.1] | [2.5, 6] | +0.0000 | 0.00 | 4.08e-01 | 80 | 38 | 1.3e-07 | 1.1e-09 | +1.0000 of 1 | -0.0000 | +0 | PASS |
+
+Not counted here: rep_l2 (the same box as p7603_l2); n3_l2 (crosses Re s = 0, where the cut of k makes y1(r_m) not holomorphic); n3_l3 (crosses Re s = 0, where the cut of k makes y1(r_m) not holomorphic).
+
+# Controls on the stored box (phantom 0.7603, l = 2)
+  flat (--flat --plant=0.3,1.76): all checks passed  (14 s); failed checks none, must pass  PASS
+  mut_reverse (--mutate=reverse --plant=0.3,1.76): FAILED: plant  (15 s); failed checks ['plant'], must fail plant  PASS
+  mut_nonorm (--mutate=nonorm --plant=0.3,1.76): FAILED: holo  (44 s); failed checks ['holo'], must fail holo  PASS
+  mut_lshift (--mutate=lshift --plant=0.3,1.76): FAILED: column  (16 s); failed checks ['column'], must fail column  PASS
+
+RESULT: all rows complete, every planted zero returned, every control as required
