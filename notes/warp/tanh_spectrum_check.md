@@ -936,6 +936,132 @@ speed-bound lines are unchanged to the printed digits (`I127-win/diff-wide.log`)
   times a k = 256 run. The peak of 9.87 GiB (B, m = 21/2) is 0.8 GiB above the 9.07 GiB of #119's σR = 2 B job and 0.2 GiB
   above its largest peak, 9.68 GiB (σR = 4, B), not the 1 to 2 GiB more the issue expected.
 
+## #75's code at m = 23/2 to 41/2 (#125)
+
+Issue #125. Scripts unmodified, at 5ed8160 (branch `wip/i125-highm75`), output
+[tanh_spectrum_highm_output.txt](tanh_spectrum_highm_output.txt), raw output in negative-mass-raw folder `I125-win`
+(commit e6a525d). #75's spectral code, `tanh_spectrum.py`, computed the leading |μ|v_c of m = 23/2, 29/2, 35/2 and 41/2
+at σR = 2 and 4, and of m = 21/2 as a reproduction, at #75's sizes. `tanh_spectrum_highm.py` compares them with #120's
+B-spline values. Status: *numerical evidence*. Galerkin eigenvalues of a non-normal operator are not bounds.
+
+In all eight (σR, m) #75's leading value agrees with #120's, in A and in B, to 3.0×10⁻⁶ at most (the threshold is 10⁻⁴),
+and lies above both in all 16 comparisons. #75's own two resolutions agree to 1.6×10⁻⁷ at most in all ten sectors. The
+largest values are 0.07681409 and 0.08776927, at m = 23/2. `tanh_spectrum_highm.py` exits 0 with 28 checks passing, and
+`--mutate=plant` and `--mutate=conv` each exit 1 with only their target failing.
+
+### What was run
+
+Machine win (surface-laptop-4, Windows 11, 8 logical CPUs, 32 GB, shared with choptuik-large-d), Python 3.14.10 with
+numpy 2.5.4 and scipy 1.18.1, from the repository root. Thread settings and below-normal detached launches as in #111
+above, with `--procs=1`, so a job is a main process and one worker. Two jobs ran at a time, the second started only
+while choptuik-large-d's processes together used under 4 cores (2.02 cores at the one reading). The sizes are #75's, the
+script's defaults without `--quick`: A has dK = 28, p = 80 (σR = 2) or 100 (σR = 4), Lmap = 2, npan = 160, and B has dK
+= 38, p = 90 or 110, Lmap = 3, npan = 240. The commands, as bash:
+
+    RAW=../negative-mass-raw/I125-win
+    TS="python notes/warp/tanh_spectrum.py --part=vc,planted,tanh --procs=1 --raw=$RAW/eig"
+    HM="python -X utf8 notes/warp/tanh_spectrum_highm.py --raw=$RAW/eig --ref=../negative-mass-raw/I120-win/eig"
+    $TS --sigmas=4 --ms=20.5                                    (the pilot, alone)
+    $TS --sigmas=2 --ms=10.5,11.5,14.5,17.5,20.5
+    $TS --sigmas=4 --ms=10.5,11.5,14.5,17.5
+    $HM > notes/warp/tanh_spectrum_highm_output.txt             (exits 0)
+    $HM --mutate=plant                                           (exits 1)
+    $HM --mutate=conv                                            (exits 1)
+
+The pilot ran alone from 09:38 to 09:44, inside its 30 min stop condition. The two solves started at 09:45 and ended at
+10:04 and 10:11, so the three solving runs took 33 min of wall time against the issue's 1 to 2 h. The peak working sets
+were sampled once a minute during the pilot and every 10 s after (`I125-win/memory-sampler.log`, `runs.log`), the
+worker's being the job's peak:
+
+| run | exit | wall | peak memory |
+|---|---|---|---|
+| pilot, σR = 4, m = 41/2 | 0 | 342 s | 2.57 GiB |
+| σR = 2, m = 21/2 to 41/2 | 0 | 1126 s | 1.69 GiB |
+| σR = 4, m = 21/2 to 35/2 | 0 | 1539 s | 2.57 GiB |
+| `tanh_spectrum_highm.py` | 0 | 0.2 s | |
+| `--mutate=plant` | 1 | 0.2 s | |
+| `--mutate=conv` | 1 | 0.2 s | |
+
+The pilot's last 42 s, B's eigensolve, went unsampled. The σR = 4 solve has the same sizes and peaked at 2.57 GiB (2636
+MiB against the pilot's 2627 MiB), so the pilot's value is not short. The machine's free memory stayed between 19.3 and
+25.1 GiB. No process was stopped and none died. In each solving run the planted check passed first (worst error
+7.3×10⁻¹⁵), `v_c` equals mass_bounds.md's to 3.7×10⁻⁶, and the script's `converged`, `no_real_in_window` and
+`real_identity` checks pass. `ref63` is skipped with a printed line, since m = ½ is not among the sectors, and the
+"peak resident" lines print nan on Windows.
+
+### The sectors
+
+From `I125-win/table.log`. "A vs B" is #75's two resolutions' difference relative to A's value, "#75 A vs #120" the
+difference of #75's A from #120's A and B, relative to each. The time is the sector's, the peak its process's.
+m = 21/2 is the reproduction, which #120 did not compute.
+
+| σR | m | #75 A | #75 B | A vs B | #120 A | #120 B | #75 A vs #120 A / B | time, peak of its process |
+|---|---|---|---|---|---|---|---|---|
+| 2 | 21/2 | 0.08301764 | 0.08301764 | 3.1e-12 | — | — | — | 198 s, 1.69 GiB |
+| 2 | 23/2 | 0.07681409 | 0.07681409 | 5.8e-12 | 0.07681400 | 0.07681406 | 1.2e-06 / 3.9e-07 | 201 s, 1.69 GiB |
+| 2 | 29/2 | 0.06274360 | 0.06274360 | 2.2e-11 | 0.06274354 | 0.06274358 | 9.1e-07 / 2.9e-07 | 207 s, 1.69 GiB |
+| 2 | 35/2 | 0.05302721 | 0.05302721 | 1.5e-10 | 0.05302717 | 0.05302720 | 8.3e-07 / 2.5e-07 | 227 s, 1.69 GiB |
+| 2 | 41/2 | 0.04591550 | 0.04591550 | 4.8e-09 | 0.04591547 | 0.04591549 | 6.3e-07 / 2.0e-07 | 287 s, 1.69 GiB |
+| 4 | 21/2 | 0.09435789 | 0.09435789 | 1.3e-09 | — | — | — | 360 s, 2.57 GiB |
+| 4 | 23/2 | 0.08776927 | 0.08776927 | 2.7e-09 | 0.08776901 | 0.08776917 | 3.0e-06 / 1.2e-06 | 358 s, 2.57 GiB |
+| 4 | 29/2 | 0.07256402 | 0.07256402 | 1.5e-08 | 0.07256388 | 0.07256397 | 2.0e-06 / 7.7e-07 | 448 s, 2.57 GiB |
+| 4 | 35/2 | 0.06184636 | 0.06184635 | 5.5e-08 | 0.06184627 | 0.06184633 | 1.5e-06 / 4.9e-07 | 365 s, 2.57 GiB |
+| 4 | 41/2 | 0.05388590 | 0.05388589 | 1.6e-07 | 0.05388585 | 0.05388589 | 8.9e-07 / 1.9e-07 | 335 s, 2.57 GiB |
+
+The pilot's value at σR = 4, m = 41/2 (0.05388590 and 0.05388589) is the Mac test's, to every printed digit. #75's
+values fall strictly with m through the five sectors computed, from 0.08301764 to 0.04591550 (σR = 2) and from
+0.09435789 to 0.05388590 (σR = 4). #75's A is above #120's A and B in all 16 comparisons, and #120's B is above its A,
+so the B-spline values approach #75's from below. #120's A vs B gap is then the difference of their distances from
+#75's: at σR = 4, m = 23/2, 3.0×10⁻⁶ − 1.2×10⁻⁶ = 1.8×10⁻⁶. The distances from #75's A are 6.3×10⁻⁷ to 3.0×10⁻⁶ for
+#120's A and 1.9×10⁻⁷ to 1.2×10⁻⁶ for its B, and fall with m. They are errors of the B-splines only where #75's own A vs
+B (up to 1.6×10⁻⁷) is smaller than them, which it is not for B at σR = 4, m = 41/2 (1.9×10⁻⁷).
+
+### Each criterion
+
+| criterion of #125 | verdict |
+|---|---|
+| #75's code reproduces its m = 21/2 values (0.083018 and 0.094358) to its printed digits | pass. `repro`: 0.08301764 and 0.09435789 (A), which round to 0.083018 and 0.094358 |
+| at each of the eight (σR, m) the leading \|μ\|v_c agrees with #120's to 10⁻⁴ relative, a planted factor 1.001 on one value fails | pass in 8 of 8 against #120's A and B, worst 3.0×10⁻⁶ (σR = 4, m = 23/2, against A), 33 times inside the threshold. `vc` agrees to 10⁻⁶ in all 8. `--mutate=plant` fires: exit 1, `vs120` fails at σR = 4, m = 29/2 (1.0×10⁻³) and nothing else fails |
+| a convergence statement per sector: the leading value at two resolutions, and their difference | pass. A and B differ by 3.1×10⁻¹² to 4.8×10⁻⁹ (σR = 2) and 1.3×10⁻⁹ to 1.6×10⁻⁷ (σR = 4), under #75's `converged` threshold of 10⁻⁶ in all ten, 6.3 times inside at worst. `--mutate=conv` fires: exit 1, `conv` fails at σR = 2, m = 41/2 (1.0×10⁻⁵) and nothing else fails |
+
+Of the 28 checks, 2 are `repro`, 10 `conv`, 8 `vc` and 8 `vs120`.
+
+### The speed bound
+
+The lines are unchanged: 12.05 v_c and 10.60 v_c, the reciprocals of #75's m = 21/2 values. #75's leading values at
+m = 23/2 to 41/2 are all below them, the largest 0.07681409 (0.9253 of 0.083018) and 0.08776927 (0.9302 of 0.094358),
+both at m = 23/2. The dense solver returns every eigenvalue of the Galerkin matrix, so for these ten sectors the leading
+value is the largest of all of them, not of the 64 that ARPACK returned in #120. That #120's leading values match #75's
+in eight sectors also shows that ARPACK did not miss the leading eigenvalue in them. This covers four of #120's ten
+m per σR (23/2, 29/2, 35/2, 41/2) and no others. The range over which the fall is computed is unchanged (m ≤ 41/2), and
+for m > 41/2 the decline is still an assumption.
+
+### What the two codes share, and what it does not show
+
+- What they share is the operator S⁻¹M, the tanh profile and v_c's definition. #75's basis (Jacobi polynomials in y =
+  r/(r + Lmap) times spin-angular functions, dense eigensolver) shares none of the code of #120's (B-splines, ARPACK).
+  Each script computes v_c by its own quadrature of one formula (#75's adaptive `quad`, #120's 400-point Gauss–Legendre
+  on [0, 15]), and `vc` compares them to 10⁻⁶. The agreement therefore tests the discretisation, the solver and their
+  sizes. It does not test the formulation: an error in S⁻¹M or in the profile would be in both codes, and only the
+  planted checks of each (the exact spectrum of the Frank–Loss weight, 7.3×10⁻¹⁵ here) test the operator, at a different
+  weight from tanh.
+- The margins of the two thresholds narrow with m at #75's fixed sizes. A vs B grows from 1.3×10⁻⁹ (m = 21/2) to
+  1.6×10⁻⁷ (m = 41/2) at σR = 4 and from 3.1×10⁻¹² to 4.8×10⁻⁹ at σR = 2, against the threshold 10⁻⁶. Nothing is
+  extrapolated here, and sectors beyond m = 41/2 were not run.
+- The script prints the L² residual ‖Sψ − vMψ‖/‖Sψ‖ of the leading eigenfunctions, with no threshold. At σR = 4 it is
+  1.4×10⁻³ at m = 21/2, the top of the 2×10⁻⁴ to 1.4×10⁻³ that tanh_spectrum.md quotes for #75's run, and rises to
+  8.6×10⁻³ at m = 41/2 (σR = 2: 5.0×10⁻⁵ to 6.8×10⁻³). tanh_spectrum.md notes that the eigenvalue converges far faster
+  than the eigenfunction. The leading eigenvalues here agree with #120's to 3.0×10⁻⁶ at residuals up to 8.6×10⁻³.
+- The script's `real_identity` check, which is not a criterion of #125, is 8.0×10⁻⁹ at σR = 2, m = 41/2, against its
+  threshold of 10⁻⁸, and 0 in the other nine sectors. It passes. The quantity is the maximum, over the evaluated
+  eigenfunctions, of max(|q_rel|, cluster Gram) × |Re μ|/|μ|.
+- Twelve of #120's 20 sectors (m = 25/2, 27/2, 31/2, 33/2, 37/2 and 39/2 at both σR) were not re-solved with #75's code.
+- On Windows, `tanh_spectrum_highm.py` as the task states the command fails before any check runs: `printed75` opens
+  tanh_spectrum.md without an encoding, and Python 3.14 reads it as cp1252 (`UnicodeDecodeError`, exit 1,
+  `I125-win/highm-cp1252-error.log`). All three `highm` runs above are `python -X utf8`. The script is unmodified.
+- #94 and #111 found #75 and the B-spline basis to agree to 6.0×10⁻⁶ at m = ½ to 21/2. Here, at #120's sizes (#94's),
+  they agree to 3.0×10⁻⁶ at m = 23/2 to 41/2.
+
 ## What this does and does not show
 
 Status words of AGENTS.md. These are *numerical evidence*. A Galerkin eigenvalue of a non-normal operator is not a bound
