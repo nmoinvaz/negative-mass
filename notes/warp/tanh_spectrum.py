@@ -42,7 +42,6 @@ for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS"):
 
 import argparse
 import math
-import resource
 import subprocess
 import sys
 import time
@@ -83,6 +82,10 @@ def check(name, ok, detail=""):
 
 
 def peak_gb():
+    try:
+        import resource
+    except ImportError:  # Windows: no getrusage; the run's memory sampler records the peak
+        return float("nan")
     m = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss  # kB on Linux, bytes on macOS
     return m / 2**30 if sys.platform == "darwin" else m / 2**20
 
@@ -674,7 +677,9 @@ def part_tanh(cfg, args):
         rho, rhoB = rho_all[sig]
         check("converged", abs(rho - rhoB) < 1e-6 * rho,
               f"sigma R = {sig:g}: rho(T1) v_c = {rho:.8f}, A and B differ by {abs(rho - rhoB):.1e}")
-        if sig in REF63:
+        if sig in REF63 and 0.5 not in ms:  # rho(T1) is the leading eigenvalue of m = 1/2
+            print(f"  ref63 sigma R = {sig:g}: not compared, m = 1/2 is not among the sectors run")
+        elif sig in REF63:
             ref = REF63[sig]
             rel = abs(rho - ref) / ref
             check("ref63", rel < 1e-3,
