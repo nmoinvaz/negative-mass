@@ -19,6 +19,7 @@ does not end as it must.
   --mutate=changed   expects a guard-1 value 2 higher for w_s1_l2 (CHANGED)
   --mutate=noguard   expects the job list without --guard=all (jobs.txt differs)
   --mutate=control   expects z_mut_lshift to pass (the control check must fail)
+  --mutate=nolog     reads no log for w_s1_l2 (a missing log: its row says "not run" and the exit status is 1)
 """
 import os, re, sys
 
@@ -66,7 +67,7 @@ CONTROLS = [('z_flat', Z, f'-1 0.7603 2 {ST.replace(" --", " --flat --")}{G}', '
             ('w_mut_reverse', W, f'-1 0.7603 4 0.0001 0.1 0.23 --mutate=reverse --plant=0.0005,0.12{G}', 'I115-rpi5', 'fail',
              'PLANTED')]
 MUT = next((a.split('=', 1)[1] for a in sys.argv[1:] if a.startswith('--mutate=')), None)
-assert MUT in (None, 'noplant', 'shift', 'changed', 'noguard', 'control'), MUT
+assert MUT in (None, 'noplant', 'shift', 'changed', 'noguard', 'control', 'nolog'), MUT
 
 
 def joblines(guard=True):
@@ -115,6 +116,8 @@ def box(args):
 
 def read(job):
     f = os.path.join(RAW, job + '.log')
+    if MUT == 'nolog' and job == 'w_s1_l2':
+        return None
     return open(f, encoding='utf-8', errors='replace').read() if os.path.exists(f) else None
 
 
