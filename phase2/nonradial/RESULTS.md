@@ -219,8 +219,9 @@ the counts of §5 and §5.1, were counted with guard 1** (the half-step test at 
 
 **The failed check (s1 at l = 5, guard 1).** `winding2.py` exited 1: the count with the planted pair is −0.0000 instead
 of +2.0000. **Cause, in one line:** the lost step is 0.1/4 of an edge wide, so it was accepted at bisection depth 2, where
-the half-step test of guard 1 does not run. No threshold was changed. The raw folder's `diagnose_plant.py` replays the counter on the 212 cached points of
-that box, with no new evaluation of D (`diagnose_s1.log`, `diagnose_all.log` there; the script is not in this repository).
+the half-step test of guard 1 does not run. No threshold was changed. The raw folder's `diagnose_plant.py` replays the
+counter on the 212 cached points of that box, with no new evaluation of D (`diagnose_s1.log`, `diagnose_all.log` there;
+the script is not in this repository).
 - It reproduces the logged cumulative phases of D on all three edges and the planted count of −0.0000.
 - On the left edge, Re s = 0.03, one accepted step of D times the planted factor, from Im s = 0.25 to 0.1875, measured
   −0.3826 rad. The 14 cached points of that stretch sum to +5.9006 rad (largest step 0.73 rad), so the step lost one 2π
