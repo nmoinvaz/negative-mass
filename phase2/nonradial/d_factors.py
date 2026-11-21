@@ -2,7 +2,7 @@
 Checks that the Zerilli column is D's only source of poles in the counted boxes (#122). D is polar_solver's
 PolarProblem.D with winding2.py's phase factor (Dc). Usage, from phase2/nonradial:
 
-  python d_factors.py --part=factors,gap,norm,pole,axis --raw=RAW_FOLDER [--cache=DIR] [--boxes=a,b] [--rtol=1e-8]
+  python d_factors.py --part=factors,gap,norm,pole,axis,mean --raw=RAW_FOLDER [--cache=DIR] [--boxes=a,b] [--rtol=1e-8]
                       [--stop=SECONDS] [--maxeval=N] [--mutate=NAME]
 
 RAW_FOLDER (negative-mass-raw/I122-rpi5) holds this script's evaluation caches, one pickle per part and box, so a rerun
@@ -19,6 +19,13 @@ and the script exits 1 when one fails. Criteria, fixed before the runs:
                      Richardson-extrapolated (4 L(h/2) - L(h)) / 3, with h = 1e-3 of the box's longer side L, satisfies
                      |lap phi| L^2 <= 1e-6 (1 + |grad phi| L). Planted: the phase of (s - a)(s - b) e^s, a and b outside
                      the box, passes; that phase plus 1e-3 (Re s)^2 / L^2 fails.
+  mean     added after `harm` failed at rtol 1e-8 (see RESULTS 5.5), a better-conditioned test of the same property, with its
+           criterion fixed before its runs. phi = arg D has the mean value property: at the middle interior point of harm's
+           six boxes, the mean of phi over 16 points of a circle of radius rho (0.1 L; 5 h = 5e-3 L in n3_l2, which
+           crosses Re s = 0 and where zerilli_q degrades outside the box) equals phi at its centre. The same inequality as harm
+           with 4 (mean - phi_centre) / rho^2 as the Laplacian (exact for a harmonic phi, with no 1/h^2 amplification of the
+           integrator's noise): |lap phi| L^2 <= 1e-6 (1 + |grad phi| L), |grad phi| from the first Fourier mode. Planted pair
+           as harm (the non-harmonic one gives 2e-3 and must fail); mutation nonholo.
   gap      per box, over the contour (401 points per edge), the cache's points and a 20 x 20 grid, polished by a local
            search inside the box: min over the two selected eigenvalues of the vacuum Jacobian's scalar block at R_s against
            the other two, |difference| / max |eigenvalue| >= 1e-3 (gap); the gap in real parts, relative the same way, >= 1e-3
@@ -66,7 +73,7 @@ T_START = time.time()
 opts = dict((a[2:].split('=', 1) + ['1'])[:2] for a in sys.argv[1:] if a.startswith('--'))
 PARTS = [p for p in opts.get('part', '').split(',') if p]
 MUTS = {'factors': ('nonholo', 'singularT', 'jnonlin'), 'gap': ('branch', 'cols'), 'norm': ('noproj',),
-        'pole': ('nophase', 'nogauge', 'reverse'), 'axis': ('reverse', 'wrongq')}
+        'pole': ('nophase', 'nogauge', 'reverse'), 'axis': ('reverse', 'wrongq'), 'mean': ('nonholo',)}
 MUT = opts.get('mutate')
 if (set(opts) - {'part', 'raw', 'cache', 'boxes', 'rtol', 'stop', 'maxeval', 'mutate', 'plant', 'skip'} or not PARTS or 'raw' not in opts
         or set(PARTS) - set(MUTS) or (MUT and (len(PARTS) != 1 or MUT not in MUTS[PARTS[0]]))):
@@ -201,7 +208,7 @@ class Store:
     """restart-safe cache of evaluations, one pickle per (part, box) in RAW"""
 
     def __init__(self, name):
-        self.path = os.path.join(RAW, f"d_factors_cache_{name}.pkl")
+        self.path = os.path.join(RAW, f"d_factors_cache_{name}" + ("" if RTOL == 1e-8 else f"_rtol{RTOL:g}") + ".pkl")
         self.d = pickle.load(open(self.path, 'rb')) if os.path.exists(self.path) else {}
         self.new = 0
 
@@ -261,7 +268,7 @@ def harm_point(F, s0, L, h):
     l1, g1 = stencil(h); l2, g2 = stencil(h / 2)
     lap, grad = (4 * l2 - l1) / 3, (4 * g2 - g1) / 3
     lhs, rhs = abs(lap) * L ** 2, 1e-6 * (1 + np.linalg.norm(grad) * L)
-    return lap, np.linalg.norm(grad), lhs, rhs
+    return lap, np.linalg.norm(grad), lhs, rhs, (l1, l2)
 
 
 def box_L(b):
@@ -289,10 +296,11 @@ def harm_run(b, F, label, ref_pts=None):
     ok, worst = True, 0.0
     for s0 in (ref_pts or harm_points(b)):
         assert b.x0 < 0 < b.x1 or h <= 0.5 * s0.real, f"h = {h} too large at {s0}"
-        lap, g, lhs, rhs = harm_point(F, s0, L, h)
+        lap, g, lhs, rhs, (l1, l2) = harm_point(F, s0, L, h)
         ok &= lhs <= rhs; worst = max(worst, lhs / rhs)
         print(f"    {label} s = {s0.real:+.5g}{s0.imag:+.5g}i: |grad phi| {g:.3g}, |lap phi| L^2 {lhs:.2e} against "
-              f"{rhs:.2e}: {'ok' if lhs <= rhs else 'EXCEEDS'}", flush=True)
+              f"{rhs:.2e}: {'ok' if lhs <= rhs else 'EXCEEDS'} (L^2 times the Laplacian at h {l1 * L ** 2:+.2e}, at h/2 "
+              f"{l2 * L ** 2:+.2e})", flush=True)
     return ok, worst
 
 
@@ -398,6 +406,44 @@ def part_harm():
               f"({st.new} new evaluations, {len(st.d)} stored)", flush=True)
         allok &= ok and pg_ok and not pb_ok; worst_all = max(worst_all, worst)
     check("harm", allok, f"Delta arg D = 0 in the boxes {', '.join(b.name for b in jobs(HARM6))}; worst ratio to the limit "
+          f"{worst_all:.3e}{'  [mutate=' + MUT + ']' if MUT else ''}")
+
+
+# ---------------------------------------------------------------- part mean
+def mean_point(F, s0, L, rho, N=16):
+    """Laplacian from the mean value property, 4 (mean - phi_centre) / rho^2, and |grad| from the first Fourier mode"""
+    f0 = F(s0)
+    th = 2 * np.pi * np.arange(N) / N
+    ph = np.array([np.angle(F(s0 + rho * np.exp(1j * t)) / f0) for t in th])
+    assert np.abs(ph).max() < 2.5, "phase across the circle too large to unwrap against the centre"
+    lap = 4 * ph.mean() / rho ** 2
+    grad = np.hypot(2 * np.mean(ph * np.cos(th)), 2 * np.mean(ph * np.sin(th))) / rho
+    return lap, grad, abs(lap) * L ** 2, 1e-6 * (1 + grad * L)
+
+
+def part_mean():
+    print("# mean: phi = arg D has the mean value property (16 points on a circle of radius rho around the middle point)")
+    allok, worst_all = True, 0.0
+    for b in jobs(HARM6):
+        L = box_L(b); s0 = harm_points(b)[1]
+        rho = 5e-3 * L if b.x0 < 0 < b.x1 else 0.1 * L
+        good, bad = planted_pair(b)
+        lg = mean_point(good, s0, L, rho); lb = mean_point(bad, s0, L, rho)
+        pg_ok, pb_ok = lg[2] <= lg[3], lb[2] <= lb[3]
+        st = Store(f"mean_{b.name}"); db = DBox(b)
+        mut = (lambda s, L=L: np.exp(1j * 1e-3 * s.real ** 2 / L ** 2)) if MUT == 'nonholo' else (lambda s: 1.0)
+        F = lambda s, st=st, db=db, mut=mut: st.get(('D', s), lambda: db.D(s)) * mut(s)
+        try:
+            lap, g, lhs, rhs = mean_point(F, s0, L, rho)
+        except Stop as e:
+            print(f"  STOP {e}"); check("mean", False, f"stopped in {b.name}: {e}"); return
+        ok = lhs <= rhs
+        print(f"  {b.name}: s = {s0.real:+.5g}{s0.imag:+.5g}i, rho = {rho:.3g}: |grad phi| {g:.3g}, |lap phi| L^2 {lhs:.2e} against "
+              f"{rhs:.2e}: {'ok' if ok else 'EXCEEDS'} (ratio {lhs / rhs:.2e}); planted holomorphic {lg[2]:.1e} "
+              f"{'passes' if pg_ok else 'FAILS'}, planted non-harmonic {lb[2]:.1e} {'fails as required' if not pb_ok else 'PASSES (wrong)'} "
+              f"({st.new} new evaluations)", flush=True)
+        allok &= ok and pg_ok and not pb_ok; worst_all = max(worst_all, lhs / rhs)
+    check("mean", allok, f"mean value property of arg D in {', '.join(b.name for b in jobs(HARM6))}; worst ratio to the limit "
           f"{worst_all:.3e}{'  [mutate=' + MUT + ']' if MUT else ''}")
 
 
@@ -861,7 +907,7 @@ def part_axis():
 
 # ---------------------------------------------------------------- run
 if __name__ == '__main__':
-    fn = {'factors': part_factors, 'gap': part_gap, 'norm': part_norm, 'pole': part_pole, 'axis': part_axis}
+    fn = {'factors': part_factors, 'gap': part_gap, 'norm': part_norm, 'pole': part_pole, 'axis': part_axis, 'mean': part_mean}
     print(f"d_factors.py parts {','.join(PARTS)}, RTOL {RTOL:g}, raw {RAW}" + (f", mutate={MUT}" if MUT else ""), flush=True)
     for p in PARTS:
         print(f"\n===== part {p}", flush=True)
