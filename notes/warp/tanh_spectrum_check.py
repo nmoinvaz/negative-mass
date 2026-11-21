@@ -22,6 +22,7 @@ in #75's closing comment.
     python notes/warp/tanh_spectrum_check.py --part=compare --out=DIR --ref=DENSE [--mutate=compare]
     python notes/warp/tanh_spectrum_check.py --part=highm --out=DIR --ms=11.5,...,20.5 [--mutate=bump|lift]
     python notes/warp/tanh_spectrum_check.py --part=report --out=DIR --mutate=floorup  (every window `floor`, must exit 1)
+    python notes/warp/tanh_spectrum_check.py --part=report --out=DIR --mutate=real     (noreal fails at sR = 2, m = 11/2)
 
 `solve` writes DIR/s<sigma>_<disc>_m<2m>.npz per sector, one sector at a time, and skips sectors already written.
 `report` reads them all, prints the tables and exits 1 if a check fails. Run one process per (sigma, disc) with
@@ -32,7 +33,8 @@ OMP_NUM_THREADS=1. Discretisation A is h = 0.1 min(2/sigma, 1/(1 + m/10)) on [0,
 Wider windows (#111). --fnth and --fh scale both discretisations' theta intervals and core spacing, so A and B stay
 distinct. --solver=arpack keeps only the largest-modulus eigenvalues, down to |mu| v_c = --floor, from a sparse LU of K,
 where the dense solver's n^2 memory stops; the report treats a truncated spectrum as known only above its smallest
-modulus. --out for the report may list several directories, comma-separated, read in order per sector.
+modulus. --out for the report may list several directories, comma-separated, read in order per sector. --k0 sets the
+first k of the doubling and --kmax the last (0: no limit), so a sector known to need k = 512 is solved once at 512.
 """
 import argparse
 import glob
@@ -63,9 +65,11 @@ ap.add_argument("--fnth", type=float, default=1.0)  # scales both discretisation
 ap.add_argument("--fh", type=float, default=1.0)    # scales both discretisations' core spacing h
 ap.add_argument("--solver", default="dense", choices=["dense", "arpack"])
 ap.add_argument("--floor", type=float, default=0.07)  # arpack: the |mu| v_c the computed spectrum must reach
+ap.add_argument("--k0", type=int, default=64)        # arpack: first number of eigenvalues requested
+ap.add_argument("--kmax", type=int, default=0)       # arpack: no doubling past it (0: until --floor or n)
 args = ap.parse_args()
 MUT = args.mutate
-if MUT not in ("", "kterm", "half", "next", "compare", "bump", "lift", "floorup"):
+if MUT not in ("", "kterm", "half", "next", "compare", "bump", "lift", "floorup", "real"):
     sys.exit(f"unknown mutation {MUT}")
 K4, NG = 3, 6  # cubic splines, Gauss points per interval
 S_SOB = 3 * (np.pi / 2) ** (4 / 3)
@@ -168,8 +172,9 @@ def sector_C(tau_fn, m, br, nth):
 
 def sector_mu(tau_fn, m, br, nth, floor):
     """The eigenvalues mu of sector m by decreasing modulus, and (n, worst residual). Dense: all of them, from C. ARPACK
-    (#111): the largest-modulus ones of K^-1 N by implicitly restarted Arnoldi on a sparse LU of K, k doubled from 64
-    until the smallest returned |mu| is below floor, each pair's residual |K^-1 N x - mu x| / |mu x| returned."""
+    (#111): the largest-modulus ones of K^-1 N by implicitly restarted Arnoldi on a sparse LU of K, k doubled from --k0
+    until the smallest returned |mu| is below floor or k reaches --kmax, each pair's residual |K^-1 N x - mu x| / |mu x|
+    returned."""
     if args.solver == "dense":
         C = sector_C(tau_fn, m, br, nth)
         n = C.shape[0]
@@ -179,12 +184,12 @@ def sector_mu(tau_fn, m, br, nth, floor):
     n = K.shape[0]
     lu = spl.splu(K, permc_spec="MMD_AT_PLUS_A")
     op = spl.LinearOperator((n, n), matvec=lambda x: lu.solve(N @ x), dtype=float)
-    k = 64
+    k = args.k0
     while True:
         mu, X = spl.eigs(op, k=k, which="LM", ncv=min(n - 1, 2 * k + 40), tol=0.0, maxiter=100 * n)
         o = np.argsort(-np.abs(mu))
         mu, X = mu[o], X[:, o]
-        if np.abs(mu[-1]) < floor or 2 * k >= n - 2:
+        if np.abs(mu[-1]) < floor or 2 * k >= n - 2 or (args.kmax and 2 * k > args.kmax):
             break
         k *= 2
     res = max(np.linalg.norm(op.matvec(X[:, j].real) + 1j * op.matvec(X[:, j].imag) - mu[j] * X[:, j])
@@ -271,7 +276,9 @@ def part_report():
     "set by" (#119) says what sets the 1e-5 window: `floor`, the truncated spectrum's smallest modulus (so the basis's own
     window starts lower), or `match`, an eigenvalue above the floor without a partner. Checks `match` (the window is set
     by an eigenvalue) and `own75` (the 1e-5 window starts below #75's own window). --mutate=floorup puts the floor 1 %
-    above the leading eigenvalue, so every window is `floor` and `match` fails."""
+    above the leading eigenvalue, so every window is `floor` and `match` fails. --mutate=real makes the leading
+    eigenvalue of sR = 2, m = 11/2 and its partner in B real, with the modulus kept, so A and B still pair it and `noreal` fails
+    there (`sym` too: its negative has no partner)."""
     TOLS, tol_lead, tol_next, tol_real = (1e-5, 1e-4), 1e-5, 1e-4, 1e-9
 
     def second(x):  # x sorted by decreasing modulus
@@ -299,6 +306,10 @@ def part_report():
             fa, fb = found[0]
             A, B = np.load(fa), np.load(fb)
             ma, mb = A["mu"] * vc, B["mu"] * vc
+            if MUT == "real" and (sig, m) == (2.0, 5.5):
+                ma, mb = ma.copy(), mb.copy()
+                j = np.argmin(np.abs(mb - ma[0]))  # B's partner of A's leading eigenvalue
+                ma[0] = mb[j] = abs(ma[0])
             am, bm = np.abs(ma), np.abs(mb)
             # A truncated (arpack) spectrum is known only above its smallest modulus. Above the larger of A's and B's
             # (with 1e-4 room for a quadruple the truncation splits), and the window cannot start below it.
