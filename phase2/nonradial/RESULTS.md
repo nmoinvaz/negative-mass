@@ -916,8 +916,9 @@ runs cached, and is no test of D.
 Status: numerical evidence that the 61 counts of §5, §5.1, §3a and §5.3 do not depend on the depth at which the
 half-step test stops. The test compares a step with its two halves, so a loss that survives both halves is not detected at
 any depth, and the planted check counts on the same D and the same steps. The dense chain of the replay uses every
-cached point and so is a test of the step rule apart from the half-step test; it was run only on s1 at l = 5. The Z
-boxes use the same rule. The other conditions of §5.3 stand as they are (that the Zerilli column is D's only pole
+cached point and so is a test of the step rule apart from the half-step test. #126 ran it on s1 at l = 5, and #128 on
+all 61 boxes (above), where no step differs from it. It sees a loss only between cached points, so a turn hidden between
+two neighbouring cached points stays undetected. The Z boxes use the same rule. The other conditions of §5.3 stand as they are (that the Zerilli column is D's only pole
 source, #122).
 
 | acceptance criterion | verdict |
@@ -966,7 +967,9 @@ source, #122).
 - Every winding except the rerun of s1 at l = 5 used guard 1, the half-step test at bisection depths 0 and 1 only. In
   #115 a planted count lost 2π at depth 2. The planted check cannot see a loss that hits D and D times the factor
   alike (§3a). §5.4 (#126) recounts every guard-1 count of §3a, §5 and §5.1 to §5.3 with `--guard=all`, and none
-  changes. A loss inside a step whose two halves agree is excluded by neither guard (§5.4).
+  changes. A loss inside a step whose two halves agree is excluded by neither guard. The dense chain of every cached
+  point agrees with every accepted step in all 61 boxes (§5.4, #128), so such a loss would have to fall between two
+  neighbouring cached points.
 - The windings of §5 were computed with a step rule that can lose 2π in one step (§5.1). One loss shifts a symmetric-box
   count by ±2. They were recounted with the current rule in §5.2. Only ω = 0.85, l = 3 changed, from −2 to 0, because the
   old rule lost one 2π there.
