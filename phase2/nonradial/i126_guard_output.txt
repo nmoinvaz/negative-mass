@@ -1,0 +1,76 @@
+# Recount at --guard=all of the boxes counted at guard 1 (D: winding2.py, zeros minus poles; Z: zerilli_zeros.py)
+jobs.txt equals the job list (61 boxes, 5 controls)
+| job | counts | section | Re s | Im s | guard 1 | guard all | against guard 1 | max step | min abs | evaluations | planted | check |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| w_p7603_l2 | D | 5 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.39 | 6.70e-04 | 135 | +2.0000 of 2 | PASS |
+| w_p7603_l3 | D | 5 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.40 | 1.68e-03 | 195 | +2.0000 of 2 | PASS |
+| w_c075_l2 | D | 5 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.40 | 6.88e-04 | 111 | +2.0000 of 2 | PASS |
+| w_p070_l2 | D | 5 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.40 | 7.45e-04 | 134 | +2.0000 of 2 | PASS |
+| w_p070_l3 | D | 5 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.40 | 1.86e-03 | 209 | +2.0000 of 2 | PASS |
+| w_p085_l2 | D | 5 | [0.1, 2] | abs(Im s) ≤ 2.5 | -0.0000 | +0.0000 | unchanged | 0.40 | 4.93e-04 | 129 | +2.0000 of 2 | PASS |
+| w_p085_l3 | D | 5 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.40 | 1.23e-03 | 205 | +2.0000 of 2 | PASS |
+| w_n1_l2 | D | 5.1 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | -0.0000 | +0.0000 | unchanged | 0.33 | 2.82e-03 | 84 | +2.0000 of 2 | PASS |
+| w_n1_l3 | D | 5.1 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | +0.0000 | +0.0000 | unchanged | 0.35 | 3.16e-02 | 112 | +2.0000 of 2 | PASS |
+| w_n3_l2 | D | 5.1 | [-0.001, 0.0001] | [0.01, 0.23] | +0.0000 | +0.0000 | unchanged | 0.39 | 2.75e-03 | 116 | +1.0000 of 1 | PASS |
+| w_n3_l3 | D | 5.1 | [-0.001, 0.0001] | [0.01, 0.23] | -0.0000 | +0.0000 | unchanged | 0.38 | 3.66e-02 | 124 | +1.0000 of 1 | PASS |
+| w_s1_l2 | D | 5.1 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.40 | 1.00e-03 | 180 | +2.0000 of 2 | PASS |
+| w_s1_l3 | D | 5.1 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.40 | 2.49e-03 | 233 | +2.0000 of 2 | PASS |
+| w_h1_l2 | D | 5.1 | [0.1, 2] | [2.5, 6] | +0.0000 | +0.0000 | unchanged | 0.38 | 1.05e-04 | 108 | +1.0000 of 1 | PASS |
+| w_h1_l3 | D | 5.1 | [0.1, 2] | [2.5, 6] | -0.0000 | +0.0000 | unchanged | 0.38 | 2.63e-04 | 126 | +1.0000 of 1 | PASS |
+| w_t1_r40 | D | 5.1 | [0.02, 0.1] | [0.15, 0.33] | +0.0000 | +0.0000 | unchanged | 0.38 | 3.73e-03 | 94 | +1.0000 of 1 | PASS |
+| w_t1_r80 | D | 5.1 | [0.02, 0.1] | [0.15, 0.33] | -0.0000 | +0.0000 | unchanged | 0.39 | 3.73e-03 | 94 | +1.0000 of 1 | PASS |
+| w_t2_r40 | D | 5.1 | [0.02, 0.1] | [1.68, 1.84] | +0.0000 | +0.0000 | unchanged | 0.40 | 9.30e-04 | 94 | +1.0000 of 1 | PASS |
+| w_t2_r80 | D | 5.1 | [0.02, 0.1] | [1.68, 1.84] | +0.0000 | +0.0000 | unchanged | 0.35 | 9.30e-04 | 94 | +1.0000 of 1 | PASS |
+| w_s2_l2 | D | 5.1 | [0.01, 0.03] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.40 | 5.30e-04 | 227 | +2.0000 of 2 | PASS |
+| w_h2_l2 | D | 5.1 | [0.1, 2] | [6, 10] | -0.0000 | +0.0000 | unchanged | 0.31 | 2.57e-05 | 92 | +1.0000 of 1 | PASS |
+| w_s3_l2 | D | 5.1 | [0.03, 0.1] | [2.5, 6] | -0.0000 | +0.0000 | unchanged | 0.39 | 9.90e-05 | 106 | +1.0000 of 1 | PASS |
+| w_s3_l3 | D | 5.1 | [0.03, 0.1] | [2.5, 6] | -0.0000 | +0.0000 | unchanged | 0.38 | 2.71e-04 | 106 | +1.0000 of 1 | PASS |
+| w_rep_l4 | D | 3a | [0.1, 2] | abs(Im s) ≤ 2.5 | -0.0000 | +0.0000 | unchanged | 0.40 | 3.02e-03 | 261 | +2.0000 of 2 | PASS |
+| w_s1_l4 | D | 3a | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.40 | 4.43e-03 | 289 | +2.0000 of 2 | PASS |
+| w_n1_l4 | D | 3a | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | +0.0000 | +0.0000 | unchanged | 0.40 | 4.17e-02 | 131 | +2.0000 of 2 | PASS |
+| w_rep_l5 | D | 3a | [0.1, 2] | abs(Im s) ≤ 2.5 | -0.0000 | +0.0000 | unchanged | 0.40 | 4.70e-03 | 327 | +2.0000 of 2 | PASS |
+| w_n1_l5 | D | 3a | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | -0.0000 | +0.0000 | unchanged | 0.40 | 7.17e-02 | 128 | +2.0000 of 2 | PASS |
+| w_rep_l6 | D | 3a | [0.1, 2] | abs(Im s) ≤ 2.5 | -0.0000 | +0.0000 | unchanged | 0.40 | 6.71e-03 | 407 | +2.0000 of 2 | PASS |
+| w_s1_l6 | D | 3a | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.40 | 8.69e-03 | 433 | +2.0000 of 2 | PASS |
+| w_n1_l6 | D | 3a | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | +0.0000 | +0.0000 | unchanged | 0.39 | 1.35e-01 | 144 | +2.0000 of 2 | PASS |
+| z_p7603_l2 | Z | 5.3 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.36 | 5.59e-01 | 71 | +2.0000 of 2 | PASS |
+| z_p7603_l3 | Z | 5.3 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.29 | 5.59e-01 | 67 | +2.0000 of 2 | PASS |
+| z_c075_l2 | Z | 5.3 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.36 | 5.59e-01 | 67 | +2.0000 of 2 | PASS |
+| z_p070_l2 | Z | 5.3 | [0.1, 2] | abs(Im s) ≤ 2.5 | -0.0000 | +0.0000 | unchanged | 0.36 | 5.59e-01 | 67 | +2.0000 of 2 | PASS |
+| z_p070_l3 | Z | 5.3 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.28 | 5.59e-01 | 67 | +2.0000 of 2 | PASS |
+| z_p085_l2 | Z | 5.3 | [0.1, 2] | abs(Im s) ≤ 2.5 | -0.0000 | +0.0000 | unchanged | 0.38 | 5.59e-01 | 67 | +2.0000 of 2 | PASS |
+| z_p085_l3 | Z | 5.3 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.32 | 5.59e-01 | 67 | +2.0000 of 2 | PASS |
+| z_n1_l2 | Z | 5.3 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | -0.0000 | +0.0000 | unchanged | 0.23 | 2.04e+00 | 73 | +2.0000 of 2 | PASS |
+| z_n1_l3 | Z | 5.3 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | -0.0000 | +0.0000 | unchanged | 0.22 | 2.07e+00 | 74 | +2.0000 of 2 | PASS |
+| z_s1_l2 | Z | 5.3 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | -0.0000 | +0.0000 | unchanged | 0.36 | 6.32e-01 | 83 | +2.0000 of 2 | PASS |
+| z_s1_l3 | Z | 5.3 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.35 | 6.33e-01 | 81 | +2.0000 of 2 | PASS |
+| z_h1_l2 | Z | 5.3 | [0.1, 2] | [2.5, 6] | -0.0000 | +0.0000 | unchanged | 0.04 | 3.98e-01 | 89 | +1.0000 of 1 | PASS |
+| z_h1_l3 | Z | 5.3 | [0.1, 2] | [2.5, 6] | -0.0000 | +0.0000 | unchanged | 0.04 | 3.98e-01 | 89 | +1.0000 of 1 | PASS |
+| z_t1_z1 | Z | 5.3 | [0.02, 0.1] | [0.15, 0.33] | +0.0000 | +0.0000 | unchanged | 0.04 | 1.73e+00 | 88 | +1.0000 of 1 | PASS |
+| z_t1_z2 | Z | 5.3 | [0.02, 0.1] | [0.15, 0.33] | +0.0000 | +0.0000 | unchanged | 0.04 | 1.73e+00 | 88 | +1.0000 of 1 | PASS |
+| z_t2_z1 | Z | 5.3 | [0.02, 0.1] | [1.68, 1.84] | -0.0000 | +0.0000 | unchanged | 0.00 | 7.37e-01 | 86 | +1.0000 of 1 | PASS |
+| z_t2_z2 | Z | 5.3 | [0.02, 0.1] | [1.68, 1.84] | +0.0000 | +0.0000 | unchanged | 0.00 | 7.37e-01 | 86 | +1.0000 of 1 | PASS |
+| z_s2_l2 | Z | 5.3 | [0.01, 0.03] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.31 | 6.33e-01 | 93 | +2.0000 of 2 | PASS |
+| z_h2_l2 | Z | 5.3 | [0.1, 2] | [6, 10] | +0.0000 | +0.0000 | unchanged | 0.02 | 3.13e-01 | 90 | +1.0000 of 1 | PASS |
+| z_s3_l2 | Z | 5.3 | [0.03, 0.1] | [2.5, 6] | +0.0000 | +0.0000 | unchanged | 0.00 | 4.08e-01 | 99 | +1.0000 of 1 | PASS |
+| z_s3_l3 | Z | 5.3 | [0.03, 0.1] | [2.5, 6] | +0.0000 | +0.0000 | unchanged | 0.00 | 4.08e-01 | 99 | +1.0000 of 1 | PASS |
+| z_rep_l4 | Z | 5.3 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.27 | 5.59e-01 | 67 | +2.0000 of 2 | PASS |
+| z_s1_l4 | Z | 5.3 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.27 | 6.33e-01 | 82 | +2.0000 of 2 | PASS |
+| z_n1_l4 | Z | 5.3 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | +0.0000 | +0.0000 | unchanged | 0.22 | 2.10e+00 | 73 | +2.0000 of 2 | PASS |
+| z_rep_l5 | Z | 5.3 | [0.1, 2] | abs(Im s) ≤ 2.5 | -0.0000 | +0.0000 | unchanged | 0.26 | 5.59e-01 | 67 | +2.0000 of 2 | PASS |
+| z_s1_l5 | Z | 5.3 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.27 | 6.34e-01 | 82 | +2.0000 of 2 | PASS |
+| z_n1_l5 | Z | 5.3 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | -0.0000 | +0.0000 | unchanged | 0.22 | 2.09e+00 | 73 | +2.0000 of 2 | PASS |
+| z_rep_l6 | Z | 5.3 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.34 | 5.59e-01 | 65 | +2.0000 of 2 | PASS |
+| z_s1_l6 | Z | 5.3 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | unchanged | 0.37 | 6.34e-01 | 81 | +2.0000 of 2 | PASS |
+| z_n1_l6 | Z | 5.3 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | +0.0000 | +0.0000 | unchanged | 0.11 | 1.94e+00 | 73 | +2.0000 of 2 | PASS |
+
+0 of 61 counts changed at --guard=all.
+
+# Controls at --guard=all
+  z_flat: all checks passed  (4 s); failed checks none, must pass  PASS
+  z_mut_reverse: FAILED: plant  (4 s); failed checks ['plant'], must fail plant  PASS
+  z_mut_nonorm: FAILED: holo  (12 s); failed checks ['holo'], must fail holo  PASS
+  z_mut_lshift: FAILED: column  (4 s); failed checks ['column'], must fail column  PASS
+  w_mut_reverse: PLANTED FAIL; failed checks ['PLANTED'], must fail PLANTED  PASS
+
+RESULT: all rows complete, every planted check passed, no count changed, every control as required

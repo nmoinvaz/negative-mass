@@ -1,0 +1,27 @@
+# s1 at l = 5, the 212-point cache before the guard-all rerun, guard 1 (the run that failed its planted check)
+cache ../../../negative-mass-raw/I115-rpi5/cache_before_guard/winding2_cache_eps-1_w0.7603_l5_0.03_0.1_2.5.pkl: 212 points; planted s0 = (0.04+0.25j); guard 1
+== D
+  edge (0.1+0j)->(0.1+2.5j): adaptive -22.8537 (86 steps, max 0.400), dense chain -22.8537 (93 steps, max 0.400), difference/2pi +0.0000
+  edge (0.1+2.5j)->(0.03+2.5j): adaptive -0.5455 (10 steps, max 0.055), dense chain -0.5455 (20 steps, max 0.027), difference/2pi +0.0000
+  edge (0.03+2.5j)->(0.03+0j): adaptive +23.3992 (85 steps, max 0.396), dense chain +23.3992 (98 steps, max 0.396), difference/2pi +0.0000
+  total adaptive +0.0000 -> count +0.0000;  dense chain +0.0000 -> count +0.0000
+== D*factor
+  edge (0.1+0j)->(0.1+2.5j): adaptive -19.7605 (71 steps, max 0.399), dense chain -19.7605 (93 steps, max 0.399), difference/2pi +0.0000
+  edge (0.1+2.5j)->(0.03+2.5j): adaptive -0.4890 (10 steps, max 0.049), dense chain -0.4890 (20 steps, max 0.025), difference/2pi -0.0000
+  edge (0.03+2.5j)->(0.03+0j): adaptive +20.2495 (78 steps, max 0.399), dense chain +26.5327 (98 steps, max 0.730), difference/2pi -1.0000
+    step t in [0.90000, 0.92500] (s = 0.03000+0.25000j .. 0.03000+0.18750j): measured -0.3826, dense chain +5.9006 over 14 cached steps (max 0.730), difference/2pi -1.0000
+  total adaptive +0.0000 -> count +0.0000;  dense chain +6.2832 -> count +2.0000
+CHECK expected one step, in D*factor, measured -0.3826 against the chain's +5.9006; chain's largest increment 0.730 rad  PASS
+# s1 at l = 5, the 387-point cache after the guard-all rerun, guard all
+cache ../../../negative-mass-raw/I115-rpi5/cache/winding2_cache_eps-1_w0.7603_l5_0.03_0.1_2.5.pkl: 387 points; planted s0 = (0.04+0.25j); guard all
+== D
+  edge (0.1+0j)->(0.1+2.5j): adaptive -22.8537 (86 steps, max 0.400), dense chain -22.8537 (172 steps, max 0.207), difference/2pi +0.0000
+  edge (0.1+2.5j)->(0.03+2.5j): adaptive -0.5455 (10 steps, max 0.055), dense chain -0.5455 (20 steps, max 0.027), difference/2pi +0.0000
+  edge (0.03+2.5j)->(0.03+0j): adaptive +23.3992 (85 steps, max 0.396), dense chain +23.3992 (194 steps, max 0.211), difference/2pi -0.0000
+  total adaptive +0.0000 -> count +0.0000;  dense chain +0.0000 -> count +0.0000
+== D*factor
+  edge (0.1+0j)->(0.1+2.5j): adaptive -19.7605 (71 steps, max 0.399), dense chain -19.7605 (172 steps, max 0.203), difference/2pi -0.0000
+  edge (0.1+2.5j)->(0.03+2.5j): adaptive -0.4890 (10 steps, max 0.049), dense chain -0.4890 (20 steps, max 0.025), difference/2pi -0.0000
+  edge (0.03+2.5j)->(0.03+0j): adaptive +26.5327 (97 steps, max 0.399), dense chain +26.5327 (194 steps, max 0.211), difference/2pi -0.0000
+  total adaptive +6.2832 -> count +2.0000;  dense chain +6.2832 -> count +2.0000
+CHECK expected no step differs from the chain; chain's largest increment 0.211 rad  PASS

@@ -749,6 +749,134 @@ the planted pair (limit 0.45), worst Cauchy–Riemann defect 1.1×10⁻⁸ (`n1_
 | counts reported with max step, min abs(Z), star and l from the logs by a collector whose `--mutate=` fails it; each nonzero count with its box and the corrected count of zeros of D | met; no count is nonzero, so zeros of D = 0 in all 21; both mutations exit 1 |
 | #115's boxes, added as a second step | moved to #124 (above), met in all nine |
 
+### 5.4 Guard at every level (#126)
+
+The half-step test of §5.1 and §5.2 runs at bisection depths 0 and 1 only (`--guard=1`, the default). A step accepted at
+depth 2 or deeper can lose 2π, and the planted check does not see it when it hits D and D times the factor alike: in
+#115, s1 at l = 5 lost 2π in its planted count that way (§3a). #126 counts again at `--guard=all`, which applies the
+test at every depth, each box whose count the sections above report at guard 1. Each runs on a copy of its stored cache
+with the planted zero of its first run. That is 31 windings of D with `winding2.py` and 30 counts of the zeros of Z(r_m;
+s) with `zerilli_zeros.py`, which gained `--guard` for this: §5's 7 boxes, §5.1's other 16 (its `rep` box at l = 2 is
+§5's `p7603_l2`), #115's 8 other than s1 at l = 5 (#115 counted that one at guard all), and the 21 and 9 boxes of §5.3.
+
+On rpi5 (Raspberry Pi 5, aarch64, 4 cores shared with another project) on 2026-11-21, 00:49 to 09:35, with the code of
+`wip/i126-guard-all` at 37ec4d3. Each job is `python -u <script> <arguments> --cachedir=<raw folder>/cache`, with the 66
+lines `job|script|arguments|source folder` that `python collect_i126.py --jobs` prints (raw `jobs.txt`), at nice level
+10, one thread, at most two processes at a time and the second only while the 15-minute load was under 4. The five
+controls ran first, then the 30 Z boxes, then the pilot `w_s2_l2` (the slowest at guard 1, 3.7 h in #5; stop condition 8
+h; it took 2 h 22 min), then the other 30 W boxes, longest expected first. Each job ran once and none died. The second
+process started `w_s3_l3` at 02:03 with the 15-minute load at about 6, which the rule does not allow. From 02:37 every
+start of a second process waited for the load (`launch_I126_gated.sh`, the waits are in `queue.log`), and the load
+stayed above 4 for most of the run, so the W boxes ran mostly on one process. This changes the times and no result. Logs
+and caches are in negative-mass-raw, folder `I126-rpi5` at e4323fa. From `phase2/nonradial`, with the raw repository
+cloned beside the checkout:
+
+```
+python collect_i126.py ../../../negative-mass-raw/I126-rpi5 > i126_guard_output.txt
+```
+
+The collector exits 0. **No count changed: all 61 counts at `--guard=all` equal their guard-1 values, 31 windings of D
+and 30 counts of zeros of Z, all 0.** Each planted zero is returned (+2.0000 of 2 in the symmetric boxes, +1.0000 of 1
+in the upper boxes) and every check passes (for the Z boxes `count`, `holo`, `column` and `plant`). The guard-1 values
+are read from `i54_recount_output.txt`, `i5_boxes_output.txt`, `i115_boxes_output.txt`, `i121_zeros_output.txt` and
+`i124_zeros_output.txt`. Its five controls end as required: `z_flat` all checks passed, `z_mut_reverse` FAILED: plant,
+`z_mut_nonorm` FAILED: holo, `z_mut_lshift` FAILED: column and `w_mut_reverse` PLANTED FAIL. Its mutations
+`--mutate=noplant`, `shift` (a count of 0.5), `changed` (a guard-1 value 2 higher), `noguard` (the job list without
+`--guard=all`) and `control` (`z_mut_lshift` expected to pass) each exit 1. A copy of the raw folder without
+`w_s1_l2.log` also exits 1 ("no result"); that was run once by hand and is not a mutation of the script. The 31 windings
+of D:
+
+| job | section | Re s | Im s | guard 1 | guard all | max step (rad) | min abs(D) | evaluations | planted found |
+|---|---|---|---|---|---|---|---|---|---|
+| p7603_l2 | 5 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | 0.39 | 6.70e-04 | 135 | +2.0000 of 2 |
+| p7603_l3 | 5 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | 0.40 | 1.68e-03 | 195 | +2.0000 of 2 |
+| c075_l2 | 5 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | 0.40 | 6.88e-04 | 111 | +2.0000 of 2 |
+| p070_l2 | 5 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | 0.40 | 7.45e-04 | 134 | +2.0000 of 2 |
+| p070_l3 | 5 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | 0.40 | 1.86e-03 | 209 | +2.0000 of 2 |
+| p085_l2 | 5 | [0.1, 2] | abs(Im s) ≤ 2.5 | -0.0000 | +0.0000 | 0.40 | 4.93e-04 | 129 | +2.0000 of 2 |
+| p085_l3 | 5 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | 0.40 | 1.23e-03 | 205 | +2.0000 of 2 |
+| n1_l2 | 5.1 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | -0.0000 | +0.0000 | 0.33 | 2.82e-03 | 84 | +2.0000 of 2 |
+| n1_l3 | 5.1 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | +0.0000 | +0.0000 | 0.35 | 3.16e-02 | 112 | +2.0000 of 2 |
+| n3_l2 | 5.1 | [-0.001, 0.0001] | [0.01, 0.23] | +0.0000 | +0.0000 | 0.39 | 2.75e-03 | 116 | +1.0000 of 1 |
+| n3_l3 | 5.1 | [-0.001, 0.0001] | [0.01, 0.23] | -0.0000 | +0.0000 | 0.38 | 3.66e-02 | 124 | +1.0000 of 1 |
+| s1_l2 | 5.1 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | 0.40 | 1.00e-03 | 180 | +2.0000 of 2 |
+| s1_l3 | 5.1 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | 0.40 | 2.49e-03 | 233 | +2.0000 of 2 |
+| h1_l2 | 5.1 | [0.1, 2] | [2.5, 6] | +0.0000 | +0.0000 | 0.38 | 1.05e-04 | 108 | +1.0000 of 1 |
+| h1_l3 | 5.1 | [0.1, 2] | [2.5, 6] | -0.0000 | +0.0000 | 0.38 | 2.63e-04 | 126 | +1.0000 of 1 |
+| t1_r40 | 5.1 | [0.02, 0.1] | [0.15, 0.33] | +0.0000 | +0.0000 | 0.38 | 3.73e-03 | 94 | +1.0000 of 1 |
+| t1_r80 | 5.1 | [0.02, 0.1] | [0.15, 0.33] | -0.0000 | +0.0000 | 0.39 | 3.73e-03 | 94 | +1.0000 of 1 |
+| t2_r40 | 5.1 | [0.02, 0.1] | [1.68, 1.84] | +0.0000 | +0.0000 | 0.40 | 9.30e-04 | 94 | +1.0000 of 1 |
+| t2_r80 | 5.1 | [0.02, 0.1] | [1.68, 1.84] | +0.0000 | +0.0000 | 0.35 | 9.30e-04 | 94 | +1.0000 of 1 |
+| s2_l2 | 5.1 | [0.01, 0.03] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | 0.40 | 5.30e-04 | 227 | +2.0000 of 2 |
+| h2_l2 | 5.1 | [0.1, 2] | [6, 10] | -0.0000 | +0.0000 | 0.31 | 2.57e-05 | 92 | +1.0000 of 1 |
+| s3_l2 | 5.1 | [0.03, 0.1] | [2.5, 6] | -0.0000 | +0.0000 | 0.39 | 9.90e-05 | 106 | +1.0000 of 1 |
+| s3_l3 | 5.1 | [0.03, 0.1] | [2.5, 6] | -0.0000 | +0.0000 | 0.38 | 2.71e-04 | 106 | +1.0000 of 1 |
+| rep_l4 | 3a | [0.1, 2] | abs(Im s) ≤ 2.5 | -0.0000 | +0.0000 | 0.40 | 3.02e-03 | 261 | +2.0000 of 2 |
+| s1_l4 | 3a | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | 0.40 | 4.43e-03 | 289 | +2.0000 of 2 |
+| n1_l4 | 3a | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | +0.0000 | +0.0000 | 0.40 | 4.17e-02 | 131 | +2.0000 of 2 |
+| rep_l5 | 3a | [0.1, 2] | abs(Im s) ≤ 2.5 | -0.0000 | +0.0000 | 0.40 | 4.70e-03 | 327 | +2.0000 of 2 |
+| n1_l5 | 3a | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | -0.0000 | +0.0000 | 0.40 | 7.17e-02 | 128 | +2.0000 of 2 |
+| rep_l6 | 3a | [0.1, 2] | abs(Im s) ≤ 2.5 | -0.0000 | +0.0000 | 0.40 | 6.71e-03 | 407 | +2.0000 of 2 |
+| s1_l6 | 3a | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | +0.0000 | 0.40 | 8.69e-03 | 433 | +2.0000 of 2 |
+| n1_l6 | 3a | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | +0.0000 | +0.0000 | 0.39 | 1.35e-01 | 144 | +2.0000 of 2 |
+
+The 30 Z boxes (`i126_guard_output.txt` has every row) all count 0 at guard 1 and at guard all, with max step 0.00 to
+0.38 rad and min abs(Z) 3.13e-01 to 2.10e+00. The largest max step of a D count is 0.40 rad (17 boxes), of a Z count
+0.38 rad (`p085_l2`), against the 0.45 limit of the planted check. The smallest min abs(D) is 2.57e-05 (`h2_l2`). The
+planted zero is returned in all 30 Z boxes: 21 with +2.0000 of 2 and 9 with +1.0000 of 1.
+
+Evaluations of D are the points each run used: 84 (`n1_l2`) to 433 (`s1_l6`) in the 31 windings. The caches grew from
+6922 to 9003 points in 65 files, 2081 new (`summary.txt` in the raw folder has each). The largest increases are
+`rep_l6` (205), `s1_l6` (198) and `rep_l5` (159); s1 at l = 5 has no
+job here, and its 387 points are #115's. Walls, from `queue.log`: the W boxes took 11.71 h in all, the longest `s2_l2`
+(2 h 22 min), `s1_l6` (1 h 41 min) and `s1_l4` (55 min); the Z boxes 17.5 min and the controls 3.2 min. All 66 jobs took
+12.06 h of process time in 8.77 h of wall time.
+
+#### The replay
+
+`diagnose_plant.py` replays the step rule of `winding2.py` on a stored cache, without evaluating D, and compares each
+accepted step with the dense chain of every cached point on the edge. It was moved here from negative-mass-raw
+`I115-rpi5`, where #115 used it, and gained `--expect` and `--mutate`. From `phase2/nonradial`, with the raw repository
+cloned beside the checkout:
+
+```
+R=../../../negative-mass-raw/I115-rpi5/cache; B=${R}_before_guard; T=winding2_cache_eps-1_w0.7603_l5_0.03_0.1_2.5.pkl
+{ echo "# s1 at l = 5, the 212-point cache before the guard-all rerun, guard 1 (the run that failed its planted check)" &&
+  python diagnose_plant.py $B/$T 0.03 0.1 2.5 0.04,0.25 --expect=-0.3826,+5.9006 &&
+  echo "# s1 at l = 5, the 387-point cache after the guard-all rerun, guard all" &&
+  python diagnose_plant.py $R/$T 0.03 0.1 2.5 0.04,0.25 --guard=all --expect=none; } > i115_replay_output.txt
+```
+
+- On the 212-point cache of `cache_before_guard`, at guard 1, one step differs from the chain, in D times the factor: t
+  in [0.90000, 0.92500] of the edge Re s = 0.03 (s = 0.03000+0.25000i to 0.03000+0.18750i), measured −0.3826 rad against
+  the chain's +5.9006 rad over 14 cached steps (largest 0.730), a loss of one turn. The planted difference is then 0
+  instead of +2, the failure of #115's first run. D alone has no such step. The check passes, so the replay reproduces
+  −0.3826 against +5.9006.
+- On the 387-point cache after the rerun, at guard all, no step differs and the chain's largest increment is 0.211 rad;
+  D times the factor counts +2.0000 on the steps and on the chain.
+- Mutations, each on the 212-point cache and each exit 1 (raw `diagnose_*.log`): `--mutate=sparse` keeps only the
+  accepted steps' end points in the chain, so the chain loses the turn too and no step differs; `--mutate=wrongexpect`
+  shifts the expected phases by 10⁻³; `--expect=none` at guard 1 finds the one step; `--guard=all` asks for a point the
+  cache lacks, (0.1+0.00390625i), and stops, as the cache is not the one of the guard-all run.
+- §3a calls the stretch "the 14 cached points". The 14 are cached steps between 15 points, 13 of them inside the
+  stretch, the 13 removed in the coordinator's check (#126's description). §3a is unchanged here.
+
+#### What this settles
+
+Status: numerical evidence that the 61 counts of §5, §5.1, §3a and §5.3 do not depend on the depth at which the
+half-step test stops. The test compares a step with its two halves, so a loss that survives both halves is not detected at
+any depth, and the planted check counts on the same D and the same steps. The dense chain of the replay uses every
+cached point and so is a test of the step rule apart from the half-step test; it was run only on s1 at l = 5. The Z
+boxes use the same rule. The other conditions of §5.3 stand as they are (that the Zerilli column is D's only pole
+source, #122).
+
+| acceptance criterion | verdict |
+|---|---|
+| at `--guard=all` each box returns its planted zero, with max step, min abs(D), evaluations; a winding that differs from guard 1 is named with its box | met in all 61 (31 D, 30 Z); none differs, so none is named |
+| a collector exits 1 on a failed planted check, a missing log or a non-integer winding, and its mutations exit 1 | met: exit 0 on the real logs; `--mutate=noplant`, `shift`, `changed`, `noguard` and `control` each exit 1; a missing log exits 1 (by hand) |
+| the replay reproduces −0.3826 against +5.9006 on `cache_before_guard/` and exits 1 under a mutation | met: PASS on the 212-point cache; `--mutate=sparse`, `--mutate=wrongexpect`, `--expect=none` and `--guard=all` on it each exit 1 |
+| the Z boxes of §5.3 recounted at `--guard=all` (added by the coordinator) | met in all 30; none changed |
+
 ## 6. Conclusions
 
 1. **Polar, real growth rates.** For the phantom campaign star (ω = 0.7603, M = −0.01458) there is
@@ -834,6 +962,8 @@ the planted pair (limit 0.45), worst Cauchy–Riemann defect 1.1×10⁻⁸ (`n1_
 | `zerilli_zeros.py` | zeros of the decaying Zerilli solution Z(r_m; s) in a box, the poles of D's Zerilli column (§5.3) |
 | `collect_i121.py`, `i121_zeros_output.txt` | the job list and table of §5.3 from the raw logs (negative-mass-raw, I121-win) |
 | `i124_zeros_output.txt` | the table of §5.3's #124 paragraph, the nine boxes of §3a, from the raw logs (I124-rpi5), built by `collect_i121.py --only=3a` |
+| `collect_i126.py`, `i126_guard_output.txt` | the recount of §5.4 at `--guard=all`, 61 boxes and 5 controls, from the raw logs (negative-mass-raw, I126-rpi5) |
+| `diagnose_plant.py`, `i115_replay_output.txt` | the replay of a lost step on a cached box, and its two runs on #115's s1 at l = 5 before and after the guard-all rerun (§5.4) |
 | `l456_graph.py` → `l456_mode_condition.svg` | the figure of §3a |
 | `boxes_graph.py` → `complex_s_boxes.svg` | the figure of §5.1 |
 | `data_graphs.py` | SVG drawing primitives of both figures, vendored unchanged (its docstring names the canonical copy) |

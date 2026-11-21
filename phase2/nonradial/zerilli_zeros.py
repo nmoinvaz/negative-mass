@@ -14,7 +14,7 @@ zerilli_q takes at the smallest |s| of the contour, r_m + zfac (40 + 20 l)/|s|_m
 Z(conj s) = conj Z(s), so the symmetric box is doubled as in winding2.py, with the same step rule. Usage:
 
   python zerilli_zeros.py eps w l x0 x1 y1 [--y0=Y0] [--zfac=1] [--nseg=10] [--plant=RE,IM] [--cachedir=DIR]
-                          [--flat] [--mutate=NAME]
+                          [--flat] [--guard=1] [--mutate=NAME]
 
 Checks, each printed with PASS or FAIL (exit 1 if any fails):
   count     the winding is within 0.05 of an integer and every accepted step is at most 0.45 rad;
@@ -28,6 +28,8 @@ Checks, each printed with PASS or FAIL (exit 1 if any fails):
   --flat    Mext = 0 (flat space, V = l(l+1)/r^2): Z is r k_l(s r) up to a zero-free factor, whose zeros all have
             Re s < 0, so every box must count 0, and q = 1/r + s k_l'(s r)/k_l(s r) at r_m exactly (check `flatq`,
             1e-8 relative at the three points). A planted-truth run of the same code path.
+  --guard=1 deepest bisection level at which a step is accepted only if its two half steps agree with it; `all`
+            applies the half-step test at every level, as winding2.py's --guard. The default 1 is the rule of #54.
   --mutate=reverse  traverse the contour clockwise (the planted check must fail);
   --mutate=nonorm   start from y = (1, -k) at a radius that depends on |s| (zerilli_q's), so Z is not holomorphic
                     (the holo check must fail);
@@ -44,13 +46,14 @@ from polar_solver import PolarProblem
 
 args = [a for a in sys.argv[1:] if not a.startswith('--')]
 opts = dict((a[2:].split('=', 1) + ['1'])[:2] for a in sys.argv[1:] if a.startswith('--'))
-if set(opts) - {'y0', 'zfac', 'nseg', 'plant', 'cachedir', 'flat', 'mutate'} or len(args) != 6:
+if set(opts) - {'y0', 'zfac', 'nseg', 'plant', 'cachedir', 'flat', 'guard', 'mutate'} or len(args) != 6:
     sys.exit(__doc__)
 eps, w, l = int(args[0]), float(args[1]), int(args[2])
 x0, x1, y1 = (float(a) for a in args[3:6])
 y0, zfac, nseg = float(opts.get('y0', 0.0)), float(opts.get('zfac', 1.0)), int(opts.get('nseg', 10))
 mutate, flat, cachedir = opts.get('mutate'), 'flat' in opts, opts.get('cachedir', HERE)
 plant = complex(*(float(a) for a in opts['plant'].split(','))) if 'plant' in opts else None
+guard = np.inf if opts.get('guard', '1') == 'all' else int(opts.get('guard', '1'))
 assert mutate in (None, 'reverse', 'nonorm', 'lshift'), mutate
 assert x0 < x1 and 0 <= y0 < y1
 sym = y0 == 0.0
@@ -110,7 +113,7 @@ def Zc(s):
 
 def count(F):
     """Phase of F along the contour with winding2.py's step rule: at most 0.4 rad per step, and a step of the first
-    two bisection levels only if its two half steps are small too and add up to it."""
+    two bisection levels (every level with --guard=all) only if its two half steps are small too and add up to it."""
     total, maxstep, fmin = 0.0, 0.0, np.inf
     for a, b in zip(corners[:-1], corners[1:]):
         def step(t0, t1, depth):
@@ -118,7 +121,7 @@ def count(F):
             da, db = F(a + (b - a) * t0), F(a + (b - a) * t1)
             dph = np.angle(db / da)
             fine = t1 - t0 <= 1e-5
-            if abs(dph) <= 0.4 and depth <= 1 and not fine:
+            if abs(dph) <= 0.4 and depth <= guard and not fine:
                 dm = F(a + (b - a) * 0.5 * (t0 + t1))
                 h1, h2 = np.angle(dm / da), np.angle(db / dm)
                 if max(abs(h1), abs(h2)) > 0.4 or abs(h1 + h2 - dph) > 0.1:
