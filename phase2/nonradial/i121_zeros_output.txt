@@ -22,13 +22,63 @@
 | h2_l2 | 5.1 | phantom 0.7603 | 2 | [0.1, 2] | [6, 10] | +0.0000 | 0.02 | 3.13e-01 | 80 | 10 | 2.7e-08 | 4.5e-12 | +1.0000 of 1 | -0.0000 | +0 | PASS |
 | s3_l2 | 5.1 | phantom 0.7603 | 2 | [0.03, 0.1] | [2.5, 6] | +0.0000 | 0.00 | 4.08e-01 | 80 | 32 | 4.0e-08 | 1.6e-09 | +1.0000 of 1 | -0.0000 | +0 | PASS |
 | s3_l3 | 5.1 | phantom 0.7603 | 3 | [0.03, 0.1] | [2.5, 6] | +0.0000 | 0.00 | 4.08e-01 | 80 | 38 | 1.3e-07 | 1.1e-09 | +1.0000 of 1 | -0.0000 | +0 | PASS |
+| n3_l2 | 5.1 | phantom 0.7603 | 2 | [-0.001, 0.0001] | [0.01, 0.23] | +0.0000 | 0.39 | 1.05e+00 | 90 | 131 | 8.9e-11 |  | +1.0000 of 1 | +0.0000 | +0 | PASS |
+| n3_l2_pr | 5.1 | phantom 0.7603 | 2 | [-0.001, 0.0001] | [0.01, 0.23] | +0.0000 | 0.39 | 1.05e+00 | 148 | 0 | 8.9e-11 |  | +1.0000 of 1 | +0.0000 | +0 | PASS |
+| n3_l2_z2 | 5.1 | phantom 0.7603 | 2 | [-0.001, 0.0001] | [0.01, 0.23] | +0.0000 | 0.39 | 1.05e+00 | 90 | 165 | 4.1e-10 |  | +1.0000 of 1 | +0.0000 | +0 | PASS |
+| n3_l3 | 5.1 | phantom 0.7603 | 3 | [-0.001, 0.0001] | [0.01, 0.23] | -0.0000 | 0.39 | 1.11e+00 | 98 | 195 | 6.5e-11 |  | +1.0000 of 1 | -0.0000 | +0 | PASS |
+| n3_l3_pr | 5.1 | phantom 0.7603 | 3 | [-0.001, 0.0001] | [0.01, 0.23] | -0.0000 | 0.39 | 1.11e+00 | 156 | 0 | 6.5e-11 |  | +1.0000 of 1 | -0.0000 | +0 | PASS |
+| n3_l3_z2 | 5.1 | phantom 0.7603 | 3 | [-0.001, 0.0001] | [0.01, 0.23] | +0.0000 | 0.39 | 1.11e+00 | 98 | 195 | 1.5e-10 |  | +1.0000 of 1 | -0.0000 | +0 | PASS |
 
-Not counted here: rep_l2 (the same box as p7603_l2); n3_l2 (crosses Re s = 0, where the cut of k makes y1(r_m) not holomorphic); n3_l3 (crosses Re s = 0, where the cut of k makes y1(r_m) not holomorphic).
+Not counted here: rep_l2 (the same box as p7603_l2).
 
 # Controls on the stored box (phantom 0.7603, l = 2)
   flat (--flat --plant=0.3,1.76): all checks passed  (14 s); failed checks none, must pass  PASS
   mut_reverse (--mutate=reverse --plant=0.3,1.76): FAILED: plant  (15 s); failed checks ['plant'], must fail plant  PASS
   mut_nonorm (--mutate=nonorm --plant=0.3,1.76): FAILED: holo  (44 s); failed checks ['holo'], must fail holo  PASS
   mut_lshift (--mutate=lshift --plant=0.3,1.76): FAILED: column  (16 s); failed checks ['column'], must fail column  PASS
+
+# Controls of --axis (#123): the n3 boxes, and a flat-space box that holds a zero
+  n3_l2_flat (2 -0.001 0.0001 0.23 --y0=0.01 --axis --guard=all --flat --plant=-0.0005,0.12): all checks passed  (289 s); failed checks none, must pass  PASS
+  n3_l3_flat (3 -0.001 0.0001 0.23 --y0=0.01 --axis --guard=all --flat --plant=-0.0005,0.12): all checks passed  (367 s); failed checks none, must pass  PASS
+  n3_l2_mprincipal (2 -0.001 0.0001 0.23 --y0=0.01 --axis --guard=all --mutate=principal --plant=-0.0005,0.12): FAILED: holo  (236 s); failed checks ['holo'], must fail holo  PASS
+  n3_l3_mprincipal (3 -0.001 0.0001 0.23 --y0=0.01 --axis --guard=all --mutate=principal --plant=-0.0005,0.12): FAILED: holo  (294 s); failed checks ['holo'], must fail holo  PASS
+  ax_flatzero (2 -0.09 -0.03 0.07 --y0=0.01 --axis --guard=all --flat --plant=-0.045,0.055): all checks passed  (170 s); failed checks none, must pass  PASS
+  ax_flatzero_rev (2 -0.09 -0.03 0.07 --y0=0.01 --axis --guard=all --flat --mutate=reverse --plant=-0.045,0.055): FAILED: flat, plant  (42 s); failed checks ['flat', 'plant'], must fail flat  PASS
+
+# Boxes across Re s = 0 (#123)
+
+Planted zero on each side of the axis (each box's `plant` check; the left plant is the box's main job):
+| box | job | planted s0 | side of Re s = 0 | counted | row check |
+|---|---|---|---|---|---|
+| n3_l2 | n3_l2 | -0.0005+0.12i | left | +1.0000 of 1 | PASS |
+| n3_l2 | n3_l2_pr | 5e-05+0.12i | right | +1.0000 of 1 | PASS |
+| n3_l2 | n3_l2_z2 | -0.0005+0.12i | left | +1.0000 of 1 | PASS |
+| n3_l3 | n3_l3 | -0.0005+0.12i | left | +1.0000 of 1 | PASS |
+| n3_l3 | n3_l3_pr | 5e-05+0.12i | right | +1.0000 of 1 | PASS |
+| n3_l3 | n3_l3_z2 | -0.0005+0.12i | left | +1.0000 of 1 | PASS |
+
+zfac 1 against 2 (the start radius R_z doubled), y1(r_m) at the three contour points of the column check; y1(r_m) = exp(s r_m*) Z(r_m; s) does not depend on R_z, so any difference is numerical:
+| box | zeros of Z, zfac 1 | zeros of Z, zfac 2 | R_z, zfac 1 | R_z, zfac 2 | largest relative difference of y1 | at s | check |
+|---|---|---|---|---|---|---|---|
+| n3_l2 | +0.0000 | +0.0000 | 8074.1 | 16074.1 | 1.8e-13 | -0.001+0.23i | PASS |
+| n3_l3 | -0.0000 | +0.0000 | 10074.1 | 20074.1 | 1.4e-13 | 0.0001+0.05422i | PASS |
+
+q = y2/y1 at r_m against polar_solver's zerilli_q (D's own Zerilli column), at the column check's three contour points and at the Cauchy-Riemann points (Re s = x0/2, 0, x1/2). Reported, not a criterion (#122):
+| box | points | s | side of Re s = 0 | relative difference |
+|---|---|---|---|---|
+| n3_l2 | contour | 0.0001+0.05422i | Re s > 0 | 6.0e-07 |
+| n3_l2 | contour | -0.001+0.23i | Re s < 0 | 7.3e-06 |
+| n3_l2 | contour | -0.001+0.05312i | Re s < 0 | 1.8e-05 |
+| n3_l2 | Cauchy-Riemann | -0.0005+0.076i | Re s < 0 | 8.8e-06 |
+| n3_l2 | Cauchy-Riemann | 0+0.142i | Re s = 0 | 4.0e-06 |
+| n3_l2 | Cauchy-Riemann | 5e-05+0.208i | Re s > 0 | 3.3e-06 |
+| n3_l2 | worst | | Re s < 0 1.8e-05; Re s = 0 4.0e-06; Re s > 0 3.3e-06 | |
+| n3_l3 | contour | 0.0001+0.05422i | Re s > 0 | 2.8e-08 |
+| n3_l3 | contour | -0.001+0.23i | Re s < 0 | 1.0e-05 |
+| n3_l3 | contour | -0.001+0.05312i | Re s < 0 | 1.8e-06 |
+| n3_l3 | Cauchy-Riemann | -0.0005+0.076i | Re s < 0 | 1.4e-06 |
+| n3_l3 | Cauchy-Riemann | 0+0.142i | Re s = 0 | 4.0e-06 |
+| n3_l3 | Cauchy-Riemann | 5e-05+0.208i | Re s > 0 | 3.7e-06 |
+| n3_l3 | worst | | Re s < 0 1.0e-05; Re s = 0 4.0e-06; Re s > 0 3.7e-06 | |
 
 RESULT: all rows complete, every planted zero returned, every control as required
