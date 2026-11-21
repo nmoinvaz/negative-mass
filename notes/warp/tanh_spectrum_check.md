@@ -509,6 +509,150 @@ which is not computed here, and are statements about the Galerkin eigenvalues.
 - The planted check took 47 min and a solve 14 to 29 min, against the issue's estimate of about 20 min for the planted
   check and 20 to 30 min per sector.
 
+## Sectors m = 23/2 to 41/2 (#120)
+
+Issue #120. Script unmodified, at ad62a25 (branch `wip/i120-high-m`), output
+[tanh_spectrum_check_high_m_output.txt](tanh_spectrum_check_high_m_output.txt), raw output in negative-mass-raw folder
+`I120-win` (commit 7cb59a7). The leading eigenvalue of the ten sectors m = 23/2 to 41/2, at σR = 2 and 4, discretisations
+A and B, at #94's base sizes (no `--fnth` or `--fh`) with ARPACK. Status: *numerical evidence*. Galerkin eigenvalues of a
+non-normal operator are not bounds.
+
+In all 20 pairs of (σR, m) the leading |μ|v_c of A and B agree to 1.8×10⁻⁶ at most, lie below 0.0830 and 0.0944, and fall
+strictly with m from #75's m = 21/2 value. The largest are 0.076814 and 0.087769, at m = 23/2. m|μ|v_c rises at every
+step. `--part=highm` exits 0 with 42 checks passing, and `--mutate=bump` fails `fall`.
+
+### What was run
+
+Machine win (surface-laptop-4, Windows 11, 8 logical CPUs, 32 GB, shared with choptuik-large-d), Python 3.14.10 with
+numpy 2.5.4 and scipy 1.18.1, from the repository root. Thread settings and below-normal detached launches as in #111
+above. Two solve processes ran at a time, the second started only while choptuik-large-d's processes together used under
+4 cores (1.19 to 1.51 cores at the three readings). The sizes are #94's, with ARPACK at the default `--floor=0.07`. The
+commands, as bash:
+
+    RAW=../negative-mass-raw/I120-win
+    MS=--ms=11.5,12.5,13.5,14.5,15.5,16.5,17.5,18.5,19.5,20.5
+    CHK="python notes/warp/tanh_spectrum_check.py"
+    $CHK --part=planted --ms=11.5,20.5 --solver=arpack
+    $CHK --part=solve --sigma=4 --disc=B --ms=20.5 --solver=arpack --out=$RAW/eig            (the pilot)
+    $CHK --part=solve --sigma=4 --disc=B $MS --solver=arpack --out=$RAW/eig                (and (4, A), (2, B), (2, A))
+    $CHK --part=highm --out=$RAW/eig $MS > notes/warp/tanh_spectrum_check_high_m_output.txt
+    $CHK --part=highm --out=$RAW/eig $MS --mutate=bump                                     (exits 1)
+    python $RAW/trend.py > $RAW/trend.log                                                  (derived columns, no check)
+
+The planted check ran first and passed before any tanh weight was solved. The pilot ran alone, inside its 1 h stop
+condition. (4, B) and (4, A) then started at 18:34 and 18:35, (2, B) and (2, A) at 18:39 as they exited. (4, B) reused the
+pilot's m = 41/2 file. Every n equals the size planned from the script's knot rules, and the largest, 23484 (B, m = 41/2),
+is under a quarter of #118's 102414. The peak working sets were sampled once a minute (`I120-win/memory-sampler.log`):
+
+| run | exit | wall | peak memory |
+|---|---|---|---|
+| planted, m = 23/2 and 41/2, n = 10868 and 17836 | 0 | 46 s | not sampled (under 100 MB or short) |
+| pilot, σR = 4, B, m = 41/2, n = 23484 | 0 | 76 s | 1.5 GiB |
+| solve σR = 4, B (m = 41/2 from the pilot) | 0 | 273 s | 1.4 GiB |
+| solve σR = 4, A | 0 | 208 s | 1.1 GiB |
+| solve σR = 2, B | 0 | 365 s | 1.5 GiB |
+| solve σR = 2, A | 0 | 217 s | 1.1 GiB |
+| `highm` | 0 | 0 s | |
+| `highm --mutate=bump` | 1 | 0 s | |
+
+A sector took 11 to 79 s, and the planted check, pilot and four solves took 14 min of wall time against the issue's
+estimate of 30 min. The machine's free memory stayed between 23.7 and 25.9 GiB. No process was stopped and none died.
+ARPACK kept 64 eigenvalues per sector, down to |μ|v_c = 0.0336 to 0.0495, at residuals of 2×10⁻¹⁴ or less. All of them
+are below the 0.07 floor, so k was never doubled.
+
+### The sectors
+
+From the report. "A vs B" is the leading values' difference relative to A's, "leading / line" the larger of the two
+over 0.0830 or 0.0944 (`I120-win/trend.log`). The coordinator's pilot (m = 23/2 and 41/2) is reproduced to every printed
+digit.
+
+| σR | m | n, A / B | leading \|μ\|v_c, A | B | A vs B | m\|μ\|v_c | leading / line |
+|---|---|---|---|---|---|---|---|
+| 2 | 23/2 | 10868 / 14344 | 0.076814 | 0.076814 | 7.6×10⁻⁷ | 0.8834 | 0.9255 |
+| 2 | 25/2 | 11544 / 15548 | 0.071472 | 0.071472 | 8.0×10⁻⁷ | 0.8934 | 0.8611 |
+| 2 | 27/2 | 12464 / 16262 | 0.066824 | 0.066824 | 5.9×10⁻⁷ | 0.9021 | 0.8051 |
+| 2 | 29/2 | 13104 / 17444 | 0.062744 | 0.062744 | 6.1×10⁻⁷ | 0.9098 | 0.7559 |
+| 2 | 31/2 | 13846 / 18300 | 0.059132 | 0.059132 | 5.9×10⁻⁷ | 0.9165 | 0.7124 |
+| 2 | 33/2 | 14520 / 19074 | 0.055914 | 0.055914 | 5.7×10⁻⁷ | 0.9226 | 0.6737 |
+| 2 | 35/2 | 15210 / 20352 | 0.053027 | 0.053027 | 5.8×10⁻⁷ | 0.9280 | 0.6389 |
+| 2 | 37/2 | 16262 / 21276 | 0.050424 | 0.050424 | 4.3×10⁻⁷ | 0.9328 | 0.6075 |
+| 2 | 39/2 | 17088 / 22624 | 0.048064 | 0.048064 | 4.4×10⁻⁷ | 0.9373 | 0.5791 |
+| 2 | 41/2 | 17836 / 23484 | 0.045915 | 0.045915 | 4.2×10⁻⁷ | 0.9413 | 0.5532 |
+| 4 | 23/2 | 10868 / 14344 | 0.087769 | 0.087769 | 1.8×10⁻⁶ | 1.0093 | 0.9298 |
+| 4 | 25/2 | 11544 / 15548 | 0.082040 | 0.082040 | 1.7×10⁻⁶ | 1.0255 | 0.8691 |
+| 4 | 27/2 | 12464 / 16262 | 0.077012 | 0.077012 | 1.3×10⁻⁶ | 1.0397 | 0.8158 |
+| 4 | 29/2 | 13104 / 17444 | 0.072564 | 0.072564 | 1.2×10⁻⁶ | 1.0522 | 0.7687 |
+| 4 | 31/2 | 13846 / 18300 | 0.068601 | 0.068602 | 1.1×10⁻⁶ | 1.0633 | 0.7267 |
+| 4 | 33/2 | 14520 / 19074 | 0.065049 | 0.065049 | 1.0×10⁻⁶ | 1.0733 | 0.6891 |
+| 4 | 35/2 | 15210 / 20352 | 0.061846 | 0.061846 | 9.9×10⁻⁷ | 1.0823 | 0.6552 |
+| 4 | 37/2 | 16262 / 21276 | 0.058944 | 0.058944 | 7.9×10⁻⁷ | 1.0905 | 0.6244 |
+| 4 | 39/2 | 17088 / 22624 | 0.056302 | 0.056302 | 7.6×10⁻⁷ | 1.0979 | 0.5964 |
+| 4 | 41/2 | 17836 / 23484 | 0.053886 | 0.053886 | 7.0×10⁻⁷ | 1.1047 | 0.5708 |
+
+The sign of |μ|_A − |μ|_B is negative in all 20 sectors, as in the sectors above, and 1.8×10⁻⁶ at most. #75's m = 21/2
+values, from which `fall` starts, are 0.083018 (m|μ|v_c = 0.8717) and 0.094358 (0.9908).
+
+### Each criterion
+
+| criterion of #120 | verdict |
+|---|---|
+| planted check at m = 23/2 and 41/2 at the sizes used | pass. Exit 0 in 46 s, worst \|μ\| error 1.8×10⁻⁶ and 6.6×10⁻⁷, residual 2×10⁻¹⁴ and 1×10⁻¹⁴, max \|Re μ\| 3.1×10⁻¹⁷ and 1.9×10⁻¹⁷ |
+| `ABhigh`: A and B leading agree to 10⁻⁵ in every sector | pass in all 20. Worst 1.8×10⁻⁶ (σR = 4, m = 23/2), 5.6 times inside the threshold. σR = 2: worst 8.0×10⁻⁷ (m = 25/2) |
+| `below`: leading under 0.0830 (σR = 2) and 0.0944 (σR = 4) | pass in all 20. Largest 0.076814 and 0.087769 (m = 23/2), 0.9255 and 0.9298 of the lines |
+| `fall`: leading falls strictly with m from #75's m = 21/2 value | pass at both σR. The largest step, the one nearest zero, is −2.15×10⁻³ (σR = 2) and −2.42×10⁻³ (σR = 4), both 39/2 to 41/2 |
+| `--mutate=bump` fails `fall` | fires. Exit 1, `fall` fails at both σR (largest step +5.9×10⁻⁴ and +6.9×10⁻⁴). `ABhigh` also fails at m = 33/2 at both σR (6.4×10⁻² and 6.1×10⁻²), since the mutation changes A's value only. Four failed checks, no other |
+
+`below` has no `--mutate` of its own, and `bump` leaves the bumped value under the line. As a control, `--part=highm` on
+#118's m = 19/2 and 21/2 files (`I120-win/highm-control-below.log`, read-only) exits 1 and fails `below` for 0.090309
+and 0.083018 (σR = 2) and 0.102014 (σR = 4), as it should against 0.0830 and 0.0944.
+
+### The trend of m|μ|v_c
+
+"Step" is the change of m|μ|v_c from the sector before, "exponent" the local d ln|μ| / d ln m between the two. The first
+row starts from #75's m = 21/2 value (`I120-win/trend.log`).
+
+| m | step, σR = 2 | exponent, σR = 2 | step, σR = 4 | exponent, σR = 4 |
+|---|---|---|---|---|
+| 23/2 | +0.01167 | −0.8538 | +0.01858 | −0.7957 |
+| 25/2 | +0.01004 | −0.8644 | +0.01615 | −0.8096 |
+| 27/2 | +0.00873 | −0.8737 | +0.01416 | −0.8218 |
+| 29/2 | +0.00765 | −0.8818 | +0.01252 | −0.8325 |
+| 31/2 | +0.00677 | −0.8889 | +0.01115 | −0.8420 |
+| 33/2 | +0.00603 | −0.8952 | +0.00999 | −0.8505 |
+| 35/2 | +0.00540 | −0.9008 | +0.00900 | −0.8581 |
+| 37/2 | +0.00487 | −0.9058 | +0.00815 | −0.8650 |
+| 39/2 | +0.00441 | −0.9104 | +0.00742 | −0.8712 |
+| 41/2 | +0.00401 | −0.9145 | +0.00678 | −0.8769 |
+
+m|μ|v_c rises at every step, from 0.8717 to 0.9413 at σR = 2 and from 0.9908 to 1.1047 at σR = 4, so the leading value
+falls more slowly than 1/m throughout, as in the coordinator's pilot. The steps shrink at every sector and the exponent
+moves toward −1 from above, but at m = 41/2 neither has reached it: the steps are still 0.0040 and 0.0068. Nothing is
+extrapolated here, and the trend is a description of ten computed sectors.
+
+### The speed bound
+
+The lines are unchanged: 12.05 v_c (σR = 2) and 10.60 v_c (σR = 4) are the reciprocals of the leading values of m = 21/2.
+Of the Galerkin eigenvalues of m = 23/2 to 41/2 that ARPACK returned (the 64 of largest modulus per sector), none has
+modulus above 0.076814 (σR = 2) or 0.087769 (σR = 4), that is none with |v| below 13.02 v_c or 11.39 v_c, above the lines
+at 12.05 and 10.60. That holds for the whole sector if ARPACK missed none, which the planted check supports (all 42
+expected eigenvalues returned at m = 23/2 and 41/2). #111's comparison with #94's dense spectra at base sizes (1.6×10⁻¹⁴)
+covered m = ½ only. This moves the range over which the
+fall of the leading eigenvalue is computed from m ≤ 21/2 to m ≤ 41/2. For m > 41/2 it is still an assumption, which #95's
+bound would remove. The text above describes the state before #120, and is left as it was.
+
+### What it does not show, and what differs
+
+- A and B share the script, the formulation, the solver and the profile. Their agreement to 10⁻⁶ tests the two grids
+  against each other, not the formulation. #75's spectral basis stops at m = 21/2, so no second code covers m > 21/2, and
+  the report has no `lead` check against #75 for these sectors. At m = 21/2 the base sizes agreed with #75 to 6.0×10⁻⁶
+  (#94), which is far below the 7% margin to the nearest line.
+- The report header prints the σR = 4 line as "1/0.0944 = 10.59 v_c", because the script's line is the rounded 0.0944. The
+  speed-bound line is 1/0.094358 = 10.60 v_c. The checks do not change, since the nearest sector is 7.0% below its line.
+  The same rounding puts #75's own σR = 2 value at m = 21/2 (0.083018) above the script's 0.0830, which the control above
+  shows. Neither affects the 20 sectors here.
+- The planted check, pilot and solves took 14 min against the estimate of 30 min, and each solve peaked at 1.1 to 1.5 GiB,
+  against 5.6 to 9.7 GiB at the wide sizes of #111 and #118.
+
 ## What this does and does not show
 
 Status words of AGENTS.md. These are *numerical evidence*. A Galerkin eigenvalue of a non-normal operator is not a bound
