@@ -41,6 +41,8 @@ basis is two to four orders less accurate in the leading eigenvalue.
 from #94's files (0.0801, 0.0743 and 0.0912, 0.0850). No real eigenvalue lies in any window. The second |μ|v_c agrees with
 #75's to 4.0×10⁻⁶ (re-solved sectors) and 2.1×10⁻⁵ (#94's two). The speed-bound lines are 12.05 v_c (σR = 2) and
 10.60 v_c (σR = 4), against #75's 12.05 v_c and 10.32 v_c. The wide report exits 1 on two `AB` failures, in #94's files.
+#118 re-solved those two sectors at the wide sizes, and the wide report then exits 0 (last subsection of "Wider windows
+(#111)").
 
 ## What was run
 
@@ -190,7 +192,8 @@ Issue #111. Script at 0e3170f (branch `wip/i111-wide-windows`), output
 [tanh_spectrum_check_wide_output.txt](tanh_spectrum_check_wide_output.txt), raw output in negative-mass-raw folder
 `I111-win` (commit ae8f274). The sectors m = ½ to 17/2 were re-solved at σR = 2 and 4. The sectors 19/2 and 21/2 are
 read from #94's `I94-win` files, whose windows already start below the targets. The `files` column of the tables says
-which. Status: *numerical evidence*. Galerkin eigenvalues of a non-normal operator are not bounds.
+which. #118 re-solved those two at the wide sizes (last subsection below). Status: *numerical evidence*. Galerkin
+eigenvalues of a non-normal operator are not bounds.
 
 ### What was run
 
@@ -220,7 +223,7 @@ coordinator's pilot's, and were not changed to chase a target. The commands, as 
 The solve ran for (S, D) = (4, B) and (4, A), then (2, B) and (2, A). The second pair started as slots freed (2, B at
 12:20 when (4, A) exited, (2, A) at 13:32 when (4, B) exited), so two processes ran throughout. (4, B) reused the
 pilot's m = 17/2 file. All three reports exit 1. The `--mutate=next` one must. The other two fail #94's `AB` check
-(below). The times and peak working sets (sampled once a minute, `$RAW/memory-sampler.log`, in GiB):
+(below). With #118's files the wide report exits 0 (last subsection). The times and peak working sets (sampled once a minute, `$RAW/memory-sampler.log`, in GiB):
 
 | run | exit | wall | peak memory |
 |---|---|---|---|
@@ -298,7 +301,8 @@ columns are as above, and "A vs #75" is relative.
 
 The 10⁻⁵ window starts at 0.0552 to 0.0697 (σR = 2) and 0.0562 to 0.0712 (σR = 4) in the nine re-solved sectors, against
 0.1830 and 0.1926 at m = ½ in #94's files. It is below #75's 0.0830 and 0.0969 in every sector, including the two from
-#94's files (0.0801 and 0.0912 at most). It is below #75's own window in 17 of the 18 re-solved sectors. The exception
+#94's files (0.0801 and 0.0912 at most, and 0.0499 to 0.0538 re-solved in #118). It is below #75's own window in 17 of
+the 18 re-solved sectors. The exception
 is σR = 2, m = 9/2, 0.0697 against 0.0667, where the ARPACK stop (k = 64 returns down to 0.0697, just under the 0.07
 floor) set the window, not convergence. At σR = 2 every re-solved window is a `floor`. At σR = 4 the windows of
 m = ½ to 7/2 are `match`, 0.0077 to 0.0094 above their floors. No real eigenvalue lies in any window, of A or B. ARPACK
@@ -322,7 +326,8 @@ keeps the largest 64 to 128 eigenvalues of each sector, so the real eigenvalues 
 | no real eigenvalue in the window, in A or B (`noreal`) | 22 | pass |
 
 The wide report has 112 checks and exits 1 on the two `AB` failures, both from #94's files, where #94 reported the same
-1.9×10⁻⁶ (its review traced it to A's own discretisation error). The threshold stays as written. At the re-solved sizes
+1.9×10⁻⁶ (its review traced it to A's own discretisation error). The threshold stays as written. #118 re-solves the two
+sectors at the wide sizes, where `AB` passes (last subsection). At the re-solved sizes
 the leading eigenvalues of A and B agree to 3.3×10⁻¹⁰ (σR = 2) and 1.8×10⁻⁹ (σR = 4) in every sector, against #94's up to
 9.8×10⁻⁷ and 1.9×10⁻⁶, and #75's 5×10⁻¹² and 5×10⁻¹⁰ at m = ½ (here 2.5×10⁻¹⁰ and 1.6×10⁻¹⁰). The `lead` agreement
 with #75 is at the resolution of its six printed digits in all 22 sectors (the largest difference is 4.9×10⁻⁷ absolute).
@@ -338,7 +343,8 @@ The second |μ|v_c of the 18 re-solved sectors differs from #75's by at most 4.0
 which is #75's print resolution in all 18 (absolute difference 5×10⁻⁷ or less to rounding, checked per sector). In #94's
 four sectors, m = 19/2 and 21/2, it differs by 1.6×10⁻⁵ to 2.1×10⁻⁵, 1.4×10⁻⁶ to 1.8×10⁻⁶ absolute, beyond the print
 resolution, with A below #75's in all four and B at or below it. That is #94's discretisation error in the second
-modulus, and the issue's unscripted "within 3×10⁻⁵" is this. All are inside the `next` tolerance of 10⁻⁴.
+modulus, and the issue's unscripted "within 3×10⁻⁵" is this. All are inside the `next` tolerance of 10⁻⁴. At #118's wide
+sizes the four differ by 6.1×10⁻⁷ to 5.0×10⁻⁶ (last subsection).
 
 The sign of |μ|_A − |μ|_B is negative for both the leading and the second modulus in all 22 sectors, at both σR. A, the
 coarser discretisation, lies below B in every sector, whether the difference is 10⁻⁶ (#94's files) or 10⁻¹⁰ (the
@@ -362,7 +368,7 @@ The report's last lines, the windows taken together over the sectors computed:
 
 No window starts above the leading eigenvalue of m = 21/2 (0.0830 and 0.0944) in any sector, so both lines are that
 leading eigenvalue's reciprocal, 1/0.083018 and 1/0.094358. The largest window starts are 0.0801 and 0.0912, from #94's
-m = 19/2 files, and 0.0697 and 0.0712 in the re-solved sectors. At σR = 2 the line equals #75's by this same definition.
+m = 19/2 files (re-solved in #118, which moves neither line), and 0.0697 and 0.0712 in the re-solved sectors. At σR = 2 the line equals #75's by this same definition.
 At σR = 4 it is 2.7% above #75's 10.32 v_c, because #75's line was its m = ½ window of 0.0969 and the window here is 0.0712.
 Both lines are conditional on the leading eigenvalue continuing to fall with m beyond 21/2, which is not computed, and
 are statements about the Galerkin eigenvalues. The widening reached its aim, so no memory or time limit set a smaller
@@ -382,7 +388,126 @@ window.
 | cost | 36 min, 4 workers | 172 min the longest solve, 5.6 to 9.7 GiB, n up to 93852 |
 
 Nothing in the table is a disagreement about the physics. The window and bound differences follow from the two bases
-converging differently and from the truncation floor. The only failed check is `AB` in #94's two coarse sectors.
+converging differently and from the truncation floor. The only failed check is `AB` in #94's two coarse sectors, which
+#118 re-solves at the wide sizes, where it passes.
+
+### m = 19/2 and 21/2 at the wide sizes (#118)
+
+Issue #118. Script unmodified, at 69f5a61 (branch `wip/i118-wide-m19-21`), regenerated
+[tanh_spectrum_check_wide_output.txt](tanh_spectrum_check_wide_output.txt), raw output in negative-mass-raw folder
+`I118-win` (commit 566373f). The sectors m = 19/2 and 21/2 were re-solved at σR = 2 and 4, discretisations A and B, at
+#111's wide sizes, and the wide report reads them from `I118-win` before #111's `I111-win` files. All 22 sectors of the
+wide report are now from the wide sizes (4 from `I118-win`, 18 from `I111-win`, none from `I94-win`). The text above
+describes #111's state, in which these two sectors came from #94's files and the wide report exited 1. Its tables are
+left as they were. Status: *numerical evidence*.
+
+#### What was run
+
+Machine win, Python, thread settings and below-normal detached launches as in #111 above. The sizes are #111's
+(`--fnth=4 --fh=0.4`). One solve process ran at a time, and a second started only while choptuik-large-d's processes
+together used under 4 cores (CPU-seconds over 10 s, 1.2 to 1.7 cores at the three launches of a second process). The
+commands, as bash:
+
+    RAW=../negative-mass-raw/I118-win
+    OLD=../negative-mass-raw/I111-win/eig
+    WIDE="--solver=arpack --floor=0.07 --fnth=4 --fh=0.4"
+    CHK="python notes/warp/tanh_spectrum_check.py"
+    $CHK --part=planted --ms=9.5,10.5 $WIDE
+    $CHK --part=solve --sigma=4 --disc=B --ms=10.5 $WIDE --out=$RAW/eig                 (the pilot)
+    $CHK --part=solve --sigma=4 --disc=B --ms=9.5,10.5 $WIDE --out=$RAW/eig            (and (4, A), (2, B), (2, A))
+    $CHK --part=report --out=$RAW/eig,$OLD > notes/warp/tanh_spectrum_check_wide_output.txt
+    $CHK --part=report --out=$RAW/eig,$OLD --mutate=next                               (exits 1)
+
+The planted check ran first and passed before any tanh weight was solved. The pilot ran alone, inside its stop condition
+(3 h). (4, B) and (4, A) then started at 16:21, (2, B) at 16:47 when (4, B) exited and (2, A) at 17:05 when (4, A)
+exited, so two solves ran together from about 16:22 to 17:30. (4, B) reused the pilot's m = 21/2 file. Every n equals the
+size planned from the script's knot rules, and the largest, 102414 (B, m = 21/2, both σR), is 9% above #111's largest
+93852. Peak working sets were sampled once a minute (`I118-win/memory-sampler.log`, in GiB):
+
+| run | exit | wall | peak memory |
+|---|---|---|---|
+| planted, m = 19/2 and 21/2, n = 72240 and 78010 | 0 | 47 min | 6.5 GiB |
+| pilot, σR = 4, B, m = 21/2, n = 102414 | 0 | 27 min | 8.7 GiB |
+| solve σR = 4, B (m = 21/2 from the pilot) | 0 | 25 min | 8.2 GiB |
+| solve σR = 4, A | 0 | 43 min | 6.5 GiB |
+| solve σR = 2, B | 0 | 43 min | 8.7 GiB |
+| solve σR = 2, A | 0 | 38 min | 6.5 GiB |
+| report, #118 and #111 files | 0 | 0 s | |
+| report, #118 and #111 files, `--mutate=next` | 1 | 0 s | |
+
+A solved sector took 14 min (σR = 2, B, m = 19/2) to 29 min (σR = 2, B, m = 21/2). The machine's free memory stayed
+between 12.9 and 26.7 GiB. No process was stopped and none failed.
+
+#### The four sectors
+
+From the wide report. The columns are as in the tables above, with σR as the first. "window set by" is `floor` in all
+four.
+
+| σR | m | n, A / B | window 10⁻⁵ | window 10⁻⁴ | #75 window | 10⁻⁵ window set by | real, A / B | \|μ\|v_c, A | A vs #75 | A vs B | second \|μ\|v_c, A | A vs #75 | A − B, lead and second | files |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2 | 9.5 | 72240/94866 | 0.0524 | 0.0524 | 0.0595 | floor | 0 / 0 | 0.090309 | 2.3×10⁻⁶ | 2.0×10⁻¹⁰ | 0.080088 | 4.6×10⁻⁶ | − − | I118 |
+| 2 | 10.5 | 78010/102414 | 0.0499 | 0.0499 | 0.0563 | floor | 0 / 0 | 0.083018 | 4.3×10⁻⁶ | 1.8×10⁻¹⁰ | 0.074316 | 4.0×10⁻⁶ | − − | I118 |
+| 4 | 9.5 | 73640/96822 | 0.0538 | 0.0538 | 0.0688 | floor | 0 / 0 | 0.102014 | 1.9×10⁻⁶ | 2.1×10⁻⁹ | 0.091157 | 5.0×10⁻⁶ | − − | I118 |
+| 4 | 10.5 | 78010/102414 | 0.0516 | 0.0516 | 0.0653 | floor | 0 / 0 | 0.094358 | 1.2×10⁻⁶ | 2.2×10⁻⁹ | 0.085018 | 6.1×10⁻⁷ | − − | I118 |
+
+Against the same sectors in #94's files, as #111's tables above give them:
+
+| σR | m | n, A / B, #94 | window 10⁻⁵, #94 → here | A vs B, #94 → here | second \|μ\|v_c vs #75, #94 → here |
+|---|---|---|---|---|---|
+| 2 | 9.5 | 9720/12936 | 0.0801 → 0.0524 | 7.9×10⁻⁷ → 2.0×10⁻¹⁰ | 2.0×10⁻⁵ → 4.6×10⁻⁶ |
+| 2 | 10.5 | 10286/13674 | 0.0743 → 0.0499 | 7.8×10⁻⁷ → 1.8×10⁻¹⁰ | 1.9×10⁻⁵ → 4.0×10⁻⁶ |
+| 4 | 9.5 | 9864/13104 | 0.0912 → 0.0538 | 1.9×10⁻⁶ → 2.1×10⁻⁹ | 1.6×10⁻⁵ → 5.0×10⁻⁶ |
+| 4 | 10.5 | 10286/13674 | 0.0850 → 0.0516 | 1.9×10⁻⁶ → 2.2×10⁻⁹ | 2.1×10⁻⁵ → 6.1×10⁻⁷ |
+
+ARPACK kept 64 eigenvalues per sector, down to |μ|v_c = 0.0524 and 0.0499 (σR = 2) and 0.0538 and 0.0516 (σR = 4), at
+residuals of 2×10⁻¹⁴ or less, and 60 of them lie in each window. All four windows are the truncation floor, so this
+basis's own windows start lower, as for 14 of #111's 18 (now 18 of 22). The 10⁻⁵ windows of the 22 sectors start at
+0.0499 to 0.0697 (σR = 2) and 0.0516 to 0.0712 (σR = 4), and below #75's own window in 21 of 22 (the exception is
+σR = 2, m = 9/2, as above). The leading and second |μ|v_c differ from #75's printed values by 5.2×10⁻⁸ to 4.5×10⁻⁷
+absolute, inside the half unit of its sixth digit. The sign of |μ|_A − |μ|_B is negative for both, as in the other 18
+sectors, now at 10⁻¹⁰ to 10⁻⁹ instead of #94's 10⁻⁶. A and B have equal second moduli to the six printed digits in all
+four.
+
+#### Each criterion
+
+| criterion of #118 | verdict |
+|---|---|
+| planted check at m = 19/2 and 21/2 at the wide sizes, before the tanh weight | pass. Exit 0, worst \|μ\| error 5.5×10⁻¹⁰ and 4.2×10⁻¹⁰, residual 10⁻¹⁴ or less, max \|Re μ\| 2.9×10⁻¹⁷ |
+| wide report, #118's files then #111's, exits 0 | met. Exit 0, 112 checks, all pass |
+| `AB` at 10⁻⁶ in all 22 sectors | pass. Worst 2.2×10⁻⁹ (σR = 4, m = 21/2). The four new ones are 1.8×10⁻¹⁰ to 2.2×10⁻⁹ |
+| `next` within 10⁻⁴ of #75's | pass in all 22. Worst 5.0×10⁻⁶ (σR = 4, m = 19/2), the four new ones 6.1×10⁻⁷ to 5.0×10⁻⁶ |
+| no real eigenvalue in any window | pass. 0 / 0 in all 22 sectors, A and B |
+| 10⁻⁵ windows of m = 19/2 and 21/2 below 0.0830 (σR = 2) and 0.0969 (σR = 4) | met. 0.0524 and 0.0499, 0.0538 and 0.0516, all `floor` |
+| speed-bound lines against #111's 12.05 v_c and 10.60 v_c | 12.05 v_c and 10.60 v_c, unchanged to the printed digits |
+| `--mutate=next` fails the check | fires. Exit 1, 22 failed `next` checks and no other |
+
+The other checks of the 22 sectors: `lead` passes with worst 4.4×10⁻⁶ (σR = 2, m = 15/2), and `sym` with worst
+3.5×10⁻⁷ (σR = 2, m = ½), the four new ones at 3.1×10⁻⁹ or less.
+
+#### The speed bound
+
+The report's last lines are identical to #111's, the windows taken together over the sectors computed:
+
+    σR = 2, tolerance 1e-05 and 1e-04: ... so no real zero mode with |v| <= 12.05 v_c
+    σR = 4, tolerance 1e-05 and 1e-04: ... so no real zero mode with |v| <= 10.60 v_c
+
+They are the reciprocals of the leading eigenvalues of m = 21/2 (1/0.083018 and 1/0.094358), because no window starts above
+them. The largest window starts in the 22 sectors are now 0.0697 (σR = 2, m = 9/2) and 0.0712 (σR = 4, m = ½), where they had
+been 0.0801 and 0.0912 in #94's m = 19/2 files, which were below the same leading eigenvalues. So re-solving the two sectors
+did not move the lines, as expected. Both stay conditional on the leading eigenvalue continuing to fall with m beyond 21/2,
+which is not computed here, and are statements about the Galerkin eigenvalues.
+
+#### What differs from the text above and from the previous output
+
+- The regenerated output differs from the one at 69f5a61 in 22 lines: the four table rows (n, windows, the two moduli, the
+  differences and the directory column, `I94-win/eig` to `I118-win/eig`), the `next`, `AB`, `sym` and `noreal` check lines
+  of those four sectors, the wall-time line and the closing line (`FAILED: AB sR=4 m=9.5, AB sR=4 m=10.5` to
+  `all checks passed`). The `lead` check lines, every other row and the speed-bound lines are unchanged.
+- #94's regenerated report, `tanh_spectrum_check_output.txt`, is untouched and was not rerun. It reads only #94's files,
+  so it still exits 1 on its seven `AB` failures at base sizes, which are grid A's own discretisation error. They are not
+  an `AB` failure of the wide sizes.
+- The planted check took 47 min and a solve 14 to 29 min, against the issue's estimate of about 20 min for the planted
+  check and 20 to 30 min per sector.
 
 ## What this does and does not show
 
