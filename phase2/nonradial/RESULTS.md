@@ -461,6 +461,117 @@ The left-edge phase of the three l = 3 boxes is now +13.17 (ω = 0.85), +13.60 (
   the paragraph "Discrepancy (#7)", the "Not covered" list of §5.1 and §6 item 2. The "conditional on D having no pole"
   of §5 and of the "Status" line in §5.1 still holds, since poles were not searched for.
 
+### 5.3 Poles of D (#121)
+
+`polar_solver.decaying_plane` builds the Zerilli column of D as (1, q/f) with q = f Z′/Z at r_m, so D has a pole at each
+zero of the decaying Zerilli solution Z(r_m; s), and the windings of §5, §5.1 and §5.2 count the zeros of D minus these.
+#121 counts the zeros of Z(r_m; s) in each of those boxes with `zerilli_zeros.py`. It integrates Z inward from a radius
+R_z fixed for the box, in WKB-scaled variables with the implicit Radau method, and counts the phase of
+y₁(r_m) = Z(r_m; s) exp Ψ(r_m) with the step rule of §5.1. y₁(r_m) is holomorphic in s and has the zeros of Z(r_m; s) for
+Re s > 0. The script's docstring has the details.
+
+Result: **all 21 counted boxes have 0 zeros of Z(r_m; s)**, each with its planted zero returned. So the Zerilli column
+gives D no pole in any of them, and the zeros of D equal the winding of D, 0, in each. No count is nonzero, so no box
+needs a corrected count. Status: numerical evidence.
+
+**What ran.** On win (surface-laptop-4) on 2026-11-20, with the code of `wip/i121-zerilli-zeros` at d801d1e, unmodified.
+Each job is `python -u zerilli_zeros.py <arguments> --cachedir=<raw folder>/cache`, with the 25 lines `job|arguments`
+that `python collect_i121.py --jobs` prints (21 boxes and 4 controls; raw `jobs.txt`). The four controls ran first, then
+the pilot `n1_l3` (the largest R_z, 1.0×10⁶; 225 s in all, 146 s of it the count), then the other 20 boxes, at most two
+processes at a time. Each job ran once and none died. Logs, caches and launchers are in negative-mass-raw, folder
+`I121-win` at bc19469. From `phase2/nonradial`, with the raw repository cloned beside the checkout:
+
+```
+python collect_i121.py ../../../negative-mass-raw/I121-win > i121_zeros_output.txt
+```
+
+The collector exits 0 here. It exits 1 when a log is missing, a check is not as required or a count is not an integer.
+Its `--mutate=box` (it expects `s1_l2` at Re s up to 0.2) and `--mutate=control` (it expects `mut_lshift` to pass) each
+exit 1, as they should.
+
+| job | § | star, l | Re s | Im s | zeros of Z | max step | min abs(Z) | planted found | winding of D | zeros of D |
+|---|---|---|---|---|---|---|---|---|---|---|
+| p7603_l2 | 5 | 0.7603, 2 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | 0.36 | 5.59e-01 | +2.0000 of 2 | +0.0000 | 0 |
+| p7603_l3 | 5 | 0.7603, 3 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | 0.29 | 5.59e-01 | +2.0000 of 2 | +0.0000 | 0 |
+| c075_l2 | 5 | canonical 0.75, 2 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | 0.36 | 5.59e-01 | +2.0000 of 2 | +0.0000 | 0 |
+| p070_l2 | 5 | 0.70, 2 | [0.1, 2] | abs(Im s) ≤ 2.5 | -0.0000 | 0.36 | 5.59e-01 | +2.0000 of 2 | +0.0000 | 0 |
+| p070_l3 | 5 | 0.70, 3 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | 0.28 | 5.59e-01 | +2.0000 of 2 | +0.0000 | 0 |
+| p085_l2 | 5 | 0.85, 2 | [0.1, 2] | abs(Im s) ≤ 2.5 | -0.0000 | 0.38 | 5.59e-01 | +2.0000 of 2 | -0.0000 | 0 |
+| p085_l3 | 5 | 0.85, 3 | [0.1, 2] | abs(Im s) ≤ 2.5 | +0.0000 | 0.32 | 5.59e-01 | +2.0000 of 2 | +0.0000 | 0 |
+| s1_l2 | 5.1 | 0.7603, 2 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | -0.0000 | 0.36 | 6.32e-01 | +2.0000 of 2 | +0.0000 | 0 |
+| s1_l3 | 5.1 | 0.7603, 3 | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | 0.35 | 6.33e-01 | +2.0000 of 2 | +0.0000 | 0 |
+| n1_l2 | 5.1 | 0.7603, 2 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | -0.0000 | 0.23 | 2.04e+00 | +2.0000 of 2 | -0.0000 | 0 |
+| n1_l3 | 5.1 | 0.7603, 3 | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | -0.0000 | 0.22 | 2.07e+00 | +2.0000 of 2 | +0.0000 | 0 |
+| h1_l2 | 5.1 | 0.7603, 2 | [0.1, 2] | [2.5, 6] | -0.0000 | 0.04 | 3.98e-01 | +1.0000 of 1 | +0.0000 | 0 |
+| h1_l3 | 5.1 | 0.7603, 3 | [0.1, 2] | [2.5, 6] | -0.0000 | 0.04 | 3.98e-01 | +1.0000 of 1 | -0.0000 | 0 |
+| t1_z1 | 5.1 | 0.7603, 2 | [0.02, 0.1] | [0.15, 0.33] | +0.0000 | 0.04 | 1.73e+00 | +1.0000 of 1 | +0.0000 | 0 |
+| t1_z2 | 5.1 | 0.7603, 2 | [0.02, 0.1] | [0.15, 0.33] | +0.0000 | 0.04 | 1.73e+00 | +1.0000 of 1 | -0.0000 | 0 |
+| t2_z1 | 5.1 | 0.7603, 2 | [0.02, 0.1] | [1.68, 1.84] | -0.0000 | 0.00 | 7.37e-01 | +1.0000 of 1 | +0.0000 | 0 |
+| t2_z2 | 5.1 | 0.7603, 2 | [0.02, 0.1] | [1.68, 1.84] | +0.0000 | 0.00 | 7.37e-01 | +1.0000 of 1 | +0.0000 | 0 |
+| s2_l2 | 5.1 | 0.7603, 2 | [0.01, 0.03] | abs(Im s) ≤ 2.5 | +0.0000 | 0.31 | 6.33e-01 | +2.0000 of 2 | +0.0000 | 0 |
+| h2_l2 | 5.1 | 0.7603, 2 | [0.1, 2] | [6, 10] | +0.0000 | 0.02 | 3.13e-01 | +1.0000 of 1 | -0.0000 | 0 |
+| s3_l2 | 5.1 | 0.7603, 2 | [0.03, 0.1] | [2.5, 6] | +0.0000 | 0.00 | 4.08e-01 | +1.0000 of 1 | -0.0000 | 0 |
+| s3_l3 | 5.1 | 0.7603, 3 | [0.03, 0.1] | [2.5, 6] | +0.0000 | 0.00 | 4.08e-01 | +1.0000 of 1 | -0.0000 | 0 |
+
+Stars are phantom (ε = −1) unless marked. A box with abs(Im s) ≤ y is symmetric and doubled from its upper half, one with
+[a, b] is an upper box (as in §5.1). The winding of D is §5.2's recount (`i54_recount_output.txt`) for the §5 rows and
+§5.1's (`i5_boxes_output.txt`) for the others, and zeros of D = winding of D + zeros of Z. `i121_zeros_output.txt` also
+has the evaluations, the times and the two check columns. In `t1` and `t2` the start radius is doubled in the second row
+(`z2`, #5's outer radii 40 and 80), and the counts and min abs(Z) agree.
+
+The counted function is WKB-scaled, so `min abs(Z)` is its smallest modulus on the contour and is not a distance to a
+zero. In the §5 boxes it is 5.59×10⁻¹ for every star and l, which equals |2 + 2.5i|^(−1/2), the WKB amplitude k^(−1/2)
+at the far corner, to three digits.
+`p7603_l2` shows 67 evaluations and 0 s because `mut_reverse` ran first and shares its cache (the reversed contour of the
+same box). Its own 10 s is in `mut_reverse`'s log.
+
+**Checks in every box.** `count`: each count within 0.05 of an integer, max step at most 0.45 rad (largest 0.38), and Z
+real with one sign at both ends of a symmetric box. `holo`: Cauchy–Riemann defect at most 10⁻⁶ (worst 1.3×10⁻⁷, `s3_l3`).
+`column`: q against `zerilli_q` at most 10⁻⁶ where Re s ≥ 0.03 (worst 1.6×10⁻⁹, `s3_l2`). `plant`: the planted zero
+returned. Where Re s < 0.03 the difference in q is reported and not checked, since `zerilli_q` starts at a per-point radius
+that leaves a WKB error there: at most 7.0×10⁻⁷ (`n1_l2`, s = 10⁻⁴ + 0.056i).
+
+#### Controls
+
+On the stored box (phantom 0.7603, l = 2, Re s ∈ [0.1, 2], |Im s| ≤ 2.5, planted 0.3 + 1.76i), each with its planted pair:
+
+| job | what | ends | result |
+|---|---|---|---|
+| `flat` | `--flat`, Mext = 0 | all checks passed | `flat` count 0, `flatq` against r k_l(s r) at most 1.6×10⁻¹², planted +2.0000 of 2 |
+| `mut_reverse` | contour clockwise | FAILED: plant | counted −2.0000 of +2 |
+| `mut_nonorm` | per-point start without the WKB scaling | FAILED: holo | Cauchy–Riemann defect 1.3×10⁻² to 1.6×10⁻² |
+| `mut_lshift` | l + 1 in the potential | FAILED: column | q differs from `zerilli_q` by 7.0×10⁻⁴ to 1.1×10⁻² |
+
+Each mutation fails its own check and no other, and `flat` is a planted-truth run of the same code path (flat space has no
+zero of Z with Re s > 0). The collector requires these outcomes. What is shared: `column` compares two integrations of
+the same equation (Radau on the linear system, DOP853 on the Riccati one) that share `solve_star` (r_m, M_ext) and the
+form of the Zerilli potential (the script has its own copy). The `flat` reference, scipy's modified spherical Bessel
+function, shares only r_m. The counter's step rule is a copy of §5.1's, and
+the planted zero in every box tests it. The sign with which a pole enters a winding was shown in #54 (a planted pole
+counted −2) and was not repeated.
+
+#### Not counted, and what this settles
+
+- `rep_l2` is the first box of §5, `p7603_l2`. `n3_l2` and `n3_l3` cross Re s = 0, where k = √(s² + V) has its cut, so
+  y₁(r_m) is not holomorphic there and a count would not be a count of zeros. They need k continued across the axis.
+  The 14 boxes of §5.1 counted here, with §5's seven, are the 21.
+- #115's boxes (l = 4, 5, 6) and #117's larger ones are not counted here. Neither are the regions §5.1 lists under "Not
+  covered" (Re s below the lower edges, above the upper ones).
+- In the 21 boxes the zeros of Z(r_m; s) are absent, so the pole of D that #54's hypothesis and `decaying_plane` allow is
+  absent, and each 0 of §5 and §5.1 counts zeros of D. That the Zerilli column is D's only pole source is the
+  coordinator's reading of `polar_solver.py` (the regular plane is integrated from the centre, the scalar plane's
+  spectral projector is holomorphic away from s = ±i(1 ± ω)). This run did not test that reading, so the "conditional on
+  D having no pole" passages are unchanged here.
+- The exterior of the phantom star is nearly flat (r_m = 24.11, M_ext = −0.014580, so 2|M_ext|/r_m = 1.2×10⁻³), and flat
+  space has no zero with Re s > 0. All counts are 0, as that suggests.
+
+| acceptance criterion | verdict |
+|---|---|
+| each §5 box (7) and §5.1 box (17 less 3) returns its planted zero with `count`, `holo`, `column`, `plant` passing | met in all 21 |
+| `--flat` passes `flat` and `flatq`; each mutation exits 1 on the stored box | met (table above) |
+| counts reported with max step, min abs(Z), star and l from the logs by a collector whose `--mutate=` fails it; each nonzero count with its box and the corrected count of zeros of D | met; no count is nonzero, so zeros of D = 0 in all 21; both mutations exit 1 |
+| #115's boxes, added as a second step | not done, #115 is not merged |
+
 ## 6. Conclusions
 
 1. **Polar, real growth rates.** For the phantom campaign star (ω = 0.7603, M = −0.01458) there is
