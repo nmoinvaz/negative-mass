@@ -938,7 +938,7 @@ speed-bound lines are unchanged to the printed digits (`I127-win/diff-wide.log`)
 
 Issue #125. Scripts unmodified, at 5ed8160 (branch `wip/i125-highm75`), output
 [tanh_spectrum_highm_output.txt](tanh_spectrum_highm_output.txt), raw output in negative-mass-raw folder `I125-win`
-(commit 6417f1c). #75's spectral code, `tanh_spectrum.py`, computed the leading |μ|v_c of m = 23/2, 29/2, 35/2 and 41/2
+(commit e6a525d). #75's spectral code, `tanh_spectrum.py`, computed the leading |μ|v_c of m = 23/2, 29/2, 35/2 and 41/2
 at σR = 2 and 4, and of m = 21/2 as a reproduction, at #75's sizes. `tanh_spectrum_highm.py` compares them with #120's
 B-spline values. Status: *numerical evidence*. Galerkin eigenvalues of a non-normal operator are not bounds.
 
