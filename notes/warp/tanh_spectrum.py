@@ -18,6 +18,7 @@ is a polynomial or a smooth weight in y. The matrices are real, so eigenvalues a
 
     python notes/warp/tanh_spectrum.py [--part=reduce,angular,radial,vc,planted,shift,tanh,conv] [--sigmas=2,4]
                                        [--ms=0.5,1.5,...] [--procs=4] [--raw=DIR] [--quick]
+                                       [--p=SIG:P,...] [--npan=N] [--convtol=1e-7]
     python notes/warp/tanh_spectrum.py --controls          every --mutate control, each must make its checks fail
 
 Parts:
@@ -31,6 +32,11 @@ Parts:
   tanh     the tanh profile per m and sigma R: rho(T1) v_c, the leading eigenvalues, convergence in every parameter,
            the real candidates, the identity Re(v) int tau1 |psi|^2 = 0 and the residual of each eigenfunction.
   conv     the leading eigenvalues of m = 1/2 and 3/2 with one discretisation parameter changed at a time.
+
+Sizes: --p sets discretisation A's radial size p per sigma R (B has p + 10), for example --p=8:200,16:400; the defaults
+are 80 at sigma R = 2 and 100 at 4, and another sigma R needs --p. --npan sets A's radial panels (default 160; B has
+1.5 times as many) and the conv part's base (160 without it, also with --quick), whose variants are npan / 2 and 2 npan. --convtol is the conv check's
+largest relative move of the leading eigenvalue (default 1e-7).
 
 Mutations (each must make its checks fail): g0block, ladder, dterm, half, lscale, sobolev, rot, trunc.
 Exits 1 when any check fails.
@@ -599,6 +605,8 @@ def sector_task(t):
 
 
 def pfor(cfg, sig):
+    if isinstance(cfg["p"], dict) and sig not in cfg["p"]:
+        sys.exit(f"no radial size p for sigma R = {sig:g}: give it with --p={sig:g}:P")
     return cfg["p"][sig] if isinstance(cfg["p"], dict) else cfg["p"]
 
 
@@ -731,14 +739,15 @@ def conv_task(t):
 def part_conv(cfg, args):
     sigmas = [float(s_) for s_ in args.sigmas.split(",")]
     print("== conv: |mu| v_c of the leading eigenvalue and of the fifth (the next quadruple), one parameter changed "
-          "at a time from the base dK = 20, p, Lmap = 2, npan = 160", flush=True)
+          f"at a time from the base dK = 20, p, Lmap = 2, npan = {args.npan or 160}", flush=True)
     tasks = []
     for sig in sigmas:
         p0 = pfor(cfg, sig)
-        base = {"dK": 20, "p": p0, "L": 2.0, "npan": 160}
+        n0 = args.npan or 160
+        base = {"dK": 20, "p": p0, "L": 2.0, "npan": n0}
         var = [("base", {}), ("dK = 12", {"dK": 12}), ("dK = 28", {"dK": 28}), (f"p = {p0 - 20}", {"p": p0 - 20}),
                (f"p = {p0 + 20}", {"p": p0 + 20}), ("Lmap = 1", {"L": 1.0}), ("Lmap = 4", {"L": 4.0}),
-               ("npan = 80", {"npan": 80}), ("npan = 320", {"npan": 320})]
+               (f"npan = {n0 // 2}", {"npan": n0 // 2}), (f"npan = {2 * n0}", {"npan": 2 * n0})]
         for m in (0.5, 1.5):
             for name, ch in var:
                 tasks.append({"sig": sig, "m": m, "mut": MUT, "name": name, **{**base, **ch}})
@@ -758,7 +767,7 @@ def part_conv(cfg, args):
                       f"         | {dt:.0f}")
                 if name != "dK = 12":
                     worst = max(worst, abs(l1 - b1) / b1)
-    check("conv", worst < 1e-7, f"leading eigenvalue moves by at most {worst:.1e} (relative) under every change but "
+    check("conv", worst < args.convtol, f"leading eigenvalue moves by at most {worst:.1e} (relative) under every change but "
           "the deliberately coarse dK = 12")
 
 
@@ -811,11 +820,19 @@ def main():
     ap.add_argument("--raw", default="", help="directory for the eigenvalue arrays (npz)")
     ap.add_argument("--quick", action="store_true")
     ap.add_argument("--controls", action="store_true")
+    ap.add_argument("--p", default="", help="radial size p of discretisation A per sigma R, e.g. 8:200,16:400")
+    ap.add_argument("--npan", type=int, default=0, help="radial panels of discretisation A (default 160)")
+    ap.add_argument("--convtol", type=float, default=1e-7, help="the conv check's threshold")
     args = ap.parse_args()
     MUT = args.mutate
     if MUT and MUT not in MUTATIONS:
         sys.exit(f"unknown mutation {MUT}")
     cfg = dict(QUICK if args.quick else FULL)
+    if args.p:
+        cfg["p"] = {**(cfg["p"] if isinstance(cfg["p"], dict) else {}),
+                    **{float(k): int(v) for k, v in (x.split(":") for x in args.p.split(","))}}
+    if args.npan:
+        cfg["npan"] = args.npan
     if MUT == "trunc":
         cfg.update({"dK": 2, "p": 8})
     parts = args.part.split(",")
