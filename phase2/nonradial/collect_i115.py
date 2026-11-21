@@ -93,7 +93,8 @@ for key, l, job, eguard in JOBS:
     winds = f"{wind:+.4f}" if mutate == 'shift' else r.group(5)          # as logged, with the sign of a rounded 0
     step, mind = r.group(6), r.group(7)
     why = []
-    if guard != ('all' if mutate == 'wrongguard' else eguard): why.append(f"guard {guard}, expected {eguard}")
+    want = 'all' if mutate == 'wrongguard' else eguard
+    if guard != want: why.append(f"guard {guard}, expected {want}")
     if abs(wind - round(wind)) >= 0.05: why.append('winding not an integer')
     if float(step) > 0.45: why.append('max step above 0.45 rad')
     p = None if mutate == 'noplant' else next((m for m in pla.finditer(txt) if m.group(1) == tag), None)
@@ -139,7 +140,7 @@ else:
     bad |= not cok
     if not cok: print("  control: FAIL or incomplete"); failed.append(('control', 'FAIL or incomplete'))
 print()
-print("Each winding counts zeros minus poles of D (#121 counts the poles). No box is covered by a pole exclusion yet.")
+print("Each winding counts zeros minus poles of D (#124 counts the poles). No box is covered by a pole exclusion yet.")
 for job, why in failed:
     print(f"FAILED {job}: {why}")
 print("RESULT: " + ("FAIL" if bad else "all runs complete, every planted pair returned, control PASS")

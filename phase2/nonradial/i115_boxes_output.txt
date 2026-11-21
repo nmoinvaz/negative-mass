@@ -32,6 +32,6 @@
   displaced: winding = +0.0000  (expected 0, R_s = 207, min Re k 0.232, rsmult 40, 32 steps, max step 0.03 rad)  PASS
   exit 0
 
-Each winding counts zeros minus poles of D (#121 counts the poles). No box is covered by a pole exclusion yet.
+Each winding counts zeros minus poles of D (#124 counts the poles). No box is covered by a pole exclusion yet.
 FAILED s1_l5: planted zero not returned, job exit 1
 RESULT: FAIL
