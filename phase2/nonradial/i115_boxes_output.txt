@@ -1,15 +1,16 @@
 # winding2.py boxes (phantom, omega = 0.7603, l = 4, 5, 6); winding = zeros minus poles of D, a symmetric box doubled
-| box | l | what | Re s | Im s | winding | max step | min abs(D) | planted s0 | planted found | check |
-|---|---|---|---|---|---|---|---|---|---|---|
-| rep | 4 | stored box | [0.1, 2.0] | abs(Im s) ≤ 2.5 | -0.0000 | 0.40 | 3.02e-03 | 0.3+1.76j | +2.0000 of 2 | PASS |
-| s1 | 4 | strip | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | 0.40 | 4.43e-03 | 0.04+0.25j | +2.0000 of 2 | PASS |
-| n1 | 4 | below the threshold 1 - w, right of the axis | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | +0.0000 | 0.40 | 4.17e-02 | 0.0005+0.12j | +2.0000 of 2 | PASS |
-| rep | 5 | stored box | [0.1, 2.0] | abs(Im s) ≤ 2.5 | -0.0000 | 0.40 | 4.70e-03 | 0.3+1.76j | +2.0000 of 2 | PASS |
-| s1 | 5 | strip | [0.03, 0.1] | abs(Im s) ≤ 2.5 | -0.0000 | 0.40 | 7.21e-03 | 0.04+0.25j | +0.0000 of 2 | FAIL |
-| n1 | 5 | below the threshold 1 - w, right of the axis | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | -0.0000 | 0.40 | 7.17e-02 | 0.0005+0.12j | +2.0000 of 2 | PASS |
-| rep | 6 | stored box | [0.1, 2.0] | abs(Im s) ≤ 2.5 | -0.0000 | 0.40 | 6.71e-03 | 0.3+1.76j | +2.0000 of 2 | PASS |
-| s1 | 6 | strip | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | 0.40 | 8.69e-03 | 0.04+0.25j | +2.0000 of 2 | PASS |
-| n1 | 6 | below the threshold 1 - w, right of the axis | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | +0.0000 | 0.39 | 1.35e-01 | 0.0005+0.12j | +2.0000 of 2 | PASS |
+| box | l | guard | what | Re s | Im s | winding | max step | min abs(D) | planted s0 | planted found | check |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| rep | 4 | 1 | stored box | [0.1, 2.0] | abs(Im s) ≤ 2.5 | -0.0000 | 0.40 | 3.02e-03 | 0.3+1.76j | +2.0000 of 2 | PASS |
+| s1 | 4 | 1 | strip | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | 0.40 | 4.43e-03 | 0.04+0.25j | +2.0000 of 2 | PASS |
+| n1 | 4 | 1 | below the threshold 1 - w, right of the axis | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | +0.0000 | 0.40 | 4.17e-02 | 0.0005+0.12j | +2.0000 of 2 | PASS |
+| rep | 5 | 1 | stored box | [0.1, 2.0] | abs(Im s) ≤ 2.5 | -0.0000 | 0.40 | 4.70e-03 | 0.3+1.76j | +2.0000 of 2 | PASS |
+| s1 | 5 | 1 | strip | [0.03, 0.1] | abs(Im s) ≤ 2.5 | -0.0000 | 0.40 | 7.21e-03 | 0.04+0.25j | +0.0000 of 2 | FAIL |
+| n1 | 5 | 1 | below the threshold 1 - w, right of the axis | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | -0.0000 | 0.40 | 7.17e-02 | 0.0005+0.12j | +2.0000 of 2 | PASS |
+| rep | 6 | 1 | stored box | [0.1, 2.0] | abs(Im s) ≤ 2.5 | -0.0000 | 0.40 | 6.71e-03 | 0.3+1.76j | +2.0000 of 2 | PASS |
+| s1 | 6 | 1 | strip | [0.03, 0.1] | abs(Im s) ≤ 2.5 | +0.0000 | 0.40 | 8.69e-03 | 0.04+0.25j | +2.0000 of 2 | PASS |
+| n1 | 6 | 1 | below the threshold 1 - w, right of the axis | [0.0001, 0.1] | abs(Im s) ≤ 0.23 | +0.0000 | 0.39 | 1.35e-01 | 0.0005+0.12j | +2.0000 of 2 | PASS |
+| s1 | 5 | all | strip | [0.03, 0.1] | abs(Im s) ≤ 2.5 | -0.0000 | 0.40 | 7.21e-03 | 0.04+0.25j | +2.0000 of 2 | PASS |
 
 # Runs: exit status, evaluations of D in the cache at the last edge, wall hours from the first start to the last end in
 # queue.log (includes any wait for load), starts (more than 1: restarted from the cache)
@@ -24,6 +25,7 @@
 | rep_l6 | 0 | 212 | 0.87 | 1 |
 | s1_l6 | 0 | 241 | 1.97 | 1 |
 | n1_l6 | 0 | 108 | 0.14 | 1 |
+| s1_l5_guardall | 0 | 363 | 1.14 | 1 |
 
 # control_winding2.py (Mini BS I, l = 2), same machine
   around QNM: winding = +1.0000  (expected 1, R_s = 207, min Re k 0.232, rsmult 40, 56 steps, max step 0.33 rad)  PASS
