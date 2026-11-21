@@ -914,12 +914,12 @@ runs cached, and is no test of D.
 #### What this settles
 
 Status: numerical evidence that the 61 counts of §5, §5.1, §3a and §5.3 do not depend on the depth at which the
-half-step test stops. The test compares a step with its two halves, so a loss that survives both halves is not detected at
-any depth, and the planted check counts on the same D and the same steps. The dense chain of the replay uses every
+half-step test stops. The test compares a step with its two halves, so a loss that survives both halves is not detected
+at any depth, and the planted check counts on the same D and the same steps. The dense chain of the replay uses every
 cached point and so is a test of the step rule apart from the half-step test. #126 ran it on s1 at l = 5, and #128 on
 all 61 boxes (above), where no step differs from it. It sees a loss only between cached points, so a turn hidden between
-two neighbouring cached points stays undetected. The Z boxes use the same rule. The other conditions of §5.3 stand as they are (that the Zerilli column is D's only pole
-source, #122).
+two neighbouring cached points stays undetected. The Z boxes use the same rule. The other conditions of §5.3 stand as
+they are (that the Zerilli column is D's only pole source, #122).
 
 | acceptance criterion | verdict |
 |---|---|
