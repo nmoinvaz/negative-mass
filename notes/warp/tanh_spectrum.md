@@ -34,7 +34,8 @@ modulus to 5.0×10⁻⁶. It finds no real eigenvalue in any window, so it confi
 12.05 v_c at σR = 2 and to 10.60 v_c at σR = 4. The second line is set by the leading eigenvalue of m = 21/2 rather
 than by a window, so it is above this note's 10.32 v_c. Both rest on the same condition as this note's, that the
 leading eigenvalue keeps falling beyond m = 21/2. #120 computed it for m = 23/2 to 41/2, where it falls strictly and stays
-below both lines, so the condition now concerns m > 41/2 only.
+below both lines, so the condition now concerns m > 41/2 only. #125 recomputed m = 23/2, 29/2, 35/2 and 41/2 with this
+note's code, within 3.0×10⁻⁶ of #120's ([tanh_spectrum_check.md](tanh_spectrum_check.md)).
 
 The identity ∫τ₁|ψ|² = ∫τ₁|χ|² = 0 has nothing to evaluate on, since there is no real candidate, and for this profile it
 would hold without one (§5).

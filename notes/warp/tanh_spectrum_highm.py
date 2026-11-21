@@ -61,7 +61,7 @@ def lead120(ref, sig, m, disc):
 
 def printed75(sig):
     """#75's printed leading |mu| v_c of m = 21/2, from tanh_spectrum.md section 4 (sigma R = 2 table first)."""
-    md = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "tanh_spectrum.md")).read()
+    md = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "tanh_spectrum.md"), encoding="utf-8").read()
     rows = re.findall(r"^\| 10\.5 \| [-\d.]+ \+ [\d.]+i \| ([\d.]+) \| [\d.]+ \| [\d.]+ \|$", md, re.M)
     assert len(rows) == 2, rows
     return rows[SIGMAS.index(sig)]

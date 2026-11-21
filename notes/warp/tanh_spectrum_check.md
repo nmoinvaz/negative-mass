@@ -1014,7 +1014,8 @@ values fall strictly with m through the five sectors computed, from 0.08301764 t
 so the B-spline values approach #75's from below. #120's A vs B gap is then the difference of their distances from
 #75's: at σR = 4, m = 23/2, 3.0×10⁻⁶ − 1.2×10⁻⁶ = 1.8×10⁻⁶. The distances from #75's A are 6.3×10⁻⁷ to 3.0×10⁻⁶ for
 #120's A and 1.9×10⁻⁷ to 1.2×10⁻⁶ for its B, and fall with m. They are errors of the B-splines only where #75's own A vs
-B (up to 1.6×10⁻⁷) is smaller than them, which it is not for B at σR = 4, m = 41/2 (1.9×10⁻⁷).
+B (up to 1.6×10⁻⁷) is smaller than them. It is in every sector, most narrowly for B at σR = 4, m = 41/2 (1.9×10⁻⁷
+against 1.6×10⁻⁷; the review corrected "which it is not" here).
 
 ### Each criterion
 
@@ -1059,6 +1060,7 @@ for m > 41/2 the decline is still an assumption.
 - On Windows, `tanh_spectrum_highm.py` as the task states the command fails before any check runs: `printed75` opens
   tanh_spectrum.md without an encoding, and Python 3.14 reads it as cp1252 (`UnicodeDecodeError`, exit 1,
   `I125-win/highm-cp1252-error.log`). All three `highm` runs above are `python -X utf8`. The script is unmodified.
+  The merge (coordinator) opens tanh_spectrum.md as UTF-8, so the command runs without `-X utf8` too.
 - #94 and #111 found #75 and the B-spline basis to agree to 6.0×10⁻⁶ at m = ½ to 21/2. Here, at #120's sizes (#94's),
   they agree to 3.0×10⁻⁶ at m = 23/2 to 41/2.
 
