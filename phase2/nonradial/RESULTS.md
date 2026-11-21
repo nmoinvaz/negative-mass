@@ -439,8 +439,8 @@ belongs to both gaps of the issue and to none of the first boxes.
 only comparable within a row).
 
 Winding is zeros minus poles of D in the box (§5, #54). §5.3 (#121) finds no pole from the Zerilli column in any of
-these boxes except `n3_l2` and `n3_l3`, which it does not count (#123). Elsewhere each 0 means no zero, conditional on
-that column being D's only pole source (#122).
+these boxes, and #123 none in `n3_l2` and `n3_l3`, which cross the axis ("Boxes across Re s = 0" in §5.3). So each 0
+means no zero, conditional on that column being D's only pole source (#122).
 
 #### Controls
 
@@ -495,13 +495,15 @@ roots closer than about 3 % in γ is therefore excluded only by that smoothness,
 - The strip Re s < 0.03 for 2.5 < |Im s|, and the strip Re s < 0.1 for |Im s| > 6.
 - Re s ∈ [0.1, 2] above |Im s| = 10 (l = 2) and 6 (l = 3), and Re s > 2.
 - The sliver |Im s| < 0.01 left of Re s = 10⁻⁴.
-- Poles of D. Every count is zeros minus poles. §5.3 (#121) excludes the Zerilli column's poles in every box but
-  `n3_l2` and `n3_l3` (#123). That the column is D's only pole source is not yet checked (#122).
+- Poles of D. Every count is zeros minus poles. §5.3 (#121, and #123 for `n3_l2` and `n3_l3`) excludes the Zerilli
+  column's poles in every box. That the column is D's only pole source is not yet checked (#122).
 - l ≥ 4, except the stored box, s1 and n1 at l = 4, 5, 6 (§3a, #115).
 
-Status: numerical evidence, conditional on the Zerilli column being D's only pole source (§5.3, #122), and for `n3_l2`
-and `n3_l3` on D having no pole there (#123). Every count here used guard 1. §5.4 (#126) recounts each with
-`--guard=all`, and none changes; a 2π lost inside a step whose two halves agree is excluded by neither guard.
+Status: numerical evidence, conditional on the Zerilli column being D's only pole source (§5.3, #122). In `n3_l2` and
+`n3_l3` the winding of D used `zerilli_q` for that column on both sides of Re s = 0, and on the left it differs from the
+continued solution by up to 8.9×10⁻⁵ (§5.3, #123), which #122 bears on. Every count here used guard 1. §5.4 (#126)
+recounts each with `--guard=all`, and none changes; a 2π lost inside a step whose two halves agree is excluded by
+neither guard.
 
 ### 5.2 Recount of §5's windings with the corrected step rule (#54)
 
@@ -732,7 +734,7 @@ the planted pair (limit 0.45), worst Cauchy–Riemann defect 1.1×10⁻⁸ (`n1_
 #### Not counted, and what this settles
 
 - `rep_l2` is the first box of §5, `p7603_l2`. `n3_l2` and `n3_l3` cross Re s = 0, where k = √(s² + V) has its cut, so
-  y₁(r_m) is not holomorphic there and a count would not be a count of zeros. They need k continued across the axis (#123).
+  y₁(r_m) is not holomorphic there and a count would not be a count of zeros. #123 counts them with `--axis` (below).
   The 14 boxes of §5.1 counted here, with §5's seven, are the 21.
 - #117's larger boxes are not counted here, and #115's nine are #124's (above). Neither are the regions §5.1 lists
   under "Not covered" (Re s below the lower edges, above the upper ones).
@@ -1136,7 +1138,8 @@ they are (that the Zerilli column is D's only pole source, #122).
   (§3a).
 - The windings count zeros minus poles of D. The −2 that suggested a net pole at ω = 0.85, l = 3 was the old step rule
   (§5.2), so no box shows a net pole. §5.3 (#121) finds no pole from the Zerilli column in 21 boxes. That it is D's
-  only pole source rests on reading `polar_solver.py` (#122), and `n3_l2` and `n3_l3` are not counted (#123).
+  only pole source rests on reading `polar_solver.py` (#122). #123 finds none in `n3_l2` and `n3_l3` either, across
+  Re s = 0; there D's own column, from `zerilli_q`, is up to 8.9×10⁻⁵ off on the left of the axis (§5.3).
 - The equations for (tt) and the angular trace are verified numerically (relative residual ≤ 7×10⁻⁷),
   not symbolically. (tθ), (tr), (rθ) are verified exactly.
 - Weak-field stars only (|M|/R ~ 3×10⁻³). Nothing here says what happens for compact phantom stars.
