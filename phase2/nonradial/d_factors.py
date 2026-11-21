@@ -55,6 +55,7 @@ and the script exits 1 when one fails. Criteria, fixed before the runs:
     pole:    nophase (the R-diagonal factor of the planted column's QR dropped), nogauge (that column's phase fixed by
              its largest component, so no phase is left), reverse (the counter runs clockwise)
     axis:    reverse (the chain runs clockwise), wrongq (q times 1 + 1e-4)
+  --rho=F        mean: the circle's radius as a fraction of L (default 0.1; a convergence study in rho)
   --boxes=a,b    restricts harm, norm and axis to these jobs (for mutation runs); --skip=static,harm leaves out the
   moncrief and jpoly checks, or harm; --plant=z|s|zs restricts pole to the
   Zerilli column or the scalar plane; --stop=SECONDS ends a run that reaches it (exit 3); --maxeval=N ends a part after N
@@ -75,7 +76,7 @@ PARTS = [p for p in opts.get('part', '').split(',') if p]
 MUTS = {'factors': ('nonholo', 'singularT', 'jnonlin'), 'gap': ('branch', 'cols'), 'norm': ('noproj',),
         'pole': ('nophase', 'nogauge', 'reverse'), 'axis': ('reverse', 'wrongq'), 'mean': ('nonholo',)}
 MUT = opts.get('mutate')
-if (set(opts) - {'part', 'raw', 'cache', 'boxes', 'rtol', 'stop', 'maxeval', 'mutate', 'plant', 'skip'} or not PARTS or 'raw' not in opts
+if (set(opts) - {'part', 'raw', 'cache', 'boxes', 'rtol', 'stop', 'maxeval', 'mutate', 'plant', 'skip', 'rho'} or not PARTS or 'raw' not in opts
         or set(PARTS) - set(MUTS) or (MUT and (len(PARTS) != 1 or MUT not in MUTS[PARTS[0]]))):
     sys.exit(__doc__)
 RAW = os.path.abspath(opts['raw']); os.makedirs(RAW, exist_ok=True)
@@ -86,6 +87,7 @@ RTOL = float(opts.get('rtol', os.environ.get('RTOL', '1e-8')))
 STOP = float(opts['stop']) if 'stop' in opts else None
 MAXEVAL = int(opts['maxeval']) if 'maxeval' in opts else None
 ONLY = opts['boxes'].split(',') if 'boxes' in opts else None
+RHO = float(opts.get('rho', '0.1'))                 # mean: circle radius as a fraction of L
 SKIP = opts.get('skip', '').split(',')              # factors: static (moncrief, jpoly) and/or harm
 PLANTS = opts.get('plant', 'zs')                   # pole: which columns get the planted pole, z and/or s
 THR = 1e-3                                    # gap, order, cols, moncrief
@@ -426,11 +428,11 @@ def part_mean():
     allok, worst_all = True, 0.0
     for b in jobs(HARM6):
         L = box_L(b); s0 = harm_points(b)[1]
-        rho = 5e-3 * L if b.x0 < 0 < b.x1 else 0.1 * L
+        rho = (5e-3 * RHO / 0.1 if b.x0 < 0 < b.x1 else RHO) * L
         good, bad = planted_pair(b)
         lg = mean_point(good, s0, L, rho); lb = mean_point(bad, s0, L, rho)
         pg_ok, pb_ok = lg[2] <= lg[3], lb[2] <= lb[3]
-        st = Store(f"mean_{b.name}"); db = DBox(b)
+        st = Store(f"mean_{b.name}" + ("" if RHO == 0.1 else f"_rho{RHO:g}")); db = DBox(b)
         mut = (lambda s, L=L: np.exp(1j * 1e-3 * s.real ** 2 / L ** 2)) if MUT == 'nonholo' else (lambda s: 1.0)
         F = lambda s, st=st, db=db, mut=mut: st.get(('D', s), lambda: db.D(s)) * mut(s)
         try:
