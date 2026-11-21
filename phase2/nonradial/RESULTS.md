@@ -752,6 +752,160 @@ the planted pair (limit 0.45), worst Cauchy–Riemann defect 1.1×10⁻⁸ (`n1_
 | counts reported with max step, min abs(Z), star and l from the logs by a collector whose `--mutate=` fails it; each nonzero count with its box and the corrected count of zeros of D | met; no count is nonzero, so zeros of D = 0 in all 21; both mutations exit 1 |
 | #115's boxes, added as a second step | moved to #124 (above), met in all nine |
 
+#### Boxes across Re s = 0 (#123)
+
+#121 did not count `n3_l2` and `n3_l3`, the boxes of §5.1 that cross the axis (Re s ∈ [−10⁻³, 10⁻⁴], Im s ∈ [0.01, 0.23],
+l = 2 and 3, phantom ω = 0.7603). Its function y₁ = Z exp Ψ has k = √(s² + V) on the principal branch, whose cut is on
+Re s = 0, so y₁ is not holomorphic across the axis. #123 counts them with a new option, `zerilli_zeros.py --axis`.
+
+Result: **both boxes have 0 zeros of Z(r_m; s)**, each with a planted zero returned on the left and on the right of the
+axis. So the Zerilli column gives D no pole in them, and the zeros of D equal the winding of D, 0, in each. Status:
+numerical evidence, with the condition of the 21 boxes above (that column is D's only pole source, #122).
+
+**Method.** The counted function is y₁(r_m) = exp(s r_m*) Z(r_m; s), from y = (Z, f Z′) exp(s r*) with r* the tortoise
+coordinate:
+
+```
+dy₁/dr = (y₂ + s y₁)/f,   dy₂/dr = ((s² + V) y₁ + s y₂)/f
+```
+
+It has no k, and exp(s r*) is entire and zero-free. Z is the Jost solution exp(−s r*) u, u = Σ aₙ r⁻ⁿ → 1. The aₙ follow
+from f (f u′)′ − 2 s f u′ = V u by a recursion in 1/r that is singular in s only at s = 0, so the start
+y(R_z) = (u, f u′ − s u) is holomorphic in the box. The series is summed until its terms are below 10⁻¹⁸. R_z is #121's
+rule, r_m + (40 + 20 l)/|s|_min + 50 (8074.1 for l = 2, 10074.1 for l = 3), and y₁(r_m) does not depend on it. The
+Cauchy–Riemann points are at Re s = x₀/2, 0 and x₁/2, so that their stencils lie on both sides of the axis and the limit
+h ≤ Re s/2 is dropped; the criterion stays 10⁻⁶.
+
+Two choices differ from the issue's suggestion (start (1, −k_c), integration on the real axis), and I made them after
+measuring (negative-mass-raw, `I123-rpi5/explore`). For Re s < 0 the other solution grows inward on the real axis by
+exp(−2 Re s (R_z* − r_m*)), e¹⁶ at Re s = −0.001 for l = 2 and e³² with `--zfac=2`, so an error at R_z is amplified
+without limit; a start with the principal k is on the wrong branch there (the result at −0.0005 + 0.12i is 9×10³ times
+the wanted function). With the Jost start the real-axis Radau solve at −0.0005 + 0.12i agrees with the integration
+below to 2.4×10⁻¹³, but the three solves made at that point (two Jost starts, one WKB start) took 229 s, against 3.7 s
+for the same three at 10⁻⁴ + 0.12i. So `--axis` integrates along the ray r = r_m − i p, p from R_z − r_m
+to 0. For Im s > 0 the wanted solution decays outward there as exp(−Im s p) and the other decays inward, so the
+integration is stable over the whole box (1.4 to 2.7 s per point), and its result is the continuation of the decaying
+solution of Re s > 0. The count, the checks and the step rule are #121's. The docstring of `zerilli_zeros.py` has the
+details.
+
+**What ran.** On rpi5 (Raspberry Pi 5, aarch64, 4 cores shared with another project) on 2026-11-21, with the code of
+`wip/i123-axis` at ce624b9 (the option at c4206eb). Each job is `python -u zerilli_zeros.py <arguments> --cachedir=<raw
+folder>/cache`, with the lines `job|arguments` of `python collect_i121.py --jobs` (raw `jobs.txt`; the 25 of #121 were not
+rerun), at `nice -n 10`, one thread, at most two processes at a time, a second one only while the 15-minute load was
+below 4. The pilot `n3_l2` ran alone (246 s in the script, exit 0), then the other 11 jobs. 12 jobs took 50.8 min of
+process time in 36.7 min of wall time. Each ran once and none died; the three that exit 1 are the mutations below. Logs and
+caches are in negative-mass-raw, folder `I123-rpi5` at e43001a, with #121's logs copied beside them (sources and
+sha256 in `sources.sha256`). From `phase2/nonradial`, with the raw repository cloned beside the checkout:
+
+```
+python collect_i121.py ../../../negative-mass-raw/I123-rpi5 > i121_zeros_output.txt
+```
+
+The collector exits 0, and the 21 rows of #121 regenerate byte for byte. It also exits 1 on a missing log, a tag that does
+not match the arguments, a missing planted zero on either side, or a zfac difference above 10⁻⁶ (its `--mutate=axis`,
+`oneside` and `zfac`, with `box` and `control`, each exit 1; logs `collect_mutate_*.log`).
+
+| job | l | R_z | planted s₀ | zeros of Z | planted found | max step | min abs(Z) | evaluations | count (s) | winding of D | zeros of D |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| n3_l2 | 2 | 8074.1 | −0.0005 + 0.12i | +0.0000 | +1.0000 of 1 | 0.39 | 1.05 | 90 | 131 | +0.0000 | 0 |
+| n3_l2_pr | 2 | 8074.1 | 0.00005 + 0.12i | +0.0000 | +1.0000 of 1 | 0.39 | 1.05 | 148 | 0 | +0.0000 | 0 |
+| n3_l2_z2 | 2 | 16074.1 | −0.0005 + 0.12i | +0.0000 | +1.0000 of 1 | 0.39 | 1.05 | 90 | 165 | +0.0000 | 0 |
+| n3_l3 | 3 | 10074.1 | −0.0005 + 0.12i | −0.0000 | +1.0000 of 1 | 0.39 | 1.11 | 98 | 195 | −0.0000 | 0 |
+| n3_l3_pr | 3 | 10074.1 | 0.00005 + 0.12i | −0.0000 | +1.0000 of 1 | 0.39 | 1.11 | 156 | 0 | −0.0000 | 0 |
+| n3_l3_z2 | 3 | 20074.1 | −0.0005 + 0.12i | +0.0000 | +1.0000 of 1 | 0.39 | 1.11 | 98 | 195 | −0.0000 | 0 |
+
+The upper box (Im s ∈ [0.01, 0.23]) stands for its mirror, as in §5.1. `_pr` is the planted zero on the right of the axis;
+it shares its cache with the left plant, so it shows 148 evaluations (90 counted before, 58 new for the plant's own
+steps) and 0 s. `_z2` is `--zfac=2`. All six run at `--guard=all`. The winding of D is §5.1's (`i5_boxes_output.txt`), which
+§5.4 recounts at `--guard=all` without change, and zeros of D = winding of D + zeros of Z. `min abs(Z)` is that of
+y₁(r_m) = exp(s r_m*) Z, which is not the WKB-scaled function of the rows above. The count's largest step is 0.39 rad
+(0.33 to 0.40 with the planted zero, limit 0.45), and the worst Cauchy–Riemann defect is 4.1×10⁻¹⁰ (`n3_l2_z2`; limit
+10⁻⁶).
+
+**Controls.** Each fails where it must, and each passes where it must:
+
+| job | what | ends | result |
+|---|---|---|---|
+| `n3_l2_flat`, `n3_l3_flat` | `--flat` in the n3 box | all checks passed | counts 0, with no root of the reverse Bessel polynomial in the box (nearest −0.0622 ± 0.0359i for l = 2, −0.0763 ± 0.0728i and −0.0963 for l = 3); `flatq` at most 8.6×10⁻¹³ at Re s = 10⁻⁴ and −0.001 |
+| `ax_flatzero` | `--flat`, box Re s ∈ [−0.09, −0.03], Im s ∈ [0.01, 0.07], planted −0.045 + 0.055i | all checks passed | counts +1.0000, the root −0.0622 + 0.0359i; `flatq` at most 6.3×10⁻¹³ |
+| `ax_flatzero_rev` | the same, contour clockwise | FAILED: flat, plant | counted −1.0000 of +1 |
+| `n3_l2_mprincipal`, `n3_l3_mprincipal` | `--mutate=principal`, start (1, −√(s² + V(R_z))) | FAILED: holo | Cauchy–Riemann defect 1.5×10⁻⁵ (1.2×10⁻⁵ for l = 3), then 1.2 and 1.2 at the two points whose stencil crosses the axis; `count` and `plant` still pass |
+
+`ax_flatzero` is a planted-truth run: the zero is a root of a polynomial, at Re s < 0, and the same code counts it. The
+principal-branch start makes the function jump across the axis (min abs(y₁) on the contour is 2.5×10⁻¹⁰ against 1.05), and
+the count and the planted zero do not see it (they pass), so `holo` is the check that detects the defect of #121's form.
+#121's three mutations are unchanged and were not rerun.
+
+**Without `--axis`** the output of `zerilli_zeros.py` is that of 77b0541 (rerun on rpi5 from empty caches for `flat` and
+`h1_l2`: identical apart from the times). Against #121's logs the RESULT lines agree except the sign of an exact zero
+(`h1_l2` +0.0000 here, −0.0000 there) and the times, and the Cauchy–Riemann defects and `q` differences differ at the
+10⁻⁹ level, finite-difference noise on another platform.
+
+**zfac 1 against 2.** The start radius is doubled (8074.1 → 16074.1 for l = 2, 10074.1 → 20074.1 for l = 3). The counts are
+equal, and y₁(r_m) at the three contour points of the column check differs by at most:
+
+| box | zeros of Z, zfac 1 | zeros of Z, zfac 2 | largest relative difference of y₁ | at s |
+|---|---|---|---|---|
+| n3_l2 | +0.0000 | +0.0000 | 1.8×10⁻¹³ | −0.001 + 0.23i |
+| n3_l3 | −0.0000 | +0.0000 | 1.4×10⁻¹³ | 0.0001 + 0.05422i |
+
+y₁(r_m) does not depend on R_z, so these are numerical differences; the collector requires at most 10⁻⁶ (a limit I set
+before the run).
+
+**`q` against `zerilli_q`** (D's own Zerilli column; not a criterion, since the script checks `column` only where
+Re s ≥ 0.03 and none of the three points is there; the line prints 0 of 3). `q` = y₂/y₁ at r_m, relative difference:
+
+| box | points | s | side | difference |
+|---|---|---|---|---|
+| n3_l2 | contour | 0.0001 + 0.05422i | Re s > 0 | 6.0×10⁻⁷ |
+| n3_l2 | contour | −0.001 + 0.23i | Re s < 0 | 7.3×10⁻⁶ |
+| n3_l2 | contour | −0.001 + 0.05312i | Re s < 0 | 1.8×10⁻⁵ |
+| n3_l2 | Cauchy–Riemann | −0.0005 + 0.076i | Re s < 0 | 8.8×10⁻⁶ |
+| n3_l2 | Cauchy–Riemann | 0 + 0.142i | Re s = 0 | 4.0×10⁻⁶ |
+| n3_l2 | Cauchy–Riemann | 0.00005 + 0.208i | Re s > 0 | 3.3×10⁻⁶ |
+| n3_l3 | contour | 0.0001 + 0.05422i | Re s > 0 | 2.8×10⁻⁸ |
+| n3_l3 | contour | −0.001 + 0.23i | Re s < 0 | 1.0×10⁻⁵ |
+| n3_l3 | contour | −0.001 + 0.05312i | Re s < 0 | 1.8×10⁻⁶ |
+| n3_l3 | Cauchy–Riemann | −0.0005 + 0.076i | Re s < 0 | 1.4×10⁻⁶ |
+| n3_l3 | Cauchy–Riemann | 0 + 0.142i | Re s = 0 | 4.0×10⁻⁶ |
+| n3_l3 | Cauchy–Riemann | 0.00005 + 0.208i | Re s > 0 | 3.7×10⁻⁶ |
+
+At nearly the same |s| = 0.054 the difference on the left of the axis is 30 times (l = 2) and 64 times (l = 3) that on
+the right. `zerilli_q` starts at a per-point radius from the WKB data, so its error from the omitted terms, damped
+inward for Re s > 0, is amplified inward for Re s < 0 by exp(2 |Re s| (R_start − r_m)): 22 for R_start = 1578 at
+−0.001 + 0.053i. Along the two edges of n3 (12 points, `column_scan_l2.log` and `_l3.log`) the difference is
+at most 3.5×10⁻⁶ at Re s = 10⁻⁴ (3.4×10⁻⁶ for l = 3) and at most 8.9×10⁻⁵ at Re s = −0.001 (l = 2, Im s = 0.01; 1.3×10⁻⁵
+for l = 3), so D's column on the left is about 10⁻⁴ off at worst, of the order that factor (9×10⁶ there) times the
+right-hand difference (5.1×10⁻¹¹ at 10⁻⁴ + 0.01i) gives. This bears on D's own Zerilli column on the left of the axis,
+which §5.1's n3 windings used (#122); I did not change it.
+
+**Independent check of `q` at Re s < 0.** Raw `cross_continue_i123.py` reads the `q` of an `--axis` log at its six points
+(on both sides of the axis) and compares it with #121's form of the solution, which is stable for Re s > 0, continued
+across the axis by a Taylor series (order 8, fitted on 12 points of a circle of radius 0.0018 centred at 0.002 + i Im s).
+It shares only the potential, r_m and M_ext with `--axis`: neither the Jost start nor the rotated path. The largest
+relative difference is 2.7×10⁻⁹ for `n3_l2` (at −0.001 + 0.05312i) and 2.2×10⁻¹⁰ for `n3_l3` (at −0.001 + 0.23i), against
+a limit of 10⁻⁸ set before the run. On the flat log the same run gives 2.7×10⁻⁹ at the same point while the log's `q` is
+within 9.4×10⁻¹³ of the exact flat value, so the 2.7×10⁻⁹ is the continuation's own error, not the integration's. With
+the series evaluated 10⁻⁴ off (`--mutate=shift`) the check fails (2.7×10⁻³). The first runs of the script missed the point
+on the axis (a parser error, kept as `*_first_missed_axis_point.log`) and were rerun.
+
+**Corrected count of zeros of D** = winding(D) + zeros of Z: 0 + 0 = 0 for `n3_l2` and for `n3_l3`. No count is nonzero.
+
+**What this settles and what it does not.** Z(r_m; s) has no zero in either box, on either side of the axis, so the
+Zerilli column adds no pole of D there, and the windings of §5.1's `n3_l2` and `n3_l3` (0, with a planted zero at
+−0.0005 + 0.12i) count zeros of D, under the condition that column is D's only pole source (#122). The count is of the
+analytic continuation of the decaying solution across Re s = 0 at Im s ∈ [0.01, 0.23]; the lower mirror has the same count
+by Z(conj s) = conj Z(s), the continuation passing through Re s > 0. A zero of Z with Re s < 0 outside the box is not
+excluded (flat space has them at Re s ≈ −0.06). The sliver |Im s| < 0.01 is not covered (§5.1). The checks are
+numerical: no interval enclosure and no proof.
+
+| acceptance criterion | verdict |
+|---|---|
+| a planted zero on each side of the axis is returned in each box | **Met**: −0.0005 + 0.12i and 0.00005 + 0.12i, +1.0000 of 1 in `n3_l2` and `n3_l3` |
+| Cauchy–Riemann check at points on both sides of Re s = 0 passes at 10⁻⁶; with the principal-branch k it fails | **Met**: worst 4.1×10⁻¹⁰; `--mutate=principal` fails `holo` (1.2) in both boxes |
+| `--flat` counts 0 in each box | **Met**: `n3_l2_flat`, `n3_l3_flat` |
+| the count in each box and the corrected count of zeros of D | **Met**: 0 in each, and winding(D) + zeros of Z = 0 |
+
 ### 5.4 Guard at every level (#126)
 
 The half-step test of §5.1 and §5.2 runs at bisection depths 0 and 1 only (`--guard=1`, the default). A step accepted at
