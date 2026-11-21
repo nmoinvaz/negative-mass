@@ -230,8 +230,10 @@ D(x1) have the same sign. §5.2 recounts every row with the corrected step rule,
 **Discrepancy (#7), resolved by #54.** #7 counted −2 for ω = 0.85, l = 3. A count of zeros cannot be negative, so this
 was read as a net pole of D in the box, with a hypothesis for #54 to test: the Zerilli column (1, q/f) of
 `polar_solver.decaying_plane` has a pole wherever the decaying Zerilli solution vanishes at r_m. The recount of §5.2 gives
-0, and the −2 was the first step rule losing one 2π on the left edge. The hypothesis is untested. Each winding counts
-zeros minus poles, so the 0 counts remain conditional on D having no pole in the box.
+0, and the −2 was the first step rule losing one 2π on the left edge. The column has such a pole by construction
+(q = f Z′/Z), and §5.3 (#121) finds no zero of Z(r_m; s) in any of these boxes, so it gives D no pole there. Each
+winding counts zeros minus poles, so the 0 counts are counts of zeros of D, conditional on the Zerilli column being D's
+only pole source (the coordinator's reading of `polar_solver.py`, to be checked in #122).
 
 No oscillatory
 instability with e-folding time ≤ 10 (code units) and |Im s| ≤ 2.5. This range covers the scalar
@@ -322,7 +324,9 @@ belongs to both gaps of the issue and to none of the first boxes.
 `max step` is the largest phase step in radians and `min abs(D)` the smallest |D| on the contour (phase-normalised, so
 only comparable within a row).
 
-Winding is zeros minus poles of D in the box (§5, #54), so each 0 means no zero only if D has no pole there.
+Winding is zeros minus poles of D in the box (§5, #54). §5.3 (#121) finds no pole from the Zerilli column in any of
+these boxes except `n3_l2` and `n3_l3`, which it does not count (#123). Elsewhere each 0 means no zero, conditional on
+that column being D's only pole source (#122).
 
 #### Controls
 
@@ -377,11 +381,12 @@ roots closer than about 3 % in γ is therefore excluded only by that smoothness,
 - The strip Re s < 0.03 for 2.5 < |Im s|, and the strip Re s < 0.1 for |Im s| > 6.
 - Re s ∈ [0.1, 2] above |Im s| = 10 (l = 2) and 6 (l = 3), and Re s > 2.
 - The sliver |Im s| < 0.01 left of Re s = 10⁻⁴.
-- Poles of D. Every count is zeros minus poles, and a count of 0 is not a proof that there is no zero. #54 found no net
-  pole (§5.2) but did not search for poles.
+- Poles of D. Every count is zeros minus poles. §5.3 (#121) excludes the Zerilli column's poles in every box but
+  `n3_l2` and `n3_l3` (#123). That the column is D's only pole source is not yet checked (#122).
 - l ≥ 4 (#4).
 
-Status: numerical evidence, conditional on D having no pole in each box (#54).
+Status: numerical evidence, conditional on the Zerilli column being D's only pole source (§5.3, #122), and for `n3_l2`
+and `n3_l3` on D having no pole there (#123).
 
 ### 5.2 Recount of §5's windings with the corrected step rule (#54)
 
@@ -459,7 +464,8 @@ The left-edge phase of the three l = 3 boxes is now +13.17 (ω = 0.85), +13.60 (
   Its only evidence was the −2. A winding of 0 is still zeros minus poles, and nothing here searches for poles.
 - The passages this recount supersedes were edited by the coordinator at the merge: the §5 table row ω = 0.85, l = 3,
   the paragraph "Discrepancy (#7)", the "Not covered" list of §5.1 and §6 item 2. The "conditional on D having no pole"
-  of §5 and of the "Status" line in §5.1 still holds, since poles were not searched for.
+  of §5 and of the "Status" line in §5.1 still held, since poles were not searched for. §5.3 (#121) has since counted
+  the zeros of Z(r_m; s), and the coordinator narrowed those passages at its merge.
 
 ### 5.3 Poles of D (#121)
 
@@ -554,15 +560,16 @@ counted −2) and was not repeated.
 #### Not counted, and what this settles
 
 - `rep_l2` is the first box of §5, `p7603_l2`. `n3_l2` and `n3_l3` cross Re s = 0, where k = √(s² + V) has its cut, so
-  y₁(r_m) is not holomorphic there and a count would not be a count of zeros. They need k continued across the axis.
+  y₁(r_m) is not holomorphic there and a count would not be a count of zeros. They need k continued across the axis (#123).
   The 14 boxes of §5.1 counted here, with §5's seven, are the 21.
-- #115's boxes (l = 4, 5, 6) and #117's larger ones are not counted here. Neither are the regions §5.1 lists under "Not
+- #115's boxes (l = 4, 5, 6, #124) and #117's larger ones are not counted here. Neither are the regions §5.1 lists under "Not
   covered" (Re s below the lower edges, above the upper ones).
 - In the 21 boxes the zeros of Z(r_m; s) are absent, so the pole of D that #54's hypothesis and `decaying_plane` allow is
   absent, and each 0 of §5 and §5.1 counts zeros of D. That the Zerilli column is D's only pole source is the
   coordinator's reading of `polar_solver.py` (the regular plane is integrated from the centre, the scalar plane's
   spectral projector is holomorphic away from s = ±i(1 ± ω)). This run did not test that reading, so the "conditional on
-  D having no pole" passages are unchanged here.
+  D having no pole" passages are unchanged here. The coordinator narrowed them to that reading at the merge, and #122
+  checks it.
 - The exterior of the phantom star is nearly flat (r_m = 24.11, M_ext = −0.014580, so 2|M_ext|/r_m = 1.2×10⁻³), and flat
   space has no zero with Re s > 0. All counts are 0, as that suggests.
 
@@ -584,7 +591,8 @@ counted −2) and was not repeated.
 2. **Polar, complex growth rates.** Argument-principle count (validated on a known QNM): winding **0** in
    Re s ∈ [0.1, 2], |Im s| ≤ 2.5, for phantom l = 2, phantom l = 3 and canonical l = 2, and for ω = 0.70
    and 0.85 (l = 2, 3). #7's −2 for ω = 0.85, l = 3 was an error of the first step rule, and the recount gives 0
-   (§5.2). This means 0 zeros only if D has no pole in the box, which was not searched for.
+   (§5.2). §5.3 (#121) finds no zero of the decaying Zerilli solution at r_m in these boxes, so the 0 counts zeros
+   of D, conditional on that column being D's only pole source (#122).
 3. **Axial: stable for all l ≥ 2.** V_ax > 0 everywhere; positivity is exact once V_ax > 0 is checked on
    the grid (r²V_ax/(α² l(l+1)) ≥ 1 − 10⁻⁶).
 4. **κ_eff.** κ_eff − κ_c = s²/(q_int − g) exactly, and for the phantom star q_int > g, so the matter
@@ -614,8 +622,8 @@ counted −2) and was not repeated.
   ω = 0.85, and axial positivity at 0.70 and 0.90. At l = 5 and 6 the rtol 1e-12 variant is missing at the top γ
   (§3a).
 - The windings count zeros minus poles of D. The −2 that suggested a net pole at ω = 0.85, l = 3 was the old step rule
-  (§5.2), so no box shows a net pole. Poles were not searched for, and the hypothesis of #54 that the Zerilli column has
-  one where ψ(r_m; s) vanishes is untested.
+  (§5.2), so no box shows a net pole. §5.3 (#121) finds no pole from the Zerilli column in 21 boxes. That it is D's
+  only pole source rests on reading `polar_solver.py` (#122), and `n3_l2` and `n3_l3` are not counted (#123).
 - The equations for (tt) and the angular trace are verified numerically (relative residual ≤ 7×10⁻⁷),
   not symbolically. (tθ), (tr), (rθ) are verified exactly.
 - Weak-field stars only (|M|/R ~ 3×10⁻³). Nothing here says what happens for compact phantom stars.
@@ -645,6 +653,8 @@ counted −2) and was not repeated.
 | `collect_i54.py`, `i54_recount_output.txt` | the recount table of §5.2 from the raw logs (I54-rpi5, I5-rpi5, I7-win2) |
 | `replay_old_rule_i54.py`, `i54_replay_output.txt` | the first step rule replayed on #7's stored boxes, and the lost step (§5.2) |
 | `check_cache_i54.py`, `i54_cache_check_output.txt` | stored D values recomputed on a second machine (§5.2) |
+| `zerilli_zeros.py` | zeros of the decaying Zerilli solution Z(r_m; s) in a box, the poles of D's Zerilli column (§5.3) |
+| `collect_i121.py`, `i121_zeros_output.txt` | the job list and table of §5.3 from the raw logs (negative-mass-raw, I121-win) |
 | `l456_graph.py` → `l456_mode_condition.svg` | the figure of §3a |
 | `boxes_graph.py` → `complex_s_boxes.svg` | the figure of §5.1 |
 | `data_graphs.py` | SVG drawing primitives of both figures, vendored unchanged (its docstring names the canonical copy) |

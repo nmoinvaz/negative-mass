@@ -98,6 +98,6 @@
 <g><polygon points="294.0,611.9 300.5,618.4 294.0,624.9 287.5,618.4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>planted at -0.0005 + 0.12i (n3_l3): returned +1 of 1, PASS</title></g>
 <text x="16.0" y="752.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">winding2.py (#5), table by collect_i5.py  ·  raw I5-rpi5  ·  rpi5-ubuntu, Raspberry Pi 5</text>
 <text x="16.0" y="736.0" font-size="10" fill="#c98500" text-anchor="start" font-weight="normal">⚠</text>
-<text x="30.0" y="736.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">a winding counts zeros minus poles of D (section 5, #54)</text>
+<text x="30.0" y="736.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">a winding counts zeros minus poles of D; section 5.3 (#121) finds no Zerilli-column pole in any box but n3, not counted (#123)</text>
 <a href="https://github.com/nmoinvaz/negative-mass"><text x="764" y="752" font-size="10" fill="#52514e" text-anchor="end" text-decoration="underline">github.com/nmoinvaz/negative-mass</text></a>
 </svg>

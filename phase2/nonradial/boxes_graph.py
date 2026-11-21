@@ -118,6 +118,7 @@ for s0, (run, got, exp, verdict) in plants.items():
                f"planted at {s0.real:g} + {s0.imag:g}i ({run}): returned {got:+.0f} of {exp}, {verdict}")
 
 height = footnote(svg, ["winding2.py (#5), table by collect_i5.py", "raw I5-rpi5"], "rpi5-ubuntu, Raspberry Pi 5",
-                  ["a winding counts zeros minus poles of D (section 5, #54)"],
+                  ["a winding counts zeros minus poles of D; section 5.3 (#121) finds no Zerilli-column pole in "
+                   "any box but n3, not counted (#123)"],
                   iy + ih + 44, "https://github.com/nmoinvaz/negative-mass")
 open(os.path.join(HERE, "complex_s_boxes.svg"), "w").write(svg.finish(height))
