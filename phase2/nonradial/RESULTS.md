@@ -864,6 +864,53 @@ R=../../../negative-mass-raw/I115-rpi5/cache; B=${R}_before_guard; T=winding2_ca
 - §3a calls the stretch "the 14 cached points". The 14 are cached steps between 15 points, 13 of them inside the
   stretch, the 13 removed in the coordinator's check (#126's description). §3a is unchanged here.
 
+**Dense-chain replay of every box (#128).** `replay_i126.py` runs this replay on the cache of each of the 61 boxes of
+this section, at `--guard=all --expect=none` and with the planted zero of its first run. `diagnose_plant.py` gained
+`--y0=Y0` for it: with Y0 > 0 the contour is `winding2.py`'s upper box (four edges counterclockwise from (x1, Y0), no
+doubling) and the planted factor is (s − s0) alone; Y0 = 0, the default, is the symmetric box as before, and
+`i115_replay_output.txt` still regenerates byte for byte with the command above. From `phase2/nonradial`, with the raw
+repository cloned beside the checkout:
+
+```
+python replay_i126.py ../../../negative-mass-raw/I126-rpi5 > i126_replay_output.txt
+```
+
+It exits 0, in about 11 s on rpi5, and prints one row per box (the counted function, the accepted steps of F and of F times
+the factor, the chain's points, the replayed counts, the planted zeros found, the chain's largest increments).
+**In all 61 boxes (31 of D, 30 of Z) no accepted step differs from the dense chain, in F or in F times the planted factor,
+and none fails.** The chains hold 69 to 445 cached points; the largest increment of any chain is 0.314 rad (`z_n1_l2`, Z
+times the factor; 0.313 rad for D, `w_s2_l2`), against the limit of 1 rad. The replayed count of F is 0 in all 61 boxes.
+The planted zeros are found: +2.0000 in the 41 symmetric boxes and +1.0000 in the 20 upper boxes (11 of D, 9 of Z), which
+go through `--y0`. A second script, `cross_replay_i126.py` in raw `I128-rpi5`, orders the cached points of each contour by
+arclength, shares only the cache files, `jobs.txt` and the contour's geometry with the replay, and reproduces every row's
+chain points and largest increments to 0.0006 rad (its `--mutate=thin` exits 1).
+
+Controls, all in negative-mass-raw `I128-rpi5` at dc61d9d (code at 716ce01):
+- Before the real caches, `synthetic_y0.py` ran `--y0` on caches of known functions: the upper box counts +1 and +2 with
+  the planted zero inside and +1 and +1 below it, the symmetric box +2 and +4, as the zeros and poles inside it say. A
+  function that hides 40 turns per edge from every step of depth 2 or less exits 1, with the dense chain's 40 turns
+  printed on all four edges. Its `--mutate=wrongcount` exits 1.
+- A `--y0` box replayed without it fails: the symmetric contour starts at (x1, 0), which an upper box's cache lacks, and
+  the replay stops on that point. `replay_i126.py --mutate=noy0` stops all 20 upper boxes this way and passes the 41
+  symmetric ones.
+- `replay_i126.py --mutate=sparse` (passes `--mutate=sparse` to `diagnose_plant.py` on `w_h1_l2`), `noy0`, `misplant` (the
+  expected planted zeros of `w_h1_l2` from a zero outside the box), `nocache` and `nojobs` (jobs.txt without `w_p7603_l2`)
+  each exit 1 (raw `replay_mutate_*.log`). `diagnose_plant.py --mutate=sparse --expect=none` exits 0 on a normal box: a
+  chain cut to the steps' end points agrees with the steps. The replay therefore also requires each chain to hold every
+  cached point on its contour, counted from the pickle, and that is what `--mutate=sparse` fires (48 chain points against
+  126 on the contour).
+- `collect_i126.py --mutate=nolog` reads no log for `w_s1_l2` and exits 1; the unmutated collector still regenerates
+  `i126_guard_output.txt` byte for byte.
+
+Status: numerical evidence. The chain shares D and its cache with the count: it tests the step rule on the points the
+runs cached, and is no test of D.
+
+| acceptance criterion | verdict |
+|---|---|
+| in each of the 61 boxes no accepted step at `--guard=all` differs from the dense chain, in F or in F times the factor; each chain's largest increment is below 1 rad | met in 61 of 61; largest increment 0.314 rad |
+| the upper boxes go through `--y0`; a `--y0` box replayed without it fails | met: 20 upper boxes with `--y0`; without it each stops on the missing point (x1, 0) |
+| `--mutate=sparse` on one box and `collect_i126.py --mutate=nolog` each exit 1 | met for `replay_i126.py --mutate=sparse` (through the chain-points check) and `collect_i126.py --mutate=nolog`; `diagnose_plant.py --mutate=sparse` alone exits 0 under `--expect=none` |
+
 #### What this settles
 
 Status: numerical evidence that the 61 counts of §5, §5.1, §3a and §5.3 do not depend on the depth at which the
@@ -968,6 +1015,7 @@ source, #122).
 | `i124_zeros_output.txt` | the table of §5.3's #124 paragraph, the nine boxes of §3a, from the raw logs (I124-rpi5), built by `collect_i121.py --only=3a` |
 | `collect_i126.py`, `i126_guard_output.txt` | the recount of §5.4 at `--guard=all`, 61 boxes and 5 controls, from the raw logs (negative-mass-raw, I126-rpi5) |
 | `diagnose_plant.py`, `i115_replay_output.txt` | the replay of a lost step on a cached box, and its two runs on #115's s1 at l = 5 before and after the guard-all rerun (§5.4) |
+| `replay_i126.py`, `i126_replay_output.txt` | the dense-chain replay of §5.4's 61 boxes at `--guard=all` on the caches of negative-mass-raw `I126-rpi5` (`diagnose_plant.py --y0` for the upper boxes); exits 1 when a box fails (§5.4, #128) |
 | `l456_graph.py` → `l456_mode_condition.svg` | the figure of §3a |
 | `boxes_graph.py` → `complex_s_boxes.svg` | the figure of §5.1 |
 | `data_graphs.py` | SVG drawing primitives of both figures, vendored unchanged (its docstring names the canonical copy) |
