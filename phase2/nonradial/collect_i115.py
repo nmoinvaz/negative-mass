@@ -61,6 +61,7 @@ def times(job):
     return (st[0], en[-1], len(st)) if st and en else None
 
 bad = False
+failed = []                     # (job, reason) of every box that fails
 rows, runs = [], []
 for l in LS:
     for key, what, x0, x1, y1, s0 in BOXES:
@@ -69,14 +70,16 @@ for l in LS:
         tag = f"eps-1_w0.7603_l{lw}_{x0}_{x1}_{y1}"
         txt = read(job + '.log')
         if txt is None:
-            rows.append(f"| {key} | {l} | {what} | | | not run | | | | | |"); bad = True; continue
+            rows.append(f"| {key} | {l} | {what} | | | not run | | | | | |"); bad = True; failed.append((job, 'not run')); continue
         r = next((m for m in res.finditer(txt) if m.group(1) == tag), None)
         if not r:
             rows.append(f"| {key} | {l} | {what} | [{x0}, {x1}] | abs(Im s) ≤ {y1} | no result for {tag} | | | | | |")
-            bad = True; continue
+            bad = True; failed.append((job, 'no RESULT line')); continue
         wind = float(r.group(5)) + (0.5 if mutate == 'shift' else 0.0)
         step, mind = r.group(6), r.group(7)
-        ok = abs(wind - round(wind)) < 0.05 and float(step) <= 0.45
+        why = []
+        if abs(wind - round(wind)) >= 0.05: why.append('winding not an integer')
+        if float(step) > 0.45: why.append('max step above 0.45 rad')
         p = None if mutate == 'noplant' else next((m for m in pla.finditer(txt) if m.group(1) == tag), None)
         if p:
             expected = 1 if mutate == 'wrongexpect' else int(p.group(3))
@@ -84,12 +87,12 @@ for l in LS:
             pok = (p.group(8) == 'PASS' and p.group(2) == s0 and expected == 2
                    and abs(float(p.group(6)) - expected) < 0.05 and float(p.group(7)) <= 0.45)
             pl = f"{p.group(2)} | {float(p.group(6)):+.4f} of {expected} | {'PASS' if pok else 'FAIL'}"
-            ok &= pok
+            if not pok: why.append('planted zero not returned')
         else:
-            pl, ok = " | | no PLANTED line", False
+            pl = " | | no PLANTED line"; why.append('no PLANTED line')
         rc = rc_of(job)
-        ok &= rc == '0'
-        bad |= not ok
+        if rc != '0': why.append(f"job exit {rc}")
+        if why: bad = True; failed.append((job, ', '.join(why)))
         ev = [int(m.group(1)) for m in edge.finditer(txt)]
         rows.append(f"| {key} | {l} | {what} | [{x0}, {x1}] | abs(Im s) ≤ {y1} | {wind:+.4f} | {step} | {mind} | {pl} |")
         t = times(job)
@@ -110,7 +113,7 @@ print()
 print("# control_winding2.py (Mini BS I, l = 2), same machine")
 ctl = None if mutate == 'nocontrol' else read('control.log')
 if ctl is None:
-    print("  control: not run"); bad = True
+    print("  control: not run"); bad = True; failed.append(('control', 'not run'))
 else:
     lines = [x for x in ctl.splitlines() if x.startswith('winding2 normalisation control') or x.startswith('exit')]
     for x in lines:
@@ -118,9 +121,11 @@ else:
     cl = [x for x in lines if x.startswith('winding2')]
     cok = len(cl) == 2 and all(x.rstrip().endswith('PASS') for x in cl) and 'exit 0' in lines
     bad |= not cok
-    if not cok: print("  control: FAIL or incomplete")
+    if not cok: print("  control: FAIL or incomplete"); failed.append(('control', 'FAIL or incomplete'))
 print()
 print("Each winding counts zeros minus poles of D (#121 counts the poles). No box is covered by a pole exclusion yet.")
+for job, why in failed:
+    print(f"FAILED {job}: {why}")
 print("RESULT: " + ("FAIL" if bad else "all nine boxes complete, every planted pair returned, control PASS")
       + (f"  [mutate={mutate}]" if mutate else ""))
 sys.exit(1 if bad else 0)
