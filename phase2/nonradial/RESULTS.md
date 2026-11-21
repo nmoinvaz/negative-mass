@@ -485,7 +485,8 @@ processes at a time. Each job ran once and none died. Logs, caches and launchers
 python collect_i121.py ../../../negative-mass-raw/I121-win > i121_zeros_output.txt
 ```
 
-The collector exits 0 here. It exits 1 when a log is missing, a check is not as required or a count is not an integer.
+On Windows with Python 3.14 the redirect needs `PYTHONIOENCODING=utf-8` (the table has ≥ and ≤, and the default code page
+raises `UnicodeEncodeError`). The collector exits 0 here. It exits 1 when a log is missing, a check is not as required or a count is not an integer.
 Its `--mutate=box` (it expects `s1_l2` at Re s up to 0.2) and `--mutate=control` (it expects `mut_lshift` to pass) each
 exit 1, as they should.
 
