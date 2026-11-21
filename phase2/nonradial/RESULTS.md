@@ -246,25 +246,34 @@ reported whatever it is.
   the same to 4 decimals as at guard 1 (−22.8537, −23.3992, −0.0000), so the guard changed the planted count and not D's.
 - The default-guard run `s1_l5.log` stays as it is. It is the mutation that shows the check can fail: the same cache
   and plant give a count of 0 at guard 1 and +2 at guard `all`.
-So the count of D at s1, l = 5 is confirmed by its planted check, with `--guard=all`. The other eight boxes passed their
-check with guard 1 and are not recounted here.
+So s1 at l = 5 passes its planted check with `--guard=all`, and the guard leaves D's count there unchanged. The other
+eight boxes passed their check with guard 1 and are not recounted here.
+
+**What the planted check does not test** (coordinator's review of #115). The planted check compares two counts made on
+the same accepted steps. Suppose a step loses 2π in D alone, and the planted factor turns little over that step. Then
+the step loses 2π in D times the factor as well, and the difference is unchanged. The review removed the cached points
+inside the lost stretch from the 212-point copy. D alone then lost 2π there too, and the difference stayed 2. So a
+passing planted check shows that the counter finds a pair at s0. It does not show that D's own steps lost nothing; only
+the step rule protects D's count. #126 recounts the guard-1 boxes with `--guard=all` and puts that replay in the
+repository.
 
 **Controls of the collector.** On a synthetic raw folder built from #5's logs (tags renamed to l = 4, 5, 6) the collector
 exits 0, and each of `--mutate=noplant`, `wrongexpect`, `wrongbox`, `shift` and `nocontrol` exits 1. On the real logs
 each of the first four lists all ten rows as FAILED, `nocontrol` lists the control and the one real failure, and
 `--mutate=wrongguard` (expects guard all everywhere) lists the nine default rows.
 
-**Pole caveat.** Each winding is zeros minus poles of D. D has one pole source, the Zerilli column (1, q/f), whose q has a
-pole at each zero of the Zerilli solution at r_m (#54, #121). #121 counts those poles in every counted box, this task's
-included. **Until then no box of this task is covered by a pole exclusion**, and a count of 0 is not a proof that there is
-no zero.
+**Pole caveat.** Each winding is zeros minus poles of D. D's known pole source is the Zerilli column (1, q/f). Its q has
+a pole at each zero of the Zerilli solution at r_m (#54, #121); #122 checks that there is no other source. #121 counted
+those zeros in the 21 boxes of §5 and §5.1 (§5.3), and #124 counts them in these nine. **Until #124, no box of this
+task is covered by a pole exclusion**, and a count of 0 is not a proof that there is no zero.
 
 **Not covered.** Only the stored box, s1 and n1 were counted. The other boxes of §5.1 (n3, h1, h2, s2, s3 and the
 threshold boxes t1 and t2 at two outer radii) are not run for l = 4, 5, 6; Re s < 0.03 for 0.23 < |Im s| ≤ 2.5 and
 |Im s| > 2.5 are open, as in §5.1. The real-γ axis at l = 4, 5, 6 is the 100-point scan above, not refined.
 
-Status: *numerical evidence*, conditional on D having no pole in each box. Eight boxes passed their planted check at
-guard 1; s1 at l = 5 failed it at guard 1 and passed it with `--guard=all`.
+Status: *numerical evidence*, conditional on D having no pole in each box (#124). It is also conditional on no accepted
+step of D's count losing 2π past bisection depth 1 (#126). Eight boxes passed their planted check at guard 1; s1 at
+l = 5 failed it at guard 1 and passed it with `--guard=all`.
 
 ## 4. Effective surface condition κ_eff (`kappa_eff.py`, `kappa_eff_l2_output.txt`, `love.py`, `love_output.txt`)
 
@@ -484,10 +493,11 @@ roots closer than about 3 % in γ is therefore excluded only by that smoothness,
 - The sliver |Im s| < 0.01 left of Re s = 10⁻⁴.
 - Poles of D. Every count is zeros minus poles. §5.3 (#121) excludes the Zerilli column's poles in every box but
   `n3_l2` and `n3_l3` (#123). That the column is D's only pole source is not yet checked (#122).
-- l ≥ 4 (#4).
+- l ≥ 4, except the stored box, s1 and n1 at l = 4, 5, 6 (§3a, #115).
 
 Status: numerical evidence, conditional on the Zerilli column being D's only pole source (§5.3, #122), and for `n3_l2`
-and `n3_l3` on D having no pole there (#123).
+and `n3_l3` on D having no pole there (#123). Every count here used guard 1, so each is also conditional on no accepted
+step losing 2π past bisection depth 1 (§3a, #126).
 
 ### 5.2 Recount of §5's windings with the corrected step rule (#54)
 
@@ -693,7 +703,9 @@ counted −2) and was not repeated.
    Re s ∈ [0.1, 2], |Im s| ≤ 2.5, for phantom l = 2, phantom l = 3 and canonical l = 2, and for ω = 0.70
    and 0.85 (l = 2, 3). #7's −2 for ω = 0.85, l = 3 was an error of the first step rule, and the recount gives 0
    (§5.2). §5.3 (#121) finds no zero of the decaying Zerilli solution at r_m in these boxes, so the 0 counts zeros
-   of D, conditional on that column being D's only pole source (#122).
+   of D, conditional on that column being D's only pole source (#122). At l = 4, 5, 6 the stored box, s1 and n1
+   count 0 too (§3a, #115). Those are zeros minus poles until #124. Every count used the step rule at guard 1, which
+   #126 rechecks.
 3. **Axial: stable for all l ≥ 2.** V_ax > 0 everywhere; positivity is exact once V_ax > 0 is checked on
    the grid (r²V_ax/(α² l(l+1)) ≥ 1 − 10⁻⁶).
 4. **κ_eff.** κ_eff − κ_c = s²/(q_int − g) exactly, and for the phantom star q_int > g, so the matter
@@ -714,6 +726,10 @@ counted −2) and was not repeated.
 - Complex s, campaign star, l = 2 (l = 3 where it differs): counted are Re s ∈ [0.1, 2] for |Im s| ≤ 10 (6 for l = 3),
   Re s ∈ [0.03, 0.1] for |Im s| ≤ 6, Re s ∈ [0.01, 0.03] for |Im s| ≤ 2.5 (l = 2 only), and Re s ∈ [−10⁻³, 0.1] for
   |Im s| ≤ 0.23 (§5.1). The rest is listed under "Not covered" there. The other stars have Re s ≥ 0.1, |Im s| ≤ 2.5 only.
+  At l = 4, 5, 6 the campaign star has the stored box, s1 and n1 only (§3a).
+- Every winding except the rerun of s1 at l = 5 used guard 1, the half-step test at bisection depths 0 and 1 only. In
+  #115 a planted count lost 2π at depth 2. The planted check cannot see a loss that hits D and D times the factor
+  alike (§3a). #126 recounts with `--guard=all`.
 - The windings of §5 were computed with a step rule that can lose 2π in one step (§5.1). One loss shifts a symmetric-box
   count by ±2. They were recounted with the current rule in §5.2. Only ω = 0.85, l = 3 changed, from −2 to 0, because the
   old rule lost one 2π there.
