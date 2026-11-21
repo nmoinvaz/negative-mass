@@ -20,7 +20,8 @@ in #75's closing comment.
     python notes/warp/tanh_spectrum_check.py --part=planted --mutate=kterm      (a control, must exit 1)
     python notes/warp/tanh_spectrum_check.py --part=report --out=DIR --mutate=next  (shifts #75's second moduli by 3e-4)
     python notes/warp/tanh_spectrum_check.py --part=compare --out=DIR --ref=DENSE [--mutate=compare]
-    python notes/warp/tanh_spectrum_check.py --part=highm --out=DIR --ms=11.5,...,20.5 [--mutate=bump]
+    python notes/warp/tanh_spectrum_check.py --part=highm --out=DIR --ms=11.5,...,20.5 [--mutate=bump|lift]
+    python notes/warp/tanh_spectrum_check.py --part=report --out=DIR --mutate=floorup  (every window `floor`, must exit 1)
 
 `solve` writes DIR/s<sigma>_<disc>_m<2m>.npz per sector, one sector at a time, and skips sectors already written.
 `report` reads them all, prints the tables and exits 1 if a check fails. Run one process per (sigma, disc) with
@@ -64,7 +65,7 @@ ap.add_argument("--solver", default="dense", choices=["dense", "arpack"])
 ap.add_argument("--floor", type=float, default=0.07)  # arpack: the |mu| v_c the computed spectrum must reach
 args = ap.parse_args()
 MUT = args.mutate
-if MUT not in ("", "kterm", "half", "next", "compare", "bump"):
+if MUT not in ("", "kterm", "half", "next", "compare", "bump", "lift", "floorup"):
     sys.exit(f"unknown mutation {MUT}")
 K4, NG = 3, 6  # cubic splines, Gauss points per interval
 S_SOB = 3 * (np.pi / 2) ** (4 / 3)
@@ -266,7 +267,11 @@ def part_report():
     narrower; TOLS[1] = 1e-4 is reported beside it. Real eigenvalues are searched in the wider of the two windows.
     The second modulus is the largest |mu| below the leading quadruple's by more than 1e-6 relative, checked against #75's
     "next" column to 1e-4 relative (#111). "A - B" gives the signs of |mu|_A - |mu|_B for the leading and second moduli.
-    --out may list several directories, comma-separated; each sector is read from the first one holding both files."""
+    --out may list several directories, comma-separated; each sector is read from the first one holding both files.
+    "set by" (#119) says what sets the 1e-5 window: `floor`, the truncated spectrum's smallest modulus (so the basis's own
+    window starts lower), or `match`, an eigenvalue above the floor without a partner. Checks `match` (the window is set
+    by an eigenvalue) and `own75` (the 1e-5 window starts below #75's own window). --mutate=floorup puts the floor 1 %
+    above the leading eigenvalue, so every window is `floor` and `match` fails."""
     TOLS, tol_lead, tol_next, tol_real = (1e-5, 1e-4), 1e-5, 1e-4, 1e-9
 
     def second(x):  # x sorted by decreasing modulus
@@ -280,7 +285,7 @@ def part_report():
         check(f"v_c sR={sig:g}", abs(vc - ref["vc"]) < 1e-5, f"{vc:.6f} against #75's {ref['vc']}")
         print(f"\n== sigma R = {sig:g}, v_c = {vc:.6f}")
         print("  m    | n A / B       | leading mu v_c (A)  | |mu| v_c A | B        | #75      | rel. to #75 |"
-              " converged above, 1e-5 / 1e-4 (#75) | eigs in window | real in window A / B | next |mu| v_c A | B"
+              " converged above, 1e-5 / 1e-4 (#75) | set by | eigs in window | real in window A / B | next |mu| v_c A | B"
               "        | #75      | rel. to #75 | A - B lead, next | dir")
         bound = {tol: 0.0 for tol in TOLS}
         lead_last = None
@@ -298,6 +303,8 @@ def part_report():
             # A truncated (arpack) spectrum is known only above its smallest modulus. Above the larger of A's and B's
             # (with 1e-4 room for a quadruple the truncation splits), and the window cannot start below it.
             floor = max(1e-3, am.min() * (1 + 1e-4), bm.min() * (1 + 1e-4))
+            if MUT == "floorup":
+                floor = max(am.max(), bm.max()) * 1.01
             top_a, top_b = ma[am > floor], mb[bm > floor]
             rel_a = np.array([np.min(np.abs(mb - z)) / abs(z) for z in top_a])
             rel_b = np.array([np.min(np.abs(ma - z)) / abs(z) for z in top_b])
@@ -306,6 +313,7 @@ def part_report():
                 bad = np.r_[np.abs(top_a[rel_a > tol]), np.abs(top_b[rel_b > tol]), floor if floor > 1e-3 else 0.0]
                 return bad.max()
             cv = {tol: conv(tol) for tol in TOLS}
+            setby = "floor" if floor > 1e-3 and cv[TOLS[0]] == floor else "match"
             wide = min(cv.values())
             win_a, win_b = top_a[np.abs(top_a) > wide], top_b[np.abs(top_b) > wide]
             real_a = win_a[np.abs(win_a.imag) <= tol_real * np.abs(win_a)]
@@ -323,7 +331,7 @@ def part_report():
             lead_last = lead_a
             print(f"  {m:4g} | {int(A['n']):5d} / {int(B['n']):5d} | {ma[0].real:+.5f}{ma[0].imag:+.5f}i | {lead_a:.6f}   | "
                   f"{lead_b:.6f} | {r75:.6f} | {rel:.1e}     | {cv[TOLS[0]]:.4f} / {cv[TOLS[1]]:.4f} ({c75:.4f})"
-                  f"           | {len(win_a):4d}           | {len(real_a)} / {len(real_b)}                | {next_a:.6f}         | "
+                  f"           | {setby}  | {len(win_a):4d}           | {len(real_a)} / {len(real_b)}                | {next_a:.6f}         | "
                   f"{next_b:.6f} | {n75:.6f} | {reln:.1e}     | {sgn(lead_a - lead_b)} {sgn(next_a - next_b)}"
                   f"              | {'/'.join(os.path.normpath(os.path.dirname(fa)).replace(os.sep, '/').split('/')[-2:])}",
                   flush=True)
@@ -337,6 +345,10 @@ def part_report():
             check(f"sym sR={sig:g} m={m:g}", sym < 1e-4, f"window symmetric under mu -> -mu to {sym:.1e} relative")
             check(f"noreal sR={sig:g} m={m:g}", len(real_a) == 0 and len(real_b) == 0,
                   f"no real eigenvalue with |mu| v_c above {wide:.4f}, in A or B")
+            check(f"match sR={sig:g} m={m:g}", setby == "match",
+                  f"1e-5 window {cv[TOLS[0]]:.4f} set by {setby} (floor {floor:.4f})")
+            check(f"own75 sR={sig:g} m={m:g}", cv[TOLS[0]] < c75,
+                  f"1e-5 window {cv[TOLS[0]]:.4f} against #75's own {c75:.4f}")
         if lead_last is not None:
             for tol in TOLS:
                 top = max(bound[tol], lead_last)
@@ -352,7 +364,8 @@ def part_highm():
     Checks per sigma R: A and B leading agree to 1e-5 relative (`ABhigh`), both lie below the line (`below`: 0.0830 at
     sigma R = 2 and 0.0944 at 4, the leading values of m = 21/2 that set #111's lines), and the leading values fall
     strictly with m from #75's m = 21/2 value on (`fall`). --mutate=bump sets A's leading value of the middle sector 1 %
-    above the sector before it, and `fall` must fail."""
+    above the sector before it, and `fall` must fail. --mutate=lift sets B's leading value of the middle sector 0.1 %
+    above the line, and `below` must fail."""
     LINE = {2.0: 0.0830, 4.0: 0.0944}
     for sig in (2.0, 4.0):
         vc, ref = v_c(sig), REF[sig]
@@ -368,6 +381,8 @@ def part_highm():
             la, lb = np.abs(A["mu"][0]) * vc, np.abs(B["mu"][0]) * vc
             if MUT == "bump" and i == len(MS) // 2:
                 la = seq[-1] * 1.01
+            if MUT == "lift" and i == len(MS) // 2:
+                lb = LINE[sig] * 1.001
             rel = abs(la - lb) / la
             seq.append(la)
             print(f"  {m:4g} | {int(A['n']):5d} / {int(B['n']):5d} | {la:.6f}           | {lb:.6f}   | {rel:.1e} | "
@@ -383,14 +398,15 @@ def part_highm():
 def part_compare():
     """ARPACK against dense at the same sizes: in every sector file of --out also in --ref, each eigenvalue of either
     above the truncated spectrum's smallest modulus (with 1e-4 room) has a partner in the other within 1e-10 relative.
-    --mutate=compare scales the ARPACK eigenvalues by 1 + 1e-9."""
+    When --ref is truncated too (#119: a lower --floor against #111's files), the comparison starts above the higher of
+    the two smallest moduli. --mutate=compare scales the ARPACK eigenvalues by 1 + 1e-9."""
     files = sorted(glob.glob(os.path.join(args.out, "s*_m*.npz")))
     pairs = [(f, os.path.join(args.ref, os.path.basename(f))) for f in files]
     pairs = [(f, g) for f, g in pairs if os.path.exists(g)]
     check("compare present", len(pairs) > 0, f"{len(pairs)} sector files in both {args.out} and {args.ref}")
     for f, g in pairs:
         a, d = np.load(f)["mu"] * (1 + 1e-9 if MUT == "compare" else 1.0), np.load(g)["mu"]
-        floor = np.abs(a).min() * (1 + 1e-4)
+        floor = max(np.abs(a).min(), np.abs(d).min()) * (1 + 1e-4)
         sa, sd = a[np.abs(a) > floor], d[np.abs(d) > floor]
         worst = max(max(np.min(np.abs(d - z)) / abs(z) for z in sa), max(np.min(np.abs(a - z)) / abs(z) for z in sd))
         check(f"compare {os.path.basename(f)}", worst < 1e-10 and len(sa) == len(sd),
