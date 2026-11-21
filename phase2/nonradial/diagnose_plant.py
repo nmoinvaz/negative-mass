@@ -1,13 +1,17 @@
 """
-Replay of winding2.py's step rule on a box's cache, to find a step that lost 2 pi (#115 s1 at l = 5, #126). Reads only the
-pickle cache of the symmetric box, no evaluation of D. Usage:
+Replay of winding2.py's step rule on a box's cache, to find a step that lost 2 pi (#115 s1 at l = 5, #126, #128). Reads
+only the pickle cache of the box (winding2.py's or zerilli_zeros.py's), no evaluation of D. Usage:
 
-  python diagnose_plant.py CACHE_PKL x0 x1 y1 RE,IM [--guard=1|all] [--expect=none|MEASURED,CHAIN] [--mutate=NAME]
+  python diagnose_plant.py CACHE_PKL x0 x1 y1 RE,IM [--y0=Y0] [--guard=1|all] [--expect=none|MEASURED,CHAIN]
+                           [--mutate=NAME]
 
 Replays the adaptive counter of winding2.py (copied, same rule) on the cached values of D and of the planted count
 D (s - s0)(s - conj s0), then compares each accepted step with the dense chain of every cached point on the edge, sorted
 along it. A step whose measured phase differs from the chain's over the same stretch by more than 0.5 rad lost or gained a
 multiple of 2 pi. The chain shares D and its cache with the count, so it tests the step rule and not D.
+  --y0=0          lower edge, as winding2.py's. Y0 = 0 (the default): the symmetric box |Im s| <= y1, three edges from
+                  (x1, 0), the count doubled, the planted factor (s - s0)(s - conj s0). Y0 > 0: the upper box
+                  Y0 < Im s < y1, four edges counterclockwise from (x1, Y0), no doubling, the planted factor (s - s0).
   --guard=1       deepest bisection level with the half-step test, as winding2.py's --guard (`all` or an integer).
   --expect=...    makes the replay a check that exits 1 when it fails. `none`: no step differs from the chain.
                   MEASURED,CHAIN (rad): exactly one step differs, in D times the factor, with these phases to 4
@@ -21,17 +25,21 @@ import sys, pickle, numpy as np
 
 args = [a for a in sys.argv[1:] if not a.startswith('--')]
 opts = dict(a[2:].split('=', 1) for a in sys.argv[1:] if a.startswith('--') and '=' in a)
-if len(args) != 5 or set(opts) - {'guard', 'expect', 'mutate'}:
+if len(args) != 5 or set(opts) - {'y0', 'guard', 'expect', 'mutate'}:
     sys.exit(__doc__)
 cf, (x0, x1, y1) = args[0], (float(a) for a in args[1:4])
 s0 = complex(*(float(a) for a in args[4].split(',')))
+y0 = float(opts.get('y0', 0.0))
+assert 0 <= y0 < y1, "--y0 must satisfy 0 <= Y0 < y1"
+sym = (y0 == 0.0)
 guard = np.inf if opts.get('guard', '1') == 'all' else int(opts.get('guard', '1'))
 expect, mutate = opts.get('expect'), opts.get('mutate')
 assert mutate in (None, 'sparse', 'wrongexpect'), mutate
 if mutate == 'wrongexpect' and (expect is None or expect == 'none'):
     sys.exit("--mutate=wrongexpect needs --expect=MEASURED,CHAIN")
 cache = pickle.load(open(cf, 'rb'))
-corners = [complex(x1, 0), complex(x1, y1), complex(x0, y1), complex(x0, 0)]
+corners = [complex(x1, 0), complex(x1, y1), complex(x0, y1), complex(x0, 0)] if sym else \
+    [complex(x1, y0), complex(x1, y1), complex(x0, y1), complex(x0, y0), complex(x1, y0)]
 key = lambda s: complex(round(s.real, 12), round(s.imag, 12))
 
 
@@ -45,7 +53,7 @@ def D(s):
     return cache[key(s)]
 
 
-pf = lambda s: (s - s0) * (s - np.conj(s0))
+pf = (lambda s: (s - s0) * (s - np.conj(s0))) if sym else (lambda s: s - s0)
 F = {'D': D, 'D*factor': lambda s: D(s) * pf(s)}
 
 
@@ -85,7 +93,7 @@ def chain(f, a, b, leaves):
 
 
 print(f"cache {cf}: {len(cache)} points; planted s0 = {s0}; guard {opts.get('guard', '1')}"
-      + (f"; mutate={mutate}" if mutate else ""))
+      + ("" if sym else f"; y0 = {y0:g}") + (f"; mutate={mutate}" if mutate else ""))
 lost, chainmax = [], 0.0
 try:
     for name, f in F.items():
@@ -110,8 +118,8 @@ try:
                         print(f"    step t in [{t0:.5f}, {t1:.5f}] (s = {a + (b - a) * t0:.5f} .. {a + (b - a) * t1:.5f}): "
                               f"measured {dph:+.4f}, dense chain {c:+.4f} over {len(sel)} cached steps "
                               f"(max {max(abs(inc[i]) for i in sel):.3f}), difference/2pi {(dph - c) / (2 * np.pi):+.4f}")
-        print(f"  total adaptive {tot_ad:+.4f} -> count {2 * tot_ad / (2 * np.pi):+.4f};  dense chain {tot_ch:+.4f} -> "
-              f"count {2 * tot_ch / (2 * np.pi):+.4f}")
+        print(f"  total adaptive {tot_ad:+.4f} -> count {(2 if sym else 1) * tot_ad / (2 * np.pi):+.4f};  "
+              f"dense chain {tot_ch:+.4f} -> count {(2 if sym else 1) * tot_ch / (2 * np.pi):+.4f}")
 except Missing as e:
     print(f"CHECK FAIL: the cache lacks the point {e.args[0]} that the counter asks for (guard {opts.get('guard', '1')})")
     sys.exit(1)
