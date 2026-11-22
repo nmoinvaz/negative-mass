@@ -19,7 +19,7 @@ SPHERE_LIMIT = 4 * 3600  # wall seconds allowed to any single sphere integral
 
 # Every control is a mutation of the code that must make its target checks fail. The target lists are written before the first
 # control run and are not changed after it.
-VSPIN_T = ["identity_points", "planted_B_schwarzschild", "planted_dipole", "bdy_vs_adm", "eps1_drops", "free_symbols"]
+VSPIN_T = ["identity_points", "planted_B_schwarzschild", "planted_dipole", "bdy_vs_adm", "eps1_drops", "eps1_hand", "free_symbols"]
 CONTROLS = {
     "gamma": ("scales g^1 by 11/10", ["clifford", "identity_points"]),
     "no-conj": ("takes <a, b> = a^T b, without the complex conjugate", ["dagger", "identity_points"]),
@@ -30,12 +30,12 @@ CONTROLS = {
     "weight": ("takes the flux and the divergence without the weight psi^4 (and psi^-6)",
                ["div_formula", "planted_B_schwarzschild", "identity_points"]),
     "Vsign": ("flips V's K term, +(1/2) P_ij xi^j, with nabla~ and the identity as stated",
-              ["identity_points", "planted_BY", "bdy_vs_adm", "bdy_vs_adm_T", "flip_consistent"]),
+              ["identity_points", "planted_BY", "bdy_vs_adm", "bdy_vs_adm_T", "flip_consistent", "aligned_eps0"]),
     "sign": ("takes nabla~ with the other sign of its K term, nabla_i - (1/2) K_ij g^j g^0, and V's K term derived from it, "
              "-(1/2) sK P_ij xi^j with sK = -1, so +(1/2) P_ij xi^j; the identity keeps -J.xi",
-             ["identity_points", "planted_BY", "bdy_vs_adm", "bdy_vs_adm_T"]),
+             ["identity_points", "planted_BY", "bdy_vs_adm", "bdy_vs_adm_T", "aligned_eps0"]),
     "Jsign": ("writes +J.xi in the pointwise identity", ["identity_points"]),
-    "Kdiv": ("drops V's K term", ["identity_points", "planted_BY", "bdy_vs_adm", "bdy_vs_adm_T", "flip_consistent"]),
+    "Kdiv": ("drops V's K term", ["identity_points", "planted_BY", "bdy_vs_adm", "bdy_vs_adm_T", "flip_consistent", "aligned_eps0"]),
     "Vspin": ("drops -g^i D eps from V", VSPIN_T),
     "Dhalf": ("takes -(1/2) g^i D eps in V, so g^i g^k is no longer antisymmetrized against delta_ik", VSPIN_T),
     "trace": ("takes P_ij = K_ij in V, without -delta_ij tr K", ["identity_points", "bdy_vs_adm_T"]),
@@ -666,6 +666,36 @@ def section_planted():
                   "(1 + m/2r)^-2 P.xi_0 by hand (tr K-hat = 0 and the sphere mean of n_i K-hat_ij r^2 is 2 P_j), so the boundary term is m |eps_0|^2 - P.xi_0")
 
 
+def section_aligned():
+    """E - |P| is reached by the eps_0 with xi_0 = P/|P|, and E + |P| by xi_0 = -P/|P| (with the sign of nabla~ of the note)."""
+    if not todo("aligned_eps0"):
+        return
+    print("\n== 3b. The eps_0 that gives E - |P| ==")
+    R = series_run("BY", P=True)
+    Pn = [1, 2, 2]  # |P| = 3, so that the projector and the spinors are exact
+    g0, gj = gammas()
+    al = [g0 * g for g in gj]  # alpha_j = g^0 g^j, Hermitian, alpha_i alpha_j + alpha_j alpha_i = 2 delta_ij
+    Pa = sum((sp.Rational(Pn[j], 3) * al[j] for j in range(3)), sp.zeros(4))
+    out = []
+    ok = True
+    for sgn, name in ((1, "xi_0 = +P/|P|"), (-1, "xi_0 = -P/|P|")):
+        Pi = (sp.eye(4) + sgn * Pa) / 2  # projector onto the +1 (or -1) eigenspace of P.alpha/|P|
+        c = next(j for j in range(4) if any(Pi[:, j]))
+        e0 = (sp.sqrt(2) * Pi[:, c]).applyfunc(sp.expand)  # |eps_0|^2 = 2 Pi_cc = 1 for a projector column
+        vals = {sym(f"u{a}"): sp.re(e0[a]) for a in range(4)}
+        vals.update({sym(f"v{a}"): sp.im(e0[a]) for a in range(4)})
+        vals.update({sym(f"P{c_}"): Pn[j] for j, c_ in enumerate("xyz")})
+        xi = [sp.expand(x.subs(vals)) for x in R["xi"]]
+        e2v = sp.expand(R["e2"].subs(vals))
+        B = sp.expand(R["flux"].get(0, 0).subs(vals))
+        want = sym("m") - sgn * 3
+        good = e2v == 1 and xi == [sp.Rational(sgn * Pn[j], 3) for j in range(3)] and sp.expand(B - want) == 0
+        ok = ok and good
+        out.append(f"{name}: |eps_0|^2 = {e2v}, xi_0 = {xi}, boundary term {B}")
+    check("aligned_eps0", ok, "P = (1, 2, 2), |P| = 3, eps_0 = sqrt(2) times a column of (1 +- P.alpha/|P|)/2: " + "; ".join(out)
+          + ". So E - |P| is the boundary term of the eps_0 with xi_0 = +P/|P|, and E + |P| that of xi_0 = -P/|P|")
+
+
 # ---- 4. The general boundary term ------------------------------------------------------------------------------------------
 GEN = dict(psi2="general", P=True, K3=True, eps1=True, eps2=True)
 
@@ -675,12 +705,28 @@ def gen_run():
     return series_run("general", **kw)
 
 
+def eps1_hand_check(R):
+    """The eps_1-dependent part of the order r^0 integrand against the hand form -Re<eps_0, nslash dslash_tan eps_1>, modulo n^2 = 1."""
+    g0, gj = gammas()
+    F0 = split_s(R["F"].v).get(2, 0)
+    fs = {v for k, v in SYMS.items() if k.startswith("f")}
+    part = sp.Add(*[t for t in sp.Add.make_args(sp.expand(F0)) if t.free_symbols & fs])
+    e1 = sp.Matrix([poly_n(f"f{a}", 2, True) for a in range(4)])
+    dtan = [e1.diff(N3[k]) - N3[k] * sum((N3[j] * e1.diff(N3[j]) for j in range(3)), sp.zeros(4, 1)) for k in range(3)]
+    ns = sum((N3[i] * gj[i] for i in range(3)), sp.zeros(4))
+    vec = sum((ns * gj[k] * dtan[k] for k in range(3)), sp.zeros(4, 1))
+    hand = -WC.re(WC.inner(R["D"]["e0"], vec))
+    diff = sp.expand(part - hand)
+    rem = sp.rem(sp.Poly(diff, nz), sp.Poly(nz**2 + nx**2 + ny**2 - 1, nz)).as_expr()
+    return sp.expand(rem) == 0, len(sp.Add.make_args(part))
+
+
 def section_general():
     print("\n== 4. The boundary term of the general data against E |eps_0|^2 - P.xi_0 ==")
-    names = ("bdy_vs_adm", "bdy_vs_adm_T", "no_divergence", "limit_exists", "eps1_drops", "free_symbols")
+    names = ("bdy_vs_adm", "bdy_vs_adm_T", "no_divergence", "limit_exists", "eps1_drops", "eps1_hand", "free_symbols")
     if not any(todo(n) for n in names):
         return
-    if any(todo(n) for n in ("bdy_vs_adm", "no_divergence", "limit_exists", "eps1_drops", "free_symbols")):
+    if any(todo(n) for n in ("bdy_vs_adm", "no_divergence", "limit_exists", "eps1_drops", "eps1_hand", "free_symbols")):
         R = gen_run()
         flux, E, P, xi, e2_ = R["flux"], R["E"], R["P"], R["xi"], R["e2"]
         eps1_syms = {v for k, v in SYMS.items() if k.startswith(("f", "g", "h"))}
@@ -706,7 +752,12 @@ def section_general():
             dep_integral = bool(sp.expand(flux.get(0, 0)).free_symbols & eps1_syms)
             check("eps1_drops", dep_pointwise and not dep_integral, "the eps_1 and eps_2 coefficients enter the order r^0 integrand "
                   f"(pointwise it has {len(sp.Add.make_args(F0))} terms) but not its sphere integral: the spin part's eps_1 term is "
-                  "-Re<eps_0, nslash dslash_tan eps_1>, a rotation derivative with antisymmetric g^i g^k, whose sphere integral is 0")
+                  "-Re<eps_0, nslash dslash_tan eps_1> (eps1_hand), a rotation derivative with antisymmetric g^i g^k whose sphere integral is 0")
+        if todo("eps1_hand"):
+            okh, nth = eps1_hand_check(R)
+            check("eps1_hand", okh, f"the {nth} terms of the order r^0 integrand that contain eps_1 equal -Re<eps_0, nslash dslash_tan eps_1> "
+                  "modulo n^2 = 1, with dslash_tan = g^k (d_nk - n_k n.d_n): nslash dslash_tan = sum_{i<k} g^i g^k (n_i d_k - n_k d_i) is a "
+                  "sum of rotation generators with antisymmetric g^i g^k, whose sphere integral is 0")
         if todo("free_symbols"):
             ok = not (sp.expand(flux.get(0, 0)).free_symbols & outside)
             check("free_symbols", ok, "the boundary term depends on m, P and eps_0 only: not on the angular parts of psi, the r^-3 terms "
@@ -727,7 +778,7 @@ def section_general():
 def values():
     """Exact rational values for every symbol of the fullest data family, fixed by the sorted names."""
     D = data(psi2="general", P=True, K3=True, T=True, eps1=True, eps2=True, eta=True)
-    syms = sorted((v for v in SYMS.values()), key=str)
+    syms = sorted({v for e in (D["psi"], *D["Kh"], *D["eps"]) for v in e.free_symbols} - set(N3) - {s}, key=str)
     return {v: (sp.Rational(3, 5) if v.name == "m" else sp.Rational(((5 * i + 2) % 11) - 5, 10)) for i, v in enumerate(syms)}
 
 
@@ -830,6 +881,7 @@ def main():
     section_conventions()
     section_machinery()
     section_planted()
+    section_aligned()
     section_general()
     section_identity()
     fails = [n for n, ok in RESULTS if not ok]
