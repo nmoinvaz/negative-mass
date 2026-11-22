@@ -827,8 +827,9 @@ def section_general():
             check("no_divergence", not nz_, "pointwise, psi^4 V^a n_a r^2 has no term of order r^2 or r: its first term is the order "
                   f"r^0 one, which has {len(sp.Add.make_args(F.get(2, 0)))} terms in n")
         if todo("limit_exists"):
-            check("limit_exists", zero(flux.get(-2, 0)) and zero(flux.get(-1, 0)), "the sphere integrals of the r^2 and r terms vanish: "
-                  "the limit r -> infinity of the boundary term exists")
+            nt = [len(sp.Add.make_args(sp.expand(flux.get(j, 0)))) if not zero(flux.get(j, 0)) else 0 for j in (-2, -1)]
+            check("limit_exists", nt == [0, 0], "the sphere integrals of the r^2 and r terms vanish (they have "
+                  f"{nt[0]} and {nt[1]} terms): the limit r -> infinity of the boundary term exists")
         if todo("bdy_vs_adm"):
             Pdot = sum(P[j].get(0, 0) * xi[j] for j in range(3))
             want = E.get(0, 0) * e2_ - Pdot
