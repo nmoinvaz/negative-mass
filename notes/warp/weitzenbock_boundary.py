@@ -789,7 +789,9 @@ GEN = dict(psi2="general", P=True, K3=True, eps1=True, eps2=True)
 
 
 def gen_run():
-    kw = dict(GEN, eta=True) if MUT == "eps-O1" else GEN
+    # eps-O1 adds eta(n) to eps_0 with the Bowen-York K and no other angular terms: with all of the terms the flux series was not
+    # finished after 2 h 14 min (1.2 GiB) in step 4's first run, and the divergence of the O(1) term does not depend on them
+    kw = dict(P=True, eta=True) if MUT == "eps-O1" else GEN
     return series_run("general", **kw)
 
 
