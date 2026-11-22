@@ -1,0 +1,21 @@
+# #117: four boxes of the phantom campaign star (eps = -1, omega = 0.7603) at --guard=all
+jobs.txt equals the job list (8 jobs)
+| box | l | Re s | Im s | winding of D | max step | min abs(D) | evaluations | R_s | planted s0 | planted found (D) | count of Z | planted found (Z) | zeros of D |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| b25_l2 | 2 | [2, 5] | abs(Im s) ≤ 10 | +0.0000 | 0.39 | 1.95e-05 | 165 | 44.0 | 2.5+1j | +2.0000 of 2 | -0.0000 | +2.0000 of 2 | 0 |
+| b25_l3 | 3 | [2, 5] | abs(Im s) ≤ 10 | -0.0000 | 0.40 | 4.87e-05 | 231 | 44.0 | 2.5+1j | +2.0000 of 2 | +0.0000 | +2.0000 of 2 | 0 |
+| h2_l3 | 3 | [0.1, 2] | [6, 10] | +0.0000 | 0.38 | 6.43e-05 | 80 | 422.4 | 0.3+6.2j | +1.0000 of 1 | -0.0000 | +1.0000 of 1 | 0 |
+| h3_l2 | 2 | [0.1, 2] | [10, 20] | -0.0000 | 0.28 | 3.38e-06 | 120 | 423.6 | 0.3+10.5j | +1.0000 of 1 | -0.0000 | +1.0000 of 1 | 0 |
+
+| job | script | exit status | max step | min abs | evaluations | wall | D(x0), D(x1) | checks |
+|---|---|---|---|---|---|---|---|---|
+| w_b25_l2 | winding2.py | 0 | 0.39 | 1.95e-05 | 165 | 0 h 18 min | -1.773e-03, -1.895e-04 | PASS |
+| w_b25_l3 | winding2.py | 0 | 0.40 | 4.87e-05 | 231 | 0 h 21 min | -4.425e-03, -4.739e-04 | PASS |
+| w_h2_l3 | winding2.py | 0 | 0.38 | 6.43e-05 | 80 | 1 h 30 min |  | PASS |
+| w_h3_l2 | winding2.py | 0 | 0.28 | 3.38e-06 | 120 | 3 h 55 min |  | PASS |
+| z_b25_l2 | zerilli_zeros.py | 0 | 0.23 | 2.99e-01 | 61 | 24 s |  | PASS; holo defect ≤ 1.7e-08, q against zerilli_q ≤ 9.2e-12 |
+| z_b25_l3 | zerilli_zeros.py | 0 | 0.23 | 2.99e-01 | 61 | 26 s |  | PASS; holo defect ≤ 1.6e-08, q against zerilli_q ≤ 1.6e-12 |
+| z_h2_l3 | zerilli_zeros.py | 0 | 0.02 | 3.13e-01 | 80 | 36 s |  | PASS; holo defect ≤ 2.4e-08, q against zerilli_q ≤ 4.0e-12 |
+| z_h3_l2 | zerilli_zeros.py | 0 | 0.01 | 2.23e-01 | 80 | 32 s |  | PASS; holo defect ≤ 6.1e-09, q against zerilli_q ≤ 1.5e-12 |
+
+RESULT: all eight jobs exit 0, every count is an integer, every planted check passed and D has one sign at both ends of each symmetric box
