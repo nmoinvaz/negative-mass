@@ -20,18 +20,32 @@ exp(c nu0 + ...) becomes alpha^(2c), exp(c lam0) becomes a^(2c).
 Method.  The straight-line program of J_and_h (source of polar_matrix_generated.py, read, with its two numpy
 imports dropped; the printer wrote five exponents as -1.0 and one 1/3 as a Python float quotient, which are turned
 into -1 and Rational(1, 3) by an AST rewrite so that no float enters) is run on truncated Taylor series in r of
-order 2 whose coefficients are exact elements of a rational function field K over Q.  The order-1 coefficient of
+order 2 whose coefficients are exact elements of a field or ring of rational functions over Q.  The order-1 coefficient of
 a quantity is its total r-derivative by the chain rule through alpha, a, phi0, u (so J', h'), the order-2
-coefficient is half its second derivative (h'').  pi enters as a generator PI of K (the identity holds for any
-value of the coupling constant, so it holds for pi).  K has
-    --method=points:    the single generator PI; every other variable is a random rational number
-                        (an identity test at points, not a symbolic proof);
-    --method=symbolic:  all twelve generators r, alpha, a, phi0, u, omega, epsilon, s, LL, Lambda, mu, PI;
-                        a residual that is the zero of K is a proof by exact computation (checked symbolically).
-                        --deadline=<seconds> stops it with exit code 2 (not finished).
+coefficient is half its second derivative (h'').  pi enters as a generator PI of the number field (the identity
+holds for any value of the coupling constant, so it holds for pi); epsilon is a generator too, not +-1.
+Two exact number types carry the series:
+    --engine=frac  sympy's rational function field: every operation cancels by gcd (canonical form).  At twelve
+                   variables it did not get past J' in 5 min 48 s (a 300 s deadline, delayed by one gcd; raw I8-rpi5).
+    --engine=af    gcd-free: an element is N / prod(atom_k^e_k) with N a Laurent polynomial over Q in the free
+                   variables, the atoms the polynomials the program inverts (here one, an 8-term polynomial, the
+                   same up to monomials and scale everywhere); sums bring both terms to the common denominator by
+                   multiplying numerators by atom powers.  It is zero iff N is zero as a polynomial.
+--method=points: every variable but PI is a random rational number (identity test at points, not a symbolic proof);
+                 engine frac by default.
+--method=symbolic: --free=all (default) keeps all twelve variables r, alpha, a, phi0, u, omega, epsilon, s, LL, Lambda,
+                 mu, PI as generators; engine af by default.  A residual that is exactly the zero polynomial is an
+                 exact computer-assisted identity in twelve variables (checked symbolically).  --free=r,s,... keeps
+                 only those (and PI) free, the others at the base points of --seed (a ladder for the engines).
+                 --deadline=<seconds> stops it with exit code 2 (not finished); a long gcd delays the stop.
+Cross-checks: --selftest (series derivatives against sympy's chain rule on the symbolic J, h, at points),
+--crosscheck (the symbolic objects of the af engine, all twelve variables free, evaluated at random rational points
+against the field engine's exact values there: J, J', h, h', h'', every row of y, y', y'' and every coefficient of
+the equations).  What the engines share: the program of J_and_h and its AST rewrite, the series class, the first
+background derivatives and the extraction of the equations' coefficients from polar_eqs.pkl.
 
 Pass criteria (written before the runs).
-  - a residual vector counts as zero only if all six coefficients are the zero element of K;
+  - a residual vector counts as zero only if all six coefficients are the zero element;
   - points: for each of the eight equations all N points give zero (N = 20, epsilon = +1 and -1 alternating);
   - symbolic: all eight equations give zero.
   - Exit code 1 if any check fails.  Exit code 0 if all pass.
@@ -43,12 +57,15 @@ Controls (--mutate), each must give a nonzero residual in (tt) or the angular tr
 A mutated run exits 1 when the mutation is detected (the check fails, as it must) and 0 when it is not detected.
 
 Usage:  python verify_polar_exact.py [--method=points|symbolic] [--npoints=20] [--seed=8] [--mutate=...]
-                                     [--sensitivity] [--selftest] [--deadline=SECONDS] [--eqs=tt,ang_tr,...]
+                                     [--sensitivity] [--selftest] [--crosscheck] [--deadline=SECONDS] [--eqs=tt,ang_tr,...]
+                                     [--engine=frac|af] [--free=all|r,s,...]
 """
 import os, sys, ast, time, pickle, random, signal, hashlib, argparse, subprocess
+from fractions import Fraction
 import sympy as sp
 from sympy import QQ
 from sympy.polys.fields import field
+from sympy.polys.rings import ring
 
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)
 sys.setrecursionlimit(200000)
@@ -69,6 +86,109 @@ def say(*a):
 
 def tm():
     return "%.0fs" % (time.time() - T0)
+
+
+# ------------------------------------------------------------------ gcd-free exact numbers
+class AFField:
+    """Elements N / prod(atom_k^e_k): N a Laurent polynomial over Q in the free variables, the atoms the inverted
+    polynomials (monic, monomial factor removed). No gcd is ever taken; an element is zero iff N is zero."""
+    def __init__(self, names):
+        self.R, *self.gens = ring(','.join(names), QQ)
+        self.names = names
+        self.atoms, self.aid, self.pwc = [], {}, {}
+        self.zero, self.one = AF(self, self.R.zero, {}), AF(self, self.R.one, {})
+
+    def pw(self, den):
+        key = tuple(sorted(den.items()))
+        v = self.pwc.get(key)
+        if v is None:
+            v = self.R.one
+            for k, e in key:
+                v = v * self.atoms[k] ** e
+            self.pwc[key] = v
+        return v
+
+    def poly(self, d):
+        return self.R.from_dict(d)
+
+    def from_expr(self, expr):
+        out = {}
+        for term in sp.Add.make_args(sp.expand(expr)):
+            c, rest = term.as_coeff_Mul()
+            assert c.is_Rational, term
+            ev = [0] * len(self.names)
+            if rest != 1:
+                for b, e in rest.as_powers_dict().items():
+                    assert b.is_Symbol and e.is_Integer and b.name in self.names, (term, b, e)
+                    ev[self.names.index(b.name)] += int(e)
+            ev = tuple(ev)
+            out[ev] = out.get(ev, 0) + QQ.from_sympy(c)
+        return AF(self, self.poly({k: v for k, v in out.items() if v}), {})
+
+
+class AF:
+    __slots__ = ('F', 'N', 'den')
+
+    def __init__(self, F, N, den):
+        self.F, self.N, self.den = F, N, (den if N else {})
+
+    def _co(self, o):
+        return o if isinstance(o, AF) else AF(self.F, self.F.R.from_dict({(0,) * len(self.F.names): QQ(int(o))}), {})
+
+    def __bool__(self):
+        return bool(self.N)
+
+    def __neg__(self):
+        return AF(self.F, -self.N, self.den)
+
+    def __add__(self, o):
+        o = self._co(o)
+        if self.den == o.den:
+            return AF(self.F, self.N + o.N, self.den)
+        den = {k: max(self.den.get(k, 0), o.den.get(k, 0)) for k in set(self.den) | set(o.den)}
+        d1 = {k: v - self.den.get(k, 0) for k, v in den.items() if v > self.den.get(k, 0)}
+        d2 = {k: v - o.den.get(k, 0) for k, v in den.items() if v > o.den.get(k, 0)}
+        N1 = self.N * self.F.pw(d1) if d1 else self.N
+        N2 = o.N * self.F.pw(d2) if d2 else o.N
+        return AF(self.F, N1 + N2, den)
+    __radd__ = __add__
+
+    def __sub__(self, o):
+        return self + (-self._co(o))
+
+    def __rsub__(self, o):
+        return self._co(o) + (-self)
+
+    def __mul__(self, o):
+        o = self._co(o)
+        den = dict(self.den)
+        for k, v in o.den.items():
+            den[k] = den.get(k, 0) + v
+        return AF(self.F, self.N * o.N, den)
+    __rmul__ = __mul__
+
+    def inv(self):
+        F, N = self.F, self.N
+        if not N:
+            raise ZeroDivisionError
+        ks = list(N)
+        mon = tuple(min(k[i] for k in ks) for i in range(len(ks[0])))
+        P = F.R.from_dict({tuple(e - m for e, m in zip(k, mon)): c for k, c in N.items()})
+        lc = P.LC
+        inv_mon = F.poly({tuple(-e for e in mon): QQ(1) / lc})
+        num = inv_mon * F.pw(self.den)
+        if len(P) == 1:
+            return AF(F, num, {})
+        A = P.quo_ground(lc)
+        k = F.aid.get(A)
+        if k is None:
+            k = F.aid[A] = len(F.atoms)
+            F.atoms.append(A)
+        return AF(F, num, {k: 1})
+
+
+def finv(x):
+    return x.inv() if isinstance(x, AF) else KF.one / x
 
 
 # ------------------------------------------------------------------ truncated Taylor series
@@ -128,7 +248,7 @@ class Jet:
 
     def inv(self):
         b = self
-        i0 = KF.one / b[0]
+        i0 = finv(b[0])
 
         def g(k):
             if k == 1:
@@ -281,16 +401,24 @@ def bg_flow(mut_bg):
 
 # ------------------------------------------------------------------ the evaluation in K
 class Ctx:
-    def __init__(self, code, pt, flow):
-        """pt: dict name -> Rational for a points run, None for the symbolic run."""
+    def __init__(self, code, pt, flow, engine='frac', free=None):
+        """pt: dict name -> Rational for the variables that are not free (None: all free). engine: 'frac' is the
+        rational function field of sympy (gcd after every operation), 'af' the gcd-free AFField."""
         global KF
-        self.pt, self.code, self.flow = pt, code, flow
-        names = ['PI'] if pt is not None else NAMES
-        self.K, *gens = field(','.join(names), QQ)
+        self.pt, self.code, self.flow, self.engine = pt, code, flow, engine
+        if free is None:
+            free = NAMES if pt is None else ['PI']
+        names = [n for n in NAMES if n == 'PI' or n in free]
+        if engine == 'af':
+            self.K = AFField(names)
+            gens = [AF(self.K, g, {}) for g in self.K.gens]
+        else:
+            self.K, *gens = field(','.join(names), QQ)
         KF = self.K
         _kc.clear()
+        self.names = names
         self.gen = dict(zip(names, gens))
-        self.xmap = {Q[n]: v for n, v in (pt or {}).items()}
+        self.xmap = {Q[n]: v for n, v in (pt or {}).items() if n not in names}
 
     def conv(self, expr):
         return self.K.from_expr(expr.xreplace(self.xmap) if self.xmap else expr)
@@ -314,7 +442,7 @@ class Ctx:
         Jg, hg = ns['J_and_h'](*[inp[n] for n in ('r', 'alpha', 'a', 'phi0', 'u', 'omega', 'epsilon', 's', 'LL',
                                                      'Lambda', 'mu')])
         if verbose:
-            say("  program run on the series: %s" % tm())
+            say("  program run on the series (lazy): %s" % tm())
         J = [[lift(Jg[i, j])[0] for j in range(6)] for i in range(6)]
         if verbose:
             say("  J:    %s  %s" % (tm(), size(J)))
@@ -381,10 +509,15 @@ def vadd(a, b):
     return [x + y for x, y in zip(a, b)]
 
 
+def sz(x):
+    return (len(x.N), len(x.den)) if isinstance(x, AF) else (len(x.numer), len(x.denom))
+
+
 def size(M):
-    n = [(len(x.numer), len(x.denom)) for row in M for x in row if x]
-    return "terms of numerator / denominator: max %d / %d, total %d" % (
-        max((a for a, _ in n), default=0), max((b for _, b in n), default=0), sum(a + b for a, b in n))
+    n = [sz(x) for row in M for x in row if x]
+    return "terms of numerator / denominator%s: max %d / %d, total %d" % (
+        " (atoms)" if n and isinstance(KF, AFField) else "", max((a for a, _ in n), default=0),
+        max((b for _, b in n), default=0), sum(a + b for a, b in n))
 
 
 def nnz(vec):
@@ -409,7 +542,7 @@ def make_points(n, seed):
     return pts
 
 
-def run_points(a, code, eqs, order, coef, mut_bg):
+def run_points(a, code, eqs, order, coef, mut_bg, engine):
     flow = bg_flow(mut_bg)
     pts = make_points(a.npoints, a.seed)
     say("points (seed %d), epsilon alternates +1, -1:" % a.seed)
@@ -419,7 +552,7 @@ def run_points(a, code, eqs, order, coef, mut_bg):
     stats = {k: dict(zero=0, yzero=0, nnz=[]) for k in order}
     anytgt = []
     for m, p in enumerate(pts):
-        ctx = Ctx(code, p, flow)
+        ctx = Ctx(code, p, flow, engine)
         base = ctx.evaluate()
         rows = ctx.make_rows(base, coef)
         res = {k: ctx.residual(rows, eqs[k]) for k in order}
@@ -427,9 +560,10 @@ def run_points(a, code, eqs, order, coef, mut_bg):
         line = []
         for k in order:
             c = res[k]
-            ry = sum((ctx.K.from_expr(y[j]) * c[j] for j in range(6)), ctx.K.zero).as_expr()
+            ryv = sum((ctx.K.from_expr(y[j]) * c[j] for j in range(6)), ctx.K.zero)
+            ryz = (not ryv) if engine == 'af' else (ryv.as_expr() == 0 and isinstance(ryv.as_expr(), sp.Rational))
             n = nnz(c)
-            stats[k]['zero'] += n == 0; stats[k]['yzero'] += (ry == 0 and isinstance(ry, sp.Rational))
+            stats[k]['zero'] += n == 0; stats[k]['yzero'] += ryz
             stats[k]['nnz'].append(n)
             line.append("%s %s" % (k, "0" if n == 0 else "NONZERO(%d/6)" % n))
         anytgt.append(any(nnz(res[k]) for k in EQS_TARGET if k in res))
@@ -500,6 +634,60 @@ def selftest(a, code, mut_bg):
     return 0 if ok else 1
 
 
+def eval_af(x, F, vals):
+    """Value of an AF element at rational values (list in the order of F.names), as a Fraction."""
+    def poly(N):
+        tot = Fraction(0)
+        for ev, c in N.items():
+            v = Fraction(int(c.numerator), int(c.denominator))
+            for z, e in zip(vals, ev):
+                if e:
+                    v *= z ** e
+            tot += v
+        return tot
+    v = poly(x.N) if x.N else Fraction(0)
+    for k, e in x.den.items():
+        v /= poly(F.atoms[k]) ** e
+    return v
+
+
+def crosscheck(a, code, eqs, order, mut_bg):
+    """The symbolic objects of the gcd-free engine (all twelve variables free) evaluated at random rational points,
+    against the same quantities from the field engine at those points (different arithmetic)."""
+    flow = bg_flow(mut_bg)
+    S = Ctx(code, None, flow, 'af')
+    baseS = S.evaluate()
+    rowsS = S.make_rows(baseS)
+    coefS = {k: [(nk, S.conv(A)) for nk, A in eqs[k]] for k in order}
+    say("crosscheck: symbolic objects built %s; atoms %d" % (tm(), len(S.K.atoms)))
+    ok = True
+    rng = random.Random(a.seed + 2)
+    for m, pt in enumerate(make_points(a.npoints, a.seed + 2)):
+        pv = sp.Rational(rng.randint(1, 60), rng.randint(1, 20))
+        N = Ctx(code, pt, flow, 'frac')
+        baseN = N.evaluate()
+        rowsN = N.make_rows(baseN)
+        vals = [Fraction(int(pt[n].p), int(pt[n].q)) if n != 'PI' else Fraction(int(pv.p), int(pv.q)) for n in NAMES]
+        num = lambda x: x.as_expr().xreplace({Q['PI']: pv})
+        eq = lambda xs, xn: (Fraction(int(num(xn).p), int(num(xn).q)) == eval_af(xs, S.K, vals))
+        res = []
+        for name in ('J', 'Jp'):
+            res.append((name, sum(eq(baseS[name][i][j], baseN[name][i][j]) for i in range(6) for j in range(6)), 36))
+        for name in ('h', 'hp', 'hpp'):
+            res.append((name, sum(eq(baseS[name][j], baseN[name][j]) for j in range(6)), 6))
+        res.append(('rows', sum(eq(rowsS[nk][j], rowsN[nk][j]) for nk in rowsS for j in range(6)), 6 * len(rowsS)))
+        nc = tot = 0
+        for k in order:
+            for nk, A in coefS[k]:
+                An = N.conv(dict(eqs[k])[nk])
+                nc += eq(A, An); tot += 1
+        res.append(('coefficients', nc, tot))
+        say("  point %d (PI = %s): " % (m + 1, pv) + "  ".join("%s %d/%d" % x for x in res) + "   [%s]" % tm())
+        ok &= all(n == tt for _, n, tt in res)
+    say("RESULT crosscheck %s" % ("PASS: symbolic objects agree with the field engine at every point" if ok else "FAILED"))
+    return 0 if ok else 1
+
+
 # ------------------------------------------------------------------ main
 def main():
     ap = argparse.ArgumentParser()
@@ -509,8 +697,11 @@ def main():
     ap.add_argument('--mutate', default=None)
     ap.add_argument('--sensitivity', action='store_true')
     ap.add_argument('--selftest', action='store_true')
+    ap.add_argument('--crosscheck', action='store_true')
     ap.add_argument('--deadline', type=int, default=0)
     ap.add_argument('--eqs', default=None)
+    ap.add_argument('--engine', default=None, choices=('frac', 'af'))
+    ap.add_argument('--free', default='all')
     a = ap.parse_args()
     order = tuple(a.eqs.split(',')) if a.eqs else EQS_PLANTED + EQS_TARGET
     coef = mut_bg = None
@@ -533,15 +724,20 @@ def main():
                                                       info['exp_sqrt_log_used'] or 'none'))
     for k in order:
         say("  E[%-6s] jets: %s" % (k, ", ".join("%s%s" % (n, "'" * kk) for (n, kk), _ in sorted(eqs[k]))))
+    engine = a.engine or ('frac' if a.method == 'points' else 'af')
+    say("engine: %s" % ({'frac': 'sympy rational function field (gcd after every operation)',
+                         'af': 'gcd-free: Laurent polynomial numerators, inverted polynomials as denominator atoms'}[engine]))
     if a.mutate:
         say("MUTATION %s" % a.mutate)
     if a.selftest:
         return selftest(a, code, mut_bg)
+    if a.crosscheck:
+        return crosscheck(a, code, eqs, order, mut_bg)
     if a.sensitivity:
         sensitivity(a, code, eqs, order, mut_bg)
         return 0
     if a.method == 'points':
-        ok, anytgt = run_points(a, code, eqs, order, coef, mut_bg)
+        ok, anytgt = run_points(a, code, eqs, order, coef, mut_bg, engine)
         if a.mutate:
             det = all(anytgt)
             say("\nMUTATION %s: (tt) or the angular trace has a nonzero residual at %d/%d points -> %s"
@@ -552,36 +748,58 @@ def main():
         say("RESULT %s" % ("all eight residuals exactly 0 at all points" if ok else "FAILED"))
         return 0 if ok else 1
     # symbolic
+    free = None if a.free == 'all' else a.free.split(',')
+    assert free is None or all(x in NAMES for x in free), free
+    full = free is None
     if a.deadline:
         def stop(*_):
             raise TimeoutError
         signal.signal(signal.SIGALRM, stop); signal.alarm(a.deadline)
-    ctx = Ctx(code, None, bg_flow(mut_bg))
-    ok, done = True, []
+    flow = bg_flow(mut_bg)
+    pts = [None] if full else make_points(a.npoints, a.seed)
+    say("symbolic: %s free, %s, deadline %s" % (
+        "all twelve variables" if full else ", ".join(sorted(set(free) | {'PI'}, key=NAMES.index)),
+        "no base point" if full else "the others at the %d points of seed %d" % (len(pts), a.seed),
+        ("%d s" % a.deadline) if a.deadline else "none"))
+    ok, done, detected = True, [], []
     stage = 'program'
     try:
-        say("symbolic: all twelve variables free, deadline %s" % (("%d s" % a.deadline) if a.deadline else "none"))
-        base = ctx.evaluate(verbose=True)
-        stage = 'rows'
-        rows = ctx.make_rows(base, coef, verbose=True)
-        for k in order:
-            stage = k
-            t = time.time()
-            res = ctx.residual(rows, eqs[k])
-            n = nnz(res)
-            say("  %-7s residual %s  (%d of 6 coefficients nonzero)  %.0fs, total %s"
-                % (k, "= 0 exactly" if n == 0 else "NONZERO", n, time.time() - t, tm()))
-            done.append((k, n))
-            ok &= n == 0
+        for m, pt in enumerate(pts):
+            if not full:
+                say("base point %d: %s" % (m + 1, " ".join("%s=%s" % (k, pt[k]) for k in NAMES[:-1] if k not in free)))
+            ctx = Ctx(code, pt, flow, engine, free)
+            stage = 'program'
+            base = ctx.evaluate(verbose=True)
+            if engine == 'af':
+                say("  atoms (inverted polynomials): %d" % len(ctx.K.atoms))
+            stage = 'rows'
+            rows = ctx.make_rows(base, coef, verbose=True)
+            ns = []
+            for k in order:
+                stage = k
+                t = time.time()
+                res = ctx.residual(rows, eqs[k])
+                n = nnz(res)
+                say("  %-7s residual %s  (%d of 6 coefficients nonzero)  %.0fs, total %s"
+                    % (k, "= 0 exactly" if n == 0 else "NONZERO", n, time.time() - t, tm()))
+                ns.append((k, n))
+                ok &= n == 0
+            done.append(ns)
+            detected.append(any(n for k, n in ns if k in EQS_TARGET))
     except TimeoutError:
         say("\nNOT FINISHED: deadline of %d s reached in stage '%s'; finished: %s" % (a.deadline, stage, done))
         return 2
     if a.mutate:
-        det = any(n for k, n in done if k in EQS_TARGET)
-        say("MUTATION %s: %s" % (a.mutate, "DETECTED" if det else "NOT DETECTED"))
-        return 1 if det else 0
-    say("\nmethod: full symbolic computation in the rational function field over Q in twelve variables")
-    say("RESULT %s" % ("all residuals are the zero of the field: checked symbolically" if ok else "FAILED"))
+        say("MUTATION %s: (tt) or the angular trace has a nonzero residual at %d/%d base points -> %s"
+            % (a.mutate, sum(detected), len(detected), "DETECTED" if all(detected) else "NOT DETECTED"))
+        return 1 if all(detected) else 0
+    if full:
+        say("\nmethod: full symbolic computation, exact, all twelve variables free (%s engine)" % engine)
+        say("RESULT %s" % ("all residuals are exactly zero: checked symbolically" if ok else "FAILED"))
+    else:
+        say("\nmethod: exact, free variables %s, the others at the base points: an identity test in the other variables, "
+            "not a full symbolic proof" % ",".join(sorted(set(free) | {'PI'}, key=NAMES.index)))
+        say("RESULT %s" % ("all residuals exactly zero at the base points" if ok else "FAILED"))
     return 0 if ok else 1
 
 
