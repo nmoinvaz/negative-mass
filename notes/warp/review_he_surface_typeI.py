@@ -98,9 +98,14 @@ def identity_necessity(h):
     f1 = L.red(md + jth * (Bp + c * v * F * jr))
     f2 = L.red(me + jth * (c * v * F * A + jr))
     f3 = L.red(A + Bp - v**2 * F * a * u * s**2)
-    h.check("identity_necessity", ident == 0 and f1 == 0 and f2 == 0 and f3 == 0,
+    # the a = 0 step of section 2: m_a = A B' - j_r^2 = -A^2, m_b = A C' - j_theta^2, and the displayed identity
+    # j_theta^4 + m_a C'^2 + 2 A C' m_b - m_b^2 = 0 holds there for every lam
+    ma, mb = A * Bp - jr**2, A * Cp - jth**2
+    a0 = [L.red(e.subs(a, 0)) for e in (ma + A**2, jr, jth**4 + ma * Cp**2 + 2 * A * Cp * mb - mb**2)]
+    h.check("identity_necessity", ident == 0 and f1 == 0 and f2 == 0 and f3 == 0 and all(e == 0 for e in a0),
             "j_theta v c a u (1 + v^2 F^2) + m_e + c v F m_d reduces to %s for symbolic lam; m_d = -j_theta (B' + c v F j_r): %s; "
-            "m_e = -j_theta (c v F A + j_r): %s; A + B' = v^2 F a u s^2: %s" % (ident, f1 == 0, f2 == 0, f3 == 0))
+            "m_e = -j_theta (c v F A + j_r): %s; A + B' = v^2 F a u s^2: %s; at a = 0: m_a + A^2, j_r and "
+            "j_theta^4 + m_a C'^2 + 2 A C' m_b - m_b^2 reduce to %s" % (ident, f1 == 0, f2 == 0, f3 == 0, a0))
 
 
 def D_on_T1(h):

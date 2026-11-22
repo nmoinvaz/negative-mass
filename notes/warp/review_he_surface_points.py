@@ -82,7 +82,7 @@ def issq(q):
 
 def find_typeI(count):
     out = []
-    Fs = [Fr(1, 2), Fr(2, 3), Fr(1), Fr(3, 2), Fr(3, 4), Fr(2)]
+    Fs = [Fr(1, 2), Fr(2, 3), Fr(1), Fr(3, 2), Fr(3, 4), Fr(2), Fr(-1, 2), Fr(-3, 4)]
     rs = [Fr(1), Fr(2), Fr(3, 2), Fr(5, 2), Fr(4), Fr(5, 3)]
     ks = [Fr(p, q) for q in range(2, 13) for p in range(1, q)]
     for (cc, ss) in PYTH:
@@ -137,9 +137,26 @@ def numeric_type(pt_mp):
     return best[0], sv
 
 
+def _jac_exact():
+    """Jacobian of (T1, Pu) in (v, F, a, b, u, c) as callables on a point (v, F, a, b, u, c, s) of Fractions."""
+    vs = (v, F, a, b, u, c)
+    Pu_ = v**2 * (a + F * u) * (a + c**2 * F * u) + c**2 * u**2
+    out = []
+    for e in (b + a * u, Pu_):
+        row = []
+        for z in vs:
+            terms = L.poly_terms(sp.diff(e, z))
+            row.append(lambda *pt, terms=terms: L.peval(terms, pt))
+        out.append(row)
+    return out
+
+
 def exact_points(h):
     pts = find_typeI(24)
     res = []
+    nneg = nvf_neg = 0
+    global JAC
+    JAC = _jac_exact()
     for pt in pts:
         if MUT == "locus-shift":
             pt = (pt[0] * Fr(101, 100),) + tuple(pt[1:])
@@ -147,7 +164,13 @@ def exact_points(h):
         info = classify_pt(pt)
         D = info["D"]
         ok = (t1 == 0 and t2 == 0 and t3 != 0 and D == 0 and info["type"] == "I" and info["m"] == 2 and info["rank"] == 1)
+        # (v F s^2)^2 >= 4 c^2 on T1 and T2, from Theta^2 = v^2 a^2 u^2 (v^2 F^2 s^4 - 4 c^2)
+        ok = ok and (pt[0] * pt[1] * pt[6] ** 2) ** 2 >= 4 * pt[5] ** 2
+        # T1 and T2 are independent equations: the Jacobian of (b + a u, Pu) in (v, F, a, b, u, c) has rank 2
+        ok = ok and L.rank_frac([[g(*pt) for g in row] for row in JAC]) == 2
         res.append(ok)
+        nneg += pt[1] < 0
+        nvf_neg += pt[0] * pt[1] * pt[6] ** 2 < 0
     n_typeI = len(pts)
     # points failing exactly one condition
     desc = lambda t1, t2, t3: (MUT == "loosen-T1" or t1 == 0) and (MUT == "loosen-T2" or t2 == 0) and (MUT == "loosen-T3" or t3 != 0)
@@ -216,10 +239,12 @@ def exact_points(h):
                     nI += 1
     ok_samp = nsamp >= 6 and nI == 0
     all_out = all(ok and not d for _, _, d, ok, _ in outs)
-    h.check("exact_points", all(res) and n_typeI >= 20 and all_out and ok_samp,
-            "%d points on T1, T2, T3 have D = 0 exactly, a double root, rank 1: Type I (%d of %d); the three points failing exactly one condition are not Type I "
-            "and lie outside the description: %s; %d real roots of D(b) off T1 at six generic parameter sets, %d of them Type I"
-            % (n_typeI, sum(res), n_typeI, all_out, nsamp, nI))
+    print("   Type I points with F < 0 (where -F < r a < -c^2 F fails and v F s^2 >= 2|c| fails): %d, with v F s^2 < 0: %d" % (nneg, nvf_neg))
+    h.check("exact_points", all(res) and n_typeI >= 20 and all_out and ok_samp and nneg >= 2,
+            "%d points on T1, T2, T3 have D = 0 exactly, a double root, rank 1, (v F s^2)^2 >= 4 c^2 and independent T1, T2 (Type I %d of %d; %d with F < 0); "
+            "the three points failing exactly one condition are not Type I and lie outside the description: %s; "
+            "%d real roots of D(b) off T1 at six generic parameter sets, %d of them Type I"
+            % (n_typeI, sum(res), n_typeI, nneg, all_out, nsamp, nI))
 
 
 # ----------------------------------------------------------------------------------------------------------------------
