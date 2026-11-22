@@ -1,5 +1,93 @@
 #!/usr/bin/env python3
-"""DRAFT (docstring written last)."""
+"""The boundary term of item 6's identity against E - P.xi_0 (#100), checked symbolically.
+
+The identity of #87 (weitzenbock_conf.py), on g = psi^4 delta in the frame e_i = psi^-2 d_i, is
+    |nabla~ eps|^2 - |D~ eps|^2 + 4 pi (mu |eps|^2 - J.xi) = div V,   div V = psi^-6 d_a(psi^4 V^a),
+    V^i = Re<eps, nabla^i eps - g^i D eps> - (1/2) P_ij xi^j,   P_ij = K_ij - delta_ij tr K,   xi^j = <eps, g^0 g^j eps>,
+with the gammas and <a, b> = a^dagger b of mass_bounds.md, nabla~_i = nabla_i + (1/2) K_ij g^j g^0 and D = g^i nabla_i. With
+D~ eps = 0, integrated over the ball |x| < r with r -> infinity, it is item 6: (1/4 pi) int |nabla~ eps|^2 dV + int (mu
+|eps|^2 - J.xi) dV = B, with the boundary term B = (1/4 pi) lim of the flux of V through the sphere, which item 6 and
+phase4/RESULTS.md section 1 state to be E - P.xi_0 (|eps_0| = 1, xi_0^j = <eps_0, g^0 g^j eps_0>). This script computes B.
+
+Data (asymptotics, with s = 1/r and n = x/r, every coefficient an independent symbol): psi = 1 + (m/2) s + psi_2(n) s^2 +
+psi_3(n) s^3, psi_2 a polynomial of degree 2 in n (a dipole d.n, a quadrupole and a constant), psi_3 of degree 1; K_ij (frame
+components) = psi^-6 K-hat_ij with K-hat_ij = (3/2) s^2 [P_i n_j + P_j n_i - (delta_ij - n_i n_j) P.n] (Bowen-York, tr = 0)
++ s^3 K3_ij(n); eps = eps_0 + eps_1(n) s + eps_2(n) s^2 with eps_0 a constant spinor of eight real symbols, eps_1 four
+components of polynomials of degree <= 2 in n with independent complex coefficients, eps_2 of degree <= 1. Two extensions beyond
+the issue: a K-hat term s^2 T_ij(n) with a trace (`bdy_vs_adm_T`, so that -delta_ij tr K is exercised), and an O(1) term
+eta(n) in eps (the control `eps-O1`).
+
+The flux. The covariant divergence of a vector V = V^a e_a is psi^-6 d_a(psi^4 V^a) (`div_formula` checks that against the
+Christoffel symbols of psi^4 delta for arbitrary psi and V^a). Its volume element is psi^6 d^3x, so the integral of div V over
+a shell is the integral of d_a(psi^4 V^a) d^3x, which is the flux of psi^4 V^a through the two coordinate spheres by Gauss in
+flat R^3 (by hand): int over |x| = r of psi^4 V^a n_a r^2 dOmega, n the Euclidean unit normal. It is the covariant flux
+too: the unit normal has frame components n_a and the area element is psi^4 r^2 dOmega. `planted_B_schwarzschild` checks the
+weight psi^4 on an exact flux through a finite sphere. B is the coefficient of s^0 of (1/4 pi) int psi^4 V^a n_a r^2 dOmega.
+E = (1/16 pi) int (d_j g_ij - d_i g_jj) n_i r^2 dOmega and P_j = (1/8 pi) int (K_ij - delta_ij tr K) n_i r^2 dOmega are the
+ADM integrals of the same data, with the coordinate components g_ij = psi^4 delta_ij, K_ij = psi^4 (frame components), tr K =
+delta^ij K_ij, written separately from V's code (`adm_E_series`, `adm_P_series`).
+
+How. Every quantity is a polynomial in n_i, s and the symbols, truncated at s^3 (V to s^3, so the flux to order 1/r). The
+Cartesian derivative at x = n/s is D_i f = s (d_ni f - n_i (n.d_n f + s d_s f)), which is consistent on the sphere. The sphere
+integral is by exact moments, (1/4 pi) int n_x^a n_y^b n_z^c dOmega = (a-1)!!(b-1)!!(c-1)!!/(a+b+c+1)!! for even a, b, c.
+Data of exactly these polynomial forms have a flux that is rational in s with a denominator a power of psi, analytic at s = 0,
+so the limit r -> infinity is the s^0 coefficient. The V code is one function (`Vvec`) of a field representation, run in
+three: the s-series, exact Taylor jets at a point (for the identity at exact points) and exact generic functions (for the
+checks on arbitrary psi). By hand, for eps = eps_0 constant, D eps_0 = psi^-2 phislash eps_0 with phi = 2 d ln psi, Re<eps_0,
+Om_i eps_0> = 0 and V^i = -2 psi^-3 d_i psi |eps_0|^2 - (1/2) P_ij xi_0^j, whose flux is m (1 + m/2r)|eps_0|^2 - (1 +
+m/2r)^-2 P.xi_0 for psi = 1 + m/2r and K = psi^-6 Bowen-York; this is the planted case.
+
+The eps_1 terms. With eta = eps - eps_0, the terms of V linear in eta at order r^-2 are Re<eps_0, (delta_ik - g^i g^k) d_k eta>.
+The flux of the first term, n_i d_i eta, is not zero, but together they are -Re<eps_0, nslash dslash_tan eta>, because n_i
+(delta_ik - g^i g^k) n_k = 0, and nslash dslash_tan = sum_{i<k} g^i g^k (n_i d_k - n_k d_i) (`eps1_hand` checks this for eps_1). It
+is a sum of rotation generators with the antisymmetric g^i g^k. The generators are divergence-free on the sphere, so the
+integral over the sphere is 0 for every smooth angular dependence, and eps_1 drops out at leading order (`eps1_drops`,
+`bdy_vs_adm`, `free_symbols`). Decay needed (power counting, by hand, not computed): for eps - eps_0 = O(r^-d) with
+d(eps) = O(r^-1-d), the linear term is zero for every d by the antisymmetry (the curved-space factors psi^2 - 1 times it are
+O(r^-d)), the quadratic terms Re<eta, (delta_ik - g^i g^k) n_i d_k eta> r^2 are O(r^(1-2d)), and the cross terms with the spin
+connection and K are O(r^-d). So d > 1/2 is enough, and the quadratic term is the one that can survive below it. For a power law,
+d(eps) in L^2 at infinity needs 2 (1 + d) > 3, the same d > 1/2. With d = 0, eta = O(1) angular, the flux grows like r
+(control `eps-O1`). The coefficients of psi_2, psi_3, K3 and eps_2 drop out by power counting, and `free_symbols` shows it.
+
+Checks, with the controls that must fail them in CONTROLS. Planted first: the gammas (`clifford`, `dagger`), the derivative
+and the sphere moments against sympy's own derivative and integral (`planted_derivation`, `planted_sphere`), the spin
+connection against Geo's (`omega_vs_conf`), the flux formula (`div_formula`), Schwarzschild: E = m and B = m|eps_0|^2 with
+the finite-r series m(1 + m/2r)^3 and m(1 + m/2r)|eps_0|^2 (`planted_E`, `planted_B_schwarzschild`), a dipole in psi
+(`planted_dipole`), P_ADM = P (1 + m/2r)^-2 and the Bowen-York flux (`planted_P`, `planted_BY`), the eps_0 with xi_0 = +P/|P|
+that gives B = m - |P| (`aligned_eps0`). Then the general data: B = E |eps_0|^2 - P.xi_0 (`bdy_vs_adm`, with E, P and xi_0
+computed from the same data), with the trace term (`bdy_vs_adm_T`), no term of order r^2 or r pointwise or integrated
+(`no_divergence`, `limit_exists`), and the eps_1 terms (`eps1_drops`, `eps1_hand`, `free_symbols`). Last, V against the
+identity itself on the same data, at three exact points with exact rational values of every symbol (`identity_points`), whose
+left side uses weitzenbock_conf's Geo and constraints and not this script's spin connection, and the other sign of nabla~
+(`flip_consistent`): with nabla_i - (1/2) K_ij g^j g^0 the identity holds with +J.xi and V's K term +(1/2) P_ij xi^j, and the
+boundary term is E + P.xi_0. The controls `Vsign` and `sign` both change V's K term from -(1/2) P_ij xi^j to +(1/2) P_ij xi^j
+and nothing else in V; `Vsign` keeps nabla~ and the identity as stated, `sign` also takes nabla~ with the other sign and
+leaves the identity's -J.xi, so each fails `identity_points` and each makes the P.xi_0 term disagree (B = E + P.xi_0).
+
+What is shared with weitzenbock_conf.py, loaded read-only with its argv hidden: `note_gammas`, `inner` and `re` (so <a, b> and
+the conjugation, and the controls `gamma` and `no-conj` act on them), `Geo` and `constraints` (the left side of
+`identity_points`, `omega_vs_conf`), `christoffel`, `fn`, `sym_K`, `is_zero`, `ETA`, `X3` and `I3`. V's code, the series,
+the jets, the ADM integrals and the sphere moments are new here, typed from the formulas above. V and the ADM integrals share
+the derivative D_i and the sphere moments, which `planted_derivation` and `planted_sphere` check against independent code, and
+the hand values of the Schwarzschild and Bowen-York cases do not use the code. The 4-metric route of #87, which ties mu and J
+to G_ab, is not repeated.
+
+What the code proves (*checked symbolically*): for the data above, with m, P, eps_0 and every angular coefficient arbitrary
+symbols, the flux has no term of order r^2 or r, and its order r^0 term is, as a polynomial identity in the symbols, E
+|eps_0|^2 - P.xi_0, with E and P the ADM integrals of the same data; V satisfies #87's identity on these data at three exact
+points, in exact arithmetic (for all psi, K and eps the identity is #87's, *checked symbolically*). Assumed, not
+computed: that data with remainders (psi - 1 - m/2r - psi_2 s^2 = O(r^-3) and so on) contribute only terms of higher order,
+by power counting with each derivative gaining a power of 1/r; the decay statement above; and the integrated identity, whose
+D~ eps = 0 solution and existence (item 5) are not touched. Not covered: a frame or slice other than psi^4 delta, K-hat other
+than Bowen-York plus the extensions, and angular dependence of eps_1 that is not polynomial.
+
+    python3 notes/warp/weitzenbock_boundary.py                  checks, then every control
+    python3 notes/warp/weitzenbock_boundary.py --no-controls    checks only
+    python3 notes/warp/weitzenbock_boundary.py --mutate=NAME    one control (its target checks must fail, exit 1)
+    python3 notes/warp/weitzenbock_boundary.py --no-controls --only=NAME,...   (or --skip=NAME,...) some checks, for staged runs
+
+Exit status is 1 if a check fails or a control does not fire.
+"""
 import importlib.util
 import pathlib
 import subprocess
