@@ -60,6 +60,8 @@ import sympy as sp
 
 OPTS = dict(a[2:].split("=", 1) if "=" in a else (a[2:], "1") for a in sys.argv[1:] if a.startswith("--"))
 MUT = OPTS.get("mutate", "")
+ONLY = set(OPTS["only"].split(",")) if "only" in OPTS else None  # staging: run only these diagonal checks
+SKIP = set(OPTS.get("skip", "").split(","))  # staging: leave these diagonal checks out
 
 IDENT = ["identity_flat_K0", "identity_lichnerowicz", "identity_flat_K", "identity_alcubierre", "identity_general"]
 CONTROLS = {
@@ -469,6 +471,303 @@ def section_identity():
     identity("identity_general", psi, Kg, "psi, K_ij and eps arbitrary", reduced=True)
 
 
+# ---- The diagonal slice g = diag(A^2, B^2, C^2), issue #99 -----------------------------------------------------------------
+# The same checks as above for g = diag(A^2, B^2, C^2)(x, y, z) with A, B, C arbitrary positive functions, the frame
+# e_i = d_i / A_i, and div V = (1/ABC) d_a(ABC V^a / A_a). GeoDiag, constraints_diag and identity_diag are written beside Geo,
+# constraints and identity and call none of them, so the conformally flat results above are as #87 left them, and
+# A = B = C = psi^2 is a planted case for the new code (diag_conf_limit, identity_diag_conf).
+def todo(name):
+    """Whether the diagonal check `name` runs: not when staged away with --only or --skip, and under a mutation only if the
+    mutation targets it, since the general case is expensive and the other checks of a mutated run need not repeat it."""
+    if ONLY is not None and name not in ONLY:
+        return False
+    return name not in SKIP and (not MUT or name in CONTROLS[MUT][1])
+
+
+class GeoDiag:
+    """The slice g = diag(A^2, B^2, C^2): Christoffel symbols, Ricci scalar, the frame e_i = d_i / A_i, its spin coefficients
+    omega_jk(e_i) = g(e_j, nabla_{e_i} e_k) and the spinor connection matrices Om_i = (1/4) omega_jk(e_i) g^j g^k. The
+    spin connection comes from the Christoffel symbols, as Geo's does."""
+
+    def __init__(self, A):
+        self.A = A = list(A)
+        self.g = sp.diag(*[a**2 for a in A])
+        self.gi = sp.diag(*[a**(-1 if MUT == "inv-typo" else -2) for a in A])  # typed in
+        self.inv_ok = is_zero(self.g * self.gi - I3)
+        self.Chr = christoffel(self.g, self.gi, X3)
+        Rab = ricci(self.Chr, X3)
+        self.R = sp.expand(sum(self.gi[a, b] * Rab[a, b] for a in range(3) for b in range(3)))
+        self.sc = [a**(-2 if MUT == "diag-frame" else -1) for a in A]  # e_i = sc_i d_i
+        if MUT == "aniso-frame":
+            self.sc[0] = 1 / A[1]
+        E = [sp.Matrix([int(m == i) for m in range(3)]) * self.sc[i] for i in range(3)]
+        self.frame = sp.Matrix(3, 3, lambda i, j: sp.expand((E[i].T * self.g * E[j])[0]))
+        sg = -1 if MUT == "christoffel" else 1
+
+        def nabla(U, V):  # (nabla_U V)^m = U^k d_k V^m + Gamma^m_kl U^k V^l
+            return sp.Matrix([sp.expand(sum(U[k] * sp.diff(V[m], X3[k]) for k in range(3))
+                                        + sg * sum(self.Chr[m][k][l] * U[k] * V[l] for k in range(3) for l in range(3)))
+                              for m in range(3)])
+        self.om = [[[sp.expand((E[j].T * self.g * nabla(E[i], E[k]))[0]) for i in range(3)] for k in range(3)]
+                   for j in range(3)]
+        g0, gj = note_gammas()
+        ss = -1 if MUT == "omega-sign" else 1
+        self.Om = [(ss * sum((self.om[j][k][i] * gj[j] * gj[k] for j in range(3) for k in range(3)),
+                             sp.zeros(4)) / 4).applyfunc(sp.expand) for i in range(3)]
+
+
+def omega_hand_diag(A):
+    """omega_jk(e_i) = (delta_ij d_k A_j - delta_ik d_j A_k) / (A_j A_k) for j != k and 0 for j = k, from Cartan's first
+    structure equation with theta^j = A_j dx^j, as in conventions.py section 6(c) (#86)."""
+    s2 = -1 if MUT == "omega-hand" else 1
+    return [[[0 if j == k else (int(i == j) * sp.diff(A[j], X3[k]) - s2 * int(i == k) * sp.diff(A[k], X3[j]))
+              / (A[j] * A[k]) for i in range(3)] for k in range(3)] for j in range(3)]
+
+
+def constraints_diag(A, K, geo):
+    """mu and the frame components J_i = J(e_i) from the constraints, computed in coordinates from the frame components K_ij,
+    whose coordinate components are A_i A_j K_ij."""
+    g, gi, Chr = geo.g, geo.gi, geo.Chr
+    Kc = sp.Matrix(3, 3, lambda a, b: K[a, b] if MUT == "Kframe" else A[a] * A[b] * K[a, b])
+    trK = sp.expand(sum(gi[a, b] * Kc[a, b] for a in range(3) for b in range(3)))
+    K2 = sp.expand(sum(gi[a, c] * gi[b, d] * Kc[a, b] * Kc[c, d] for a in range(3) for b in range(3) for c in range(3)
+                       for d in range(3)))
+    sR = -1 if MUT == "Rsign" else 1
+    sq = 1 if MUT == "Ksq" else -1
+    mu = sp.expand((sR * geo.R + trK**2 + sq * K2) / (16 * sp.pi))
+    tr = 1 if MUT == "trace" else -1
+    Pc = (Kc + tr * g * trK).applyfunc(sp.expand)  # P_ab = K_ab - g_ab tr K
+
+    def DP(c, a, b):  # nabla_c P_ab
+        ch = 0 if MUT == "J-christoffel" else 1
+        return sp.diff(Pc[a, b], X3[c]) - ch * sum(Chr[d][c][a] * Pc[d, b] + Chr[d][c][b] * Pc[a, d] for d in range(3))
+    J = sp.Matrix([sp.expand(sum(gi[a, c] * DP(c, a, b) for a in range(3) for c in range(3)) / (8 * sp.pi) / A[b])
+                   for b in range(3)])
+    return mu, J
+
+
+def section_planted_diag():
+    names = ["inverse_diag", "orthonormal_diag", "planted_R_diag", "planted_omega_diag", "clifford_parallel_diag",
+             "diag_conf_limit"]
+    if not any(todo(n) for n in names):
+        return
+    print("\n== 6. The diagonal slice diag(A^2, B^2, C^2): planted R, omega and Clifford parallelism ==")
+    A = [fn(n) for n in "ABC"]
+    geo = GeoDiag(A)
+    if todo("inverse_diag"):
+        check("inverse_diag", geo.inv_ok, "g_ab g^bc = delta, with g = diag(A^2, B^2, C^2) and the inverse typed in")
+    if todo("orthonormal_diag"):
+        check("orthonormal_diag", is_zero(geo.frame - I3), "g(e_i, e_j) = delta_ij for e_i = d_i / A_i")
+    if todo("planted_R_diag"):
+        # By hand: for a metric h + c^2 dz^2 on a base h, R = R_h - 2 Laplace_h(c) / c, which gives (b), and the Gaussian
+        # curvature of dx^2 + f^2 dy^2 is -f''/f, which with (b) gives (d). (c) is (d) with g = f, which is hyperbolic space,
+        # R = -6, for f = exp(x). (e) is (d) in the proper length dr = A dx.
+        f, h, c2 = sp.Function("f")(X), sp.Function("g")(X), sp.Function("c")(X, Y)
+        a_, b_, c_ = [sp.Function(n)(X) for n in "abc"]
+        one = sp.Integer(1)
+        sf = -1 if MUT == "R-hand" else 1
+        cases = [
+            ("flat", [one, one, one], sp.Integer(0)),
+            ("dx^2 + dy^2 + c(x,y)^2 dz^2", [one, one, c2], -2 * (sp.diff(c2, X, 2) + sp.diff(c2, Y, 2)) / c2),
+            ("dx^2 + f(x)^2 (dy^2 + dz^2)", [one, f, f], -4 * sp.diff(f, X, 2) / f - sf * 2 * sp.diff(f, X)**2 / f**2),
+            ("dx^2 + f(x)^2 dy^2 + g(x)^2 dz^2", [one, f, h],
+             -2 * (sp.diff(f, X, 2) / f + sp.diff(h, X, 2) / h + sp.diff(f, X) * sp.diff(h, X) / (f * h))),
+            ("A(x)^2 dx^2 + B(x)^2 dy^2 + C(x)^2 dz^2", [a_, b_, c_],
+             -2 * (sp.diff(sp.diff(b_, X) / a_, X) / (a_ * b_) + sp.diff(sp.diff(c_, X) / a_, X) / (a_ * c_)
+                   + sp.diff(b_, X) * sp.diff(c_, X) / (a_**2 * b_ * c_))),
+        ]
+        ok = True
+        for _, Ac, want in cases:
+            ok = ok and zero(GeoDiag(Ac).R - want)
+        psi = fn("psi")
+        ok = ok and zero(GeoDiag([psi**2] * 3).R + 8 * lap(psi) / psi**5)
+        check("planted_R_diag", ok, "R of %d metrics with a hand value: flat, dx^2 + dy^2 + c(x,y)^2 dz^2 (R = -2 Laplace c / c), "
+              "dx^2 + f^2 (dy^2 + dz^2) (R = -4 f''/f - 2 f'^2/f^2), dx^2 + f^2 dy^2 + g^2 dz^2, A(x), B(x), C(x) arbitrary, "
+              "and psi^2 for A, B, C (R = -8 psi^-5 Laplace psi)" % (len(cases) + 1))
+    if todo("planted_omega_diag"):
+        hand = omega_hand_diag(A)
+        check("planted_omega_diag", all(zero(geo.om[j][k][i] - hand[j][k][i]) for i in range(3) for j in range(3)
+                                        for k in range(3)),
+              "omega_jk(e_i) = g(e_j, nabla_{e_i} e_k) = (delta_ij d_k A_j - delta_ik d_j A_k)/(A_j A_k), j != k, 0 for j = k, "
+              "Cartan's formula of conventions.py section 6(c)")
+    if todo("clifford_parallel_diag"):
+        g0, gj = note_gammas()
+        par = all(is_zero(geo.Om[i] * gj[l] - gj[l] * geo.Om[i] - sum((geo.om[j][l][i] * gj[j] for j in range(3)),
+                                                                      sp.zeros(4)))
+                  for i in range(3) for l in range(3))
+        check("clifford_parallel_diag", par, "[(1/4) omega_jk g^j g^k, g^l] = omega_jl g^j on the diagonal slice")
+    if todo("diag_conf_limit"):
+        psi = fn("psi")
+        gd, gc = GeoDiag([psi**2] * 3), Geo(psi)
+        Kg = sym_K()
+        mud, Jd = constraints_diag([psi**2] * 3, Kg, gd)
+        muc, Jc = constraints(psi, Kg, gc)
+        same = is_zero(gd.g - gc.g) and zero(gd.R - gc.R) and zero(mud - muc) and is_zero(Jd - Jc)
+        same = same and all(zero(gd.om[j][k][i] - gc.om[j][k][i]) for i in range(3) for j in range(3) for k in range(3))
+        same = same and all(is_zero(gd.Om[i] - gc.Om[i]) for i in range(3))
+        check("diag_conf_limit", same, "A = B = C = psi^2 gives #87's g, R, omega_jk, Om_i and, for K_ij arbitrary, mu and J_i")
+
+
+def section_constraints_diag():
+    names = ["planted_alcubierre_diag", "planted_K0_diag", "planted_trace_diag", "planted_TT_diag", "planted_kasner_diag"]
+    if not any(todo(n) for n in names):
+        return
+    print("\n== 7. Planted truth for mu and J_i from the constraints, on diagonal slices ==")
+    one = sp.Integer(1)
+    f, v = fn("f"), sp.Symbol("v", real=True)
+    c2 = sp.Function("c")(X, Y)
+    Ac = [one, one, c2]  # dx^2 + dy^2 + c(x, y)^2 dz^2, R = -2 Laplace_xy c / c
+    Rc = -2 * (sp.diff(c2, X, 2) + sp.diff(c2, Y, 2)) / c2
+    if todo("planted_alcubierre_diag"):
+        # The planted flat case: A = B = C = 1, through constraints_diag, with #58 item 1's values.
+        b = [-v * f, 0, 0]
+        Ka = sp.Matrix(3, 3, lambda i, j: (sp.diff(b[j], X3[i]) + sp.diff(b[i], X3[j])) / 2)
+        mu, J = constraints_diag([one] * 3, Ka, GeoDiag([one] * 3))
+        wantJ = sp.Matrix([v / (16 * sp.pi) * (sp.diff(f, X, X3[i]) - int(i == 0) * lap(f)) for i in range(3)])
+        check("planted_alcubierre_diag", zero(mu + v**2 / (32 * sp.pi) * (sp.diff(f, Y)**2 + sp.diff(f, Z)**2))
+              and is_zero(J - wantJ),
+              "A = B = C = 1, K = Alcubierre's, arbitrary f: mu = -(v^2/32 pi)(f_y^2 + f_z^2), "
+              "J_i = (v/16 pi)(d_x d_i f - delta_ix Laplace f)")
+    if todo("planted_K0_diag"):
+        mu, J = constraints_diag(Ac, sp.zeros(3), GeoDiag(Ac))
+        check("planted_K0_diag", zero(mu - Rc / (16 * sp.pi)) and is_zero(J),
+              "A = B = 1, C = c(x, y), K = 0: mu = R/16 pi = -(c_xx + c_yy)/(8 pi c), J = 0")
+    if todo("planted_trace_diag"):
+        # K_ij = f delta_ij in the frame, so K_ab = f g_ab, P_ab = -2 f g_ab, 16 pi mu = R + 6 f^2, 8 pi J_a = -2 d_a f.
+        mu, J = constraints_diag(Ac, f * I3, GeoDiag(Ac))
+        wantJ = sp.Matrix([-sp.diff(f, X3[i]) / (4 * sp.pi * Ac[i]) for i in range(3)])
+        check("planted_trace_diag", zero(mu - (Rc / (16 * sp.pi) + 3 * f**2 / (8 * sp.pi))) and is_zero(J - wantJ),
+              "A = B = 1, C = c(x, y), K_ij = f delta_ij: mu = R/16 pi + 3 f^2/8 pi, J_i = -d_i f/(4 pi A_i)")
+    if todo("planted_TT_diag"):
+        # The Bowen-York form of #87's planted_TT, with A = B = C = psi^2 given to the diagonal code.
+        psi = fn("psi")
+        phi = X * Y * Z + (X**3 - 3 * X * Y**2) / 6 + sp.Rational(1, 3) * (Y**2 * Z - Z**3 / 3)
+        Hh = sp.hessian(phi, X3)
+        hh = sp.expand(sum(Hh[i, j]**2 for i in range(3) for j in range(3)))
+        mu, J = constraints_diag([psi**2] * 3, Hh / psi**6, GeoDiag([psi**2] * 3))
+        check("planted_TT_diag", zero(mu - (-lap(psi) / (2 * sp.pi * psi**5) - hh / (16 * sp.pi * psi**12))) and is_zero(J),
+              "A = B = C = psi^2, K_ij = psi^-6 H_ij, H the Hessian of a harmonic polynomial: J = 0, "
+              "16 pi mu = R - psi^-12 H_ij H_ij")
+    if todo("planted_kasner_diag"):
+        # A Kasner slice at t = 1: constant scale factors a_i (so g is flat), K_ij = diag(p_i) in the frame with sum p = sum p^2 = 1,
+        # which is vacuum, so (tr K)^2 = K_ij K_ij and mu = J = 0 for every a_i.
+        a = [sp.Symbol(f"a{i + 1}", positive=True) for i in range(3)]
+        p = [sp.Rational(1, 2)] * 3 if MUT == "kasner-exponents" else [sp.Rational(-2, 7), sp.Rational(3, 7),
+                                                                       sp.Rational(6, 7)]
+        mu, J = constraints_diag(a, sp.diag(*p), GeoDiag(a))
+        check("planted_kasner_diag", zero(mu) and is_zero(J),
+              "constant A_i = a_i, K_ij = diag(-2/7, 3/7, 6/7) (Kasner at t = 1: sum p = sum p^2 = 1): mu = J = 0")
+
+
+def section_4d_diag():
+    if not todo("constraints_4d_diag"):
+        return
+    print("\n== 8. The constraints against G_ab of the 4-metric, diagonal slice ==")
+    # g = -dt^2 + Lam (delta - 2 t K) Lam, Lam = diag(A, B, C), with N = 1 and no shift: the coordinate components of the
+    # extrinsic curvature K(d_i, d_j) = A_i A_j K_ij at t = 0 are -(1/2) d_t g_ij, as in section 4.
+    A = [fn(n) for n in "ABC"]
+    K = sym_K()
+    sg = -1 if MUT == "adm-K" else 1
+    K2 = (K * K).applyfunc(sp.expand)
+    Lam, Lami = sp.diag(*A), sp.diag(*[1 / a for a in A])
+    gs = (Lam * (I3 - sg * 2 * T * K) * Lam).applyfunc(sp.expand)
+    gis = (Lami * (I3 + sg * 2 * T * K + 4 * T**2 * K2) * Lami).applyfunc(sp.expand)
+    prod = (gs * gis).applyfunc(sp.expand)
+    inv_ok = all(sp.expand(prod[i, j] - int(i == j)).coeff(T, p) == 0 for i in range(3) for j in range(3) for p in range(3))
+    g, gi = sp.zeros(4), sp.zeros(4)
+    g[0, 0], gi[0, 0] = -1, -1
+    for i in range(3):
+        for j in range(3):
+            g[i + 1, j + 1], gi[i + 1, j + 1] = gs[i, j], gis[i, j]
+    Chr = christoffel(g, gi, CRD)
+    Chr = [[[sp.expand(c.subs(T, 0) + T * sp.diff(c, T).subs(T, 0)) for c in row] for row in blk] for blk in Chr]  # O(t)
+    Rab = ricci(Chr, CRD).subs(T, 0)
+    gi0 = gi.subs(T, 0)
+    Rs = sp.expand(sum(gi0[a, b] * Rab[a, b] for a in range(4) for b in range(4)))
+    Gtt = sp.expand(Rab[0, 0] + Rs / 2)
+    sj = 1 if MUT == "J4d" else -1
+    mu4 = Gtt / (8 * sp.pi)
+    J4 = sp.Matrix([sj * Rab[0, i + 1] / (8 * sp.pi) / A[i] for i in range(3)])  # J_i = -G_ti / 8 pi, frame component
+    mu, J = constraints_diag(A, K, GeoDiag(A))
+    check("constraints_4d_diag", inv_ok and zero(mu - mu4) and is_zero(J - J4),
+          "the constraints' mu and J_i equal G_tt / 8 pi and -G_ti / 8 pi of -dt^2 + Lam (delta - 2 t K) Lam at t = 0, "
+          "Lam = diag(A, B, C), for arbitrary A, B, C and K_ij")
+
+
+def identity_diag(name, A, K, text, reduced=False):
+    run_main, run_red = todo(name), reduced and todo("V_reduced_diag")
+    if not (run_main or run_red):
+        return
+    t0 = time.time()
+    geo = GeoDiag(A)
+    mu, J = constraints_diag(A, K, geo)
+    g0, gj = note_gammas()
+    eps = spinor()
+    trK = K.trace()
+    P = K - trK * I3
+    sK = -1 if MUT == "sign" else 1
+    Aterm = [sK * sum((K[i, j] * gj[j] * g0 for j in range(3)), sp.zeros(4)) / 2 for i in range(3)]
+    nab = [sp.expand(geo.sc[i] * eps.diff(X3[i]) + geo.Om[i] * eps) for i in range(3)]  # nabla_i eps
+    nabt = [sp.expand(nab[i] + Aterm[i] * eps) for i in range(3)]  # nabla~_i eps
+    Deps = sum((gj[i] * nab[i] for i in range(3)), sp.zeros(4, 1))
+    Dteps = sum((gj[i] * nabt[i] for i in range(3)), sp.zeros(4, 1))  # D~ eps = g^i nabla~_i eps
+    e2 = inner(eps, eps)
+    xi = [inner(eps, g0 * gj[j] * eps) for j in range(3)]
+    Jxi = sum(J[j] * xi[j] for j in range(3))
+    sM = -1 if MUT == "musign" else 1
+    sJ = 1 if MUT == "Jsign" else -1
+    V = []
+    for i in range(3):
+        spin = nab[i] if MUT == "Vspin" else nab[i] - gj[i] * Deps
+        Pxi = 0 if MUT == "Kdiv" else sum(P[i, j] * xi[j] for j in range(3)) / 2
+        V.append(sp.expand(re(inner(eps, spin)) - Pxi))
+    if run_main:
+        lhs = sp.expand(sum(inner(nabt[i], nabt[i]) for i in range(3)) - inner(Dteps, Dteps)
+                        + 4 * sp.pi * (sM * mu * e2 + sJ * Jxi))
+        sqg = A[0]**3 if MUT == "abc" else A[0] * A[1] * A[2]  # sqrt(det g) = A B C
+        if MUT == "weight":
+            div = sum(sp.diff(V[a], X3[a]) for a in range(3))
+        else:  # div V = (1/ABC) d_a(ABC V^a / A_a), the coordinate components of V = V^a e_a being V^a sc_a
+            div = sum(sp.diff(sqg * geo.sc[a] * V[a], X3[a]) for a in range(3)) / sqg
+        div = sp.expand(div)
+        res = sp.expand(lhs - div)
+        check(name, res == 0, f"{text}; {nterms(lhs)} terms on the left, {nterms(div)} in div V, "
+              f"{len(sp.Add.make_args(res)) if res != 0 else 0} in the difference")
+        print(f"    ({name}: {time.time() - t0:.0f} s)", file=sys.stderr, flush=True)
+    if run_red:
+        Vr = [sp.expand(-sum(re(inner(eps, gj[i] * gj[j] * nab[j])) for j in range(3) if j != i)
+                        - sum(P[i, j] * xi[j] for j in range(3)) / 2) for i in range(3)]
+        check("V_reduced_diag", all(zero(V[i] - Vr[i]) for i in range(3)),
+              "V^i = -sum_{j != i} Re<eps, g^i g^j nabla_j eps> - (1/2) P_ij xi^j, the j = i term having cancelled")
+
+
+def section_identity_diag():
+    names = ["identity_diag_flat_K0", "identity_diag_lichnerowicz", "identity_diag_flat_K", "identity_diag_alcubierre",
+             "identity_diag_conf", "identity_diag_Kdiag", "identity_diag_general"]
+    if not any(todo(n) for n in names):
+        return
+    print("\n== 9. The identity |nabla~ eps|^2 - |D~ eps|^2 + 4 pi (mu |eps|^2 - J.xi) = div V on diag(A^2, B^2, C^2) ==")
+    print("    V^i as in section 5, div V = (1/ABC) d_a(ABC V^a / A_a)")
+    one, Kz = sp.Integer(1), sp.zeros(3)
+    A = [fn(n) for n in "ABC"]
+    Kg = sym_K()
+    f, v = fn("f"), sp.Symbol("v", real=True)
+    b = [-v * f, 0, 0]
+    Ka = sp.Matrix(3, 3, lambda i, j: (sp.diff(b[j], X3[i]) + sp.diff(b[i], X3[j])) / 2)
+    Kd = sp.diag(*[fn(f"k{i + 1}") for i in range(3)])
+    psi = fn("psi")
+    print("  Planted first: A = B = C = 1, then K = 0, through the code of the general case")
+    identity_diag("identity_diag_flat_K0", [one] * 3, Kz, "A = B = C = 1, K = 0, so mu = J = 0: the flat Weitzenbock identity")
+    identity_diag("identity_diag_lichnerowicz", A, Kz, "A, B, C arbitrary, K = 0, mu = R/16 pi, J = 0: Lichnerowicz")
+    identity_diag("identity_diag_flat_K", [one] * 3, Kg, "A = B = C = 1, K_ij arbitrary")
+    identity_diag("identity_diag_alcubierre", [one] * 3, Ka, "A = B = C = 1, K = Alcubierre's with b = (-v f, 0, 0), "
+                  "f(x, y, z) arbitrary")
+    identity_diag("identity_diag_conf", [psi**2] * 3, Kg, "A = B = C = psi^2, K_ij and eps arbitrary: #87's "
+                  "identity_general through the diagonal code")
+    identity_diag("identity_diag_Kdiag", A, Kd, "A, B, C arbitrary, K_ij = diag(k1, k2, k3) arbitrary functions, eps arbitrary")
+    identity_diag("identity_diag_general", A, Kg, "A, B, C, K_ij and eps arbitrary", reduced=True)
+
+
 def main():
     t0 = time.time()
     print("weitzenbock_conf.py, issue #87. sympy %s, python %s. mutation: %s" % (sp.__version__, sys.version.split()[0],
@@ -478,6 +777,10 @@ def main():
     section_constraints()
     section_4d()
     section_identity()
+    section_planted_diag()
+    section_constraints_diag()
+    section_4d_diag()
+    section_identity_diag()
     fails = [n for n, ok in RESULTS if not ok]
     print("\nchecks: %d passed, %d failed %s. %.0f s" % (len(RESULTS) - len(fails), len(fails), fails, time.time() - t0))
     if MUT:
