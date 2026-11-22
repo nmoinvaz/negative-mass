@@ -54,6 +54,7 @@ Controls (--mutate), each must give a nonzero residual in (tt) or the angular tr
   --mutate=coef[:i,j]  J[i, j] is scaled by 1 + 1/7 (J' with it, being the derivative of the scaled function);
                        default J[0, 0]; --sensitivity lists every entry of J.
   --mutate=bg[:name]   one background derivative gets the wrong sign: alpha (default), a, phi0 or u.
+  --mutate=eq          the coefficient of H0'' in (tt) and of K'' in the angular trace is scaled by 1 + 1/7.
 A mutated run exits 1 when the mutation is detected (the check fails, as it must) and 0 when it is not detected.
 
 Usage:  python verify_polar_exact.py [--method=points|symbolic] [--npoints=20] [--seed=8] [--mutate=...]
@@ -704,7 +705,7 @@ def main():
     ap.add_argument('--free', default='all')
     a = ap.parse_args()
     order = tuple(a.eqs.split(',')) if a.eqs else EQS_PLANTED + EQS_TARGET
-    coef = mut_bg = None
+    coef = mut_bg = mut_eq = None
     if a.mutate:
         kind, _, arg = a.mutate.partition(':')
         if kind == 'coef':
@@ -712,11 +713,17 @@ def main():
         elif kind == 'bg':
             mut_bg = arg or 'alpha'
             assert mut_bg in BGNAMES
+        elif kind == 'eq':
+            mut_eq = True
         else:
-            raise SystemExit("--mutate=coef[:i,j] or bg[:alpha|a|phi0|u]")
+            raise SystemExit("--mutate=coef[:i,j] or bg[:alpha|a|phi0|u] or eq")
     git = subprocess.run(['git', '-C', HERE, 'rev-parse', '--short', 'HEAD'], capture_output=True, text=True).stdout.strip()
     code, info = load_program()
     eqs = load_equations(order)
+    if mut_eq:
+        for key, nk in (('tt', ('H0', 2)), ('ang_tr', ('K', 2))):
+            if key in eqs:
+                eqs[key] = [(k, A * SCALE if k == nk else A) for k, A in eqs[key]]
     say("verify_polar_exact.py  %s" % " ".join(sys.argv[1:]))
     say("commit %s  python %s  sympy %s" % (git, sys.version.split()[0], sp.__version__))
     say("polar_matrix_generated.py sha256 %s: %d float exponents turned into ints, %d int/int quotients into Rational; "
@@ -772,6 +779,8 @@ def main():
             base = ctx.evaluate(verbose=True)
             if engine == 'af':
                 say("  atoms (inverted polynomials): %d" % len(ctx.K.atoms))
+                for k, A in enumerate(ctx.K.atoms):
+                    say("    atom %d (%d terms, monic): %s" % (k, len(A), A.as_expr()))
             stage = 'rows'
             rows = ctx.make_rows(base, coef, verbose=True)
             ns = []
