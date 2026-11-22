@@ -36,7 +36,8 @@ The Witten / Parker–Taubes identity (checked numerically below to 1.6×10⁻�
 
 ξ_ε is future causal, |ξ⃗| ≤ |ε|². Its time component |ε|² is not ⟨ε, γ⁰γ⁰ε⟩, which is −|ε|² in these
 gammas. With J_i = −n^a T_ai as above, T(ξ_ε, n) = μ|ε|² − J·ξ⃗. The integrand identity, with its divergence
-written out, holds pointwise on conformally flat slices (notes/warp/mass_bounds.md, "The causal vector", #87).
+written out, holds pointwise on conformally flat and on diagonal slices (notes/warp/mass_bounds.md, "The causal
+vector", #87, #99).
 
 Each T± satisfies the DEC, so T₊(ξ_ε, n) ≥ 0 and 0 ≤ T₋(ξ_ε, n) = μ₋|ε|² − J₋·ξ⃗ ≤ (μ₋ + |J₋|)|ε|².
 
