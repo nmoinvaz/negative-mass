@@ -819,8 +819,10 @@ def section_general():
     if any(todo(n) for n in ("bdy_vs_adm", "no_divergence", "limit_exists", "eps1_drops", "eps1_hand", "free_symbols")):
         R = gen_run()
         flux, E, P, xi, e2_ = R["flux"], R["E"], R["P"], R["xi"], R["e2"]
-        eps1_syms = {v for k, v in SYMS.items() if k.startswith(("f", "g", "h"))}
-        outside = {v for k, v in SYMS.items() if k[0] in "fghkpdT" and k not in ("m",)}
+        D = R["D"]
+        gsyms = {v for e in (D["psi"], *D["Kh"], *D["eps"]) for v in e.free_symbols} - set(N3) - {s}
+        eps1_syms = {v for v in gsyms if v.name.startswith(("f", "g", "h"))}  # eps_1, eps_2 and eta
+        outside = {v for v in gsyms if v.name[0] not in "mPuv"}  # everything but m, P and eps_0
         F = split_s(R["F"].v)
         if todo("no_divergence"):
             nz_ = [k - 2 for k in (0, 1) if not zero(F.get(k, 0))]
@@ -860,9 +862,9 @@ def section_general():
         res = sp.expand(flux.get(0, 0) - (E.get(0, 0) * e2_ - Pdot))
         Pv = [sym(f"P{c}") for c in "xyz"]
         shifted = any(not zero(P[j].get(0, 0) - Pv[j]) for j in range(3))
-        check("bdy_vs_adm_T", res == 0 and shifted, "with an added r^-2 term T_ij(n) in K-hat that has a trace (not Bowen-York), "
-              f"the boundary term is still E |eps_0|^2 - P.xi_0, P_ADM = P + {[sp.expand(P[j].get(0, 0) - Pv[j]) for j in range(3)][:1]}... "
-              "so the trace term of the ADM integral and of V is exercised")
+        check("bdy_vs_adm_T", res == 0 and shifted, "with an added r^-2 term T_ij(n) in K-hat that has a trace (not Bowen-York), the boundary "
+              "term is still E |eps_0|^2 - P.xi_0 with P_ADM - P = " + str([sp.expand(P[j].get(0, 0) - Pv[j]) for j in range(3)])
+              + ", so the trace term of the ADM integral and of V is exercised")
 
 
 # ---- 5. The identity on these data, at exact points ------------------------------------------------------------------------
