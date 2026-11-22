@@ -65,8 +65,8 @@ polynomials, and the constraints define mu and J_i with K_ij = -g(nabla_{e_i} n,
     python3 notes/warp/weitzenbock_conf.py --no-controls --only=NAME,...   (or --skip=NAME,...) some diagonal checks of
         sections 6 to 9 only, for staged runs. Under --mutate a diagonal check runs only if the control targets it.
 
-Exit status is 1 if a check fails or a control does not fire. One process, 20 s for the checks and about 10 minutes with
-the controls, 75 MB.
+Exit status is 1 if a check fails or a control does not fire. One process, 30 s for the checks and about 11 minutes with
+the controls, 88 MB.
 """
 import importlib.util
 import pathlib
@@ -686,7 +686,8 @@ def section_constraints_diag():
         for Ac, Rc in metrics:
             mu, J = constraints_diag(Ac, sp.zeros(3), GeoDiag(Ac))
             ok = ok and zero(mu - Rc / (16 * sp.pi)) and is_zero(J)
-        check("planted_K0_diag", ok, "K = 0 on the two metrics above: mu = R/16 pi with R by hand, J = 0")
+        check("planted_K0_diag", ok, "K = 0 on dx^2 + dy^2 + c(x,y)^2 dz^2 and on a(x)^2 dx^2 + w(x)^2 (dy^2 + dz^2): "
+              "mu = R/16 pi with R by hand, J = 0")
     if todo("planted_trace_diag"):
         # K_ij = f delta_ij in the frame, so K_ab = f g_ab, P_ab = -2 f g_ab, 16 pi mu = R + 6 f^2, 8 pi J_a = -2 d_a f.
         ok = True
@@ -694,7 +695,7 @@ def section_constraints_diag():
             mu, J = constraints_diag(Ac, f * I3, GeoDiag(Ac))
             wantJ = sp.Matrix([-sp.diff(f, X3[i]) / (4 * sp.pi * Ac[i]) for i in range(3)])
             ok = ok and zero(mu - (Rc / (16 * sp.pi) + 3 * f**2 / (8 * sp.pi))) and is_zero(J - wantJ)
-        check("planted_trace_diag", ok, "K_ij = f delta_ij on the two metrics above: mu = R/16 pi + 3 f^2/8 pi, "
+        check("planted_trace_diag", ok, "K_ij = f delta_ij on the same two metrics: mu = R/16 pi + 3 f^2/8 pi, "
               "J_i = -d_i f/(4 pi A_i)")
     if todo("planted_TT_diag"):
         # The Bowen-York form of #87's planted_TT, with A = B = C = psi^2 given to the diagonal code.
