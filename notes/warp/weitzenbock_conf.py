@@ -828,7 +828,7 @@ def section_identity_diag():
 
 def main():
     t0 = time.time()
-    print("weitzenbock_conf.py, issue #87. sympy %s, python %s. mutation: %s" % (sp.__version__, sys.version.split()[0],
+    print("weitzenbock_conf.py, issues #87 and #99. sympy %s, python %s. mutation: %s" % (sp.__version__, sys.version.split()[0],
                                                                                 MUT or "none"))
     section_gammas()
     section_planted()
