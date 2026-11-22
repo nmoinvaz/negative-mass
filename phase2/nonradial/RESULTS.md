@@ -1084,6 +1084,272 @@ they are (that the Zerilli column is D's only pole source, #122).
 | the replay reproduces −0.3826 against +5.9006 on `cache_before_guard/` and exits 1 under a mutation | met: PASS on the 212-point cache; `--mutate=sparse`, `--mutate=wrongexpect`, `--expect=none` and `--guard=all` on it each exit 1 |
 | the Z boxes of §5.3 recounted at `--guard=all` (added by the coordinator) | met in all 30; none changed |
 
+### 5.5 D's factors and its poles (#122)
+
+§5.3 finds no zero of the decaying Zerilli solution in the counted boxes, so the Zerilli column gives D no pole there.
+That makes each winding of 0 a count of zeros of D only if the Zerilli column is D's only pole source. #122 lists every
+factor of `polar_solver.PolarProblem.D` along its code path and checks the others with the new script `d_factors.py`
+(`d_factors_output.txt`). Five parts check the factors, the scalar plane's spectral projector, its eigenvector
+normalisation, a pole planted in two factors, and the n3 boxes with the continued Zerilli column. A sixth part, `mean`,
+was added after the first failed. Status: numerical evidence.
+
+**Result.** The checks on the individual factors are met in the 61 boxes. The numerical check that D as computed is
+holomorphic, `harm`, is not met.
+- Met: the two selected eigenvalues of the scalar block stay apart from the other two, with a smallest relative
+  separation of 0.122 in all 61 boxes (`s2_l2`; limit 10⁻³) and a box around s = i(1 − ω) failing at 6×10⁻⁹; D does not
+  depend on the eigenvector normalisation (at most 1.0×10⁻¹³ relative, limit 10⁻¹⁰); a pole planted in the Zerilli
+  column and one planted in the scalar plane's first column each change the winding of `n1_l2` by −2.0000 through D's
+  code path; with q of `zerilli_zeros.py --axis` in place of `zerilli_q` the windings of `n3_l2` and `n3_l3` stay 0 and
+  the planted zero is returned.
+- **Not met: `harm`.** arg D is not harmonic to the criterion fixed before the runs in 5 of the 6 boxes checked. At
+  winding2's rtol 10⁻⁸ the four boxes with Re s ≥ 0.1 exceed it by up to 129 times, and `n3_l2` by 840 to 1.3×10⁵. In
+  `n3_l2` it is the `zerilli_q` factor (D with the continued q passes), as #123 found. In the other four the cause is
+  not established; below says what was shown and what is a reading.
+
+#### The factors
+
+In order along `D`, with `D = det[Y, Z] · p_Y · p_Z · exp(−i Im Θ)`, Θ = (k₊ + k₋)(R_s − r_m) + (k₊ + k₋ + s) r_m, k± =
+√(1 + (s ∓ iω)²) (principal branch) and p the products of the QR phases. `d_factors.py` prints this table.
+
+| # | factor | holomorphic in a box? | zero-free? | checked by |
+|---|---|---|---|---|
+| 1 | interior start data Y0 (`regular_plane`) | constant, real, s-independent | 3 independent columns | structure |
+| 2 | J(r; s²), interior and vacuum | polynomial in s² (entire); singularities in r only | - | `jpoly` |
+| 3 | interior flow Φ(r_m, r0; s), DOP853 in chunks | entire: linear ODE with entire coefficients | Φ invertible, so the plane keeps rank 3 | `harm` (numerical) |
+| 4 | QR of the regular plane: Q, phase of R's diagonal | D = det[Y, Z] / ∏ abs(R_ii), a positive divisor; arg D = arg det | abs(R_ii) > 0 | `pole` (the factor enters as c / abs(c)), structure |
+| 5 | Moncrief map T(r_m) | constant in s (poles in r at 2 M_ext and −3 M_ext/λ, not at r_m) | det T ≠ 0 | `moncrief` |
+| 6 | Zerilli column zv = (1, q/f), q = f Z′/Z | meromorphic; poles at the zeros of Z(r_m; s) (the pole source; none in the 61 boxes: #121, #123, #124) | first entry 1 | `axis` (D_axis against D), `harm` at n3_l2 |
+| 7 | scalar block Js = Jvac(R_s, s)[2:, 2:], R_s fixed per box | entire (factor 2) | - | `jpoly` |
+| 8 | eig(Js), the two eigenvalues of smallest real part | eigenvectors carry arbitrary normalisations and the choice is by real part: neither is holomorphic by itself | - | `norm`, `order` |
+| 9 | projector P = V_sel V⁻¹_sel | holomorphic while the selected pair stays apart from the other two (Riesz projector); independent of the eigenvector normalisation | - | `gap`, `norm` |
+| 10 | start columns P[:, 0], P[:, 2] | holomorphic | independent iff P e₀ and P e₂ are | `cols` |
+| 11 | scalar plane flow R_s → r_m and its QR phases | as 3 and 4 | as 3 | `harm`, `pole` (scalar column) |
+| 12 | decaying plane Z = [m, S] and its QR | m = T zv and S as above; positive divisor as 4 | m ≠ 0 (T invertible, zv[0] = 1); S rank 2 (σ_min(S) = 1.0000 at the `norm` points, reported) | `pole` (Zerilli column), `norm` |
+| 13 | det[Y, Z] times the QR phases | holomorphic matching determinant divided by a positive function | zeros are the modes | `harm` |
+| 14 | winding2's exp(−i Im Θ) | a pure phase, not holomorphic; its argument −Im Θ is that of exp(−Θ), holomorphic and zero-free where k± is, i.e. off the cut on Re s = 0, abs(Im s ∓ ω) ≥ 1 | never zero | `harm`, `gap` |
+
+Rows 8 to 10 are the factors the issue names (the projector and the normalisation). Row 10 was not in its list: D
+contains the columns P[:, 0] and P[:, 2], and if they became dependent D would have a zero that the decaying plane does
+not.
+
+**What makes arg D the argument of a holomorphic function.** The QRs divide each plane by a positive number, since Y =
+QR gives det[Y, Z] = det[Q_Y, Q_Z] det R_Y det R_Z and D has det[Q_Y, Q_Z] times the phases of det R, so D = det[Y, Z] /
+∏ abs(R_ii) for any QR. With numpy the diagonal of R is real, so these phases are signs, and a column's complex phase is
+in Q, not in R (a pole planted as a column factor c enters D as c / abs(c), `pole` below). The unnormalised matrix is
+holomorphic apart from the Zerilli column's poles. winding2's factor exp(−i Im Θ) is a pure phase, which no holomorphic
+function except a constant can be; but D times it is (det[Y, Z] exp(−Θ)) times a positive function, because exp(−i Im Θ)
+= exp(−Θ) · exp(Re Θ), so its argument is that of a holomorphic function. Where k± is holomorphic, arg D is therefore
+harmonic away from zeros and poles of det[Y, Z] exp(−Θ), and `harm` tests that numerically.
+
+#### What ran
+
+On rpi5 (Raspberry Pi 5, aarch64, 4 cores shared with another project) on 2026-11-21, from 12:11 to 15:45, with the code
+of `wip/i122-factors`: `d_factors.py` at 9f34847 until 13:12, then the working tree that became 2222a98 (it adds the
+file suffix of non-default rtol, the two stencil Laplacians in the `harm` lines and the `mean` part, which those jobs
+did not call), and 7ace97a for the last output run. Each job is `python -u
+d_factors.py <arguments> --raw=<raw folder>` from `jobs.txt`, at `nice -n 10`, one thread, in a load-gated queue (a
+second process only while the 15-minute load was below 4; it stayed above 4 for most of the run, so most jobs ran one at
+a time). 38 jobs finished (17 exit 0 and 21 exit 1: 12 are mutations, which must fail, and 9 are failed checks), 4.09 h
+of process time. D evaluations take 4 to 12 s (a stored box about 12 s). Logs, evaluation caches (one pickle per part
+and box) and the queue scripts are in negative-mass-raw, folder `I122-rpi5` at 813692a. The box caches of `I126-rpi5`
+and the `--axis` logs of `I123-rpi5` are read, never written. From `phase2/nonradial` with the raw repository cloned
+beside the checkout, the output file regenerates from the caches in about 6 min:
+
+```
+python d_factors.py --part=factors,gap,norm,pole,axis,mean --raw=../../../negative-mass-raw/I122-rpi5 > d_factors_output.txt
+```
+
+It exits 1, because `harm` and `mean` fail. All criteria are in the script's docstring and were fixed before the runs,
+except `mean`'s, which was written after `harm` failed and before any `mean` run.
+
+#### `moncrief`, `jpoly`
+
+`moncrief`: |det T| / (|col 1| |col 2|) at r_m is 0.071 or more in the 10 (star, l) of the boxes (limit 10⁻³), so T is
+invertible. `jpoly`: J(r; s²) is linear in s² and even in s, to 6.8×10⁻¹⁴ relative at five radii in [r₀, r_m] and three
+in vacuum for each (star, l) (limit 10⁻¹⁰); a planted J with a t² term gives 4.3×10⁻² and fails.
+
+#### `harm`: arg D harmonic
+
+At three interior points of six boxes, D as `winding2.py` evaluates it (rtol 10⁻⁸), the five-point Laplacian of φ = arg
+D at h and h/2, Richardson-extrapolated, h = 10⁻³ of the box's longer side L. Criterion: |Δφ| L² ≤ 10⁻⁶ (1 + |∇φ| L).
+The boxes are the stored box at l = 2 and 3 (phantom 0.7603), the canonical star's at l = 2, phantom 0.85 at l = 3,
+`n1_l4` and the upper box `n3_l2`. In each, the planted phase of (s − a)(s − b) eˢ passes (at most 2×10⁻³ of the limit)
+and that phase plus 10⁻³ (Re s)² / L² fails (2.0×10⁻³ against limits of 2×10⁻⁶ to 9×10⁻⁶).
+
+| box | s | abs(∇φ) | abs(Δφ) L² | limit | ratio | verdict |
+|---|---|---|---|---|---|---|
+| `p7603_l2` | +0.575+0.75i | 3.77 | 9.06×10⁻⁵ | 1.04×10⁻⁵ | 8.71 | **exceeds** |
+| `p7603_l2` | +1.05+1.5i | 2.85 | 2.24×10⁻⁶ | 8.12×10⁻⁶ | 0.276 | pass |
+| `p7603_l2` | +1.525+2.25i | 2.3 | 4.20×10⁻⁵ | 6.76×10⁻⁶ | 6.21 | **exceeds** |
+| `p7603_l3` | +0.575+0.75i | 5.92 | 9.02×10⁻⁵ | 1.58×10⁻⁵ | 5.71 | **exceeds** |
+| `p7603_l3` | +1.05+1.5i | 4.3 | 6.10×10⁻⁶ | 1.17×10⁻⁵ | 0.521 | pass |
+| `p7603_l3` | +1.525+2.25i | 3.36 | 3.63×10⁻⁵ | 9.40×10⁻⁶ | 3.86 | **exceeds** |
+| `c075_l2` | +0.575+0.75i | 3.17 | 1.08×10⁻⁴ | 8.93×10⁻⁶ | 12.1 | **exceeds** |
+| `c075_l2` | +1.05+1.5i | 2.19 | 1.16×10⁻⁵ | 6.48×10⁻⁶ | 1.79 | **exceeds** |
+| `c075_l2` | +1.525+2.25i | 1.68 | 6.70×10⁻⁴ | 5.21×10⁻⁶ | 129 | **exceeds** |
+| `p085_l3` | +0.575+0.75i | 6 | 1.28×10⁻⁵ | 1.60×10⁻⁵ | 0.8 | pass |
+| `p085_l3` | +1.05+1.5i | 4.12 | 2.07×10⁻⁵ | 1.13×10⁻⁵ | 1.83 | **exceeds** |
+| `p085_l3` | +1.525+2.25i | 3.25 | 1.04×10⁻³ | 9.11×10⁻⁶ | 114 | **exceeds** |
+| `n1_l4` | +0.025075+0.069i | 23.7 | 4.46×10⁻⁸ | 6.45×10⁻⁶ | 0.00691 | pass |
+| `n1_l4` | +0.05005+0.138i | 24.6 | 6.06×10⁻⁸ | 6.65×10⁻⁶ | 0.00911 | pass |
+| `n1_l4` | +0.075025+0.207i | 34.5 | 6.48×10⁻⁷ | 8.94×10⁻⁶ | 0.0725 | pass |
+| `n3_l2` | −0.0005+0.076i | 19.2 | 6.87×10⁻¹ | 5.22×10⁻⁶ | 1.32×10⁵ | **exceeds** |
+| `n3_l2` | +0+0.142i | 7.96 | 2.11×10⁻¹ | 2.75×10⁻⁶ | 7.67×10⁴ | **exceeds** |
+| `n3_l2` | +5e-05+0.208i | 19.8 | 4.51×10⁻³ | 5.37×10⁻⁶ | 840 | **exceeds** |
+
+**FAIL in 5 of 6 boxes.**
+
+- The four boxes with Re s ≥ 0.1 exceed the limit at 9 of 12 points, by up to 129 times (`c075_l2` at 1.525 + 2.25i,
+  with 6.7×10⁻⁴ against 5.2×10⁻⁶). `p7603_l2` and `p7603_l3` give nearly equal values (9.1×10⁻⁵ and 9.0×10⁻⁵ at 0.575 +
+  0.75i).
+- In `c075_l2` at 1.525 + 2.25i the Laplacian times L² is −1.9×10⁻³ at h and +2.8×10⁻⁵ at h/2, so it does not scale as
+  h².
+- `n1_l4` (Re s ≥ 0.025) passes, at 7 % of the limit.
+- `n3_l2` exceeds it by 840 to 1.3×10⁵, with the same value at h and h/2 (smooth, not noise). With q of `--axis` in
+  place of `zerilli_q` the same three points give 4.2×10⁻⁸, 4.5×10⁻⁸ and 2.2×10⁻⁷ (`axis` below), so the non-harmonic
+  factor is `zerilli_q`.
+
+*Shown:* the failures above, and that the criterion's planted pair and its mutation `nonholo` (D times exp(i 10⁻³ (Re
+s)² / L²) fails `n1_l4`, 310 times the limit) work. In the four boxes with Re s ≥ 0.1, a rerun of `p7603_l2` at rtol
+10⁻¹⁰ (`harm_diag_p7603_l2_rtol1e-10.log`) gives 6.8×10⁻⁷ (passes), 1.4×10⁻⁵ and 1.7×10⁻⁵ (exceed 8.1×10⁻⁶ and 6.8×10⁻⁶)
+at the three points; at rtol 10⁻¹² (`harm_diag_p7603_l2_rtol1e-12.log`) 1.8×10⁻⁸ and 5.4×10⁻⁶ (pass) and 1.0×10⁻⁵
+(exceeds 6.8×10⁻⁶). The worst ratio to the limit is 8.7 at rtol 10⁻⁸, 2.6 at 10⁻¹⁰ and 1.5 at 10⁻¹².
+
+*Reading, not tested:* that the failures at Re s ≥ 0.1 are integrator noise (of order 10⁻¹¹ in arg D at rtol 10⁻⁸, which
+the stencil multiplies by 4 (L/h)² ≈ 4×10⁶ in abs(Δφ) L²), sometimes with a discrete jump in the stencil (`nchunks` of
+`_integrate_plane` depends on |s|, and 1.525 + 2.25i lies within 0.0014 of a threshold). The first point's values fall
+with the tolerance (9.1×10⁻⁵, 6.8×10⁻⁷ and 1.8×10⁻⁸ at rtol 10⁻⁸, 10⁻¹⁰ and 10⁻¹²), the third point's fall more slowly
+(4.2×10⁻⁵, 1.7×10⁻⁵, 1.0×10⁻⁵) and stay above the limit, and the second point's do not fall monotonically (2.2×10⁻⁶,
+1.4×10⁻⁵, 5.4×10⁻⁶). So rtol alone does not remove the failure at 10⁻¹². `zerilli_q` integrates at a fixed rtol of 10⁻¹¹
+(`polar_solver.py`) that `rtol` does not set, which is a candidate floor: also a reading, not tested.
+
+#### `mean`: the mean value property
+
+Added after `harm` failed, as a better-conditioned test of the same property, with its criterion fixed before its runs.
+φ at the middle interior point of each box against the mean of φ over 16 points of a circle of radius ρ = 0.1 L (5 h in
+`n3_l2`, which crosses Re s = 0 and where `zerilli_q` degrades outside the box); 4 (mean − φ_centre) / ρ² stands for the
+Laplacian in the same inequality, and for a harmonic φ it is exact with no 1/h² amplification of noise. The planted pair
+gives at most 1.5×10⁻¹¹ (passes) and 2.0×10⁻³ (fails) in every box; `nonholo` fails `n1_l4` (300 times).
+
+| box | s | ρ | abs(∇φ) | abs(Δφ) L² | limit | ratio | verdict |
+|---|---|---|---|---|---|---|---|
+| `p7603_l2` | +1.05+1.5i | 0.25 | 2.85 | 6.02×10⁻⁶ | 8.12×10⁻⁶ | 0.741 | pass |
+| `p7603_l3` | +1.05+1.5i | 0.25 | 4.3 | 5.74×10⁻⁶ | 1.17×10⁻⁵ | 0.489 | pass |
+| `c075_l2` | +1.05+1.5i | 0.25 | 2.19 | 4.20×10⁻⁶ | 6.48×10⁻⁶ | 0.649 | pass |
+| `p085_l3` | +1.05+1.5i | 0.25 | 4.12 | 2.22×10⁻⁵ | 1.13×10⁻⁵ | 1.97 | **exceeds** |
+| `n1_l4` | +0.05005+0.138i | 0.023 | 24.6 | 1.78×10⁻⁸ | 6.65×10⁻⁶ | 0.00268 | pass |
+| `n3_l2` | +0+0.142i | 0.0011 | 7.96 | 2.38×10⁻¹ | 2.75×10⁻⁶ | 8.63×10⁴ | **exceeds** |
+
+Two boxes fail, as computed: `p085_l3` (ratio 1.97) and `n3_l2` (8.6×10⁴, `zerilli_q` again). The other three pass, at
+ratios of 0.49 to 0.74 that are close to 1, with ρ = 0.25 (L = 2.5). *Reading, not tested:* that a 16-point trapezoid on
+a circle of radius 0.25 has an aliasing error of about (ρ/d)¹⁶ for a singularity of det[Y, Z] at distance d, which at d
+≈ 0.7 would give about 4×10⁻⁵ in this quantity, as large as the values above. The test is a smaller ρ at the same point,
+`--rho=`, not run before this report (the runs are in `listF_after_report.txt` in the raw folder).
+
+#### `gap`: the projector's eigenvalue separation
+
+Over each box's contour (401 points per edge), the points of its cache and a 20 × 20 grid, polished by a local search
+inside the box: the relative separation of the two selected eigenvalues of the vacuum scalar block at R_s from the other
+two (`gap`), the gap between their real parts (`order`: the selection by real part is stable), and σ_min / σ_max of the
+columns 0 and 2 of the projector (`cols`).
+
+| check | smallest over the 61 boxes | box | limit | verdict |
+|---|---|---|---|---|
+| `gap` | 0.1222 at s = 0.01 + 1.7603i | `s2_l2` (Re s ∈ [0.01, 0.03]) | 10⁻³ | pass |
+| `order` | 6.77×10⁻³ | `s2_l2` | 10⁻³ | pass |
+| `cols` | 0.3436 | `p085_l2`, `p085_l3` | 10⁻³ | pass |
+
+The branch points s = ±i(1 ± ω) are at ±0.2397i, ±1.7603i (ω = 0.7603), ±0.25i, ±1.75i (0.75), ±0.3i, ±1.7i (0.70) and
+±0.15i, ±1.85i (0.85). The nearest a counted box comes is 0.010 (`s2_l2` and the `n1`, `n3` boxes), 0.020 (the threshold
+boxes) and 0.030 (`s1`); the stored boxes are 0.100 from the axis, `s3` and `h1` 0.74. The 61 rows (the contour, cache
+and grid minima, R_s, the polished minimum and where it is, and the distance to the branch points) are in
+`d_factors_output.txt`. Planted: boxes of ±0.01 around s = i(1 − ω) and i(1 + ω) give polished separations of 6.4×10⁻⁹
+and 1.3×10⁻⁸ (at 0.2397i and 1.7603i) and an order gap below 10⁻¹⁸, so they fail, and their 20 × 20 grids alone
+(9.0×10⁻² and 3.3×10⁻²) would not: the polish is what finds the point. A projector with P e₀ = P e₂ gives a column ratio
+of 0 and fails `cols`. Mutations: `branch` (every box moved onto i(1 − ω)) fails all three (1.4×10⁻⁹, 0, 6×10⁻¹⁷) and
+`cols` fails `cols`.
+
+#### `norm`: the eigenvector normalisation
+
+D with each eigenvector of `np.linalg.eig` in `scalar_plane` multiplied by a random nonzero complex factor (modulus
+log-uniform in [0.1, 10], uniform phase) at each s, at five points in each of the six boxes: the largest relative
+difference from D is 1.0×10⁻¹³ (`p7603_l2`; the others 4.9×10⁻¹⁴, 6.1×10⁻¹⁴, 2.9×10⁻¹⁴, 1.5×10⁻¹⁴ and 5.5×10⁻¹⁵; limit
+10⁻¹⁰), and σ_min of the scalar plane's 4 × 2 block is 1.0000. Mutation `noproj` (the selected eigenvectors themselves
+as start columns, `--boxes=n1_l4,c075_l2`) gives 1.99 and fails.
+
+#### `pole`: a pole planted through D's code path
+
+In `n1_l2` (phantom 0.7603, l = 2, Re s ∈ [10⁻⁴, 0.1], |Im s| ≤ 0.23, 0 at `--guard=all` in #126, planted zero 0.0005 +
+0.12i) the factor 1/((s − s₀)(s − s̄₀)), s₀ = 0.05 + 0.1i, is multiplied onto the Zerilli column (zv in
+`decaying_plane`) and, in a second run, onto the scalar plane's first start column, in copies of those two methods on
+the script's own instance of `PolarProblem` (the files are unchanged). The box is recounted with a copy of
+`winding2.py`'s step rule at `--guard=all`.
+
+| run | winding | change against #126's 0 | max step | points, time | D_pole / D against c / abs(c) |
+|---|---|---|---|---|---|
+| Zerilli column | −2.0000 | −2.0000 | 0.40 rad | 81, 348 s | 1.1×10⁻¹⁵ at 63 cached points |
+| scalar plane, first column | −2.0000 | −2.0000 | 0.40 rad | 81, 395 s | 4.3×10⁻¹⁴ at 63 cached points |
+
+The copied counter on #126's cache reproduces its winding (0), max step (0.33 rad), min abs(D) (2.82×10⁻³) and planted
+pair (+2.0000; 71 distinct points of the 84 its cache held), and the copied methods with no factor reproduce the cached
+D at three points exactly. The pole enters D as the factor's phase c / abs(c), to rounding, so the count follows.
+Mutations, each exit 1: `reverse` (contour clockwise) gives +2.0000; `nophase` (the phase factor of the planted column's
+QR dropped, as specified) does not lose the pole, since numpy's R has a real diagonal, but removes a sign, so D
+jumps by ±1 and the identity deviates by 2.00; the count had not finished after 300 evaluations; `nogauge` (that
+column's phase fixed by its largest component, which does lose the pole) gives +8.0000 with a step of 3.14 rad and a
+deviation of 2.00 after 293 points.
+
+#### `axis`: n3 with the continued Zerilli column
+
+`n3_l2` and `n3_l3` (Re s ∈ [−10⁻³, 10⁻⁴], Im s ∈ [0.01, 0.23]) with q from `zerilli_zeros.py --axis` (its function
+copied; it reproduces the six q values of the I123 logs exactly) in place of `zerilli_q`, at every cached contour point
+(144 and 152 points, 294 and 310 evaluations). The dense-chain winding is that of the cached points on the four edges.
+
+| box | edge | points | largest abs(D_axis − D) / abs(D) | largest abs(D_axis − D) | of min abs(D) |
+|---|---|---|---|---|---|
+| `n3_l2` | right Re s = 10⁻⁴ | 53 | 4.1×10⁻⁶ | 8.0×10⁻⁷ | 2.9×10⁻⁴ |
+| `n3_l2` | top Im s = 0.23 | 21 | 2.2×10⁻⁶ | 6.1×10⁻⁹ | 2.2×10⁻⁶ |
+| `n3_l2` | left Re s = −10⁻³ | 53 | 7.9×10⁻⁵ | 4.2×10⁻⁶ | 1.5×10⁻³ |
+| `n3_l2` | bottom Im s = 0.01 | 21 | 7.9×10⁻⁵ | 4.2×10⁻⁶ | 1.5×10⁻³ |
+| `n3_l3` | right | 57 | 3.7×10⁻⁶ | 6.8×10⁻⁷ | 1.9×10⁻⁵ |
+| `n3_l3` | top | 21 | 2.4×10⁻⁶ | 1.1×10⁻⁷ | 3.1×10⁻⁶ |
+| `n3_l3` | left | 57 | 2.5×10⁻⁵ | 3.2×10⁻⁶ | 8.9×10⁻⁵ |
+| `n3_l3` | bottom | 21 | 1.1×10⁻⁷ | 8.3×10⁻⁹ | 2.3×10⁻⁷ |
+
+min abs(D) on the contour is 2.75×10⁻³ (`n3_l2`) and 3.61×10⁻² (`n3_l3`). The difference is largest on the left edge,
+where `zerilli_q` is off by up to 8.9×10⁻⁵ (§5.3), and the relative difference is below 10⁻⁴ at every cached point, so
+the argument of D_axis / D stays within ±π/2 on the chain and D_axis and D have the same winding. Winding of the cached
+D on the dense chain: 0 (largest increment 0.210 and 0.201 rad); of D_axis: 0 (0.209 and 0.133 rad); with the planted
+zero −0.0005 + 0.12i, D_axis: +1.0000 in both, so the criterion (winding 0, planted zero returned) is met. Harmonic at
+the three points of `harm`: D_axis passes at 4 % of the limit in `n3_l2` and 16 % in `n3_l3`, while D (with `zerilli_q`)
+fails by 1.3×10⁵ and 4.1×10⁴. Mutations: `reverse` gives −1.0000 for the planted zero and fails `axis_plant`; `wrongq`
+(q times 1 + 10⁻⁴) fails `axis_q` (10⁻⁴ against 10⁻¹⁰).
+
+#### What this settles and what it does not
+
+- *Shown (numerical evidence):* the projector's separation, the order of the selection and the independence of its start
+  columns hold in the 61 boxes with margins of 7 to 340 times the limits; D does not depend on the eigenvector
+  normalisation; a pole in either column of the decaying plane enters D exactly as its phase and changes the winding by
+  −2; the Zerilli column's non-holomorphy in `n3` (via `zerilli_q`) does not change the windings, and the continued
+  column gives windings of 0 with the planted zero returned.
+- *Not shown:* that arg D is harmonic to 10⁻⁶ in the boxes with Re s ≥ 0.1 at rtol 10⁻⁸ (the check fails there), so a
+  non-holomorphic part of D at that level is not excluded by this check. That such a part cannot change a count is a
+  reading, not tested here: it would have to move arg D by about the 0.4 rad of a counted step, and the failures are of
+  the order 10⁻⁵ to 10⁻³ in abs(Δφ) L².
+- *Reading, not tested:* that those failures are integrator noise and that the `mean` failure at `p085_l3` is aliasing
+  (above).
+- The checks are numerical, one phase of each plane, and no interval enclosure or proof. They do not look beyond the 61
+  boxes or outside the part of Re s = 0 that the n3 boxes cover.
+
+| acceptance criterion | verdict |
+|---|---|
+| a table of D's factors, each with its argument or check of holomorphy | met (the table above, in `d_factors_output.txt`) |
+| the smallest separation of the selected eigenvalues per box, a planted box around s = i(1 − ω) failing | met: 0.122 at worst, planted 6×10⁻⁹ |
+| D unchanged to 10⁻¹⁰ under random eigenvector factors; a mutation skipping the normalisation failing | met: 1.0×10⁻¹³; `noproj` 1.99 |
+| a pole planted in one factor changes the winding (by −2 in the symmetric box) | met: −2.0000 in the Zerilli column and in the scalar plane's first column; `reverse`, `nophase`, `nogauge` fail |
+| `harm`: φ = arg D harmonic, planted pair passing and failing | **not met**: 5 of 6 boxes exceed the limit (worst ratios 5.7 to 129 in the four boxes at rtol 10⁻⁸, 1.3×10⁵ in `n3_l2`); the planted pair and `nonholo` behave |
+| `axis`: winding of D_axis equals 0 and the planted zero is returned | met in `n3_l2` and `n3_l3` |
+
 ## 6. Conclusions
 
 1. **Polar, real growth rates.** For the phantom campaign star (ω = 0.7603, M = −0.01458) there is
@@ -1176,6 +1442,7 @@ they are (that the Zerilli column is D's only pole source, #122).
 | `collect_i126.py`, `i126_guard_output.txt` | the recount of §5.4 at `--guard=all`, 61 boxes and 5 controls, from the raw logs (negative-mass-raw, I126-rpi5) |
 | `diagnose_plant.py`, `i115_replay_output.txt` | the replay of a lost step on a cached box, and its two runs on #115's s1 at l = 5 before and after the guard-all rerun (§5.4) |
 | `replay_i126.py`, `i126_replay_output.txt` | the dense-chain replay of §5.4's 61 boxes at `--guard=all` on the caches of negative-mass-raw `I126-rpi5` (`diagnose_plant.py --y0` for the upper boxes); exits 1 when a box fails (§5.4, #128) |
+| `d_factors.py`, `d_factors_output.txt` | the checks of D's factors and its pole sources of §5.5 (`--part=factors,gap,norm,pole,axis,mean`, each with a `--mutate=`), 61 boxes, its output from the caches of negative-mass-raw `I122-rpi5`; exits 1 because `harm` and `mean` fail (§5.5, #122) |
 | `l456_graph.py` → `l456_mode_condition.svg` | the figure of §3a |
 | `boxes_graph.py` → `complex_s_boxes.svg` | the figure of §5.1 |
 | `data_graphs.py` | SVG drawing primitives of both figures, vendored unchanged (its docstring names the canonical copy) |
