@@ -65,7 +65,8 @@ with lapse 1, shift β_x = −v f and K_ij = ½(∂_iβ_j + ∂_jβ_i). It is th
    and 4 (*numerical evidence*).
 6. **The identity at E = P = 0** (*numerical evidence*). In these conventions, with ξ^j = ⟨ε, γ⁰γ^jε⟩, it reads
    (1/4π)∫|∇̃ε|² dV + ∫(μ|ε|² − J·ξ) dV = E − P·ξ₀ = 0. Its boundary terms need more decay than ε − ε₀ ∈ Ḣ¹ gives in
-   general. Here the source of ψ decays exponentially, so ψ = O(r⁻²) and they vanish ([review.md](review.md) gap 2).
+   general. Here the source of ψ decays exponentially, so ψ = O(r⁻²) and they vanish ([review.md](review.md) gap 2;
+   the boundary term with E, P ≠ 0 is in "The boundary term" below).
    Picard iteration of the FFT solve converges in 8–10 steps. The identity holds to 4×10⁻¹⁴, 4×10⁻¹⁴ and 1×10⁻¹²
    (relative to the gradient term G) at N = 128 for (σR, v) = (2, 0.5), (2, 1) and (4, 0.5), with spectral
    convergence in N (10⁻⁶, 10⁻¹⁰, 10⁻¹⁴ at N = 64, 96, 128). With the minimal split, ∫T₋(ξ_ε, n) = G + ∫T₊(ξ_ε, n):
@@ -110,6 +111,15 @@ K_ij and ε ([weitzenbock_conf.py](weitzenbock_conf.py), *checked symbolically*,
 slice, in both frames, an independent exact check at rational points agrees). Other slices and frames rest on the hand
 derivation (*proved*). Its `--mutate=Jsign` and `--mutate=sign` fail.
 phase4/RESULTS.md §1 uses these conventions.
+
+**The boundary term.** On ψ⁴δ the flux of V through the coordinate sphere is ∮ψ⁴V^a n_a r² dΩ. Take
+ψ = 1 + m/2r + O(r⁻²), K_ij = ψ⁻⁶K̂_ij with K̂ the Bowen–York form of momentum P plus O(r⁻³), and ε = ε₀ + O(r⁻¹).
+Then (1/4π) lim ∮ψ⁴V^a n_a r² dΩ = E|ε₀|² − P·ξ₀, with E and P the ADM integrals of the same data and
+ξ₀^j = ⟨ε₀, γ⁰γ^jε₀⟩ ([weitzenbock_boundary.py](weitzenbock_boundary.py), *checked symbolically*, #100, with the
+angular coefficients of ψ to r⁻³, of K̂ to r⁻³ and of ε to r⁻² as independent symbols; an independent numerical check
+of the flux at large radii agrees). The O(r⁻¹) part of ε drops out: its term is a sum of rotation generators, whose sphere integral is 0. By
+power counting (by hand, not computed), ε − ε₀ = O(r⁻ᵈ) with ∂(ε − ε₀) = O(r⁻¹⁻ᵈ) and d > ½ is enough. The ε₀ with
+ξ₀ = P/|P| gives E − |P|. With the other sign of ∇̃, V has +½P_ijξ^j and the boundary term is E + P·ξ₀.
 
 ## References
 

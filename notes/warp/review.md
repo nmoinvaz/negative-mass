@@ -212,6 +212,9 @@ corrected on #59.
 2. **#58 item 5, the solution class.** Uniqueness and "no decaying kernel" hold in ε − ε₀ ∈ Ḣ¹, which the note does
    not state. The identity's boundary terms need more decay than Ḣ¹ gives in general. For these data
    ψ = −D⁻¹(source) with an exponentially decaying source, so ψ = O(r⁻²) and the terms vanish.
+   *Coordinator, after #100:* for ψ = 1 + m/2r + O(r⁻²), K of Bowen–York form plus O(r⁻³) and ε − ε₀ = O(r⁻¹)
+   the boundary term is E|ε₀|² − P·ξ₀ (*checked symbolically*, mass_bounds.md "The boundary term"), and by power
+   counting ε − ε₀ = O(r⁻ᵈ) with d > ½ is enough. That Ḣ¹ alone is enough is not shown.
 3. **#58 item 5, Natário's warp drive** is named without a reference. Its tr K = 0 is recalled, not read here.
 4. **phase4/RESULTS.md §1** writes ξ_ε^a = ⟨ε, γ⁰γ^a ε⟩ with ξ⁰ = |ε|². In #58's gammas ⟨ε, γ⁰γ⁰ε⟩ = −|ε|², so the
    two files differ in more than the sign of ξ⃗. phase4 §1 fixes neither its gammas nor the sign of J. Nothing in

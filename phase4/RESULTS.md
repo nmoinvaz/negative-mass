@@ -21,7 +21,9 @@ Setup. (Σ, g, K) is a complete asymptotically flat initial data set (one end, g
 K = O(r^−q−1), μ, J ∈ L¹). It is spin automatically in 3D. The source is μ = μ₊ − μ₋ and J = J₊ − J₋,
 where μ± = T±(n, n) and J±_i = −n^a T±_ai are the normal projections of T±. **DEC sector by sector:**
 μ± ≥ |J±|. ε₀ is a constant spinor at infinity with |ε₀| = 1, aligned with P so that the boundary term is
-E − |P|. ε solves the hypersurface Dirac equation D̃ε = 0 with ε → ε₀.
+E − |P|. ε solves the hypersurface Dirac equation D̃ε = 0 with ε → ε₀. The boundary term E − P·ξ₀, and E − |P| for
+ξ₀ = P/|P|, is checked for g − δ = O(r⁻¹), K = O(r⁻²) and ε − ε₀ = O(r⁻¹) (notes/warp/mass_bounds.md, "The boundary
+term", #100). The wider class q > ½ rests on the standard argument.
 
 The conventions are those of notes/warp/mass_bounds.md, "Conventions". The gammas are
 γ⁰ = i diag(1, 1, −1, −1) and γ^j = [[0, σ_j], [σ_j, 0]], with ⟨a, b⟩ = a†b, and
