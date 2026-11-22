@@ -58,7 +58,10 @@ is that hypothesis, with ẑ = e_ϕ, at every point.
 (μ, p) = (3/2, 1/5), dust, an anisotropic fluid, two canonical Type IV tensors, null dust with and without a pressure,
 [Le26]'s Type III example ℓm + mℓ and λη are each written in a frame boosted twice and rotated, with a decoupled fourth
 axis. All nine get their type, the fluids through D = 0 and the rank test. numpy's eigenvalues agree on the three with
-D ≠ 0.
+D ≠ 0. `he_type_exact` decides the sign of D exactly (`exact_sign`, #103): a rational D by its fraction, D = 0 by its
+minimal polynomial, and otherwise by an outward-rounded interval at rising precision. Two more planted tensors have
+D = 10⁻⁶⁰ (Type I) and D = −10⁻⁶⁰ (Type IV), which rounding sends to 0, and six algebraic sign cases that floats cannot
+decide; the control `--mutate=nsimplify` fails them.
 
 ## The closed form
 
