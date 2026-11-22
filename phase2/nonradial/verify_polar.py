@@ -8,8 +8,8 @@ At sample radii on a real star background (eps = +1 and -1), for random state ve
     H1 = s y0, G = s y4, H0 = h.y (and its derivatives likewise).
 Each residual is reported relative to the largest single term of that equation (|residual| / max|term|),
 and compared with a control where y'' is perturbed by 1% (must give O(1e-2) residual).
-This complements the exact random-rational check in derive_nonradial.py, which completed for
-(t-theta, t-r, r-theta) before the run was interrupted.
+verify_polar_exact.py (#8) makes the same check in exact arithmetic. The exact random-rational check of (t-theta),
+(t-r), (r-theta) that this docstring once attributed to derive_nonradial.py is not in that script.
 """
 import os, sys, pickle, numpy as np, sympy as sp
 HERE = os.path.dirname(os.path.abspath(__file__)); sys.path.insert(0, HERE)

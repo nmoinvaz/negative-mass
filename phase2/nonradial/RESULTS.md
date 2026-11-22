@@ -32,18 +32,23 @@ Checks:
   (`verify_polar.py`, `verify_polar_output.txt`). The relative residual is ≤ 7e-7, limited by the
   finite-difference J′. A control with y″ perturbed by 1% gives 1e-5…1e-2. The exact rational check of (tθ), (tr), (rθ)
   that this text attributed to `derive_nonradial.py` is not in that script (the run was interrupted; #8).
-- **The same 8 equations, exactly** (`verify_polar_exact.py`, `verify_polar_exact_output.txt`, #8). On y′ = J y with
-  y″ = (J′ + J²) y and H0 = h·y, J′, h′, h″ by the chain rule through the background (written as `lincommon.bgsub`
-  writes it), every residual is **exactly 0**, for all six components of y. *Checked symbolically*: as a polynomial
-  identity in r, α, a, φ0, u, ω, ε, s, l(l+1), Λ, μ and π as twelve indeterminates (ε generic, not only ±1), by exact
-  gcd-free arithmetic (4 s; the generated J has one denominator, an 8-term polynomial printed in the output). It is
-  also 0 at 20 random rational points with ε = ±1 in sympy's rational function field in π, and, in that field, with
-  only r, or r and s, or r, α and a free. Controls that fire: J[0, 0] scaled by 1 + 1/7, the sign of each of α′, a′, φ0′, u′
-  reversed, and the coefficients of H0″ in (tt) and of K″ in the angular trace scaled by 1 + 1/7 each leave a nonzero
-  residual in (tt) and the angular trace, symbolically and at 20 of 20 points. The first attempt, in the rational function
-  field with a gcd after every operation, did not get past J′ in 5 min 48 s (negative-mass-raw `I8-rpi5/probe`). What it checks: the reduced system implies
-  the separated equations of `polar_eqs.pkl`. It does not re-derive them from G_ab − 8πεT_ab. The code has not had
-  an independent review.
+- **The same 8 equations, exactly** (`verify_polar_exact.py`, `verify_polar_exact_output.txt`, #8). On y′ = J y with y″
+  = (J′ + J²) y and H0 = h·y, J′, h′, h″ by the chain rule through the background (written as `lincommon.bgsub` writes
+  it), every residual is **exactly 0**, for all six components of y. *Checked symbolically*: as a polynomial identity in
+  r, α, a, φ0, u, ω, ε, s, l(l+1), Λ, μ and π as twelve indeterminates (ε generic, not only ±1), by exact gcd-free
+  arithmetic (4 s; the generated J has one denominator, an 8-term polynomial printed in the output). It is also 0 at 20
+  random rational points with ε = ±1 in sympy's rational function field in π, and, in that field, with only r, or r and
+  s, or r, α and a free. Controls that fire: J[0, 0] scaled by 1 + 1/7, the sign of each of α′, a′, φ0′, u′ reversed,
+  and the coefficients of H0″ in (tt) and of K″ in the angular trace scaled by 1 + 1/7 each leave a nonzero residual in
+  (tt) and the angular trace, symbolically and at 20 of 20 points. The first attempt, in the rational function field
+  with a gcd after every operation, did not get past J′ in 5 min 48 s (negative-mass-raw `I8-rpi5/probe`). What it
+  checks: the reduced system implies the separated equations of `polar_eqs.pkl`. It does not re-derive them from G_ab −
+  8πεT_ab. *Coordinator's review (#8's closing comment):* an independent derivation, with its own linearization of G_ab
+  − 8πεT_ab and its own background equations, shares only `J_and_h` with this check. On y′ = J y it gives exactly 0 for
+  (tt) and the angular trace at 6 random rational points, with l = 2 and 3, ε = ±1 and π replaced by a rational. Its
+  controls pass: the separation, and the background (θθ) equation. Its mutations (a J coefficient scaled by 8/7, ε
+  flipped in T_ab, J′ dropped) each fire. That check re-derives the separated equations, which this one takes as given;
+  it is an identity test at points, not a symbolic proof (negative-mass-raw `I8-mac`).
 - **Vacuum limit** (φ0 = 0, Schwarzschild M of either sign), symbolically: the metric and scalar blocks
   decouple. The metric block is exactly the **Zerilli equation** f(fZ′)′ = (s² + V_Z)Z under the Moncrief
   map
@@ -1519,7 +1524,8 @@ fails by 1.3×10⁵ and 4.1×10⁴. Mutations: `reverse` gives −1.0000 for the
 - The equations for (tt) and the angular trace were verified numerically (relative residual ≤ 7×10⁻⁷,
   `verify_polar.py`) and are now *checked symbolically* (#8, `verify_polar_exact.py`, §1 Checks): on solutions of
   y′ = J y both residuals are exactly 0, as are those of (tθ), (tr), (rθ), (rr), KG_R and KG_I. The check takes the
-  separated equations of `polar_eqs.pkl` as given.
+  separated equations of `polar_eqs.pkl` as given. The coordinator's independent re-derivation from G_ab − 8πεT_ab
+  agrees exactly at 6 rational points (§1 Checks).
 - Weak-field stars only (|M|/R ~ 3×10⁻³). Nothing here says what happens for compact phantom stars.
 - Linear theory, Regge–Wheeler gauge, m = 0 (sufficient by spherical symmetry).
 
@@ -1528,7 +1534,7 @@ fails by 1.3×10⁵ and 4.1×10⁴. Mutations: `reverse` gives −1.0000 for the
 | file | role |
 |---|---|
 | `lincommon.py` | shared sympy linearisation of G_ab − 8πεT_ab and KG (ε symbolic) |
-| `derive_nonradial.py` (+`_output.txt`) | polar linearisation and separation → `polar_eqs.pkl`; exact check of 3 eqs |
+| `derive_nonradial.py` (+`_output.txt`) | polar linearisation and separation → `polar_eqs.pkl` (the exact check of 3 equations once attributed to it is not in it; #8) |
 | `reduce_polar.py` (+`_output.txt`) | joint reduction → `polar_matrix_generated.py`; vacuum Zerilli/KG checks |
 | `verify_polar.py` (+`_output.txt`) | numerical check of all 8 equations |
 | `verify_polar_exact.py` (+`_output.txt`) | exact check of all 8 equations on y′ = J y (#8): *checked symbolically* in twelve variables (gcd-free, 4 s) and exactly 0 at 20 rational points; `--mutate=coef\|bg\|eq`, `--selftest`, `--crosscheck`, `--sensitivity`, `--method`, `--engine`, `--free`; exits 1 when a check fails or a mutation is detected |
