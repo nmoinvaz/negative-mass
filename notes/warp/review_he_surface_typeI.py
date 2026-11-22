@@ -208,9 +208,15 @@ def T3_multiplicity(h):
     # Theta in the rho a form of he_surface.md: B' - A = v^2 a u (2 r a + (1 + c^2) F)
     r = 1 / u
     d5 = L.red(sp.expand(th - v**2 * a * u * (2 * r * a + (1 + c**2) * F)))
-    h.check("T3_multiplicity", d1 == 0 and all(e == 0 for e in d2) and d3 == 0 and d4 == 0 and d5 == 0,
+    # section 2's values at lam = lam* in the rotated frame: A = -v^2 a (a + F u c^2), B' = v^2 a (a + F u), A B' - j_r^2 = -v^2 a^2 Pu
+    Sp = rotated(R3, ls)
+    A_, B_, jr_ = Sp[0, 0], Sp[1, 1], Sp[0, 1]
+    d6 = [L.red(A_.subs(T1) + v**2 * a * (a + F * u * c**2)), L.red(B_.subs(T1) - v**2 * a * (a + F * u)),
+          L.red((A_ * B_ - jr_**2).subs(T1) + v**2 * a**2 * pu), L.red((B_ - A_).subs(T1) - th)]
+    h.check("T3_multiplicity", d1 == 0 and all(e == 0 for e in d2) and d3 == 0 and d4 == 0 and d5 == 0 and all(e == 0 for e in d6),
             "chi|T1 - (x - lam*)[(x - lam*)(x - lam* - Theta) + v^2 a^2 Pu] = %s; Sigma(lam*) theta^ on T1 = %s; chi_2(lam*) - v^2 a^2 Pu = %s; "
-            "chi_2'(lam*) + Theta = %s; Theta - v^2 a u (2 r a + (1 + c^2) F) = %s" % (d1, d2, d3, d4, d5))
+            "chi_2'(lam*) + Theta = %s; Theta - v^2 a u (2 r a + (1 + c^2) F) = %s; at lam*: A + v^2 a (a + F u c^2), B' - v^2 a (a + F u), "
+            "A B' - j_r^2 + v^2 a^2 Pu, B' - A - Theta reduce to %s" % (d1, d2, d3, d4, d5, d6))
 
 
 # ----------------------------------------------------------------------------------------------------------------------
