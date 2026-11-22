@@ -507,10 +507,12 @@ boxes and planted zeros were fixed before the runs and not moved. Each job is `p
 (raw `jobs.txt`), for example `winding2.py -1 0.7603 2 0.1 2.0 20.0 --y0=10.0 --plant=0.3,10.5 --guard=all`. The pilot
 `w_h3_l2` (the largest |s| and the slow left edge, stop condition 8 h) ran alone for 3 h 55 min. The coordinator started
 the other seven jobs with the same launcher while the runner session waited for a usage reset. That first start of
-`w_b25_l2` and `w_b25_l3` died within 20 s, after 20 and 18 cached points and with empty logs (by the coordinator's
-account, killed when the process that started them returned). They were restarted with the same command on the same
-cache at 21:36, which is why their walls below are the second run's. The other six jobs ran once, and all eight
-exited 0. Logs, caches and the launcher are in negative-mass-raw, folder `I117-rpi5` at 28863c5. From `phase2/nonradial`,
+`w_b25_l2` and `w_b25_l3` died within 20 s and left empty logs and no cached point (by the coordinator's account,
+killed when the process that started them returned, with no cache file of either box at 21:35). Raw 13360d3 holds no
+cache file of them, and the 20 and 18 points in raw 705847e were committed at 21:37:58, after the restart, so they are
+the restart's. The two jobs were restarted with the same command at 21:36 and began from an empty cache, so their walls
+below are those of complete runs. The other six jobs ran once, and all eight exited 0.
+Logs, caches and the launcher are in negative-mass-raw, folder `I117-rpi5` at 28863c5. From `phase2/nonradial`,
 with the raw repository cloned beside the checkout:
 
 ```
