@@ -30,8 +30,20 @@ Checks:
 - **All 8 separated equations** (tt, tr, rr, tθ, rθ, angular trace, KG_R, KG_I) are satisfied on solutions
   of the generated system, on real ε = ±1 backgrounds, l = 2, 3, s ∈ {0.05, 0.7, 5}, 4 radii, random y
   (`verify_polar.py`, `verify_polar_output.txt`). The relative residual is ≤ 7e-7, limited by the
-  finite-difference J′. A control with y″ perturbed by 1% gives 1e-5…1e-2. The exact rational check in
-  `derive_nonradial.py` gives 0 for (tθ), (tr), (rθ).
+  finite-difference J′. A control with y″ perturbed by 1% gives 1e-5…1e-2. The exact rational check of (tθ), (tr), (rθ)
+  that this text attributed to `derive_nonradial.py` is not in that script (the run was interrupted; #8).
+- **The same 8 equations, exactly** (`verify_polar_exact.py`, `verify_polar_exact_output.txt`, #8). On y′ = J y with
+  y″ = (J′ + J²) y and H0 = h·y, J′, h′, h″ by the chain rule through the background (written as `lincommon.bgsub`
+  writes it), every residual is **exactly 0**, for all six components of y. *Checked symbolically*: as a polynomial
+  identity in r, α, a, φ0, u, ω, ε, s, l(l+1), Λ, μ and π as twelve indeterminates (ε generic, not only ±1), by exact
+  gcd-free arithmetic (4 s; the generated J has one denominator, an 8-term polynomial printed in the output). It is
+  also 0 at 20 random rational points with ε = ±1 in sympy's rational function field in π, and, in that field, with
+  only r, or r and s, or r, α and a free. Controls that fire: J[0, 0] scaled by 1 + 1/7, the sign of each of α′, a′, φ0′, u′
+  reversed, and the coefficients of H0″ in (tt) and of K″ in the angular trace scaled by 1 + 1/7 each leave a nonzero
+  residual in (tt) and the angular trace, symbolically and at 20 of 20 points. The first attempt, in the rational function
+  field with a gcd after every operation, did not get past J′ in 5 min 48 s (negative-mass-raw `I8-rpi5/probe`). What it checks: the reduced system implies
+  the separated equations of `polar_eqs.pkl`. It does not re-derive them from G_ab − 8πεT_ab. The code has not had
+  an independent review.
 - **Vacuum limit** (φ0 = 0, Schwarzschild M of either sign), symbolically: the metric and scalar blocks
   decouple. The metric block is exactly the **Zerilli equation** f(fZ′)′ = (s² + V_Z)Z under the Moncrief
   map
@@ -1504,8 +1516,10 @@ fails by 1.3×10⁵ and 4.1×10⁴. Mutations: `reverse` gives −1.0000 for the
   pole source is checked factor by factor in §5.5 (#122), whose test that arg D is harmonic fails at Re s ≥ 0.1 at rtol
   10⁻⁸ (#129). #123 finds none in `n3_l2` and `n3_l3` either, across Re s = 0; there D's own column, from `zerilli_q`,
   is up to 8.9×10⁻⁵ off on the left of the axis (§5.3).
-- The equations for (tt) and the angular trace are verified numerically (relative residual ≤ 7×10⁻⁷),
-  not symbolically. (tθ), (tr), (rθ) are verified exactly.
+- The equations for (tt) and the angular trace were verified numerically (relative residual ≤ 7×10⁻⁷,
+  `verify_polar.py`) and are now *checked symbolically* (#8, `verify_polar_exact.py`, §1 Checks): on solutions of
+  y′ = J y both residuals are exactly 0, as are those of (tθ), (tr), (rθ), (rr), KG_R and KG_I. The check takes the
+  separated equations of `polar_eqs.pkl` as given.
 - Weak-field stars only (|M|/R ~ 3×10⁻³). Nothing here says what happens for compact phantom stars.
 - Linear theory, Regge–Wheeler gauge, m = 0 (sufficient by spherical symmetry).
 
@@ -1517,6 +1531,7 @@ fails by 1.3×10⁵ and 4.1×10⁴. Mutations: `reverse` gives −1.0000 for the
 | `derive_nonradial.py` (+`_output.txt`) | polar linearisation and separation → `polar_eqs.pkl`; exact check of 3 eqs |
 | `reduce_polar.py` (+`_output.txt`) | joint reduction → `polar_matrix_generated.py`; vacuum Zerilli/KG checks |
 | `verify_polar.py` (+`_output.txt`) | numerical check of all 8 equations |
+| `verify_polar_exact.py` (+`_output.txt`) | exact check of all 8 equations on y′ = J y (#8): *checked symbolically* in twelve variables (gcd-free, 4 s) and exactly 0 at 20 rational points; `--mutate=coef\|bg\|eq`, `--selftest`, `--crosscheck`, `--sensitivity`, `--method`, `--engine`, `--free`; exits 1 when a check fails or a mutation is detected |
 | `derive_axial.py`, `axial.py` (+outputs) | axial master equation, positivity of V_ax |
 | `background.py` | frozen copy of `../radial/background.py` |
 | `polar_solver.py` | determinant D(s), exterior Zerilli/KG, κ_eff helper |
@@ -1547,4 +1562,5 @@ fails by 1.3×10⁵ and 4.1×10⁴. Mutations: `reverse` gives −1.0000 for the
 | `data_graphs.py` | SVG drawing primitives of both figures, vendored unchanged (its docstring names the canonical copy) |
 | `kappa_eff.py`, `kappa_eff_l2_*`, `love.py`, `love_output.txt` | κ_eff vs κ_c; static Love-type coefficient |
 | `mini_bs.py`, `mini_bs_output.txt` | validation against Macedo et al. 2013 Mini BS I polar QNM |
-| `check_bg.py`, `matter_sv.py` | background / denominator sanity checks; scalar-sector SVD diagnostic (not run) |
+| `check_bg.py` | background / denominator sanity checks |
+| `matter_sv.py`, `matter_sv_output.txt` | scalar-sector SVD diagnostic at r_m over γ ∈ [10⁻³, 0.6] (25 values), run in #8 for (ε, ω, l) = (−1, 0.7603, 2), (−1, 0.7603, 3), (+1, 0.75, 2), (+1, 0.75, 3): sv2/sv1 does not approach 0. Its minimum is 0.5845, 0.5973, 0.6051, 0.6179, each at the smallest γ = 10⁻³, and it rises to 0.959–0.960 at γ = 0.6; sv3/sv1 ≤ 8×10⁻¹⁷ (the generic null vector). The γ-range and the four stars are all it covers |
