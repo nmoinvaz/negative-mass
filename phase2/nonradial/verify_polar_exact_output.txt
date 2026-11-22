@@ -1,0 +1,1039 @@
+verify_polar_exact.py, unmodified at commit 62b62df (branch wip/i8-polar-exact), run from phase2/nonradial on rpi5-ubuntu,
+Python 3.14.10, sympy 1.14.0. Raw logs, timings and exit codes: negative-mass-raw, folder I8-rpi5. Every run is
+nice -n 10 python -I verify_polar_exact.py ... with OMP_NUM_THREADS=1, one process at a time.
+Exit code 0: all checks of the run pass. Exit code 1: a check fails. A run with --mutate must exit 1, since the mutation must be
+detected; its "expected" exit code below is 1.
+
+| run | exit | expected | last verdict line of the run |
+|---|---|---|---|
+| points | 0 | 0 | RESULT all eight residuals exactly 0 at all points |
+| mutate_coef | 1 | 1 | MUTATION coef: (tt) or the angular trace has a nonzero residual at 20/20 points -> DETECTED |
+| mutate_bg_alpha | 1 | 1 | MUTATION bg: (tt) or the angular trace has a nonzero residual at 20/20 points -> DETECTED |
+| mutate_bg_a | 1 | 1 | MUTATION bg:a: (tt) or the angular trace has a nonzero residual at 20/20 points -> DETECTED |
+| mutate_bg_phi0 | 1 | 1 | MUTATION bg:phi0: (tt) or the angular trace has a nonzero residual at 20/20 points -> DETECTED |
+| mutate_bg_u | 1 | 1 | MUTATION bg:u: (tt) or the angular trace has a nonzero residual at 20/20 points -> DETECTED |
+| mutate_eq | 1 | 1 | MUTATION eq: (tt) or the angular trace has a nonzero residual at 20/20 points -> DETECTED |
+| points_af | 0 | 0 | RESULT all eight residuals exactly 0 at all points |
+| sensitivity | 0 | 0 | (no verdict line) |
+| selftest | 0 | 0 | RESULT selftest PASS: series and sympy chain rule agree exactly |
+| symbolic | 0 | 0 | RESULT all residuals are exactly zero: checked symbolically |
+| symbolic_mutate_coef | 1 | 1 | MUTATION coef: (tt) or the angular trace has a nonzero residual at 1/1 base points -> DETECTED |
+| symbolic_mutate_bg_alpha | 1 | 1 | MUTATION bg: (tt) or the angular trace has a nonzero residual at 1/1 base points -> DETECTED |
+| symbolic_mutate_bg_a | 1 | 1 | MUTATION bg:a: (tt) or the angular trace has a nonzero residual at 1/1 base points -> DETECTED |
+| symbolic_mutate_bg_phi0 | 1 | 1 | MUTATION bg:phi0: (tt) or the angular trace has a nonzero residual at 1/1 base points -> DETECTED |
+| symbolic_mutate_bg_u | 1 | 1 | MUTATION bg:u: (tt) or the angular trace has a nonzero residual at 1/1 base points -> DETECTED |
+| symbolic_mutate_eq | 1 | 1 | MUTATION eq: (tt) or the angular trace has a nonzero residual at 1/1 base points -> DETECTED |
+| crosscheck | 0 | 0 | RESULT crosscheck PASS: symbolic objects agree with the field engine at every point |
+| frac_free_r | 0 | 0 | RESULT all residuals exactly zero at the base points |
+| frac_free_r_s | 0 | 0 | RESULT all residuals exactly zero at the base points |
+| frac_free_r_alpha_a | 0 | 0 | RESULT all residuals exactly zero at the base points |
+
+All exit codes as expected: yes
+
+$ python verify_polar_exact.py --method=points --npoints=20
+verify_polar_exact.py  --method=points --npoints=20
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: sympy rational function field (gcd after every operation)
+points (seed 8), epsilon alternates +1, -1:
+   1  r=3/2 alpha=1 a=5/3 phi0=26/21 u=-16/7 omega=7/17 epsilon=1 s=-1/8 LL=30 Lambda=1 mu=16/9
+   2  r=16/3 alpha=3/7 a=35/9 phi0=16/17 u=27/8 omega=3 epsilon=-1 s=17/5 LL=6 Lambda=13/15 mu=1
+   3  r=3/5 alpha=35/6 a=39/5 phi0=20/7 u=-9/5 omega=3 epsilon=1 s=4 LL=56 Lambda=28/17 mu=24/17
+   4  r=55/9 alpha=2 a=10 phi0=2/3 u=-6/5 omega=11/27 epsilon=-1 s=23/17 LL=20 Lambda=10/7 mu=12/19
+   5  r=5/11 alpha=6 a=4 phi0=6 u=-6/5 omega=2/3 epsilon=1 s=3/2 LL=56 Lambda=14/11 mu=13/12
+   6  r=4/3 alpha=9/5 a=1/2 phi0=5/2 u=23/13 omega=5/4 epsilon=-1 s=-1/14 LL=30 Lambda=27/8 mu=19/16
+   7  r=27/10 alpha=28/9 a=7/12 phi0=3/14 u=27/5 omega=23/8 epsilon=1 s=3/4 LL=12 Lambda=25/19 mu=17/14
+   8  r=46/5 alpha=10 a=14/3 phi0=10/3 u=-21/10 omega=11/17 epsilon=-1 s=-37/5 LL=30 Lambda=12/13 mu=4
+   9  r=4/3 alpha=39/5 a=13/8 phi0=14/19 u=11/9 omega=4/7 epsilon=1 s=-13/9 LL=12 Lambda=13/9 mu=26/7
+  10  r=19/5 alpha=1 a=17/2 phi0=23/20 u=-2 omega=19/17 epsilon=-1 s=3/2 LL=6 Lambda=2/9 mu=2/17
+  11  r=47/3 alpha=10/3 a=3/13 phi0=12/31 u=-23/3 omega=2/3 epsilon=1 s=3/4 LL=12 Lambda=11/19 mu=13/19
+  12  r=19/7 alpha=7/8 a=9/2 phi0=3/2 u=11/5 omega=3/22 epsilon=-1 s=-27/13 LL=6 Lambda=17/12 mu=3/2
+  13  r=55/4 alpha=7/5 a=25/9 phi0=19/14 u=10/3 omega=1/2 epsilon=1 s=-13/7 LL=56 Lambda=27/14 mu=11/8
+  14  r=34/11 alpha=1 a=3 phi0=4/7 u=-2 omega=28/13 epsilon=-1 s=-27/5 LL=72 Lambda=10/11 mu=26/19
+  15  r=9/2 alpha=25/6 a=17/11 phi0=24/19 u=-13/6 omega=2/3 epsilon=1 s=-39/8 LL=56 Lambda=8/3 mu=13/3
+  16  r=11/9 alpha=4/5 a=1/4 phi0=7/26 u=-2 omega=9/7 epsilon=-1 s=-7/16 LL=56 Lambda=7/3 mu=6
+  17  r=14 alpha=22/3 a=7/5 phi0=7/10 u=-2 omega=12/31 epsilon=1 s=5/9 LL=20 Lambda=20/13 mu=2/3
+  18  r=5/11 alpha=3/4 a=8/3 phi0=3/5 u=17/7 omega=9/17 epsilon=-1 s=2/3 LL=20 Lambda=1/5 mu=8/5
+  19  r=8 alpha=8/3 a=5/11 phi0=13/14 u=-3 omega=6/31 epsilon=1 s=-11/12 LL=20 Lambda=29/10 mu=24/19
+  20  r=9/5 alpha=2 a=5/3 phi0=3/5 u=6/13 omega=5/29 epsilon=-1 s=-29/3 LL=6 Lambda=19/12 mu=7/8
+point  1  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [3s]
+point  2  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [4s]
+point  3  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [5s]
+point  4  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [5s]
+point  5  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [7s]
+point  6  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [7s]
+point  7  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [8s]
+point  8  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [10s]
+point  9  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [11s]
+point 10  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [11s]
+point 11  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [13s]
+point 12  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [14s]
+point 13  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [15s]
+point 14  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [16s]
+point 15  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [17s]
+point 16  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [18s]
+point 17  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [19s]
+point 18  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [20s]
+point 19  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [21s]
+point 20  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [22s]
+
+summary: residual vector (six coefficients of y) exactly zero, and residual at a random rational y exactly 0
+  tth     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  tr      zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  rth     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  rr      zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  KGR     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  KGI     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  tt      zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  ang_tr  zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+
+method: exact evaluation at 20 rational points (an identity test at points, not a symbolic proof)
+RESULT all eight residuals exactly 0 at all points
+exit 0  (wall 23 s)
+
+$ python verify_polar_exact.py --method=points --npoints=20 --mutate=coef
+verify_polar_exact.py  --method=points --npoints=20 --mutate=coef
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: sympy rational function field (gcd after every operation)
+MUTATION coef
+points (seed 8), epsilon alternates +1, -1:
+   1  r=3/2 alpha=1 a=5/3 phi0=26/21 u=-16/7 omega=7/17 epsilon=1 s=-1/8 LL=30 Lambda=1 mu=16/9
+   2  r=16/3 alpha=3/7 a=35/9 phi0=16/17 u=27/8 omega=3 epsilon=-1 s=17/5 LL=6 Lambda=13/15 mu=1
+   3  r=3/5 alpha=35/6 a=39/5 phi0=20/7 u=-9/5 omega=3 epsilon=1 s=4 LL=56 Lambda=28/17 mu=24/17
+   4  r=55/9 alpha=2 a=10 phi0=2/3 u=-6/5 omega=11/27 epsilon=-1 s=23/17 LL=20 Lambda=10/7 mu=12/19
+   5  r=5/11 alpha=6 a=4 phi0=6 u=-6/5 omega=2/3 epsilon=1 s=3/2 LL=56 Lambda=14/11 mu=13/12
+   6  r=4/3 alpha=9/5 a=1/2 phi0=5/2 u=23/13 omega=5/4 epsilon=-1 s=-1/14 LL=30 Lambda=27/8 mu=19/16
+   7  r=27/10 alpha=28/9 a=7/12 phi0=3/14 u=27/5 omega=23/8 epsilon=1 s=3/4 LL=12 Lambda=25/19 mu=17/14
+   8  r=46/5 alpha=10 a=14/3 phi0=10/3 u=-21/10 omega=11/17 epsilon=-1 s=-37/5 LL=30 Lambda=12/13 mu=4
+   9  r=4/3 alpha=39/5 a=13/8 phi0=14/19 u=11/9 omega=4/7 epsilon=1 s=-13/9 LL=12 Lambda=13/9 mu=26/7
+  10  r=19/5 alpha=1 a=17/2 phi0=23/20 u=-2 omega=19/17 epsilon=-1 s=3/2 LL=6 Lambda=2/9 mu=2/17
+  11  r=47/3 alpha=10/3 a=3/13 phi0=12/31 u=-23/3 omega=2/3 epsilon=1 s=3/4 LL=12 Lambda=11/19 mu=13/19
+  12  r=19/7 alpha=7/8 a=9/2 phi0=3/2 u=11/5 omega=3/22 epsilon=-1 s=-27/13 LL=6 Lambda=17/12 mu=3/2
+  13  r=55/4 alpha=7/5 a=25/9 phi0=19/14 u=10/3 omega=1/2 epsilon=1 s=-13/7 LL=56 Lambda=27/14 mu=11/8
+  14  r=34/11 alpha=1 a=3 phi0=4/7 u=-2 omega=28/13 epsilon=-1 s=-27/5 LL=72 Lambda=10/11 mu=26/19
+  15  r=9/2 alpha=25/6 a=17/11 phi0=24/19 u=-13/6 omega=2/3 epsilon=1 s=-39/8 LL=56 Lambda=8/3 mu=13/3
+  16  r=11/9 alpha=4/5 a=1/4 phi0=7/26 u=-2 omega=9/7 epsilon=-1 s=-7/16 LL=56 Lambda=7/3 mu=6
+  17  r=14 alpha=22/3 a=7/5 phi0=7/10 u=-2 omega=12/31 epsilon=1 s=5/9 LL=20 Lambda=20/13 mu=2/3
+  18  r=5/11 alpha=3/4 a=8/3 phi0=3/5 u=17/7 omega=9/17 epsilon=-1 s=2/3 LL=20 Lambda=1/5 mu=8/5
+  19  r=8 alpha=8/3 a=5/11 phi0=13/14 u=-3 omega=6/31 epsilon=1 s=-11/12 LL=20 Lambda=29/10 mu=24/19
+  20  r=9/5 alpha=2 a=5/3 phi0=3/5 u=6/13 omega=5/29 epsilon=-1 s=-29/3 LL=6 Lambda=19/12 mu=7/8
+point  1  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [3s]
+point  2  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [4s]
+point  3  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [5s]
+point  4  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [6s]
+point  5  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [7s]
+point  6  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [8s]
+point  7  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [9s]
+point  8  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [10s]
+point  9  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [11s]
+point 10  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [12s]
+point 11  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [13s]
+point 12  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [14s]
+point 13  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [15s]
+point 14  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [16s]
+point 15  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [17s]
+point 16  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [18s]
+point 17  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [19s]
+point 18  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [20s]
+point 19  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [21s]
+point 20  tth NONZERO(1/6)  tr 0  rth NONZERO(1/6)  rr NONZERO(6/6)  KGR NONZERO(1/6)  KGI NONZERO(1/6)  tt NONZERO(6/6)  ang_tr NONZERO(1/6)   [22s]
+
+summary: residual vector (six coefficients of y) exactly zero, and residual at a random rational y exactly 0
+  tth     zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  tr      zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  rth     zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  rr      zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  KGR     zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  KGI     zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  tt      zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  ang_tr  zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+
+MUTATION coef: (tt) or the angular trace has a nonzero residual at 20/20 points -> DETECTED
+exit 1  (wall 23 s)
+
+$ python verify_polar_exact.py --method=points --npoints=20 --mutate=bg
+verify_polar_exact.py  --method=points --npoints=20 --mutate=bg
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: sympy rational function field (gcd after every operation)
+MUTATION bg
+points (seed 8), epsilon alternates +1, -1:
+   1  r=3/2 alpha=1 a=5/3 phi0=26/21 u=-16/7 omega=7/17 epsilon=1 s=-1/8 LL=30 Lambda=1 mu=16/9
+   2  r=16/3 alpha=3/7 a=35/9 phi0=16/17 u=27/8 omega=3 epsilon=-1 s=17/5 LL=6 Lambda=13/15 mu=1
+   3  r=3/5 alpha=35/6 a=39/5 phi0=20/7 u=-9/5 omega=3 epsilon=1 s=4 LL=56 Lambda=28/17 mu=24/17
+   4  r=55/9 alpha=2 a=10 phi0=2/3 u=-6/5 omega=11/27 epsilon=-1 s=23/17 LL=20 Lambda=10/7 mu=12/19
+   5  r=5/11 alpha=6 a=4 phi0=6 u=-6/5 omega=2/3 epsilon=1 s=3/2 LL=56 Lambda=14/11 mu=13/12
+   6  r=4/3 alpha=9/5 a=1/2 phi0=5/2 u=23/13 omega=5/4 epsilon=-1 s=-1/14 LL=30 Lambda=27/8 mu=19/16
+   7  r=27/10 alpha=28/9 a=7/12 phi0=3/14 u=27/5 omega=23/8 epsilon=1 s=3/4 LL=12 Lambda=25/19 mu=17/14
+   8  r=46/5 alpha=10 a=14/3 phi0=10/3 u=-21/10 omega=11/17 epsilon=-1 s=-37/5 LL=30 Lambda=12/13 mu=4
+   9  r=4/3 alpha=39/5 a=13/8 phi0=14/19 u=11/9 omega=4/7 epsilon=1 s=-13/9 LL=12 Lambda=13/9 mu=26/7
+  10  r=19/5 alpha=1 a=17/2 phi0=23/20 u=-2 omega=19/17 epsilon=-1 s=3/2 LL=6 Lambda=2/9 mu=2/17
+  11  r=47/3 alpha=10/3 a=3/13 phi0=12/31 u=-23/3 omega=2/3 epsilon=1 s=3/4 LL=12 Lambda=11/19 mu=13/19
+  12  r=19/7 alpha=7/8 a=9/2 phi0=3/2 u=11/5 omega=3/22 epsilon=-1 s=-27/13 LL=6 Lambda=17/12 mu=3/2
+  13  r=55/4 alpha=7/5 a=25/9 phi0=19/14 u=10/3 omega=1/2 epsilon=1 s=-13/7 LL=56 Lambda=27/14 mu=11/8
+  14  r=34/11 alpha=1 a=3 phi0=4/7 u=-2 omega=28/13 epsilon=-1 s=-27/5 LL=72 Lambda=10/11 mu=26/19
+  15  r=9/2 alpha=25/6 a=17/11 phi0=24/19 u=-13/6 omega=2/3 epsilon=1 s=-39/8 LL=56 Lambda=8/3 mu=13/3
+  16  r=11/9 alpha=4/5 a=1/4 phi0=7/26 u=-2 omega=9/7 epsilon=-1 s=-7/16 LL=56 Lambda=7/3 mu=6
+  17  r=14 alpha=22/3 a=7/5 phi0=7/10 u=-2 omega=12/31 epsilon=1 s=5/9 LL=20 Lambda=20/13 mu=2/3
+  18  r=5/11 alpha=3/4 a=8/3 phi0=3/5 u=17/7 omega=9/17 epsilon=-1 s=2/3 LL=20 Lambda=1/5 mu=8/5
+  19  r=8 alpha=8/3 a=5/11 phi0=13/14 u=-3 omega=6/31 epsilon=1 s=-11/12 LL=20 Lambda=29/10 mu=24/19
+  20  r=9/5 alpha=2 a=5/3 phi0=3/5 u=6/13 omega=5/29 epsilon=-1 s=-29/3 LL=6 Lambda=19/12 mu=7/8
+point  1  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [3s]
+point  2  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [4s]
+point  3  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [5s]
+point  4  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [6s]
+point  5  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [7s]
+point  6  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [8s]
+point  7  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [9s]
+point  8  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [11s]
+point  9  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [12s]
+point 10  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [13s]
+point 11  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [14s]
+point 12  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [15s]
+point 13  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [16s]
+point 14  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [17s]
+point 15  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [18s]
+point 16  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [19s]
+point 17  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [20s]
+point 18  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [21s]
+point 19  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [22s]
+point 20  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [23s]
+
+summary: residual vector (six coefficients of y) exactly zero, and residual at a random rational y exactly 0
+  tth     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  tr      zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  rth     zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  rr      zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  KGR     zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  KGI     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  tt      zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  ang_tr  zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+
+MUTATION bg: (tt) or the angular trace has a nonzero residual at 20/20 points -> DETECTED
+exit 1  (wall 24 s)
+
+$ python verify_polar_exact.py --method=points --npoints=20 --mutate=bg:a
+verify_polar_exact.py  --method=points --npoints=20 --mutate=bg:a
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: sympy rational function field (gcd after every operation)
+MUTATION bg:a
+points (seed 8), epsilon alternates +1, -1:
+   1  r=3/2 alpha=1 a=5/3 phi0=26/21 u=-16/7 omega=7/17 epsilon=1 s=-1/8 LL=30 Lambda=1 mu=16/9
+   2  r=16/3 alpha=3/7 a=35/9 phi0=16/17 u=27/8 omega=3 epsilon=-1 s=17/5 LL=6 Lambda=13/15 mu=1
+   3  r=3/5 alpha=35/6 a=39/5 phi0=20/7 u=-9/5 omega=3 epsilon=1 s=4 LL=56 Lambda=28/17 mu=24/17
+   4  r=55/9 alpha=2 a=10 phi0=2/3 u=-6/5 omega=11/27 epsilon=-1 s=23/17 LL=20 Lambda=10/7 mu=12/19
+   5  r=5/11 alpha=6 a=4 phi0=6 u=-6/5 omega=2/3 epsilon=1 s=3/2 LL=56 Lambda=14/11 mu=13/12
+   6  r=4/3 alpha=9/5 a=1/2 phi0=5/2 u=23/13 omega=5/4 epsilon=-1 s=-1/14 LL=30 Lambda=27/8 mu=19/16
+   7  r=27/10 alpha=28/9 a=7/12 phi0=3/14 u=27/5 omega=23/8 epsilon=1 s=3/4 LL=12 Lambda=25/19 mu=17/14
+   8  r=46/5 alpha=10 a=14/3 phi0=10/3 u=-21/10 omega=11/17 epsilon=-1 s=-37/5 LL=30 Lambda=12/13 mu=4
+   9  r=4/3 alpha=39/5 a=13/8 phi0=14/19 u=11/9 omega=4/7 epsilon=1 s=-13/9 LL=12 Lambda=13/9 mu=26/7
+  10  r=19/5 alpha=1 a=17/2 phi0=23/20 u=-2 omega=19/17 epsilon=-1 s=3/2 LL=6 Lambda=2/9 mu=2/17
+  11  r=47/3 alpha=10/3 a=3/13 phi0=12/31 u=-23/3 omega=2/3 epsilon=1 s=3/4 LL=12 Lambda=11/19 mu=13/19
+  12  r=19/7 alpha=7/8 a=9/2 phi0=3/2 u=11/5 omega=3/22 epsilon=-1 s=-27/13 LL=6 Lambda=17/12 mu=3/2
+  13  r=55/4 alpha=7/5 a=25/9 phi0=19/14 u=10/3 omega=1/2 epsilon=1 s=-13/7 LL=56 Lambda=27/14 mu=11/8
+  14  r=34/11 alpha=1 a=3 phi0=4/7 u=-2 omega=28/13 epsilon=-1 s=-27/5 LL=72 Lambda=10/11 mu=26/19
+  15  r=9/2 alpha=25/6 a=17/11 phi0=24/19 u=-13/6 omega=2/3 epsilon=1 s=-39/8 LL=56 Lambda=8/3 mu=13/3
+  16  r=11/9 alpha=4/5 a=1/4 phi0=7/26 u=-2 omega=9/7 epsilon=-1 s=-7/16 LL=56 Lambda=7/3 mu=6
+  17  r=14 alpha=22/3 a=7/5 phi0=7/10 u=-2 omega=12/31 epsilon=1 s=5/9 LL=20 Lambda=20/13 mu=2/3
+  18  r=5/11 alpha=3/4 a=8/3 phi0=3/5 u=17/7 omega=9/17 epsilon=-1 s=2/3 LL=20 Lambda=1/5 mu=8/5
+  19  r=8 alpha=8/3 a=5/11 phi0=13/14 u=-3 omega=6/31 epsilon=1 s=-11/12 LL=20 Lambda=29/10 mu=24/19
+  20  r=9/5 alpha=2 a=5/3 phi0=3/5 u=6/13 omega=5/29 epsilon=-1 s=-29/3 LL=6 Lambda=19/12 mu=7/8
+point  1  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [3s]
+point  2  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [4s]
+point  3  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [5s]
+point  4  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [6s]
+point  5  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [7s]
+point  6  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [8s]
+point  7  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [9s]
+point  8  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [10s]
+point  9  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [11s]
+point 10  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [12s]
+point 11  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [13s]
+point 12  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [14s]
+point 13  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [15s]
+point 14  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [16s]
+point 15  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [17s]
+point 16  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [18s]
+point 17  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [19s]
+point 18  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [20s]
+point 19  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [21s]
+point 20  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [22s]
+
+summary: residual vector (six coefficients of y) exactly zero, and residual at a random rational y exactly 0
+  tth     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  tr      zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  rth     zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  rr      zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  KGR     zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  KGI     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  tt      zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  ang_tr  zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+
+MUTATION bg:a: (tt) or the angular trace has a nonzero residual at 20/20 points -> DETECTED
+exit 1  (wall 23 s)
+
+$ python verify_polar_exact.py --method=points --npoints=20 --mutate=bg:phi0
+verify_polar_exact.py  --method=points --npoints=20 --mutate=bg:phi0
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: sympy rational function field (gcd after every operation)
+MUTATION bg:phi0
+points (seed 8), epsilon alternates +1, -1:
+   1  r=3/2 alpha=1 a=5/3 phi0=26/21 u=-16/7 omega=7/17 epsilon=1 s=-1/8 LL=30 Lambda=1 mu=16/9
+   2  r=16/3 alpha=3/7 a=35/9 phi0=16/17 u=27/8 omega=3 epsilon=-1 s=17/5 LL=6 Lambda=13/15 mu=1
+   3  r=3/5 alpha=35/6 a=39/5 phi0=20/7 u=-9/5 omega=3 epsilon=1 s=4 LL=56 Lambda=28/17 mu=24/17
+   4  r=55/9 alpha=2 a=10 phi0=2/3 u=-6/5 omega=11/27 epsilon=-1 s=23/17 LL=20 Lambda=10/7 mu=12/19
+   5  r=5/11 alpha=6 a=4 phi0=6 u=-6/5 omega=2/3 epsilon=1 s=3/2 LL=56 Lambda=14/11 mu=13/12
+   6  r=4/3 alpha=9/5 a=1/2 phi0=5/2 u=23/13 omega=5/4 epsilon=-1 s=-1/14 LL=30 Lambda=27/8 mu=19/16
+   7  r=27/10 alpha=28/9 a=7/12 phi0=3/14 u=27/5 omega=23/8 epsilon=1 s=3/4 LL=12 Lambda=25/19 mu=17/14
+   8  r=46/5 alpha=10 a=14/3 phi0=10/3 u=-21/10 omega=11/17 epsilon=-1 s=-37/5 LL=30 Lambda=12/13 mu=4
+   9  r=4/3 alpha=39/5 a=13/8 phi0=14/19 u=11/9 omega=4/7 epsilon=1 s=-13/9 LL=12 Lambda=13/9 mu=26/7
+  10  r=19/5 alpha=1 a=17/2 phi0=23/20 u=-2 omega=19/17 epsilon=-1 s=3/2 LL=6 Lambda=2/9 mu=2/17
+  11  r=47/3 alpha=10/3 a=3/13 phi0=12/31 u=-23/3 omega=2/3 epsilon=1 s=3/4 LL=12 Lambda=11/19 mu=13/19
+  12  r=19/7 alpha=7/8 a=9/2 phi0=3/2 u=11/5 omega=3/22 epsilon=-1 s=-27/13 LL=6 Lambda=17/12 mu=3/2
+  13  r=55/4 alpha=7/5 a=25/9 phi0=19/14 u=10/3 omega=1/2 epsilon=1 s=-13/7 LL=56 Lambda=27/14 mu=11/8
+  14  r=34/11 alpha=1 a=3 phi0=4/7 u=-2 omega=28/13 epsilon=-1 s=-27/5 LL=72 Lambda=10/11 mu=26/19
+  15  r=9/2 alpha=25/6 a=17/11 phi0=24/19 u=-13/6 omega=2/3 epsilon=1 s=-39/8 LL=56 Lambda=8/3 mu=13/3
+  16  r=11/9 alpha=4/5 a=1/4 phi0=7/26 u=-2 omega=9/7 epsilon=-1 s=-7/16 LL=56 Lambda=7/3 mu=6
+  17  r=14 alpha=22/3 a=7/5 phi0=7/10 u=-2 omega=12/31 epsilon=1 s=5/9 LL=20 Lambda=20/13 mu=2/3
+  18  r=5/11 alpha=3/4 a=8/3 phi0=3/5 u=17/7 omega=9/17 epsilon=-1 s=2/3 LL=20 Lambda=1/5 mu=8/5
+  19  r=8 alpha=8/3 a=5/11 phi0=13/14 u=-3 omega=6/31 epsilon=1 s=-11/12 LL=20 Lambda=29/10 mu=24/19
+  20  r=9/5 alpha=2 a=5/3 phi0=3/5 u=6/13 omega=5/29 epsilon=-1 s=-29/3 LL=6 Lambda=19/12 mu=7/8
+point  1  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [3s]
+point  2  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [4s]
+point  3  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [5s]
+point  4  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [6s]
+point  5  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [7s]
+point  6  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [8s]
+point  7  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [9s]
+point  8  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [10s]
+point  9  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [11s]
+point 10  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [12s]
+point 11  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [13s]
+point 12  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [14s]
+point 13  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [15s]
+point 14  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [16s]
+point 15  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [17s]
+point 16  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [18s]
+point 17  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [19s]
+point 18  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [20s]
+point 19  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [21s]
+point 20  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [22s]
+
+summary: residual vector (six coefficients of y) exactly zero, and residual at a random rational y exactly 0
+  tth     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  tr      zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  rth     zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  rr      zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  KGR     zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  KGI     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  tt      zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  ang_tr  zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+
+MUTATION bg:phi0: (tt) or the angular trace has a nonzero residual at 20/20 points -> DETECTED
+exit 1  (wall 23 s)
+
+$ python verify_polar_exact.py --method=points --npoints=20 --mutate=bg:u
+verify_polar_exact.py  --method=points --npoints=20 --mutate=bg:u
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: sympy rational function field (gcd after every operation)
+MUTATION bg:u
+points (seed 8), epsilon alternates +1, -1:
+   1  r=3/2 alpha=1 a=5/3 phi0=26/21 u=-16/7 omega=7/17 epsilon=1 s=-1/8 LL=30 Lambda=1 mu=16/9
+   2  r=16/3 alpha=3/7 a=35/9 phi0=16/17 u=27/8 omega=3 epsilon=-1 s=17/5 LL=6 Lambda=13/15 mu=1
+   3  r=3/5 alpha=35/6 a=39/5 phi0=20/7 u=-9/5 omega=3 epsilon=1 s=4 LL=56 Lambda=28/17 mu=24/17
+   4  r=55/9 alpha=2 a=10 phi0=2/3 u=-6/5 omega=11/27 epsilon=-1 s=23/17 LL=20 Lambda=10/7 mu=12/19
+   5  r=5/11 alpha=6 a=4 phi0=6 u=-6/5 omega=2/3 epsilon=1 s=3/2 LL=56 Lambda=14/11 mu=13/12
+   6  r=4/3 alpha=9/5 a=1/2 phi0=5/2 u=23/13 omega=5/4 epsilon=-1 s=-1/14 LL=30 Lambda=27/8 mu=19/16
+   7  r=27/10 alpha=28/9 a=7/12 phi0=3/14 u=27/5 omega=23/8 epsilon=1 s=3/4 LL=12 Lambda=25/19 mu=17/14
+   8  r=46/5 alpha=10 a=14/3 phi0=10/3 u=-21/10 omega=11/17 epsilon=-1 s=-37/5 LL=30 Lambda=12/13 mu=4
+   9  r=4/3 alpha=39/5 a=13/8 phi0=14/19 u=11/9 omega=4/7 epsilon=1 s=-13/9 LL=12 Lambda=13/9 mu=26/7
+  10  r=19/5 alpha=1 a=17/2 phi0=23/20 u=-2 omega=19/17 epsilon=-1 s=3/2 LL=6 Lambda=2/9 mu=2/17
+  11  r=47/3 alpha=10/3 a=3/13 phi0=12/31 u=-23/3 omega=2/3 epsilon=1 s=3/4 LL=12 Lambda=11/19 mu=13/19
+  12  r=19/7 alpha=7/8 a=9/2 phi0=3/2 u=11/5 omega=3/22 epsilon=-1 s=-27/13 LL=6 Lambda=17/12 mu=3/2
+  13  r=55/4 alpha=7/5 a=25/9 phi0=19/14 u=10/3 omega=1/2 epsilon=1 s=-13/7 LL=56 Lambda=27/14 mu=11/8
+  14  r=34/11 alpha=1 a=3 phi0=4/7 u=-2 omega=28/13 epsilon=-1 s=-27/5 LL=72 Lambda=10/11 mu=26/19
+  15  r=9/2 alpha=25/6 a=17/11 phi0=24/19 u=-13/6 omega=2/3 epsilon=1 s=-39/8 LL=56 Lambda=8/3 mu=13/3
+  16  r=11/9 alpha=4/5 a=1/4 phi0=7/26 u=-2 omega=9/7 epsilon=-1 s=-7/16 LL=56 Lambda=7/3 mu=6
+  17  r=14 alpha=22/3 a=7/5 phi0=7/10 u=-2 omega=12/31 epsilon=1 s=5/9 LL=20 Lambda=20/13 mu=2/3
+  18  r=5/11 alpha=3/4 a=8/3 phi0=3/5 u=17/7 omega=9/17 epsilon=-1 s=2/3 LL=20 Lambda=1/5 mu=8/5
+  19  r=8 alpha=8/3 a=5/11 phi0=13/14 u=-3 omega=6/31 epsilon=1 s=-11/12 LL=20 Lambda=29/10 mu=24/19
+  20  r=9/5 alpha=2 a=5/3 phi0=3/5 u=6/13 omega=5/29 epsilon=-1 s=-29/3 LL=6 Lambda=19/12 mu=7/8
+point  1  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [3s]
+point  2  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [4s]
+point  3  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [5s]
+point  4  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [6s]
+point  5  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [7s]
+point  6  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [8s]
+point  7  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [9s]
+point  8  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [10s]
+point  9  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [11s]
+point 10  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [12s]
+point 11  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [13s]
+point 12  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [14s]
+point 13  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [15s]
+point 14  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [16s]
+point 15  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [17s]
+point 16  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [18s]
+point 17  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [19s]
+point 18  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [20s]
+point 19  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [21s]
+point 20  tth 0  tr 0  rth NONZERO(6/6)  rr NONZERO(6/6)  KGR NONZERO(6/6)  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [22s]
+
+summary: residual vector (six coefficients of y) exactly zero, and residual at a random rational y exactly 0
+  tth     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  tr      zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  rth     zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  rr      zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  KGR     zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  KGI     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  tt      zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  ang_tr  zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+
+MUTATION bg:u: (tt) or the angular trace has a nonzero residual at 20/20 points -> DETECTED
+exit 1  (wall 23 s)
+
+$ python verify_polar_exact.py --method=points --npoints=20 --mutate=eq
+verify_polar_exact.py  --method=points --npoints=20 --mutate=eq
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: sympy rational function field (gcd after every operation)
+MUTATION eq
+points (seed 8), epsilon alternates +1, -1:
+   1  r=3/2 alpha=1 a=5/3 phi0=26/21 u=-16/7 omega=7/17 epsilon=1 s=-1/8 LL=30 Lambda=1 mu=16/9
+   2  r=16/3 alpha=3/7 a=35/9 phi0=16/17 u=27/8 omega=3 epsilon=-1 s=17/5 LL=6 Lambda=13/15 mu=1
+   3  r=3/5 alpha=35/6 a=39/5 phi0=20/7 u=-9/5 omega=3 epsilon=1 s=4 LL=56 Lambda=28/17 mu=24/17
+   4  r=55/9 alpha=2 a=10 phi0=2/3 u=-6/5 omega=11/27 epsilon=-1 s=23/17 LL=20 Lambda=10/7 mu=12/19
+   5  r=5/11 alpha=6 a=4 phi0=6 u=-6/5 omega=2/3 epsilon=1 s=3/2 LL=56 Lambda=14/11 mu=13/12
+   6  r=4/3 alpha=9/5 a=1/2 phi0=5/2 u=23/13 omega=5/4 epsilon=-1 s=-1/14 LL=30 Lambda=27/8 mu=19/16
+   7  r=27/10 alpha=28/9 a=7/12 phi0=3/14 u=27/5 omega=23/8 epsilon=1 s=3/4 LL=12 Lambda=25/19 mu=17/14
+   8  r=46/5 alpha=10 a=14/3 phi0=10/3 u=-21/10 omega=11/17 epsilon=-1 s=-37/5 LL=30 Lambda=12/13 mu=4
+   9  r=4/3 alpha=39/5 a=13/8 phi0=14/19 u=11/9 omega=4/7 epsilon=1 s=-13/9 LL=12 Lambda=13/9 mu=26/7
+  10  r=19/5 alpha=1 a=17/2 phi0=23/20 u=-2 omega=19/17 epsilon=-1 s=3/2 LL=6 Lambda=2/9 mu=2/17
+  11  r=47/3 alpha=10/3 a=3/13 phi0=12/31 u=-23/3 omega=2/3 epsilon=1 s=3/4 LL=12 Lambda=11/19 mu=13/19
+  12  r=19/7 alpha=7/8 a=9/2 phi0=3/2 u=11/5 omega=3/22 epsilon=-1 s=-27/13 LL=6 Lambda=17/12 mu=3/2
+  13  r=55/4 alpha=7/5 a=25/9 phi0=19/14 u=10/3 omega=1/2 epsilon=1 s=-13/7 LL=56 Lambda=27/14 mu=11/8
+  14  r=34/11 alpha=1 a=3 phi0=4/7 u=-2 omega=28/13 epsilon=-1 s=-27/5 LL=72 Lambda=10/11 mu=26/19
+  15  r=9/2 alpha=25/6 a=17/11 phi0=24/19 u=-13/6 omega=2/3 epsilon=1 s=-39/8 LL=56 Lambda=8/3 mu=13/3
+  16  r=11/9 alpha=4/5 a=1/4 phi0=7/26 u=-2 omega=9/7 epsilon=-1 s=-7/16 LL=56 Lambda=7/3 mu=6
+  17  r=14 alpha=22/3 a=7/5 phi0=7/10 u=-2 omega=12/31 epsilon=1 s=5/9 LL=20 Lambda=20/13 mu=2/3
+  18  r=5/11 alpha=3/4 a=8/3 phi0=3/5 u=17/7 omega=9/17 epsilon=-1 s=2/3 LL=20 Lambda=1/5 mu=8/5
+  19  r=8 alpha=8/3 a=5/11 phi0=13/14 u=-3 omega=6/31 epsilon=1 s=-11/12 LL=20 Lambda=29/10 mu=24/19
+  20  r=9/5 alpha=2 a=5/3 phi0=3/5 u=6/13 omega=5/29 epsilon=-1 s=-29/3 LL=6 Lambda=19/12 mu=7/8
+point  1  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [3s]
+point  2  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [4s]
+point  3  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [5s]
+point  4  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [6s]
+point  5  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [7s]
+point  6  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [8s]
+point  7  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [9s]
+point  8  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [10s]
+point  9  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [11s]
+point 10  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [12s]
+point 11  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [13s]
+point 12  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [14s]
+point 13  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [15s]
+point 14  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [16s]
+point 15  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [17s]
+point 16  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [18s]
+point 17  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [19s]
+point 18  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [20s]
+point 19  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [21s]
+point 20  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt NONZERO(6/6)  ang_tr NONZERO(6/6)   [22s]
+
+summary: residual vector (six coefficients of y) exactly zero, and residual at a random rational y exactly 0
+  tth     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  tr      zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  rth     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  rr      zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  KGR     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  KGI     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  tt      zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+  ang_tr  zero at  0/20 points, residual at random y exactly 0 at  0/20   -> FAIL (nonzero at 20 points)
+
+MUTATION eq: (tt) or the angular trace has a nonzero residual at 20/20 points -> DETECTED
+exit 1  (wall 23 s)
+
+$ python verify_polar_exact.py --method=points --engine=af --npoints=20
+verify_polar_exact.py  --method=points --engine=af --npoints=20
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: gcd-free: Laurent polynomial numerators, inverted polynomials as denominator atoms
+points (seed 8), epsilon alternates +1, -1:
+   1  r=3/2 alpha=1 a=5/3 phi0=26/21 u=-16/7 omega=7/17 epsilon=1 s=-1/8 LL=30 Lambda=1 mu=16/9
+   2  r=16/3 alpha=3/7 a=35/9 phi0=16/17 u=27/8 omega=3 epsilon=-1 s=17/5 LL=6 Lambda=13/15 mu=1
+   3  r=3/5 alpha=35/6 a=39/5 phi0=20/7 u=-9/5 omega=3 epsilon=1 s=4 LL=56 Lambda=28/17 mu=24/17
+   4  r=55/9 alpha=2 a=10 phi0=2/3 u=-6/5 omega=11/27 epsilon=-1 s=23/17 LL=20 Lambda=10/7 mu=12/19
+   5  r=5/11 alpha=6 a=4 phi0=6 u=-6/5 omega=2/3 epsilon=1 s=3/2 LL=56 Lambda=14/11 mu=13/12
+   6  r=4/3 alpha=9/5 a=1/2 phi0=5/2 u=23/13 omega=5/4 epsilon=-1 s=-1/14 LL=30 Lambda=27/8 mu=19/16
+   7  r=27/10 alpha=28/9 a=7/12 phi0=3/14 u=27/5 omega=23/8 epsilon=1 s=3/4 LL=12 Lambda=25/19 mu=17/14
+   8  r=46/5 alpha=10 a=14/3 phi0=10/3 u=-21/10 omega=11/17 epsilon=-1 s=-37/5 LL=30 Lambda=12/13 mu=4
+   9  r=4/3 alpha=39/5 a=13/8 phi0=14/19 u=11/9 omega=4/7 epsilon=1 s=-13/9 LL=12 Lambda=13/9 mu=26/7
+  10  r=19/5 alpha=1 a=17/2 phi0=23/20 u=-2 omega=19/17 epsilon=-1 s=3/2 LL=6 Lambda=2/9 mu=2/17
+  11  r=47/3 alpha=10/3 a=3/13 phi0=12/31 u=-23/3 omega=2/3 epsilon=1 s=3/4 LL=12 Lambda=11/19 mu=13/19
+  12  r=19/7 alpha=7/8 a=9/2 phi0=3/2 u=11/5 omega=3/22 epsilon=-1 s=-27/13 LL=6 Lambda=17/12 mu=3/2
+  13  r=55/4 alpha=7/5 a=25/9 phi0=19/14 u=10/3 omega=1/2 epsilon=1 s=-13/7 LL=56 Lambda=27/14 mu=11/8
+  14  r=34/11 alpha=1 a=3 phi0=4/7 u=-2 omega=28/13 epsilon=-1 s=-27/5 LL=72 Lambda=10/11 mu=26/19
+  15  r=9/2 alpha=25/6 a=17/11 phi0=24/19 u=-13/6 omega=2/3 epsilon=1 s=-39/8 LL=56 Lambda=8/3 mu=13/3
+  16  r=11/9 alpha=4/5 a=1/4 phi0=7/26 u=-2 omega=9/7 epsilon=-1 s=-7/16 LL=56 Lambda=7/3 mu=6
+  17  r=14 alpha=22/3 a=7/5 phi0=7/10 u=-2 omega=12/31 epsilon=1 s=5/9 LL=20 Lambda=20/13 mu=2/3
+  18  r=5/11 alpha=3/4 a=8/3 phi0=3/5 u=17/7 omega=9/17 epsilon=-1 s=2/3 LL=20 Lambda=1/5 mu=8/5
+  19  r=8 alpha=8/3 a=5/11 phi0=13/14 u=-3 omega=6/31 epsilon=1 s=-11/12 LL=20 Lambda=29/10 mu=24/19
+  20  r=9/5 alpha=2 a=5/3 phi0=3/5 u=6/13 omega=5/29 epsilon=-1 s=-29/3 LL=6 Lambda=19/12 mu=7/8
+point  1  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [2s]
+point  2  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [2s]
+point  3  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [2s]
+point  4  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [2s]
+point  5  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [3s]
+point  6  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [3s]
+point  7  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [3s]
+point  8  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [3s]
+point  9  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [3s]
+point 10  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [4s]
+point 11  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [4s]
+point 12  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [4s]
+point 13  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [4s]
+point 14  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [4s]
+point 15  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [5s]
+point 16  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [5s]
+point 17  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [5s]
+point 18  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [5s]
+point 19  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [5s]
+point 20  tth 0  tr 0  rth 0  rr 0  KGR 0  KGI 0  tt 0  ang_tr 0   [6s]
+
+summary: residual vector (six coefficients of y) exactly zero, and residual at a random rational y exactly 0
+  tth     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  tr      zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  rth     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  rr      zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  KGR     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  KGI     zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  tt      zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+  ang_tr  zero at 20/20 points, residual at random y exactly 0 at 20/20   -> PASS
+
+method: exact evaluation at 20 rational points (an identity test at points, not a symbolic proof)
+RESULT all eight residuals exactly 0 at all points
+exit 0  (wall 6 s)
+
+$ python verify_polar_exact.py --sensitivity
+verify_polar_exact.py  --sensitivity
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: sympy rational function field (gcd after every operation)
+sensitivity at point 1: scale J[i, j] by 8/7 and recompute the residual
+  rows i = 0..5, columns j = 0..5; per equation, '#' nonzero, '.' zero, '-' J[i, j] is 0
+  equation tth
+     # # # # # #
+     . . . . . .
+     - - - . - -
+     . . . . . .
+     - - - - - .
+     . - . - . .
+  equation tr
+     . . . . . .
+     # # # # # #
+     - - - . - -
+     . . . . . .
+     - - - - - #
+     . - . - . .
+  equation rth
+     # # # # # #
+     # # # # # #
+     - - - # - -
+     # # # # # #
+     - - - - - #
+     # - # - # #
+  equation rr
+     # # # # # #
+     # # # # # #
+     - - - # - -
+     # # # # # #
+     - - - - - #
+     # - # - # #
+  equation KGR
+     # # # # # #
+     # # # # # #
+     - - - # - -
+     # # # # # #
+     - - - - - #
+     # - # - # #
+  equation KGI
+     # # # # # #
+     . . . . . .
+     - - - . - -
+     . . . . . .
+     - - - - - #
+     # - # - # #
+  equation tt
+     # # # # # #
+     # # # # # #
+     - - - # - -
+     # # # # # #
+     - - - - - #
+     # - # - # #
+  equation ang_tr
+     # # # # # #
+     # # # # # #
+     - - - # - -
+     # # # # # #
+     - - - - - #
+     # - # - # #
+exit 0  (wall 21 s)
+
+$ python verify_polar_exact.py --selftest
+verify_polar_exact.py  --selftest
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: sympy rational function field (gcd after every operation)
+selftest: symbolic J, h from the program with sympy symbols; D = d/dr + sum (q' d/dq), q' = the flow
+  symbolic derivatives built 12s
+  point 1: J 36/36 equal  J' 36/36 equal  h 6/6 equal  h' 6/6 equal  h'' 6/6 equal   [17s]
+  point 2: J 36/36 equal  J' 36/36 equal  h 6/6 equal  h' 6/6 equal  h'' 6/6 equal   [20s]
+RESULT selftest PASS: series and sympy chain rule agree exactly
+exit 0  (wall 21 s)
+
+$ python verify_polar_exact.py --method=symbolic --deadline=28800
+verify_polar_exact.py  --method=symbolic --deadline=28800
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: gcd-free: Laurent polynomial numerators, inverted polynomials as denominator atoms
+symbolic: all twelve variables free, no base point, deadline 28800 s
+  program run on the series (lazy): 2s
+  J:    2s  terms of numerator / denominator (atoms): max 176 / 1, total 718
+  J':   2s  terms of numerator / denominator (atoms): max 1832 / 1, total 9312
+  h, h': 2s
+  h'':  2s  terms of numerator / denominator (atoms): max 3283 / 1, total 11480
+  atoms (inverted polynomials): 1
+    atom 0 (8 terms, monic): -3*LL*a**2*alpha**2/4 - 3*Lambda*PI*a**2*alpha**2*epsilon*phi0**4*r**2/2 + PI*a**2*alpha**2*epsilon*mu*phi0**6*r**2 + 3*PI*a**2*alpha**2*epsilon*phi0**2*r**2 + 3*PI*a**2*epsilon*omega**2*phi0**2*r**2 - 9*PI*alpha**2*epsilon*phi0**2*r**2*u**2 - 3*a**2*alpha**2/4 + 9*alpha**2/4
+  rows of y, y', y'' for H0, H1, K, F, G: 3s
+  tth     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  tr      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  rth     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  rr      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  KGR     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  KGI     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  tt      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 4s
+  ang_tr  residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 4s
+
+method: full symbolic computation, exact, all twelve variables free (af engine)
+RESULT all residuals are exactly zero: checked symbolically
+exit 0  (wall 4 s)
+
+$ python verify_polar_exact.py --method=symbolic --mutate=coef --deadline=28800
+verify_polar_exact.py  --method=symbolic --mutate=coef --deadline=28800
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: gcd-free: Laurent polynomial numerators, inverted polynomials as denominator atoms
+MUTATION coef
+symbolic: all twelve variables free, no base point, deadline 28800 s
+  program run on the series (lazy): 2s
+  J:    2s  terms of numerator / denominator (atoms): max 176 / 1, total 718
+  J':   2s  terms of numerator / denominator (atoms): max 1832 / 1, total 9312
+  h, h': 2s
+  h'':  2s  terms of numerator / denominator (atoms): max 3283 / 1, total 11480
+  atoms (inverted polynomials): 1
+    atom 0 (8 terms, monic): -3*LL*a**2*alpha**2/4 - 3*Lambda*PI*a**2*alpha**2*epsilon*phi0**4*r**2/2 + PI*a**2*alpha**2*epsilon*mu*phi0**6*r**2 + 3*PI*a**2*alpha**2*epsilon*phi0**2*r**2 + 3*PI*a**2*epsilon*omega**2*phi0**2*r**2 - 9*PI*alpha**2*epsilon*phi0**2*r**2*u**2 - 3*a**2*alpha**2/4 + 9*alpha**2/4
+  rows of y, y', y'' for H0, H1, K, F, G: 3s
+  tth     residual NONZERO  (1 of 6 coefficients nonzero)  0s, total 3s
+  tr      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  rth     residual NONZERO  (1 of 6 coefficients nonzero)  0s, total 3s
+  rr      residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 3s
+  KGR     residual NONZERO  (1 of 6 coefficients nonzero)  0s, total 3s
+  KGI     residual NONZERO  (1 of 6 coefficients nonzero)  0s, total 3s
+  tt      residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 4s
+  ang_tr  residual NONZERO  (1 of 6 coefficients nonzero)  0s, total 4s
+MUTATION coef: (tt) or the angular trace has a nonzero residual at 1/1 base points -> DETECTED
+exit 1  (wall 5 s)
+
+$ python verify_polar_exact.py --method=symbolic --mutate=bg --deadline=28800
+verify_polar_exact.py  --method=symbolic --mutate=bg --deadline=28800
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: gcd-free: Laurent polynomial numerators, inverted polynomials as denominator atoms
+MUTATION bg
+symbolic: all twelve variables free, no base point, deadline 28800 s
+  program run on the series (lazy): 2s
+  J:    2s  terms of numerator / denominator (atoms): max 176 / 1, total 718
+  J':   2s  terms of numerator / denominator (atoms): max 1792 / 1, total 9064
+  h, h': 2s
+  h'':  2s  terms of numerator / denominator (atoms): max 3286 / 1, total 11352
+  atoms (inverted polynomials): 1
+    atom 0 (8 terms, monic): -3*LL*a**2*alpha**2/4 - 3*Lambda*PI*a**2*alpha**2*epsilon*phi0**4*r**2/2 + PI*a**2*alpha**2*epsilon*mu*phi0**6*r**2 + 3*PI*a**2*alpha**2*epsilon*phi0**2*r**2 + 3*PI*a**2*epsilon*omega**2*phi0**2*r**2 - 9*PI*alpha**2*epsilon*phi0**2*r**2*u**2 - 3*a**2*alpha**2/4 + 9*alpha**2/4
+  rows of y, y', y'' for H0, H1, K, F, G: 3s
+  tth     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  tr      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  rth     residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 3s
+  rr      residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 3s
+  KGR     residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 4s
+  KGI     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 4s
+  tt      residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 4s
+  ang_tr  residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 4s
+MUTATION bg: (tt) or the angular trace has a nonzero residual at 1/1 base points -> DETECTED
+exit 1  (wall 4 s)
+
+$ python verify_polar_exact.py --method=symbolic --mutate=bg:a --deadline=28800
+verify_polar_exact.py  --method=symbolic --mutate=bg:a --deadline=28800
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: gcd-free: Laurent polynomial numerators, inverted polynomials as denominator atoms
+MUTATION bg:a
+symbolic: all twelve variables free, no base point, deadline 28800 s
+  program run on the series (lazy): 2s
+  J:    2s  terms of numerator / denominator (atoms): max 176 / 1, total 718
+  J':   2s  terms of numerator / denominator (atoms): max 1808 / 1, total 8954
+  h, h': 2s
+  h'':  2s  terms of numerator / denominator (atoms): max 3290 / 1, total 11118
+  atoms (inverted polynomials): 1
+    atom 0 (8 terms, monic): -3*LL*a**2*alpha**2/4 - 3*Lambda*PI*a**2*alpha**2*epsilon*phi0**4*r**2/2 + PI*a**2*alpha**2*epsilon*mu*phi0**6*r**2 + 3*PI*a**2*alpha**2*epsilon*phi0**2*r**2 + 3*PI*a**2*epsilon*omega**2*phi0**2*r**2 - 9*PI*alpha**2*epsilon*phi0**2*r**2*u**2 - 3*a**2*alpha**2/4 + 9*alpha**2/4
+  rows of y, y', y'' for H0, H1, K, F, G: 3s
+  tth     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  tr      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  rth     residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 3s
+  rr      residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 3s
+  KGR     residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 3s
+  KGI     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 4s
+  tt      residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 4s
+  ang_tr  residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 4s
+MUTATION bg:a: (tt) or the angular trace has a nonzero residual at 1/1 base points -> DETECTED
+exit 1  (wall 4 s)
+
+$ python verify_polar_exact.py --method=symbolic --mutate=bg:phi0 --deadline=28800
+verify_polar_exact.py  --method=symbolic --mutate=bg:phi0 --deadline=28800
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: gcd-free: Laurent polynomial numerators, inverted polynomials as denominator atoms
+MUTATION bg:phi0
+symbolic: all twelve variables free, no base point, deadline 28800 s
+  program run on the series (lazy): 2s
+  J:    2s  terms of numerator / denominator (atoms): max 176 / 1, total 718
+  J':   2s  terms of numerator / denominator (atoms): max 1873 / 1, total 9500
+  h, h': 2s
+  h'':  2s  terms of numerator / denominator (atoms): max 3389 / 1, total 11788
+  atoms (inverted polynomials): 1
+    atom 0 (8 terms, monic): -3*LL*a**2*alpha**2/4 - 3*Lambda*PI*a**2*alpha**2*epsilon*phi0**4*r**2/2 + PI*a**2*alpha**2*epsilon*mu*phi0**6*r**2 + 3*PI*a**2*alpha**2*epsilon*phi0**2*r**2 + 3*PI*a**2*epsilon*omega**2*phi0**2*r**2 - 9*PI*alpha**2*epsilon*phi0**2*r**2*u**2 - 3*a**2*alpha**2/4 + 9*alpha**2/4
+  rows of y, y', y'' for H0, H1, K, F, G: 3s
+  tth     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  tr      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  rth     residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 3s
+  rr      residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 4s
+  KGR     residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 4s
+  KGI     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 4s
+  tt      residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 4s
+  ang_tr  residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 4s
+MUTATION bg:phi0: (tt) or the angular trace has a nonzero residual at 1/1 base points -> DETECTED
+exit 1  (wall 5 s)
+
+$ python verify_polar_exact.py --method=symbolic --mutate=bg:u --deadline=28800
+verify_polar_exact.py  --method=symbolic --mutate=bg:u --deadline=28800
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: gcd-free: Laurent polynomial numerators, inverted polynomials as denominator atoms
+MUTATION bg:u
+symbolic: all twelve variables free, no base point, deadline 28800 s
+  program run on the series (lazy): 2s
+  J:    2s  terms of numerator / denominator (atoms): max 176 / 1, total 718
+  J':   2s  terms of numerator / denominator (atoms): max 1842 / 1, total 9144
+  h, h': 2s
+  h'':  2s  terms of numerator / denominator (atoms): max 3418 / 1, total 11587
+  atoms (inverted polynomials): 1
+    atom 0 (8 terms, monic): -3*LL*a**2*alpha**2/4 - 3*Lambda*PI*a**2*alpha**2*epsilon*phi0**4*r**2/2 + PI*a**2*alpha**2*epsilon*mu*phi0**6*r**2 + 3*PI*a**2*alpha**2*epsilon*phi0**2*r**2 + 3*PI*a**2*epsilon*omega**2*phi0**2*r**2 - 9*PI*alpha**2*epsilon*phi0**2*r**2*u**2 - 3*a**2*alpha**2/4 + 9*alpha**2/4
+  rows of y, y', y'' for H0, H1, K, F, G: 3s
+  tth     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  tr      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  rth     residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 3s
+  rr      residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 3s
+  KGR     residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 4s
+  KGI     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 4s
+  tt      residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 4s
+  ang_tr  residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 4s
+MUTATION bg:u: (tt) or the angular trace has a nonzero residual at 1/1 base points -> DETECTED
+exit 1  (wall 4 s)
+
+$ python verify_polar_exact.py --method=symbolic --mutate=eq --deadline=28800
+verify_polar_exact.py  --method=symbolic --mutate=eq --deadline=28800
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: gcd-free: Laurent polynomial numerators, inverted polynomials as denominator atoms
+MUTATION eq
+symbolic: all twelve variables free, no base point, deadline 28800 s
+  program run on the series (lazy): 2s
+  J:    2s  terms of numerator / denominator (atoms): max 176 / 1, total 718
+  J':   2s  terms of numerator / denominator (atoms): max 1832 / 1, total 9312
+  h, h': 2s
+  h'':  2s  terms of numerator / denominator (atoms): max 3283 / 1, total 11480
+  atoms (inverted polynomials): 1
+    atom 0 (8 terms, monic): -3*LL*a**2*alpha**2/4 - 3*Lambda*PI*a**2*alpha**2*epsilon*phi0**4*r**2/2 + PI*a**2*alpha**2*epsilon*mu*phi0**6*r**2 + 3*PI*a**2*alpha**2*epsilon*phi0**2*r**2 + 3*PI*a**2*epsilon*omega**2*phi0**2*r**2 - 9*PI*alpha**2*epsilon*phi0**2*r**2*u**2 - 3*a**2*alpha**2/4 + 9*alpha**2/4
+  rows of y, y', y'' for H0, H1, K, F, G: 3s
+  tth     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  tr      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  rth     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  rr      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  KGR     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  KGI     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  tt      residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 3s
+  ang_tr  residual NONZERO  (6 of 6 coefficients nonzero)  0s, total 4s
+MUTATION eq: (tt) or the angular trace has a nonzero residual at 1/1 base points -> DETECTED
+exit 1  (wall 4 s)
+
+$ python verify_polar_exact.py --crosscheck --npoints=5
+verify_polar_exact.py  --crosscheck --npoints=5
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: sympy rational function field (gcd after every operation)
+crosscheck: symbolic objects built 3s; atoms 1
+  point 1 (PI = 37/2): J 36/36  Jp 36/36  h 6/6  hp 6/6  hpp 6/6  rows 90/90  coefficients 58/58   [5s]
+  point 2 (PI = 7/4): J 36/36  Jp 36/36  h 6/6  hp 6/6  hpp 6/6  rows 90/90  coefficients 58/58   [7s]
+  point 3 (PI = 37): J 36/36  Jp 36/36  h 6/6  hp 6/6  hpp 6/6  rows 90/90  coefficients 58/58   [9s]
+  point 4 (PI = 14/15): J 36/36  Jp 36/36  h 6/6  hp 6/6  hpp 6/6  rows 90/90  coefficients 58/58   [10s]
+  point 5 (PI = 53/16): J 36/36  Jp 36/36  h 6/6  hp 6/6  hpp 6/6  rows 90/90  coefficients 58/58   [12s]
+RESULT crosscheck PASS: symbolic objects agree with the field engine at every point
+exit 0  (wall 13 s)
+
+$ python verify_polar_exact.py --method=symbolic --engine=frac --free=r --npoints=1
+verify_polar_exact.py  --method=symbolic --engine=frac --free=r --npoints=1
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: sympy rational function field (gcd after every operation)
+symbolic: r, PI free, the others at the 1 points of seed 8, deadline none
+base point 1: alpha=1 a=5/3 phi0=26/21 u=-16/7 omega=7/17 epsilon=1 s=-1/8 LL=30 Lambda=1 mu=16/9
+  program run on the series (lazy): 2s
+  J:    2s  terms of numerator / denominator: max 10 / 2, total 133
+  J':   2s  terms of numerator / denominator: max 20 / 3, total 283
+  h, h': 2s
+  h'':  2s  terms of numerator / denominator: max 22 / 4, total 131
+  rows of y, y', y'' for H0, H1, K, F, G: 3s
+  tth     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  tr      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  rth     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  rr      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  KGR     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  KGI     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  tt      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  ang_tr  residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+
+method: exact, free variables r,PI, the others at the base points: an identity test in the other variables, not a full symbolic proof
+RESULT all residuals exactly zero at the base points
+exit 0  (wall 4 s)
+
+$ python verify_polar_exact.py --method=symbolic --engine=frac --free=r,s --npoints=1
+verify_polar_exact.py  --method=symbolic --engine=frac --free=r,s --npoints=1
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: sympy rational function field (gcd after every operation)
+symbolic: r, s, PI free, the others at the 1 points of seed 8, deadline none
+base point 1: alpha=1 a=5/3 phi0=26/21 u=-16/7 omega=7/17 epsilon=1 LL=30 Lambda=1 mu=16/9
+  program run on the series (lazy): 2s
+  J:    2s  terms of numerator / denominator: max 10 / 2, total 138
+  J':   2s  terms of numerator / denominator: max 24 / 3, total 310
+  h, h': 2s
+  h'':  3s  terms of numerator / denominator: max 27 / 4, total 148
+  rows of y, y', y'' for H0, H1, K, F, G: 3s
+  tth     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  tr      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  rth     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  rr      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  KGR     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  KGI     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  tt      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+  ang_tr  residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 3s
+
+method: exact, free variables r,s,PI, the others at the base points: an identity test in the other variables, not a full symbolic proof
+RESULT all residuals exactly zero at the base points
+exit 0  (wall 4 s)
+
+$ python verify_polar_exact.py --method=symbolic --engine=frac --free=r,alpha,a --npoints=1
+verify_polar_exact.py  --method=symbolic --engine=frac --free=r,alpha,a --npoints=1
+commit 62b62df  python 3.14.10  sympy 1.14.0
+polar_matrix_generated.py sha256 46b68ab9fd06541b: 5 float exponents turned into ints, 1 int/int quotients into Rational; exp, sqrt, log used in the program: none
+  E[tth   ] jets: G, H0, H1, H1', K
+  E[tr    ] jets: F, G, G', H0, H1, K, K'
+  E[rth   ] jets: F, H0, H0', H1, K'
+  E[rr    ] jets: F, F', H0, H0', H0'', H1, H1', K', K''
+  E[KGR   ] jets: F, F', F'', G, H0, H0', H1, K'
+  E[KGI   ] jets: F, G, G', G'', H0, H1, H1', K
+  E[tt    ] jets: F, G, H0, H0', H0'', H1, H1', K, K'
+  E[ang_tr] jets: F, H0, H0', H1, K, K', K''
+engine: sympy rational function field (gcd after every operation)
+symbolic: r, alpha, a, PI free, the others at the 1 points of seed 8, deadline none
+base point 1: phi0=26/21 u=-16/7 omega=7/17 epsilon=1 s=-1/8 LL=30 Lambda=1 mu=16/9
+  program run on the series (lazy): 2s
+  J:    2s  terms of numerator / denominator: max 60 / 5, total 408
+  J':   4s  terms of numerator / denominator: max 242 / 14, total 1976
+  h, h': 4s
+  h'':  7s  terms of numerator / denominator: max 307 / 30, total 1483
+  rows of y, y', y'' for H0, H1, K, F, G: 379s
+  tth     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 379s
+  tr      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 380s
+  rth     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 380s
+  rr      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 380s
+  KGR     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 380s
+  KGI     residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 380s
+  tt      residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 380s
+  ang_tr  residual = 0 exactly  (0 of 6 coefficients nonzero)  0s, total 380s
+
+method: exact, free variables r,alpha,a,PI, the others at the base points: an identity test in the other variables, not a full symbolic proof
+RESULT all residuals exactly zero at the base points
+exit 0  (wall 381 s)
