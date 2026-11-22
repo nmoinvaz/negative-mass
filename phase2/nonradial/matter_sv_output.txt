@@ -1,0 +1,49 @@
+matter_sv.py, unmodified, run from phase2/nonradial at commit e595ec2 (branch wip/i8-polar-exact) on rpi5-ubuntu,
+Python 3.14.10 (sympy 1.14.0, numpy 2.5.4, scipy 1.18.1). Raw logs, timings and exit codes: negative-mass-raw, folder I8-rpi5.
+Each run below is  nice -n 10 python matter_sv.py <eps> <w> <l>  (OMP_NUM_THREADS=1); every exit code is 0.
+sv2/sv1 and sv3/sv1 are the second and third singular values of A over the first (matter_sv.py's docstring);
+the table lists every 4th of the 25 values of gamma, the first line gives the minimum over all 25.
+
+$ python matter_sv.py -1 0.7603 2
+eps=-1 w=0.7603 l=2: min sv2/sv1 = 5.845e-01 at gamma=0.001;  max sv3/sv1 = 6.1e-17
+   gamma=1.000e-03  sv2/sv1=5.845e-01
+   gamma=2.904e-03  sv2/sv1=5.845e-01
+   gamma=8.434e-03  sv2/sv1=5.848e-01
+   gamma=2.449e-02  sv2/sv1=5.871e-01
+   gamma=7.114e-02  sv2/sv1=6.062e-01
+   gamma=2.066e-01  sv2/sv1=7.341e-01
+   gamma=6.000e-01  sv2/sv1=9.600e-01
+exit 0
+
+$ python matter_sv.py -1 0.7603 3
+eps=-1 w=0.7603 l=3: min sv2/sv1 = 5.973e-01 at gamma=0.001;  max sv3/sv1 = 7.9e-17
+   gamma=1.000e-03  sv2/sv1=5.973e-01
+   gamma=2.904e-03  sv2/sv1=5.973e-01
+   gamma=8.434e-03  sv2/sv1=5.976e-01
+   gamma=2.449e-02  sv2/sv1=5.999e-01
+   gamma=7.114e-02  sv2/sv1=6.183e-01
+   gamma=2.066e-01  sv2/sv1=7.427e-01
+   gamma=6.000e-01  sv2/sv1=9.591e-01
+exit 0
+
+$ python matter_sv.py 1 0.75 2
+eps=+1 w=0.75 l=2: min sv2/sv1 = 6.051e-01 at gamma=0.001;  max sv3/sv1 = 7.3e-17
+   gamma=1.000e-03  sv2/sv1=6.051e-01
+   gamma=2.904e-03  sv2/sv1=6.051e-01
+   gamma=8.434e-03  sv2/sv1=6.053e-01
+   gamma=2.449e-02  sv2/sv1=6.075e-01
+   gamma=7.114e-02  sv2/sv1=6.255e-01
+   gamma=2.066e-01  sv2/sv1=7.470e-01
+   gamma=6.000e-01  sv2/sv1=9.597e-01
+exit 0
+
+$ python matter_sv.py 1 0.75 3
+eps=+1 w=0.75 l=3: min sv2/sv1 = 6.179e-01 at gamma=0.001;  max sv3/sv1 = 7.0e-17
+   gamma=1.000e-03  sv2/sv1=6.179e-01
+   gamma=2.904e-03  sv2/sv1=6.179e-01
+   gamma=8.434e-03  sv2/sv1=6.182e-01
+   gamma=2.449e-02  sv2/sv1=6.203e-01
+   gamma=7.114e-02  sv2/sv1=6.377e-01
+   gamma=2.066e-01  sv2/sv1=7.556e-01
+   gamma=6.000e-01  sv2/sv1=9.588e-01
+exit 0
