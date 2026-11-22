@@ -47,8 +47,8 @@ weitzenbock_conf.py, issues #87 and #99. sympy 1.14.0, python 3.14.10. mutation:
 
 == 7. Planted truth for mu and J_i from the constraints, on diagonal slices ==
 [PASS] planted_alcubierre_diag: A = B = C = 1, K = Alcubierre's, arbitrary f: mu = -(v^2/32 pi)(f_y^2 + f_z^2), J_i = (v/16 pi)(d_x d_i f - delta_ix Laplace f)
-[PASS] planted_K0_diag: K = 0 on the two metrics above: mu = R/16 pi with R by hand, J = 0
-[PASS] planted_trace_diag: K_ij = f delta_ij on the two metrics above: mu = R/16 pi + 3 f^2/8 pi, J_i = -d_i f/(4 pi A_i)
+[PASS] planted_K0_diag: K = 0 on dx^2 + dy^2 + c(x,y)^2 dz^2 and on a(x)^2 dx^2 + w(x)^2 (dy^2 + dz^2): mu = R/16 pi with R by hand, J = 0
+[PASS] planted_trace_diag: K_ij = f delta_ij on the same two metrics: mu = R/16 pi + 3 f^2/8 pi, J_i = -d_i f/(4 pi A_i)
 [PASS] planted_TT_diag: A = B = C = psi^2, K_ij = psi^-6 H_ij, H the Hessian of a harmonic polynomial: J = 0, 16 pi mu = R - psi^-12 H_ij H_ij
 [PASS] planted_kasner_diag: constant A_i = a_i, K_ij = diag(-2/7, 3/7, 6/7) (Kasner at t = 1: sum p = sum p^2 = 1): mu = J = 0
 
