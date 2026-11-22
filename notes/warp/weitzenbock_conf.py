@@ -100,8 +100,8 @@ tie to G_ab on these classes of slices (N = 1, no shift).
     python3 notes/warp/weitzenbock_conf.py --no-controls --only=NAME,...   (or --skip=NAME,...) some diagonal and rotated checks
         of sections 6 to 13 only, for staged runs. Under --mutate such a check runs only if the control targets it.
 
-Exit status is 1 if a check fails or a control does not fire. One process, about 4 minutes for the checks and about 1 hour
-with the controls, 110 MiB.
+Exit status is 1 if a check fails or a control does not fire. One process, about 3 minutes for the checks and about 1 hour
+with the controls, 110 MiB (170 MiB for the inv-typo control).
 """
 import importlib.util
 import pathlib
