@@ -27,18 +27,18 @@ Checks (each can fail and each has a control, `--mutate=NAME`):
   tanh_points     the Type III points of the tanh wall at Le's and Rodal's speeds, at 60 digits
   tanh_curve      the curve of Type III points over r at sigma R_b = 8 and 20
   tanh_enclosure  interval Newton enclosures of the points at the papers' speeds
+  lab_ricci       the same points from second differences of the lab metric (own Christoffel code, no comoving jets)
 
 Imports. From `review_he_surface_lib.py` (#101): `frame_block` (the frame Ricci tensor, by its own Christoffel and Ricci
-code), `sigma`, `minors`, `red`, `classify`, `rank_frac`, `QS`, `qs_rank`, `qs_matmul`, `peval`, `poly_terms`, `Harness`. From
-`he_type.py` (#64, #103): `he_type_exact` for the type at rational points and `tanh_jets` for the profile cross-check. Not
-imported, and not needed: `he_surface.py`, `review_he_surface_typeI.py`, `review_he_surface_points.py`. The cofactors of
-`cert_rank` are #101's, restated and re-verified here; every other certificate is new.
+code), `sigma`, `minors`, `red`, `classify` and `rank_frac` (its own type test), `QS` and `qs_rank` (arithmetic in Q(sqrt d)),
+`Harness`. From `he_type.py` (#64, #103): `he_type_exact` for the type of a tensor and `tanh_jets` for the profile cross-check.
+Not imported: `he_surface.py`, `review_he_surface_typeI.py`, `review_he_surface_points.py`. The cofactors of `cert_rank` are
+#101's, restated and re-verified here; every other certificate is new. `lab_ricci` shares nothing with the library's Ricci code.
 
     python3 notes/warp/he_type3.py                 all checks, then every control (exit 1 if any check fails)
     python3 notes/warp/he_type3.py --mutate=NAME   one control (its target checks must all fail, exit 1)
     python3 notes/warp/he_type3.py --no-controls   the checks only
 """
-import itertools
 import math
 import os
 import sys
@@ -329,6 +329,22 @@ def planted_types(h):
 # ----------------------------------------------------------------------------------------------------------------------
 # polynomials
 # ----------------------------------------------------------------------------------------------------------------------
+def forms():
+    """E1 (a quadratic form) and E2 (a cubic form) in (X, gamma, y) = (v^2 a^2, v a u, v (b - a u)) with coefficients in phi = vF and
+    w = c^2, from the effective Ricci block: the compact form of the conditions."""
+    Rl, _, _ = effective()
+    Mx = sp.diag(-1, 1, 1) * Rl
+    c2_, c1_, c0_ = inv_c(Mx)
+
+    def rd(e):
+        e = sp.rem(sp.Poly(sp.expand(e), s), sp.Poly(s**2 - 1 + c**2, s)).as_expr()
+        return sp.expand(sp.expand(e).subs(c, sp.sqrt(w)))
+
+    c2r, c1r, c0r = rd(c2_), rd(c1_), rd(c0_)
+    e1_, e2_ = E12(c2r, c1r, c0r)
+    return sp.expand(e1_), sp.expand(e2_), c2r
+
+
 def polynomials(h):
     al = algebra()
     R3, c2, c1, c0, E1, E2 = al["R3"], al["c2"], al["c1"], al["c0"], al["E1"], al["E2"]
@@ -355,17 +371,22 @@ def polynomials(h):
     # a triple root: p = q gives E1 = E2 = 0 for all p
     ee3 = E12(-3 * p_, 3 * p_**2, -p_**3)
     ok_tr = sp.expand(ee3[0]) == 0 and sp.expand(ee3[1]) == 0
+    E1x, E2x, c2x = forms()
+    back = {X: v**2 * a**2, ga: v * a * u, yy: v * (b - a * u), ph: v * F, w: c**2}
+    ok_forms = sp.expand(E1x.subs(back) - E1) == 0 and sp.expand(E2x.subs(back) - E2) == 0
+    cx = lambda e: sp.collect(e, [X, ga, yy], sp.factor)  # noqa: E731
     n1, n2 = len(sp.Poly(E1, v, F, a, b, u, c).terms()), len(sp.Poly(E2, v, F, a, b, u, c).terms())
     f1 = sp.factor_list(E1)
     f2 = sp.factor_list(E2)
-    h.check("polynomials", ok_tab and ok_chi and ok_c and ok_v and ok_w and ok_pq and ok_tr,
+    h.check("polynomials", ok_tab and ok_chi and ok_c and ok_v and ok_w and ok_pq and ok_tr and ok_forms,
             "typed table of he_surface.md section 1 minus own Ricci block reduces to 0: %s; det(x - M) = det Sigma(x) = x^3 + c2 x^2 + "
             "c1 x + c0: %s; E1, E2 are s-free and even in c: %s; in phi = vF, A = va, B = vb they are v-free: %s, with weights 4 "
             "and 6 under (A, B, u) -> (l A, l^2 B, l u): %s; E1 = (p - q)^2 and E2 = (p - q)^2 (8p + q) on (p, p, q): %s; "
-            "E1 = E2 = 0 on (p, p, p): %s; E1 has %d terms and E2 has %d terms in (v, F, a, b, u, c); factors of E1: %s, of E2: %s" % (
+            "E1 = E2 = 0 on (p, p, p): %s; E1 has %d terms and E2 has %d terms in (v, F, a, b, u, c); factors of E1: %s, of E2: %s. In "
+            "X = v^2 a^2, gamma = v a u, y = v (b - a u), phi = v F, w = c^2 (identity with the above: %s) c2 = %s, E1 = %s, E2 = %s" % (
                 ok_tab, ok_chi, ok_c, ok_v, ok_w, ok_pq, ok_tr, n1, n2,
                 [(sp.Poly(f, v, F, a, b, u, c).total_degree(), k) for f, k in f1[1]],
-                [(sp.Poly(f, v, F, a, b, u, c).total_degree(), k) for f, k in f2[1]]))
+                [(sp.Poly(f, v, F, a, b, u, c).total_degree(), k) for f, k in f2[1]], ok_forms, sp.factor(c2x), cx(E1x), cx(E2x)))
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -549,8 +570,9 @@ _RAY = {}
 def ray_symbolic():
     """Cofactors n = (lam, X, gamma, y) of the 3x4 matrix of Sigma(lam) e = 0, e = (1, e1, e2), in the effective variables,
     and the polynomials tr M - kappa lam on the ray as polynomials in phi."""
-    if "r" in _RAY:
-        return _RAY["r"]
+    key = "r" + ("-typo" if MUT == "ray-typo" else "")
+    if key in _RAY:
+        return _RAY[key]
     Rl, _, _ = effective()
     eta = sp.diag(-1, 1, 1)
     e = sp.Matrix([1, e1s, e2s])
@@ -568,8 +590,8 @@ def ray_symbolic():
         t_ = red_ce(trM - kap * n[0])  # reduced modulo the two circle relations: valid at every exact point used here
         taus[kap] = [PolyEval(cf, (c, s, e1s, e2s)) for cf in sp.Poly(t_, ph).all_coeffs()]
     syms = (c, s, e1s, e2s, ph)
-    _RAY["r"] = dict(Rl=Rl, K=K, n=n, kn=kn, trM=trM, nev=[PolyEval(red_ce(q), syms) for q in n], taus=taus)
-    return _RAY["r"]
+    _RAY[key] = dict(Rl=Rl, K=K, n=n, kn=kn, trM=trM, nev=[PolyEval(red_ce(q), syms) for q in n], taus=taus)
+    return _RAY[key]
 
 
 def ray_family(h):
@@ -674,8 +696,10 @@ def make_point(c_, s_, e1_, e2_, root, vv):
     if root[0] == "Q":
         phi_, field = Fr(root[1]), None
     else:
-        QS.d = root[1]
+        QS.d = root[1] + (1 if MUT == "nf-radicand" else 0)
         phi_, field = QS(root[2], root[3]), root[1]
+    if MUT == "phi-off":
+        phi_ = phi_ + Fr(1, 1000)
     nv = [f((c_, s_, e1_, e2_, phi_)) for f in R["nev"]]
     if is0(nv[1]):
         return None
@@ -702,6 +726,8 @@ def point_invariants(pt):
 
 def to_mp(z, dps=60):
     mp.mp.dps = dps
+    if isinstance(z, (mp.mpf, mp.mpc)):
+        return z
     if isinstance(z, QS):
         return mp.mpf(z.p.numerator) / z.p.denominator + mp.mpf(z.q.numerator) / z.q.denominator * mp.sqrt(QS.d)
     z = Fr(z)
@@ -722,17 +748,18 @@ def numeric_type3(M_, dps=60):
 def search_seeds(maxm=7):
     """The search that produced TYPE3_SEEDS (`--search-seeds`): over Pythagorean (c, s) and null directions e = (1, e1, e2) it keeps,
     for each squarefree d, the seed with the smallest denominators whose root phi gives a point with F > 0, u > 0, T != 0 and E1 = E2 = 0
-    exactly. 350 fields Q(sqrt d) occur and no rational point."""
+    exactly, and counts the seeds whose phi is rational. Returns (seeds, number of seeds tried, rational points found)."""
     ps = pyth_pairs(maxm)
     sg = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
-    cand = {}
+    cand, tried, nrat = {}, 0, 0
     for (cc, ss) in ps:
         for (p1, p2) in ps:
             for g1, g2 in sg:
                 sd = (cc, ss, p1 * g1, p2 * g2)
+                tried += 1
                 for root in ray_data(*sd, 3):
                     res = make_point(*sd, root, 2)
-                    if root[0] != "S" or res is None:
+                    if res is None:
                         continue
                     pt = res[0]
                     if float(pt[1]) <= 0 or float(pt[4]) <= 0:
@@ -740,10 +767,13 @@ def search_seeds(maxm=7):
                     inv = point_invariants(pt)
                     if is0(inv["T"]) or not (is0(inv["E1"]) and is0(inv["E2"])):
                         continue
+                    if root[0] == "Q":
+                        nrat += 1
+                        continue
                     key = max(cc.denominator, sd[2].denominator)
                     if root[1] not in cand or key < cand[root[1]][0]:
                         cand[root[1]] = (key, sd, root)
-    return [cand[d_][1:] for d_ in sorted(cand)]
+    return [cand[d_][1:] for d_ in sorted(cand)], tried, nrat
 
 
 TYPE3_SEEDS = [
@@ -798,8 +828,13 @@ def exact_points(h):
             # #72's printed values a = -0.2394, b = -0.1307, r = 7.25 and F = 0.0509 (he_surface.md section 3)
             same = abs(ar - (-0.2394 * 7.25)) < 4e-3 and abs(br2 - (-0.1307 * 7.25**2)) < 2e-2 and abs(float(pt[1]) - 0.0509) < 5e-5
             ok = ok and same
-            extra = " [#72's point: same c, e, phi, v; a r = %.4f, b r^2 = %.3f against -1.7357, -6.870 from the printed a, b, r; F = %.5f against 0.0509: %s]" % (
-                ar, br2, float(pt[1]), same)
+            co = [f((sd[0], sd[1], sd[2], sd[3])) for f in ray_symbolic()["taus"][3]]
+            co = [Fr(0)] * (3 - len(co)) + co
+            quad = "tau(phi) = (%s)(8 phi^2 + 9 phi - 1)" % (co[0] / 8) \
+                if co[1] / co[0] == Fr(9, 8) and co[2] / co[0] == Fr(-1, 8) else "tau(phi) = %s phi^2 + %s phi + %s (NOT #72's quadratic)" % tuple(co)
+            ok = ok and co[1] / co[0] == Fr(9, 8) and co[2] / co[0] == Fr(-1, 8)
+            extra = " [#72's point: same c, e, phi, v, and %s, the quadratic of he_surface.md section 3; a r = %.4f, b r^2 = %.3f against -1.7357, -6.870 " \
+                    "from the printed a, b, r; F = %.5f against 0.0509: %s]" % (quad, ar, br2, float(pt[1]), same)
         rows.append("%s c = %s, e = (1, %s, %s), phi = %s, v = 2: F = %s, a = %s, b = %s, u = %s; T = %s != 0, D = 0, E1 = E2 = 0, triple root "
                     "lam = %s, rank(M - lam) = %d, N^2 != 0, N^3 = 0, Jacobian of (E1, E2) in (v, F, a, b, u, c) has rank %d, singular values "
                     "%s, %s, %s, |N^3| = %s%s" % (
@@ -961,7 +996,7 @@ def type2_failures(h):
         q_ = -(inv["M"][0][0] + inv["M"][1][1] + inv["M"][2][2]) - 2 * p_  # sign fixed below
         q_ = (inv["M"][0][0] + inv["M"][1][1] + inv["M"][2][2]) - 2 * p_
         good = (sm["type"] == "II" and sm["D0"] and (not sm["E1z"]) and sm["E2z"] and (not sm["Tz"]) and sm["rank"] == 2 and sm["mult"] == 2
-                and q_ == -8 * p_ and not is0(p_) and not in_description(sm))
+                and q_ == -8 * p_ and not is0(p_) and sm.get("ht", "II") == "II" and sm.get("cl", "II") == "II" and not in_description(sm))
         ok = ok and good
         rows.append("%s: type %s, D = 0, double root p = %s, third root q = %s = -8p, rank %d, E2 = 0, E1 = %s != 0, T != 0, in description: %s" % (
             lab, sm["type"], fmt_num(p_), fmt_num(q_), sm["rank"], fmt_num(inv["E1"]), in_description(sm)))
@@ -1036,8 +1071,9 @@ _SH = {}
 def shadow():
     """E1, E2 as polynomials in w = c^2 with coefficients in (phi, A', B') = (vF, v r a, v r^2 b), and the factor P of their
     resultant in w: P = 0 is necessary for a common root, P(phi, A', B') = v^10 (P0 + P1 v^2 + ... + P4 v^8) on the wall."""
-    if "s" in _SH:
-        return _SH["s"]
+    ckey = "s" + ("-P" if MUT == "P-term" else "")
+    if ckey in _SH:
+        return _SH[ckey]
     al = algebra()
     out = []
     for key in ("E1", "E2"):
@@ -1060,9 +1096,11 @@ def shadow():
     for e in (e1w, e2w):
         Pw = sp.Poly(e, w)
         ecoef.append([[(mn, mp.mpf(int(cf.p)) / int(cf.q)) for mn, cf in sp.Poly(co, ph, Ap, Bp).terms()] for co in Pw.all_coeffs()[::-1]])
-    _SH["s"] = dict(e1w=e1w, e2w=e2w, Res=Res, fl=fl, P=P, rest=rest, ptab=ptab, ecoef=ecoef, nterms=len(PP.terms()),
+    eexact = [[[(mn, int(cf.p), int(cf.q)) for mn, cf in sp.Poly(co, ph, Ap, Bp).terms()] for co in sp.Poly(e, w).all_coeffs()[::-1]]
+              for e in (e1w, e2w)]
+    _SH[ckey] = dict(e1w=e1w, e2w=e2w, Res=Res, fl=fl, P=P, rest=rest, ptab=ptab, ecoef=ecoef, eexact=eexact, nterms=len(PP.terms()),
                     degs=sorted({sum(mn) for mn, _ in PP.terms()}))
-    return _SH["s"]
+    return _SH[ckey]
 
 
 def eval_terms(tab, vals):
@@ -1125,7 +1163,7 @@ def polish_vw(F_, a_, b_, r_, v0, w0):
     """Newton on (v, w) for E1 = E2 = 0 at the wall point r, from the candidate (v0, w0). Returns (v, w, residual) or None."""
     f = lambda vv, ww: Eeval(vv * F_, vv * a_ * r_, vv * b_ * r_**2, ww)  # noqa: E731
     try:
-        sol = mp.findroot(f, (v0, w0), tol=mp.mpf(10)**-(mp.mp.dps - 8), maxsteps=60)
+        sol = mp.findroot(f, (v0, w0), tol=mp.mpf(10)**-(mp.mp.dps - 8), maxsteps=15)
     except (ValueError, ZeroDivisionError):
         return None
     vv, ww = sol[0], sol[1]
@@ -1142,7 +1180,19 @@ def curve_at(r_, sig, Rb, dps=60):
     return curve_from_jets(F_, a_, b_, r_, dps)
 
 
-def curve_from_jets(F_, a_, b_, r_, dps=60):
+def admit(F_, a_, b_, r_, vv, w0, dps=60, filter_T=True):
+    """Newton polish of a candidate (v, w) and the admission tests: residual below 10^-(dps - 15), 0 < w < 1, v > 0 and T != 0."""
+    pl = polish_vw(F_, a_, b_, r_, vv, w0)
+    if pl is None or pl[2] > mp.mpf(10)**-(dps - 15) or not (0 < pl[1] < 1) or pl[0] <= 0:
+        return None
+    T_ = b_ + a_ / r_
+    Tabs = abs(T_) / (abs(b_) + abs(a_ / r_))
+    if filter_T and MUT != "T-filter-off" and Tabs < mp.mpf(10)**-(dps // 2):
+        return None
+    return (pl[0], pl[1], T_)
+
+
+def curve_from_jets(F_, a_, b_, r_, dps=60, filter_T=True):
     mp.mp.dps = dps
     co = Pquartic(F_, a_, b_, r_)
     while co and co[-1] == 0:
@@ -1154,21 +1204,532 @@ def curve_from_jets(F_, a_, b_, r_, dps=60):
     except mp.libmp.libhyper.NoConvergence:
         return []
     out = []
-    T_ = b_ + a_ / r_
     for z in rts:
         if abs(mp.im(z)) > mp.mpf(10)**-(dps // 2) * max(1, abs(z)) or mp.re(z) <= 0:
             continue
         vv = mp.sqrt(mp.re(z))
         for w0 in wcommon(vv * F_, vv * a_ * r_, vv * b_ * r_**2):
-            pl = polish_vw(F_, a_, b_, r_, vv, w0)
-            if pl is None or pl[2] > mp.mpf(10)**-(dps - 15) or not (0 < pl[1] < 1) or pl[0] <= 0:
-                continue
-            Tabs = abs(T_) / (abs(b_) + abs(a_ / r_))
-            if MUT != "T-filter-off" and Tabs < mp.mpf(10)**-(dps // 2):
-                continue
-            out.append((pl[0], pl[1], T_))
+            pnt = admit(F_, a_, b_, r_, vv, w0, dps, filter_T)
+            if pnt is not None:
+                out.append(pnt)
     out.sort(key=lambda t: t[0])
     return out
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# the tanh wall: checks
+# ----------------------------------------------------------------------------------------------------------------------
+_NB = {}
+
+
+def block_num(vals):
+    """The frame block R3 at a point of mp numbers (v, F, a, b, u, c, s), at the current precision."""
+    if "b" not in _NB:
+        R3 = algebra()["R3"]
+        _NB["b"] = [[[(mn, int(cf.p), int(cf.q)) for mn, cf in sp.Poly(sp.expand(R3[i, j]), *VARS7).terms()] for j in range(3)] for i in range(3)]
+    out = []
+    for i in range(3):
+        row = []
+        for j in range(3):
+            tot = mp.mpf(0)
+            for mn, p_, q_ in _NB["b"][i][j]:
+                t = mp.mpf(p_) / q_
+                for xx, e in zip(vals, mn):
+                    if e:
+                        t *= xx**e
+                tot += t
+            row.append(tot)
+        out.append(row)
+    return out
+
+
+def point_numeric(sig, Rb, r_, v0, w_):
+    """Singular values of N = M - lam0, |N^3|, E1, E2 (frame values) and T at the wall point (r, c^2 = w, v = v0), 60 digits."""
+    F_, a_, b_, _ = jets_mp(r_, sig, Rb)
+    c_ = mp.sqrt(w_)
+    s_ = mp.sqrt(1 - w_)
+    pt = (v0, F_, a_, b_, 1 / r_, c_, s_)
+    R_ = block_num(pt)
+    M_ = mixed_at(R_)
+    sv, n3 = numeric_type3(M_)
+    c2_, c1_, c0_ = cubic_at(M_)
+    e1_, e2_ = E12(c2_, c1_, c0_)
+    return dict(sv=sv, n3=n3, E1=e1_, E2=e2_, T=b_ + a_ / r_, F=F_, scale=max(abs(z) for row in R_ for z in row), c=c_, s=s_, R=R_, M=M_)
+
+
+def tanh_jets_check(h):
+    """Own jets against he_type.tanh_jets (floats) and against mp.diff of the profile at 40 digits."""
+    ok, rows = True, []
+    mp.mp.dps = 40
+    for nm, (sig, Rb, v0) in WALLS.items():
+        w1 = w2 = mpw = mp.mpf(0)
+        fn = lambda xx: (mp.tanh(sig * (xx + Rb)) - mp.tanh(sig * (xx - Rb))) / (2 * mp.tanh(sig * Rb))  # noqa: E731
+        for k in range(12):
+            r_ = Rb * (mp.mpf(1) / 2 + mp.mpf(k) / 8)
+            F_, a_, b_, c3 = jets_mp(r_, sig, Rb)
+            f_, f1_, f2_ = HT.tanh_jets(float(r_), float(sig), float(Rb))
+            w1 = max(w1, abs(1 - f_ - F_), abs(f1_ - a_) / max(1, abs(a_)), abs(f2_ - b_) / max(1, abs(b_)))
+            d = [mp.diff(fn, r_, n) for n in (1, 2, 3)]
+            mpw = max(mpw, abs(d[0] - a_) / max(1, abs(a_)), abs(d[1] - b_) / max(1, abs(b_)), abs(d[2] - c3) / max(1, abs(c3)))
+        ok = ok and w1 < mp.mpf(10)**-9 and mpw < mp.mpf(10)**-25
+        rows.append("%s (sigma = %s, R_b = %s): max |own - he_type.tanh_jets| = %s over 12 radii, max |own - mp.diff| = %s for f', f'', f'''" % (
+            nm, sig, Rb, mp.nstr(w1, 3), mp.nstr(mpw, 3)))
+    h.check("tanh_jets", ok, "; ".join(rows))
+
+
+def tanh_planted(h):
+    """Planted truth for the numerical path: the solver, given the jets (F, a, b) and r of an exact Type III point, finds its
+    (v, c^2); given those of a triple-root rank-1 point (T = 0) it sees the common root and the T filter rejects it."""
+    ok, rows = True, []
+    for idx in (0, 1):
+        sd, root = TYPE3_SEEDS[idx]
+        pt, lam1, phi_, field = make_point(*sd, root, 2)
+        mp.mp.dps = 60
+        F_, a_, b_ = to_mp(pt[1]), to_mp(pt[2]), to_mp(pt[3])
+        r_ = 1 / to_mp(pt[4])
+        res = curve_from_jets(F_, a_, b_, r_)
+        want_w = mp.mpf(sd[0].numerator)**2 / sd[0].denominator**2
+        hit = [z for z in res if abs(z[0] - 2) < mp.mpf(10)**-40 and abs(z[1] - want_w) < mp.mpf(10)**-40]
+        ok = ok and len(hit) == 1
+        rows.append("planted Type III point in Q(sqrt %d), (v, c^2) = (2, %s): the solver returns %d point(s) at r = %s, %s" % (
+            root[1], sd[0]**2, len(res), mp.nstr(r_, 8), "recovers it to 1e-40" if hit else "MISSES it"))
+    pt = triple_rank1_points()[0][1]
+    mp.mp.dps = 60
+    F_, a_, b_ = to_mp(pt[1]), to_mp(pt[2]), to_mp(pt[3])
+    r_ = 1 / to_mp(pt[4])
+    co = Pquartic(F_, a_, b_, r_)
+    Pres = abs(sum(co[k] * (mp.mpf(9) / 4)**k for k in range(5))) / sum(abs(co[k]) * (mp.mpf(9) / 4)**k for k in range(5))
+    seen = admit(F_, a_, b_, r_, mp.mpf(3) / 2, mp.mpf(9) / 25, filter_T=False)
+    gone = admit(F_, a_, b_, r_, mp.mpf(3) / 2, mp.mpf(9) / 25)
+    ok = ok and Pres < mp.mpf(10)**-50 and seen is not None and gone is None
+    rows.append("planted triple root of rank 1, (v, c^2) = (3/2, 9/25), T = 0: V = 9/4 is a root of the shadow quartic (relative residual %s, a "
+                "triple root, so not returned by the root finder), Newton from (3/2, 9/25) converges without the T filter (%s) and the T filter "
+                "rejects it (%s)" % (mp.nstr(Pres, 3), seen is not None, gone is None))
+    h.check("tanh_planted", ok, "; ".join(rows))
+
+
+def r_grid(name):
+    sig, Rb, v0 = WALLS[name]
+    segs = {"Le": [(0.05, 0.3, 0.005), (0.3, 3.0, 0.0005), (3.0, 10.0, 0.01)],
+            "Rodal": [(0.5, 3.0, 0.02), (3.0, 9.0, 0.001), (9.0, 25.0, 0.02)]}[name]
+    out = []
+    for lo, hi, st in segs:
+        n = int(round((hi - lo) / st))
+        out += [mp.mpf(lo) + (mp.mpf(hi) - mp.mpf(lo)) * k / n for k in range(n)]
+    out.append(mp.mpf(segs[-1][1]))
+    return out
+
+
+def gsum(r_, sig, Rb, v0):
+    F_, a_, b_, _ = jets_mp(r_, sig, Rb)
+    co = Pquartic(F_, a_, b_, r_)
+    V = v0**2
+    return sum(co[k] * V**k for k in range(5))
+
+
+def points_at_speed(name):
+    """All Type III points of the wall at the paper's speed: sign changes of P(v F, v r a, v r^2 b) over a fine grid of r,
+    bisection at 60 digits, the common root w, Newton on (r, w), and the checks. Also near-tangent minima of |P|."""
+    sig, Rb, v0 = WALLS[name]
+    grid = r_grid(name)
+    mp.mp.dps = 30
+    vals = [gsum(r_, sig, Rb, v0) for r_ in grid]
+    brackets = [(grid[i], grid[i + 1]) for i in range(len(grid) - 1) if vals[i] * vals[i + 1] < 0]
+    tang = [grid[i] for i in range(1, len(grid) - 1) if abs(vals[i]) < abs(vals[i - 1]) and abs(vals[i]) < abs(vals[i + 1])
+            and vals[i - 1] * vals[i] > 0 and vals[i] * vals[i + 1] > 0 and abs(vals[i]) < mp.mpf(10)**-3 * min(abs(vals[i - 1]), abs(vals[i + 1]))]
+    mp.mp.dps = 60
+    out, rejected = [], []
+    for lo, hi in brackets:
+        lo, hi = mp.mpf(lo), mp.mpf(hi)
+        glo = gsum(lo, sig, Rb, v0)
+        if glo * gsum(hi, sig, Rb, v0) >= 0:
+            rejected.append((lo, "no sign change at 60 digits"))
+            continue
+        for _ in range(170):
+            mid = (lo + hi) / 2
+            gm = gsum(mid, sig, Rb, v0)
+            if gm * glo > 0:
+                lo, glo = mid, gm
+            else:
+                hi = mid
+        r0 = (lo + hi) / 2
+        F_, a_, b_, _ = jets_mp(r0, sig, Rb)
+        cand = wcommon(v0 * F_, v0 * a_ * r0, v0 * b_ * r0**2)
+        if not cand:
+            rejected.append((r0, "no common root w"))
+            continue
+        for w0 in cand:
+            def fr(rr, ww):
+                Fx, ax, bx, _ = jets_mp(rr, sig, Rb)
+                return Eeval(v0 * Fx, v0 * ax * rr, v0 * bx * rr**2, ww)
+            try:
+                sol = mp.findroot(fr, (r0, w0), tol=mp.mpf(10)**-52, maxsteps=40)
+            except (ValueError, ZeroDivisionError):
+                rejected.append((r0, "Newton failed"))
+                continue
+            rr, ww = sol[0], sol[1]
+            res = max(abs(z) for z in fr(rr, ww))
+            Fx, ax, bx, _ = jets_mp(rr, sig, Rb)
+            Tv = bx + ax / rr
+            if res < mp.mpf(10)**-45 and 0 < ww < 1 and abs(Tv) > mp.mpf(10)**-20:
+                out.append(dict(r=rr, w=ww, res=res, T=Tv, F=Fx))
+            else:
+                rejected.append((r0, "residual %s, w %s" % (mp.nstr(res, 3), mp.nstr(ww, 5))))
+    return out, rejected, tang, len(brackets)
+
+
+def in_mask(name, r_):
+    sig, Rb, v0 = WALLS[name]
+    if name == "Le":
+        f_ = 1 - jets_mp(r_, sig, Rb)[0]
+        return 0.1 <= f_ <= 0.9
+    return Rb - 3 / sig <= r_ <= Rb + 3 / sig
+
+
+def tanh_points(h):
+    ok, rows = True, []
+    for name in ("Le", "Rodal"):
+        sig, Rb, v0 = WALLS[name]
+        pts, rejected, tang, nbr = points_at_speed(name)
+        shift_ = mp.mpf(10)**-6 if MUT == "tanh-off-root" else 0
+        good = len(pts) >= 1
+        desc = []
+        for pnt in pts:
+            r_ = pnt["r"]
+            nb = point_numeric(sig, Rb, r_ + shift_, v0, pnt["w"])
+            sv = nb["sv"]
+            ok_pt = (sv[2] < mp.mpf(10)**-45 * max(1, nb["scale"]) and sv[1] > mp.mpf(10)**-8 * max(1, nb["scale"]) and
+                     nb["n3"] < mp.mpf(10)**-40 * max(1, nb["scale"])**3 and abs(nb["E1"]) < mp.mpf(10)**-40 * max(1, nb["scale"])**2)
+            good = good and ok_pt
+            th = mp.degrees(mp.acos(nb["c"]))
+            desc.append("r = %s (f = %s, in mask: %s), cos(theta) = %s (theta = %s deg), T = %s, singular values of M - lam: %s, %s, %s, |N^3| = %s" % (
+                mp.nstr(r_, 12), mp.nstr(1 - nb["F"], 6), in_mask(name, r_), mp.nstr(nb["c"], 12), mp.nstr(th, 8), mp.nstr(nb["T"], 6),
+                mp.nstr(sv[0], 6), mp.nstr(sv[1], 6), mp.nstr(sv[2], 3), mp.nstr(nb["n3"], 3)))
+        ok = ok and good
+        rows.append("%s (sigma = %s, R_b = %s, v = %s): %d sign changes of P over %d grid radii, %d Type III points of residual < 1e-45, %d rejected %s, "
+                    "%d near-tangent minima of |P|; %s" % (
+                        name, sig, Rb, v0, nbr, len(r_grid(name)), len(pts), len(rejected), [z[1] for z in rejected], len(tang), "; ".join(desc)))
+    h.check("tanh_points", ok, " ... ".join(rows))
+
+
+_PTS = {}
+
+
+def points_cached(name):
+    key = (name, MUT if MUT in ("jets-sign", "P-term") else "")
+    if key not in _PTS:
+        _PTS[key] = points_at_speed(name)
+    return _PTS[key]
+
+
+def eq_end(sig, Rb, r0):
+    """The equator end of branch A. At c = 0 the resultant of E1 and E2 in B' is 36 A'^6 (A' + 2 phi)^6, so a common root has
+    A' = -2 phi, i.e. r a = -2 F, and then E1 = 0 gives B' = 2 phi (1 +- 2 phi), i.e. v = |r^2 b - 2F| / (4 F^2)."""
+    def g(rr):
+        Fx, ax, bx, _ = jets_mp(rr, sig, Rb)
+        return rr * ax + (3 if MUT == "eq-end-typo" else 2) * Fx
+    rr = mp.findroot(g, r0, tol=mp.mpf(10)**-52)
+    Fx, ax, bx, _ = jets_mp(rr, sig, Rb)
+    vv = abs(rr**2 * bx - 2 * Fx) / (4 * Fx**2)
+    return rr, vv
+
+
+def ax_start(sig, Rb, rlo, rhi):
+    """The start of branch B: the radius where the leading coefficient Q4 of the shadow quartic changes sign, so that a root V = v^2
+    goes to infinity."""
+    q4 = lambda rr: Pquartic(*jets_mp(rr, sig, Rb)[:3], rr)[4]  # noqa: E731
+    lo, hi = mp.mpf(rlo), mp.mpf(rhi)
+    glo = q4(lo)
+    assert glo * q4(hi) < 0
+    for _ in range(160):
+        mid = (lo + hi) / 2
+        gm = q4(mid)
+        if gm * glo > 0:
+            lo, glo = mid, gm
+        else:
+            hi = mid
+    return (lo + hi) / 2
+
+
+# the three Newton points of #72 on the tanh wall, he_surface.md section 4: (sigma, R_b = 1) -> (r, v, cos theta)
+POINTS72 = [(1, mp.mpf("2.0656"), mp.mpf("1.1282"), mp.mpf("0.7768")), (4, mp.mpf("0.898"), mp.mpf("2.2089"), mp.mpf("0.2116")),
+            (8, mp.mpf("0.916"), mp.mpf("2.0194"), mp.mpf("0.6437"))]
+
+
+def solve_near(sig, Rb, r0, v0, c0):
+    """Newton on (r, w) for E1 = E2 = 0 at fixed v from (r0, c0^2)."""
+    def fr(rr, ww):
+        Fx, ax, bx, _ = jets_mp(rr, sig, Rb)
+        return Eeval(v0 * Fx, v0 * ax * rr, v0 * bx * rr**2, ww)
+    sol = mp.findroot(fr, (r0, c0**2), tol=mp.mpf(10)**-52, maxsteps=60)
+    return sol[0], sol[1], max(abs(z) for z in fr(sol[0], sol[1]))
+
+
+def tanh_curve(h):
+    """The curve of Type III points over r: branch A from the centre (v -> infinity as r decreases) to the equator, branch B from
+    infinity on the axis side to r -> infinity (v -> 0). Counts per radius, the two ends, the minimum of v on A, a table, the
+    crossings of v, and #72's three Newton points."""
+    ok, rows = True, []
+    mp.mp.dps = 60
+    for name, (lo, hi, n) in (("Le", (0.7, 2.0, 650)), ("Rodal", (4.0, 7.0, 600))):
+        sig, Rb, v0 = WALLS[name]
+        mp.mp.dps = 60
+        A, B, counts = [], [], []
+        for k in range(n + 1):
+            r_ = mp.mpf(lo) + (mp.mpf(hi) - mp.mpf(lo)) * k / n
+            pts = sorted(curve_at(r_, sig, Rb), key=lambda z: z[1])
+            counts.append(len(pts))
+            if len(pts) == 2:
+                A.append((r_, pts[0][0], pts[0][1]))
+                B.append((r_, pts[1][0], pts[1][1]))
+            elif len(pts) == 1:
+                (A if not B else B).append((r_, pts[0][0], pts[0][1]))
+        pattern = [counts[0]] + [counts[i] for i in range(1, len(counts)) if counts[i] != counts[i - 1]]
+        i_ax = next(i for i in range(len(counts)) if counts[i] == 2)
+        i_eq = next(i for i in range(i_ax, len(counts)) if counts[i] == 1)
+        dr = (mp.mpf(hi) - mp.mpf(lo)) / n
+        r_i = lambda i: mp.mpf(lo) + dr * i  # noqa: E731
+        okp = pattern == [1, 2, 1]
+        rax = ax_start(sig, Rb, r_i(i_ax - 3), r_i(i_ax))
+        pB = sorted(curve_at(rax + mp.mpf(10)**-6, sig, Rb), key=lambda z: z[1])
+        axis_ok = len(pB) == 2 and pB[1][0] > 100 and pB[1][1] > mp.mpf("0.999") and abs(rax - r_i(i_ax)) < 4 * dr
+        req, veq = eq_end(sig, Rb, r_i(i_eq))
+        neq = point_numeric(sig, Rb, req, veq, mp.mpf(0))
+        Fq, aq, bq, _ = jets_mp(req, sig, Rb)
+        Qeq = 4 * veq**2 * aq**2 * Fq * (Fq + req * aq) + (aq + req * bq)**2  # he_type.md: Q_eq = 0
+        edge = req**2 * veq**2 * aq**4 - (aq + req * bq)**2  # he_type.md: the edge v r f'^2 = |(r f')'|
+        eq_ok = (abs(req - r_i(i_eq)) < 2 * dr and abs(neq["E1"]) < mp.mpf(10)**-40 and abs(neq["E2"]) < mp.mpf(10)**-40
+                 and neq["sv"][1] < mp.mpf(10)**-40 * max(1, neq["scale"]) and neq["sv"][0] > mp.mpf(10)**-6
+                 and abs(Qeq) < mp.mpf(10)**-40 * max(1, neq["scale"]**2) and abs(edge) < mp.mpf(10)**-40 * max(1, neq["scale"]**2))
+        amin = min(A, key=lambda z: z[1])
+        rT = mp.findroot(lambda rr: (lambda j: j[2] + j[1] / rr)(jets_mp(rr, sig, Rb)), amin[0])
+        pT = [curve_at(rT + sg_ * mp.mpf(10)**-5, sig, Rb) for sg_ in (-1, 1)]
+        tT_ok = all(len(z) >= 1 and min(q[0] for q in z) < mp.mpf("0.01") and min(mp.sqrt(q[1]) for q in z) < mp.mpf("0.01") for z in pT)
+        cross = 0
+        for br in (A, B):
+            for i in range(len(br) - 1):
+                if (br[i][1] - v0) * (br[i + 1][1] - v0) < 0 and br[i + 1][0] - br[i][0] < 3 * dr:
+                    cross += 1
+        npts = len(points_cached(name)[0])
+        ok = ok and okp and axis_ok and eq_ok and tT_ok and cross == npts
+        sel = {"Le": [0.8, 0.9, 0.916, 0.95, 1.0, 1.01, 1.03, 1.05, 1.08, 1.1, 1.13, 1.2, 1.5, 2.0, 3.0],
+               "Rodal": [4.5, 4.7, 4.9, 5.0, 5.05, 5.1, 5.2, 5.3, 5.35, 5.5, 6.0, 8.0, 12.0]}[name]
+        tab = []
+        for r_ in sel:
+            pts = curve_at(mp.mpf(r_), sig, Rb)
+            tab.append("r = %s (f = %.4f): %s" % (r_, float(1 - jets_mp(mp.mpf(r_), sig, Rb)[0]),
+                       ", ".join("(v = %s, cos = %s)" % (mp.nstr(z[0], 5), mp.nstr(mp.sqrt(z[1]), 5)) for z in pts) or "none"))
+        rows.append("%s (sigma = %s, R_b = %s): the number of Type III points per radius over r in [%s, %s] at %d radii runs %s. Branch B starts at "
+                    "r = %s where the leading coefficient of the shadow quartic changes sign (v -> infinity, c -> 1): at r + 1e-6 it has v = %s, c^2 = %s. "
+                    "Branch A ends on the equator at r = %s, v = %s (r a = -2F, v = |r^2 b - 2F| / (4 F^2); there E1 = %s, E2 = %s, singular values "
+                    "%s, %s, %s: a triple root of rank 1, Type II; he_type.md's Q_eq = %s and r^2 v^2 a^4 - (a + r b)^2 = %s there, so it is the crossing of "
+                    "the two curves of the equator). v on A has its minimum %s on the grid at r = %s (cos = %s), and A passes through v = 0, c = 0 "
+                    "at r_T = %s, the root of (r f')' = 0 (T = 0): at r_T -+ 1e-5 the smallest (v, cos) are (%s, %s) and (%s, %s). v crosses the paper's "
+                    "v = %s %d times over the branches and tanh_points found %d points. Table: %s" % (
+                        name, sig, Rb, lo, hi, n + 1, pattern, mp.nstr(rax, 12), mp.nstr(pB[1][0], 6) if len(pB) == 2 else "none",
+                        mp.nstr(pB[1][1], 8) if len(pB) == 2 else "none", mp.nstr(req, 12), mp.nstr(veq, 10), mp.nstr(abs(neq["E1"]), 2),
+                        mp.nstr(abs(neq["E2"]), 2), mp.nstr(neq["sv"][0], 5), mp.nstr(neq["sv"][1], 2), mp.nstr(neq["sv"][2], 2),
+                        mp.nstr(abs(Qeq), 2), mp.nstr(abs(edge), 2), mp.nstr(amin[1], 6), mp.nstr(amin[0], 6), mp.nstr(mp.sqrt(amin[2]), 6), mp.nstr(rT, 10),
+                        mp.nstr(min(q[0] for q in pT[0]), 3), mp.nstr(min(mp.sqrt(q[1]) for q in pT[0]), 3),
+                        mp.nstr(min(q[0] for q in pT[1]), 3), mp.nstr(min(mp.sqrt(q[1]) for q in pT[1]), 3), v0, cross, npts, "; ".join(tab)))
+    # #72's Newton points at R_b = 1: sigma R_b = 1, 4, 8
+    rr72 = []
+    ok72 = True
+    for sig_, r0, v0_, c0 in POINTS72:
+        sol = solve_near(mp.mpf(sig_), mp.mpf(1), r0, v0_, c0)
+        near = abs(sol[0] - r0) < mp.mpf("0.005") * max(1, r0) and abs(mp.sqrt(sol[1]) - c0) < mp.mpf("0.002") and sol[2] < mp.mpf(10)**-45
+        ok72 = ok72 and near
+        rr72.append("sigma R_b = %s: Newton at v = %s from (r, cos) = (%s, %s) gives r = %s, cos = %s (residual %s)" % (
+            sig_, mp.nstr(v0_, 5), mp.nstr(r0, 5), mp.nstr(c0, 5), mp.nstr(sol[0], 8), mp.nstr(mp.sqrt(sol[1]), 6), mp.nstr(sol[2], 2)))
+    ok = ok and ok72
+    h.check("tanh_curve", ok, " ... ".join(rows) + " ... #72's points (he_surface.md section 4) lie on the curve: " + "; ".join(rr72))
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# interval Newton enclosures
+# ----------------------------------------------------------------------------------------------------------------------
+def iv_tanh(xx):
+    e = mp.iv.exp(2 * xx)
+    return (e - 1) / (e + 1)
+
+
+def iv_jets(r_, sig, Rb):
+    sig, Rb = mp.iv.mpf(sig), mp.iv.mpf(Rb)
+    tp, tm, tR = iv_tanh(sig * (r_ + Rb)), iv_tanh(sig * (r_ - Rb)), iv_tanh(sig * Rb)
+    N = 2 * tR
+    f0 = (tp - tm) / N
+    f1 = sig * (tm * tm - tp * tp) / N
+    f2 = 2 * sig**2 * (tm * (1 - tm * tm) - tp * (1 - tp * tp)) / N
+    f3 = -2 * sig**3 * ((1 - tp * tp) * (1 - 3 * tp * tp) - (1 - tm * tm) * (1 - 3 * tm * tm)) / N
+    return 1 - f0, f1, f2, f3
+
+
+def iv_E(r_, w_, v0, sig, Rb):
+    """E1, E2 (u = 1 effective form, unscaled) and their partial derivatives in r and w, as intervals, at (r, w)."""
+    iv = mp.iv
+    v0 = iv.mpf(v0)
+    F_, a_, b_, c3 = iv_jets(r_, sig, Rb)
+    vals = (v0 * F_, v0 * r_ * a_, v0 * r_ * r_ * b_)
+    dv = (-v0 * a_, v0 * (a_ + r_ * b_), v0 * (2 * r_ * b_ + r_ * r_ * c3))
+    sh = shadow()
+    outE, outR, outW = [], [], []
+    for k in range(2):
+        E_, dEr, dEw = iv.mpf(0), iv.mpf(0), iv.mpf(0)
+        for m, tab in enumerate(sh["eexact"][k]):
+            C_, dC = iv.mpf(0), iv.mpf(0)
+            for mn, p_, q_ in tab:
+                cf = iv.mpf(p_) / q_
+                C_ += cf * vals[0]**mn[0] * vals[1]**mn[1] * vals[2]**mn[2]
+                for t_ in range(3):
+                    if mn[t_]:
+                        ex = list(mn)
+                        ex[t_] -= 1
+                        dC += cf * mn[t_] * vals[0]**ex[0] * vals[1]**ex[1] * vals[2]**ex[2] * dv[t_]
+            E_ += C_ * w_**m
+            dEr += dC * w_**m
+            if m:
+                dEw += m * C_ * w_**(m - 1)
+        outE.append(E_)
+        outR.append(dEr)
+        outW.append(dEw)
+    return outE, outR, outW
+
+
+def krawczyk(name, rc, wc, dr, dw, v0):
+    """Krawczyk test for G = (E1, E2)(r, w) at fixed v0 on the box rc +- dr, wc +- dw. Returns (contracts, T enclosure, details)."""
+    iv = mp.iv
+    sig, Rb, _ = WALLS[name]
+    iv.dps = mp.mp.dps
+    X = [iv.mpf([rc - dr, rc + dr]), iv.mpf([wc - dw, wc + dw])]
+    xm = [iv.mpf(rc), iv.mpf(wc)]
+    Gm, dRm, dWm = iv_E(xm[0], xm[1], v0, sig, Rb)
+    Jm = mp.matrix([[dRm[0].mid, dWm[0].mid], [dRm[1].mid, dWm[1].mid]])
+    Y = Jm**-1
+    GX, dRX, dWX = iv_E(X[0], X[1], v0, sig, Rb)
+    JX = [[dRX[0], dWX[0]], [dRX[1], dWX[1]]]
+    Yi = [[iv.mpf(Y[i, j]) for j in range(2)] for i in range(2)]
+    corr = [[(1 if i == j else 0) - (Yi[i][0] * JX[0][j] + Yi[i][1] * JX[1][j]) for j in range(2)] for i in range(2)]
+    dX = [X[0] - xm[0], X[1] - xm[1]]
+    K = []
+    for i in range(2):
+        K.append(xm[i] - (Yi[i][0] * Gm[0] + Yi[i][1] * Gm[1]) + (corr[i][0] * dX[0] + corr[i][1] * dX[1]))
+    inside = all(K[i].a > X[i].a and K[i].b < X[i].b for i in range(2))
+    F_, a_, b_, _ = iv_jets(X[0], sig, Rb)
+    T = b_ + a_ / X[0]
+    Tpos = T.a > 0 or T.b < 0
+    cond = (corr[0][0].b - corr[0][0].a, max(abs(corr[i][j].a) + abs(corr[i][j].b) for i in range(2) for j in range(2)))
+    return inside and Tpos and F_.a > 0 and a_.b < 0 and X[1].a > 0 and X[1].b < 1, T, (K, X, cond)
+
+
+def tanh_enclosure(h):
+    """Krawczyk enclosures of the Type III points of tanh_points: a box with a unique zero of (E1, E2) at the paper's v, with T != 0
+    on it. A box shifted by 20 half-widths must fail (planted negative)."""
+    ok, rows = True, []
+    mp.mp.dps = 60
+    for name in ("Le", "Rodal"):
+        sig, Rb, v0 = WALLS[name]
+        pts = points_cached(name)[0]
+        dr = mp.mpf(10)**-25
+        dw = mp.mpf(10)**-25
+        sh_ = 20 * dr if MUT == "enclosure-shift" else 0
+        for pnt in pts:
+            good, T, det = krawczyk(name, pnt["r"] + sh_, pnt["w"], dr, dw, v0)
+            bad, _, _ = krawczyk(name, pnt["r"] + 20 * dr, pnt["w"], dr, dw, v0)
+            ok = ok and good and not bad
+            rows.append("%s r = %s, c^2 = %s: Krawczyk operator inside the box %s (half-widths 1e-25), T = %s with a relative enclosure width %s, "
+                        "shifted box rejected %s" % (name, mp.nstr(pnt["r"], 14), mp.nstr(pnt["w"], 14), good, mp.nstr(T.mid, 8),
+                                                     mp.nstr((T.b - T.a).mid / abs(T.mid), 2), not bad))
+    h.check("tanh_enclosure", ok, "; ".join(rows))
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+# an independent route to the frame Ricci tensor: second differences of the lab metric
+# ----------------------------------------------------------------------------------------------------------------------
+def lab_frame_ricci(sig, Rb, v0, r_, c_, s_, dps=70):
+    """Frame Ricci tensor of the lab metric ds^2 = -dt^2 + (dx - v f(r_s) dt)^2 + dy^2 + dz^2, r_s^2 = (x - v t)^2 + y^2 + z^2,
+    at t = 0, (x, y, z) = r (c, s, 0), in the frame E_0 = (1, v f, 0, 0), E_1 = d_x, E_2 = d_y, E_3 = d_z. Own Christoffel and
+    Ricci code, with the first and second derivatives of g from mp.diff at `dps` digits; it shares no code with the comoving jets of
+    review_he_surface_lib. Returns the 4x4 frame matrix (mp numbers)."""
+    mp.mp.dps = dps
+    sg = -1 if MUT == "lab-sign" else 1
+
+    def prof(rs):
+        return (mp.tanh(sig * (rs + Rb)) - mp.tanh(sig * (rs - Rb))) / (2 * mp.tanh(sig * Rb))
+
+    def fl(t_, x_, y_, z_):
+        return prof(mp.sqrt((x_ - v0 * t_)**2 + y_**2 + z_**2))
+
+    comps = {(0, 0): lambda t_, x_, y_, z_: -1 + (v0 * fl(t_, x_, y_, z_))**2,
+             (0, 1): lambda t_, x_, y_, z_: -sg * v0 * fl(t_, x_, y_, z_)}
+    X0 = (mp.mpf(0), r_ * c_, r_ * s_, mp.mpf(0))
+    g = mp.zeros(4, 4)
+    for i in range(4):
+        g[i, i] = 1
+    g[0, 0] = -1
+    for (i, j), fn in comps.items():
+        g[i, j] = g[j, i] = fn(*X0)
+    dg = [[[mp.mpf(0)] * 4 for _ in range(4)] for _ in range(4)]
+    ddg = [[[[mp.mpf(0)] * 4 for _ in range(4)] for _ in range(4)] for _ in range(4)]
+    for (i, j), fn in comps.items():
+        for k in range(4):
+            od = tuple(1 if q == k else 0 for q in range(4))
+            dg[k][i][j] = dg[k][j][i] = mp.diff(fn, X0, od)
+            for l in range(k, 4):
+                od2 = tuple((1 if q == k else 0) + (1 if q == l else 0) for q in range(4))
+                ddg[k][l][i][j] = ddg[k][l][j][i] = ddg[l][k][i][j] = ddg[l][k][j][i] = mp.diff(fn, X0, od2)
+    gi = g**-1
+    dgi = [-(gi * mp.matrix([[dg[k][i][j] for j in range(4)] for i in range(4)]) * gi) for k in range(4)]
+    G = [[[sum(gi[m, n] * (dg[i][n][j] + dg[j][n][i] - dg[n][i][j]) for n in range(4)) / 2 for j in range(4)] for i in range(4)] for m in range(4)]
+    dG = [[[[sum(dgi[k][m, n] * (dg[i][n][j] + dg[j][n][i] - dg[n][i][j]) +
+                 gi[m, n] * (ddg[k][i][n][j] + ddg[k][j][n][i] - ddg[k][n][i][j]) for n in range(4)) / 2
+             for j in range(4)] for i in range(4)] for m in range(4)] for k in range(4)]
+    R = mp.zeros(4, 4)
+    for i in range(4):
+        for j in range(4):
+            tot = mp.mpf(0)
+            for m in range(4):
+                tot += dG[m][m][i][j] - dG[j][m][i][m]
+                for n in range(4):
+                    tot += G[m][m][n] * G[n][i][j] - G[m][j][n] * G[n][i][m]
+            R[i, j] = tot
+    fv = prof(r_)
+    E = [mp.matrix([1, v0 * fv, 0, 0]), mp.matrix([0, 1, 0, 0]), mp.matrix([0, 0, 1, 0]), mp.matrix([0, 0, 0, 1])]
+    return mp.matrix([[(E[a_].T * R * E[b_])[0] for b_ in range(4)] for a_ in range(4)])
+
+
+def lab_ricci(h):
+    """The tanh points of tanh_points, and a generic point, from the lab metric: the frame Ricci block equals the comoving-jet block of
+    the library, R(e_phi, .) = 0, and the rank test on the lab block alone gives a triple root of rank 2. Planted: v = 0 is flat."""
+    ok, rows = True, []
+    mp.mp.dps = 70
+    flat = lab_frame_ricci(mp.mpf(8), mp.mpf(1), mp.mpf(0), mp.mpf("0.95"), mp.mpf("0.6"), mp.mpf("0.8"))
+    okf = max(abs(flat[i, j]) for i in range(4) for j in range(4)) < mp.mpf(10)**-60
+    ok = ok and okf
+    rows.append("planted: v = 0 gives max |R| = %s" % mp.nstr(max(abs(flat[i, j]) for i in range(4) for j in range(4)), 2))
+    cases = [("generic", mp.mpf(8), mp.mpf(1), mp.mpf("0.7"), mp.mpf("0.9"), mp.mpf("0.6"))]
+    for name in ("Le", "Rodal"):
+        sig, Rb, v0 = WALLS[name]
+        for pnt in points_cached(name)[0]:
+            cases.append((name, sig, Rb, v0, pnt["r"], mp.sqrt(pnt["w"])))
+    for name, sig, Rb, v0, r_, c_ in cases:
+        s_ = mp.sqrt(1 - c_**2)
+        Rl4 = lab_frame_ricci(sig, Rb, v0, r_, c_, s_)
+        F_, a_, b_, _ = jets_mp(r_, sig, Rb)
+        Rb3 = block_num((v0, F_, a_, b_, 1 / r_, c_, s_))
+        scale = max(abs(Rl4[i, j]) for i in range(4) for j in range(4))
+        dif = max(abs(Rl4[i, j] - Rb3[i][j]) for i in range(3) for j in range(3)) / scale
+        dphi = max(abs(Rl4[3, j]) for j in range(4)) / scale
+        good = dif < mp.mpf(10)**-25 and dphi < mp.mpf(10)**-25
+        info = ""
+        if name != "generic":
+            M_ = mixed_at([[Rl4[i, j] for j in range(3)] for i in range(3)])
+            sv, n3 = numeric_type3(M_, 70)
+            good = good and sv[2] < mp.mpf(10)**-20 * max(1, scale) and sv[1] > mp.mpf(10)**-6 and n3 < mp.mpf(10)**-18 * max(1, scale)**3
+            info = ", lab block alone: singular values %s, %s, %s, |N^3| = %s" % (mp.nstr(sv[0], 5), mp.nstr(sv[1], 5), mp.nstr(sv[2], 2), mp.nstr(n3, 2))
+        ok = ok and good
+        rows.append("%s r = %s, cos = %s: max |lab - comoving jets| / max |R| = %s, R(e_phi, .) = %s%s" % (
+            name, mp.nstr(r_, 8), mp.nstr(c_, 8), mp.nstr(dif, 2), mp.nstr(dphi, 2), info))
+    h.check("lab_ricci", ok, "; ".join(rows))
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -1185,16 +1746,53 @@ CHECKS = {
     "exact_points": exact_points,
     "type2_failures": type2_failures,
     "description": description,
+    "tanh_jets": tanh_jets_check,
+    "tanh_planted": tanh_planted,
+    "tanh_points": tanh_points,
+    "tanh_curve": tanh_curve,
+    "tanh_enclosure": tanh_enclosure,
+    "lab_ricci": lab_ricci,
 }
 
-CONTROLS = {}
+CONTROLS = {
+    "no-rank": (["planted_types", "exact_points", "description"], "every D = 0 tensor is called Type II"),
+    "disc-sign": (["planted_types", "type2_failures", "description"], "the sign of D flipped in the type tests"),
+    "E2-typo": (["planted_types", "polynomials", "cert_T0", "cert_disc", "ray_family", "exact_points"], "E2 = 27 c0 + c2^3"),
+    "E1-typo": (["planted_types", "polynomials", "cert_T0", "cert_disc", "ray_family", "exact_points"], "E1 = c2^2 - 4 c1"),
+    "table-typo": (["polynomials"], "the sign of R_0x in the typed table"),
+    "weight-typo": (["polynomials"], "the weight of E1 taken as 5"),
+    "cof-rank-perturb": (["cert_rank"], "the first cofactor of the rank certificate plus 1"),
+    "cof-rank-drop": (["cert_rank"], "the cofactor of m02,12 set to 0"),
+    "cof-g1-perturb": (["cert_T0"], "g1 plus 1"),
+    "cof-g2-drop": (["cert_T0"], "g2 set to 0"),
+    "cof-B-perturb": (["cert_T0"], "B_0 plus 1"),
+    "theta-typo": (["cert_T0"], "Theta with (1 + c) for (1 + c^2)"),
+    "disc27": (["cert_disc"], "26 D + E2^2"),
+    "cof-disc-perturb": (["cert_disc"], "G plus c2"),
+    "axis-typo": (["equator_axis"], "the vanishing tested off the equator and the axis"),
+    "ray-typo": (["ray_family", "exact_points"], "n_X of the null ray plus 1"),
+    "nf-radicand": (["exact_points", "description"], "the radicand of Q(sqrt d) plus 1"),
+    "phi-off": (["exact_points", "description"], "phi shifted by 1/1000"),
+    "loosen-E1": (["type2_failures", "description"], "the description without E1 = 0"),
+    "loosen-E2": (["type2_failures", "description"], "the description without E2 = 0"),
+    "loosen-T": (["type2_failures", "description"], "the description without T != 0"),
+    "jets-sign": (["tanh_jets"], "the sign of f'' in the own jets"),
+    "P-term": (["tanh_planted"], "the first term of P dropped"),
+    "T-filter-off": (["tanh_planted"], "the T != 0 test skipped"),
+    "tanh-off-root": (["tanh_points"], "r shifted by 1e-6 before the rank test"),
+    "enclosure-shift": (["tanh_enclosure"], "the Krawczyk box moved off the root"),
+    "eq-end-typo": (["tanh_curve"], "the equator end from r a + 3F = 0"),
+    "lab-sign": (["lab_ricci"], "the sign of the shift in the lab metric"),
+}
 
 
 def main():
     argv = sys.argv[1:]
     if "--search-seeds" in argv:
-        for sd, root in search_seeds():
+        found, tried, nrat = search_seeds()
+        for sd, root in found:
             print([str(z) for z in sd], root)
+        say("%d seeds tried, %d squarefree d, %d points with rational phi" % (tried, len(found), nrat))
         return
     import platform
     say("he_type3.py: python %s, sympy %s, mpmath %s" % (platform.python_version(), sp.__version__, mp.__version__))
