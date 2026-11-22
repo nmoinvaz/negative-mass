@@ -19,7 +19,9 @@ when
 
 (**proved** by hand, section 2, with every identity **checked symbolically**; a Gröbner elimination of λ gives the same
 set by a second route; #101's independent review confirms it from its own Ricci tensor, with an explicit cofactor
-certificate in the unrotated frame, **certified**, [review_he_surface.md](review_he_surface.md)). Every other point of D = 0 there is Type II, except a further set of Type III points. The
+certificate in the unrotated frame, **certified**, [review_he_surface.md](review_he_surface.md)). Every other point of
+D = 0 there is Type II, except the Type III set c₂² = 3c₁, 27c₀ = c₂³, b + a u ≠ 0 (**certified**,
+[he_type3.md](he_type3.md), #102, with the coordinator's independent check). The
 conditions are three polynomials in (v, F, a, b, u, c), and T1 and T2 together are codimension 2, so the Type I points
 are codimension 1 in the surface D = 0. A random sample of the surface never meets them, which is why #71's 200 points
 were all Type II ([review_he.md](review_he.md) §5).
@@ -27,7 +29,9 @@ were all Type II ([review_he.md](review_he.md) §5).
 For the tanh wall the Type I set is empty. T2 needs F + r f′ > 0 at the root of (r f′)′ = 0, and a scan of
 σR_b from 0.01 to 100 finds F + r f′ ≤ −0.054 there (**numerical evidence**). So on the tanh wall D = 0 off the equator is
 Type II, or Type III on a curve of points that Newton at 50 digits finds at σR_b = 1, 4 and 8 (**numerical evidence**).
-A Type III point of the general family is exact, in Q(√113) (**checked symbolically**).
+A Type III point of the general family is exact, in Q(√113) (**checked symbolically**). The curve has two branches. At
+Le's speed (σR_b = 8, v = 1/2) and Rodal's (σR_b = 20, v = 1) it meets the wall on three circles each, each point
+enclosed (**certified**); that there are no others is **numerical evidence** ([he_type3.md](he_type3.md) section 5, #133).
 
 On the axis, D = 0 only where v a = 0, and there M is diagonal, Type I.
 
@@ -36,7 +40,7 @@ On the axis, D = 0 only where v a = 0, and there M is diagonal, Type I.
 | T1, T2, T3 | I | 1 | double |
 | generic | II | 2 | double |
 | T1, T2, not T3 (\|v F\| s² = 2\|c\|, r a = −(1 + c²)F/2) | II | 1 | triple |
-| triple root with b + a u ≠ 0 | III | 2 | triple |
+| c₂² = 3c₁, 27c₀ = c₂³, b + a u ≠ 0 ([he_type3.md](he_type3.md)) | III | 2 | triple |
 
 T1 says the momentum density j is radial. T2 has real solutions only where r a lies strictly between −F and −c²F
 (−F < r a < −c²F for F > 0; #101 found Type I points with F < 0), and then it fixes
@@ -176,7 +180,8 @@ singular values of M − λ and the powers of N = M − λ (`tanh_type3`, **nume
 | 8 | 0.916 (0.793) | 2.0194 | 0.6437 | 40.43, 15.02, 6 × 10⁻⁵⁰ | 5 × 10⁻⁴⁷ |
 
 All three radii lie inside Le's wall mask f ∈ [0.1, 0.9]. At fixed r these are isolated points, so over r they form a
-curve in (v, r, θ). The extent of the curve was not mapped.
+curve in (v, r, θ). #102 mapped it at Le's and Rodal's walls: two branches, and three points at each paper speed. The
+three points above lie on it ([he_type3.md](he_type3.md) section 5).
 
 ## 5. What this says about the exclusion of #57
 
@@ -230,8 +235,8 @@ rank of M − λ comes from minors in `Fraction` arithmetic, which shares nothin
 Assumed: constant v and the Alcubierre metric of he_type.md. The theorem is for c ≠ 0, s ≠ 0, v ≠ 0 and (a, b) ≠ (0, 0).
 At (a, b) = (0, 0) or v = 0 the tensor is zero. The equator was settled in #71 and the axis above.
 
-Not covered: the tanh scan is a scan, not a bound. The Type III set was found, not characterized. The accelerating
-bubble (#73).
+Not covered: the tanh scan is a scan, not a bound (#132). The count of the tanh wall's Type III points (#133). The
+accelerating bubble (#73).
 
 ## Discrepancies
 
@@ -253,12 +258,12 @@ bubble (#73).
    claim with no independent review yet, which AGENTS.md asks for before it is relied on. Acceptance. The conditions reproduced, the
    identity j_θ v c a u (1 + v²F²) + m_e + c v F m_d = 0 re-derived without reading `he_surface.py`, and a control that
    makes each fail. Depends on #72.
-2. **The Type III set on D = 0 off the equator.** What. Characterize the points with a triple root and rank 2 as
+2. **The Type III set on D = 0 off the equator.** Done in #102 ([he_type3.md](he_type3.md)). What. Characterize the points with a triple root and rank 2 as
    polynomial conditions in (v, F, a, b, u, c), checked at exact points, and map the curve found on the tanh wall for
    the parameters of Le and Rodal in [he_type.md](he_type.md). Why. Type III excludes both a scalar and a
    fluid, and this is the only part of D = 0 where the type alone does. Acceptance. An exact description, and a Type II
    point of D = 0 that satisfies all but one of its conditions. Depends on #72.
-3. **Wording of he_type.md** for the coordinator: "Off the equator, 200 sampled points of D = 0 are all Type II … Which
+3. **Wording of he_type.md** for the coordinator. Done, with the Type III set added after #102: "Off the equator, 200 sampled points of D = 0 are all Type II … Which
    points there are Type I is #72" becomes the Answer of this note, and the Type III set is added. No task.
 4. **An exact sign in `he_type_exact`.** Done in #103, which added `exact_sign` and planted tensors with D = ±10⁻⁶⁰ to
    `he_type.py`, where `--mutate=nsimplify` makes `planted` fail. The task as written:

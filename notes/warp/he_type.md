@@ -154,8 +154,10 @@ A minimally coupled scalar has a stress tensor of Type I or II, and a perfect fl
   the annulus have 2|j| = |ρ_n + S_∥| with j ≠ 0, which is Type II by [Le26] Eq. 12. Off the equator D = 0 is Type II
   except on two sets of codimension 1 in it ([he_surface.md](he_surface.md), #72). It is Type I exactly where
   (r f′)′ = 0, v²(r f′ + F)(r f′ + c²F) + c² = 0 and 2r f′ + (1 + c²)F ≠ 0 (**proved**), which the tanh wall never
-  meets, and Type III on a triple-root set, which it does meet (both **numerical evidence** for the tanh wall). Type III
-  excludes a scalar and a perfect fluid by type alone. Its exact set is #102.
+  meets (**numerical evidence**). It is Type III exactly where c₂² = 3c₁, 27c₀ = c₂³ and b + a u ≠ 0 (**certified**,
+  [he_type3.md](he_type3.md), #102). The tanh wall meets that set on three circles at Le's v = 0.5 and three at Rodal's
+  v = 1, each point enclosed (**certified**); that there are no others is **numerical evidence** (#133). Type III excludes
+  a scalar and a perfect fluid by type alone.
 
 ## Checks and controls
 
@@ -208,7 +210,7 @@ Assumed: constant v, as in phantom_source.md up to its accelerating bubble. The 
 profile, and the numbers use the tanh profile on the slice t = 0, which any other t translates.
 
 Not covered: the accelerating bubble of phantom_source.md. (I1) holds there, so the cubic still decides, but its D was
-not computed (#73). The exact Type III set on D = 0 off the equator (#102). Le's graded grid.
+not computed (#73). A rigorous count of the tanh wall's Type III points (#133). Le's graded grid.
 
 ## References
 

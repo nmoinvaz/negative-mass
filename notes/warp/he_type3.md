@@ -255,9 +255,14 @@ only the block, and the exact points take their type from three routes (own, `cl
 
 Assumed: constant v and the Alcubierre metric of he_type.md. The theorem is for c ≠ 0, s ≠ 0, v ≠ 0, u finite and (a, b) ≠ (0, 0).
 
-Not covered: no independent review of this note yet. The Type III set of the accelerating bubble (#73). A rigorous count of the
+Review: the coordinator's independent check (raw `I102-mac`, `ind102.py`, no code shared with this note's scripts or
+with `review_he_surface_lib.py`) derives the frame block from the metric. It reproduces section 1's table and E1, the
+certificates of section 2 (the rank certificate, and the chain at T = 0), #72's point in Q(√113) with exact rank, two
+tanh points at 50 digits, and the six points by its own resultant scan.
+
+Not covered: the Type III set of the accelerating bubble (#73). A rigorous count of the
 Type III points of the wall at a given speed over all r (the box enclosures prove the six points exist, not that there are no
-others). A rational Type III point.
+others, #133). A rational Type III point.
 
 ## Discrepancies
 

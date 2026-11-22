@@ -217,6 +217,6 @@ The coordinator owns that file. Proposed changes:
    by interval arithmetic over σR_b ∈ [0.01, 100] with an asymptotic argument outside. Why. The empty Type I set of the
    tanh wall rests on a scan at 97 values. Acceptance. A rigorous enclosure, and the planted profile sech²(r)/10 found
    non-empty by the same code. Depends on #72.
-2. **The Type III set (#102) by the same method.** What. Triple-root conditions c₂² = 3c₁, 27c₀ = c₂³ as polynomials in
+2. **The Type III set (#102) by the same method.** Done in #102 ([he_type3.md](he_type3.md)). What. Triple-root conditions c₂² = 3c₁, 27c₀ = c₂³ as polynomials in
    the unrotated frame, with a cofactor certificate that rank 2 forces b + a u ≠ 0, checked at the Q(√113) point.
    Acceptance. An exact description, and a Type II point failing exactly one condition. Depends on #102.
