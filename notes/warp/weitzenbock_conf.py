@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Item 6's Weitzenbock identity on a conformally flat slice, checked symbolically, for issue #87.
+"""Item 6's Weitzenbock identity on a conformally flat slice (#87) and on a diagonal slice (#99), checked symbolically.
 
-Data: g = psi^4 delta on R^3 with psi(x, y, z) arbitrary, an arbitrary symmetric K_ij(x, y, z) in the orthonormal frame
-e_i = psi^-2 d_i, and an arbitrary spinor field eps = u + i v with the eight real components u_a, v_a of (x, y, z). The
-note's gammas (mass_bounds.md, "Conventions") act on eps, <a, b> = a^dagger b, xi^j = <eps, g^0 g^j eps>, and
+Data, #87: g = psi^4 delta on R^3 with psi(x, y, z) arbitrary, an arbitrary symmetric K_ij(x, y, z) in the orthonormal frame
+e_i = psi^-2 d_i, and an arbitrary spinor field eps = u + i v with the eight real components u_a, v_a of (x, y, z). Data,
+#99: g = diag(A^2, B^2, C^2)(x, y, z) with A, B, C arbitrary positive functions, e_i = d_i / A_i, K_ij = K(e_i, e_j)
+arbitrary and symmetric, eps arbitrary, and div V = (1/ABC) d_a(ABC V^a / A_a) for V = V^a e_a. A = B = C = psi^2 is #87's
+slice. The note's gammas (mass_bounds.md, "Conventions") act on eps, <a, b> = a^dagger b, xi^j = <eps, g^0 g^j eps>, and
     nabla~_i = nabla_i + (1/2) K_ij g^j g^0,   nabla_i = e_i + (1/4) omega_jk(e_i) g^j g^k,   D~ = g^i nabla~_i,
 with the sign of the K term fixed by #67 and #86. mu and J_i are defined by the constraints,
     16 pi mu = R + (tr K)^2 - K_ij K^ij,    8 pi J_i = D^j (K_ij - g_ij tr K),
@@ -12,43 +14,59 @@ which with K_ij = -g(nabla_{e_i} n, e_j) and J_i = -n^a T_ai are #58 item 1's co
 The identity checked is
     |nabla~ eps|^2 - |D~ eps|^2 + 4 pi (mu |eps|^2 - J.xi) = div V,
     V^i = Re<eps, nabla^i eps - g^i D eps> - (1/2) P_ij xi^j,   P_ij = K_ij - delta_ij tr K,   D = g^i nabla_i,
-where div V = psi^-6 d_a(psi^4 V^a) is the divergence of V = V^a e_a. By hand (proved) it is Lichnerowicz's formula
-|nabla eps|^2 - |D eps|^2 + (R/4)|eps|^2 = div Re<eps, nabla^i eps - g^i D eps> for the spin part, and for the K part
-Re<nabla_i eps, P_ij g^j g^0 eps> = (1/2) div(P_ij <eps, g^j g^0 eps>) - (1/2)(nabla_i P_ij)<eps, g^j g^0 eps>, with
-<eps, g^j g^0 eps> = -xi^j, nabla_i P_ij = 8 pi J_j and the algebraic terms (1/4)(|K|^2 - (tr K)^2)|eps|^2. Using the
-Hamiltonian constraint, -R/4 + (|K|^2 - (tr K)^2)/4 = -4 pi mu, which gives the identity. The script checks the identity
-as a polynomial identity in the jets of psi, K_ij, u_a and v_a, with V written out. The difference is expanded and must be
-zero term by term. Inside the integral with D~ eps = 0 this is item 6 (the boundary term is div V).
+where div V = psi^-6 d_a(psi^4 V^a) on psi^4 delta, and (1/ABC) d_a(ABC V^a / A_a) on the diagonal slice. By hand (proved) it
+is Lichnerowicz's formula |nabla eps|^2 - |D eps|^2 + (R/4)|eps|^2 = div Re<eps, nabla^i eps - g^i D eps> for the spin part,
+and for the K part Re<nabla_i eps, P_ij g^j g^0 eps> = (1/2) div(P_ij <eps, g^j g^0 eps>) - (1/2)(nabla_i P_ij)<eps, g^j g^0
+eps>, with <eps, g^j g^0 eps> = -xi^j, nabla_i P_ij = 8 pi J_j and the algebraic terms (1/4)(|K|^2 - (tr K)^2)|eps|^2. Using
+the Hamiltonian constraint, -R/4 + (|K|^2 - (tr K)^2)/4 = -4 pi mu, which gives the identity. The script checks the identity
+as a polynomial identity in the jets of psi (or A, B, C), K_ij, u_a and v_a, with V written out. The difference is expanded
+and must be zero term by term. Inside the integral with D~ eps = 0 this is item 6 (the boundary term is div V).
 
 Planted truth comes first. Each of these has an answer known without the code and goes through the code path of the
-general case: R = -8 psi^-5 Laplace psi, the spin connection omega_jk(e_i) = psi^-2 (delta_ij phi_k - delta_ik phi_j) with
-phi = 2 ln psi, #58 item 1's mu and J for Alcubierre's flat data (with an arbitrary profile f(x, y, z)), K = 0, K = f delta,
-a transverse trace-free K (Hessian of a harmonic polynomial, times psi^-6), and Schwarzschild. Then the constraints
-are compared with G_ab of the 4-metric -dt^2 + psi^4 (delta_ij - 2 t K_ij) dx^i dx^j, whose Einstein tensor at t = 0 gives
-8 pi mu = G_tt and 8 pi J_i = -G_ti.
+general case. On psi^4 delta: R = -8 psi^-5 Laplace psi, the spin connection omega_jk(e_i) = psi^-2 (delta_ij phi_k -
+delta_ik phi_j) with phi = 2 ln psi, #58 item 1's mu and J for Alcubierre's flat data (with an arbitrary profile
+f(x, y, z)), K = 0, K = f delta, a transverse trace-free K (Hessian of a harmonic polynomial, times psi^-6), and
+Schwarzschild. Then the constraints are compared with G_ab of the 4-metric -dt^2 + psi^4 (delta_ij - 2 t K_ij) dx^i dx^j,
+whose Einstein tensor at t = 0 gives 8 pi mu = G_tt and 8 pi J_i = -G_ti. On the diagonal slice (sections 6 to 9): R of six
+metrics with a hand value (flat, dx^2 + dy^2 + c(x,y)^2 dz^2, dx^2 + f^2 (dy^2 + dz^2), dx^2 + f^2 dy^2 + g^2 dz^2,
+A(x), B(x), C(x) arbitrary, and A = B = C = psi^2), omega_jk(e_i) = (delta_ij d_k A_j - delta_ik d_j A_k)/(A_j A_k) for
+j != k from Cartan's formula (conventions.py section 6(c), #86), Clifford parallelism, mu and J for Alcubierre's data with
+A = B = C = 1 (the planted flat case), K = 0 and K = f delta on two metrics with a hand R, the Bowen-York form on
+A = B = C = psi^2, a Kasner slice with constant a_i, and the 4-metric -dt^2 + Lam (delta - 2 t K) Lam dx dx, Lam =
+diag(A, B, C). The identities then run in the order flat (A = B = C = 1, K = 0), Lichnerowicz (K = 0, A, B, C arbitrary),
+flat with K arbitrary, Alcubierre's K, A = B = C = psi^2 with K arbitrary (#87's identity_general through the diagonal
+code), K = diag(k1, k2, k3), and last A, B, C, K_ij and eps all arbitrary.
 
-What the checks share. The gammas are retyped from conventions.py (compared with its note_gammas() in `gammas_match`),
-and christoffel and ricci are retyped from it too. Nothing else is imported from it. The identity side (matrices, the
-frame, V) shares with the constraint side only sympy, christoffel and ricci. The spin connection of the identity comes from
-the Christoffel symbols of psi^4 delta and is compared with the closed form above. The constraints are computed in
-coordinates and compared with the 4-metric's G_ab. Complex conjugation is the structural replacement i -> -i on
-expressions in the real functions u_a, v_a, psi and K_ij. Zero is tested by sp.expand, which is canonical for Laurent
-polynomials in the jets, and sp.simplify only on the planted cases with sqrt.
+What the checks share. The gammas are retyped from conventions.py (compared with its note_gammas() in `gammas_match`), and
+christoffel and ricci are retyped from it too. Nothing else is imported from it. The identity side (matrices, the frame, V)
+shares with the constraint side only sympy, christoffel and ricci. The spin connection of the identity comes from the
+Christoffel symbols of the metric and is compared with the closed form above. The constraints are computed in coordinates
+and compared with the 4-metric's G_ab, which shares christoffel and ricci with them, so a wrong ricci is seen only by the
+planted values of R. The diagonal code (GeoDiag, constraints_diag, identity_diag) is written beside #87's Geo, constraints
+and identity and calls none of them, so #87's checks run as they were. They share the helpers (christoffel, ricci, inner,
+re, zero, sym_K, spinor, note_gammas), and `diag_conf_limit` and `identity_diag_conf` compare the two codes at
+A = B = C = psi^2. Complex conjugation is the structural replacement i -> -i on expressions in the real functions u_a, v_a,
+psi, A, B, C and K_ij. Zero is tested by sp.expand, which is canonical for Laurent polynomials in the jets, and sp.simplify
+only on the planted cases with sqrt.
 
-What the code proves (*checked symbolically*): at every point, for all psi, K_ij and eps, the two sides above are equal as
-polynomials in the jets, to second order, of psi, K_ij, u_a and v_a, in the note's gammas with the stated sign of nabla~
-and with mu and J_i the constraints' values. It does not prove the integrated identity, whose boundary term is div V and
-needs decay (review.md gap 2), or that D~ eps = 0 has a solution (item 5). The hand derivation above uses only the
-Levi-Civita connection, the Clifford relations and Hermiticity, so it holds on any slice (*proved* by hand). The script
-checks only g = psi^4 delta. Assumed: sp.expand is canonical on these Laurent polynomials, and the constraints define mu
-and J_i with K_ij = -g(nabla_{e_i} n, e_j), which `constraints_4d` ties to G_ab on this class of slices.
+What the code proves (*checked symbolically*): at every point, for all psi, K_ij and eps on psi^4 delta, and for all A, B,
+C, K_ij and eps on diag(A^2, B^2, C^2)(x, y, z), the two sides above are equal as polynomials in the jets, to second order,
+of the functions, in the note's gammas with the stated sign of nabla~ and with mu and J_i the constraints' values. It does
+not prove the integrated identity, whose boundary term is div V and needs decay (review.md gap 2), or that D~ eps = 0 has a
+solution (item 5). The hand derivation above uses only the Levi-Civita connection, the Clifford relations and Hermiticity,
+so it holds on any slice (*proved* by hand). Still covered only by it: slices that are not diagonal in the coordinates, and
+frames other than e_i = d_i / A_i (such as one rotated about an axis). Assumed: sp.expand is canonical on these Laurent
+polynomials, and the constraints define mu and J_i with K_ij = -g(nabla_{e_i} n, e_j), which `constraints_4d` and
+`constraints_4d_diag` tie to G_ab on these classes of slices (N = 1, no shift).
 
     python3 notes/warp/weitzenbock_conf.py                  checks, then every control
     python3 notes/warp/weitzenbock_conf.py --no-controls    checks only
     python3 notes/warp/weitzenbock_conf.py --mutate=NAME    one control (its target checks must fail, exit 1)
+    python3 notes/warp/weitzenbock_conf.py --no-controls --only=NAME,...   (or --skip=NAME,...) some diagonal checks of
+        sections 6 to 9 only, for staged runs. Under --mutate a diagonal check runs only if the control targets it.
 
-Exit status is 1 if a check fails or a control does not fire. One process, 10 s for the checks and about 4 minutes with
-the controls, 71 MB.
+Exit status is 1 if a check fails or a control does not fire. One process, 20 s for the checks and about 10 minutes with
+the controls, 75 MB.
 """
 import importlib.util
 import pathlib
@@ -117,10 +135,10 @@ CONTROLS = {
     "J4d": ("takes J_i = +G_ti / 8 pi from the 4-metric", ["constraints_4d", "constraints_4d_diag"]),
     "inv-typo": ("types the inverse metric as psi^-2 delta (diagonal: as diag(A^-1, B^-1, C^-1))",
                  ["inverse", "inverse_diag", "planted_R_diag", "planted_omega_diag", "clifford_parallel_diag",
-                  "planted_K0_diag", "planted_trace_diag", "planted_TT_diag", "constraints_4d_diag"]),
+                  "planted_K0_diag", "planted_trace_diag", "planted_TT_diag", "constraints_4d_diag"] + ANI),
     "ricci-sign": ("takes the Gamma Gamma terms of R_ab with the other sign",
                    ["planted_R", "planted_K0", "planted_schwarzschild", "constraints_4d", "planted_R_diag",
-                    "planted_K0_diag", "planted_trace_diag", "planted_TT_diag", "constraints_4d_diag"]),
+                    "planted_K0_diag", "planted_trace_diag", "planted_TT_diag", "constraints_4d_diag"] + ANI),
     "schwarzschild-power": ("takes psi = 1 + m1/2|x|^2 + m2/2|x - c|^2, which is not harmonic",
                             ["planted_schwarzschild"]),
     "diag-frame": ("takes e_i = d_i / A_i^2 instead of d_i / A_i",
@@ -646,8 +664,13 @@ def section_constraints_diag():
     one = sp.Integer(1)
     f, v = fn("f"), sp.Symbol("v", real=True)
     c2 = sp.Function("c")(X, Y)
-    Ac = [one, one, c2]  # dx^2 + dy^2 + c(x, y)^2 dz^2, R = -2 Laplace_xy c / c
-    Rc = -2 * (sp.diff(c2, X, 2) + sp.diff(c2, Y, 2)) / c2
+    a_, w_ = sp.Function("a")(X), sp.Function("w")(X)
+    # Two metrics with a hand value of R. (i) dx^2 + dy^2 + c(x, y)^2 dz^2, R = -2 Laplace_xy c / c, whose Gamma Gamma terms
+    # cancel in R and whose g_bb does not depend on x_b. (ii) a(x)^2 dx^2 + w(x)^2 (dy^2 + dz^2), which is the metric of
+    # planted_R_diag's third case in the proper length dr = a dx, R = -4 (1/a)(w'/a)'/w - 2 w'^2/(a w)^2, with Gamma Gamma terms
+    # in R and d_x g_xx != 0, so that the Christoffel terms of the divergence in J matter.
+    metrics = [([one, one, c2], -2 * (sp.diff(c2, X, 2) + sp.diff(c2, Y, 2)) / c2),
+               ([a_, w_, w_], -4 * sp.diff(sp.diff(w_, X) / a_, X) / (a_ * w_) - 2 * sp.diff(w_, X)**2 / (a_ * w_)**2)]
     if todo("planted_alcubierre_diag"):
         # The planted flat case: A = B = C = 1, through constraints_diag, with #58 item 1's values.
         b = [-v * f, 0, 0]
@@ -659,15 +682,20 @@ def section_constraints_diag():
               "A = B = C = 1, K = Alcubierre's, arbitrary f: mu = -(v^2/32 pi)(f_y^2 + f_z^2), "
               "J_i = (v/16 pi)(d_x d_i f - delta_ix Laplace f)")
     if todo("planted_K0_diag"):
-        mu, J = constraints_diag(Ac, sp.zeros(3), GeoDiag(Ac))
-        check("planted_K0_diag", zero(mu - Rc / (16 * sp.pi)) and is_zero(J),
-              "A = B = 1, C = c(x, y), K = 0: mu = R/16 pi = -(c_xx + c_yy)/(8 pi c), J = 0")
+        ok = True
+        for Ac, Rc in metrics:
+            mu, J = constraints_diag(Ac, sp.zeros(3), GeoDiag(Ac))
+            ok = ok and zero(mu - Rc / (16 * sp.pi)) and is_zero(J)
+        check("planted_K0_diag", ok, "K = 0 on the two metrics above: mu = R/16 pi with R by hand, J = 0")
     if todo("planted_trace_diag"):
         # K_ij = f delta_ij in the frame, so K_ab = f g_ab, P_ab = -2 f g_ab, 16 pi mu = R + 6 f^2, 8 pi J_a = -2 d_a f.
-        mu, J = constraints_diag(Ac, f * I3, GeoDiag(Ac))
-        wantJ = sp.Matrix([-sp.diff(f, X3[i]) / (4 * sp.pi * Ac[i]) for i in range(3)])
-        check("planted_trace_diag", zero(mu - (Rc / (16 * sp.pi) + 3 * f**2 / (8 * sp.pi))) and is_zero(J - wantJ),
-              "A = B = 1, C = c(x, y), K_ij = f delta_ij: mu = R/16 pi + 3 f^2/8 pi, J_i = -d_i f/(4 pi A_i)")
+        ok = True
+        for Ac, Rc in metrics:
+            mu, J = constraints_diag(Ac, f * I3, GeoDiag(Ac))
+            wantJ = sp.Matrix([-sp.diff(f, X3[i]) / (4 * sp.pi * Ac[i]) for i in range(3)])
+            ok = ok and zero(mu - (Rc / (16 * sp.pi) + 3 * f**2 / (8 * sp.pi))) and is_zero(J - wantJ)
+        check("planted_trace_diag", ok, "K_ij = f delta_ij on the two metrics above: mu = R/16 pi + 3 f^2/8 pi, "
+              "J_i = -d_i f/(4 pi A_i)")
     if todo("planted_TT_diag"):
         # The Bowen-York form of #87's planted_TT, with A = B = C = psi^2 given to the diagonal code.
         psi = fn("psi")
