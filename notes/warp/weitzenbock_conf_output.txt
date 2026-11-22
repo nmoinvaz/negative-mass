@@ -1,4 +1,4 @@
-weitzenbock_conf.py, issue #87. sympy 1.14.0, python 3.14.10. mutation: none
+weitzenbock_conf.py, issues #87 and #99. sympy 1.14.0, python 3.14.10. mutation: none
 
 == 1. The gammas, the conjugation and the causal vector ==
 [PASS] clifford: {g^a, g^b} = 2 eta^ab; g^0 anti-Hermitian and unitary, g^j Hermitian
@@ -37,28 +37,64 @@ weitzenbock_conf.py, issue #87. sympy 1.14.0, python 3.14.10. mutation: none
 [PASS] identity_general: psi, K_ij and eps arbitrary; 336 terms on the left, 336 in div V, 0 in the difference
 [PASS] V_reduced: V^i = -sum_{j != i} Re<eps, g^i g^j nabla_j eps> - (1/2) P_ij xi^j, the j = i term having cancelled
 
-checks: 22 passed, 0 failed []. 10 s
+== 6. The diagonal slice diag(A^2, B^2, C^2): planted R, omega and Clifford parallelism ==
+[PASS] inverse_diag: g_ab g^bc = delta, with g = diag(A^2, B^2, C^2) and the inverse typed in
+[PASS] orthonormal_diag: g(e_i, e_j) = delta_ij for e_i = d_i / A_i
+[PASS] planted_R_diag: R of 6 metrics with a hand value: flat, dx^2 + dy^2 + c(x,y)^2 dz^2 (R = -2 Laplace c / c), dx^2 + f^2 (dy^2 + dz^2) (R = -4 f''/f - 2 f'^2/f^2), dx^2 + f^2 dy^2 + g^2 dz^2, A(x), B(x), C(x) arbitrary, and psi^2 for A, B, C (R = -8 psi^-5 Laplace psi)
+[PASS] planted_omega_diag: omega_jk(e_i) = g(e_j, nabla_{e_i} e_k) = (delta_ij d_k A_j - delta_ik d_j A_k)/(A_j A_k), j != k, 0 for j = k, Cartan's formula of conventions.py section 6(c)
+[PASS] clifford_parallel_diag: [(1/4) omega_jk g^j g^k, g^l] = omega_jl g^j on the diagonal slice
+[PASS] diag_conf_limit: A = B = C = psi^2 gives #87's g, R, omega_jk, Om_i and, for K_ij arbitrary, mu and J_i
+
+== 7. Planted truth for mu and J_i from the constraints, on diagonal slices ==
+[PASS] planted_alcubierre_diag: A = B = C = 1, K = Alcubierre's, arbitrary f: mu = -(v^2/32 pi)(f_y^2 + f_z^2), J_i = (v/16 pi)(d_x d_i f - delta_ix Laplace f)
+[PASS] planted_K0_diag: K = 0 on dx^2 + dy^2 + c(x,y)^2 dz^2 and on a(x)^2 dx^2 + w(x)^2 (dy^2 + dz^2): mu = R/16 pi with R by hand, J = 0
+[PASS] planted_trace_diag: K_ij = f delta_ij on the same two metrics: mu = R/16 pi + 3 f^2/8 pi, J_i = -d_i f/(4 pi A_i)
+[PASS] planted_TT_diag: A = B = C = psi^2, K_ij = psi^-6 H_ij, H the Hessian of a harmonic polynomial: J = 0, 16 pi mu = R - psi^-12 H_ij H_ij
+[PASS] planted_kasner_diag: constant A_i = a_i, K_ij = diag(-2/7, 3/7, 6/7) (Kasner at t = 1: sum p = sum p^2 = 1): mu = J = 0
+
+== 8. The constraints against G_ab of the 4-metric, diagonal slice ==
+[PASS] constraints_4d_diag: the constraints' mu and J_i equal G_tt / 8 pi and -G_ti / 8 pi of -dt^2 + Lam (delta - 2 t K) Lam at t = 0, Lam = diag(A, B, C), for arbitrary A, B, C and K_ij
+
+== 9. The identity |nabla~ eps|^2 - |D~ eps|^2 + 4 pi (mu |eps|^2 - J.xi) = div V on diag(A^2, B^2, C^2) ==
+    V^i as in section 5, div V = (1/ABC) d_a(ABC V^a / A_a)
+  Planted first: A = B = C = 1, then K = 0, through the code of the general case
+[PASS] identity_diag_flat_K0: A = B = C = 1, K = 0, so mu = J = 0: the flat Weitzenbock identity; 24 terms on the left, 24 in div V, 0 in the difference
+[PASS] identity_diag_lichnerowicz: A, B, C arbitrary, K = 0, mu = R/16 pi, J = 0: Lichnerowicz; 240 terms on the left, 240 in div V, 0 in the difference
+[PASS] identity_diag_flat_K: A = B = C = 1, K_ij arbitrary; 168 terms on the left, 168 in div V, 0 in the difference
+[PASS] identity_diag_alcubierre: A = B = C = 1, K = Alcubierre's with b = (-v f, 0, 0), f(x, y, z) arbitrary; 88 terms on the left, 88 in div V, 0 in the difference
+[PASS] identity_diag_conf: A = B = C = psi^2, K_ij and eps arbitrary: #87's identity_general through the diagonal code; 336 terms on the left, 336 in div V, 0 in the difference
+[PASS] identity_diag_Kdiag: A, B, C arbitrary, K_ij = diag(k1, k2, k3) arbitrary functions, eps arbitrary; 360 terms on the left, 360 in div V, 0 in the difference
+[PASS] identity_diag_general: A, B, C, K_ij and eps arbitrary; 480 terms on the left, 480 in div V, 0 in the difference
+[PASS] V_reduced_diag: V^i = -sum_{j != i} Re<eps, g^i g^j nabla_j eps> - (1/2) P_ij xi^j, the j = i term having cancelled
+
+checks: 42 passed, 0 failed []. 29 s
 
 == Controls: each mutation must make its target checks fail ==
-[FIRED] --mutate=sign (takes nabla~ with the other sign, d_i - (1/2) K_ij g^j g^0, and D~ from it): exit 1, failed ['dirac', 'identity_flat_K', 'identity_alcubierre', 'identity_general']
-[FIRED] --mutate=Jsign (writes +J.xi in the identity, instead of -J.xi): exit 1, failed ['identity_flat_K', 'identity_alcubierre', 'identity_general']
-[FIRED] --mutate=musign (writes -mu |eps|^2 in the identity): exit 1, failed ['identity_lichnerowicz', 'identity_flat_K', 'identity_alcubierre', 'identity_general']
-[FIRED] --mutate=Kdiv (drops the term -(1/2) P_ij xi^j from V): exit 1, failed ['identity_flat_K', 'identity_alcubierre', 'identity_general', 'V_reduced']
-[FIRED] --mutate=Vspin (drops -g^i D eps from V): exit 1, failed ['identity_flat_K0', 'identity_lichnerowicz', 'identity_flat_K', 'identity_alcubierre', 'identity_general', 'V_reduced']
-[FIRED] --mutate=weight (takes div V = d_a V^a, without psi^-6 d_a psi^4): exit 1, failed ['identity_lichnerowicz', 'identity_general']
-[FIRED] --mutate=omega-sign (takes the slice's spin connection with -(1/4) omega_jk g^j g^k): exit 1, failed ['clifford_parallel', 'identity_lichnerowicz', 'identity_general']
-[FIRED] --mutate=christoffel (flips the sign of the Christoffel term in nabla_X Y, which gives omega_jk): exit 1, failed ['planted_omega', 'clifford_parallel', 'identity_lichnerowicz', 'identity_general']
-[FIRED] --mutate=psi-frame (takes e_i = psi^-1 d_i instead of psi^-2 d_i): exit 1, failed ['orthonormal', 'planted_omega', 'clifford_parallel', 'identity_lichnerowicz', 'identity_general']
-[FIRED] --mutate=trace (takes P_ij = K_ij + g_ij tr K in the momentum constraint): exit 1, failed ['planted_alcubierre', 'planted_trace', 'constraints_4d', 'identity_flat_K', 'identity_alcubierre', 'identity_general']
-[FIRED] --mutate=Ksq (takes 16 pi mu = R + (tr K)^2 + K_ij K^ij): exit 1, failed ['planted_alcubierre', 'planted_trace', 'planted_TT', 'constraints_4d', 'identity_flat_K', 'identity_alcubierre', 'identity_general']
-[FIRED] --mutate=Rsign (takes 16 pi mu = -R + (tr K)^2 - K_ij K^ij): exit 1, failed ['planted_K0', 'planted_trace', 'planted_TT', 'constraints_4d', 'identity_lichnerowicz', 'identity_general']
-[FIRED] --mutate=Kframe (takes the frame components K_ij as coordinate components in the constraints): exit 1, failed ['planted_trace', 'planted_TT', 'constraints_4d', 'identity_general']
-[FIRED] --mutate=J-christoffel (drops the Christoffel terms of the covariant divergence in the momentum constraint): exit 1, failed ['planted_trace', 'planted_TT', 'constraints_4d', 'identity_general']
-[FIRED] --mutate=gamma (scales g^1 by 11/10): exit 1, failed ['clifford', 'gammas_match', 'causal', 'clifford_parallel', 'dirac', 'identity_flat_K0', 'identity_lichnerowicz', 'identity_flat_K', 'identity_alcubierre', 'identity_general', 'V_reduced']
-[FIRED] --mutate=no-conj (takes <a, b> = a^T b, without the complex conjugate): exit 1, failed ['dagger', 'identity_flat_K0', 'identity_lichnerowicz', 'identity_flat_K', 'identity_alcubierre', 'identity_general']
-[FIRED] --mutate=adm-K (takes the 4-metric with the other sign of K, g_ij = psi^4 (delta_ij + 2 t K_ij)): exit 1, failed ['constraints_4d']
-[FIRED] --mutate=J4d (takes J_i = +G_ti / 8 pi from the 4-metric): exit 1, failed ['constraints_4d']
-[FIRED] --mutate=inv-typo (types the inverse metric as psi^-2 delta): exit 1, failed ['inverse', 'planted_R', 'planted_omega', 'clifford_parallel', 'planted_K0', 'planted_trace', 'planted_TT', 'planted_schwarzschild', 'constraints_4d', 'identity_lichnerowicz', 'identity_general']
-[FIRED] --mutate=ricci-sign (takes the Gamma Gamma terms of R_ab with the other sign): exit 1, failed ['planted_R', 'planted_K0', 'planted_trace', 'planted_TT', 'planted_schwarzschild', 'constraints_4d', 'identity_lichnerowicz', 'identity_general']
+[FIRED] --mutate=sign (takes nabla~ with the other sign, d_i - (1/2) K_ij g^j g^0, and D~ from it): exit 1, failed ['dirac', 'identity_flat_K', 'identity_alcubierre', 'identity_general', 'identity_diag_flat_K', 'identity_diag_alcubierre', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general']
+[FIRED] --mutate=Jsign (writes +J.xi in the identity, instead of -J.xi): exit 1, failed ['identity_flat_K', 'identity_alcubierre', 'identity_general', 'identity_diag_flat_K', 'identity_diag_alcubierre', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general']
+[FIRED] --mutate=musign (writes -mu |eps|^2 in the identity): exit 1, failed ['identity_lichnerowicz', 'identity_flat_K', 'identity_alcubierre', 'identity_general', 'identity_diag_lichnerowicz', 'identity_diag_flat_K', 'identity_diag_alcubierre', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general']
+[FIRED] --mutate=Kdiv (drops the term -(1/2) P_ij xi^j from V): exit 1, failed ['identity_flat_K', 'identity_alcubierre', 'identity_general', 'V_reduced', 'identity_diag_flat_K', 'identity_diag_alcubierre', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general', 'V_reduced_diag']
+[FIRED] --mutate=Vspin (drops -g^i D eps from V): exit 1, failed ['identity_flat_K0', 'identity_lichnerowicz', 'identity_flat_K', 'identity_alcubierre', 'identity_general', 'V_reduced', 'identity_diag_flat_K0', 'identity_diag_lichnerowicz', 'identity_diag_flat_K', 'identity_diag_alcubierre', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general', 'V_reduced_diag']
+[FIRED] --mutate=weight (takes div V = d_a V^a, without psi^-6 d_a psi^4 (diagonal: without (1/ABC) d_a ABC)): exit 1, failed ['identity_lichnerowicz', 'identity_general', 'identity_diag_lichnerowicz', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general']
+[FIRED] --mutate=omega-sign (takes the slice's spin connection with -(1/4) omega_jk g^j g^k): exit 1, failed ['clifford_parallel', 'identity_lichnerowicz', 'identity_general', 'clifford_parallel_diag', 'identity_diag_lichnerowicz', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general']
+[FIRED] --mutate=christoffel (flips the sign of the Christoffel term in nabla_X Y, which gives omega_jk): exit 1, failed ['planted_omega', 'clifford_parallel', 'identity_lichnerowicz', 'identity_general', 'planted_omega_diag', 'clifford_parallel_diag', 'identity_diag_lichnerowicz', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general']
+[FIRED] --mutate=psi-frame (takes e_i = psi^-1 d_i instead of psi^-2 d_i): exit 1, failed ['orthonormal', 'planted_omega', 'clifford_parallel', 'identity_lichnerowicz', 'identity_general', 'diag_conf_limit']
+[FIRED] --mutate=trace (takes P_ij = K_ij + g_ij tr K in the momentum constraint): exit 1, failed ['planted_alcubierre', 'planted_trace', 'constraints_4d', 'identity_flat_K', 'identity_alcubierre', 'identity_general', 'planted_alcubierre_diag', 'planted_trace_diag', 'constraints_4d_diag', 'identity_diag_flat_K', 'identity_diag_alcubierre', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general']
+[FIRED] --mutate=Ksq (takes 16 pi mu = R + (tr K)^2 + K_ij K^ij): exit 1, failed ['planted_alcubierre', 'planted_trace', 'planted_TT', 'constraints_4d', 'identity_flat_K', 'identity_alcubierre', 'identity_general', 'planted_alcubierre_diag', 'planted_trace_diag', 'planted_TT_diag', 'planted_kasner_diag', 'constraints_4d_diag', 'identity_diag_flat_K', 'identity_diag_alcubierre', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general']
+[FIRED] --mutate=Rsign (takes 16 pi mu = -R + (tr K)^2 - K_ij K^ij): exit 1, failed ['planted_K0', 'planted_trace', 'planted_TT', 'constraints_4d', 'identity_lichnerowicz', 'identity_general', 'planted_K0_diag', 'planted_trace_diag', 'planted_TT_diag', 'constraints_4d_diag', 'identity_diag_lichnerowicz', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general']
+[FIRED] --mutate=Kframe (takes the frame components K_ij as coordinate components in the constraints): exit 1, failed ['planted_trace', 'planted_TT', 'constraints_4d', 'identity_general', 'planted_trace_diag', 'planted_TT_diag', 'planted_kasner_diag', 'constraints_4d_diag', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general']
+[FIRED] --mutate=J-christoffel (drops the Christoffel terms of the covariant divergence in the momentum constraint): exit 1, failed ['planted_trace', 'planted_TT', 'constraints_4d', 'identity_general', 'planted_trace_diag', 'planted_TT_diag', 'constraints_4d_diag', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general']
+[FIRED] --mutate=gamma (scales g^1 by 11/10): exit 1, failed ['clifford', 'gammas_match', 'causal', 'clifford_parallel', 'dirac', 'identity_flat_K0', 'identity_lichnerowicz', 'identity_flat_K', 'identity_alcubierre', 'identity_general', 'V_reduced', 'clifford_parallel_diag', 'identity_diag_flat_K0', 'identity_diag_lichnerowicz', 'identity_diag_flat_K', 'identity_diag_alcubierre', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general', 'V_reduced_diag']
+[FIRED] --mutate=no-conj (takes <a, b> = a^T b, without the complex conjugate): exit 1, failed ['dagger', 'identity_flat_K0', 'identity_lichnerowicz', 'identity_flat_K', 'identity_alcubierre', 'identity_general', 'identity_diag_flat_K0', 'identity_diag_lichnerowicz', 'identity_diag_flat_K', 'identity_diag_alcubierre', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general']
+[FIRED] --mutate=adm-K (takes the 4-metric with the other sign of K, g_ij = psi^4 (delta_ij + 2 t K_ij)): exit 1, failed ['constraints_4d', 'constraints_4d_diag']
+[FIRED] --mutate=J4d (takes J_i = +G_ti / 8 pi from the 4-metric): exit 1, failed ['constraints_4d', 'constraints_4d_diag']
+[FIRED] --mutate=inv-typo (types the inverse metric as psi^-2 delta (diagonal: as diag(A^-1, B^-1, C^-1))): exit 1, failed ['inverse', 'planted_R', 'planted_omega', 'clifford_parallel', 'planted_K0', 'planted_trace', 'planted_TT', 'planted_schwarzschild', 'constraints_4d', 'identity_lichnerowicz', 'identity_general', 'inverse_diag', 'planted_R_diag', 'planted_omega_diag', 'clifford_parallel_diag', 'planted_K0_diag', 'planted_trace_diag', 'planted_TT_diag', 'constraints_4d_diag', 'identity_diag_lichnerowicz', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general']
+[FIRED] --mutate=ricci-sign (takes the Gamma Gamma terms of R_ab with the other sign): exit 1, failed ['planted_R', 'planted_K0', 'planted_trace', 'planted_TT', 'planted_schwarzschild', 'constraints_4d', 'identity_lichnerowicz', 'identity_general', 'planted_R_diag', 'planted_K0_diag', 'planted_trace_diag', 'planted_TT_diag', 'constraints_4d_diag', 'identity_diag_lichnerowicz', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general']
 [FIRED] --mutate=schwarzschild-power (takes psi = 1 + m1/2|x|^2 + m2/2|x - c|^2, which is not harmonic): exit 1, failed ['planted_schwarzschild']
+[FIRED] --mutate=diag-frame (takes e_i = d_i / A_i^2 instead of d_i / A_i): exit 1, failed ['orthonormal_diag', 'planted_omega_diag', 'identity_diag_lichnerowicz', 'identity_diag_conf', 'identity_diag_Kdiag', 'identity_diag_general']
+[FIRED] --mutate=aniso-frame (takes e_1 = d_1 / B, the scale of the wrong axis): exit 1, failed ['orthonormal_diag', 'planted_omega_diag', 'identity_diag_lichnerowicz', 'identity_diag_Kdiag', 'identity_diag_general']
+[FIRED] --mutate=abc (takes sqrt(det g) = A^3 in the divergence, not ABC (equal for A = B = C)): exit 1, failed ['identity_diag_lichnerowicz', 'identity_diag_Kdiag', 'identity_diag_general']
+[FIRED] --mutate=omega-hand (takes the second term of the closed form of omega_jk(e_i) with the other sign): exit 1, failed ['planted_omega_diag']
+[FIRED] --mutate=R-hand (takes -2 f'^2/f^2 as +2 f'^2/f^2 in the hand value of R for dx^2 + f^2 (dy^2 + dz^2)): exit 1, failed ['planted_R_diag']
+[FIRED] --mutate=kasner-exponents (takes the exponents (1/2, 1/2, 1/2), which are not vacuum, for the Kasner slice): exit 1, failed ['planted_kasner_diag']
 controls: all fired
