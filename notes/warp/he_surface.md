@@ -18,7 +18,8 @@ when
     T3    2 r a + (1 + c²) F ≠ 0
 
 (**proved** by hand, section 2, with every identity **checked symbolically**; a Gröbner elimination of λ gives the same
-set by a second route). Every other point of D = 0 there is Type II, except a further set of Type III points. The
+set by a second route; #101's independent review confirms it from its own Ricci tensor, with an explicit cofactor
+certificate in the unrotated frame, **certified**, [review_he_surface.md](review_he_surface.md)). Every other point of D = 0 there is Type II, except a further set of Type III points. The
 conditions are three polynomials in (v, F, a, b, u, c), and T1 and T2 together are codimension 2, so the Type I points
 are codimension 1 in the surface D = 0. A random sample of the surface never meets them, which is why #71's 200 points
 were all Type II ([review_he.md](review_he.md) §5).
@@ -34,10 +35,11 @@ On the axis, D = 0 only where v a = 0, and there M is diagonal, Type I.
 |---|---|---|---|
 | T1, T2, T3 | I | 1 | double |
 | generic | II | 2 | double |
-| T1, T2, not T3 (v F s² = 2\|c\|, r a = −(1 + c²)F/2) | II | 1 | triple |
+| T1, T2, not T3 (\|v F\| s² = 2\|c\|, r a = −(1 + c²)F/2) | II | 1 | triple |
 | triple root with b + a u ≠ 0 | III | 2 | triple |
 
-T1 says the momentum density j is radial. T2 has real solutions only where −F < r a < −c²F, and then it fixes
+T1 says the momentum density j is radial. T2 has real solutions only where r a lies strictly between −F and −c²F
+(−F < r a < −c²F for F > 0; #101 found Type I points with F < 0), and then it fixes
 v² = −c² / [(r a + F)(r a + c² F)]. A triple root with rank 2 cannot lie on T1, because there M is block diagonal with a
 2×2 block, so M − λ has rank at most 1 at a triple root.
 
@@ -71,7 +73,8 @@ D taken from route C). The first factor is disc(N₂) and the second is χ_N₂(
 ## 2. The proof
 
 Let Σ = R − λη on (n, e_x, e_ρ), so M − λ = ηΣ, and let m_a … m_f be the six distinct 2×2 minors of Σ′ in the rotated
-frame, with A = R′_00 + λ, B′ = R′_rr − λ, C′ = R′_θθ − λ, τ = R′_rθ,
+frame, with A = R′_00 + λ, B′ = R′_rr − λ, C′ = R′_θθ − λ, τ = R′_rθ: m_a = AB′ − j_r², m_b = AC′ − j_θ²,
+m_c = B′C′ − τ², m_f = j_r C′ − j_θ τ (#101) and
 
     m_d = j_r τ − j_θ B′ ,    m_e = A τ − j_θ j_r .
 
@@ -96,7 +99,8 @@ root of M is μ = λ + (B′ − A) with B′ − A = v² a u (2 r a + (1 + c²)
 exactly when T3 holds, and rank 1 = 3 − 2 is Type I by the lemma of he_type.md. If T3 fails the root is triple with rank
 1, which the lemma calls Type II (`sufficiency_T1`, **checked symbolically**). ∎
 
-On T1 ∩ T2 the discriminant of N₂ is (A − B′)², so v F s² ≥ 2|c| there, with equality exactly where T3 fails.
+On T1 ∩ T2 the discriminant of N₂ is (A − B′)², so (v F s²)² ≥ 4c², that is |v F| s² ≥ 2|c|, there, with equality
+exactly where T3 fails.
 
 **A second route.** In the effective variables φ = vF, X = v²a², γ = v a u, y = v(b − a u), w = c², the six minors are
 polynomials in (λ, γ, X, φ, w) after y = 1. A Gröbner basis of their ideal gives, for h = (φ² + 1)(w − 1),
@@ -243,7 +247,7 @@ bubble (#73).
 
 ## Recommended tasks
 
-1. **Independent review of #72.** What. Re-derive T1, T2 and T3 from the metric by a route that does not use the rotated
+1. **Independent review of #72.** Done in #101 ([review_he_surface.md](review_he_surface.md)). What. Re-derive T1, T2 and T3 from the metric by a route that does not use the rotated
    frame, for example the cofactor certificate of the ideal membership in section 2's second route, and confirm the
    six exact-point sets with a different rank routine. Why. The characterization is a computer-assisted
    claim with no independent review yet, which AGENTS.md asks for before it is relied on. Acceptance. The conditions reproduced, the
