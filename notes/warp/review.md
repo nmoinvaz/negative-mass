@@ -43,7 +43,7 @@ and #58's item 5 has been reviewed. Any change of status word is for the coordin
 | #58 | item 5, contraction constant κ_K = ‖tr K‖_{L³}/(2√S) | confirmed, by hand; attained in the one-step bound (`contraction_sharp`) |
 | #58 | item 5, existence, uniqueness and no decaying kernel | confirmed, in the class ε − ε₀ ∈ Ḣ¹ (gap 2) |
 | #58 | item 5, v_c = 3.745, 2.471, 1.562, 0.985 and the thin-wall formula | confirmed, `v_c` and by hand |
-| #58 | item 6, the identity and its sign convention | confirmed, by hand and `weitzenbock`; pointwise on ψ⁴δ and diag(A², B², C²) slices, *checked symbolically* (`weitzenbock_conf.py`, #87, #99) |
+| #58 | item 6, the identity and its sign convention | confirmed, by hand and `weitzenbock`; pointwise on ψ⁴δ and diag(A², B², C²) slices, the latter also in frames rotated about z, *checked symbolically* (`weitzenbock_conf.py`, #87, #99, #130) |
 | #58 | item 6 against phase4/RESULTS.md §1 | consistent; phase4 §1 leaves its conventions open (gap 4) |
 | #58 | control `--part=spinor --mutate=norm` | rerun, fired (exit 1, identity off by 0.5) |
 
