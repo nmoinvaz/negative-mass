@@ -66,7 +66,7 @@ polynomials, and the constraints define mu and J_i with K_ij = -g(nabla_{e_i} n,
         sections 6 to 9 only, for staged runs. Under --mutate a diagonal check runs only if the control targets it.
 
 Exit status is 1 if a check fails or a control does not fire. One process, 30 s for the checks and about 11 minutes with
-the controls, 88 MB.
+the controls, 86 MiB.
 """
 import importlib.util
 import pathlib
