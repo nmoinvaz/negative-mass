@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
-"""Item 6's Weitzenbock identity on a conformally flat slice (#87) and on a diagonal slice (#99), checked symbolically.
+"""Item 6's Weitzenbock identity on a conformally flat slice (#87), on a diagonal slice (#99) and in a frame rotated about z
+on it (#130), checked symbolically.
 
-Data, #87: g = psi^4 delta on R^3 with psi(x, y, z) arbitrary, an arbitrary symmetric K_ij(x, y, z) in the orthonormal frame
-e_i = psi^-2 d_i, and an arbitrary spinor field eps = u + i v with the eight real components u_a, v_a of (x, y, z). Data,
-#99: g = diag(A^2, B^2, C^2)(x, y, z) with A, B, C arbitrary positive functions, e_i = d_i / A_i, K_ij = K(e_i, e_j)
+Data, #87: g = psi^4 delta on R^3 with psi(x, y, z) arbitrary, an arbitrary symmetric K_ij(x, y, z) in the orthonormal
+frame e_i = psi^-2 d_i, and an arbitrary spinor field eps = u + i v with the eight real components u_a, v_a of (x, y, z).
+Data, #99: g = diag(A^2, B^2, C^2)(x, y, z) with A, B, C arbitrary positive functions, e_i = d_i / A_i, K_ij = K(e_i, e_j)
 arbitrary and symmetric, eps arbitrary, and div V = (1/ABC) d_a(ABC V^a / A_a) for V = V^a e_a. A = B = C = psi^2 is #87's
-slice. The note's gammas (mass_bounds.md, "Conventions") act on eps, <a, b> = a^dagger b, xi^j = <eps, g^0 g^j eps>, and
+slice. Data, #130: the same slice in the frame e'_1 = c e_1 + s e_2, e'_2 = -s e_1 + c e_2, e'_3 = e_3, with c =
+cos(alpha), s = sin(alpha) and alpha(x, y, z) arbitrary, K'_ij = K(e'_i, e'_j) arbitrary and symmetric, eps arbitrary, V =
+V'^a e'_a and div V = (1/ABC) d_m(ABC V^m) with the coordinate components V^m = V'^a e'^m_a. The note's gammas
+(mass_bounds.md, "Conventions") act on eps, <a, b> = a^dagger b, xi^j = <eps, g^0 g^j eps>, and
     nabla~_i = nabla_i + (1/2) K_ij g^j g^0,   nabla_i = e_i + (1/4) omega_jk(e_i) g^j g^k,   D~ = g^i nabla~_i,
 with the sign of the K term fixed by #67 and #86. mu and J_i are defined by the constraints,
     16 pi mu = R + (tr K)^2 - K_ij K^ij,    8 pi J_i = D^j (K_ij - g_ij tr K),
@@ -37,42 +41,74 @@ diag(A, B, C). The identities then run in the order flat (A = B = C = 1, K = 0),
 flat with K arbitrary, Alcubierre's K, A = B = C = psi^2 with K arbitrary (#87's identity_general through the diagonal
 code), K = diag(k1, k2, k3), and last A, B, C, K_ij and eps all arbitrary.
 
+In the rotated frame (sections 10 to 13) the planted values are: omega'_jk(e'_i) = R_ip R_jl R_km omega_lm(e_p) +
+(delta_j2 delta_k1 - delta_j1 delta_k2) e'_i(alpha) with Cartan's omega_lm of the diagonal frame and R the rotation, which
+is the closed form of #86 (omega'_21(X) = X(alpha) on a flat frame), and #86's own slice connection from conventions.py
+(`omega_rot_conv`); orthonormality of e'; Clifford parallelism; mu and J'_i = J(e'_i) by hand for K = 0, K' = f delta (the
+same in every frame, J' = -e'_i(f)/4 pi), Alcubierre's K rotated, K' = R K R^T, and a Kasner slice rotated, K' = R diag(p)
+R^T; mu and J' against #99's constraints_diag for K = R^T K' R; and against G_ab of the 4-metric with that K. Then alpha =
+0 is compared with identity_diag_general term for term, and the identities run flat (K = 0) and Lichnerowicz with alpha
+arbitrary, flat with K' arbitrary, Alcubierre's K rotated, K' = diag(k1, k2, k3), and last alpha, A, B, C, K'_ij and eps
+all arbitrary.
+
+The reduction. In the rotated frame every expression is a polynomial in c = cos(alpha) and s = sin(alpha) whose
+coefficients are Laurent polynomials in the jets of A, B, C, alpha, K'_ij, u_a and v_a (sympy differentiates cos(alpha) by
+the chain rule, so d_i c = -s d_i alpha). `red` expands and, as conventions.py's trig_reduce (#86) does, divides by c^2 +
+s^2 - 1: c^k goes to c^(k mod 2) (1 - s^2)^(k div 2). That polynomial is monic in c, so the remainder is unique and has
+degree at most 1 in c, and the remainder of e is 0 exactly when e is a multiple of c^2 + s^2 - 1. That is the right test
+for "zero for every alpha": the jets of alpha at a point are independent of alpha itself, so the only relation among c, s
+and the jets is c^2 + s^2 = 1, and a polynomial vanishing on the real circle vanishes on the irreducible conic c^2 + s^2 =
+1 and is a multiple of its equation. Reduced results are mapped back to cos(alpha) and sin(alpha) before they are
+differentiated again.
+
 What the checks share. The gammas are retyped from conventions.py (compared with its note_gammas() in `gammas_match`), and
-christoffel and ricci are retyped from it too. Nothing else is imported from it. The identity side (matrices, the frame, V)
-shares with the constraint side only sympy, christoffel and ricci. The spin connection of the identity comes from the
-Christoffel symbols of the metric and is compared with the closed form above. The constraints are computed in coordinates
-and compared with the 4-metric's G_ab, which shares christoffel and ricci with them, so a wrong ricci is seen only by the
-planted values of R. The diagonal code (GeoDiag, constraints_diag, identity_diag) is written beside #87's Geo, constraints
-and identity and calls none of them, so #87's checks run as they were. They share the helpers (christoffel, ricci, inner,
-re, zero, sym_K, spinor, note_gammas), and `diag_conf_limit` and `identity_diag_conf` compare the two codes at
-A = B = C = psi^2. Complex conjugation is the structural replacement i -> -i on expressions in the real functions u_a, v_a,
-psi, A, B, C and K_ij. Zero is tested by sp.expand, which is canonical for Laurent polynomials in the jets, and sp.simplify
-only on the planted cases with sqrt.
+christoffel and ricci are retyped from it too. Nothing else is imported from it, except in `omega_rot_conv`, which calls
+its slice_data. The identity side (matrices, the frame, V) shares with the constraint side only sympy, christoffel and
+ricci. The spin connection of the identity comes from the Christoffel symbols of the metric and is compared with the
+closed form above. The constraints are computed in coordinates and compared with the 4-metric's G_ab, which shares
+christoffel and ricci with them, so a wrong ricci is seen only by the planted values of R. The diagonal code (GeoDiag,
+constraints_diag, identity_diag) is written beside #87's Geo, constraints and identity and calls none of them, so #87's
+checks run as they were. They share the helpers (christoffel, ricci, inner, re, zero, sym_K, spinor, note_gammas), and
+`diag_conf_limit` and `identity_diag_conf` compare the two codes at A = B = C = psi^2. The rotated code (GeoRot,
+constraints_rot, rot_terms) is written beside the diagonal code in the same way: GeoRot subclasses GeoDiag, so g, the
+inverse, the Christoffel symbols and R are GeoDiag's, but its frame, spin connection, constraints and identity are its
+own, and `diag_terms`, which identity_diag now calls, is the diagonal code that `rot_alpha0_limit` and
+`identity_rot_alpha0` compare it with at alpha = 0. The spin connection of the rotated frame comes from the Christoffel
+symbols and is compared with the closed form, which shares only Cartan's omega_lm of the diagonal frame, and with #86's
+slice_data, which shares sympy, the retyped christoffel and the retyped trig_reduce. The 4-metric route builds K = R^T K'
+R from the hand matrix R and not from GeoRot's coframe. Complex conjugation is the structural replacement i -> -i on
+expressions in the real functions u_a, v_a, psi, A, B, C and K_ij. Zero is tested by sp.expand, which is canonical for
+Laurent polynomials in the jets, and sp.simplify only on the planted cases with sqrt, and in the rotated frame by `red`,
+which is canonical modulo c^2 + s^2 = 1.
 
 What the code proves (*checked symbolically*): at every point, for all psi, K_ij and eps on psi^4 delta, and for all A, B,
-C, K_ij and eps on diag(A^2, B^2, C^2)(x, y, z), the two sides above are equal as polynomials in the jets, to second order,
-of the functions, in the note's gammas with the stated sign of nabla~ and with mu and J_i the constraints' values. It does
-not prove the integrated identity, whose boundary term is div V and needs decay (review.md gap 2), or that D~ eps = 0 has a
-solution (item 5). The hand derivation above uses only the Levi-Civita connection, the Clifford relations and Hermiticity,
-so it holds on any slice (*proved* by hand). Still covered only by it: slices that are not diagonal in the coordinates, and
-frames other than e_i = d_i / A_i (such as one rotated about an axis). Assumed: sp.expand is canonical on these Laurent
-polynomials, and the constraints define mu and J_i with K_ij = -g(nabla_{e_i} n, e_j), which `constraints_4d` and
-`constraints_4d_diag` tie to G_ab on these classes of slices (N = 1, no shift).
+C, K_ij and eps on diag(A^2, B^2, C^2)(x, y, z), and for all alpha, A, B, C, K'_ij and eps in the frame e'_a rotated by
+alpha(x, y, z) about z on that slice, the two sides above are equal as polynomials in the jets, to second order, of the
+functions (in the rotated frame also modulo c^2 + s^2 = 1), in the note's gammas with the stated sign of nabla~ and with
+mu and J_i the constraints' values. It does not prove the integrated identity, whose boundary term is div V and needs
+decay (review.md gap 2), or that D~ eps = 0 has a solution (item 5). The hand derivation above uses only the Levi-Civita
+connection, the Clifford relations and Hermiticity, so it holds on any slice (*proved* by hand). Still covered only by it:
+slices that are not diagonal in the coordinates, and frames other than e_i = d_i / A_i and its rotation about z (such as
+one rotated about x or y, or a general SO(3) frame), and a rotation angle that depends on t. Assumed: sp.expand is
+canonical on these Laurent polynomials, `red` is canonical modulo c^2 + s^2 = 1 (argued above), and the constraints define
+mu and J_i with K_ij = -g(nabla_{e_i} n, e_j), which `constraints_4d` and `constraints_4d_diag` and `constraints_4d_rot`
+tie to G_ab on these classes of slices (N = 1, no shift).
 
     python3 notes/warp/weitzenbock_conf.py                  checks, then every control
     python3 notes/warp/weitzenbock_conf.py --no-controls    checks only
     python3 notes/warp/weitzenbock_conf.py --mutate=NAME    one control (its target checks must fail, exit 1)
-    python3 notes/warp/weitzenbock_conf.py --no-controls --only=NAME,...   (or --skip=NAME,...) some diagonal checks of
-        sections 6 to 9 only, for staged runs. Under --mutate a diagonal check runs only if the control targets it.
+    python3 notes/warp/weitzenbock_conf.py --no-controls --only=NAME,...   (or --skip=NAME,...) some diagonal and rotated checks
+        of sections 6 to 13 only, for staged runs. Under --mutate such a check runs only if the control targets it.
 
-Exit status is 1 if a check fails or a control does not fire. One process, 30 s for the checks and about 11 minutes with
-the controls, 86 MiB.
+Exit status is 1 if a check fails or a control does not fire. One process, about 3 minutes for the checks and about 1 hour
+with the controls, 110 MiB (170 MiB for the inv-typo control).
 """
 import importlib.util
 import pathlib
 import subprocess
 import sys
 import time
+import types
 
 import sympy as sp
 
@@ -88,6 +124,15 @@ IDENT_D = ["identity_diag_flat_K0", "identity_diag_lichnerowicz", "identity_diag
 KID = ["identity_diag_flat_K", "identity_diag_alcubierre", "identity_diag_conf", "identity_diag_Kdiag",
        "identity_diag_general"]
 ANI = ["identity_diag_lichnerowicz", "identity_diag_conf", "identity_diag_Kdiag", "identity_diag_general"]
+# The rotated frame's identities (#130): IDENT_R are all of them, KIDR those with K != 0, ANIR those with A, B, C not constant
+# and ROTR those with alpha not constant.
+IDENT_R = ["identity_rot_alpha0", "identity_rot_flat_K0", "identity_rot_lichnerowicz", "identity_rot_flat_K",
+           "identity_rot_alcubierre", "identity_rot_Kdiag", "identity_rot_general"]
+KIDR = ["identity_rot_alpha0", "identity_rot_flat_K", "identity_rot_alcubierre", "identity_rot_Kdiag",
+        "identity_rot_general"]
+ANIR = ["identity_rot_alpha0", "identity_rot_lichnerowicz", "identity_rot_Kdiag", "identity_rot_general"]
+ROTR = ["identity_rot_flat_K0", "identity_rot_lichnerowicz", "identity_rot_flat_K", "identity_rot_alcubierre",
+        "identity_rot_Kdiag", "identity_rot_general"]
 CONTROLS = {
     "sign": ("takes nabla~ with the other sign, d_i - (1/2) K_ij g^j g^0, and D~ from it",
              ["dirac", "identity_flat_K", "identity_alcubierre", "identity_general"] + KID),
@@ -153,6 +198,51 @@ CONTROLS = {
     "kasner-exponents": ("takes the exponents (1/2, 1/2, 1/2), which are not vacuum, for the Kasner slice",
                          ["planted_kasner_diag"]),
 }
+# The rotated frame's controls (#130). The old controls keep their targets and gain the rotated checks they must also fail.
+CONTROLS.update({
+    "rot-dalpha": ("drops the derivatives of alpha in the spin connection of the rotated frame",
+                   ["planted_omega_rot", "omega_rot_conv"] + ROTR),
+    "rot-reverse": ("rotates the frame by -alpha, where the hand values and conventions.py rotate by +alpha",
+                    ["planted_omega_rot", "omega_rot_conv", "planted_trace_rot", "planted_alcubierre_rot",
+                     "planted_kasner_rot"]),
+    "rot-swap": ("takes c and s swapped, the frame rotated by pi/2 - alpha, which is orthonormal but is not alpha = 0 at "
+                 "alpha = 0", ["planted_omega_rot", "omega_rot_conv", "rot_alpha0_limit", "identity_rot_alpha0",
+                               "planted_trace_rot", "planted_alcubierre_rot", "planted_kasner_rot"]),
+    "rot-ortho": ("rotates e_1 only, so the frame is not orthonormal",
+                  ["orthonormal_rot", "planted_omega_rot", "omega_rot_conv", "identity_rot_flat_K0",
+                   "identity_rot_general"]),
+    "rot-k": ("takes K'_ij as components in the unrotated frame in the constraints",
+              ["planted_alcubierre_rot", "planted_kasner_rot", "constraints_cov_rot", "constraints_4d_rot",
+               "identity_rot_flat_K", "identity_rot_alcubierre", "identity_rot_Kdiag", "identity_rot_general"]),
+    "rot-J-frame": ("takes J(e'_i) as J(e_i), the components in the unrotated frame",
+                    ["planted_alcubierre_rot", "planted_trace_rot", "constraints_cov_rot", "constraints_4d_rot",
+                     "identity_rot_flat_K", "identity_rot_alcubierre", "identity_rot_Kdiag", "identity_rot_general"]),
+    "rot-div": ("takes V = V'^a e_a, along the unrotated frame, in the divergence", ROTR),
+    "rot-reduce": ("does not reduce modulo c^2 + s^2 = 1", ["orthonormal_rot"] + ROTR),
+})
+for _n, _extra in {
+    "sign": KIDR, "Jsign": KIDR, "musign": ["identity_rot_lichnerowicz"] + KIDR, "Kdiv": KIDR + ["V_reduced_rot"],
+    "Vspin": IDENT_R + ["V_reduced_rot"], "weight": ANIR, "omega-sign": ["clifford_parallel_rot"] + IDENT_R,
+    "christoffel": ["planted_omega_rot", "omega_rot_conv", "clifford_parallel_rot"] + ANIR,
+    "trace": KIDR + ["planted_alcubierre_rot", "planted_trace_rot", "constraints_4d_rot"],
+    "Ksq": KIDR + ["planted_alcubierre_rot", "planted_trace_rot", "planted_kasner_rot", "constraints_4d_rot"],
+    "Rsign": ["planted_K0_rot", "planted_trace_rot", "constraints_4d_rot"] + ANIR,
+    "Kframe": ["planted_alcubierre_rot", "planted_trace_rot", "planted_kasner_rot", "constraints_cov_rot",
+               "constraints_4d_rot"] + KIDR,
+    "J-christoffel": ["planted_trace_rot", "constraints_4d_rot", "identity_rot_alpha0", "identity_rot_Kdiag",
+                      "identity_rot_general"],
+    "gamma": ["clifford_parallel_rot"] + IDENT_R, "no-conj": IDENT_R, "adm-K": ["constraints_4d_rot"],
+    "J4d": ["constraints_4d_rot"],
+    "inv-typo": ["planted_omega_rot", "omega_rot_conv", "clifford_parallel_rot", "planted_K0_rot", "planted_trace_rot",
+                 "constraints_4d_rot"] + ANIR,
+    "ricci-sign": ["planted_K0_rot", "planted_trace_rot", "constraints_4d_rot"] + ANIR,
+    "diag-frame": ["orthonormal_rot", "planted_omega_rot"] + ANIR,
+    "aniso-frame": ["orthonormal_rot", "planted_omega_rot", "identity_rot_alpha0", "identity_rot_lichnerowicz",
+                    "identity_rot_Kdiag", "identity_rot_general"],
+    "abc": ["identity_rot_alpha0", "identity_rot_lichnerowicz", "identity_rot_Kdiag", "identity_rot_general"],
+    "omega-hand": ["planted_omega_rot"], "kasner-exponents": ["planted_kasner_rot"],
+}.items():
+    CONTROLS[_n] = (CONTROLS[_n][0], CONTROLS[_n][1] + _extra)
 if MUT and MUT not in CONTROLS:
     sys.exit(f"unknown mutation {MUT}")
 RESULTS = []
@@ -753,11 +843,9 @@ def section_4d_diag():
           "Lam = diag(A, B, C), for arbitrary A, B, C and K_ij")
 
 
-def identity_diag(name, A, K, text, reduced=False):
-    run_main, run_red = todo(name), reduced and todo("V_reduced_diag")
-    if not (run_main or run_red):
-        return
-    t0 = time.time()
+def diag_terms(A, K, main=True):
+    """The pieces of the identity on diag(A^2, B^2, C^2) in the frame e_i = d_i / A_i: nabla_i eps, V, and, if main, the left
+    side and div V."""
     geo = GeoDiag(A)
     mu, J = constraints_diag(A, K, geo)
     g0, gj = note_gammas()
@@ -780,7 +868,8 @@ def identity_diag(name, A, K, text, reduced=False):
         spin = nab[i] if MUT == "Vspin" else nab[i] - gj[i] * Deps
         Pxi = 0 if MUT == "Kdiv" else sum(P[i, j] * xi[j] for j in range(3)) / 2
         V.append(sp.expand(re(inner(eps, spin)) - Pxi))
-    if run_main:
+    lhs = div = None
+    if main:
         lhs = sp.expand(sum(inner(nabt[i], nabt[i]) for i in range(3)) - inner(Dteps, Dteps)
                         + 4 * sp.pi * (sM * mu * e2 + sJ * Jxi))
         sqg = A[0]**3 if MUT == "abc" else A[0] * A[1] * A[2]  # sqrt(det g) = A B C
@@ -789,11 +878,23 @@ def identity_diag(name, A, K, text, reduced=False):
         else:  # div V = (1/ABC) d_a(ABC V^a / A_a), the coordinate components of V = V^a e_a being V^a sc_a
             div = sum(sp.diff(sqg * geo.sc[a] * V[a], X3[a]) for a in range(3)) / sqg
         div = sp.expand(div)
-        res = sp.expand(lhs - div)
-        check(name, res == 0, f"{text}; {nterms(lhs)} terms on the left, {nterms(div)} in div V, "
+    return types.SimpleNamespace(nab=nab, P=P, xi=xi, V=V, lhs=lhs, div=div)
+
+
+def identity_diag(name, A, K, text, reduced=False):
+    run_main, run_red = todo(name), reduced and todo("V_reduced_diag")
+    if not (run_main or run_red):
+        return
+    t0 = time.time()
+    d = diag_terms(A, K, run_main)
+    if run_main:
+        res = sp.expand(d.lhs - d.div)
+        check(name, res == 0, f"{text}; {nterms(d.lhs)} terms on the left, {nterms(d.div)} in div V, "
               f"{len(sp.Add.make_args(res)) if res != 0 else 0} in the difference")
         print(f"    ({name}: {time.time() - t0:.0f} s)", file=sys.stderr, flush=True)
     if run_red:
+        gj = note_gammas()[1]
+        eps, nab, V, P, xi = spinor(), d.nab, d.V, d.P, d.xi
         Vr = [sp.expand(-sum(re(inner(eps, gj[i] * gj[j] * nab[j])) for j in range(3) if j != i)
                         - sum(P[i, j] * xi[j] for j in range(3)) / 2) for i in range(3)]
         check("V_reduced_diag", all(zero(V[i] - Vr[i]) for i in range(3)),
@@ -827,9 +928,407 @@ def section_identity_diag():
     identity_diag("identity_diag_general", A, Kg, "A, B, C, K_ij and eps arbitrary", reduced=True)
 
 
+# ---- The diagonal slice in the frame rotated about z, issue #130 -------------------------------------------------------------
+# The frame e'_1 = c e_1 + s e_2, e'_2 = -s e_1 + c e_2, e'_3 = e_3, c = cos(alpha), s = sin(alpha), alpha(x, y, z) arbitrary,
+# on diag(A^2, B^2, C^2) with e_i = d_i / A_i. K'_ij = K(e'_i, e'_j) and eps are arbitrary, V = V'^a e'_a. GeoRot,
+# constraints_rot and rot_terms are written beside GeoDiag, constraints_diag and diag_terms and call none of the old
+# constraints and identity code. At alpha = 0 they are compared with the diagonal code (rot_alpha0_limit,
+# identity_rot_alpha0). Expressions hold cos(alpha) and sin(alpha), which sympy differentiates by the chain rule, so the
+# derivatives of alpha appear as jets, and `red` reduces modulo c^2 + s^2 = 1.
+ALPHA = fn("alpha")  # the angle of the rotated frame
+def trig_reduce(e):
+    """Reduces the expanded e modulo c^2 + s^2 - 1, c = cos(alpha), s = sin(alpha). The polynomial c^2 + s^2 - 1 is monic in c,
+    so division by it, with the coefficients (Laurent polynomials in the jets of A, B, C, alpha, K'_ij, u_a, v_a) as the
+    ground ring, has a unique remainder of degree at most 1 in c: c^k goes to c^(k mod 2) (1 - s^2)^(k div 2). The remainder
+    is zero exactly when e is in the ideal. That ideal is all of the polynomials that vanish for every real alpha: the jets
+    of alpha at a point are independent of alpha itself, so the only relation among c, s and the jets is c^2 + s^2 = 1, and
+    the real circle is dense in the irreducible conic c^2 + s^2 = 1, so a polynomial vanishing on the circle is a multiple of
+    c^2 + s^2 - 1. This is the reduction of conventions.py's trig_reduce (#86) for alpha(x, y, z), grouped term by term
+    because sympy's collect rejects mixed derivatives such as f_xy, and mapped back to cos and sin."""
+    c, s = sp.Dummy("c"), sp.Dummy("s")
+    e = e.xreplace({sp.cos(ALPHA): c, sp.sin(ALPHA): s})
+    groups = {}  # the terms of e by their power k of c, each a monomial of the expanded e
+    for term in sp.Add.make_args(e):
+        k = term.as_powers_dict().get(c, 0)
+        groups.setdefault(k, []).append(term * c**-k)
+    out = sum(sp.Add(*co) * c ** (k % 2) * (1 - s**2) ** (k // 2) for k, co in groups.items())
+    return sp.expand(out).xreplace({c: sp.cos(ALPHA), s: sp.sin(ALPHA)})  # back, since reduced results are differentiated
+
+
+def red(e):
+    """The canonical form of e: expanded, and reduced modulo c^2 + s^2 = 1 if it holds cos(alpha) or sin(alpha)."""
+    e = sp.expand(e)
+    if MUT != "rot-reduce" and e != 0 and e.has(sp.cos(ALPHA), sp.sin(ALPHA)):
+        e = trig_reduce(e)
+    return e
+
+
+def zero_rot(e):
+    return red(e) == 0
+
+
+def is_zero_rot(M):
+    return all(zero_rot(e) for e in sp.Matrix(M))
+
+
+def rot_matrix(alpha):
+    """R with e'_i = R_ik e_k, the rotation of the hand values."""
+    c, s = sp.cos(alpha), sp.sin(alpha)
+    return sp.Matrix([[c, s, 0], [-s, c, 0], [0, 0, 1]])
+
+
+def rot_frame(E, alpha):
+    """The frame E rotated by alpha about the third axis, e'_1 = c e_1 + s e_2, e'_2 = -s e_1 + c e_2, e'_3 = e_3."""
+    c, s = sp.cos(alpha), sp.sin(alpha)
+    if MUT == "rot-reverse":
+        s = -s
+    if MUT == "rot-swap":
+        c, s = s, c
+    if MUT == "rot-ortho":
+        return [c * E[0] + s * E[1], E[1], E[2]]
+    return [c * E[0] + s * E[1], -s * E[0] + c * E[1], E[2]]
+
+
+def nabla_vec(Chr, U, V):
+    """(nabla_U V)^m = U^k d_k V^m + Gamma^m_kl U^k V^l, for coordinate components U and V."""
+    sg = -1 if MUT == "christoffel" else 1
+    return sp.Matrix([sum(U[k] * sp.diff(V[m], X3[k]) for k in range(3))
+                      + sg * sum(Chr[m][k][l] * U[k] * V[l] for k in range(3) for l in range(3)) for m in range(3)])
+
+
+class GeoRot(GeoDiag):
+    """The slice diag(A^2, B^2, C^2) in the frame e'_a rotated by alpha about z: F[i][m] the coordinate components of e'_i,
+    th[i][m] = g(e'_i, d_m) its coframe, omr[j][k][i] = omega'_jk(e'_i) = g(e'_j, nabla_{e'_i} e'_k) from the Christoffel
+    symbols, reduced modulo c^2 + s^2 = 1, and Omr_i = (1/4) omega'_jk(e'_i) g^j g^k. The unrotated om and Om of GeoDiag stay."""
+
+    def __init__(self, A, alpha):
+        super().__init__(A)
+        self.alpha = alpha
+        E = [sp.Matrix([int(m == i) for m in range(3)]) * self.sc[i] for i in range(3)]
+        Er = rot_frame(E, alpha)
+        a0 = sp.Symbol("a0", real=True)  # a frozen angle, whose derivatives vanish
+        Es = rot_frame(E, a0) if MUT == "rot-dalpha" else Er  # the frame nabla differentiates
+        back = {a0: alpha} if MUT == "rot-dalpha" else {}
+        self.F = [list(v) for v in Er]
+        self.th = [[self.g[m, m] * self.F[i][m] for m in range(3)] for i in range(3)]
+        self.framer = sp.Matrix(3, 3, lambda i, j: red((Er[i].T * self.g * Er[j])[0]))
+        dE = [[self.g * nabla_vec(self.Chr, Es[i], Es[k]) for k in range(3)] for i in range(3)]
+        self.omr = [[[red(sp.expand((Es[j].T * dE[i][k])[0]).xreplace(back)) for i in range(3)] for k in range(3)]
+                    for j in range(3)]
+        g0, gj = note_gammas()
+        ss = -1 if MUT == "omega-sign" else 1
+        self.Omr = [(ss * sum((self.omr[j][k][i] * gj[j] * gj[k] for j in range(3) for k in range(3)),
+                              sp.zeros(4)) / 4).applyfunc(red) for i in range(3)]
+
+
+def omega_hand_rot(A, alpha):
+    """omega'_jk(e'_i) by hand: the closed form omega_lm(e_p) of omega_hand_diag rotated, R_ip R_jl R_km omega_lm(e_p), plus
+    the inhomogeneous term of the rotation, omega'_21 = e'_i(alpha) = -omega'_12 (#86, conventions.py section 6(d))."""
+    R = rot_matrix(alpha)
+    w = omega_hand_diag(A)
+    ea = [sum(R[i, p] * sp.diff(alpha, X3[p]) / A[p] for p in range(3)) for i in range(3)]
+    return [[[red(sum(R[i, p] * R[j, l] * R[k, m] * w[l][m][p] for p in range(3) for l in range(3) for m in range(3))
+                  + (int(j == 1 and k == 0) - int(j == 0 and k == 1)) * ea[i]) for i in range(3)] for k in range(3)]
+            for j in range(3)]
+
+
+CONV = None
+
+
+def conventions():
+    """conventions.py, loaded once, with its argv hidden as in section_gammas."""
+    global CONV
+    if CONV is None:
+        spec = importlib.util.spec_from_file_location("conventions_rot", pathlib.Path(__file__).with_name("conventions.py"))
+        CONV = importlib.util.module_from_spec(spec)
+        saved, sys.argv = sys.argv, sys.argv[:1]
+        try:
+            spec.loader.exec_module(CONV)
+        finally:
+            sys.argv = saved
+    return CONV
+
+
+def constraints_rot(A, K, geo):
+    """mu and the frame components J'_i = J(e'_i) from the constraints, computed in coordinates from the frame components
+    K'_ij = K(e'_i, e'_j), whose coordinate components are K_mn = K'_ij th^i_m th^j_n."""
+    g, gi, Chr = geo.g, geo.gi, geo.Chr
+    if MUT == "Kframe":
+        Kc = K
+    elif MUT == "rot-k":  # K'_ij taken in the unrotated frame
+        Kc = sp.Matrix(3, 3, lambda a, b: A[a] * A[b] * K[a, b])
+    else:
+        Kc = sp.Matrix(3, 3, lambda a, b: sum(K[i, j] * geo.th[i][a] * geo.th[j][b] for i in range(3) for j in range(3)))
+    Kc = Kc.applyfunc(red)
+    trK = red(sum(gi[a, b] * Kc[a, b] for a in range(3) for b in range(3)))
+    K2 = red(sum(gi[a, c] * gi[b, d] * Kc[a, b] * Kc[c, d] for a in range(3) for b in range(3) for c in range(3)
+                 for d in range(3)))
+    sR = -1 if MUT == "Rsign" else 1
+    sq = 1 if MUT == "Ksq" else -1
+    mu = red((sR * geo.R + trK**2 + sq * K2) / (16 * sp.pi))
+    tr = 1 if MUT == "trace" else -1
+    Pc = (Kc + tr * g * trK).applyfunc(red)  # P_ab = K_ab - g_ab tr K
+
+    def DP(c, a, b):  # nabla_c P_ab
+        ch = 0 if MUT == "J-christoffel" else 1
+        return sp.diff(Pc[a, b], X3[c]) - ch * sum(Chr[d][c][a] * Pc[d, b] + Chr[d][c][b] * Pc[a, d] for d in range(3))
+    Jc = [red(sum(gi[a, c] * DP(c, a, b) for a in range(3) for c in range(3)) / (8 * sp.pi)) for b in range(3)]  # J(d_b)
+    if MUT == "rot-J-frame":  # J(e'_i) taken as J(e_i)
+        return mu, sp.Matrix([red(Jc[i] / A[i]) for i in range(3)])
+    return mu, sp.Matrix([red(sum(geo.F[i][b] * Jc[b] for b in range(3))) for i in range(3)])
+
+
+def rot_terms(A, K, alpha, main=True):
+    """The pieces of the identity in the rotated frame: nabla_i eps, V and, if main, the left side and div V, all reduced
+    modulo c^2 + s^2 = 1."""
+    geo = GeoRot(A, alpha)
+    mu, J = constraints_rot(A, K, geo)
+    g0, gj = note_gammas()
+    eps = spinor()
+    trK = K.trace()
+    P = K - trK * I3
+    sK = -1 if MUT == "sign" else 1
+    Aterm = [sK * sum((K[i, j] * gj[j] * g0 for j in range(3)), sp.zeros(4)) / 2 for i in range(3)]
+    nab = [(sum((geo.F[i][m] * eps.diff(X3[m]) for m in range(3)), sp.zeros(4, 1)) + geo.Omr[i] * eps).applyfunc(red)
+           for i in range(3)]  # nabla_i eps = e'_i(eps) + Omr_i eps
+    nabt = [(nab[i] + Aterm[i] * eps).applyfunc(red) for i in range(3)]
+    Deps = sum((gj[i] * nab[i] for i in range(3)), sp.zeros(4, 1)).applyfunc(red)
+    Dteps = sum((gj[i] * nabt[i] for i in range(3)), sp.zeros(4, 1)).applyfunc(red)
+    e2 = inner(eps, eps)
+    xi = [inner(eps, g0 * gj[j] * eps) for j in range(3)]
+    Jxi = red(sum(J[j] * xi[j] for j in range(3)))
+    sM = -1 if MUT == "musign" else 1
+    sJ = 1 if MUT == "Jsign" else -1
+    V = []
+    for i in range(3):
+        spin = nab[i] if MUT == "Vspin" else (nab[i] - gj[i] * Deps).applyfunc(red)
+        Pxi = 0 if MUT == "Kdiv" else sum(P[i, j] * xi[j] for j in range(3)) / 2
+        V.append(red(re(inner(eps, spin)) - Pxi))
+    lhs = div = None
+    if main:
+        lhs = red(sum(red(inner(nabt[i], nabt[i])) for i in range(3)) - red(inner(Dteps, Dteps))
+                  + 4 * sp.pi * (sM * mu * e2 + sJ * Jxi))
+        sqg = A[0]**3 if MUT == "abc" else A[0] * A[1] * A[2]  # sqrt(det g) = A B C
+        # the coordinate components of V = V'^a e'_a, which with rot-div are taken along the unrotated e_a
+        Fd = [[self_sc * int(m == a) for m in range(3)] for a, self_sc in enumerate(geo.sc)] if MUT == "rot-div" else geo.F
+        Vc = [sum(V[a] * Fd[a][m] for a in range(3)) for m in range(3)]
+        if MUT == "weight":
+            div = sum(sp.diff(Vc[m], X3[m]) for m in range(3))
+        else:  # div V = (1/ABC) d_m(ABC V^m)
+            div = sum(sp.diff(sqg * Vc[m], X3[m]) for m in range(3)) / sqg
+        div = red(div)
+    return types.SimpleNamespace(geo=geo, nab=nab, P=P, xi=xi, V=V, lhs=lhs, div=div)
+
+
+def identity_rot(name, A, K, alpha, text, reduced=False):
+    run_main, run_red = todo(name), reduced and todo("V_reduced_rot")
+    if not (run_main or run_red):
+        return
+    t0 = time.time()
+    d = rot_terms(A, K, alpha, run_main)
+    if run_main:
+        res = red(d.lhs - d.div)
+        check(name, res == 0, f"{text}; {nterms(d.lhs)} terms on the left, {nterms(d.div)} in div V, "
+              f"{len(sp.Add.make_args(res)) if res != 0 else 0} in the difference")
+        print(f"    ({name}: {time.time() - t0:.0f} s)", file=sys.stderr, flush=True)
+    if run_red:
+        gj = note_gammas()[1]
+        eps, nab, V, P, xi = spinor(), d.nab, d.V, d.P, d.xi
+        Vr = [red(-sum(re(inner(eps, gj[i] * gj[j] * nab[j])) for j in range(3) if j != i)
+                  - sum(P[i, j] * xi[j] for j in range(3)) / 2) for i in range(3)]
+        check("V_reduced_rot", all(zero_rot(V[i] - Vr[i]) for i in range(3)),
+              "V^i = -sum_{j != i} Re<eps, g^i g^j nabla_j eps> - (1/2) P_ij xi^j in the rotated frame")
+
+
+def hand_metrics():
+    """Two metrics with a hand value of R, as in section_constraints_diag: dx^2 + dy^2 + c(x, y)^2 dz^2 and a(x)^2 dx^2 +
+    w(x)^2 (dy^2 + dz^2)."""
+    one = sp.Integer(1)
+    c2 = sp.Function("c")(X, Y)
+    a_, w_ = sp.Function("a")(X), sp.Function("w")(X)
+    return [([one, one, c2], -2 * (sp.diff(c2, X, 2) + sp.diff(c2, Y, 2)) / c2),
+            ([a_, w_, w_], -4 * sp.diff(sp.diff(w_, X) / a_, X) / (a_ * w_) - 2 * sp.diff(w_, X)**2 / (a_ * w_)**2)]
+
+
+def section_planted_rot():
+    names = ["orthonormal_rot", "planted_omega_rot", "omega_rot_conv", "clifford_parallel_rot", "rot_alpha0_limit"]
+    if not any(todo(n) for n in names):
+        return
+    print("\n== 10. The diagonal slice in the frame rotated about z: omega', Clifford parallelism, alpha = 0 ==")
+    A = [fn(n) for n in "ABC"]
+    geo = GeoRot(A, ALPHA)
+    if todo("orthonormal_rot"):
+        check("orthonormal_rot", is_zero_rot(geo.framer - I3),
+              "g(e'_i, e'_j) = delta_ij for e'_1 = c e_1 + s e_2, e'_2 = -s e_1 + c e_2, e'_3 = e_3, modulo c^2 + s^2 = 1")
+    if todo("planted_omega_rot"):
+        hand = omega_hand_rot(A, ALPHA)
+        check("planted_omega_rot", all(zero_rot(geo.omr[j][k][i] - hand[j][k][i]) for i in range(3) for j in range(3)
+                                       for k in range(3)),
+              "omega'_jk(e'_i) = g(e'_j, nabla_{e'_i} e'_k) from the Christoffel symbols is R_ip R_jl R_km omega_lm(e_p) "
+              "+ (delta_j2 delta_k1 - delta_j1 delta_k2) e'_i(alpha), with Cartan's omega_lm of the unrotated frame")
+    if todo("omega_rot_conv"):
+        om3, _ = conventions().slice_data(sp.Integer(1), sp.Integer(1), [0, 0, 0], A, alpha=ALPHA)
+        check("omega_rot_conv", all(zero_rot(geo.omr[j][k][i] - om3[j][k][i]) for i in range(3) for j in range(3)
+                                    for k in range(3)),
+              "omega'_jk(e'_i) equals #86's rotated-frame connection, conventions.slice_data(A, alpha=alpha), "
+              "modulo c^2 + s^2 = 1")
+    if todo("clifford_parallel_rot"):
+        g0, gj = note_gammas()
+        par = all(is_zero_rot(geo.Omr[i] * gj[l] - gj[l] * geo.Omr[i]
+                              - sum((geo.omr[j][l][i] * gj[j] for j in range(3)), sp.zeros(4)))
+                  for i in range(3) for l in range(3))
+        check("clifford_parallel_rot", par, "[(1/4) omega'_jk g^j g^k, g^l] = omega'_jl g^j in the rotated frame")
+    if todo("rot_alpha0_limit"):
+        gr, gd = GeoRot(A, sp.Integer(0)), GeoDiag(A)
+        Kg = sym_K()
+        mur, Jr = constraints_rot(A, Kg, gr)
+        mud, Jd = constraints_diag(A, Kg, gd)
+        same = is_zero(gr.g - gd.g) and zero(gr.R - gd.R) and zero(mur - mud) and is_zero(Jr - Jd)
+        same = same and all(zero(gr.omr[j][k][i] - gd.om[j][k][i]) for i in range(3) for j in range(3) for k in range(3))
+        same = same and all(is_zero(gr.Omr[i] - gd.Om[i]) for i in range(3))
+        check("rot_alpha0_limit", same, "alpha = 0 gives #99's g, R, omega_jk, Om_i and, for K_ij arbitrary, mu and J_i")
+
+
+def section_constraints_rot():
+    names = ["planted_K0_rot", "planted_trace_rot", "planted_alcubierre_rot", "planted_kasner_rot", "constraints_cov_rot"]
+    if not any(todo(n) for n in names):
+        return
+    print("\n== 11. Planted truth for mu and J'_i from the constraints, in the rotated frame ==")
+    one = sp.Integer(1)
+    f, v = fn("f"), sp.Symbol("v", real=True)
+    R = rot_matrix(ALPHA)
+    if todo("planted_K0_rot"):
+        ok = True
+        for Ac, Rc in hand_metrics():
+            mu, J = constraints_rot(Ac, sp.zeros(3), GeoRot(Ac, ALPHA))
+            ok = ok and zero_rot(mu - Rc / (16 * sp.pi)) and is_zero_rot(J)
+        check("planted_K0_rot", ok, "K = 0 on dx^2 + dy^2 + c(x,y)^2 dz^2 and on a(x)^2 dx^2 + w(x)^2 (dy^2 + dz^2), alpha "
+              "arbitrary: mu = R/16 pi with R by hand, J = 0")
+    if todo("planted_trace_rot"):
+        # K'_ij = f delta_ij is the same in every frame: K_ab = f g_ab, so 16 pi mu = R + 6 f^2 and 8 pi J_a = -2 d_a f, whose
+        # frame components are J(e'_i) = -e'_i(f)/4 pi with e'_i = R_ik e_k, e_k = d_k / A_k.
+        ok = True
+        for Ac, Rc in hand_metrics():
+            mu, J = constraints_rot(Ac, f * I3, GeoRot(Ac, ALPHA))
+            wantJ = sp.Matrix([-sum(R[i, k] * sp.diff(f, X3[k]) / Ac[k] for k in range(3)) / (4 * sp.pi) for i in range(3)])
+            ok = ok and zero_rot(mu - (Rc / (16 * sp.pi) + 3 * f**2 / (8 * sp.pi))) and is_zero_rot(J - wantJ)
+        check("planted_trace_rot", ok, "K'_ij = f delta_ij, alpha arbitrary, on the same two metrics: mu = R/16 pi + "
+              "3 f^2/8 pi, J'_i = -e'_i(f)/4 pi")
+    if todo("planted_alcubierre_rot"):
+        # Alcubierre's flat data K_ij = (d_i b_j + d_j b_i)/2, b = (-v f, 0, 0), with K'_ij = R K R^T in the rotated frame,
+        # so mu is as in the unrotated frame and J'_i = R_ik J_k, with #58 item 1's J_k.
+        b = [-v * f, 0, 0]
+        Ka = sp.Matrix(3, 3, lambda i, j: (sp.diff(b[j], X3[i]) + sp.diff(b[i], X3[j])) / 2)
+        Kp = (R * Ka * R.T).applyfunc(red)
+        mu, J = constraints_rot([one] * 3, Kp, GeoRot([one] * 3, ALPHA))
+        J0 = sp.Matrix([v / (16 * sp.pi) * (sp.diff(f, X, X3[i]) - int(i == 0) * lap(f)) for i in range(3)])
+        check("planted_alcubierre_rot", zero_rot(mu + v**2 / (32 * sp.pi) * (sp.diff(f, Y)**2 + sp.diff(f, Z)**2))
+              and is_zero_rot(J - R * J0),
+              "A = B = C = 1, K' = R K R^T with K Alcubierre's, alpha and f arbitrary: mu = -(v^2/32 pi)(f_y^2 + f_z^2), "
+              "J'_i = R_ik J_k with J_k = (v/16 pi)(d_x d_k f - delta_kx Laplace f)")
+    if todo("planted_kasner_rot"):
+        # K = diag(p) of a Kasner slice at t = 1 on constant A_i = a_i, whose frame components in the rotated frame are
+        # K' = R diag(p) R^T for every alpha, still vacuum, so mu = J' = 0.
+        a = [sp.Symbol(f"a{i + 1}", positive=True) for i in range(3)]
+        p = [sp.Rational(1, 2)] * 3 if MUT == "kasner-exponents" else [sp.Rational(-2, 7), sp.Rational(3, 7),
+                                                                       sp.Rational(6, 7)]
+        Kp = (R * sp.diag(*p) * R.T).applyfunc(red)
+        mu, J = constraints_rot(a, Kp, GeoRot(a, ALPHA))
+        check("planted_kasner_rot", zero_rot(mu) and is_zero_rot(J),
+              "constant A_i = a_i, K' = R diag(-2/7, 3/7, 6/7) R^T, alpha arbitrary: mu = J' = 0")
+    if todo("constraints_cov_rot"):
+        # Frame covariance through #99's code: mu and J of K'_ij in the rotated frame are mu and R J of K = R^T K' R in the
+        # unrotated frame, which constraints_diag takes as it is.
+        A = [fn(n) for n in "ABC"]
+        Kp = sym_K()
+        Ku = (R.T * Kp * R).applyfunc(red)
+        mud, Jd = constraints_diag(A, Ku, GeoDiag(A))
+        mur, Jr = constraints_rot(A, Kp, GeoRot(A, ALPHA))
+        check("constraints_cov_rot", zero_rot(mur - mud) and is_zero_rot(Jr - R * Jd),
+              "mu and J'_i of K'_ij in the rotated frame are mu and R_ik J_k of K = R^T K' R through constraints_diag")
+
+
+def section_4d_rot():
+    if not todo("constraints_4d_rot"):
+        return
+    print("\n== 12. The constraints against G_ab of the 4-metric, rotated frame ==")
+    # As section 8, with K = R^T K' R, the components of K' in the unrotated frame, built here from the hand matrix R and not
+    # from the coframe of GeoRot: g = -dt^2 + Lam (delta - 2 t K) Lam, Lam = diag(A, B, C), and then J'_i = R_ik J_k.
+    A = [fn(n) for n in "ABC"]
+    Kp = sym_K()
+    R = rot_matrix(ALPHA)
+    K = (R.T * Kp * R).applyfunc(red)
+    sg = -1 if MUT == "adm-K" else 1
+    K2 = (K * K).applyfunc(red)
+    Lam, Lami = sp.diag(*A), sp.diag(*[1 / a for a in A])
+    gs = (Lam * (I3 - sg * 2 * T * K) * Lam).applyfunc(red)
+    gis = (Lami * (I3 + sg * 2 * T * K + 4 * T**2 * K2) * Lami).applyfunc(red)
+    prod = (gs * gis).applyfunc(red)
+    inv_ok = all(red(prod[i, j] - int(i == j)).coeff(T, p) == 0 for i in range(3) for j in range(3) for p in range(3))
+    g, gi = sp.zeros(4), sp.zeros(4)
+    g[0, 0], gi[0, 0] = -1, -1
+    for i in range(3):
+        for j in range(3):
+            g[i + 1, j + 1], gi[i + 1, j + 1] = gs[i, j], gis[i, j]
+    Chr = christoffel(g, gi, CRD)
+    Chr = [[[red(c.subs(T, 0) + T * sp.diff(c, T).subs(T, 0)) for c in row] for row in blk] for blk in Chr]  # O(t)
+    Rab = ricci(Chr, CRD).subs(T, 0)
+    gi0 = gi.subs(T, 0)
+    Rs = red(sum(gi0[a, b] * Rab[a, b] for a in range(4) for b in range(4)))
+    Gtt = red(Rab[0, 0] + Rs / 2)
+    sj = 1 if MUT == "J4d" else -1
+    mu4 = Gtt / (8 * sp.pi)
+    J4 = R * sp.Matrix([sj * Rab[0, i + 1] / (8 * sp.pi) / A[i] for i in range(3)])  # J'_i = R_ik J_k, J_k = -G_tk / 8 pi
+    mu, J = constraints_rot(A, Kp, GeoRot(A, ALPHA))
+    check("constraints_4d_rot", inv_ok and zero_rot(mu - mu4) and is_zero_rot(J - J4),
+          "the constraints' mu and J'_i equal G_tt / 8 pi and -R_ik G_tk / 8 pi of -dt^2 + Lam (delta - 2 t K) Lam at t = 0, "
+          "K = R^T K' R, for arbitrary alpha, A, B, C and K'_ij")
+
+
+def identity_rot_alpha0(A, K):
+    name = "identity_rot_alpha0"
+    if not todo(name):
+        return
+    t0 = time.time()
+    r = rot_terms(A, K, sp.Integer(0))
+    d = diag_terms(A, K)
+    res = red(r.lhs - r.div)
+    same = zero(r.lhs - d.lhs) and zero(r.div - d.div) and all(zero(r.V[i] - d.V[i]) for i in range(3))
+    check(name, res == 0 and same, f"alpha = 0, A, B, C, K_ij and eps arbitrary; {nterms(r.lhs)} terms on the left, "
+          f"{nterms(r.div)} in div V, the difference 0, and the left side, div V and V equal identity_diag_general's "
+          f"term for term")
+    print(f"    ({name}: {time.time() - t0:.0f} s)", file=sys.stderr, flush=True)
+
+
+def section_identity_rot():
+    if not any(todo(n) for n in IDENT_R + ["V_reduced_rot"]):
+        return
+    print("\n== 13. The identity |nabla~ eps|^2 - |D~ eps|^2 + 4 pi (mu |eps|^2 - J.xi) = div V in the frame rotated about z ==")
+    print("    V = V'^a e'_a, div V = (1/ABC) d_m(ABC V^m) with V^m = V'^a e'^m_a, everything reduced modulo c^2 + s^2 = 1")
+    one, Kz = sp.Integer(1), sp.zeros(3)
+    A = [fn(n) for n in "ABC"]
+    Kg = sym_K()
+    f, v = fn("f"), sp.Symbol("v", real=True)
+    b = [-v * f, 0, 0]
+    Ka = sp.Matrix(3, 3, lambda i, j: (sp.diff(b[j], X3[i]) + sp.diff(b[i], X3[j])) / 2)
+    R = rot_matrix(ALPHA)
+    Kar = (R * Ka * R.T).applyfunc(red)
+    Kd = sp.diag(*[fn(f"k{i + 1}") for i in range(3)])
+    print("  Planted first: alpha = 0 against identity_diag_general, then A = B = C = 1 and K = 0 in the rotated frame")
+    identity_rot_alpha0(A, Kg)
+    identity_rot("identity_rot_flat_K0", [one] * 3, Kz, ALPHA, "A = B = C = 1, K = 0, alpha arbitrary: the flat identity")
+    identity_rot("identity_rot_lichnerowicz", A, Kz, ALPHA, "A, B, C, alpha arbitrary, K = 0: Lichnerowicz")
+    identity_rot("identity_rot_flat_K", [one] * 3, Kg, ALPHA, "A = B = C = 1, K'_ij and alpha arbitrary")
+    identity_rot("identity_rot_alcubierre", [one] * 3, Kar, ALPHA, "A = B = C = 1, K' = R K R^T with K Alcubierre's with "
+                 "b = (-v f, 0, 0), f and alpha arbitrary")
+    identity_rot("identity_rot_Kdiag", A, Kd, ALPHA, "A, B, C, alpha arbitrary, K'_ij = diag(k1, k2, k3) arbitrary "
+                 "functions, eps arbitrary")
+    identity_rot("identity_rot_general", A, Kg, ALPHA, "alpha, A, B, C, K'_ij and eps all arbitrary", reduced=True)
+
+
 def main():
     t0 = time.time()
-    print("weitzenbock_conf.py, issues #87 and #99. sympy %s, python %s. mutation: %s" % (sp.__version__, sys.version.split()[0],
+    print("weitzenbock_conf.py, issues #87, #99 and #130. sympy %s, python %s. mutation: %s" % (sp.__version__, sys.version.split()[0],
                                                                                 MUT or "none"))
     section_gammas()
     section_planted()
@@ -840,6 +1339,10 @@ def main():
     section_constraints_diag()
     section_4d_diag()
     section_identity_diag()
+    section_planted_rot()
+    section_constraints_rot()
+    section_4d_rot()
+    section_identity_rot()
     fails = [n for n, ok in RESULTS if not ok]
     print("\nchecks: %d passed, %d failed %s. %.0f s" % (len(RESULTS) - len(fails), len(fails), fails, time.time() - t0))
     if MUT:
