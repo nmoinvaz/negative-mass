@@ -487,6 +487,85 @@ the recomputed values differ from the stored ones by 1 %, each failing its check
 the geometric mean of its neighbours stays within 1.000 to 1.003, so ln |D| is smooth at every grid point. A pair of
 roots closer than about 3 % in γ is therefore excluded only by that smoothness, not by a sign change.
 
+#### Beyond Re s = 2 and |Im s| = 10 (#117)
+
+#117 counts four boxes outside those above, for the phantom campaign star (ω = 0.7603, M = −0.014580): Re s ∈ [2, 5] with
+|Im s| ≤ 10 for l = 2 and 3 (`b25_l2`, `b25_l3`), Re s ∈ [0.1, 2] with Im s ∈ [6, 10] for l = 3 (`h2_l3`; `h2_l2` above
+is its l = 2 counterpart) and Re s ∈ [0.1, 2] with Im s ∈ [10, 20] for l = 2 (`h3_l2`). Each box is one `winding2.py` job
+(zeros minus poles of D) and one `zerilli_zeros.py` job (zeros of Z(r_m; s), D's poles, §5.3) with the same arguments and
+`--guard=all` (§5.4), each with a planted zero.
+
+Result: **all four boxes have winding 0 and 0 zeros of Z(r_m; s), so 0 zeros of D**, and all eight runs return their
+planted zero (+2.0000 of 2 in the symmetric boxes, +1.0000 of 1 in the upper boxes). No count is nonzero. Status:
+numerical evidence, conditional as §5.1's counts are (the Zerilli column as D's only pole source, #122).
+
+**What ran.** On rpi5 on 2026-11-21, 16:10 to 23:24 (UTC−8), with `winding2.py` and `zerilli_zeros.py` of
+`wip/i117-boxes` at a05cd0b, unmodified, at nice level 10 and one thread, at most two processes at a time and the second
+only while the 15-minute load was below 4 (`queue.log` gives the load at each second-process start, all below 4). The
+boxes and planted zeros were fixed before the runs and not moved. Each job is `python -u <script> <arguments>
+--cachedir=<raw folder>/cache`, with the eight lines `job|script|arguments` that `python collect_i117.py --jobs` prints
+(raw `jobs.txt`), for example `winding2.py -1 0.7603 2 0.1 2.0 20.0 --y0=10.0 --plant=0.3,10.5 --guard=all`. The pilot
+`w_h3_l2` (the largest |s| and the slow left edge, stop condition 8 h) ran alone for 3 h 55 min. The coordinator started
+the other seven jobs with the same launcher while the runner session waited for a usage reset. That first start of
+`w_b25_l2` and `w_b25_l3` died within 20 s and left empty logs and no cached point (by the coordinator's account,
+killed when the process that started them returned, with no cache file of either box at 21:35). Raw 13360d3 holds no
+cache file of them, and the 20 and 18 points in raw 705847e were committed at 21:37:58, after the restart, so they are
+the restart's. The two jobs were restarted with the same command at 21:36 and began from an empty cache, so their walls
+below are those of complete runs. The other six jobs ran once, and all eight exited 0.
+Logs, caches and the launcher are in negative-mass-raw, folder `I117-rpi5` at 28863c5. From `phase2/nonradial`,
+with the raw repository cloned beside the checkout:
+
+```
+python collect_i117.py ../../../negative-mass-raw/I117-rpi5 > i117_boxes_output.txt
+```
+
+The collector exits 0. It exits 1 when `jobs.txt` differs from the job list, a log or exit status is missing or not 0, a
+count is not within 0.05 of an integer, a planted check fails, or D has opposite signs at the two ends of a symmetric box.
+Its `--mutate=noplant` (the count with the planted factor read as the count without it), `shift`, `nolog`, `badbox`, `rc`,
+`zcheck`, `signs` and `noguard` each exit 1 (raw `collect_mutate_<name>.log`). The four boxes:
+
+| box | l | Re s | Im s | winding of D | max step | min abs(D) | evaluations | R_s | planted s0 | planted found (D) | count of Z | planted found (Z) | zeros of D |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| b25_l2 | 2 | [2, 5] | abs(Im s) ≤ 10 | +0.0000 | 0.39 | 1.95e-05 | 165 | 44.0 | 2.5+1j | +2.0000 of 2 | -0.0000 | +2.0000 of 2 | 0 |
+| b25_l3 | 3 | [2, 5] | abs(Im s) ≤ 10 | -0.0000 | 0.40 | 4.87e-05 | 231 | 44.0 | 2.5+1j | +2.0000 of 2 | +0.0000 | +2.0000 of 2 | 0 |
+| h2_l3 | 3 | [0.1, 2] | [6, 10] | +0.0000 | 0.38 | 6.43e-05 | 80 | 422.4 | 0.3+6.2j | +1.0000 of 1 | -0.0000 | +1.0000 of 1 | 0 |
+| h3_l2 | 2 | [0.1, 2] | [10, 20] | -0.0000 | 0.28 | 3.38e-06 | 120 | 423.6 | 0.3+10.5j | +1.0000 of 1 | -0.0000 | +1.0000 of 1 | 0 |
+
+`Re s`, `Im s` and `abs(Im s) ≤ y` are as in §5.1 (a symmetric box is doubled from its upper half, an upper box counted
+on its four edges). `max step` is the largest phase step of D in radians and `min abs(D)` the smallest |D| on the
+contour, phase-normalised and comparable within a row only. `evaluations` is the cache size when the count ended, and
+the planted pass adds points. The planted found columns give the difference of the counts with and without the factor,
+as in §5.1. Zeros of D = winding of D + zeros of Z (§5.3). The eight jobs:
+
+| job | script | exit status | max step | min abs | evaluations | wall | D(x0), D(x1) | checks |
+|---|---|---|---|---|---|---|---|---|
+| w_b25_l2 | winding2.py | 0 | 0.39 | 1.95e-05 | 165 | 0 h 18 min | -1.773e-03, -1.895e-04 | PASS |
+| w_b25_l3 | winding2.py | 0 | 0.40 | 4.87e-05 | 231 | 0 h 21 min | -4.425e-03, -4.739e-04 | PASS |
+| w_h2_l3 | winding2.py | 0 | 0.38 | 6.43e-05 | 80 | 1 h 30 min |  | PASS |
+| w_h3_l2 | winding2.py | 0 | 0.28 | 3.38e-06 | 120 | 3 h 55 min |  | PASS |
+| z_b25_l2 | zerilli_zeros.py | 0 | 0.23 | 2.99e-01 | 61 | 24 s |  | PASS; holo defect ≤ 1.7e-08, q against zerilli_q ≤ 9.2e-12 |
+| z_b25_l3 | zerilli_zeros.py | 0 | 0.23 | 2.99e-01 | 61 | 26 s |  | PASS; holo defect ≤ 1.6e-08, q against zerilli_q ≤ 1.6e-12 |
+| z_h2_l3 | zerilli_zeros.py | 0 | 0.02 | 3.13e-01 | 80 | 36 s |  | PASS; holo defect ≤ 2.4e-08, q against zerilli_q ≤ 4.0e-12 |
+| z_h3_l2 | zerilli_zeros.py | 0 | 0.01 | 2.23e-01 | 80 | 32 s |  | PASS; holo defect ≤ 6.1e-09, q against zerilli_q ≤ 1.5e-12 |
+
+In the two symmetric boxes D has one sign at both ends of the real segment, as the doubling needs. In the Z jobs `max
+step` and `min abs` are those of Z, and the Cauchy–Riemann defect (limit 10⁻⁶) and the difference of q from `zerilli_q`
+(limit 10⁻⁶, applied wherever Re s ≥ 0.03, which is all three points of every box here) are the largest of the three
+points. The four winding jobs took 6.1 h of wall time in all, and the four Z jobs about 2 min. The pilot `h3_l2` took
+3 h 55 min for 120 evaluations and its planted pass; `memwatch.log` in the raw folder has the load and free memory
+every minute.
+
+| acceptance | verdict |
+|---|---|
+| each box returns its planted zero, with its winding, max phase step and min abs(D) reported | met in 4 of 4 boxes: +2.0000 of 2 (`b25_l2`, `b25_l3`) and +1.0000 of 1 (`h2_l3`, `h3_l2`) for D, the same for Z; max step 0.28 to 0.40 rad (D) and 0.01 to 0.23 rad (Z) against the 0.45 limit of the planted check; smallest min abs(D) 3.38×10⁻⁶ (`h3_l2`) |
+| any nonzero count is reported with its box | no count is nonzero: all four windings and all four counts of Z are 0, so the Zerilli column gives D no pole in these boxes and each has 0 zeros of D; D's other pole sources are not checked (#122) |
+| the collector exits 1 on a missing log, a winding off an integer or a failed planted check, and `--mutate=noplant` exits 1 | met: exit 0 on the logs, and each of its eight mutations exits 1 |
+
+What this does not show. The mutations of the counter itself (reverse, wrong doubling, misplaced and one-sided plant,
+§5.1) were run on the stored box and not repeated here. A 2π lost inside a step whose two halves agree is excluded by
+neither guard, and no dense-chain replay (§5.4, `diagnose_plant.py`) of these four caches has been made.
+`boxes_graph.py` and the figure above draw §5.1's boxes only, not these four.
+
 #### Not covered
 
 - Re s below the lower edges for 0.23 < |Im s| ≤ 2.5. For l = 2 that is 0 < Re s < 0.01 (the near-axis box n1 reaches
@@ -1439,6 +1518,7 @@ fails by 1.3×10⁵ and 4.1×10⁴. Mutations: `reverse` gives −1.0000 for the
 | `polish_zero.py` | secant polish of a zero of D near the axis, with the Mini BS I control |
 | `axis_scan.py` | \|D\| on a vertical line; its Mini BS control fails, not used (§5.1) |
 | `collect_i5.py`, `i5_boxes_output.txt` | the table of §5.1 from the raw logs (negative-mass-raw, I5-rpi5) |
+| `collect_i117.py`, `i117_boxes_output.txt` | the table of §5.1's #117 subsection from the raw logs (negative-mass-raw, I117-rpi5): four boxes beyond Re s = 2 and abs(Im s) = 10, each counted with `winding2.py` and `zerilli_zeros.py` at `--guard=all` |
 | `collect_i54.py`, `i54_recount_output.txt` | the recount table of §5.2 from the raw logs (I54-rpi5, I5-rpi5, I7-win2) |
 | `collect_i115.py`, `i115_boxes_output.txt` | the table of §3a's complex-s subsection from the raw logs (I115-rpi5); exits 1 because s1, l = 5 failed at guard 1; its `--guard=all` rerun is a row of its own |
 | `replay_old_rule_i54.py`, `i54_replay_output.txt` | the first step rule replayed on #7's stored boxes, and the lost step (§5.2) |
