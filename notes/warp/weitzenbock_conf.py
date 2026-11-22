@@ -100,8 +100,8 @@ tie to G_ab on these classes of slices (N = 1, no shift).
     python3 notes/warp/weitzenbock_conf.py --no-controls --only=NAME,...   (or --skip=NAME,...) some diagonal and rotated checks
         of sections 6 to 13 only, for staged runs. Under --mutate such a check runs only if the control targets it.
 
-Exit status is 1 if a check fails or a control does not fire. One process, 30 s for the checks and about 11 minutes with
-the controls, 86 MiB.
+Exit status is 1 if a check fails or a control does not fire. One process, about 4 minutes for the checks and about 1 hour
+with the controls, 110 MiB.
 """
 import importlib.util
 import pathlib
@@ -943,7 +943,8 @@ def trig_reduce(e):
     is zero exactly when e is in the ideal. That ideal is all of the polynomials that vanish for every real alpha: the jets
     of alpha at a point are independent of alpha itself, so the only relation among c, s and the jets is c^2 + s^2 = 1, and
     the real circle is dense in the irreducible conic c^2 + s^2 = 1, so a polynomial vanishing on the circle is a multiple of
-    c^2 + s^2 - 1. This is conventions.py's trig_reduce, with alpha(x, y, z)."""
+    c^2 + s^2 - 1. This is the reduction of conventions.py's trig_reduce (#86) for alpha(x, y, z), grouped term by term
+    because sympy's collect rejects mixed derivatives such as f_xy, and mapped back to cos and sin."""
     c, s = sp.Dummy("c"), sp.Dummy("s")
     e = e.xreplace({sp.cos(ALPHA): c, sp.sin(ALPHA): s})
     groups = {}  # the terms of e by their power k of c, each a monomial of the expanded e
