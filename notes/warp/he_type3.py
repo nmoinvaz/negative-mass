@@ -372,6 +372,9 @@ def polynomials(h):
     ee3 = E12(-3 * p_, 3 * p_**2, -p_**3)
     ok_tr = sp.expand(ee3[0]) == 0 and sp.expand(ee3[1]) == 0
     E1x, E2x, c2x = forms()
+    Rl_, _, _ = effective()
+    ent = ", ".join("R%s%s = %s" % (nm_[0], nm_[1], sp.factor(sp.expand(Rl_[i_, j_].subs(c, sp.sqrt(w)).subs(s, sp.sqrt(1 - w))))) for nm_, i_, j_ in [
+        ("00", 0, 0), ("0x", 0, 1), ("xx", 1, 1), ("0r", 0, 2), ("xr", 1, 2), ("rr", 2, 2)])
     back = {X: v**2 * a**2, ga: v * a * u, yy: v * (b - a * u), ph: v * F, w: c**2}
     ok_forms = sp.expand(E1x.subs(back) - E1) == 0 and sp.expand(E2x.subs(back) - E2) == 0
     cx = lambda e: sp.collect(e, [X, ga, yy], sp.factor)  # noqa: E731
@@ -383,10 +386,10 @@ def polynomials(h):
             "c1 x + c0: %s; E1, E2 are s-free and even in c: %s; in phi = vF, A = va, B = vb they are v-free: %s, with weights 4 "
             "and 6 under (A, B, u) -> (l A, l^2 B, l u): %s; E1 = (p - q)^2 and E2 = (p - q)^2 (8p + q) on (p, p, q): %s; "
             "E1 = E2 = 0 on (p, p, p): %s; E1 has %d terms and E2 has %d terms in (v, F, a, b, u, c); factors of E1: %s, of E2: %s. In "
-            "X = v^2 a^2, gamma = v a u, y = v (b - a u), phi = v F, w = c^2 (identity with the above: %s) c2 = %s, E1 = %s, E2 = %s" % (
+            "X = v^2 a^2, gamma = v a u, y = v (b - a u), phi = v F, w = c^2 (identity with the above: %s) the frame entries are %s; c2 = %s, E1 = %s, E2 = %s" % (
                 ok_tab, ok_chi, ok_c, ok_v, ok_w, ok_pq, ok_tr, n1, n2,
                 [(sp.Poly(f, v, F, a, b, u, c).total_degree(), k) for f, k in f1[1]],
-                [(sp.Poly(f, v, F, a, b, u, c).total_degree(), k) for f, k in f2[1]], ok_forms, sp.factor(c2x), cx(E1x), cx(E2x)))
+                [(sp.Poly(f, v, F, a, b, u, c).total_degree(), k) for f, k in f2[1]], ok_forms, ent, sp.factor(c2x), cx(E1x), cx(E2x)))
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -835,10 +838,10 @@ def exact_points(h):
             ok = ok and co[1] / co[0] == Fr(9, 8) and co[2] / co[0] == Fr(-1, 8)
             extra = " [#72's point: same c, e, phi, v, and %s, the quadratic of he_surface.md section 3; a r = %.4f, b r^2 = %.3f against -1.7357, -6.870 " \
                     "from the printed a, b, r; F = %.5f against 0.0509: %s]" % (quad, ar, br2, float(pt[1]), same)
-        rows.append("%s c = %s, e = (1, %s, %s), phi = %s, v = 2: F = %s, a = %s, b = %s, u = %s; T = %s != 0, D = 0, E1 = E2 = 0, triple root "
+        rows.append("%s c = %s, e = (1, %s, %s), phi = %s = %s, v = 2: F = %s, a = %s, b = %s, u = %s; T = %s != 0, D = 0, E1 = E2 = 0, triple root "
                     "lam = %s, rank(M - lam) = %d, N^2 != 0, N^3 = 0, Jacobian of (E1, E2) in (v, F, a, b, u, c) has rank %d, singular values "
                     "%s, %s, %s, |N^3| = %s%s" % (
-                        fld, sd[0], sd[2], sd[3], mp.nstr(to_mp(phi_, 30), 12), fmt_num(pt[1]), fmt_num(pt[2]), fmt_num(pt[3]),
+                        fld, sd[0], sd[2], sd[3], mp.nstr(to_mp(phi_, 30), 12), ("%s + (%s) sqrt(%d)" % (root[2], root[3], root[1])) if root[0] == "S" else str(root[1]), fmt_num(pt[1]), fmt_num(pt[2]), fmt_num(pt[3]),
                         fmt_num(pt[4]), fmt_num(inv["T"]), fmt_num(inv["lam"]), inv["rank"], rJ, mp.nstr(sv[0], 5), mp.nstr(sv[1], 5),
                         mp.nstr(sv[2], 3), mp.nstr(n3, 3), extra))
     # he_type_exact on #72's point in Q(sqrt 113): the sympy matrix with a radical
@@ -1305,6 +1308,12 @@ def tanh_planted(h):
     rows.append("planted triple root of rank 1, (v, c^2) = (3/2, 9/25), T = 0: V = 9/4 is a root of the shadow quartic (relative residual %s, a "
                 "triple root, so not returned by the root finder), Newton from (3/2, 9/25) converges without the T filter (%s) and the T filter "
                 "rejects it (%s)" % (mp.nstr(Pres, 3), seen is not None, gone is None))
+    sh = shadow()
+    ok_res = sp.expand(sp.cancel(sh["Res"] / sh["P"]) - sp.Rational(27, 256) * ph**3 * (Ap - Bp)**3) == 0
+    ok = ok and ok_res and sh["nterms"] == 167 and sh["degs"] == [10, 12, 14, 16, 18] and len(sh["fl"][1]) == 3
+    rows.append("the resultant of E1 and E2 in w has the factors %s, so Res = (27/256) phi^3 (A' - B')^3 P with P of %d terms, irreducible (%s), "
+                "whose degrees in (phi, A', B') are %s" % ([(len(sp.Poly(f_, ph, Ap, Bp).terms()), k_) for f_, k_ in sh["fl"][1]], sh["nterms"],
+                                                           len(sh["fl"][1]) == 3, sh["degs"]))
     h.check("tanh_planted", ok, "; ".join(rows))
 
 
@@ -1636,9 +1645,9 @@ def tanh_enclosure(h):
             good, T, det = krawczyk(name, pnt["r"] + sh_, pnt["w"], dr, dw, v0)
             bad, _, _ = krawczyk(name, pnt["r"] + 20 * dr, pnt["w"], dr, dw, v0)
             ok = ok and good and not bad
-            rows.append("%s r = %s, c^2 = %s: Krawczyk operator inside the box %s (half-widths 1e-25), T = %s with a relative enclosure width %s, "
-                        "shifted box rejected %s" % (name, mp.nstr(pnt["r"], 14), mp.nstr(pnt["w"], 14), good, mp.nstr(T.mid, 8),
-                                                     mp.nstr((T.b - T.a).mid / abs(T.mid), 2), not bad))
+            rows.append("%s r = %s, c^2 = %s: Krawczyk operator inside the box %s (half-widths 1e-25), T in [%s, %s] on the box, "
+                        "shifted box rejected %s" % (name, mp.nstr(pnt["r"], 14), mp.nstr(pnt["w"], 14), good, mp.nstr(T.a.a, 12),
+                                                     mp.nstr(T.b.b, 12), not bad))
     h.check("tanh_enclosure", ok, "; ".join(rows))
 
 
