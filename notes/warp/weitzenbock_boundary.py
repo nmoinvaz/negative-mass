@@ -663,8 +663,7 @@ def section_planted():
             Pxi = sum(Pv[j] * xi[j] for j in range(3))
             hand = {0: m * Rb["e2"] - Pxi, 1: m**2 * Rb["e2"] / 2 + m * Pxi}
             check("planted_BY", agree(Rb["flux"], hand, (-2, -1, 0, 1)), "same data: the flux is m (1 + m/2r) |eps_0|^2 - "
-                  "(1 + m/2r)^-2 P.xi_0 by hand (the Bowen-York form has tr K = 0 and the mean of n_i K_ij n... gives 2 P_j), so the "
-                  "boundary term is m |eps_0|^2 - P.xi_0")
+                  "(1 + m/2r)^-2 P.xi_0 by hand (tr K-hat = 0 and the sphere mean of n_i K-hat_ij r^2 is 2 P_j), so the boundary term is m |eps_0|^2 - P.xi_0")
 
 
 # ---- 4. The general boundary term ------------------------------------------------------------------------------------------
