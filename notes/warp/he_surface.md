@@ -194,7 +194,7 @@ All 14 checks pass and all 18 controls fire (`he_surface_output.txt`). Planted t
 | `necessity_T1` | the certificate of T1 | `tgt-cert` |
 | `sufficiency_T1` | the split, A, B′, A B′ − j_r², the third root | `tgt-suff` |
 | `D_on_T1` | D(b = −a u) from route C | `tgt-DT1` |
-| `axis` | D on the axis, 20 exact points each of a = 0 and a ≠ 0 | `tgt-axis`, `no-rank` |
+| `axis` | D on the axis, 20 exact points each of a = 0 and a ≠ 0; `he_type_exact` returns the exact D (#131) | `tgt-axis`, `no-rank`, `nsimplify-back` |
 | `elimination` | the Gröbner elimination, y = 0, and the translation | `tgt-ideal`, `loosen-T1`, `loosen-T2`, `table-typo` |
 | `locus_points` | 60 exact Type I points | `locus-T2-shift`, `no-rank` |
 | `null_points` | 250 exact points of D = 0 | `null-nonnull` |
