@@ -58,6 +58,8 @@ CONTROLS = {
     "loosen-T3": ("the description drops T3", ["outside_description"]),
     "no-rank": ("he_type_exact labels every D = 0 tensor Type II without the rank test",
                 ["planted", "locus_points"]),
+    "nsimplify-back": ("he_type_exact restores sp.nsimplify of D (ht.MUT = nsimplify), the rounding #72 found at the "
+                       "axis point v = 7/4, F = 1/8, a = -3/2, u = 2/3", ["axis"]),
     "planted-deform": ("the planted Type I tensor is deformed before the check", ["planted"]),
     "null-nonnull": ("the eigenvector of the D = 0 sample is (1, 1/2, 1/2), not null", ["null_points"]),
     "nf-modulus": ("the constant term of the field's modulus is shifted by 1, so the algebraic points are not on D = 0",
@@ -67,11 +69,16 @@ CONTROLS = {
 }
 MUT = set()
 RESULTS = []
-NSIMP = {"points": 0, "value_changed": 0}
+D_CHANGED = []  # points where he_type_exact returned a D different from the exact one, charged to the next check()
 RF_GLOBAL = [None]
 
 
 def check(name, ok, detail):
+    if D_CHANGED:  # recorded by `classify` while this check ran
+        ok = False
+        detail += (f". he_type_exact changed D at {len(D_CHANGED)} point(s), the first {D_CHANGED[0][0]}: "
+                   f"exact D = {D_CHANGED[0][1]}, returned {D_CHANGED[0][2]}")
+        D_CHANGED.clear()
     RESULTS.append((name, bool(ok)))
     print(f"[{'PASS' if ok else 'FAIL'}] {name}: {detail}", flush=True)
 
@@ -167,11 +174,8 @@ def classify(RF, pt):
     (c2, c1, c0), D = cubic_D(R3)
     typ, Dsp = ht.he_type_exact(to_R4(R3))
     Dq = sp.Rational(D.numerator, D.denominator)
-    # he_type_exact returns D after sp.nsimplify, which can replace an exact rational of large height by a nearby
-    # radical (and send |D| < 1e-60 to 0). The sign and zero-ness must agree with the exact D, the value need not.
-    assert (Dq > 0) == (Dsp > 0) and (Dq < 0) == (Dsp < 0), (Dq, Dsp)
-    NSIMP["points"] += 1
-    NSIMP["value_changed"] += (Dq != Dsp)
+    if Dsp != Dq:  # he_type_exact returns D as `disc` gives it (#103), so any difference is a failure of the caller
+        D_CHANGED.append(({str(k): str(x) for k, x in pt.items()}, Dq, Dsp))
     if D != 0:
         return typ, D, None, None, None
     lm, mult = repeated_root(c2, c1, c0)
@@ -1026,6 +1030,8 @@ def main():
         MUT.add(args.mutate)
         if args.mutate == "no-rank":
             ht.MUT = "no-rank"
+        elif args.mutate == "nsimplify-back":
+            ht.MUT = "nsimplify"
     t0 = time.time()
     print(f"he_surface.py, issue #72. sympy {sp.__version__}, mpmath {mp.__version__}, python "
           f"{sys.version.split()[0]}. mutation: {args.mutate or 'none'}. Rank test: he_type.he_type_exact (#64). "
@@ -1046,9 +1052,6 @@ def main():
     check_number_field()
     check_tanh_scan()
     check_tanh_type3()
-    print(f"note: he_type_exact applies sp.nsimplify to the exact D. At {NSIMP['value_changed']} of {NSIMP['points']} "
-          f"points it returned a value different from the exact D (a nearby radical), with the sign and zero-ness "
-          f"unchanged; sp.nsimplify(Rational(1, 10**60)) = {sp.nsimplify(sp.Rational(1, 10 ** 60))}. Not fixed here.")
     bad = sorted(n for n, ok in RESULTS if not ok)
     print(("FAILED: " + ",".join(bad)) if bad else f"all {len(RESULTS)} checks passed in {time.time() - t0:.0f} s")
     if args.mutate or args.no_controls:

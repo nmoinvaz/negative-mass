@@ -231,11 +231,13 @@ bubble (#73).
 
 ## Discrepancies
 
-1. **`he_type_exact` applies `sp.nsimplify` to an exact rational D** (`he_type.py` line 85). `sp.nsimplify` can return a
-   nearby radical for a rational of large height, and it returns 0 for `Rational(1, 10**60)`. At 1 of the 356 points that
-   went through `classify`, the value differed from the exact D, with sign and zero-ness unchanged. A tiny nonzero D
-   would take the rank branch. No result here depends on it, since every point has D = 0 or |D| of order 10⁻² or more, and
-   the script compares signs against the exact D. Not changed. For the coordinator.
+1. **`he_type_exact` applied `sp.nsimplify` to an exact rational D** (`he_type.py` line 85, before #103). `sp.nsimplify`
+   can return a nearby radical for a rational of large height, and it returns 0 for `Rational(1, 10**60)`. At 1 of the
+   356 points that went through `classify` (an a != 0 axis point in the check `axis`), the value differed from the exact
+   D, with sign and zero-ness unchanged. A tiny nonzero D would take the rank branch. No result here depended on it, since
+   every point has D = 0 or |D| of order 10⁻² or more, and the script compared signs against the exact D.
+   **Resolved by #103**: `he_type_exact` decides the sign with `exact_sign` and returns D as `disc` gives it. `classify`
+   now compares that D with the exact D by equality at every point and records a failure of the calling check (#131).
 2. **#71's 200 points and this result do not disagree.** The Type I set and the Type III set are each codimension 1 in the
    surface D = 0, so a random sample of D = 0 almost surely misses both.
 
@@ -254,6 +256,8 @@ bubble (#73).
    point of D = 0 that satisfies all but one of its conditions. Depends on #72.
 3. **Wording of he_type.md** for the coordinator: "Off the equator, 200 sampled points of D = 0 are all Type II … Which
    points there are Type I is #72" becomes the Answer of this note, and the Type III set is added. No task.
-4. **An exact sign in `he_type_exact`.** What. Replace the `sp.nsimplify` of D by an exact comparison, and add a planted
+4. **An exact sign in `he_type_exact`.** Done in #103, which added `exact_sign` and planted tensors with D = ±10⁻⁶⁰ to
+   `he_type.py`, where `--mutate=nsimplify` makes `planted` fail. The task as written:
+   What. Replace the `sp.nsimplify` of D by an exact comparison, and add a planted
    tensor with D = 10⁻⁶⁰. Why. Discrepancy 1. Acceptance. The planted tensor is classified by its sign, and the control
    restoring `nsimplify` makes it fail. Depends on #64.
