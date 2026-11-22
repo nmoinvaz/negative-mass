@@ -5,7 +5,8 @@ G^a_b and R^a_b differ by a multiple of the identity, so they have the same type
 (E_0 = n, E_1 = d_x, e_rho, e_varphi) of phantom_source.py, R(e_varphi, .) = 0 (I1). So e_varphi is an eigenvector of
 R^a_b with eigenvalue 0, and the type is that of the 3x3 mixed block M = eta R on (E_0, E_1, e_rho). Its characteristic
 polynomial is the cubic lam^3 + c2 lam^2 + c1 lam + c0, with discriminant D. D > 0 gives Type I, D < 0 Type IV, and on
-D = 0 the rank of M - lam I at the repeated root decides between Types I, II and III (`he_type_exact`).
+D = 0 the rank of M - lam I at the repeated root decides between Types I, II and III (`he_type_exact`). The sign of D is
+decided exactly by `exact_sign`, never from a rounded value (issue #103).
 
     python3 notes/warp/he_type.py                 all checks, then every control (exit 1 if any check fails)
     python3 notes/warp/he_type.py --mutate=NAME   one control (its target checks must fail, exit 1)
@@ -39,6 +40,7 @@ MUTATIONS = {
     "num-drop-w2": (["numN", "closed_vs_numeric"], "drops the shift's square from g_tt in route N"),
     "disc-sign": (["planted"], "flips the sign of the cubic discriminant"),
     "no-rank": (["planted"], "labels every D = 0 tensor Type II, without the rank test"),
+    "nsimplify": (["planted"], "restores sp.nsimplify of D before its sign test (it rounds a tiny exact D to 0)"),
     "jets-f2": (["jets"], "scales f'' of the tanh profile by 1 + 1/1000"),
     "le-speed": (["le_fraction"], "evaluates Le's setup at v = 1 instead of 1/2"),
     "rodal-speed": (["rodal_cuts"], "evaluates Rodal's setup at v = 1/4 instead of 1"),
@@ -77,15 +79,85 @@ def disc(c2, c1, c0):
     return -D if MUT == "disc-sign" else D
 
 
+class _Wider(Exception):
+    """The enclosure is too coarse for this operation at the current precision."""
+
+
+def _enclose(e):
+    """Interval of mpmath's `iv` at its current precision that contains the real algebraic expression e (a rational
+    number, a sum, a product, or an integer or rational power with a positive base). iv rounds outward."""
+    iv = mp.iv
+    if e.is_Rational:
+        return iv.mpf(int(e.p)) / int(e.q)
+    if e.is_Add:
+        return sum((_enclose(a) for a in e.args), iv.mpf(0))
+    if e.is_Mul:
+        out = iv.mpf(1)
+        for a in e.args:
+            out = out * _enclose(a)
+        return out
+    if e.is_Pow and e.exp.is_Rational:
+        b = _enclose(e.base)
+        if e.exp.is_Integer:
+            if e.exp < 0 and b.a <= 0 <= b.b:
+                raise _Wider
+            return b**int(e.exp)
+        if b.a > 0:
+            return b**(iv.mpf(int(e.exp.p)) / int(e.exp.q))
+        raise _Wider
+    raise NotImplementedError(f"no enclosure for {e}")
+
+
+def exact_sign(D):
+    """Sign, -1, 0 or 1, of the real algebraic number D, decided exactly and without changing D.
+
+    A rational D has its sign from the exact fraction. Otherwise D = 0 exactly when its minimal polynomial over Q is x,
+    which is exact algebra (resultants), not a numerical test. A nonzero D has its sign from an `iv` enclosure
+    evaluated at doubling precision, and the sign is taken only once the enclosure excludes 0. The enclosure always
+    contains D, because iv rounds every operation outward, so the sign read from it is the sign of D. The loop ends
+    because the enclosure's width goes to 0 with the precision while D != 0. A Float in D, or a D that is not
+    algebraic, raises: the sign would not be exact."""
+    D = sp.sympify(D)
+    if MUT == "nsimplify":  # the code before #103: rounds D, so a tiny exact D becomes 0
+        D = sp.nsimplify(D)
+        return 1 if D > 0 else -1 if D < 0 else 0
+    if D.atoms(sp.Float):
+        raise ValueError(f"D has a Float, so its sign cannot be exact: {D}")
+    if D.is_Rational:
+        return int(sp.sign(D))
+    if sp.minimal_polynomial(D, sp.Symbol("x")) == sp.Symbol("x"):
+        return 0
+    try:
+        dps = 30
+        while dps < 40000:
+            mp.iv.dps = dps
+            try:
+                z = _enclose(D)
+            except (_Wider, ZeroDivisionError):
+                z = None
+            if z is not None and z.a > 0:
+                return 1
+            if z is not None and z.b < 0:
+                return -1
+            dps *= 2
+    finally:
+        mp.iv.dps = 15
+    raise RuntimeError(f"the sign of D = {D} is not decided by an enclosure at 40000 digits")
+
+
 def he_type_exact(R4):
-    """Hawking-Ellis type of a 4x4 exact symmetric frame tensor R_ab whose axis 3 decouples."""
+    """Hawking-Ellis type of a 4x4 exact symmetric frame tensor R_ab whose axis 3 decouples.
+
+    Returns (type, D), with D the discriminant exactly as `disc` gives it: not rounded, simplified or expanded. The
+    sign of D, and whether D = 0, come from `exact_sign`, so a tiny exact D keeps its sign (issue #103)."""
     assert all(R4[a, 3] == 0 for a in range(3)), "e_3 does not decouple"
     M = mixed_block([[R4[a, b] for b in range(3)] for a in range(3)])
     c2, c1, c0 = cubic(M)
-    D = sp.nsimplify(disc(c2, c1, c0))
-    if D > 0:
+    D = disc(c2, c1, c0)
+    sgn = exact_sign(D)
+    if sgn > 0:
         return "I", D
-    if D < 0:
+    if sgn < 0:
         return "IV", D
     if MUT == "no-rank":
         return "II", D
@@ -327,14 +399,39 @@ def planted_cases():
         ("Le's Type III example l m + m l + lam eta", k * m.T + m * k.T - Q(1, 6) * eta3, "III"),
         ("lam eta", Q(2, 7) * eta3, "I"),
     ]
+    # D = +-10^-60, where sp.nsimplify(D) = 0. D has degree 6 in the entries of R, so D(mu R0) = mu^6 D(R0).
+    # Take mu = 10^-10 2^(-1/3), so mu^6 = 10^-60 / 4, and the tensors mu R0, with M = eta R0:
+    #   Type I, R0 = diag(0, 1, -1): M = diag(0, 1, -1), cubic lam^3 - lam, (c2, c1, c0) = (0, -1, 0), roots 0, 1, -1,
+    #   D(R0) = -4 c1^3 = 4. So D(mu R0) = 4 mu^6 = 10^-60.
+    #   Type IV, R0 = [[0, 1, 0], [1, 0, 0], [0, 0, 0]]: M = [[0, -1, 0], [1, 0, 0], [0, 0, 0]], cubic lam^3 + lam,
+    #   (c2, c1, c0) = (0, 1, 0), roots 0, +-i, D(R0) = -4. So D(mu R0) = -4 mu^6 = -10^-60.
+    # The Lorentz transform below preserves D (M -> L^-1 M L), and e_3 carries the same scale mu, so the float
+    # eigenvalues in main() see one overall scale. A search of small rational R0 found no D = -j^6, so mu is irrational.
+    mu = Q(1, 10**10) * sp.Integer(2)**Q(-1, 3)
+    cases += [
+        ("Type I, D = 10^-60: mu diag(0, 1, -1)", mu * sp.diag(0, 1, -1), "I", -Q(5, 11) * mu),
+        ("Type IV, D = -10^-60: mu (e1 e2 + e2 e1)", mu * sp.Matrix([[0, 1, 0], [1, 0, 0], [0, 0, 0]]), "IV",
+         -Q(5, 11) * mu),
+    ]
     out = []
-    for name, T3, want in cases:
+    for name, T3, want, *e3 in cases:
         T3 = L.T * T3 * L  # T'_ab = L^c_a L^d_b T_cd
         T4 = sp.zeros(4, 4)
         T4[:3, :3] = T3
-        T4[3, 3] = Q(-5, 11)
+        T4[3, 3] = e3[0] if e3 else Q(-5, 11)
         out.append((name, T4, want))
     return out
+
+
+def sign_cases():
+    """Algebraic D of known sign that rounding cannot decide, as (name, D, sign). Each D is left unexpanded."""
+    s2, c3, tiny = sp.sqrt(2), sp.cbrt(2), sp.Rational(1, 10**60)
+    z2 = (1 + s2)**2 - 3 - 2 * s2  # = 0: (1 + sqrt 2)^2 = 3 + 2 sqrt 2
+    z3 = (1 + c3)**3 - 3 - 3 * c3 - 3 * c3**2  # = 0: c^3 = 2, so (1 + c)^3 = 3 + 3 c + 3 c^2
+    big = sp.sqrt(10**120 + 1) - 10**60  # = 1 / (sqrt(10^120 + 1) + 10^60), about 5 10^-61
+    return [("(1 + sqrt 2)^2 - 3 - 2 sqrt 2", z2, 0), ("(1 + cbrt 2)^3 - 3 - 3 c - 3 c^2", z3, 0),
+            ("(1 + cbrt 2)^3 - ... + 10^-60", z3 + tiny, 1), ("(1 + cbrt 2)^3 - ... - 10^-60", z3 - tiny, -1),
+            ("sqrt(10^120 + 1) - 10^60", big, 1), ("10^60 - sqrt(10^120 + 1)", -big, -1)]
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -359,8 +456,11 @@ def main():
         num = ("IV" if numeric_type(Gm)[0] else "I") if D != 0 else "-"
         ok = got == want and (num == "-" or num == want)
         bad += [] if ok else [name]
-        print(f"  {name:>46}: D = {sp.nsimplify(D)!s:>14}, closed form {got:>3}, eigenvalues {num:>2}, "
-              f"expected {want}")
+        print(f"  {name:>46}: D = {D!s:>14}, closed form {got:>3}, eigenvalues {num:>2}, expected {want}")
+    for name, Dx, want in sign_cases():
+        got = exact_sign(Dx)
+        bad += [] if got == want else [name]
+        print(f"  {name:>46}: exact sign of D {got:>2}, expected {want:>2}")
     check("planted", not bad, f"every planted tensor gets its type from D and the rank test; wrong: {bad}")
 
     # 2. Route C: decoupling and the closed form.

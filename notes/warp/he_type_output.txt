@@ -1,4 +1,4 @@
-he_type.py, issue #64. sympy 1.14.0, numpy 2.5.4, mpmath 1.3.0, python 3.14.7. mutation: none
+he_type.py, issue #64. sympy 1.14.0, numpy 2.5.4, mpmath 1.3.0, python 3.14.10. mutation: none
 
 == 1. Planted truth: tensors of known type in a boosted and rotated frame, e_3 decoupled ==
                  perfect fluid mu = 3/2, p = 1/5: D =              0, closed form   I, eigenvalues  -, expected I
@@ -10,6 +10,14 @@ he_type.py, issue #64. sympy 1.14.0, numpy 2.5.4, mpmath 1.3.0, python 3.14.7. m
                              null dust + lam eta: D =              0, closed form  II, eigenvalues  -, expected II
        Le's Type III example l m + m l + lam eta: D =              0, closed form III, eigenvalues  -, expected III
                                          lam eta: D =              0, closed form   I, eigenvalues  -, expected I
+           Type I, D = 10^-60: mu diag(0, 1, -1): D = 1/1000000000000000000000000000000000000000000000000000000000000, closed form   I, eigenvalues  I, expected I
+        Type IV, D = -10^-60: mu (e1 e2 + e2 e1): D = -1/1000000000000000000000000000000000000000000000000000000000000, closed form  IV, eigenvalues IV, expected IV
+                   (1 + sqrt 2)^2 - 3 - 2 sqrt 2: exact sign of D  0, expected  0
+                (1 + cbrt 2)^3 - 3 - 3 c - 3 c^2: exact sign of D  0, expected  0
+                   (1 + cbrt 2)^3 - ... + 10^-60: exact sign of D  1, expected  1
+                   (1 + cbrt 2)^3 - ... - 10^-60: exact sign of D -1, expected -1
+                        sqrt(10^120 + 1) - 10^60: exact sign of D  1, expected  1
+                        10^60 - sqrt(10^120 + 1): exact sign of D -1, expected -1
 [PASS] planted: every planted tensor gets its type from D and the rank test; wrong: []
 
 == 2. Route C: the frame Ricci tensor with w = v (1 - f), and the cubic of its (E_0, E_1, e_rho) block ==
@@ -48,7 +56,7 @@ he_type.py, issue #64. sympy 1.14.0, numpy 2.5.4, mpmath 1.3.0, python 3.14.7. m
   R^a_b on the axis at x - v t = +-1 (sig = 8, R = 1, v = 1): [ 0.       +0.j         0.       +0.j        16.0000072-4.0000009j
  16.0000072+4.0000009j], [ 0.       +0.j         0.       +0.j        16.0000072-4.0000009j
  16.0000072+4.0000009j]; the closed form's -R_00 +- i R_01 = 16.000007202 +- 4.000000900 i
-[PASS] numN: route N's G(n, n)/8pi equals -(v^2/32pi)(rho^2/r_s^2) f'^2 at 40 points (relative error 8.1e-16), and its R^a_b on the axis has eigenvalues 0, 0, -R_00 +- i R_01 (v^2 (f'^2 - (1 - f) f'') +- i v f'/r_s, phantom_source's 16 +- 4i to 6 digits; relative error 5.6e-17)
+[PASS] numN: route N's G(n, n)/8pi equals -(v^2/32pi)(rho^2/r_s^2) f'^2 at 40 points (relative error 8.5e-16), and its R^a_b on the axis has eigenvalues 0, 0, -R_00 +- i R_01 (v^2 (f'^2 - (1 - f) f'') +- i v f'/r_s, phantom_source's 16 +- 4i to 6 digits; relative error 5.6e-17)
 
 == 4. Closed form (sign of D) against route N's eigenvalues at every grid point ==
   Le's wall, sig = 8, R_b = 1: f in [0.1, 0.9] is r_s in [0.862674, 1.137327], width 0.2747
@@ -87,7 +95,7 @@ he_type.py, issue #64. sympy 1.14.0, numpy 2.5.4, mpmath 1.3.0, python 3.14.7. m
     v:           0.1   0.25    0.5   0.75      1    1.5      2    2.5      3      5     10
     Type I %:   0.09   0.57   2.58   5.82   9.34  16.10  21.87  26.73  30.79  42.05  54.33
 
-checks: 8 passed, 0 failed []. 40 s
+checks: 8 passed, 0 failed []. 109 s
 
 == Controls: each mutation must make its target checks fail ==
 [FIRED] --mutate=alc-drop-w2 (drops the shift's square from g_tt in route C (phantom_source's control)): exit 1, failed ['decouple', 'structure', 'closed_vs_numeric', 'rodal_cuts']
@@ -97,6 +105,8 @@ checks: 8 passed, 0 failed []. 40 s
 [FIRED] --mutate=disc-sign (flips the sign of the cubic discriminant): exit 1, failed ['planted', 'structure', 'closed_vs_numeric', 'le_fraction', 'rodal_cuts']
     its map: Type I fraction at v = 0.5: 98.85 % against Le's 1.3 % (tolerance 2 percentage points)
 [FIRED] --mutate=no-rank (labels every D = 0 tensor Type II, without the rank test): exit 1, failed ['planted']
+    its map: Type I fraction at v = 0.5: 1.15 % against Le's 1.3 % (tolerance 2 percentage points)
+[FIRED] --mutate=nsimplify (restores sp.nsimplify of D before its sign test (it rounds a tiny exact D to 0)): exit 1, failed ['planted']
     its map: Type I fraction at v = 0.5: 1.15 % against Le's 1.3 % (tolerance 2 percentage points)
 [FIRED] --mutate=jets-f2 (scales f'' of the tanh profile by 1 + 1/1000): exit 1, failed ['jets']
     its map: Type I fraction at v = 0.5: 1.15 % against Le's 1.3 % (tolerance 2 percentage points)
