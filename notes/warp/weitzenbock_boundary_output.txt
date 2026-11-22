@@ -1,0 +1,62 @@
+weitzenbock_boundary.py, issue #100. sympy 1.14.0, python 3.14.10. mutation: none
+
+== 1. The gammas and the inner product of weitzenbock_conf.py ==
+[PASS] clifford: {g^a, g^b} = 2 eta^ab, g^0 anti-Hermitian, g^j Hermitian: the note's gammas
+[PASS] dagger: <a, b> = a^dagger b: |eps|^2 = sum u^2 + v^2 and xi^j = <eps, g^0 g^j eps> real
+
+== 2. The machinery: derivative, sphere moments, spin connection, flux formula ==
+[PASS] planted_derivation: D_i f = s (d_ni f - n_i (n.d_n f + s d_s f)) equals d/dx_i of f(x/r, y/r, z/r, 1/r), once and twice, for three polynomials at three exact points on the sphere
+[PASS] planted_sphere: (a-1)!!(b-1)!!(c-1)!!/(a+b+c+1)!! is (1/4 pi) of the integral of nx^a ny^b nz^c, against sympy's integral in theta and phi for 15 monomials
+[PASS] omega_vs_conf: Om_i = (1/4) psi^-2 (g^i phislash - phislash g^i), phi = 2 d ln psi, equals weitzenbock_conf's Geo(psi).Om_i computed from the Christoffel symbols, for arbitrary psi(x, y, z)
+[PASS] div_formula: psi^-6 d_a(psi^4 V^a) equals the covariant divergence d_a U^a + Gamma^a_ak U^k of U = psi^-2 V, for arbitrary psi and V; so the flux of V through a coordinate sphere is the integral of psi^4 V^a n_a r^2 dOmega by Gauss's theorem in flat R^3
+
+== 3. Planted boundary values: Schwarzschild, a dipole in psi, Bowen-York ==
+    [schwarzschild: 9 symbols, flux, E and P series in 1.1 s]
+[PASS] planted_E: psi = 1 + m/2r, K = 0: the ADM integral of g = psi^4 delta is m (1 + m/2r)^3, E = m at order 0 and 3*m**2/2 at order 1/r
+[PASS] planted_B_schwarzschild: psi = 1 + m/2r, K = 0, eps = eps_0: V^i = -2 psi^-3 d_i psi |eps_0|^2 by hand, flux m (1 + m/2r) |eps_0|^2, so the boundary term is m |eps_0|^2 = E |eps_0|^2
+    [dipole: 12 symbols, flux, E and P series in 3.4 s]
+[PASS] planted_dipole: psi = 1 + m/2r + (d.n)/r^2: E and the boundary term are still m and m |eps_0|^2, with no terms of order r^2 or r
+    [BY: 12 symbols, flux, E and P series in 3.5 s]
+[PASS] planted_P: psi = 1 + m/2r, K = psi^-6 Bowen-York: the ADM momentum integral is P_j (1 + m/2r)^-2, P_j = [Px, Py, Pz] at order 0, -m P_j at order 1/r
+[PASS] planted_BY: same data: the flux is m (1 + m/2r) |eps_0|^2 - (1 + m/2r)^-2 P.xi_0 by hand (tr K-hat = 0 and the sphere mean of n_i K-hat_ij r^2 is 2 P_j), so the boundary term is m |eps_0|^2 - P.xi_0
+
+== 3b. The eps_0 that gives E - |P| ==
+[PASS] aligned_eps0: P = (1, 2, 2), |P| = 3, eps_0 = sqrt(2) times a column of (1 +- P.alpha/|P|)/2: xi_0 = +P/|P|: |eps_0|^2 = 1, xi_0 = [1/3, 2/3, 2/3], boundary term m - 3; xi_0 = -P/|P|: |eps_0|^2 = 1, xi_0 = [-1/3, -2/3, -2/3], boundary term m + 3. So E - |P| is the boundary term of the eps_0 with xi_0 = +P/|P|, and E + |P| that of xi_0 = -P/|P|
+
+== 4. The boundary term of the general data against E |eps_0|^2 - P.xi_0 ==
+    [general: 162 symbols, flux, E and P series in 427.9 s]
+[PASS] no_divergence: pointwise, psi^4 V^a n_a r^2 has no term of order r^2 or r: its first term is the order r^0 one, which has 276 terms in n
+[PASS] limit_exists: the sphere integrals of the r^2 and r terms vanish (they have 0 and 0 terms): the limit r -> infinity of the boundary term exists
+[PASS] bdy_vs_adm: B = (1/4 pi) lim flux of V = E |eps_0|^2 - P.xi_0 with E = m, P_ADM = [Px, Py, Pz], xi_0^j = <eps_0, g^0 g^j eps_0> from the same data; 20 terms in B, 0 in B - (E |eps_0|^2 - P.xi_0)
+[PASS] eps1_drops: the eps_1 and eps_2 coefficients enter the order r^0 integrand (pointwise it has 276 terms) but not its sphere integral: the spin part's eps_1 term is -Re<eps_0, nslash dslash_tan eps_1> (eps1_hand), a rotation derivative with antisymmetric g^i g^k whose sphere integral is 0
+[PASS] eps1_hand: the 192 terms of the order r^0 integrand that contain eps_1 equal -Re<eps_0, nslash dslash_tan eps_1> modulo n^2 = 1, with dslash_tan = g^k (d_nk - n_k n.d_n): nslash dslash_tan = sum_{i<k} g^i g^k (n_i d_k - n_k d_i) is a sum of rotation generators with antisymmetric g^i g^k, whose sphere integral is 0
+[PASS] free_symbols: the boundary term depends on m, P and eps_0 only: not on the angular parts of psi, the r^-3 terms of K-hat, or eps_1 and eps_2 (150 symbols)
+    [T: 39 symbols, flux, E and P series in 11.9 s]
+[PASS] bdy_vs_adm_T: with an added r^-2 term T_ij(n) in K-hat that has a trace (not Bowen-York), the boundary term is still E |eps_0|^2 - P.xi_0 with P_ADM - P = [T01_010/6 + T02_001/6 - T11_100/6 - T22_100/6, -T00_010/6 + T01_100/6 + T12_001/6 - T22_010/6, -T00_001/6 + T02_100/6 - T11_001/6 + T12_010/6], so the trace term of the ADM integral and of V is exercised
+
+== 5. V against the pointwise identity, on the same data, at exact points ==
+[PASS] identity_points: |nabla~ eps|^2 - |D~ eps|^2 + 4 pi (mu |eps|^2 - J.xi) = psi^-6 d_a(psi^4 V^a), with V as used in the flux, on data with every symbol group (psi_2, psi_3, T, K3, eps_0, eta, eps_1, eps_2) at exact rational values: (1, 2, 2): lhs -0.0049782464, rhs -0.0049782464, lhs - rhs 0; (-2, 3, 6): lhs -0.0093793281, rhs -0.0093793281, lhs - rhs 0; (4, -4, 7): lhs 0.0018725872, rhs 0.0018725872, lhs - rhs 0 (40 s)
+[PASS] flip_consistent: with nabla~ = nabla - (1/2) K g g^0 the identity holds with +J.xi and V_K = +(1/2) P_ij xi^j (residual 0 at (1, 2, 2)), and the boundary term is m |eps_0|^2 + P.xi_0: the sign of P.xi_0 follows nabla~
+
+checks: 21 passed, 0 failed []. 648 s
+
+== Controls: each mutation must make its target checks fail ==
+[FIRED] --mutate=gamma (scales g^1 by 11/10): exit 1, failed ['clifford', 'identity_points'] (41 s)
+[FIRED] --mutate=no-conj (takes <a, b> = a^T b, without the complex conjugate): exit 1, failed ['dagger', 'identity_points'] (41 s)
+[FIRED] --mutate=deriv (drops the radial part of d_i, taking D_i f = s d_ni f): exit 1, failed ['planted_derivation', 'planted_E', 'planted_B_schwarzschild'] (2 s)
+[FIRED] --mutate=sphere (takes the moment as a!! b!! c!!/(a+b+c+1)!!, not (a-1)!! (b-1)!! (c-1)!!/(a+b+c+1)!!): exit 1, failed ['planted_sphere', 'planted_P', 'planted_BY'] (6 s)
+[FIRED] --mutate=omega-sign (takes the spin connection with -(1/4) omega_jk g^j g^k): exit 1, failed ['omega_vs_conf', 'planted_B_schwarzschild', 'identity_points'] (42 s)
+[FIRED] --mutate=weight (takes the flux and the divergence without the weight psi^4 (and psi^-6)): exit 1, failed ['div_formula', 'planted_B_schwarzschild', 'identity_points'] (41 s)
+[FIRED] --mutate=Vsign (flips V's K term, +(1/2) P_ij xi^j, with nabla~ and the identity as stated): exit 1, failed ['planted_BY', 'aligned_eps0', 'bdy_vs_adm', 'bdy_vs_adm_T', 'identity_points', 'flip_consistent'] (565 s)
+[FIRED] --mutate=sign (takes nabla~ with the other sign of its K term, nabla_i - (1/2) K_ij g^j g^0, and V's K term derived from it, -(1/2) sK P_ij xi^j with sK = -1, so +(1/2) P_ij xi^j; the identity keeps -J.xi): exit 1, failed ['planted_BY', 'aligned_eps0', 'bdy_vs_adm', 'bdy_vs_adm_T', 'identity_points'] (546 s)
+[FIRED] --mutate=Jsign (writes +J.xi in the pointwise identity): exit 1, failed ['identity_points'] (41 s)
+[FIRED] --mutate=Kdiv (drops V's K term): exit 1, failed ['planted_BY', 'aligned_eps0', 'bdy_vs_adm', 'bdy_vs_adm_T', 'identity_points', 'flip_consistent'] (284 s)
+[FIRED] --mutate=Vspin (drops -g^i D eps from V): exit 1, failed ['planted_B_schwarzschild', 'planted_dipole', 'bdy_vs_adm', 'eps1_drops', 'eps1_hand', 'free_symbols', 'identity_points'] (612 s)
+[FIRED] --mutate=Dhalf (takes -(1/2) g^i D eps in V, so g^i g^k is no longer antisymmetrized against delta_ik): exit 1, failed ['planted_B_schwarzschild', 'planted_dipole', 'bdy_vs_adm', 'eps1_drops', 'eps1_hand', 'free_symbols', 'identity_points'] (1259 s)
+[FIRED] --mutate=trace (takes P_ij = K_ij in V, without -delta_ij tr K): exit 1, failed ['bdy_vs_adm_T', 'identity_points'] (53 s)
+[FIRED] --mutate=adm-E (drops -d_i g_jj from the ADM energy integrand): exit 1, failed ['planted_E', 'planted_dipole', 'bdy_vs_adm'] (499 s)
+[FIRED] --mutate=adm-P-sign (takes the ADM momentum with the other sign): exit 1, failed ['planted_P', 'bdy_vs_adm', 'bdy_vs_adm_T'] (509 s)
+[FIRED] --mutate=adm-frame (takes the frame components of K as its coordinate components in the ADM momentum): exit 1, failed ['planted_P'] (5 s)
+[FIRED] --mutate=adm-trace (drops -delta_ij tr K from the ADM momentum): exit 1, failed ['bdy_vs_adm_T'] (12 s)
+[FIRED] --mutate=eps-O1 (adds an O(1) angular term eta(n) to eps, so eps - eps_0 is not O(1/r)): exit 1, failed ['no_divergence', 'limit_exists'] (486 s)
+controls: all fired

@@ -86,7 +86,8 @@ than Bowen-York plus the extensions, and angular dependence of eps_1 that is not
     python3 notes/warp/weitzenbock_boundary.py --mutate=NAME    one control (its target checks must fail, exit 1)
     python3 notes/warp/weitzenbock_boundary.py --no-controls --only=NAME,...   (or --skip=NAME,...) some checks, for staged runs
 
-Exit status is 1 if a check fails or a control does not fire.
+Exit status is 1 if a check fails or a control does not fire. One process at nice 10: the 21 checks take 648 s (the series of the
+general data 426 s, 300 MiB), and with the 18 controls 1 h 35 min, 480 MiB at the peak, the longest control `Dhalf` 22 min.
 """
 import importlib.util
 import pathlib
