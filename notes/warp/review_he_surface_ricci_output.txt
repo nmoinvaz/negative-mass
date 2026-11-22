@@ -1,0 +1,29 @@
+review_he_surface_ricci.py: sympy 1.14.0, mpmath 1.3.0
+   perfect fluid (3/2, 1/5) 3x3: got I want I; deformed copy IV
+   perfect fluid (3/2, 1/5) 4x4: got I want I; deformed copy IV
+   three distinct real roots 3x3: got I want I; deformed copy IV
+   three distinct real roots 4x4: got I want I; deformed copy IV
+   Jordan 2x2 plus simple root 3x3: got II want II; deformed copy I
+   Jordan 2x2 plus simple root 4x4: got II want II; deformed copy I
+   null dust plus pressure 3x3: got II want II; deformed copy I
+   null dust plus pressure 4x4: got II want II; deformed copy I
+   3x3 Jordan block 3x3: got III want III; deformed copy IV
+   3x3 Jordan block 4x4: got III want III; deformed copy IV
+   complex pair 3x3: got IV want IV
+   complex pair 4x4: got IV want IV
+[PASS] planted_types: six planted tensors, 3x3 and 4x4, each boosted, rotated, boosted; deformed copies change type
+   v = 0.7 r = 1.3 c = 0.6: max rel. deviation 4.14e-45, max |R(e_phi, .)| 3.72e-45, R_rr^numeric = 0.218639074662
+   v = 1.4 r = 0.9 c = -0.3: max rel. deviation 3.93e-45, max |R(e_phi, .)| 3.93e-45, R_rr^numeric = 0.500701625888
+   v = 2.2 r = 2.1 c = 0.8: max rel. deviation 3.38e-45, max |R(e_phi, .)| 3.38e-45, R_rr^numeric = 0.00259726477874
+[PASS] ricci_numeric: symbolic frame Ricci equals 50-digit second differences of the lab metric at 3 points, worst 4.14e-45 (tol 1e-30)
+[PASS] frame_table: six typed entries minus my frame Ricci reduce to ['0', '0', '0', '0', '0', '0']; R_00 + R_xx + 2R_rr = 0; R(e_phi, .) = [0, 0, 0, 0]
+[PASS] equator_axis: D of my 3x3 block equals he_type.md's closed forms: equator yes, axis yes
+control no-rank        targets ['planted_types']                        failed ['planted_types']                        FIRED
+control disc-sign      targets ['planted_types']                        failed ['planted_types']                        FIRED
+control mult-off       targets ['planted_types']                        failed ['planted_types']                        FIRED
+control drop-w2        targets ['ricci_numeric']                        failed ['ricci_numeric']                        FIRED
+control no-gamma2      targets ['ricci_numeric']                        failed ['ricci_numeric']                        FIRED
+control table-typo     targets ['frame_table']                          failed ['frame_table']                          FIRED
+control eq-typo        targets ['equator_axis']                         failed ['equator_axis']                         FIRED
+control axis-typo      targets ['equator_axis']                         failed ['equator_axis']                         FIRED
+4 checks, 0 failed []; 8 controls, 0 silent []

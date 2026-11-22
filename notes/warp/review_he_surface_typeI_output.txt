@@ -1,0 +1,16 @@
+review_he_surface_typeI.py: sympy 1.14.0
+[PASS] rotated_quantities: j_r, j_theta, R'_r,theta = -c v F j_theta, R'_00, R'_rr, R'_theta,theta agree with he_surface.md section 1 (no restriction to T1); mismatches: none
+[PASS] identity_necessity: j_theta v c a u (1 + v^2 F^2) + m_e + c v F m_d reduces to 0 for symbolic lam; m_d = -j_theta (B' + c v F j_r): True; m_e = -j_theta (c v F A + j_r): True; A + B' = v^2 F a u s^2: True; at a = 0: m_a + A^2, j_r and j_theta^4 + m_a C'^2 + 2 A C' m_b - m_b^2 reduce to [0, 0, 0]
+[PASS] D_on_T1: D(b = -a u) - v^6 a^6 u^6 (v^2 F^2 s^4 - 4c^2) P2^2 = 0; Theta^2 - 4 v^2 a^2 Pu - v^2 a^2 u^2 (v^2 F^2 s^4 - 4c^2) = 0; D - disc(chi_2) chi_2(lam*)^2 = 0
+[PASS] cert_T1: -cs m01,01 + (c^2 - s^2) m01,02 + vF c^2 m01,12 + cs m02,02 + vF cs m02,12 - K1 (b + a u) reduces to 0 for symbolic lam; at a = 0: m01,01 + Sigma_00^2 + Sigma_01^2 reduces to 0; K1 = a*c*s*u*v**2*(F**2*v**2 + 1)/2
+[PASS] cert_T2: lam certificate yes; P2 certificate yes; converse minors in <b + a u, lam - lam*, Pu> yes; per-minor converse [True, True, True, True, True, True]
+[PASS] T3_multiplicity: chi|T1 - (x - lam*)[(x - lam*)(x - lam* - Theta) + v^2 a^2 Pu] = 0; Sigma(lam*) theta^ on T1 = [0, 0, 0]; chi_2(lam*) - v^2 a^2 Pu = 0; chi_2'(lam*) + Theta = 0; Theta - v^2 a u (2 r a + (1 + c^2) F) = 0; at lam*: A + v^2 a (a + F u c^2), B' - v^2 a (a + F u), A B' - j_r^2 + v^2 a^2 Pu, B' - A - Theta reduce to [0, 0, 0, 0]
+control rot-sign       targets ['rotated_quantities']                   failed ['rotated_quantities']                   FIRED
+control tgt-ident      targets ['identity_necessity']                   failed ['identity_necessity']                   FIRED
+control tgt-DT1        targets ['D_on_T1']                              failed ['D_on_T1']                              FIRED
+control cof-perturb    targets ['cert_T1']                              failed ['cert_T1']                              FIRED
+control cof-drop       targets ['cert_T1']                              failed ['cert_T1']                              FIRED
+control cof2-perturb   targets ['cert_T2']                              failed ['cert_T2']                              FIRED
+control cof2-drop      targets ['cert_T2']                              failed ['cert_T2']                              FIRED
+control tgt-T3         targets ['T3_multiplicity']                      failed ['T3_multiplicity']                      FIRED
+6 checks, 0 failed []; 8 controls, 0 silent []
