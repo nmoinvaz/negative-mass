@@ -184,7 +184,7 @@ points the type alone does not exclude a scalar or a fluid.
 
 ## 6. Checks and controls
 
-All 14 checks pass and all 17 controls fire (`he_surface_output.txt`). Planted truth runs first.
+All 14 checks pass and all 18 controls fire (`he_surface_output.txt`). Planted truth runs first.
 
 | check | what it tests | control `--mutate=` |
 |---|---|---|

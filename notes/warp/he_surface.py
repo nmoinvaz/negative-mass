@@ -58,8 +58,8 @@ CONTROLS = {
     "loosen-T3": ("the description drops T3", ["outside_description"]),
     "no-rank": ("he_type_exact labels every D = 0 tensor Type II without the rank test",
                 ["planted", "locus_points"]),
-    "nsimplify-back": ("he_type_exact restores sp.nsimplify of D (ht.MUT = nsimplify), the rounding #72 found at the "
-                       "axis point v = 7/4, F = 1/8, a = -3/2, u = 2/3", ["axis"]),
+    "nsimplify-back": ("he_type_exact returns sp.nsimplify(D), as before #103, which changed D at the axis point "
+                       "v = 7/4, F = 1/8, a = -3/2, u = 2/3 (#72)", ["axis"]),
     "planted-deform": ("the planted Type I tensor is deformed before the check", ["planted"]),
     "null-nonnull": ("the eigenvector of the D = 0 sample is (1, 1/2, 1/2), not null", ["null_points"]),
     "nf-modulus": ("the constant term of the field's modulus is shifted by 1, so the algebraic points are not on D = 0",
@@ -1031,7 +1031,13 @@ def main():
         if args.mutate == "no-rank":
             ht.MUT = "no-rank"
         elif args.mutate == "nsimplify-back":
-            ht.MUT = "nsimplify"
+            exact_type = ht.he_type_exact
+
+            def type_and_rounded_D(R4):
+                typ, D = exact_type(R4)
+                return typ, sp.nsimplify(D)
+
+            ht.he_type_exact = type_and_rounded_D
     t0 = time.time()
     print(f"he_surface.py, issue #72. sympy {sp.__version__}, mpmath {mp.__version__}, python "
           f"{sys.version.split()[0]}. mutation: {args.mutate or 'none'}. Rank test: he_type.he_type_exact (#64). "
