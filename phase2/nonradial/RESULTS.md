@@ -497,7 +497,8 @@ is its l = 2 counterpart) and Re s ∈ [0.1, 2] with Im s ∈ [10, 20] for l = 2
 
 Result: **all four boxes have winding 0 and 0 zeros of Z(r_m; s), so 0 zeros of D**, and all eight runs return their
 planted zero (+2.0000 of 2 in the symmetric boxes, +1.0000 of 1 in the upper boxes). No count is nonzero. Status:
-numerical evidence, conditional as §5.1's counts are (the Zerilli column as D's only pole source, #122).
+numerical evidence, conditional as §5.1's counts are (that the Zerilli column is D's only pole source; §5.5 checks
+D's other factors in its 61 boxes, not in these four).
 
 **What ran.** On rpi5 on 2026-11-21, 16:10 to 23:24 (UTC−8), with `winding2.py` and `zerilli_zeros.py` of
 `wip/i117-boxes` at a05cd0b, unmodified, at nice level 10 and one thread, at most two processes at a time and the second
@@ -558,7 +559,7 @@ every minute.
 | acceptance | verdict |
 |---|---|
 | each box returns its planted zero, with its winding, max phase step and min abs(D) reported | met in 4 of 4 boxes: +2.0000 of 2 (`b25_l2`, `b25_l3`) and +1.0000 of 1 (`h2_l3`, `h3_l2`) for D, the same for Z; max step 0.28 to 0.40 rad (D) and 0.01 to 0.23 rad (Z) against the 0.45 limit of the planted check; smallest min abs(D) 3.38×10⁻⁶ (`h3_l2`) |
-| any nonzero count is reported with its box | no count is nonzero: all four windings and all four counts of Z are 0, so the Zerilli column gives D no pole in these boxes and each has 0 zeros of D; D's other pole sources are not checked (#122) |
+| any nonzero count is reported with its box | no count is nonzero: all four windings and all four counts of Z are 0, so the Zerilli column gives D no pole in these boxes and each has 0 zeros of D; D's other factors are checked in §5.5's 61 boxes, not in these four |
 | the collector exits 1 on a missing log, a winding off an integer or a failed planted check, and `--mutate=noplant` exits 1 | met: exit 0 on the logs, and each of its eight mutations exits 1 |
 
 What this does not show. The mutations of the counter itself (reverse, wrong doubling, misplaced and one-sided plant,
@@ -566,13 +567,23 @@ What this does not show. The mutations of the counter itself (reverse, wrong dou
 neither guard, and no dense-chain replay (§5.4, `diagnose_plant.py`) of these four caches has been made.
 `boxes_graph.py` and the figure above draw §5.1's boxes only, not these four.
 
+*Coordinator's review (#117's closing comment).* The collector, rerun on the raw logs, reproduces
+`i117_boxes_output.txt` byte for byte, and its `--mutate=noplant` exits 1. `w_b25_l2` and `z_b25_l2`, rerun from an empty
+cache on another machine, give the same counts and the same 195 points of D, which agree to 2.6×10⁻¹⁰ relative. An
+independent counter, which shares only `background.solve_star` and `PolarProblem.D` with these scripts, walks the full
+rectangle of `b25_l2` without the doubling: 530 points, every phase step at most 0.3 rad, and every segment bisected once
+more. It finds winding 0, two planted zeros at +2.0000 and a planted pole at −1.0000. D(s̄) = conj D(s) holds to
+6.5×10⁻¹⁴ on 235 mirrored pairs, so the doubling holds in that box. Its mutations `reverse` and `noplant` exit 1. The
+script and its logs are in negative-mass-raw, folder `I117-mac`.
+
 #### Not covered
 
 - Re s below the lower edges for 0.23 < |Im s| ≤ 2.5. For l = 2 that is 0 < Re s < 0.01 (the near-axis box n1 reaches
   10⁻⁴ only below Im s = 0.23), for l = 3 it is 0 < Re s < 0.03. R_s grows as 1/Re s (3831 at 0.01), and so does the
   cost of a box, which took 3.7 h at 0.01. A mode that close to marginal is neither shown nor excluded by these counts.
 - The strip Re s < 0.03 for 2.5 < |Im s|, and the strip Re s < 0.1 for |Im s| > 6.
-- Re s ∈ [0.1, 2] above |Im s| = 10 (l = 2) and 6 (l = 3), and Re s > 2.
+- Re s ∈ [0.1, 2] above |Im s| = 20 (l = 2) and 10 (l = 3), Re s ∈ [2, 5] above |Im s| = 10, and Re s > 5 (#117's
+  edges).
 - The sliver |Im s| < 0.01 left of Re s = 10⁻⁴.
 - Poles of D. Every count is zeros minus poles. §5.3 (#121, and #123 for `n3_l2` and `n3_l3`) excludes the Zerilli
   column's poles in every box. §5.5 (#122) checks D's other factors one by one; its test that arg D is harmonic fails at
@@ -816,8 +827,8 @@ the planted pair (limit 0.45), worst Cauchy–Riemann defect 1.1×10⁻⁸ (`n1_
 - `rep_l2` is the first box of §5, `p7603_l2`. `n3_l2` and `n3_l3` cross Re s = 0, where k = √(s² + V) has its cut, so
   y₁(r_m) is not holomorphic there and a count would not be a count of zeros. #123 counts them with `--axis` (below).
   The 14 boxes of §5.1 counted here, with §5's seven, are the 21.
-- #117's larger boxes are not counted here, and #115's nine are #124's (above). Neither are the regions §5.1 lists
-  under "Not covered" (Re s below the lower edges, above the upper ones).
+- #117's four boxes are counted in §5.1's #117 subsection, and #115's nine are #124's (above). Neither are the regions
+  §5.1 lists under "Not covered" (Re s below the lower edges, above the upper ones).
 - In the 21 boxes the zeros of Z(r_m; s) are absent, so the pole of D that #54's hypothesis and `decaying_plane` allow is
   absent, and each 0 of §5 and §5.1 counts zeros of D. That the Zerilli column is D's only pole source is the
   coordinator's reading of `polar_solver.py` (the regular plane is integrated from the centre, the scalar plane's
@@ -1467,10 +1478,11 @@ fails by 1.3×10⁵ and 4.1×10⁴. Mutations: `reverse` gives −1.0000 for the
   campaign star at l = 2, 3 the grid was refined to 397 points (step ratio 1.032 for l = 2, 1.036 for l = 3) with no
   change in the sign count, so a pair closer than about 3 % in γ is excluded there only by the smoothness of ln |D|
   (§5.1).
-- Complex s, campaign star, l = 2 (l = 3 where it differs): counted are Re s ∈ [0.1, 2] for |Im s| ≤ 10 (6 for l = 3),
-  Re s ∈ [0.03, 0.1] for |Im s| ≤ 6, Re s ∈ [0.01, 0.03] for |Im s| ≤ 2.5 (l = 2 only), and Re s ∈ [−10⁻³, 0.1] for
-  |Im s| ≤ 0.23 (§5.1). The rest is listed under "Not covered" there. The other stars have Re s ≥ 0.1, |Im s| ≤ 2.5 only.
-  At l = 4, 5, 6 the campaign star has the stored box, s1 and n1 only (§3a).
+- Complex s, campaign star, l = 2 (l = 3 where it differs): counted are Re s ∈ [0.1, 2] for |Im s| ≤ 20 (10 for l = 3,
+  #117), Re s ∈ [2, 5] for |Im s| ≤ 10 (l = 2 and 3, #117), Re s ∈ [0.03, 0.1] for |Im s| ≤ 6, Re s ∈ [0.01, 0.03] for
+  |Im s| ≤ 2.5 (l = 2 only), and Re s ∈ [−10⁻³, 0.1] for |Im s| ≤ 0.23 (§5.1). The rest is listed under "Not covered"
+  there. The other stars have Re s ≥ 0.1, |Im s| ≤ 2.5 only. At l = 4, 5, 6 the campaign star has the stored box, s1 and
+  n1 only (§3a).
 - Every winding except the rerun of s1 at l = 5 used guard 1, the half-step test at bisection depths 0 and 1 only. In
   #115 a planted count lost 2π at depth 2. The planted check cannot see a loss that hits D and D times the factor
   alike (§3a). §5.4 (#126) recounts every guard-1 count of §3a, §5 and §5.1 to §5.3 with `--guard=all`, and none
