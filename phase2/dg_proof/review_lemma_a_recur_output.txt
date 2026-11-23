@@ -1,0 +1,18 @@
+review_lemma_a_recur (mutation: None)
+PASS PL1 numeric C(7,k) k=0..12
+PASS PL1 numeric C(4,k) k=0..12
+PASS PL1 symbolic (N,M,k)
+PASS PL2 wrong sequence has nonzero residual
+PASS A2.1 P2, P1, P0 derived from V equal the hand forms (and psi_xx - V psi = -(r+2)/(r^4 D^2) (P2 chi'' + P1 chi' + P0 chi))
+PASS A2.2 P2 = -r^2 (r+2)(cr-6) as RESULTS states
+PASS A2.3a extracted recurrence equals my typed formula
+PASS A2.3b extracted recurrence equals RESULTS' form (c_m, c_{m-1} bracket as derived, c_{m-2} with c = (l+2)(l-1))
+PASS A2.4 m=1 low-order residual symbolic in l
+PASS A2.4 m=2 low-order residual symbolic in l
+PASS A2.4 m=3 low-order residual symbolic in l
+PASS A2.4 m=4 low-order residual symbolic in l
+PASS A2.5 polynomial identity in (l, m) after dividing by (l-m+5)_{2m-8}
+PASS A2.6 Pochhammer reductions exact, Pi > 0 for 4 <= m <= l+4, c_m = c_{m-1} = c_{m-2} = 0 for m >= l+5 [l=2..40]
+PASS A2.7 recurrence residual exactly 0 for m = 0..l+6 [l=2..60]
+PASS A2.8 P2 chi'' + P1 chi' + P0 chi = 0 as a polynomial [l=2..40]
+ALL PASSED: 0 failing check(s)

@@ -1,0 +1,10 @@
+review_lemma_a_signs (mutation: None)
+PASS A1.1 c_1 = 3/2
+PASS A1.1 c_2 = 0
+PASS A1.1 c_3 = -l*(l - 1)*(l + 1)*(l + 2)/32
+PASS A1.1 c_4 = l*(l - 1)*(l + 1)*(l + 2)/96
+PASS A1.2 (n-2) > 0 for n >= 4, l >= 2: all 2 coefficients positive
+PASS A1.2 (n-4)L+n-1 > 0 for n >= 4, l >= 2: all 4 coefficients positive
+PASS A1.3 (l-n+3)_{2n-4} > 0 for 3 <= n <= l+2, = 0 for n >= l+3 [l=2..300]
+PASS A1.4 signs of c_n (c_1 = 3/2, c_2 = 0, c_3 = -K/32 < 0, c_n > 0 for 4..l+2, 0 beyond, c_{l+2} > 0) [l=2..300]
+ALL PASSED: 0 failing check(s)
