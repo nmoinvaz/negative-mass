@@ -731,7 +731,8 @@ def sign_of(I):
 
 
 def sign_agreement(leaves, fun, tanh_fun):
-    """The signs of the tanh-form function and of the interval function agree at every leaf boundary; returns (ok, nchanges)."""
+    """The signs of the tanh-form function and of the interval function agree at every leaf boundary, the tanh-form sign is
+    constant inside each excluded leaf (checked at its midpoint) and changes inside each root leaf; returns (ok, nchanges)."""
     bounds = [leaves[0][0]] + [lf[1] for lf in leaves]
     sg_i = [sign_of(fun(ivpt(z)).v) for z in bounds]
     sg_t = []
@@ -741,6 +742,10 @@ def sign_agreement(leaves, fun, tanh_fun):
     ok = sg_i == sg_t and 0 not in sg_i
     kinds = [lf[2] for lf in leaves]
     ok = ok and all((sg_t[n] != sg_t[n + 1]) == (kinds[n] == "r") for n in range(len(leaves)))
+    for n, lf in enumerate(leaves):
+        if lf[2] == "x":
+            val = tanh_fun((lf[0] + lf[1]) / 2)
+            ok = ok and (1 if val > 0 else -1) == sg_t[n]
     return ok, sum(1 for n in range(len(leaves)) if sg_t[n] != sg_t[n + 1])
 
 
@@ -1257,6 +1262,14 @@ def main():
         say("control %s: %s; targets %s" % (mut, desc, targets))
     walls = make_walls(wsel.split(",") if wsel else None)
     h = run_checks(names, walls)
+    dump = next((x.split("=", 1)[1] for x in argv if x.startswith("--dump-cells=")), "")
+    if dump:
+        with open(dump, "w") as fh:
+            fh.write("# function\twall\tleft end\tright end\tkind (x: no root, r: one root); ends are exact binary fractions\n")
+            for fname, cache in (("g", _COV), ("Yn", _SPU)):
+                for wn, cv in cache.items():
+                    for a, b, kd in cv["leaves"]:
+                        fh.write("%s\t%s\t%s\t%s\t%s\n" % (fname, wn, mp.nstr(a, 70), mp.nstr(b, 70), kd))
     if mut:
         fired = [t_ for t_ in targets if t_ in h.failed]
         exact = sorted(h.failed) == sorted(targets)
