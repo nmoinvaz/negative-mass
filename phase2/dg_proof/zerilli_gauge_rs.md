@@ -185,10 +185,39 @@ Not Lean; statements only. Each is an identity in Q(r, M, s, L) (or a short ODE 
 
 ## 8. What RESULTS.md and the Zerilli notes should now say
 
-- `zerilli_derivation.md` §4: "Assumed (i)" (RW gauge attainable) is now derived for l ≥ 2 by #146 (GS.1, GU.1; divisors r, r−2M); "does not treat r_s itself" is now treated: r_s is a regular point of the flow, ζ′(r_s) = c\*ζ(r_s) with
-  c\* = λ²/(3M(2λ+3)), and DG06's printed (cz) has the opposite sign (R.5).
-- `zerilli_static.md` §4: the same two edits; for s = 0 the solve closes algebraically with no residual freedom, and the static solutions satisfy the same condition (R.S.2).
-- `RESULTS.md` §4.6, the #143 bullet: "assumes the gauge is attainable … and the behavior at r_s (#146)" becomes: the gauge is attained and unique for l ≥ 2, e^{st} and static (#146); at r_s the flow is regular and its ζ satisfies Lemma 1's condition
-  with c\* = −1/(r_s(r_s+2)) at M = −1 (#138's L1.2), where DG06's printed (cz) has the opposite sign (arXiv TeX). A #146 bullet after the #145 one.
-- `RESULTS.md` §6, the caveat on scope: the sentence "derived from the linearized Einstein equations on r ≠ r_s" can add "in Regge–Wheeler gauge, which is attained for l ≥ 2 (#146); the flow is regular at r_s".
-- `phase0/RESULTS.md` line 23 already has the condition with the derived sign (via DG08's Lemma 1); no change, optionally a pointer to #146.
+The closing comment of #146 proposed these edits; all are applied. RESULTS.md §4.6 has a #146 bullet and the #143 bullet
+points to it, §6's caveat names the gauge and r_s, and the file table has a row. `zerilli_derivation.md` §4 and
+`zerilli_static.md` §4 carry a marked coordinator's sentence on each of the gauge and r_s. `notes/literature.md`'s DG06
+entry records the three discrepancies, and #149 reads the other versions. `phase0/RESULTS.md` is unchanged: its DG08
+Lemma 1 already has the derived sign.
+
+## Coordinator's review
+
+Raw `I146-mac` (negative-mass-raw). Mac, nice 10, at most 2 processes.
+
+| step | result |
+|---|---|
+| scope | the five files the issue names, nothing else |
+| rerun `zerilli_gauge_rs.py` | exit 0, 34 PASS, 0 FAIL; output equal to rpi5's apart from the timing lines |
+| rerun the controls | 38 OK, 0 MISS, exit 0; rows equal to rpi5's apart from timings |
+| DG06 at the source | the arXiv TeX (`I143-mac`'s download): (cz) prints +2λ²/(3μ(2λ+3)); (nv1), (im), (RW17) as §3 quotes them |
+| re-solve of one case | the condition at r_s from DG06's (RW17) alone: ζ′/ζ = −2λ²/(3μ(2λ+3)), independent of s |
+| independent check `ind146.py` | run 1 exits 0; all 5 mutations fire on target |
+
+`ind146.py` is #146's recommended task 1 in another form. Its gauge part uses the coordinate Lie derivative
+ξ^c∂_c g_ab + g_cb∂_aξ^c + g_ac∂_bξ^c and its own projection onto the seven functions, with P_l explicit. Its r_s part uses
+DG06's own (3)–(4), (6), (nv1), (RW17), not the flow. It shares no code with this note's scripts, #143's library or the
+coordinator's earlier checks.
+
+| id | what | run 1 |
+|---|---|---|
+| Q0 | planted: on h = L_η g the solved ξ is −η and h′ = 0, l = 2, 3, 4, e^{st} and static | pass |
+| Q1 | on a general h, (a, b, c) of §1 give RW gauge and the four RW functions of §1, l = 2, 3, 4, e^{st} and static | pass |
+| Q2 | the seven Δ formulas of §1; at l = 1, T_ab ≡ 0 and the c-family stays free | pass |
+| Q3 | (nv1)'s K = (3)'s; (nv1)'s H1 = (2/r) × (3)'s; (3)'s H2 = (nv1)'s with its ζ term reversed | pass |
+| Q4 | K's numerator and (RW17) both give c* = −2λ²/(3μ(2λ+3)) at r_s; the printed (cz) is −c*; at μ = 2, c* = −1/(r_s(r_s+2)) | pass |
+| Q5 | (RW17) is the Zerilli equation for ζ = (2λr − 3μ)ψ | pass |
+
+So the gauge solve is confirmed, and so are the three discrepancies with DG06's arXiv TeX, from DG06's own equations.
+No project result used the printed forms; the project's L1 already has the derived sign. Recommended task 1 is this
+review's `ind146.py`, task 2 is #149, and task 3 is row 19 of #135.

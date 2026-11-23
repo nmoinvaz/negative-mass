@@ -88,12 +88,13 @@ No step divides by **s** (S.1, D.3) or by **L − 2 = 2λ** (D.4). Compared with
 **M is new**, because the flow in (K, H) replaces #143's flow in (K, H1) (there the algebraic relation A has the H coefficient (λr+3M)/(r²(r−2M)) and nothing divides by M).
 
 - **r_s.** λr + 3M = 0 at r = −3M/λ, positive iff M < 0 (λ > 0); at M = −1 it is 6/c = r_s of dg_proof. ψ is not defined there by (9) and V has a double pole. The flow of (K, H) is regular there
-  (its denominators are M, r, r − 2M). This note does not treat r_s itself (DG06's Lemma 1 is not re-derived).
+  (its denominators are M, r, r − 2M). This note does not treat r_s itself (DG06's Lemma 1 is not re-derived). *Added by the coordinator:* `zerilli_gauge_rs.md` (#146) shows the static solutions satisfy the same
+  condition ζ′(r_s) = c*ζ(r_s) as for s ≠ 0.
 - **M = 0.** The converse holds for every M (an identity). The forward direction at M = 0 is **not** shown here: the flow in (K, H) is singular, and a different elimination (using the second-order
   equations) is needed. The coordinator's certificate `ind143.py` Y3 for l = 2 (M symbolic) has the denominator 3r²(2r+3M)² only, so the forward direction holds at M = 0 for l = 2 (the l = 3 certificate is at M = −1 only);
   for every l it is a recommended task of the closing comment of #145. The project's case is M < 0, where M ≠ 0.
 - **Assumed, not derived here** (as in #143): (i) Regge–Wheeler gauge is attainable and keeps full generality for l ≥ 2 (the checks show gauge invariance of the equations, PL.G; they do not
-  construct ξ; this is #146's task, and the static case needs the same algebraic solve); (ii) m = 0 loses no generality; (iii) the sign of M is arbitrary in the derivation; (iv) boundary conditions
+  construct ξ; #146 constructs it, and at s = 0 the solve closes algebraically with no residual freedom, `zerilli_gauge_rs.md`); (ii) m = 0 loses no generality; (iii) the sign of M is arbitrary in the derivation; (iv) boundary conditions
   at r = 0 and the choice of ψ as the master variable are not touched; (v) "static" means a time-independent perturbation (no secular t-growth); l ≥ 2.
 
 ## 5. Checks

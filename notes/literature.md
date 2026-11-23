@@ -17,6 +17,9 @@
 - **Gibbons, Hartnoll & Ishibashi 2004**, hep-th/0409307 — vector modes stable; scalar modes: family of BCs
   q ∈ ℝℙ¹, q_C = 2 + log(98/9), Friedrichs extension "stable". Flaw: truncation at r_C (see phase0/RESULTS.md).
 - **Gleiser & Dotti 2006**, gr-qc/0604021 — kinematic singularity at r = 3μ/(2λ); exact smooth unstable modes.
+  Its arXiv TeX (read 2026-11-23) prints Lemma 1's (cz) as ζ′ = +2λ²/(3μ(2λ+3))ζ; its own (RW17) and (nv1)'s K force
+  the minus sign. (nv1)'s H₁ is 2/r times too large and its H₂ ζ term has the wrong sign (#146, phase2/dg_proof/
+  zerilli_gauge_rs.md; other versions and the journal text: #149).
 - **Dotti & Gleiser 2008**, arXiv:0809.3615 — intertwiner Ψ̂ = (∂ₓ − ψ₀'/ψ₀)Ψ_z; unique self-adjoint
   extension; instability excitable by generic data. Corollary: linearly unstable. Its eq. (61) prints
   −ℓ(ℓ+1)/(4|M|x) for the x⁻¹ term of V̂; the exact coefficient is 0 (phase2/dg_proof/RESULTS.md, L2/L3; #142).

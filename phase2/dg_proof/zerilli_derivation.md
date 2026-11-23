@@ -78,13 +78,15 @@ each angular component being separate equations because P and xP′ are independ
   (c = (l+2)(l−1) = 2λ). For M > 0 the zero is at negative r, outside the domain. Two things happen at r_s: ψ is not defined there by (9) and V has a double pole.
   The flow of (K, H1, H) and A themselves are regular there; H is determined by (K, H1) off r_s only. This derivation does not treat r_s itself (DG06's Lemma 1, the regularity
   condition on ζ = (2λr − 3μ)ψ_Z at r = 3μ/(2λ), is not re-derived here).
+  *Added by the coordinator:* `zerilli_gauge_rs.md` (#146) treats r_s. The flow is regular there, and every solution has
+  ζ′(r_s) = c*ζ(r_s), c* = −2λ²/(3μ(2λ+3)). DG06's arXiv TeX prints (cz) with the opposite sign.
 - **s.** The flow (K′ and H′ carry 1/s through the term L H1/(2sr²), from δR_tr), the elimination of H from A, the coefficient of H1 in ψ and, in the odd case, h0 all divide by s.
   The static case s = 0 is not covered; V does not depend on s, so −ψ,ₓₓ + Vψ = −s²ψ is the equation for every s ≠ 0.
 - **f.** r−2M = rf appears in every flow coefficient; for M < 0 it is positive on r > 0. For M > 0 it vanishes at the horizon, outside this domain.
 - **l ≥ 2.** It enters through A.1 (P and xP′ independent iff L ∉ {0, 2}, shown symbolically and by rank for l = 2..30, and at l = 1, L = 2, P = x, xP′ = x are dependent).
   No step divides by L−2 = 2λ. For l = 1 the traceless equation is empty and H0 = H2 is not obtained.
 - **Assumed, not derived here.** (i) Regge–Wheeler gauge is attainable for l ≥ 2 and keeps full generality (standard; DG06 say so). The checks here show the equations are gauge invariant
-  (PL.G) but do not construct the gauge transformation. (ii) m = 0 loses no generality (spherical symmetry). (iii) The sign of M is arbitrary: nothing in the derivation
+  (PL.G) but do not construct the gauge transformation; `zerilli_gauge_rs.md` (#146) constructs it, unique for l ≥ 2 (added by the coordinator). (ii) m = 0 loses no generality (spherical symmetry). (iii) The sign of M is arbitrary: nothing in the derivation
   assumes M > 0 or M < 0; the M < 0 content is where the singularities lie. (iv) Boundary conditions at r = 0 and the choice of ψ as the
   master variable (other master variables have other potentials) are not touched.
 
