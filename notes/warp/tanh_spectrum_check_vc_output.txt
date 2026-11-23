@@ -1,0 +1,11 @@
+== vc: v_c by Gauss-Legendre, 20 nodes on panels split at r = 1 + j/sigma (|j| <= 6), against mpmath's 30 digits (I96-mac2/vc96.txt); mutation none
+  sigma R =  2.0: v_c = 3.744899758679, mpmath 3.7448997586788, difference +8.9e-16; the rule before #140 (one panel on [0, 15], 400 nodes) 3.744899758679, -2.6e-14; new - old +2.7e-14
+  [PASS] v_c sR=2: 3.744899758679 against mpmath's 3.7448997586788: difference 8.9e-16
+  sigma R =  4.0: v_c = 2.470970674909, mpmath 2.47097067490909, difference +0.0e+00; the rule before #140 (one panel on [0, 15], 400 nodes) 2.470970674909, -2.5e-14; new - old +2.5e-14
+  [PASS] v_c sR=4: 2.470970674909 against mpmath's 2.47097067490909: difference 0.0e+00
+  sigma R =  8.0: v_c = 1.562433741638, mpmath 1.56243374163835, difference +4.7e-15; the rule before #140 (one panel on [0, 15], 400 nodes) 1.562433741638, -3.6e-13; new - old +3.6e-13
+  [PASS] v_c sR=8: 1.562433741638 against mpmath's 1.56243374163835: difference 4.7e-15
+  sigma R = 16.0: v_c = 0.985029856015, mpmath 0.985029856014836, difference +2.2e-16; the rule before #140 (one panel on [0, 15], 400 nodes) 0.985020182373, -9.7e-06; new - old +9.7e-06
+  [PASS] v_c sR=16: 0.985029856015 against mpmath's 0.985029856014836: difference 2.2e-16
+wall 0 s
+all checks passed

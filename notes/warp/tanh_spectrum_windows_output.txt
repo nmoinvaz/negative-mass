@@ -1,0 +1,71 @@
+# retab.py --tag=rpi5 --ts=notes/warp
+# machine rpi5-ubuntu aarch64, Python 3.14.10, numpy 2.5.4; tanh_spectrum.py from notes/warp at 000c3a2
+== planted truth: tanh_spectrum.py part_window, unmutated, before any stored array
+== window: the cut and the window of A from one np.abs array, on hand-made arrays (A, B) of known cut
+  [PASS] window_planted: cut 0.625, k 10, window of A 12, of B 12, by position 12, symmetry 0.292617 (planted: 0.625, 10, 12, 12, 12, 0.292617)
+  [PASS] window_scalar: pair 0.455509+0.374953i, np.abs(array) 0.5899815219915627 below abs(scalar) 0.5899815219915628: cut 0.5899815219915627, k 10, window of A 12, of B 12 (planted: k 10, 12, 12)
+== mutation: none
+== md against the logs (data): the values §7 prints that the sector logs do not print
+  none differ
+== A3, A4: window of A (ts.window) against the count by position and by exact modulus; the margin
+
+| σR = 8, m | cut | A window | by position | exact modulus | cut's tie group | abs(array) − abs(scalar) | margin | B window | symmetry | §7: A / B, symmetry | change |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0.5 | 0.1045 | 34 | 34 | 34 | 2 | 0 | 1.0e-09 | 36 | 2.7e-09 | 34 / 36, 2.7e-09 | — |
+| 1.5 | 0.0988 | 34 | 34 | 34 | 2 | 0 | 4.7e-11 | 36 | 4.4e-10 | 34 / 36, 4.4e-10 | — |
+| 2.5 | 0.1034 | 26 | 26 | 26 | 2 | + | 2.2e-11 | 28 | 5.6e-10 | 26 / 28, 5.6e-10 | — |
+| 3.5 | 0.0975 | 26 | 26 | 26 | 2 | 0 | 2.9e-11 | 28 | 7.6e-10 | 24 / 28, 7.6e-10 | A 24→26 |
+| 4.5 | 0.0922 | 26 | 26 | 26 | 2 | 0 | 3.8e-11 | 28 | 9.9e-10 | 26 / 28, 9.9e-10 | — |
+| 5.5 | 0.0873 | 26 | 26 | 26 | 2 | + | 4.8e-11 | 28 | 1.2e-09 | 26 / 28, 1.2e-09 | — |
+| 6.5 | 0.0903 | 18 | 18 | 18 | 2 | − | 3.8e-11 | 20 | 4.2e-11 | 16 / 20, 2.5e-11 | A 16→18, sym 2.5e-11→4.2e-11 |
+| 7.5 | 0.0856 | 18 | 18 | 18 | 2 | 0 | 4.9e-11 | 20 | 5.5e-11 | 16 / 20, 3.4e-11 | A 16→18, sym 3.4e-11→5.5e-11 |
+| 8.5 | 0.0813 | 18 | 18 | 18 | 2 | − | 6.4e-11 | 20 | 7.2e-11 | 16 / 20, 4.6e-11 | A 16→18, sym 4.6e-11→7.2e-11 |
+| 9.5 | 0.0773 | 18 | 18 | 18 | 2 | 0 | 8.2e-11 | 20 | 9.3e-11 | 18 / 20, 9.3e-11 | — |
+| 10.5 | 0.0738 | 18 | 18 | 18 | 2 | 0 | 1.0e-10 | 20 | 1.2e-10 | 18 / 20, 1.2e-10 | — |
+
+  σR = 8 totals over 11 sectors: A 262 (§7 254), B 284 (§7 284)
+
+| σR = 16, m | cut | A window | by position | exact modulus | cut's tie group | abs(array) − abs(scalar) | margin | B window | symmetry | §7: A / B, symmetry | change |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0.5 | 0.1128 | 22 | 22 | 22 | 2 | − | 3.3e-10 | 24 | 5.5e-10 | 20 / 24, 5.3e-10 | A 20→22, sym 5.3e-10→5.5e-10 |
+| 1.5 | 0.1075 | 22 | 22 | 22 | 2 | 0 | 1.4e-11 | 24 | 2.0e-11 | 22 / 24, 2.0e-11 | — |
+| 2.5 | 0.1025 | 22 | 22 | 22 | 2 | 0 | 1.9e-12 | 24 | 2.2e-11 | 22 / 24, 2.2e-11 | — |
+| 3.5 | 0.1063 | 18 | 18 | 18 | 2 | − | 1.2e-11 | 20 | 2.2e-11 | 16 / 20, 2.2e-11 | A 16→18 |
+| 4.5 | 0.1011 | 18 | 18 | 18 | 2 | + | 4.0e-12 | 20 | 2.5e-11 | 18 / 20, 2.5e-11 | — |
+| 5.5 | 0.0964 | 18 | 18 | 18 | 2 | − | 2.6e-11 | 20 | 3.4e-11 | 16 / 20, 2.6e-11 | A 16→18, sym 2.6e-11→3.4e-11 |
+| 6.5 | 0.0920 | 18 | 18 | 18 | 2 | 0 | 4.8e-11 | 20 | 5.5e-11 | 18 / 20, 5.5e-11 | — |
+| 7.5 | 0.0947 | 14 | 14 | 14 | 2 | − | 2.7e-11 | 16 | 4.0e-11 | 12 / 16, 2.9e-11 | A 12→14, sym 2.9e-11→4.0e-11 |
+| 8.5 | 0.0904 | 14 | 14 | 14 | 2 | 0 | 4.9e-11 | 16 | 6.1e-11 | 14 / 16, 6.1e-11 | — |
+| 9.5 | 0.0865 | 14 | 14 | 14 | 2 | 0 | 6.9e-11 | 16 | 8.2e-11 | 14 / 16, 8.2e-11 | — |
+| 10.5 | 0.0829 | 14 | 14 | 14 | 2 | 0 | 8.1e-11 | 16 | 9.7e-11 | 14 / 16, 9.7e-11 | — |
+
+  σR = 16 totals over 11 sectors: A 194 (§7 186), B 216 (§7 216)
+
+  [PASS] A3 sigma R = 8: window = position = exact modulus in 11 of 11 sectors, the cut's tie group is its eigenvalue and its conjugate
+  [PASS] A4 sigma R = 8: smallest margin 2.2e-11 (limit 1e-13), 11 of 11 sectors at or above it
+  [PASS] A3 sigma R = 16: window = position = exact modulus in 11 of 11 sectors, the cut's tie group is its eigenvalue and its conjugate
+  [PASS] A4 sigma R = 16: smallest margin 1.9e-12 (limit 1e-13), 11 of 11 sectors at or above it
+== A5: sigma R = 16, m = 1/2, the pilot (I96-win, P = 320) against the sector run (I96-dh610, P = 340)
+  pilot  P = 320: cut 0.112761, A window 22 (position 22, exact 22), B window 24, symmetry 2.1e-09, margin 1.7e-10, leading |mu| v_c A 0.225083300746, B 0.225083300303
+  sector P = 340: cut 0.112761, A window 22 (position 22, exact 22), B window 24, symmetry 5.5e-10, margin 3.3e-10, leading |mu| v_c A 0.225083300767, B 0.225083300620
+  [PASS] A5: leading |mu| v_c differ by 9.1e-11 (A) and 1.4e-09 (B) relative (limit 1e-8), cuts 0.1128 and 0.1128, the pilot passes A3 and A4 (22 = 22 = 22, margin 1.7e-10)
+
+== A6: every window count or symmetry value of §7's tables that differs, old (§7) → new
+  σR = 8, m = 3.5: A 24→26
+  σR = 8, m = 6.5: A 16→18, sym 2.5e-11→4.2e-11
+  σR = 8, m = 7.5: A 16→18, sym 3.4e-11→5.5e-11
+  σR = 8, m = 8.5: A 16→18, sym 4.6e-11→7.2e-11
+  σR = 16, m = 0.5: A 20→22, sym 5.3e-10→5.5e-10
+  σR = 16, m = 3.5: A 16→18
+  σR = 16, m = 5.5: A 16→18, sym 2.6e-11→3.4e-11
+  σR = 16, m = 7.5: A 12→14, sym 2.9e-11→4.0e-11
+  8 of 22 sectors differ
+  against the sector logs: σR = 8, m = 3.5: A 24→26; σR = 8, m = 6.5: A 16→18, sym 2.5e-11→4.2e-11; σR = 8, m = 7.5: A 16→18, sym 3.4e-11→5.5e-11; σR = 8, m = 8.5: A 16→18, sym 4.6e-11→7.2e-11; σR = 16, m = 0.5: A 20→22, sym 5.3e-10→5.5e-10; σR = 16, m = 3.5: A 16→18; σR = 16, m = 5.5: A 16→18, sym 2.6e-11→3.4e-11; σR = 16, m = 7.5: A 12→14, sym 2.9e-11→4.0e-11
+
+  machine-independent columns written to retab_rpi5.csv
+
+== supplementary (data, not part of the acceptance): sigma R = 2 and 4, the 22 sectors of I75-dh170, against tanh_spectrum_output.txt (#75's full run)
+  σR = 2: window totals A / B: new 654 / 676, #75's log 652 / 676; largest symmetry value new 1.7e-06, #75's log 1.7e-06; sectors that differ: m = 7.5: A 48→50
+  σR = 4: window totals A / B: new 406 / 424, #75's log 396 / 424; largest symmetry value new 4.7e-07, #75's log 4.7e-07; sectors that differ: m = 1.5: A 48→50; m = 3.5: A 44→46; m = 6.5: A 32→34; m = 7.5: A 32→34; m = 8.5: A 24→26
+
+all checks passed
