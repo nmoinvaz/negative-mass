@@ -382,6 +382,22 @@ def run_planted(chk, verbose=True):
 
 
 
+def to_mp(x):
+    """mp.mpf of the left endpoint of an ivmpf (exact)."""
+    sign, man, exp, _bc = x._mpi_[0]
+    return mp.mpf((-int(man) if sign else int(man), exp))
+
+
+def fmt(x, d=8):
+    """Digits of the left endpoint of an enclosure (for printing)."""
+    return mp.nstr(to_mp(x), d)
+
+
+def fmtu(x, d=8):
+    """Digits of the right endpoint (for printing an upper bound)."""
+    return mp.nstr(to_mp(iv.mpf(x.b)), d)
+
+
 # ----------------------------------------------------------------------------------------------------------
 # helpers for the perturbation scripts (Theorems L and M)
 # ----------------------------------------------------------------------------------------------------------
