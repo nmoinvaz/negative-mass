@@ -1,0 +1,22 @@
+he_tanh_bound.py, issue #132. sympy 1.14.0, mpmath 1.3.0, python 3.14.10. mutation: none. Interval arithmetic: mpmath iv at 40 digits.
+
+[PASS] identity: 13 of 13 exact identities in a = e^y, q = e^p hold: f in tanh form = cosh^2 p/(cosh(y+p) cosh(y-p)) = (1 + C)/(cosh 2y + C) with C = cosh 2p, L1, L2, L3 from the definition, (y f_y)_y = f Psi, Psi_y, E = F + y f_y, and the planted profile's L1, L2, L3; at 3 points the three forms agree to 1.6e-61
+[PASS] jets: the interval evaluators of f, L1, L2, L3, Psi, Psi_y, E and r f' at 7 points (tanh at p = 0, 0.05, 0.3, 1.7; planted at y = 0.4, 1, 2.3) have width below 1e-30 and agree with mpmath's `diff` of the definition to 1.87e-40
+[PASS] reduction: 10 of 10 exact identities hold: Psi (cosh w + C)^2 = -2 (P + C Q), E (cosh w + C)^2 = A + C B, Q (A + C B) - B (P + C Q) = T = A Q - P B, T = -w sinh w (cosh w - 1) m(w), m = w (cosh w + 2) - 3 sinh w has the Taylor coefficients 2 (k - 1)/(2k+1)! for k >= 1 and 0 at k = 0 (so zero for k = 0, 1, positive for k >= 2), r f' < 0, F > 0. So at a root (C Q = -P) E = T/(Q (cosh w + C)^2) < 0 for every C > -1: PROVED by hand from these
+[PASS] planted: f = sech^2(r)/10: (r f')' = 0 has its root enclosed in r in [1.009491, 1.0096092] with F + r f' in [0.89462249, 0.89464157] > 0 and r f' <= -0.063973 < 0 on it, so T1 and T2 have real solutions there (#101: 0.8946). Found by cell_proof, the code of the cover (22 leaves, 2 candidates, one sign change, Psi_y > 0)
+[PASS] cover: p in [0, 100] is tiled by 794 cells (widths 0.00153 to 0.195). In each, (0, 0.0625] and [p + 2, infinity) hold no root (the tail needs 4 tanh^2 2 - 2 sech^2 2 >= 3.5760951 > 0 and y_t >= 2), the leaves tile the rest, the roots lie in 18852 candidate leaves in all with one sign change and Psi_y > 0 per cell, F + r f' <= -0.05 and r f' < 0 on every candidate. Largest upper bound of F + r f' over the cells: -0.050001 (p in [0.228882, 0.231934], root y in [1.0280463, 1.0367854]); the closed form's root and F + r f' at the 3 p values of every cell lie inside the cell's enclosure; 922 s
+[PASS] large_p: the root of the closed form is enclosed by bisection (relative width 1e-30) and F + r f' < 0 there, in (-p/2 + 1/2, -p/2 + 1/2 + 1/(4p)): p = 100: y = 100.00499979168, F + r f' = -49.4987500833 (+ p/2 - 1/2 = 0.00125, 1/(8p) = 0.00125); p = 1000: y = 1000.0004999998, F + r f' = -499.499875 (+ p/2 - 1/2 = 0.000125, 1/(8p) = 0.000125); p = 10000: y = 10000.00005, F + r f' = -4999.4999875 (+ p/2 - 1/2 = 1.25e-5, 1/(8p) = 1.25e-5). The asymptote of he_surface.md section 4 is numerical evidence at these three p; the sign needs no asymptote, route 1 covers every p
+[PASS] sup: at C = 1 (the limit sigma R_b -> 0, where f = sech^2 y) the root is w = 2.01911309981960620039446, y = 1.00955654990980310019723 and F + r f' = -0.05367560305684038922018404 (enclosed to 4.1e-30). The scan's largest value, -0.0537 at sigma R_b = 0.01, is this limit
+all 7 checks passed in 950 s
+
+controls (each is the same script with --mutate=NAME and must fail exactly its target checks)
+[FIRED] --mutate=shift: adds 0.06 to F + r f' in the cover's evaluation of E; exit 1; targets cover; checks that fail: cover
+[FIRED] --mutate=identity-break: the cosh form of the profile has cosh p for cosh^2 p in the numerator; exit 1; targets cover, identity, jets; checks that fail: cover, identity, jets
+[FIRED] --mutate=no-tail: drops the r -> infinity exclusion, so every cell has a gap (y_t, infinity); exit 1; targets cover, planted; checks that fail: cover, planted
+[FIRED] --mutate=no-small: drops the r -> 0 exclusion, so every cell has a gap (0, y_a]; exit 1; targets cover, planted; checks that fail: cover, planted
+[FIRED] --mutate=cell-gap: removes one cell from the tiling of p; exit 1; targets cover; checks that fail: cover
+[FIRED] --mutate=jets-typo: 2 L2 becomes L2 in Psi_y (Psi_y only grows, so the cover still proves uniqueness); exit 1; targets jets; checks that fail: jets
+[FIRED] --mutate=proof-typo: the coefficient 2 (k - 1) of m's Taylor series becomes 2 k - 1; exit 1; targets reduction; checks that fail: reduction
+[FIRED] --mutate=factor-typo: the factor (cosh w - 1) of T becomes (cosh w + 1); exit 1; targets reduction; checks that fail: reduction
+[FIRED] --mutate=planted-eps: the planted epsilon 1/10 becomes 1, so F + r f' = -0.054 at its root; exit 1; targets planted; checks that fail: planted
+[FIRED] --mutate=asym-typo: the asymptote -p/2 + 1/2 becomes -p/2 + 1; exit 1; targets large_p; checks that fail: large_p
