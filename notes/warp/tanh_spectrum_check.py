@@ -15,6 +15,7 @@ reduction to a sector or the solver. Shares nothing with frank_loss.py beyond th
 in #75's closing comment.
 
     python notes/warp/tanh_spectrum_check.py --part=planted [--ms=...]
+    python notes/warp/tanh_spectrum_check.py --part=vc [--mutate=nosplit]  (v_c against mpmath's 30 digits; must exit 1)
     python notes/warp/tanh_spectrum_check.py --part=solve --sigma=2 --disc=A --out=DIR [--ms=...]
     python notes/warp/tanh_spectrum_check.py --part=report --out=DIR
     python notes/warp/tanh_spectrum_check.py --part=planted --mutate=kterm      (a control, must exit 1)
@@ -49,7 +50,7 @@ import scipy.sparse.linalg as spl
 from scipy.interpolate import BSpline
 
 ap = argparse.ArgumentParser()
-ap.add_argument("--part", required=True, choices=["planted", "solve", "report", "compare", "highm"])
+ap.add_argument("--part", required=True, choices=["planted", "solve", "report", "compare", "highm", "vc"])
 ap.add_argument("--mutate", default="")
 ap.add_argument("--sigma", type=float, default=2.0)
 ap.add_argument("--disc", default="A", choices=["A", "B"])
@@ -69,7 +70,7 @@ ap.add_argument("--k0", type=int, default=64)        # arpack: first number of e
 ap.add_argument("--kmax", type=int, default=0)       # arpack: no doubling past it (0: until --floor or n)
 args = ap.parse_args()
 MUT = args.mutate
-if MUT not in ("", "kterm", "half", "next", "compare", "bump", "lift", "floorup", "real"):
+if MUT not in ("", "kterm", "half", "next", "compare", "bump", "lift", "floorup", "real", "nosplit"):
     sys.exit(f"unknown mutation {MUT}")
 K4, NG = 3, 6  # cubic splines, Gauss points per interval
 S_SOB = 3 * (np.pi / 2) ** (4 / 3)
@@ -207,9 +208,26 @@ def tanh_fp(sig):
     return lambda r: sig * (sech2(sig * (r + 1)) - sech2(sig * (r - 1))) / (2 * np.tanh(sig))
 
 
-def v_c(sig):
-    g, w = np.polynomial.legendre.leggauss(400)
-    rr, ww = 15 * (g + 1) / 2, 15 * w / 2
+VC_K, VC_T, VC_N = 6, 14, 20  # #140: splits at r = 1 + j/sigma, |j| <= K; ends at 1 + T/sigma; N nodes a panel
+# I96-mac2/vc96.txt (vc96.py: mpmath, 30 digits, quad split at the wall), printed to 15 digits
+VC96 = {2.0: 3.7448997586788, 4.0: 2.47097067490909, 8.0: 1.56243374163835, 16.0: 0.985029856014836}
+
+
+def v_c(sig, split=None):
+    """v_c = 2 sqrt(S) / (pi I)^(1/3), I = int_0^inf |f'|^3 r^2 dr, by Gauss-Legendre with VC_N nodes on each panel
+    between the splits r = 1 + j/sigma (|j| <= VC_K, clipped at 0), on [0, first split] and on [1 + VC_K/sigma,
+    1 + VC_T/sigma]. The wall is 1/sigma wide. The rule before #140, one panel on [0, 15] with 400 nodes (split = False,
+    or --mutate=nosplit), put about two nodes across the wall at sigma R = 16 and was 9.7e-6 low there."""
+    if split is None:
+        split = MUT != "nosplit"
+    if split:
+        pts = [0.0] + [1.0 + j / sig for j in range(-VC_K, VC_K + 1)] + [1.0 + VC_T / sig]
+        edges, nn = np.unique(np.clip(pts, 0.0, None)), VC_N
+    else:
+        edges, nn = np.array([0.0, 15.0]), 400
+    g, w = np.polynomial.legendre.leggauss(nn)
+    a, b = edges[:-1, None], edges[1:, None]
+    rr, ww = ((b - a) / 2 * g + (a + b) / 2).ravel(), ((b - a) / 2 * w).ravel()
     return 2 * np.sqrt(S_SOB) / (np.pi * np.sum(ww * rr**2 * np.abs(tanh_fp(sig)(rr))**3)) ** (1 / 3)
 
 
@@ -220,6 +238,17 @@ def sizes(sig, disc, m):
     h = 0.1 * d["hfac"] * min(2.0 / sig, 1.0 / (1.0 + m / 10.0))
     nth = int(round(d["nth"] * (1.0 + (m - 0.5) / 20.0)))
     return knots_r(h, d["rcore"], d["q"], d["rout"]), nth, h
+
+
+def part_vc():
+    print(f"== vc: v_c by Gauss-Legendre, {VC_N} nodes on panels split at r = 1 + j/sigma (|j| <= {VC_K}), against "
+          f"mpmath's 30 digits (I96-mac2/vc96.txt); mutation {MUT or 'none'}")
+    for sig, ref in VC96.items():
+        vc, old = v_c(sig), v_c(sig, split=False)
+        print(f"  sigma R = {sig:4.1f}: v_c = {vc:.12f}, mpmath {ref!r}, difference {vc - ref:+.1e}; the rule before "
+              f"#140 (one panel on [0, 15], 400 nodes) {old:.12f}, {old - ref:+.1e}; new - old {vc - old:+.1e}", flush=True)
+        check(f"v_c sR={sig:g}", abs(vc - ref) < 1e-9,
+              f"{vc:.12f} against mpmath's {ref!r}: difference {abs(vc - ref):.1e}")
 
 
 def part_planted():
@@ -426,7 +455,7 @@ def part_compare():
 
 t_start = time.time()
 {"planted": part_planted, "solve": part_solve, "report": part_report, "compare": part_compare,
- "highm": part_highm}[args.part]()
+ "highm": part_highm, "vc": part_vc}[args.part]()
 print(f"wall {time.time() - t_start:.0f} s")
 print("FAILED: " + ", ".join(FAILED) if FAILED else "all checks passed")
 sys.exit(1 if FAILED else 0)
