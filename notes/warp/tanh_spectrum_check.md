@@ -21,6 +21,7 @@ against the script's 10⁻⁶. This basis converges a narrower window than #75's
 | check | sectors | verdict |
 |---|---|---|
 | v_c against #75's 3.7449 and 2.470971 | 2 | pass |
+| v_c against mpmath's 30 digits (`--part=vc`, #140: 20 nodes on panels split at r = 1 + j/σ) | 4 σR | pass, 4.7×10⁻¹⁵ at σR = 2 to 16; `--mutate=nosplit` (the old 400 nodes on [0, 15]) fails at σR = 16, 9.7×10⁻⁶ low (`tanh_spectrum_check_vc_output.txt`) |
 | planted τ = 6/(1 + r²), levels and multiplicities to 10⁻⁵ | 11 | pass, worst 4.1×10⁻⁶ (m = ½), 1.9×10⁻⁶ (m = 21/2) |
 | `--mutate=kterm` (drops (m + ½)B/ρ), m = ½ | 1 | fires, exit 1, worst error 5.0×10⁻¹ |
 | `--mutate=half` (doubles the weight ½τ), m = ½ | 1 | fires, exit 1, worst error 1.0 |
