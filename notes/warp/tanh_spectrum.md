@@ -241,11 +241,13 @@ reproduce it.
 
 | σR | sectors | eigenvalues in the converged windows (A / B) | real in the windows | real with \|μ\|v_c > 10⁻⁸ in A / in B, per sector | the largest \|μ\|v_c of them | real in A that B reproduces to 10⁻⁴ |
 |---|---|---|---|---|---|---|
-| 2 | 11 | 652 / 676 | 0 | 34 to 50 / 30 to 44 | 1.3×10⁻³ | 0 |
-| 4 | 11 | 396 / 424 | 0 | 55 to 66 / 43 to 55 | 1.2×10⁻³ | 0 |
+| 2 | 11 | 654 / 676 | 0 | 34 to 50 / 30 to 44 | 1.3×10⁻³ | 0 |
+| 4 | 11 | 406 / 424 | 0 | 55 to 66 / 43 to 55 | 1.2×10⁻³ | 0 |
 
-The window of a sector is \|μ\|v_c above its "converged above" value, 0.056 to 0.080 at σR = 2 and 0.065 to 0.097 at
-σR = 4. There is no real eigenvalue in any of them, in A or in B. Below the windows there are 30 to 66 real eigenvalues
+The window of a sector is \|μ\|v_c ≥ its "converged above" value, 0.056 to 0.080 at σR = 2 and 0.065 to 0.097 at
+σR = 4, with the convention of §7 (#140). Recounted that way from #75's arrays (`I75-dh170`), the A totals are 654 and
+406, against 652 and 396 in #75's log (σR = 2, m = 15/2; σR = 4, m = 3/2, 7/2, 13/2, 15/2, 17/2; +2 each). There is no
+real eigenvalue in any of them, in A or in B. Below the windows there are 30 to 66 real eigenvalues
 per sector, all at \|μ\|v_c ≤ 1.3×10⁻³, and none of them is reproduced by the other discretisation. They are the
 unconverged tail of a dense real matrix. Taking the windows together,
 
@@ -397,9 +399,9 @@ their sizes, not that P = 200 resolves the wall.
 | 3.5 | 0.00005 + 0.19041i | 0.190406 | 0.190406 | 0.159828 | 0.0975 | 7.6×10⁻¹⁰ |
 | 4.5 | 0.00001 + 0.16964i | 0.169640 | 0.169640 | 0.145264 | 0.0922 | 9.9×10⁻¹⁰ |
 | 5.5 | 0.00000 + 0.15300i | 0.153001 | 0.153001 | 0.133092 | 0.0873 | 1.2×10⁻⁹ |
-| 6.5 | 0.00000 + 0.13936i | 0.139358 | 0.139358 | 0.122779 | 0.0903 | 2.5×10⁻¹¹ |
-| 7.5 | 0.00000 + 0.12796i | 0.127962 | 0.127962 | 0.113936 | 0.0856 | 3.4×10⁻¹¹ |
-| 8.5 | 0.00000 + 0.11830i | 0.118296 | 0.118296 | 0.106273 | 0.0813 | 4.6×10⁻¹¹ |
+| 6.5 | 0.00000 + 0.13936i | 0.139358 | 0.139358 | 0.122779 | 0.0903 | 4.2×10⁻¹¹ |
+| 7.5 | 0.00000 + 0.12796i | 0.127962 | 0.127962 | 0.113936 | 0.0856 | 5.5×10⁻¹¹ |
+| 8.5 | 0.00000 + 0.11830i | 0.118296 | 0.118296 | 0.106273 | 0.0813 | 7.2×10⁻¹¹ |
 | 9.5 | 0.00000 + 0.10999i | 0.109993 | 0.109993 | 0.099569 | 0.0773 | 9.3×10⁻¹¹ |
 | 10.5 | 0.00000 + 0.10278i | 0.102782 | 0.102782 | 0.093657 | 0.0738 | 1.2×10⁻¹⁰ |
 
@@ -417,17 +419,21 @@ faster than the eigenfunction, and a diagnostic made from an eigenfunction is no
 | 0.5 | 0.1045 | 34 / 36 | 0 / 0 | 88 / 92 | 7.8×10⁻⁴ | 0 | 0 | 135 (87) |
 | 1.5 | 0.0988 | 34 / 36 | 0 / 0 | 103 / 94 | 7.4×10⁻⁴ | 0 | 0 | 146 (98) |
 | 2.5 | 0.1034 | 26 / 28 | 0 / 0 | 102 / 94 | 6.9×10⁻⁴ | 0 | 0 | 146 (98) |
-| 3.5 | 0.0975 | 24 / 28 | 0 / 0 | 102 / 94 | 6.5×10⁻⁴ | 0 | 0 | 145 (97) |
+| 3.5 | 0.0975 | 26 / 28 | 0 / 0 | 102 / 94 | 6.5×10⁻⁴ | 0 | 0 | 145 (97) |
 | 4.5 | 0.0922 | 26 / 28 | 0 / 0 | 102 / 94 | 6.2×10⁻⁴ | 0 | 0 | 146 (98) |
 | 5.5 | 0.0873 | 26 / 28 | 0 / 0 | 102 / 94 | 5.9×10⁻⁴ | 0 | 0 | 144 (96) |
-| 6.5 | 0.0903 | 16 / 20 | 0 / 0 | 102 / 94 | 5.6×10⁻⁴ | 0 | 0 | 145 (97) |
-| 7.5 | 0.0856 | 16 / 20 | 0 / 0 | 102 / 93 | 5.3×10⁻⁴ | 1 | 0 | 144 (96) |
-| 8.5 | 0.0813 | 16 / 20 | 0 / 0 | 102 / 93 | 5.1×10⁻⁴ | 0 | 0 | 144 (96) |
+| 6.5 | 0.0903 | 18 / 20 | 0 / 0 | 102 / 94 | 5.6×10⁻⁴ | 0 | 0 | 145 (97) |
+| 7.5 | 0.0856 | 18 / 20 | 0 / 0 | 102 / 93 | 5.3×10⁻⁴ | 1 | 0 | 144 (96) |
+| 8.5 | 0.0813 | 18 / 20 | 0 / 0 | 102 / 93 | 5.1×10⁻⁴ | 0 | 0 | 144 (96) |
 | 9.5 | 0.0773 | 18 / 20 | 0 / 0 | 101 / 92 | 4.8×10⁻⁴ | 0 | 0 | 144 (96) |
 | 10.5 | 0.0738 | 18 / 20 | 0 / 0 | 101 / 92 | 4.6×10⁻⁴ | 0 | 0 | 144 (96) |
 
-The window of a sector is |μ|v_c above its "stable to 10⁻⁵" value, 0.0738 to 0.1045. There is no real eigenvalue in
-any window, in A or in B, and the windows hold 254 (A) and 284 (B) eigenvalues together. Below them each sector has 88
+The window of a sector is |μ|v_c ≥ its "stable to 10⁻⁵" value, 0.0738 to 0.1045. That cut is the modulus of the first
+eigenvalue of A, by decreasing modulus, that B does not reproduce to 10⁻⁵, so the window includes that eigenvalue and its
+conjugate. The cut and the window come from one `np.abs` array (`window()` in `tanh_spectrum.py`, #140), so the counts do
+not depend on the machine: they are identical on rpi5 and the coordinator's Mac (`tanh_spectrum_windows_output.txt`, raw
+`I140-rpi5`, `I140-mac`). There is no real eigenvalue in
+any window, in A or in B, and the windows hold 262 (A) and 284 (B) eigenvalues together. Below them each sector has 88
 to 103 real eigenvalues in A and 92 to 94 in B, all with |μ|v_c ≤ 7.8×10⁻⁴. B reproduces one of A's to 10⁻⁴: at
 m = 15/2, A's −2.16459×10⁻⁸ against B's −2.16478×10⁻⁸, a relative difference of 8.6×10⁻⁵ and an absolute one of
 1.9×10⁻¹², just above the 10⁻⁸ floor of the search (`reals_check.py 8`). None of the other 1106 of A's 1107 real
@@ -463,21 +469,21 @@ their own that the script fixes, not at `--p` and `--npan`.
 
 | m | leading μv_c (a quadruple ±a ± ib) | \|μ\|v_c, A | \|μ\|v_c, B | next \|μ\|v_c | stable to 10⁻⁵ above | symmetric to |
 |---|---|---|---|---|---|---|
-| 0.5 | 0.00278 + 0.22507i | 0.225083 | 0.225083 | 0.184364 | 0.1128 | 5.3×10⁻¹⁰ |
+| 0.5 | 0.00278 + 0.22507i | 0.225083 | 0.225083 | 0.184364 | 0.1128 | 5.5×10⁻¹⁰ |
 | 1.5 | 0.00037 + 0.20079i | 0.200790 | 0.200790 | 0.169416 | 0.1075 | 2.0×10⁻¹¹ |
 | 2.5 | 0.00006 + 0.18081i | 0.180812 | 0.180812 | 0.155971 | 0.1025 | 2.2×10⁻¹¹ |
 | 3.5 | 0.00001 + 0.16471i | 0.164708 | 0.164708 | 0.144418 | 0.1063 | 2.2×10⁻¹¹ |
 | 4.5 | 0.00000 + 0.15143i | 0.151426 | 0.151426 | 0.134462 | 0.1011 | 2.5×10⁻¹¹ |
-| 5.5 | 0.00000 + 0.14024i | 0.140244 | 0.140244 | 0.125805 | 0.0964 | 2.6×10⁻¹¹ |
+| 5.5 | 0.00000 + 0.14024i | 0.140244 | 0.140244 | 0.125805 | 0.0964 | 3.4×10⁻¹¹ |
 | 6.5 | 0.00000 + 0.13067i | 0.130674 | 0.130674 | 0.118209 | 0.0920 | 5.5×10⁻¹¹ |
-| 7.5 | 0.00000 + 0.12237i | 0.122374 | 0.122374 | 0.111489 | 0.0947 | 2.9×10⁻¹¹ |
+| 7.5 | 0.00000 + 0.12237i | 0.122374 | 0.122374 | 0.111489 | 0.0947 | 4.0×10⁻¹¹ |
 | 8.5 | 0.00000 + 0.11510i | 0.115098 | 0.115098 | 0.105500 | 0.0904 | 6.1×10⁻¹¹ |
 | 9.5 | 0.00000 + 0.10866i | 0.108659 | 0.108659 | 0.100127 | 0.0865 | 8.2×10⁻¹¹ |
 | 10.5 | 0.00000 + 0.10292i | 0.102918 | 0.102918 | 0.095278 | 0.0829 | 9.7×10⁻¹¹ |
 
 The leading eigenvalue falls with m, from 0.225083 to 0.102918, with m|μ|v_c = 1.08 at m = 21/2 (1.08 at σR = 8, 0.87 at
 σR = 2). Its real part falls from 2.8×10⁻³ at m = ½ to 3.7×10⁻⁴ at m = 3/2 and 1.1×10⁻⁵ at m = 7/2 (the log's first four
-eigenvalues of A). The spectrum is symmetric under μ → −μ to at most 5.3×10⁻¹⁰ of |μ| over the converged eigenvalues.
+eigenvalues of A). The spectrum is symmetric under μ → −μ to at most 5.5×10⁻¹⁰ of |μ| over the converged eigenvalues.
 A and B differ by 9.6×10⁻¹¹ to 5.5×10⁻¹⁰ on the leading |μ|v_c of each sector (`sector_numbers.py`, R2).
 
 The L² residual ‖Sψ − vMψ‖/‖Sψ‖ of the leading eigenfunctions rises with m at both σR, and in every sector it is larger
@@ -505,20 +511,20 @@ eigenfunction is no better than that residual.
 
 | m | window \|μ\|v_c ≥ | eigenvalues in it (A / B) | real in it (A / B) | real with \|μ\|v_c > 10⁻⁸ (A / B) | largest | reproduced by B | identity, worst | eigenfunctions (real) |
 |---|---|---|---|---|---|---|---|---|
-| 0.5 | 0.1128 | 20 / 24 | 0 / 0 | 76 / 74 | 5.1×10⁻⁴ | 0 | 0 | 124 (76) |
+| 0.5 | 0.1128 | 22 / 24 | 0 / 0 | 76 / 74 | 5.1×10⁻⁴ | 0 | 0 | 124 (76) |
 | 1.5 | 0.1075 | 22 / 24 | 0 / 0 | 76 / 74 | 4.5×10⁻⁴ | 0 | 0 | 124 (76) |
 | 2.5 | 0.1025 | 22 / 24 | 0 / 0 | 76 / 74 | 4.3×10⁻⁴ | 0 | 0 | 124 (76) |
-| 3.5 | 0.1063 | 16 / 20 | 0 / 0 | 76 / 73 | 4.0×10⁻⁴ | 0 | 0 | 124 (76) |
+| 3.5 | 0.1063 | 18 / 20 | 0 / 0 | 76 / 73 | 4.0×10⁻⁴ | 0 | 0 | 124 (76) |
 | 4.5 | 0.1011 | 18 / 20 | 0 / 0 | 76 / 73 | 3.8×10⁻⁴ | 0 | 0 | 124 (76) |
-| 5.5 | 0.0964 | 16 / 20 | 0 / 0 | 76 / 72 | 3.6×10⁻⁴ | 0 | 0 | 124 (76) |
+| 5.5 | 0.0964 | 18 / 20 | 0 / 0 | 76 / 72 | 3.6×10⁻⁴ | 0 | 0 | 124 (76) |
 | 6.5 | 0.0920 | 18 / 20 | 0 / 0 | 75 / 72 | 3.4×10⁻⁴ | 0 | 0 | 123 (75) |
-| 7.5 | 0.0947 | 12 / 16 | 0 / 0 | 75 / 72 | 3.2×10⁻⁴ | 0 | 0 | 123 (75) |
+| 7.5 | 0.0947 | 14 / 16 | 0 / 0 | 75 / 72 | 3.2×10⁻⁴ | 0 | 0 | 123 (75) |
 | 8.5 | 0.0904 | 14 / 16 | 0 / 0 | 74 / 72 | 3.1×10⁻⁴ | 0 | 0 | 122 (74) |
 | 9.5 | 0.0865 | 14 / 16 | 0 / 0 | 74 / 72 | 3.0×10⁻⁴ | 0 | 0 | 122 (74) |
 | 10.5 | 0.0829 | 14 / 16 | 0 / 0 | 74 / 72 | 2.8×10⁻⁴ | 0 | 0 | 122 (74) |
 
-The window of a sector is |μ|v_c above its "stable to 10⁻⁵" value, 0.0829 to 0.1128. There is no real eigenvalue in any
-window, in A or in B, and the windows hold 186 (A) and 216 (B) eigenvalues together. Below them each sector has 74 to 76
+The window of a sector is |μ|v_c ≥ its "stable to 10⁻⁵" value, 0.0829 to 0.1128 (convention as at σR = 8). There is no real eigenvalue in any
+window, in A or in B, and the windows hold 194 (A) and 216 (B) eigenvalues together. Below them each sector has 74 to 76
 real eigenvalues in A and 72 to 74 in B, all with |μ|v_c ≤ 5.1×10⁻⁴, and B reproduces none of A's. The identity
 `real_identity` is zero to the digits printed on the 122 to 124 eigenfunctions evaluated per sector, the leading 24 of each
 parity block and the real ones. The real ones among them equal the table's real count in every sector: the script's
@@ -636,8 +642,11 @@ times (256/224)³, since the box's memory goes as N³. Scaled the same way from 
    takes the cut as `abs` of one eigenvalue and the window as `np.abs(array) >= cut`. On the machine that made the recount
    those two differ in the last bit for 309,576 of the 825,000 stored eigenvalues, so whether the cut's own eigenvalues
    are in the window is decided by rounding. That the laptop's rounding put them out is inferred from its log and was
-   not run there. No real eigenvalue enters or leaves a window, the cuts agree, and the totals above (254 and 284) follow
-   the log; with the two included, A's total is 258. The σR = 8 tables are not changed.
+   not run there. No real eigenvalue enters or leaves a window, and the cuts agree. #140 made the cut and the window
+   read one `np.abs` array, which includes the cut's pair on every machine. The tables of this section are its recount:
+   eight rows changed, each A window by +2 (σR = 8, m = 7/2, 13/2, 15/2, 17/2: the log's 24, 16, 16, 16; σR = 16, m = 1/2,
+   7/2, 11/2, 15/2: 20, 16, 16, 12), the A totals from 254 to 262 and from 186 to 194, and six symmetry values. B and
+   every cut are unchanged.
 7. The planted check's `real_identity` is 1.0×10⁻¹⁶ in the dh610 log and 2.3×10⁻¹⁶ in the laptop's. The planted weight
    does not depend on σR, and `planted` (7.3×10⁻¹⁵) and `shift` (1.6×10⁻¹¹, max |Re μ|/|μ| 7.7×10⁻¹²) are the same in
    both. Both values are at rounding level and the difference is not investigated.
@@ -654,7 +663,7 @@ times (256/224)³, since the box's memory goes as N³. Scaled the same way from 
 | planted and shift checks pass at the sizes used | pass, 7.3×10⁻¹⁵ and 1.6×10⁻¹¹, at their own fixed sizes, not at P = 200 | pass, 7.3×10⁻¹⁵ and 1.6×10⁻¹¹ (`real_identity` of `planted` 1.0×10⁻¹⁶), at their own fixed sizes, not at P = 340 |
 | A and B agree on ρ(T₁)v_c to 10⁻⁶ | pass, 1.4×10⁻¹¹ (at most 6.5×10⁻¹⁰ relative over the 11 leading eigenvalues) | pass, 1.5×10⁻¹⁰ (at most 5.3×10⁻⁹ relative over the 11 leading eigenvalues) |
 | ρ(T₁)v_c against the box at the largest affordable L, the difference against the box error | pass as the issue words it: 0.29951080 against 0.29912 at L = 3.5, +3.9×10⁻⁴; box error left 1.9×10⁻⁴ to 3.7×10⁻⁴ by model; unaccounted 2×10⁻⁵ to 2.0×10⁻⁴, not decided at dx = 1/32 (Reading notes 8) | fail, not run: the coordinator decided not to run L = 2, N = 256 at dx = 1/64, estimated at 31 GiB (34 GiB from the Mac), over the 24 GiB rule. No box value |
-| windows and real eigenvalues reported, the identity on each | pass: window 0.1045, \|v\| > 9.57 v_c = 14.95; no real eigenvalue in any window of 11 sectors; identity 0 on 135 to 146 eigenfunctions a sector | pass: window 0.1128, \|v\| > 8.87 v_c = 8.74; no real eigenvalue in any window of 11 sectors (186 A and 216 B eigenvalues in them); identity 0 on 122 to 124 eigenfunctions a sector, 74 to 76 of them real |
+| windows and real eigenvalues reported, the identity on each | pass: window 0.1045, \|v\| > 9.57 v_c = 14.95; no real eigenvalue in any window of 11 sectors; identity 0 on 135 to 146 eigenfunctions a sector | pass: window 0.1128, \|v\| > 8.87 v_c = 8.74; no real eigenvalue in any window of 11 sectors (194 A and 216 B eigenvalues in them); identity 0 on 122 to 124 eigenfunctions a sector, 74 to 76 of them real |
 
 Nine of the ten cells pass. The box comparison at σR = 16 does not: no box value exists. The σR = 16 sectors exit 0 with
 "all checks passed" (`I96-dh610/sectors-s16-p340.log.exit` holds 0), and the σR = 8 ones too.
@@ -685,7 +694,8 @@ Findings, not fixed in the text above:
 - Reading note 6's cause is now tested. On the Mac the recount matches all 132 values of the σR = 8 log, and differs from
   the σR = 16 log at m = 15/2 (14 against 12). np.abs(array) − abs(scalar) at the cut there is −1×10⁻¹⁷ where rpi5 has 0,
   and the reverse. So "σR = 16 recounts exactly" holds on rpi5 only. Each window count of a sector can move by 2 with
-  the machine. No real eigenvalue is involved.
+  the machine. No real eigenvalue is involved. #140 fixed the convention, and the tables above now carry its counts
+  (Reading notes 6).
 - The acceptance cells "planted and shift checks pass at the sizes used" are marked pass above. The coordinator counts
   them as not met: the criterion meant the sector sizes, and the checks ran at p = 60. That makes 7 of the 10 cells,
   not 9.
