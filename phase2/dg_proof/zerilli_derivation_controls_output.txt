@@ -1,22 +1,38 @@
 # baseline: unmutated must exit 0 with no FAIL line and empty stderr
-OK   baseline exit=0 PASS=32 FAIL=0 203s
+OK   baseline exit=0 PASS=32 FAIL=0 209s
 # mutated: --mutate=NAME --failfast; target = first FAIL id, exit code as listed
 OK   dual_inv     target=PL.0a      exit=2 (want 2) first-FAIL=PL.0a      1s
-MISS fsign_bg     target=PL.0c      exit=2 (want 2) first-FAIL=PL.O.3     229s
+MISS fsign_bg     target=PL.0c      exit=2 (want 2) first-FAIL=PL.O.3     231s
 OK   leg_sign     target=PL.0d      exit=2 (want 2) first-FAIL=PL.0d      1s
-OK   drop_trace   target=PL.G.even  exit=2 (want 2) first-FAIL=PL.G.even  129s
-OK   route2_drop  target=PL.X.even  exit=2 (want 2) first-FAIL=PL.X.even  8s
+OK   drop_trace   target=PL.G.even  exit=2 (want 2) first-FAIL=PL.G.even  130s
+OK   route2_drop  target=PL.X.even  exit=2 (want 2) first-FAIL=PL.X.even  9s
 OK   fsign_ans    target=PL.O.3     exit=2 (want 2) first-FAIL=PL.O.3     4s
 OK   rw_typo      target=PL.O.3     exit=2 (want 2) first-FAIL=PL.O.3     4s
 OK   l1           target=A.1        exit=1 (want 1) first-FAIL=A.1        10s
-OK   ang_norm     target=A.2        exit=1 (want 1) first-FAIL=A.2        11s
+OK   ang_norm     target=A.2        exit=1 (want 1) first-FAIL=A.2        12s
 OK   ans_rr       target=E.1        exit=1 (want 1) first-FAIL=E.1        12s
 OK   skip_s       target=E.3        exit=1 (want 1) first-FAIL=E.3        13s
-OK   mv_coef      target=E.5b       exit=1 (want 1) first-FAIL=E.5b       16s
+OK   mv_coef      target=E.5b       exit=1 (want 1) first-FAIL=E.5b       17s
 OK   fsign_mv     target=E.5b       exit=1 (want 1) first-FAIL=E.5b       16s
 OK   v_typo       target=E.5d       exit=1 (want 1) first-FAIL=E.5d       16s
 OK   res_typo     target=E.5e       exit=1 (want 1) first-FAIL=E.5e       16s
-OK   dg3_typo     target=E.6a       exit=1 (want 1) first-FAIL=E.6a       18s
+OK   dg3_typo     target=E.6a       exit=1 (want 1) first-FAIL=E.6a       17s
 OK   d2_zero      target=D.2        exit=1 (want 1) first-FAIL=D.2        17s
 OK   div_set      target=D.1        exit=1 (want 1) first-FAIL=D.1        17s
-# summary: 18 OK, 1 MISS (of 1 baseline + 18 pairs)
+OK   ds_sign      target=PL.0b      exit=2 (want 2) first-FAIL=PL.0b      1s
+OK   gauge_odd    target=PL.G.odd   exit=2 (want 2) first-FAIL=PL.G.odd   93s
+OK   x_odd        target=PL.X.odd   exit=2 (want 2) first-FAIL=PL.X.odd   10s
+OK   x_gauge      target=PL.X.gauge_even exit=2 (want 2) first-FAIL=PL.X.gauge_even 108s
+OK   odd_norm     target=PL.O.1     exit=2 (want 2) first-FAIL=PL.O.1     4s
+OK   odd_flow     target=PL.O.2     exit=2 (want 2) first-FAIL=PL.O.2     4s
+OK   same_m0      target=PL.O.4     exit=2 (want 2) first-FAIL=PL.O.4     4s
+OK   grr_trace    target=E.2        exit=1 (want 1) first-FAIL=E.2        12s
+OK   hexpr_sign   target=E.3b       exit=1 (want 1) first-FAIL=E.3b       16s
+OK   e4_drop      target=E.4        exit=1 (want 1) first-FAIL=E.4        14s
+OK   e5a_det0     target=E.5a       exit=1 (want 1) first-FAIL=E.5a       16s
+OK   v_s2         target=E.5c       exit=1 (want 1) first-FAIL=E.5c       16s
+OK   back_coef    target=E.6b       exit=1 (want 1) first-FAIL=E.6b       17s
+OK   d3_s1        target=D.3        exit=1 (want 1) first-FAIL=D.3        17s
+OK   d4_l2        target=D.4        exit=1 (want 1) first-FAIL=D.4        18s
+OK   d5_ah0       target=D.5        exit=1 (want 1) first-FAIL=D.5        17s
+# summary: 34 OK, 1 MISS (of 1 baseline + 34 pairs)
