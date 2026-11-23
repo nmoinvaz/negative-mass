@@ -301,6 +301,363 @@ The frank_loss.py check `identity` fails in both runs and `#58 Picard value of G
 #58's values at L = 5 and with an identity accurate only on the finer grid, and the frank_loss output says so of its
 L = 12 and 16 runs. They are not the quantity used here.
 
+## 7. Thin walls, σR = 8 and 16 (#96)
+
+Issue #96. Output [tanh_spectrum_thin_output.txt](tanh_spectrum_thin_output.txt): the two sector logs, σR = 8 and 16, each
+under a header with its machine, code commit and command. Raw output in
+[negative-mass-raw](https://github.com/nmoinvaz/negative-mass-raw): `I96-win` (the laptop: sizes, pilot, σR = 8 sectors,
+box runs; commit 7940b1e), `I96-mac` (box probes, a477e61), `I96-dh610` (the σR = 16 sectors, 68abc50) and `I96-rpi5`
+(numbers that no log prints, 921d262). Code: branch `wip/i96-thin` at c5fd40d, which adds `--p`, `--npan` and `--convtol`
+to tanh_spectrum.py and guards frank_loss.py's `import resource` so it starts on Windows (peak memory prints as nan there,
+so the peaks below are the memory sampler's). The scripts are otherwise those of #75 and #63. Status: *numerical
+evidence*.
+
+Every number below is taken from a log or file of the raw folders, named beside it, or from
+`I96-rpi5/sector_numbers_output.txt`. That script reads the sector logs and the `eig/*.npz` and prints the sector and
+window tables of the two σR (below). The σR = 8 tables were drafted from `I96-win/table.py`'s output, and they equal the
+rows of `sector_numbers.py`'s.
+
+### What ran
+
+Commands run from the repository root with `python` the project's venv, one thread per process (`OMP_NUM_THREADS = 1`,
+`--procs=1`), `DIR` the raw folder's `eig`.
+
+| run | where | command | exit | wall |
+|---|---|---|---|---|
+| sizes, σR = 8 | win | `tanh_spectrum.py --part=conv --sigmas=8 --p=8:P --npan=N --convtol=1e-8 --procs=1` | 1, 0 | 2073 s, 4160 s |
+| pilot, σR = 16, m = ½ | win | `tanh_spectrum.py --part=vc,planted,tanh --sigmas=16 --ms=0.5 --p=16:320 --npan=320 --procs=1 --raw=DIR` | 0 | 8615 s |
+| sizes, σR = 16 | win | `tanh_spectrum.py --part=conv --sigmas=16 --p=16:P --npan=N --convtol=1e-8 --procs=1` | 1, 0 | 12,635 s, 14,259 s |
+| sectors, σR = 8 | win | `tanh_spectrum.py --part=vc,planted,shift,tanh --sigmas=8 --p=8:200 --npan=160 --procs=1 --raw=DIR` | 0 | 24,270 s |
+| sectors, σR = 16 | dh610 | the same with `--sigmas=16 --p=16:340 --npan=320` | 0 | 97,906 s (27.2 h) |
+| box, σR = 8 | win, Mac | `frank_loss.py --part=krylov --sigmas=8 --Ns=N --L=L --vs=0.5` | see the box table | |
+| recount of the sector logs | rpi5 | `I96-rpi5/sector_numbers.py` | 1 (R1 fails at σR = 8, Reading notes 6) | 1 s |
+
+Logs: `I96-win/conv-s8-p160-n160.log`, `conv-s8-p200-n160.log`, `pilot-s16.log`, `conv-s16-p320-n320.log`,
+`conv-s16-p340-n320.log`, `sectors-s8.log` (each with its `.exit`), `I96-dh610/sectors-s16-p340.log` (with its `.exit`),
+and the box logs of the box table. The laptop (4 physical cores, 32 GB, shared with another project's solver) ran at most
+two of these at once, at below-normal priority, detached. Its peak working sets are the largest `peak=` of
+`memory-sampler.log` for the run's processes, sampled once a minute (every 10 s for the box run of L = 3.5). Nothing was
+stopped over memory. dh610 (20 cores, 62 GB, shared with that project's solver) ran the sectors at nice 10 as a systemd
+user unit, with a memory watcher (`memwatch.log`, once a minute) that only reports.
+
+### Sizes
+
+The `conv` part changes one parameter at a time from the base (dK = 20, p = P, Lmap = 2, N panels), in m = ½ and 3/2,
+and the check takes the largest relative move of the leading |μ|v_c, not counting the deliberately coarse dK = 12. The
+tolerance is 10⁻⁸ here, against #75's 10⁻⁷ (`--convtol`).
+
+| σR | attempt | P | N | largest move | variant | wall | peak working set | exit |
+|---|---|---|---|---|---|---|---|---|
+| 8 | 1 | 160 | 160 | 5.2×10⁻⁸ | Lmap = 4 (m = 3/2); next p = 140 at 2.5×10⁻⁸ | 2073 s | 2.54 GiB | 1, `conv` fails |
+| 8 | 2 | 200 | 160 | 1.1×10⁻⁹ | Lmap = 4 (m = ½) | 4160 s | 3.90 GiB | 0 |
+| 16 | 1 | 320 | 320 | 2.4×10⁻⁸ | Lmap = 4 (m = 3/2); next Lmap = 4 (m = ½) at 1.9×10⁻⁸ | 12,635 s | 9.78 GiB | 1, `conv` fails |
+| 16 | 2 | 340 | 320 | 7.2×10⁻⁹ | Lmap = 4 (m = 3/2) | 14,259 s | 11.03 GiB | 0 |
+
+The largest moves are the `conv` check's own line in each log. The variant and the runner-up are read from the logs'
+printed changes, which have two digits, so a printed ratio can differ from the check's value in the second digit.
+
+At σR = 8 the failing variants (Lmap = 4, p = 140) point to the radial size, not to the panels: 320 panels change the
+leading eigenvalue by 6.1×10⁻¹⁴ (absolute, m = ½) at P = 160. So P rose by 40 (the task's rule) with N unchanged. At
+σR = 16 the same single variant limits: at P = 320 every other variant moves the eigenvalue by at most 2.4×10⁻⁹, and at
+P = 340 the variants p = 320 and p = 360 move it by at most 5.5×10⁻¹⁰, while Lmap = 4 moves it by 7.2×10⁻⁹. The step
+from P = 320 was +20, not the task's +40: the coordinator changed it, since sectors at P = 360 would peak near 31 GiB
+(24.43 GiB of the pilot scaled by (360/320)², an estimate) and do not fit the laptop. The σR = 16 sectors went to dh610
+at P = 340. The pass has 28% of the tolerance to spare and rests on one variant.
+
+Pilot (step 3, `pilot-s16.log`): σR = 16, m = ½, P = 320, N = 320, alone, 8605 s for the sector, peak working set
+24.43 GiB against 20 GiB estimated. ρ(T₁)v_c = 0.22508330 in A and in B, differing by 4.4×10⁻¹⁰, window 0.1128 with no
+real eigenvalue in it. The sector at P = 340 gives 0.22508330 again: its A differs from the pilot's A by 2.1×10⁻¹¹ and its
+B (P = 350) from the pilot's B (P = 330) by 3.2×10⁻¹⁰ (`I96-rpi5/sector_numbers_output.txt`, R3).
+
+### The σR = 8 sectors
+
+`sectors-s8.log`: discretisation A has dK = 28, p = 200, Lmap = 2 and 160 panels of 16 nodes, B has dK = 38, p = 210,
+Lmap = 3 and 240 panels. All 11 sectors, m = ½ to 21/2, exit 0, "all checks passed", wall 24,270 s (6.74 h). A sector took
+2001 to 2521 s, beside a σR = 16 `conv` run from 14:53 on (`queue.log`). The peak working set was 9.93 GiB.
+
+The checks that run first passed. `vc` matches mass_bounds.md at all four σR to 3.7×10⁻⁶. `planted` returns ρ = 1 to
+7.3×10⁻¹⁵ (`real_identity` 2.3×10⁻¹⁶) and `shift` to 1.6×10⁻¹¹ (max |Re μ|/|μ| 7.7×10⁻¹²). These two run at sizes of
+their own that the script fixes (planted dK = 12, shift dK = 22, p = 60, 120 panels, Lmap = 2, m = ½, 3/2, 5/2), not at
+`--p` and `--npan`, and the planted weight does not depend on σR. They show that the code and the Ω basis are right at
+their sizes, not that P = 200 resolves the wall.
+
+σR = 8, v_c = 1.562434, ρ(T₁)v_c = 0.29951080 (A and B, differing by 1.4×10⁻¹¹), √3 ρ v_c = 0.5188 (FL: ≤ 1).
+
+| m | leading μv_c (a quadruple ±a ± ib) | \|μ\|v_c, A | \|μ\|v_c, B | next \|μ\|v_c | stable to 10⁻⁵ above | symmetric to |
+|---|---|---|---|---|---|---|
+| 0.5 | 0.00723 + 0.29942i | 0.299511 | 0.299511 | 0.224930 | 0.1045 | 2.7×10⁻⁹ |
+| 1.5 | 0.00116 + 0.25251i | 0.252510 | 0.252510 | 0.199123 | 0.0988 | 4.4×10⁻¹⁰ |
+| 2.5 | 0.00023 + 0.21708i | 0.217079 | 0.217079 | 0.177495 | 0.1034 | 5.6×10⁻¹⁰ |
+| 3.5 | 0.00005 + 0.19041i | 0.190406 | 0.190406 | 0.159828 | 0.0975 | 7.6×10⁻¹⁰ |
+| 4.5 | 0.00001 + 0.16964i | 0.169640 | 0.169640 | 0.145264 | 0.0922 | 9.9×10⁻¹⁰ |
+| 5.5 | 0.00000 + 0.15300i | 0.153001 | 0.153001 | 0.133092 | 0.0873 | 1.2×10⁻⁹ |
+| 6.5 | 0.00000 + 0.13936i | 0.139358 | 0.139358 | 0.122779 | 0.0903 | 2.5×10⁻¹¹ |
+| 7.5 | 0.00000 + 0.12796i | 0.127962 | 0.127962 | 0.113936 | 0.0856 | 3.4×10⁻¹¹ |
+| 8.5 | 0.00000 + 0.11830i | 0.118296 | 0.118296 | 0.106273 | 0.0813 | 4.6×10⁻¹¹ |
+| 9.5 | 0.00000 + 0.10999i | 0.109993 | 0.109993 | 0.099569 | 0.0773 | 9.3×10⁻¹¹ |
+| 10.5 | 0.00000 + 0.10278i | 0.102782 | 0.102782 | 0.093657 | 0.0738 | 1.2×10⁻¹⁰ |
+
+The leading eigenvalue falls with m, from 0.299511 to 0.102782, with m|μ|v_c = 1.08 at m = 21/2 (0.87 at σR = 2, §4).
+Its real part falls from 7.2×10⁻³ at m = ½ to 5.1×10⁻⁵ at m = 7/2 and 3×10⁻⁶ at m = 11/2 (the log's first four
+eigenvalues of A). The spectrum is symmetric under μ → −μ to at most 2.7×10⁻⁹ of |μ| over the converged eigenvalues.
+The L² residual ‖Sψ − vMψ‖/‖Sψ‖ of the leading eigenfunctions rises with m from 2.3×10⁻⁵ at m = ½ to 2.8×10⁻³ at
+m = 21/2, while A and B agree on every leading eigenvalue to the digits printed. As in §4 the eigenvalue converges far
+faster than the eigenfunction, and a diagnostic made from an eigenfunction is no better than that residual.
+
+### Real eigenvalues and the window, σR = 8
+
+| m | window \|μ\|v_c ≥ | eigenvalues in it (A / B) | real in it (A / B) | real with \|μ\|v_c > 10⁻⁸ (A / B) | largest | reproduced by B | identity, worst | eigenfunctions (real) |
+|---|---|---|---|---|---|---|---|---|
+| 0.5 | 0.1045 | 34 / 36 | 0 / 0 | 88 / 92 | 7.8×10⁻⁴ | 0 | 0 | 135 (87) |
+| 1.5 | 0.0988 | 34 / 36 | 0 / 0 | 103 / 94 | 7.4×10⁻⁴ | 0 | 0 | 146 (98) |
+| 2.5 | 0.1034 | 26 / 28 | 0 / 0 | 102 / 94 | 6.9×10⁻⁴ | 0 | 0 | 146 (98) |
+| 3.5 | 0.0975 | 24 / 28 | 0 / 0 | 102 / 94 | 6.5×10⁻⁴ | 0 | 0 | 145 (97) |
+| 4.5 | 0.0922 | 26 / 28 | 0 / 0 | 102 / 94 | 6.2×10⁻⁴ | 0 | 0 | 146 (98) |
+| 5.5 | 0.0873 | 26 / 28 | 0 / 0 | 102 / 94 | 5.9×10⁻⁴ | 0 | 0 | 144 (96) |
+| 6.5 | 0.0903 | 16 / 20 | 0 / 0 | 102 / 94 | 5.6×10⁻⁴ | 0 | 0 | 145 (97) |
+| 7.5 | 0.0856 | 16 / 20 | 0 / 0 | 102 / 93 | 5.3×10⁻⁴ | 1 | 0 | 144 (96) |
+| 8.5 | 0.0813 | 16 / 20 | 0 / 0 | 102 / 93 | 5.1×10⁻⁴ | 0 | 0 | 144 (96) |
+| 9.5 | 0.0773 | 18 / 20 | 0 / 0 | 101 / 92 | 4.8×10⁻⁴ | 0 | 0 | 144 (96) |
+| 10.5 | 0.0738 | 18 / 20 | 0 / 0 | 101 / 92 | 4.6×10⁻⁴ | 0 | 0 | 144 (96) |
+
+The window of a sector is |μ|v_c above its "stable to 10⁻⁵" value, 0.0738 to 0.1045. There is no real eigenvalue in
+any window, in A or in B, and the windows hold 254 (A) and 284 (B) eigenvalues together. Below them each sector has 88
+to 103 real eigenvalues in A and 92 to 94 in B, all with |μ|v_c ≤ 7.8×10⁻⁴. B reproduces one of A's to 10⁻⁴: at
+m = 15/2, A's −2.16459×10⁻⁸ against B's −2.16478×10⁻⁸, a relative difference of 8.6×10⁻⁵ and an absolute one of
+1.9×10⁻¹², just above the 10⁻⁸ floor of the search (`reals_check.py 8`). None of the other 1106 of A's 1107 real
+eigenvalues is reproduced (Reading notes, 1). The identity `real_identity` is zero to the digits printed on the 135 to
+146 eigenfunctions evaluated per sector, the leading 24 of each parity block and the real ones. For this profile the zero
+is structural, as in §5, and no real candidate stands in a window to evaluate it on.
+
+The window line of the log:
+
+    window: every eigenvalue with |mu| v_c >= 0.1045 is converged in every m listed, and the leading one of m = 10.5 is
+    0.1028; so a real zero mode needs |v| > 9.57 v_c = 14.95
+
+That is |v| > 9.57 v_c at σR = 8, against 12.05 v_c at σR = 2 and 10.32 v_c at σR = 4 (§5), and 14.95 in v against 45.1
+and 25.5. The window of σR = 8 starts above the leading eigenvalue of m = 21/2, so, unlike the two narrower walls, the
+line is set by the converged window of m = ½ and not by the last sector. It carries §5's condition, that the leading
+eigenvalue keeps falling with m beyond 21/2, and #120's computation of that fall (m = 23/2 to 41/2) covers σR = 2 and
+4 only. At σR = 8 the condition is assumed for every m > 21/2. This is *numerical evidence* about the Galerkin
+eigenvalues, not a bound.
+
+### The σR = 16 sectors
+
+`I96-dh610/sectors-s16-p340.log`: discretisation A has dK = 28, p = 340, Lmap = 2 and 320 panels of 16 nodes, B has
+dK = 38, p = 350, Lmap = 3 and 480 panels. All 11 sectors, m = ½ to 21/2, exit 0, "all checks passed", wall 97,906 s
+(27.2 h). A sector took 5635 to 20,362 s, m = ½ the longest. The worker's peak resident memory printed with each sector is
+28.39 to 28.40 GiB. The memory watcher's largest sum of resident sets was 28.67 GiB and its lowest MemAvailable 19.34 GiB
+(`I96-dh610/memwatch.log`, `I96-rpi5/sector_numbers_output.txt`, R4).
+
+The checks that run first passed. `vc` matches mass_bounds.md to 3.7×10⁻⁶, `planted` returns ρ = 1 to 7.3×10⁻¹⁵
+(`real_identity` 1.0×10⁻¹⁶) and `shift` to 1.6×10⁻¹¹ (max |Re μ|/|μ| 7.7×10⁻¹²). As at σR = 8 they run at the sizes of
+their own that the script fixes, not at `--p` and `--npan`.
+
+σR = 16, v_c = 0.985030, ρ(T₁)v_c = 0.22508330 (A and B, differing by 1.5×10⁻¹⁰), √3 ρ v_c = 0.3899 (FL: ≤ 1).
+
+| m | leading μv_c (a quadruple ±a ± ib) | \|μ\|v_c, A | \|μ\|v_c, B | next \|μ\|v_c | stable to 10⁻⁵ above | symmetric to |
+|---|---|---|---|---|---|---|
+| 0.5 | 0.00278 + 0.22507i | 0.225083 | 0.225083 | 0.184364 | 0.1128 | 5.3×10⁻¹⁰ |
+| 1.5 | 0.00037 + 0.20079i | 0.200790 | 0.200790 | 0.169416 | 0.1075 | 2.0×10⁻¹¹ |
+| 2.5 | 0.00006 + 0.18081i | 0.180812 | 0.180812 | 0.155971 | 0.1025 | 2.2×10⁻¹¹ |
+| 3.5 | 0.00001 + 0.16471i | 0.164708 | 0.164708 | 0.144418 | 0.1063 | 2.2×10⁻¹¹ |
+| 4.5 | 0.00000 + 0.15143i | 0.151426 | 0.151426 | 0.134462 | 0.1011 | 2.5×10⁻¹¹ |
+| 5.5 | 0.00000 + 0.14024i | 0.140244 | 0.140244 | 0.125805 | 0.0964 | 2.6×10⁻¹¹ |
+| 6.5 | 0.00000 + 0.13067i | 0.130674 | 0.130674 | 0.118209 | 0.0920 | 5.5×10⁻¹¹ |
+| 7.5 | 0.00000 + 0.12237i | 0.122374 | 0.122374 | 0.111489 | 0.0947 | 2.9×10⁻¹¹ |
+| 8.5 | 0.00000 + 0.11510i | 0.115098 | 0.115098 | 0.105500 | 0.0904 | 6.1×10⁻¹¹ |
+| 9.5 | 0.00000 + 0.10866i | 0.108659 | 0.108659 | 0.100127 | 0.0865 | 8.2×10⁻¹¹ |
+| 10.5 | 0.00000 + 0.10292i | 0.102918 | 0.102918 | 0.095278 | 0.0829 | 9.7×10⁻¹¹ |
+
+The leading eigenvalue falls with m, from 0.225083 to 0.102918, with m|μ|v_c = 1.08 at m = 21/2 (1.08 at σR = 8, 0.87 at
+σR = 2). Its real part falls from 2.8×10⁻³ at m = ½ to 3.7×10⁻⁴ at m = 3/2 and 1.1×10⁻⁵ at m = 7/2 (the log's first four
+eigenvalues of A). The spectrum is symmetric under μ → −μ to at most 5.3×10⁻¹⁰ of |μ| over the converged eigenvalues.
+A and B differ by 9.6×10⁻¹¹ to 5.5×10⁻¹⁰ on the leading |μ|v_c of each sector (`sector_numbers.py`, R2).
+
+The L² residual ‖Sψ − vMψ‖/‖Sψ‖ of the leading eigenfunctions rises with m at both σR, and in every sector it is larger
+at σR = 16 (P = 340) than at σR = 8 (P = 200), from the logs:
+
+| m | σR = 8 | σR = 16 |
+|---|---|---|
+| 0.5 | 2.3×10⁻⁵ | 8.3×10⁻⁵ |
+| 1.5 | 2.6×10⁻⁵ | 1.1×10⁻⁴ |
+| 2.5 | 3.2×10⁻⁵ | 1.7×10⁻⁴ |
+| 3.5 | 4.4×10⁻⁵ | 3.2×10⁻⁴ |
+| 4.5 | 7.6×10⁻⁵ | 6.0×10⁻⁴ |
+| 5.5 | 1.5×10⁻⁴ | 1.1×10⁻³ |
+| 6.5 | 3.0×10⁻⁴ | 1.8×10⁻³ |
+| 7.5 | 5.7×10⁻⁴ | 2.9×10⁻³ |
+| 8.5 | 1.0×10⁻³ | 4.4×10⁻³ |
+| 9.5 | 1.7×10⁻³ | 6.5×10⁻³ |
+| 10.5 | 2.8×10⁻³ | 9.0×10⁻³ |
+
+This is data. No cause is proposed: no run here tests one. In the same sectors A and B agree on the leading eigenvalue to
+5.5×10⁻¹⁰ at most, so, as in §4, the eigenvalue converges far faster than the eigenfunction, and a diagnostic made from an
+eigenfunction is no better than that residual.
+
+### Real eigenvalues and the window, σR = 16
+
+| m | window \|μ\|v_c ≥ | eigenvalues in it (A / B) | real in it (A / B) | real with \|μ\|v_c > 10⁻⁸ (A / B) | largest | reproduced by B | identity, worst | eigenfunctions (real) |
+|---|---|---|---|---|---|---|---|---|
+| 0.5 | 0.1128 | 20 / 24 | 0 / 0 | 76 / 74 | 5.1×10⁻⁴ | 0 | 0 | 124 (76) |
+| 1.5 | 0.1075 | 22 / 24 | 0 / 0 | 76 / 74 | 4.5×10⁻⁴ | 0 | 0 | 124 (76) |
+| 2.5 | 0.1025 | 22 / 24 | 0 / 0 | 76 / 74 | 4.3×10⁻⁴ | 0 | 0 | 124 (76) |
+| 3.5 | 0.1063 | 16 / 20 | 0 / 0 | 76 / 73 | 4.0×10⁻⁴ | 0 | 0 | 124 (76) |
+| 4.5 | 0.1011 | 18 / 20 | 0 / 0 | 76 / 73 | 3.8×10⁻⁴ | 0 | 0 | 124 (76) |
+| 5.5 | 0.0964 | 16 / 20 | 0 / 0 | 76 / 72 | 3.6×10⁻⁴ | 0 | 0 | 124 (76) |
+| 6.5 | 0.0920 | 18 / 20 | 0 / 0 | 75 / 72 | 3.4×10⁻⁴ | 0 | 0 | 123 (75) |
+| 7.5 | 0.0947 | 12 / 16 | 0 / 0 | 75 / 72 | 3.2×10⁻⁴ | 0 | 0 | 123 (75) |
+| 8.5 | 0.0904 | 14 / 16 | 0 / 0 | 74 / 72 | 3.1×10⁻⁴ | 0 | 0 | 122 (74) |
+| 9.5 | 0.0865 | 14 / 16 | 0 / 0 | 74 / 72 | 3.0×10⁻⁴ | 0 | 0 | 122 (74) |
+| 10.5 | 0.0829 | 14 / 16 | 0 / 0 | 74 / 72 | 2.8×10⁻⁴ | 0 | 0 | 122 (74) |
+
+The window of a sector is |μ|v_c above its "stable to 10⁻⁵" value, 0.0829 to 0.1128. There is no real eigenvalue in any
+window, in A or in B, and the windows hold 186 (A) and 216 (B) eigenvalues together. Below them each sector has 74 to 76
+real eigenvalues in A and 72 to 74 in B, all with |μ|v_c ≤ 5.1×10⁻⁴, and B reproduces none of A's. The identity
+`real_identity` is zero to the digits printed on the 122 to 124 eigenfunctions evaluated per sector, the leading 24 of each
+parity block and the real ones. The real ones among them equal the table's real count in every sector: the script's
+unscaled floor 10⁻⁸ lies below the table's, 10⁻⁸/v_c, since v_c < 1, and no real eigenvalue falls between
+(`I96-rpi5/reals_check_s16_output.txt`; at σR = 8 some do, Reading notes 2). For this profile the zero is structural, as in
+§5, and no real candidate stands in a window to evaluate it on.
+
+The window line of the log:
+
+    window: every eigenvalue with |mu| v_c >= 0.1128 is converged in every m listed, and the leading one of m = 10.5 is
+    0.1029; so a real zero mode needs |v| > 8.87 v_c = 8.74
+
+That is |v| > 8.87 v_c at σR = 16, against 9.57 v_c at σR = 8, 10.32 v_c at σR = 4 and 12.05 v_c at σR = 2, and 8.74 in v
+against 14.95, 25.5 and 45.1. As at σR = 8 the window starts above the leading eigenvalue of m = 21/2, so the line is set
+by the converged window of m = ½ and not by the last sector. It carries §5's condition, that the leading eigenvalue keeps
+falling with m beyond 21/2, which #120 covers at σR = 2 and 4 only. At σR = 16 the condition is assumed for every m > 21/2.
+This is *numerical evidence* about the Galerkin eigenvalues, not a bound.
+
+### The thin walls against σR = 2 and 4
+
+| σR | v_c | ρ(T₁)v_c | A and B differ by | √3 ρ v_c (FL: ≤ 1) | window, \|μ\|v_c ≥ | real zero mode needs \|v\| > |
+|---|---|---|---|---|---|---|
+| 2 | 3.744900 | 0.409556 | 5×10⁻¹² | 0.7094 | 0.0830 | 12.05 v_c = 45.1 |
+| 4 | 2.470971 | 0.367657 | 5×10⁻¹⁰ | 0.6368 | 0.0969 | 10.32 v_c = 25.5 |
+| 8 | 1.562434 | 0.29951080 | 1.4×10⁻¹¹ | 0.5188 | 0.1045 | 9.57 v_c = 14.95 |
+| 16 | 0.985030 | 0.22508330 | 1.5×10⁻¹⁰ | 0.3899 | 0.1128 | 8.87 v_c = 8.74 |
+
+The σR = 16 pilot (m = ½ only, P = 320) gives the same 0.22508330. The σR = 2 and 4 rows are those of the Answer's table
+and the two lines of §5.
+
+### Box comparison, σR = 8
+
+The wall is 1/8 wide, and dx = 2L/N = 1/32 puts four grid points across it. §6's method: hold dx and raise L,
+`python notes/warp/frank_loss.py --part=krylov --sigmas=8 --Ns=N --L=L --vs=0.5`, one thread, c5fd40d. Raw folders
+`I96-mac` (L = 1, 2, 2.5) and `I96-win` (L = 1 and L = 3, 3.5).
+
+| L | N | ρ(T₁)v_c, box | here − box | `gmres` residual (target 10⁻¹⁰) | of it the k = 0 part | `identity` | peak memory |
+|---|---|---|---|---|---|---|---|
+| 1 | 64 | 0.21589 | +8.4×10⁻² | 1.1×10⁻² fail | 1.1×10⁻² | 2.4×10⁻¹ fail | 0.75 GiB, Mac |
+| 2 | 128 | 0.29732 | +2.19×10⁻³ | 1.6×10⁻⁹ fail | 1.6×10⁻⁹ | 2.3×10⁻⁸ | 4.75 GiB, Mac |
+| 2.5 | 160 | 0.29843 | +1.08×10⁻³ | 5.1×10⁻¹³ | 4.9×10⁻¹³ | 5.2×10⁻¹² | 8.37 GiB, Mac |
+| 3 | 192 | 0.29890 | +6.1×10⁻⁴ | 1.3×10⁻¹³ | 1.5×10⁻¹⁶ | 2.5×10⁻¹⁶ | 12.77 GiB, win |
+| 3.5 | 224 | 0.29912 | +3.9×10⁻⁴ | 1.3×10⁻¹³ | 1.4×10⁻¹⁹ | 1.4×10⁻¹⁵ | 20.69 GiB, win |
+
+"here − box" is 0.29951080 minus the box value, which the logs print to five digits, so each difference is good to about
+5×10⁻⁶. Logs: `I96-win/box-s8-L1-N64.log` (the same numbers as `I96-mac/box-s8-L1-N64.log`),
+`I96-mac/box-s8-L2-N128.log`, `box-s8-L2.5-N160.log`, `I96-win/box-s8-L3-N192.log` and `box-s8-L3.5-N224.log`. The Mac
+peaks are the maximum resident set (the script's own figure, in GiB), the laptop's are the sampler's peak working set,
+so they are different quantities. L = 3.5 is the largest L whose N fits the laptop's 24 GiB rule alone: it took 1361 s
+and 20.69 GiB, 2% above the 20.3 GiB that N³ growth from L = 3 gives, and the machine's free memory fell to 3.7 GiB.
+L = 4 (N = 256) would need about 31 GiB (20.69 GiB × (256/224)³, an estimate) and was not run. The L = 3 run's exit code
+was not captured (its `.exit` file is empty); its log ends "all checks passed" and its `.err` is empty. L = 3.5 exited 0.
+
+L = 1 and 2 fail `gmres`, and the failure is entirely in the k = 0 part, which falls from 1.1×10⁻² at L = 1 to 1.5×10⁻¹⁶
+at L = 3 (the target is unchanged). So these two values belong to a box that is too small, and only L ≥ 2.5 is a valid
+solve. The box value rises toward the sectors' as L grows at this spacing, by 1.11×10⁻³ from L = 2 to 2.5, 4.7×10⁻⁴
+from 2.5 to 3 and 2.2×10⁻⁴ from 3 to 3.5, each good to about 10⁻⁵. The ratios of successive increments are 0.42 and 0.47
+(the second ±0.03), so the ratio has risen with L. Extrapolations of the box value at dx = 1/32 (`box_extrap.py`), all
+estimates and none a bound:
+
+| model | fitted to | limit at dx = 1/32 | sectors − limit |
+|---|---|---|---|
+| geometric, §6's, the ratio of the last two increments (0.47) | L = 2 to 3.5 | 0.29931 (0.29928 to 0.29935 over the rounding of the prints) | 2.0×10⁻⁴ |
+| geometric, the ratio of the first two (0.42) | L = 2 to 3.5 | 0.29928 | 2.3×10⁻⁴ |
+| power law ρ∞ − c L⁻ᵃ, a = 3.5 | L = 2.5, 3, 3.5 | 0.29943 | 8×10⁻⁵ |
+| power law, a = 3.2 | L = 2, 2.5, 3 | 0.29949 | 2×10⁻⁵ |
+
+So the gap to the box's limit at this spacing is somewhere between 2×10⁻⁵ and 2.3×10⁻⁴ (8×10⁻⁴ relative at most), and
+four values do not choose between the models. From L = 2, 2.5, 3 alone the geometric limit was 0.29924, 2.7×10⁻⁴ below
+the sectors', so the fourth value moved that estimate by 0.7×10⁻⁴. For σR = 4 and 2 §6 has remaining differences of
+1.7×10⁻⁵ and 5×10⁻⁶ after the same kind of extrapolation and a refinement of the spacing at fixed L. No spacing
+refinement was run at σR = 8, so the box's spacing error here is not measured, and this note proposes no cause for the
+gap. The difference of 3.9×10⁻⁴ at L = 3.5 is set against a box error left at that L of 1.9×10⁻⁴ (geometric) to 3.1×10⁻⁴
+and 3.7×10⁻⁴ (power law). That leaves 2.0×10⁻⁴ of the difference unaccounted for by the box error under the
+geometric model, and 8×10⁻⁵ or 2×10⁻⁵ under the power law.
+
+### Box comparison, σR = 16: not run
+
+The wall is 1/16 wide, so four points across it need dx ≤ 1/64. At that spacing L = 2 is N = 256, estimated at 31 GiB
+(20.69 GiB × (256/224)³), and L = 2.5 is N = 320, estimated at 60 GiB (the same scaling), both above the laptop's 24 GiB
+rule and not run. N = 192 (L = 1.5) would fit, at the 12.77 GiB measured for that N, but L = 1.5 is below the L = 2 that
+fails `gmres` at σR = 8, where L ≥ 2.5 was needed; whether σR = 16 needs the same L is not measured. So no box value
+exists at σR = 16.
+
+The coordinator decided not to run L = 2, N = 256 on a machine with the memory. Step 6's rule applies: a run that does
+not fit the 24 GiB rule is reported with its estimated memory, and not run. The estimate is 31 GiB (30.9). It is the
+peak working set of the σR = 8 run at N = 224, 20.69 GiB (21,189 MiB, `I96-win/memory-sampler.log`, sampled every 10 s),
+times (256/224)³, since the box's memory goes as N³. Scaled the same way from the Mac's maximum resident set at N = 160,
+8.37 GiB (`I96-mac/box-s8-L2.5-N160.log`), it is 34 GiB. Neither is a measurement at N = 256.
+
+### Reading notes for §7
+
+1. §5 says no real eigenvalue below the windows is reproduced by the other discretisation. At σR = 8 one is: m = 15/2,
+   |μ|v_c = 2.2×10⁻⁸, A's −2.16459×10⁻⁸ against B's −2.16478×10⁻⁸ (relative 8.6×10⁻⁵, absolute 1.9×10⁻¹²). It is below
+   every window and at the floor of the search. Nothing here tests why it matches.
+2. §5 evaluates the identity on "every real eigenvalue above 10⁻⁸". The script picks those eigenfunctions with |μ| > 10⁻⁸
+   in its own unscaled μ, while the real-eigenvalue column counts |μ|v_c > 10⁻⁸. At σR = 8 (v_c = 1.56) the two counts
+   differ by 1 to 6 per sector (`reals_check.py 8`: 88 and 87 at m = ½, 103 and 98 at m = 3/2, and so on), the real
+   eigenvalues with |μ|v_c from 1.0×10⁻⁸ to 1.6×10⁻⁸ not being evaluated. All are below the windows. The unscaled counts
+   equal the table's "(real)" column in all 11 sectors.
+3. The pilot's peak, 24.43 GiB, was above the 20 GiB estimated by scaling, and the σR = 16 `conv` runs peaked at 9.78 and
+   11.03 GiB against 10 and about 11 GiB estimated. The box run of L = 3.5 peaked at 20.69 GiB against 20.3 GiB. The
+   σR = 16 sectors at P = 340 peaked at 28.40 GiB (the worker's resident set) against the 27.6 GiB estimated
+   (`I96-dh610/README.md`).
+4. The L = 2.5 peak of the Mac probe is 8.37 GiB (8,982,675,456 bytes), which the 2026-11-22 table of #96 gave as 8.98 GB,
+   the same bytes divided by 10⁹.
+5. The helper `convmax.py` prints 5.1×10⁻⁸ for the first σR = 8 attempt where the `conv` check's line says 5.2×10⁻⁸ and
+   7.0×10⁻⁹ for the second σR = 16 attempt against 7.2×10⁻⁹, since it divides the logs' two-digit changes. The note
+   quotes the check's lines.
+6. A recount of the sector logs from the stored arrays (`I96-rpi5/sector_numbers.py`, R1) agrees with all 132 values of
+   the σR = 16 log and with 129 of the σR = 8 log's. The three that differ are in m = 7/2 and 15/2: the log's window of A
+   holds 24 and 16 eigenvalues, the recount 26 and 18, and the symmetry value at m = 15/2 is 3.4×10⁻¹¹ in the log and
+   5.5×10⁻¹¹ in the recount. In both sectors the log leaves out the two eigenvalues that define the window's cut (one and
+   its conjugate), and the recount gives the log's 24, 16 and 3.4×10⁻¹¹ exactly when it leaves them out too. The script
+   takes the cut as `abs` of one eigenvalue and the window as `np.abs(array) >= cut`. On the machine that made the recount
+   those two differ in the last bit for 309,576 of the 825,000 stored eigenvalues, so whether the cut's own eigenvalues
+   are in the window is decided by rounding. That the laptop's rounding put them out is inferred from its log and was
+   not run there. No real eigenvalue enters or leaves a window, the cuts agree, and the totals above (254 and 284) follow
+   the log; with the two included, A's total is 258. The σR = 8 tables are not changed.
+7. The planted check's `real_identity` is 1.0×10⁻¹⁶ in the dh610 log and 2.3×10⁻¹⁶ in the laptop's. The planted weight
+   does not depend on σR, and `planted` (7.3×10⁻¹⁵) and `shift` (1.6×10⁻¹¹, max |Re μ|/|μ| 7.7×10⁻¹²) are the same in
+   both. Both values are at rounding level and the difference is not investigated.
+8. The issue asks that ρ(T₁)v_c be "compared with frank_loss.py's box value at the largest affordable L" and the
+   difference "set against the box error measured as in §6". Task 3 below says it "agrees with the box value … within the
+   box error". The σR = 8 result meets the issue's wording. It does not show Task 3's agreement: 2×10⁻⁵ to 2.0×10⁻⁴ of
+   the difference is left by the extrapolation models, and the spacing error of the box is not measured.
+
+### Acceptance criteria
+
+| criterion | σR = 8 | σR = 16 |
+|---|---|---|
+| `conv` moves the leading eigenvalue by less than 10⁻⁸ | pass at P = 200, N = 160: 1.1×10⁻⁹ (P = 160 fails at 5.2×10⁻⁸) | pass at P = 340, N = 320: 7.2×10⁻⁹ (P = 320 fails at 2.4×10⁻⁸) |
+| planted and shift checks pass at the sizes used | pass, 7.3×10⁻¹⁵ and 1.6×10⁻¹¹, at their own fixed sizes, not at P = 200 | pass, 7.3×10⁻¹⁵ and 1.6×10⁻¹¹ (`real_identity` of `planted` 1.0×10⁻¹⁶), at their own fixed sizes, not at P = 340 |
+| A and B agree on ρ(T₁)v_c to 10⁻⁶ | pass, 1.4×10⁻¹¹ (at most 6.5×10⁻¹⁰ relative over the 11 leading eigenvalues) | pass, 1.5×10⁻¹⁰ (at most 5.3×10⁻⁹ relative over the 11 leading eigenvalues) |
+| ρ(T₁)v_c against the box at the largest affordable L, the difference against the box error | pass as the issue words it: 0.29951080 against 0.29912 at L = 3.5, +3.9×10⁻⁴; box error left 1.9×10⁻⁴ to 3.7×10⁻⁴ by model; unaccounted 2×10⁻⁵ to 2.0×10⁻⁴, not decided at dx = 1/32 (Reading notes 8) | fail, not run: the coordinator decided not to run L = 2, N = 256 at dx = 1/64, estimated at 31 GiB (34 GiB from the Mac), over the 24 GiB rule. No box value |
+| windows and real eigenvalues reported, the identity on each | pass: window 0.1045, \|v\| > 9.57 v_c = 14.95; no real eigenvalue in any window of 11 sectors; identity 0 on 135 to 146 eigenfunctions a sector | pass: window 0.1128, \|v\| > 8.87 v_c = 8.74; no real eigenvalue in any window of 11 sectors (186 A and 216 B eigenvalues in them); identity 0 on 122 to 124 eigenfunctions a sector, 74 to 76 of them real |
+
+Nine of the ten cells pass. The box comparison at σR = 16 does not: no box value exists. The σR = 16 sectors exit 0 with
+"all checks passed" (`I96-dh610/sectors-s16-p340.log.exit` holds 0), and the σR = 8 ones too.
+
+What this section does not show: that the box error accounts for the 3.9×10⁻⁴ at σR = 8, any box value at σR = 16, a
+cause of the rise of the eigenfunction residual with m, that `planted` and `shift` pass at P = 200 or 340 (they run at
+sizes of their own), or anything beyond m = 21/2, where the leading eigenvalue is assumed to keep falling. The status of
+every number is *numerical evidence*. No novelty is claimed.
+
 ## What this does and does not show
 
 - ρ(T₁)v_c = 0.409556 at σR = 2 and 0.367657 at σR = 4, from a method with no periodic box, no FFT and no outer

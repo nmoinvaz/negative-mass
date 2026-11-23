@@ -26,7 +26,6 @@ Exits 1 when any check fails. Peak memory at N = 128 is a few GB; run under nice
 """
 import argparse
 import math
-import resource
 import subprocess
 import sys
 import time
@@ -71,6 +70,10 @@ def check(name, ok, detail=""):
 
 def peak_gb():
     # ru_maxrss is in bytes on macOS, kB on Linux
+    try:
+        import resource
+    except ImportError:  # Windows: no getrusage; the run's memory sampler records the peak
+        return float("nan")
     m = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
     return m / 2**30 if sys.platform == "darwin" else m / 2**20
 
