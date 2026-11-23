@@ -21,6 +21,7 @@ Scripts are in this directory. Each `X.py` writes `X_output.txt`.
 | `vhat_structure.py` | Theorem 3 (§4.2): V_Z > 0 and V_Z′ < 0 beyond r_s, the quadratic form Ψ, planted toy, zero counts |
 | `threshold_isolation.py` | certified isolation of c·r_* and c·r_neg for every l = 2..3000, sympy Sturm cross-check, monotonicity tables; `--csv=PATH` writes every bracket as exact fractions |
 | `compare_brackets.py` | #139: compares that csv with #104's `sweep_brackets.csv` for overlap at every l (`compare_brackets_output.txt`) |
+| `zerilli_derivation.py` | #143: V from the linearized Einstein equations, M symbolic, s ≠ 0 (§4.2, §4.6; note `zerilli_derivation.md`; controls in `zerilli_derivation_controls.py`) |
 | `large_l_proof.py` | Theorem L (§4.4): explicit constants for the limits ρ_*, ρ_neg |
 | `monotone_proof.py` | Theorem M (§4.5): monotone approach for every l ≥ 500 |
 | `check_mutations.py` | runs every new script unmutated and once per `--mutate=...`, which must exit non-zero |
@@ -190,7 +191,10 @@ exactly against `common.chi_poly` for l = 2..30, every n (`threshold_isolation.p
 (r_neg, ∞). In particular **r_* < r_neg for every l ≥ 2**.
 
 *Proof.* Let V = 2f[λ²r²((λ+1)r−3) + 9(λr−1)]/(r³(λr−3)²), λ = c/2, be the static Zerilli potential for M = −1,
-g = ψ₀′/ψ₀ (′ = d/dx) and h = √(V/2).
+g = ψ₀′/ψ₀ (′ = d/dx) and h = √(V/2). V is derived from the linearized vacuum Einstein equations in Regge–Wheeler
+gauge, for time dependence e^{st} with s ≠ 0 and the master variable of Dotti–Gleiser gr-qc/0604021 eq. (9), in
+`zerilli_derivation.md` (#143, checked symbolically in (r, l, M)). Its double pole at λr = 3 is r_s = 6/c. The static
+case s = 0, which (Z) uses, is #145.
 - (Z) ψ₀,ₓₓ = Vψ₀ (Lemma A(ii), and checked exactly with this V for l = 2..14). So g′ = V − g² and
   **V̂ = g² − g′ = 2g² − V**.
 - (P1) V > 0 on (r_s, ∞). With λr = 3 + σ and μ = 1/λ, the numerator of V is a polynomial in (σ, μ) with positive
@@ -325,8 +329,16 @@ bracket (Ψ_{l+1} > 0 at the lower end of r_neg(l)'s) for l = 500..502.
   positive root for l = 2..50. The V of §4.2 at M = −1 equals four published forms: Dotti–Gleiser gr-qc/0604021 eq. (6)
   and arXiv:0809.3615 eq. (11), Kokkotas–Schmidt gr-qc/9909058 eq. (24) and Berti–Cardoso–Starinets arXiv:0905.2975
   eq. (15). Its eight wording notes are applied in §1. The coordinator's check (raw `I142-mac`) passes, and no number
-  of #142 disagrees with #2. Not checked: Zerilli's own papers (the publisher page was blocked, *(unverified)*), the
-  derivation of V from the linearized Einstein equations for M < 0 (#143), and DG's intertwining equivalence (§6).
+  of #142 disagrees with #2. Not checked: Zerilli's own papers (the publisher page was blocked, *(unverified)*) and DG's
+  intertwining equivalence (§6). The derivation of V is the next bullet (#143).
+- **Derivation of V (#143).** `zerilli_derivation.md` (sympy, exact) derives V from the linearized vacuum Einstein
+  equations for symbolic M: Regge–Wheeler gauge, e^{st} with s ≠ 0, l ≥ 2. The even-parity system is a two-dimensional
+  first-order flow, and DG06's master variable (9) turns it into −ψ,ₓₓ + Vψ = −s²ψ; at M = −1 this V equals §4.2's
+  exactly. The reduction divides by s, r − 2M and λr + 3M, so it holds on r ≠ r_s. It assumes the gauge is attainable.
+  The coordinator's check (raw `I143-mac`, its own Lichnerowicz operator) confirms the converse for l = 2, 3, 4 and the
+  forward direction by an exact certificate for l = 2 (M symbolic) and l = 3 (M = −1). Still not checked: Zerilli's own
+  papers (publisher HTTP 403, *(unverified)*), DG's intertwining equivalence, the gauge's attainability and the behavior
+  at r_s (#146), and the case s = 0 (#145).
 
 ## 5. Verification summary
 
@@ -368,4 +380,5 @@ bracket (Ψ_{l+1} > 0 at the lower end of r_neg(l)'s) for l = 500..502.
   convergence of its lower edge to 6.16881. The certified parts had an independent review in #104 (§4.6).
 - **Caveat on scope:** these are statements about Ĥ. Their meaning for Zerilli/metric perturbations relies on DG's
   intertwining equivalence, which is not re-proved here. V itself agrees with four published forms of the Zerilli
-  potential at M = −1 (#142); its derivation from the linearized Einstein equations for M < 0 is not redone here (#143).
+  potential at M = −1 (#142), and it is derived from the linearized Einstein equations for s ≠ 0 on r ≠ r_s in
+  `zerilli_derivation.md` (#143). The static case s = 0 is open (#145).

@@ -289,3 +289,6 @@ Zerilli form for general M, typed from memory. The hand derivation written befor
 
 W1–W8 are applied to RESULTS.md §1 (L5 named in (iii), and a new L6 paragraph), with a #142 bullet in §4.6, a row in §5
 and a sentence in §6. Recommended task 2 is row 15 of #135, and task 3 is #143.
+
+#143 (`zerilli_derivation.md`) derives the first point of "What V1 does not cover" for s ≠ 0 on r ≠ r_s, so task 3 is
+done apart from reading Zerilli's papers (publisher HTTP 403, *(unverified)*). The case s = 0 is #145.

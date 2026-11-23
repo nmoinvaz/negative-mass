@@ -140,4 +140,39 @@ or a short ODE argument, except H0, which is the genuinely geometric input.
 
 ## 8. What RESULTS.md and review_lemma_a3.md should say
 
-See the closing comment of #143.
+The closing comment of #143 proposed three edits. All three are applied, with "s ≠ 0" added where RESULTS.md §4.2 uses the
+static equation: RESULTS.md §4.2 (after V's definition), §4.6 (the #142 bullet and a #143 bullet), §6 (Caveat on scope),
+and the Coordinator's review of `review_lemma_a3.md`.
+
+## Coordinator's review
+
+Raw `I143-mac` (negative-mass-raw). Mac, nice 10, at most 2 processes.
+
+| step | result |
+|---|---|
+| scope | the six files the issue names, nothing else |
+| rerun `zerilli_derivation.py` | exit 0, 32 PASS, 0 FAIL, 60 s; output equal to rpi5's apart from the timing lines |
+| rerun the controls | 18 OK, 1 MISS, the same rows as rpi5; `fsign_bg` fires at PL.O.3, not at its target PL.0c, as §5 says |
+| DG06 at the source | the arXiv TeX of gr-qc/0604021: eqs. (2)–(6) and (9) read as §6 quotes them |
+| re-solve of one case | l = 2, M symbolic, forward: ψ,ₓₓ − (V + s²)ψ with ψ from (9) is a combination of the radial equations and their first two r-derivatives, with coefficients whose only denominator is r²(2r + 3M)² |
+| independent check `ind143.py` | runs 1 and 2 crashed in Y3 on defects of my code (a sympy domain mismatch, then `nsimplify`); both kept. Run 3, with the criteria unchanged, exits 0. All 6 mutations fire on target |
+
+`ind143.py` shares no code with this note's scripts and was written without opening them. It computes δR_ab from the
+Lichnerowicz form ½(∇^c∇_a h_bc + ∇^c∇_b h_ac − □h_ab − ∇_a∇_b h), with its own covariant derivatives, and types DG06's
+equations from the TeX. It shares the coordinates (t, r, x, φ), the ansatz of DG06 (2), e^{st} and sympy.
+
+| id | what | run 3 |
+|---|---|---|
+| Y0 | δR = 0 for h = ∂_M g and for even and odd pure gauge; δR ≠ 0 for a non-solution | pass |
+| Y1 | odd planted case: Regge–Wheeler with s h0 = F(F h1)′, l = 2, 3, 4 | pass |
+| Y2 | converse: DG06 (3)–(4) with H0 = H2 and DG06's V solve all 10 components, l = 2, 3, 4 | pass |
+| Y3 | forward: H0 − H2 and ψ,ₓₓ − (V + s²)ψ lie in the span of the radial equations (to two r-derivatives), by exact certificates, l = 2 (M symbolic) and l = 3 (M = −1) | pass |
+| Y4 | (9) inverts (3)–(4), symbolic in r, λ, M, s | pass |
+| Y5 | DG06 (6) equals §1's form; at M = −1 it equals RESULTS §4.2's V; (λr + 3M)²V at r_s is (L−2)²(L+1)²/18 | pass |
+
+So the derivation is confirmed for symbolic M by a second operator and a second route, and no number of #143 disagrees.
+One finding beyond #143: the Y3 certificates have no s and no r − 2M in their denominators. So the forward direction
+holds at s = 0 for l = 2 and 3, though §4 lists s = 0 as not covered. #145 asks for s = 0 at every l, and for the converse.
+
+Recommended task 1 is applied (§8). Task 2 is #147, tasks 3 and 4 are #146, task 5 is row 17 of #135, and task 6 is
+#145.
