@@ -1,0 +1,107 @@
+review_he_type3_count.py  mutation: None  bits: 160
+check exp
+  exp(x), 300 random x in [-70, 70]: 0 outside the 120-digit mpmath value; widest enclosure 1.0 ulp
+  exp(x) exp(-x) contains 1 and exp(x) exp(y) meets exp(x+y), 100 pairs: 0 failures
+  cosh^2 - sinh^2 contains 1 and cosh, sinh enclose the mpmath values on 100 random cells: 0 failures
+  -> PASS (1 s)
+check profile
+  tanh form = (1 + C)/(cosh z + C), exact rational identity in (q, k): difference simplifies to 0
+  f_z = -(1+C) sinh z / D^2 and f_zz = -(1+C)(-cosh^2 z + C cosh z + 2)/D^3 (D = cosh z + C): differences 0 0
+  (phi, A', B') and T from the tanh definition (sympy derivatives, mpmath 60 digits) against the enclosures at 2 x 12 radii: 0 misses
+  -> PASS (1 s)
+check frame
+  c2 and E1 from the frame table minus the printed c2 and E1 of he_type3.md section 1: 0, 0
+  E1, E2 have 17 and 42 terms (printed: 17 and 42)
+  E2 in (X, gamma, y): total degrees [3], 10 monomials (printed: a cubic form with 10 terms)
+  double root p, third root q: E1 - (p-q)^2 and E2 - (p-q)^2 (8p + q) = (0, 0)
+  P: 167 terms, total degrees [10, 12, 14, 16, 18], irreducible over Q: True (printed: 167, 10..18, irreducible)
+  Res_w(E1, E2) - (27/256) phi^3 (A' - B')^3 P = 0
+  leading coefficients in w: E1: phi**2*(A - B)**2/4 ; E2: phi**2*(A - B)**2*(9*A**2 + 10*A*phi - 10*B*phi)/8
+  exact 5 x 5 Sylvester determinant of the tables of E1, E2 against (27/256) phi^3 (A' - B')^3 P (table of the interval code) at 6 rational points: 0 mismatches
+  -> PASS (2 s)
+check planted
+  A: g has 7 roots in [1/4, 40] (exact: 7 of 9 rational c_i lie strictly between the enclosures of cosh(1/4) and cosh(40)); pair separation 1.0e-5
+  A: 52 leaves {'excl': 45, 'root': 7}, tiling True, 0 s
+  A: every root leaf holds exactly one known root: True
+  B: P_pl has 34 leaves {'excl': 17, 'root': 5, 'mono': 12}, 5 roots (exact: 5 at z = 3, 5, 5 + 1e-5, 7, 659/49)
+     root z = 3.0: enclosure contains it, boxes 1, complete True
+     root z = 5.0: enclosure contains it, boxes 1, complete True
+     root z = 5.00001: enclosure contains it, boxes 1, complete True
+     root z = 7.0: enclosure contains it, boxes 1, complete True
+     root z = 13.4489795918: enclosure contains it, boxes 1, complete True
+  B: admissible (0 < w < 1, T != 0) at z = 3, 5, 5 + 1e-5, 7, 659/49: [True, True, False, False, True]; exact expectation [True, True, False (T = 0), False (w = 7/2), True]
+  -> PASS (1 s)
+check small_z:le
+  P(phi, psi - 2 phi, delta + psi - 2 phi): 358 terms, least weight 24 (phi: 2, psi, delta: 4), weight-24 part {(8, 0, 2): 774144}
+  closed forms Phi, Psi, Delta of the weights (exact, sympy): z^2 Phi - phi, z^4 Psi - (A' + 2 phi), z^4 Delta - (B' - A') = [0, 0, 0]
+  series coefficients of K1, S, K2, K3 against the Taylor expansions of their closed forms (11 coefficients each): True
+  Phi, Psi, Delta enclosures against mpmath (100 digits) at z = 1/1000, 1/20, 1/8, 1/4: 0 misses
+  [0, 0.25]: 1 cells, G > 0 and Delta < 0 on each (smallest lower bound of G 1.0911e-67, largest upper bound of Delta -3.7453e-8); 0 cells fail; 0.0 s
+  so P = z^24 G > 0 and y = z^4 Delta < 0 on (0, 0.25]
+  -> PASS (3 s)
+check small_z:rodal
+  P(phi, psi - 2 phi, delta + psi - 2 phi): 358 terms, least weight 24 (phi: 2, psi, delta: 4), weight-24 part {(8, 0, 2): 774144}
+  closed forms Phi, Psi, Delta of the weights (exact, sympy): z^2 Phi - phi, z^4 Psi - (A' + 2 phi), z^4 Delta - (B' - A') = [0, 0, 0]
+  series coefficients of K1, S, K2, K3 against the Taylor expansions of their closed forms (11 coefficients each): True
+  Phi, Psi, Delta enclosures against mpmath (100 digits) at z = 1/1000, 1/20, 1/8, 1/4: 0 misses
+  [0, 0.25]: 1 cells, G > 0 and Delta < 0 on each (smallest lower bound of G 6.5688e-169, largest upper bound of Delta -2.8278e-18); 0 cells fail; 0.0 s
+  so P = z^24 G > 0 and y = z^4 Delta < 0 on (0, 0.25]
+  -> PASS (1 s)
+check tail:le
+  with e = e^-z, cosh = (1 + e^2)/(2e), sinh = (1 - e^2)/(2e): phi - v phih, A' + tau alphah, B' - tau z betah (exact) = [0, 0, 0]
+  P(v phih, -tau alphah, tau z betah) = (tau z)^9 S(1/z, tau, phih, alphah, betah) at 5 random rational points (exact): 0 mismatches
+  z >= 40: e <= 4.248e-18, tau <= 7.55e-10, phih in [1.0, 1.0], betah in [1.0, 1.0]
+  S = P/(tau z)^9 over 64 cells of s = 1/z in (0, 1/40]: smallest lower bound 0.49998278 (leading term 4 v^3 = 0.5); 0.6 s
+  y = tau (z betah + alphah) > 0: betah, alphah lower bounds 1.0, 1.0 -> True
+  the enclosure of S contains the true S (mpmath, 120 digits) at z = 1, 2, 3, 5 times 40: 0 misses
+  -> PASS (1 s)
+check tail:rodal
+  with e = e^-z, cosh = (1 + e^2)/(2e), sinh = (1 - e^2)/(2e): phi - v phih, A' + tau alphah, B' - tau z betah (exact) = [0, 0, 0]
+  P(v phih, -tau alphah, tau z betah) = (tau z)^9 S(1/z, tau, phih, alphah, betah) at 5 random rational points (exact): 0 mismatches
+  z >= 60: e <= 8.757e-27, tau <= 1.237e-7, phih in [1.0, 1.0], betah in [0.99999999, 1.0]
+  S = P/(tau z)^9 over 64 cells of s = 1/z in (0, 1/60]: smallest lower bound 3.9999386 (leading term 4 v^3 = 4.0); 0.7 s
+  y = tau (z betah + alphah) > 0: betah, alphah lower bounds 1.0, 1.0 -> True
+  the enclosure of S contains the true S (mpmath, 120 digits) at z = 1, 2, 3, 5 times 60: 0 misses
+  -> PASS (1 s)
+check cover:le
+  P on [1/4, 40]: 1562 leaves {'excl': 1554, 'mono': 4, 'root': 4}; tiling True; 4 roots (statement: 4); 123 s
+     tanh-form function (mpmath, 80 digits): sign at a point of every leaf vs the leaf sign: 0 disagreements
+     refined root enclosures (width <= 6.26e-46) contain the mpmath root of the tanh form: 0 misses; r = ['0.9905678898', '1.006345187', '1.023933261', '1.094662309']
+  y on [1/4, 40]: 46 leaves {'excl': 42, 'mono': 3, 'root': 1}; tiling True; 1 roots (statement: 1); 1 s
+     tanh-form function (mpmath, 80 digits): sign at a point of every leaf vs the leaf sign: 0 disagreements
+     refined root enclosures (width <= 2.69e-40) contain the mpmath root of the tanh form: 0 misses; r = ['0.9921149667']
+  -> PASS (133 s)
+check points:le
+  le: 4 P roots, 4 Krawczyk boxes in (z, w) (K(X) inside X), every other point of z in the root cell x w in [-1e4, 1e4] excluded: True; 10 s
+  admissible (0 < w < 1, T != 0): 3 (statement: 3)
+     r = 0.990567889806 (statement 0.990567889806, |diff| 4.4e-13), w in [0.06005176468, 0.06005176468], T = -8.80794; box half-widths z 1.0e-26, w 1.0e-20 -> ok
+     r = 1.02393326111 (statement 1.02393326111, |diff| 1.5e-12), w in [0.04098687975, 0.04098687975], T = 7.90635; box half-widths z 1.0e-26, w 1.0e-20 -> ok
+     r = 1.09466230932 (statement 1.09466230932, |diff| 3.6e-12), w in [0.9128666766, 0.9128666766], T = 22.0305; box half-widths z 1.0e-26, w 1.0e-20 -> ok
+  the other P roots have their common root at w = ['58.459064'] (statement: ['58459/1000'])
+  -> PASS (10 s)
+check spurious:le
+  the root of y at r = 0.99211497 (statement 0.99211): leading coefficient of E1 in w, phi^2 y^2 / 4, encloses 0.0 .. 7.01e-79
+  common roots with z in the root cell and |w| <= 1e4: 0 (complete True)
+  -> PASS (0 s)
+check cover:rodal
+  P on [1/4, 60]: 2735 leaves {'excl': 2723, 'mono': 6, 'root': 6}; tiling True; 6 roots (statement: 6); 211 s
+     tanh-form function (mpmath, 80 digits): sign at a point of every leaf vs the leaf sign: 0 disagreements
+     refined root enclosures (width <= 3.04e-31) contain the mpmath root of the tanh form: 0 misses; r = ['4.714485178', '5.020434866', '5.033740947', '5.071066343', '5.076353993', '5.103380564']
+  y on [1/4, 60]: 58 leaves {'excl': 53, 'mono': 4, 'root': 1}; tiling True; 1 roots (statement: 1); 1 s
+     tanh-form function (mpmath, 80 digits): sign at a point of every leaf vs the leaf sign: 0 disagreements
+     refined root enclosures (width <= 1.05e-48) contain the mpmath root of the tanh form: 0 misses; r = ['4.993740859']
+  -> PASS (226 s)
+check points:rodal
+  rodal: 6 P roots, 6 Krawczyk boxes in (z, w) (K(X) inside X), every other point of z in the root cell x w in [-1e4, 1e4] excluded: True; 18 s
+  admissible (0 < w < 1, T != 0): 3 (statement: 3)
+     r = 4.71448517823 (statement 4.71448517823, |diff| 1.4e-12), w in [0.9576393947, 0.9576393947], T = -4.51919; box half-widths z 1.0e-26, w 1.0e-20 -> ok
+     r = 5.07106634302 (statement 5.07106634302, |diff| 1.8e-12), w in [0.2847666782, 0.2847666782], T = 3.7259; box half-widths z 1.0e-26, w 1.0e-20 -> ok
+     r = 5.10338056385 (statement 5.10338056385, |diff| 3.3e-12), w in [0.9770299367, 0.9770299367], T = 4.97171; box half-widths z 1.0e-26, w 1.0e-20 -> ok
+  the other P roots have their common root at w = ['1.030003', '4.1006549', '8.7172638'] (statement: ['103/100', '41007/10000', '87173/10000'])
+  -> PASS (18 s)
+check spurious:rodal
+  the root of y at r = 4.9937409 (statement 4.9937): leading coefficient of E1 in w, phi^2 y^2 / 4, encloses 0.0 .. 1.13e-92
+  common roots with z in the root cell and |w| <= 1e4: 0 (complete True)
+  -> PASS (0 s)
+
+summary: 14 checks run, 0 failed [], 397 s
