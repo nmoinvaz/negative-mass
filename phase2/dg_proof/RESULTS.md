@@ -32,9 +32,10 @@ The new scripts run from this directory as `OMP_NUM_THREADS=1 python3 -u X.py > 
 **Lemma A (χ).** χ = Σ_{n=1}^{l+2} c_n rⁿ with c_n = (n−2)((n−4)l(l+1)+n−1)·(l−n+3)_{2n−4}/(2ⁿ(n−1)!²).
 (i) c₁ = 3/2, c₂ = 0, c₃ = −K/32 with K = (l−1)l(l+1)(l+2) = 6k, c₄ = K/96. Every c_n with n ≥ 4 is ≥ 0, and c_{l+2} > 0.
 (ii) The static Zerilli equation for ψ₀ = χ/(cr−6) is equivalent to P₂χ″ + P₁χ′ + P₀χ = 0 with P₂ = −r²(r+2)(cr−6).
-On rⁿ this ODE gives a three-term recurrence 12(m−1)²c_m − 2(m−2)(…)c_{m−1} + c(l−m+4)(l+m−3)c_{m−2} = 0. Dividing by
-(l−m+5)_{2m−8} turns it into a polynomial identity in (l, m), which is verified to be 0; the low orders m ≤ 4 are
-checked symbolically in l. The series terminates because (l−n+3)_{2n−4} = 0 for n ≥ l+3. So **ψ₀ solves the static
+On rⁿ this ODE gives a three-term recurrence 12(m−1)²c_m − 2(m−2)(c(m−4) − 3(m−1))c_{m−1} + c(l−m+4)(l+m−3)c_{m−2} = 0. Dividing by
+(l−m+5)_{2m−8} turns it into a polynomial identity in (l, m), which is verified to be 0. It covers 4 ≤ m ≤ l+4, which
+includes the termination orders m = l+3, l+4. The orders m ≤ 3 are checked symbolically in l, and for m ≥ l+5 every
+term vanishes. The series terminates because (l−n+3)_{2n−4} = 0 for n ≥ l+3. So **ψ₀ solves the static
 Zerilli equation for every l**. DG checked this only for small l; phase 0 checked l ≤ 5.
 (iii) **χ > 0 on r > 0.** DG's argument (eqs. 57–59), checked and put in closed form:
 - For l = 2, χ/r = 3/2 − (3/4)r² + (1/4)r³, whose minimum is 1/2 at r = 2.
@@ -45,8 +46,8 @@ Zerilli equation for every l**. DG checked this only for small l; phase 0 checke
 - DG's "unique critical point" claim is correct (it is the positive root of a quadratic with roots of opposite sign).
   So is their non-negativity claim for the dropped terms.
 
-**L1 (r_s).** The χ-ODE is singular at r_s (P₂(r_s) = 0) and has exponents 0 and 3 there. This forces
-χ′/χ(r_s) = −1/(r_s(r_s+2)) and χ″(r_s) = 0. Consequences:
+**L1 (r_s).** The χ-ODE is singular at r_s (P₂(r_s) = 0) and has exponents 0 and 3 there. The ODE at r_s
+gives χ′/χ(r_s) = −1/(r_s(r_s+2)), and the differentiated ODE at r_s gives χ″(r_s) = 0 (#138; the exponents alone do not). Consequences:
 - φ₀,ₓₓ(r_s) = 0, so V̂ = φ₀,ₓₓ/φ₀ is analytic at r_s.
 - The residue of ψ₀² dx/dr at r_s is 0.
 - The DG mode mapped by A*, Ψ̂ = (−∂ₓ + g)Ψ_DG, is regular at r_s (L6).
@@ -127,9 +128,12 @@ zero-energy eigenfunction.
 
 **Corollary (thresholds, all l).** T1 and T2 give:
 - N > 0 on [0, r_s]. Proof: N − [9 + 18c₃r² + (6c₄ − 2cc₃)r³] = Σ_{m≥4}(m−1)c_m r^{m−1}(6 − cr) + Σ_{j≥5}6c_j r^{j−1} ≥ 0,
-  and the cubic bracket is ≥ 9 − 27/4 on [0, r_s].
-- N has exactly one root r_* on (r_s, ∞). Proof: N(r_s + t) = cΣ(1−m)d_m t^m with d_m = χ^{(m)}(r_s)/m!. Here d₀ > 0,
-  d₂ = 0 by L1, and d_m > 0 for 4 ≤ m ≤ l+2. Descartes' rule then gives exactly one sign change.
+  and the cubic bracket has its minimum on [0, r_s] at r = r_s/(1+ε), equal to 9/4 + (27/4)ε²/(1+ε)² ≥ 9 − 27/4 (#138).
+  The identity holds term by term, for any coefficients with c₁ = 3/2 and c₂ = 0.
+- N has exactly one root r_* on (r_s, ∞). Proof: N(r_s + t) = cΣ(1−m)d_m t^m with d_m = χ^{(m)}(r_s)/m!
+  = Σ_{n≥m} c_n C(n,m) r_s^{n−m}. Here d₀ = N(r_s)/c > 0 by T1, d₂ = 0 by L1, and d_m > 0 for 4 ≤ m ≤ l+2, since every
+  c_n with n ≥ 4 is ≥ 0 and c_{l+2} > 0. The coefficient list then has exactly one sign change, whatever the sign of d₃.
+  Descartes' rule gives at most one positive root, and N(r_s) > 0 > N(∞) gives one.
 
 Hence κ_c < 0 on (0, r_s), κ_c → ∓∞ at r_s^∓, κ_c > 0 on (r_s, r_*) and κ_c < 0 on (r_*, ∞). Therefore:
 - **Dirichlet is unstable iff R < r_s.**
@@ -284,14 +288,19 @@ bracket (Ψ_{l+1} > 0 at the lower end of r_neg(l)'s) for l = 500..502.
   tested numerically for n ≤ 400), and elementary analysis (intermediate value, Taylor, Weierstrass' product inequality).
 - **Independent review (#104).** `review_large_l.md` (mpmath `iv` and sympy, written from this file alone) confirms 4.2–4.5 and
   finds no error: Theorem 3's (P1), (P2) and V̂ identities, the brackets for every l = 2..3000, and Theorems L and M with its own,
-  smaller constants (L: 23.82 and 172.03; M: 3.519 and 5.936). Like the certified results, it assumes T1, T2 and Lemma A(ii) for
-  l > 14. Five of its 52 controls missed their targets (`review_large_l.md` §6). The coordinator's check of the review is in
+  smaller constants (L: 23.82 and 172.03; M: 3.519 and 5.936). It assumed T1, T2 and Lemma A(ii) for l > 14, which #138 then
+  reviewed (next bullet). Five of its 52 controls missed their targets (`review_large_l.md` §6). The coordinator's check of the review is in
   negative-mass-raw `I104-mac`; its findings are in `review_large_l.md`, Coordinator's review.
+- **Independent review of the inputs (#138).** `review_lemma_a.md` (sympy and exact rationals, written from this file alone)
+  confirms Lemma A(i) and (ii), L1, T1 and T2 for every l, and finds no error. Lemma A(ii) is an exact identity in (l, m).
+  ψ₀,ₓₓ = Vψ₀ is exact for l = 2..40, and at l = 41, 45, 60 and 100 in the coordinator's check (raw `I138-mac`). Its six
+  wording notes are applied in §1 and §3. Not reviewed: Lemma A(iii), L2–L6, and the Zerilli V itself, which #2, #104 and
+  #138 all take as given.
 
 ## 5. Verification summary
 
-- **Symbolic in l (all l):** Lemma A(i–iii), L1–L6, T1, T2 (except the explicit identity check, which was also run
-  for l ≤ 12), T3, T4.
+- **Symbolic in l (all l):** Lemma A(i–iii), L1–L6, T1, T2 (T1's identity holds term by term, hence for
+  every l; #138), T3, T4.
 - **Exact for l = 2..10 (`verify_small_l_output.txt`):**
   - χ/r has no positive root, and den V̂ = r⁴(χ/r)²·const.
   - Ĥφ₀ = 0, and Res_{r_s} = 0. F′ = ψ₀² dx/dr, F > 0 on (0, r_s), and v has exactly one zero beyond r_s.

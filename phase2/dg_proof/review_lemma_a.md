@@ -204,3 +204,24 @@ there. This argument is by hand; the scripts test its conclusion, not the argume
 
 From `phase2/dg_proof` (sympy 1.14.0): `OMP_NUM_THREADS=1 python3 -u review_lemma_a_X.py > review_lemma_a_X_output.txt` for X in `common`, `signs`, `recur`,
 `zerilli` (11 s), `l1`, `t1` (32 s), `t2` (63 s), `controls` (11.5 min; `--logdir=DIR` keeps each run's log). Each of the first seven exits 0.
+
+## Coordinator's review
+
+Raw `I138-mac` (negative-mass-raw). Mac, nice 10, at most 2 processes.
+
+| step | result |
+|---|---|
+| rerun every `review_lemma_a_*.py` | the same outputs apart from timings, all exit 0 |
+| rerun the controls (one mutation and all others) | exit 0, 40 of 40 on target, identical to the committed output; e.g. `t2_window` fires at `T2.6[l=2]` |
+| the first control run's 29 of 40 | every miss was a bare id read against a target with `[l=N]`. In each log the first FAIL carries the targeted l, and the matching rule written before that run accepts it. No target changed |
+| re-solve beyond this review's range | the χ-ODE exactly at l = 41, 45, 60, 100; T2's Taylor coefficients exactly at l = 150 |
+| independent check `ind138.py` | run 1 crashed at K2 on a sympy call in my code (kept). Run 2, with that call fixed and the criteria unchanged, exits 0; its 5 mutations fire on target |
+
+`ind138.py` derives the χ-ODE itself from ψ₀,ₓₓ = Vψ₀ and gets P₂ = r²(r+2)(cr−6), that is −1 times RESULTS' normalisation,
+P₁ = −2r(cr² + 3cr − 6) and P₀ = −c²r² + 6cr − 12. Writing c_m and c_{m−1} as c_{m−2} times ratios of the rising
+factorials, the recurrence is identically 0 as a rational function of (l, m) for m ≥ 5. Its middle coefficient is
+−2(m−2)(c(m−4) − 3(m−1)), as W1 says. L1's three statements hold symbolically in c. The T1 cubic's minimum is at
+u = r/r_s = 1/(1+ε), with value 9/4 + (27/4)ε²/(1+ε)². d₃ was positive at every l tested (2..30, 50, 150), so the case
+d₃ < 0 of H13 never arose, though the argument covers it.
+
+W1–W6 are applied to RESULTS.md §1 and §3, with a #138 bullet in §4.6.
