@@ -67,8 +67,9 @@ ph = Symbol('phi', real=True)
 M = Symbol('M', real=True)
 s = Symbol('s')
 l = Symbol('l', positive=True)
-L = l * (l + 1)
-lam = (l - 1) * (l + 2) / 2
+L = Symbol('L', positive=True)          # L = l(l+1) is carried as an independent symbol; an identity in L holds for every l, and the
+                                        # comparisons are repeated after L = l(l+1)
+lam = (L - 2) / 2                       # lambda = (l-1)(l+2)/2
 COORD = (t, r, x, ph)
 N = 4
 P = Function('P')(x)          # P_l(x), Legendre's equation (1-x^2)P'' - 2xP' + L P = 0
@@ -317,17 +318,21 @@ def jet_sym(nm, n):
     return Symbol('%s_%d' % (nm, n))
 
 
-def flow_sub(expr, varmap, states, F, nmax=4):
+def flow_sub(expr, varmap, states, F, nmax=None):
     """Replace the jets nm_n of the functions in varmap ({nm: expression in the states}) by n-fold total derivatives along the
-    flow d states_i / dr = F_i(states, r)."""
+    flow d states_i / dr = F_i(states, r). Only the orders that occur in expr are built."""
     def D(e):
         return diff(e, r) + sum(diff(e, states[i]) * F[i] for i in range(len(states)))
+    names = {sy.name for sy in expr.free_symbols}
     rep = {}
     for nm, S in varmap.items():
+        top = max([int(nn.rsplit('_', 1)[1]) for nn in names if nn.rsplit('_', 1)[0] == nm and nn.rsplit('_', 1)[1].isdigit()] + [0])
+        top = top if nmax is None else min(top, nmax)
         cur = S
-        for n in range(nmax + 1):
+        for n in range(top + 1):
             rep[jet_sym(nm, n)] = cancel(cur)
-            cur = D(cur)
+            if n < top:
+                cur = D(cur)
     return expr.subs(rep, simultaneous=True)
 
 

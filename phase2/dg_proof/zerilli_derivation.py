@@ -6,9 +6,13 @@ Order: planted checks (exit 2 on failure) -> odd parity (Regge-Wheeler) -> even 
 Sources: Dotti-Gleiser gr-qc/0604021 eqs. (2)-(9) (data; typed, see I143-rpi5/README.md); Zerilli's papers were not read (publisher HTTP 403).
 Run: python zerilli_derivation.py [--part=planted|odd|even|all] [--mutate=NAME] [--failfast] > zerilli_derivation_output.txt
 Mutations: fsign_bg fsign_mv mv_coef drop_trace v_typo rw_typo l1 dual_inv leg_sign route2_drop res_typo dg3_typo skip_s
+           ans_rr ang_norm d2_zero div_set
+Other flags: --skip=PL.G,PL.X skips those planted checks (their code and results are unaffected by mutations that act later; used by the controls)
 """
+import os
 import sys
 import time
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from zerilli_derivation_lib import *
 
 PART = 'all'
@@ -82,7 +86,7 @@ for n_ in range(2, 7):
     for order in (2, 3, 4):
         red_ = leg_red(sp.Derivative(P, (x, order)))
         P0s, P1s = sp.symbols('P0 P1')
-        lhs = red_.subs({P0s: sp.legendre(n_, x), P1s: diff(sp.legendre(n_, x), x), l: n_})
+        lhs = red_.subs({P0s: sp.legendre(n_, x), P1s: diff(sp.legendre(n_, x), x), L: n_ * (n_ + 1)})
         ok = ok and cancel(lhs - diff(sp.legendre(n_, x), x, order)) == 0
 run.planted('PL.0d', ok, 'Legendre reduction differs from the explicit derivative of P_l')
 lap('PL.0d')
@@ -104,7 +108,7 @@ def sym_set(h, m, n, val):
 h_even = zeros()
 sym_set(h_even, 0, 0, fq * H0 * P * E)
 sym_set(h_even, 0, 1, H1 * P * E)
-sym_set(h_even, 1, 1, H2 * P * E / fq)
+sym_set(h_even, 1, 1, H2 * P * E / (1 if mut('ans_rr') else fq))   # mutation ans_rr: g_rr = f^-1 + eps H2 P e^{st} (no 1/f on H2)
 sym_set(h_even, 2, 2, r ** 2 * K * P * E / (1 - x ** 2))
 sym_set(h_even, 3, 3, r ** 2 * (1 - x ** 2) * K * P * E)
 
@@ -252,7 +256,8 @@ c_, Ls_ = sp.symbols('c_ Ls_')
 dep = sp.solve([c_ * (c_ - 1), Ls_ - c_ * (c_ + 1)], [c_, Ls_], dict=True)
 dep_L = sorted(set(d_[Ls_] for d_ in dep))                  # the values of L at which P and xP' can be dependent: [0, 2]
 Lq = sp.Integer(2) if mut('l1') else L                      # mutation l1: the check is run at L = 2 (l = 1)
-ok_sym = dep_L == [0, 2] and all(cancel(Lq - d_) != 0 for d_ in dep_L)
+ok_sym = (dep_L == [0, 2] and all(cancel(Lq - d_) != 0 for d_ in dep_L) and sp.factor(l * (l + 1)) == l * (l + 1)
+          and sp.factor(l * (l + 1) - 2) == (l - 1) * (l + 2))
 rank_ok = True
 for lv in range(2, 31):
     pl_ = sp.Poly(sp.legendre(lv, x), x)
@@ -266,9 +271,10 @@ lap('A.1')
 
 # ---- A.2 angular form of the seven components
 x2 = 1 - x ** 2
+XXNORM = 1 if mut('ang_norm') else x2                      # mutation ang_norm: wrong normalization of the xx component
 SPEC = (('tt', (0, 0), 1, ['P0']), ('tr', (0, 1), 1, ['P0']), ('rr', (1, 1), 1, ['P0']),
         ('tx', (0, 2), 1, ['P1']), ('rx', (1, 2), 1, ['P1']),
-        ('xx', (2, 2), x2, ['P0', 'xP1']), ('pp', (3, 3), 1 / x2, ['P0', 'xP1']))
+        ('xx', (2, 2), XXNORM, ['P0', 'xP1']), ('pp', (3, 3), 1 / x2, ['P0', 'xP1']))
 ok_a2 = all(Rr_ev[m][n] == 0 for m, n in [(0, 3), (1, 3), (2, 3)])
 why_a2 = []
 ev = {}
@@ -312,12 +318,14 @@ Hh0, Hh1, Hh2 = (jet_sym('H', n_) for n_ in range(3))
 # ---- E.2 first-order equations and the algebraic relation
 first = ('tr', 'tx', 'rx')
 allowed = {K0, K1, H10, H11, Hh0, Hh1}
-ok_first = all(eqsH[nm].free_symbols <= allowed | {r, s, l, M} for nm in first)
+ok_first = all(eqsH[nm].free_symbols <= allowed | {r, s, L, M} for nm in first)
 unk = [K1, H11, Hh1]
 Mat3 = sp.Matrix([[diff(eqsH[nm], v) for v in unk] for nm in first]).applyfunc(cancel)
 det3 = cancel(Mat3.det())
+lap('E.2 det')
 rhs3 = sp.Matrix([-(eqsH[nm] - sum(diff(eqsH[nm], v) * v for v in unk)) for nm in first]).applyfunc(cancel)
 sol3 = Mat3.LUsolve(rhs3).applyfunc(cancel)
+lap('E.2 solve')
 div('E.2: flow', 'det of the coefficient matrix of (K\', H1\', H\') in (tr, tx, rx)', det3)
 for k_, nm_ in enumerate(('K', 'H1', 'H')):
     for d_ in sp.factor_list(sp.fraction(cancel(together(sol3[k_])))[1])[1]:
@@ -329,15 +337,20 @@ vm3 = {'K': K0, 'H1': H10, 'H': Hh0}
 fsq = fq ** 2
 Grr = Err / 2 + Ett / (2 * fsq) - EtrP / (2 * fq * r ** 2)  # delta G_rr = delta R_rr - (1/2) g_rr (g^ab delta R_ab); delta R_ab = 0 in vacuum
 Grr = Grr.subs(Hs, simultaneous=True)
-ok_G_first = Grr.free_symbols <= {K0, K1, K2, H10, H11, Hh0, Hh1, Hh2, r, s, l, M}
+ok_G_first = Grr.free_symbols <= {K0, K1, K2, H10, H11, Hh0, Hh1, Hh2, r, s, L, M}
+lap('E.2 Grr built')
 Aflow = cancel(flow_sub(Grr, vm3, states3, F3))
-run.check('E.2', ok_first and det3 != 0 and Aflow.free_symbols <= set(states3) | {r, s, l, M},
+lap('E.2 A on flow')
+run.check('E.2', ok_first and det3 != 0 and Aflow.free_symbols <= set(states3) | {r, s, L, M},
           'first-order equations: no second derivatives %s, det %s, A free symbols %s' % (ok_first, det3, Aflow.free_symbols))
 aK, a1, aH = (cancel(diff(Aflow, v)) for v in states3)
 if mut('skip_s'):
     a1 = 2 * a1                                           # mutation skip_s: H1 coefficient of A scaled by 2 after the derivation
 A = aK * K0 + a1 * H10 + aH * Hh0
-run.note('E.2: algebraic relation A = %s' % sp.factor(A))
+run.note('E.2: first-order system (K\', H1\', H\') = flow in (K, H1, H), det of its coefficient matrix = %s' % sp.factor(det3))
+for nm_, e_ in (('K\'', FK), ('H1\'', FH1), ('H\'', FH)):
+    run.note('E.2:   %s = %s' % (nm_, ' + '.join('(%s) %s' % (sp.factor(diff(e_, v_)), v_) for v_ in states3)))
+run.note('E.2: algebraic relation A = aK K + a1 H1 + aH H, aK = %s, a1 = %s, aH = %s' % (sp.factor(aK), sp.factor(a1), sp.factor(aH)))
 lap('E.2')
 
 # ---- E.3 consistency of A along the flow
@@ -359,3 +372,174 @@ ok_e4 = all(v[1] == 0 for v in res4.values())
 run.check('E.4', ok_e4, 'equations not multiples of A: %s' % [k_ for k_, v in res4.items() if v[1] != 0])
 lap('E.4')
 div('E.2: H from A', 'coefficient of H in A', aH)
+
+# ---- E.5 the master variable (DG06 eq. (9)) and the reduction to -Psi_xx + V Psi = -s^2 Psi
+Hexpr = cancel(-(aK * K0 + a1 * H10) / aH)                  # H from A = 0
+states2 = [K0, H10]
+F2 = [cancel(FK.subs(Hh0, Hexpr)), cancel(FH1.subs(Hh0, Hexpr))]
+for d_ in (FK, FH1, FH, Hexpr):
+    pass
+def D2(e):
+    return diff(e, r) + sum(diff(e, states2[i]) * F2[i] for i in range(2))
+# E.3b: the third flow component agrees with d(Hexpr)/dr along the two-dimensional flow
+ok_e3b = cancel(D2(Hexpr) - FH.subs(Hh0, Hexpr)) == 0
+run.check('E.3b', ok_e3b, 'dH/dr along the (K, H1) flow differs from the r-theta equation: %s' % cancel(D2(Hexpr) - FH.subs(Hh0, Hexpr)))
+lap('E.3b')
+# DG06 (9): psi = r (r - 2M) / ((lam+1)(lam r + 3M)) (H2 - r K') + r K / (lam+1)
+rm2M = (r + 2 * M) if mut('fsign_mv') else (r - 2 * M)      # mutation fsign_mv: wrong sign of M in the factor r - 2M
+lam1 = lam if mut('mv_coef') else lam + 1                   # mutation mv_coef: (lam + 1) -> lam in the second term
+psi_e = r * rm2M / ((lam + 1) * (lam * r + 3 * M)) * (Hexpr - r * F2[0]) + r * K0 / lam1
+psi_e = cancel(psi_e)
+pcoef = (cancel(diff(psi_e, K0)), cancel(diff(psi_e, H10)))
+a_e, b_e, det_e = master_reduce(states2, F2, psi_e, fq)
+run.note('E.5a: psi = (%s) K + (%s) H1' % (sp.factor(pcoef[0]), sp.factor(pcoef[1])))
+run.check('E.5a', cancel(det_e) != 0, 'the map (K, H1) -> (psi, psi_x) is singular (det = 0)')
+div('E.5: master variable', 'det of (psi, psi_x) against (K, H1)', det_e)
+run.check('E.5b', cancel(b_e) == 0, 'coefficient of psi_x in psi_xx = a psi + b psi_x: b = %s' % sp.factor(b_e))
+V_der = cancel(a_e - s ** 2)
+run.check('E.5c', cancel(diff(V_der, s)) == 0, 'a - s^2 depends on s: d/ds = %s' % sp.factor(cancel(diff(V_der, s))))
+nine = 9 * lam * M ** (1 if mut('v_typo') else 2) * r      # mutation v_typo: 9 lam M^2 r -> 9 lam M r
+VZ = 2 * fq * (lam ** 2 * (lam + 1) * r ** 3 + 3 * lam ** 2 * M * r ** 2 + nine + 9 * M ** 3) / (r ** 3 * (lam * r + 3 * M) ** 2)
+run.check('E.5d', same(V_der, VZ) and same(V_der.subs(L, l * (l + 1)), VZ.subs(L, l * (l + 1))), 'derived V differs from the Zerilli form: difference %s' % sp.factor(cancel(V_der - VZ)))
+run.note('E.5: V = %s' % sp.factor(V_der))
+lap('E.5')
+# E.5e at M = -1 against RESULTS 4.2: V = 2f[lam^2 r^2((lam+1) r - 3) + 9(lam r - 1)] / (r^3 (lam r - 3)^2), f = 1 + 2/r, lam = c/2
+cc = L - 2                                                # c = (l+2)(l-1) of dg_proof
+lamR = cc / 2
+res9 = 9 * (lamR * r - (2 if mut('res_typo') else 1))        # mutation res_typo: 9(lam r - 1) -> 9(lam r - 2)
+V_res = 2 * (1 + 2 / r) * (lamR ** 2 * r ** 2 * ((lamR + 1) * r - 3) + res9) / (r ** 3 * (lamR * r - 3) ** 2)
+run.check('E.5e', same(V_der.subs(M, -1), V_res), 'derived V at M = -1 differs from RESULTS 4.2: %s' % sp.factor(cancel(V_der.subs(M, -1) - V_res)))
+lap('E.5e')
+
+# ---- E.6 the converse: DG06 (3)-(4) with e^{st} solves the equations when psi_xx = (V + s^2) psi
+# Exact arithmetic in the rational function field Q(r, M, s, L) (sympy.polys fields); a jet is a pair (a, b) for a psi + b psi'.
+from sympy import QQ
+from sympy.polys.fields import field
+FF, rF, MF, sF, LF = field((r, M, s, L), QQ)
+
+
+def toF(e_):
+    return FF.from_expr(sp.sympify(e_))
+
+
+fF = 1 - 2 * MF / rF
+Fk = toF((lam * (lam + 1) * r ** 2 + 3 * lam * M * r + 6 * M ** 2) / (r ** 2 * (lam * r + 3 * M)))                  # DG06 (4) f(r)
+hk = toF((lam * r ** 2 - 3 * lam * r * M - (2 if mut('dg3_typo') else 3) * M ** 2) / ((r - 2 * M) * (lam * r + 3 * M)))   # DG06 (4) h(r)
+VF = toF(VZ)
+c0_ = (VF + sF ** 2) / fF ** 2                                      # psi'' = c0 psi + c1 psi' from f (f psi')' = (V + s^2) psi
+c1_ = -(2 * MF / rF ** 2) / fF
+
+
+def DPair(p_):
+    a_, b_ = p_
+    return (a_.diff(rF) + b_ * c0_, a_ + b_.diff(rF) + b_ * c1_)
+
+
+def addP(p_, q_, cp=1, cq=1):
+    return (cp * p_[0] + cq * q_[0], cp * p_[1] + cq * q_[1])
+
+
+Kp = (Fk, fF)                                                       # (3): K = F psi + f psi'
+H1p = (sF * hk, sF * rF)                                            # (3): H1 = h psi_t + r psi_tr = s (h psi + r psi')
+inner = (hk, rF)
+finner = (fF * inner[0], fF * inner[1])
+H2p = addP(DPair(finner), Kp, 1, -1)                                # (3): H2 = d/dr[f (h psi + r psi')] - K; H0 = H2
+jets_dg = {}
+for nm_, e0 in (('K', Kp), ('H1', H1p), ('H2', H2p), ('H0', H2p)):
+    cur = e0
+    for n_ in range(3):
+        jets_dg[jet_sym(nm_, n_)] = cur
+        cur = DPair(cur)
+res6 = {}
+jetsyms = list(jets_dg.keys())
+for nm, e_ in (('tt', Ett), ('tr', Etr), ('rr', Err), ('tx', Etx), ('rx', Erx), ('trace', EtrP), ('traceless', Ec2)):
+    e_ = sp.expand(e_)
+    tot = (FF.zero, FF.zero)
+    for sy in jetsyms:
+        cj = e_.coeff(sy, 1)
+        if cj != 0:
+            tot = addP(tot, jets_dg[sy], 1, toF(cj))
+    res6[nm] = tot
+run.check('E.6a', all(v[0] == 0 and v[1] == 0 for v in res6.values()),
+          'DG06 (3)-(4) does not solve: nonzero equations %s' % [k_ for k_, v in res6.items() if v[0] != 0 or v[1] != 0])
+lap('E.6a')
+# E.6b: (9) applied to the output of (3)
+back = addP((toF(r * (r - 2 * M) / ((lam + 1) * (lam * r + 3 * M))) * (jets_dg[jet_sym('H2', 0)][0] - rF * jets_dg[jet_sym('K', 1)][0]),
+             toF(r * (r - 2 * M) / ((lam + 1) * (lam * r + 3 * M))) * (jets_dg[jet_sym('H2', 0)][1] - rF * jets_dg[jet_sym('K', 1)][1])),
+            (toF(r / (lam + 1)) * jets_dg[jet_sym('K', 0)][0], toF(r / (lam + 1)) * jets_dg[jet_sym('K', 0)][1]))
+run.check('E.6b', back[0] == 1 and back[1] == 0, '(9) o (3) != id: %s' % (back,))
+lap('E.6b')
+
+# ---- D.* the divisions of the reduction
+# every denominator and every divisor met above: (step, factored expression)
+for nm_, e_ in (('E.2: flow K\'', FK), ('E.2: flow H1\'', FH1), ('E.2: flow H\'', FH), ('E.2: H from A', Hexpr), ('E.5: psi coefficient of K', pcoef[0]),
+                ('E.5: psi coefficient of H1', pcoef[1]), ('E.5: V', V_der), ('E.5: a (psi_xx = a psi)', a_e)):
+    for fac_, mult_ in denominators_factors(e_):
+        DIV.append((nm_, 'denominator factor (multiplicity %d)' % mult_, fac_))
+DIV.append(('E.5: definition (9)', 'denominator (lam + 1) of both terms', sp.factor(lam1)))
+DIV.append(('E.5: definition (9)', 'denominator (lam r + 3M)', sp.factor(lam * r + 3 * M)))
+lam_fac = (L - 2) * r + (7 if mut('div_set') else 6) * M   # lam r + 3M up to the factor 2; mutation div_set: 6M -> 7M in the stated set
+ALLOWED = [s, r, r - 2 * M, L, L - 2, lam_fac, M]          # L = l(l+1), L - 2 = (l-1)(l+2) = 2 lam
+
+
+def is_const(e_):
+    e_ = cancel(e_)
+    return e_.free_symbols == set() or (e_.is_number)
+
+
+def classify(fac_):
+    for a_ in ALLOWED:
+        if is_const(fac_ / a_):
+            return a_
+    return None
+
+
+facs_seen = {}
+for step, desc, e_ in DIV:
+    num_, den_ = sp.fraction(cancel(together(e_)))
+    for fac_, mult_ in sp.factor_list(num_)[1] + sp.factor_list(den_)[1]:
+        a_ = classify(fac_)
+        facs_seen.setdefault(str(a_), []).append((step, desc))
+        if a_ is None:
+            facs_seen.setdefault('UNEXPECTED', []).append((step, desc, fac_))
+run.note('divisors met (step : expression):')
+for step, desc, e_ in DIV:
+    run.note('  %s | %s | %s' % (step, desc, e_))
+run.check('D.1', 'UNEXPECTED' not in facs_seen,
+          'divisor factors outside the stated set {s, r, r-2M, L, L-2, lam r + 3M, M}: %s' % facs_seen.get('UNEXPECTED'))
+for key in sorted(k_ for k_ in facs_seen if k_ != 'UNEXPECTED'):
+    run.note('  factor %s met at %d step(s)' % (key, len(facs_seen[key])))
+lap('D.1')
+
+# D.2 lam r + 3M: where it vanishes, and that the double pole of V is genuine
+r0_ = sp.solve(lam * r + (2 if mut('d2_zero') else 3) * M, r)[0]   # mutation d2_zero: zero of lam r + 2M
+Vnum_at = cancel(cancel(V_der * (lam * r + 3 * M) ** 2).subs(r, r0_))          # (lam r + 3M)^2 V at the zero: nonzero means a double pole
+ok_d2 = (cancel(r0_ + 3 * M / lam) == 0 and Vnum_at != 0 and cancel(r0_.subs(M, -1) - 6 / cc) == 0
+         and r0_.subs({M: -1, L: 6}) > 0 and r0_.subs({M: 1, L: 6}) < 0)
+run.check('D.2', ok_d2, 'lam r + 3M: zero at %s; (lam r + 3M)^2 V there = %s; at M = -1 the zero is %s (6/c = %s)' % (r0_, Vnum_at, r0_.subs(M, -1), 6 / cc))
+run.note('D.2: lam r + 3M = 0 at r = %s; (lam r + 3M)^2 V at that r = %s (nonzero: a genuine double pole); at M = -1 the zero is 6/c = r_s of dg_proof' % (r0_, sp.factor(Vnum_at)))
+run.note('D.2: lam > 0 for l >= 2, so the zero -3M/lam is positive iff M < 0 (checked at L = 6: positive at M = -1, negative at M = 1)')
+
+# D.3 s
+facs_s = [(st, ds) for st, ds in facs_seen.get(str(s), [])]
+ok_d3 = len(facs_s) > 0
+run.check('D.3', ok_d3, 'no step divides by s')
+run.note('D.3: s is a divisor at: %s; the derivation needs s != 0 (the static case is not covered)' % '; '.join(sorted(set(st for st, _ in facs_s))))
+
+# D.4 f and r - 2M, l >= 2
+facs_f = facs_seen.get(str(r - 2 * M), [])
+facs_l2 = facs_seen.get(str(L - 2), [])
+facs_L = facs_seen.get(str(L), [])
+run.check('D.4', len(facs_f) > 0 and len(facs_l2) == 0,
+          'r - 2M divisor steps: %d; steps dividing by L - 2 = 2 lam: %s' % (len(facs_f), facs_l2))
+run.note('D.4: r - 2M (= r f) is a divisor at: %s; r - 2M > 0 for r > 0 and M < 0, and vanishes at r = 2M for M > 0' % '; '.join(sorted(set(st for st, _ in facs_f))))
+run.note('D.4: L = l(l+1) is a divisor at: %s (only in the definition (9), as lam + 1 = L/2); no step divides by L - 2 = (l-1)(l+2)' % '; '.join(sorted(set(st for st, _ in facs_L))))
+run.note('D.4: the restriction l >= 2 enters through A.1 (P and xP\' independent, so each angular coefficient is its own equation: E.1 and the seven radial equations), '
+         'not through a division; for l = 1 (L = 2, lam = 0) the zero of lam r + 3M leaves the domain and the traceless equation is empty')
+
+# D.5 the determinants and A's H coefficient are nonzero rational functions
+run.check('D.5', det3 != 0 and aH != 0 and det_e != 0, 'a determinant or the coefficient of H in A is identically 0')
+run.note('D.5: det of the first-order system = %s; coefficient of H in A = %s; det of (psi, psi_x) against (K, H1) = %s' % (sp.factor(det3), sp.factor(aH), sp.factor(det_e)))
+lap('D')
+
+run.finish()
