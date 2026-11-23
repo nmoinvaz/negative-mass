@@ -1,0 +1,10 @@
+review_large_l_overlap, mutation=None: 16 rows of #2's table E, l = [2, 3, 5, 10, 20, 40, 80, 81, 100, 150, 200, 300, 500, 1000, 2000, 3000]
+PASS parsed 16 rows of #2's table E
+PASS printing convention of #2's table: 0 <= (middle of my bracket) - (printed value) < 1.2e-12 for all 32 values (truncation to 12 decimals) range [1.302e-13, 1.052e-12]
+PASS the same 32 differences are NOT all within round-to-nearest's range [-5e-13, 7e-13) so the table is truncated, not rounded
+PASS all 32 brackets (16 l, c r_* and c r_neg) overlap #2's printed brackets
+  of #2's printed l, [1000, 2000] are among my 200 random l; the others come from my sweep of every l = 2..3000
+  #2's Theorem L: l >= 138, K_* = 183009/2000, K_neg = 57467/250; Theorem M: l >= 500, s_N = 3709/1000, s_P = 6101/1000
+PASS my 200 brackets satisfy #2's Theorem L bound for the 185 sampled l >= 138 0 violations
+PASS my 200 brackets satisfy #2's Theorem M bound 0 < c r - rho <= s/c for the 157 sampled l >= 500 0 violations
+SUMMARY checks=38 failed=0

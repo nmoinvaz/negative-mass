@@ -1,0 +1,10 @@
+review_large_l_posthoc: planted problem with a sign test that accepts enclosures containing 0 (midpoint sign)
+PASS planted: one root near a verdict=CERTIFIED (certified)
+PASS planted: one root near b verdict=CERTIFIED (certified)
+PASS planted: two roots a, b = a + 1e-10 in one bracket verdict=REFUSED (no sign change)
+FAIL planted: three roots in one bracket verdict=CERTIFIED (certified)
+FAIL planted: endpoint exactly on a root verdict=REFUSED (no sign change)
+PASS planted: no root in the bracket verdict=REFUSED (no sign change)
+PASS planted: double root at a verdict=REFUSED (no sign change)
+planted checks that failed under the bug: ['planted: three roots in one bracket', 'planted: endpoint exactly on a root']
+OK: the bug is caught by the planted problem (target: planted: endpoint exactly on a root)

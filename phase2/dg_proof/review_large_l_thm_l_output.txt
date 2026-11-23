@@ -1,0 +1,54 @@
+review_large_l_thm_l, mutation=None
+PASS planted: one root near a verdict=CERTIFIED (certified)
+PASS planted: one root near b verdict=CERTIFIED (certified)
+PASS planted: two roots a, b = a + 1e-10 in one bracket verdict=REFUSED (no sign change)
+PASS planted: three roots in one bracket verdict=REFUSED (derivative enclosure contains 0)
+PASS planted: endpoint exactly on a root verdict=REFUSED (enclosure of F at an end contains 0)
+PASS planted: no root in the bracket verdict=REFUSED (no sign change)
+PASS planted: double root at a verdict=REFUSED (no sign change)
+rho_* = 8.485700967373530340931  rho_neg = 9.635989442586144020696;  windows [8.47570096737, 8.49570096737] and [9.60598944259, 9.66598944259]
+PASS C2: n^5 - [alpha'_n (1+2eps0) + alpha_n (2 + S_n (1+2eps0))] g_n^-1 has all coefficients >= 0 in n = 5 + t (kappa = 1.002 >= 1+2 eps0)
+PASS C2: B_n <= n^5 g_n for 3 <= n <= 400 (iv, with eps0 = 1/(140*137))
+PASS step 1: |a_n - alpha_n| <= eps B_n for 3 <= n <= l+10, l=138 largest ratio 1.000000 (1 only at n = 4, l = 138 where eps = eps0)
+PASS step 1: |a_n - alpha_n| <= eps B_n for 3 <= n <= l+10, l=139 largest ratio 1.000000 (1 only at n = 4, l = 138 where eps = eps0)
+PASS step 1: |a_n - alpha_n| <= eps B_n for 3 <= n <= l+10, l=140 largest ratio 1.000000 (1 only at n = 4, l = 138 where eps = eps0)
+PASS step 1: |a_n - alpha_n| <= eps B_n for 3 <= n <= l+10, l=145 largest ratio 1.000000 (1 only at n = 4, l = 138 where eps = eps0)
+PASS step 1: |a_n - alpha_n| <= eps B_n for 3 <= n <= l+10, l=200 largest ratio 1.000000 (1 only at n = 4, l = 138 where eps = eps0)
+PASS step 1: |a_n - alpha_n| <= eps B_n for 3 <= n <= l+10, l=276 largest ratio 1.000000 (1 only at n = 4, l = 138 where eps = eps0)
+PASS step 1: |a_n - alpha_n| <= eps B_n for 3 <= n <= l+10, l=500 largest ratio 1.000000 (1 only at n = 4, l = 138 where eps = eps0)
+PASS step 1: |a_n - alpha_n| <= eps B_n for 3 <= n <= l+10, l=1000 largest ratio 1.000000 (1 only at n = 4, l = 138 where eps = eps0)
+PASS Psi_l - Psi_inf = eps [rho^3 N_l^2 + 2 rho^2 D_N (N_l + N_inf) - rho^3 X_l^2 - 4 N_Z^0 D_X (X_l + X_inf)] (symbolic)
+PASS N_Z(rho, eps) - N_Z(rho, 0) = eps rho^3/4 (symbolic)
+E_X, E_N on the N window: 258.5368859, 132.0248345
+E_X, E_N on the Psi window: 501.4675881, 496.6456798
+eta (Psi) <= 5161447.0; E_N <= 132.02483; slopes: -N_inf' >= 5.5430121, Psi_inf' >= 30002.558
+PASS step 3: -N_inf' >= mu_N > 0 on the N window mu_N = 5.5430121
+PASS step 3: Psi_inf' >= mu_P > 0 on the Psi window mu_P = 30002.558
+K_* = E_N/mu_N = 23.818248   K_neg = eta/mu_P = 172.03356
+PASS step 4: eps0 E_N < mu_N delta_N (the zero of N_l lies in the window)
+PASS step 4: eps0 eta < mu_P delta_P (the zero of Psi_l lies in the window)
+PASS step 4: the windows are disjoint, rho_* + delta_N < rho_neg - delta_P
+PASS step 4: the N root of N_l (at most rho_* + K_* eps0) lies below the Psi window, so the Psi zero in the window is beyond r_*
+
+THEOREM L (own constants, l >= 138):
+  |c r_*   - rho_*  | <= 23.8182 / c    (RESULTS: 91.51)
+  |c r_neg - rho_neg| <= 172.034 / c    (RESULTS: 229.87)
+  comparison (not a pass/fail criterion): own K_* <= 91.51, own K_neg <= 229.87
+PASS Psi_inf'' closed form (sympy d^2/d rho^2 with generic X) agrees with a central difference of Psi_inf' at 9.636 107765.5175 vs 107765.5175
+PASS RESULTS 4.4: -N_inf' = (rho-6) X_inf'' >= 2.836 on [8, 9] inf = 3.2073447
+PASS RESULTS 4.4: Psi_inf'(rho_neg) = 33523 to the digits quoted 33523.34244
+PASS RESULTS 4.4: |Psi_inf''| <= 1.31e5 on [9.61, 9.66] sup |Psi''| <= 113648.4
+  for the record: my E_N on [8, 9] with eps0 = 1/108 is 259.515; RESULTS quotes 259.5 (different bounding, not a criterion)
+PASS Theorem L against the certified brackets, l=138 (c r_* - rho_*) c <= 3.51519, (c r_neg - rho_neg) c <= 5.83894
+PASS Theorem L against the certified brackets, l=139 (c r_* - rho_*) c <= 3.5152, (c r_neg - rho_neg) c <= 5.83894
+PASS Theorem L against the certified brackets, l=145 (c r_* - rho_*) c <= 3.51522, (c r_neg - rho_neg) c <= 5.83898
+PASS Theorem L against the certified brackets, l=276 (c r_* - rho_*) c <= 3.51541, (c r_neg - rho_neg) c <= 5.83928
+PASS Theorem L against the certified brackets, l=690 (c r_* - rho_*) c <= 3.51547, (c r_neg - rho_neg) c <= 5.83937
+PASS Theorem L against the certified brackets, l=1000 (c r_* - rho_*) c <= 3.51548, (c r_neg - rho_neg) c <= 5.83938
+PASS Theorem L against the certified brackets, l=2000 (c r_* - rho_*) c <= 3.51548, (c r_neg - rho_neg) c <= 5.83939
+PASS Theorem L against the certified brackets, l=3000 (c r_* - rho_*) c <= 3.51549, (c r_neg - rho_neg) c <= 5.83939
+PASS step 2 at 11 points of each window, l=138: |N_l - N_inf|/eps <= E_N and |Psi_l - Psi_inf|/eps <= eta largest observed 20 (bound 132), 2.112e+05 (bound 5.161e+06)
+PASS step 2 at 11 points of each window, l=139: |N_l - N_inf|/eps <= E_N and |Psi_l - Psi_inf|/eps <= eta largest observed 20 (bound 132), 2.112e+05 (bound 5.161e+06)
+PASS step 2 at 11 points of each window, l=276: |N_l - N_inf|/eps <= E_N and |Psi_l - Psi_inf|/eps <= eta largest observed 20 (bound 132), 2.113e+05 (bound 5.161e+06)
+PASS step 2 at 11 points of each window, l=1000: |N_l - N_inf|/eps <= E_N and |Psi_l - Psi_inf|/eps <= eta largest observed 20 (bound 132), 2.113e+05 (bound 5.161e+06)
+SUMMARY checks=105 failed=0

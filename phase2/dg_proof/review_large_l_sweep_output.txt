@@ -1,0 +1,34 @@
+review_large_l_sweep, mutation=None, l = 2..3000
+PASS planted: one root near a verdict=CERTIFIED (certified)
+PASS planted: one root near b verdict=CERTIFIED (certified)
+PASS planted: two roots a, b = a + 1e-10 in one bracket verdict=REFUSED (no sign change)
+PASS planted: three roots in one bracket verdict=REFUSED (derivative enclosure contains 0)
+PASS planted: endpoint exactly on a root verdict=REFUSED (enclosure of F at an end contains 0)
+PASS planted: no root in the bracket verdict=REFUSED (no sign change)
+PASS planted: double root at a verdict=REFUSED (no sign change)
+rho_* = 8.485700967373530340931  rho_neg = 9.635989442586144020696
+  l = 250: c r_* in [8.48575699141664633180, 8.48575699141666633181], c r_neg in [9.63608250137442163508, 9.63608250137444163509]  (19 s)
+  l = 500: c r_* in [8.48571500127202669554, 8.48571500127204669555], c r_neg in [9.63601275358114233677, 9.63601275358116233678]  (70 s)
+  l = 750: c r_* in [8.48570720880875661045, 8.48570720880877661046], c r_neg in [9.63599980991468642702, 9.63599980991470642703]  (155 s)
+  l = 1000: c r_* in [8.48570447934882835158, 8.48570447934884835159], c r_neg in [9.63599527614812258650, 9.63599527614814258651]  (273 s)
+  l = 1250: c r_* in [8.48570321548656124491, 8.48570321548658124492], c r_neg in [9.63599317681123755564, 9.63599317681125755565]  (425 s)
+  l = 1500: c r_* in [8.48570252877102758554, 8.48570252877104758555], c r_neg in [9.63599203614329054248, 9.63599203614331054249]  (611 s)
+  l = 1750: c r_* in [8.48570211463184410991, 8.48570211463186410992], c r_neg in [9.63599134823795600588, 9.63599134823797600589]  (830 s)
+  l = 2000: c r_* in [8.48570184580585640762, 8.48570184580587640763], c r_neg in [9.63599090170491794510, 9.63599090170493794511]  (1084 s)
+  l = 2250: c r_* in [8.48570166148204173728, 8.48570166148206173729], c r_neg in [9.63599059553410201028, 9.63599059553412201029]  (1371 s)
+  l = 2500: c r_* in [8.48570152962639198433, 8.48570152962641198434], c r_neg in [9.63599037651546018834, 9.63599037651548018835]  (1693 s)
+  l = 2750: c r_* in [8.48570143206220084033, 8.48570143206222084034], c r_neg in [9.63599021445659847352, 9.63599021445661847353]  (2048 s)
+  l = 3000: c r_* in [8.48570135785291719461, 8.48570135785293719462], c r_neg in [9.63599009119137336858, 9.63599009119139336859]  (2437 s)
+PASS coefficients a_n(eps), n <= 40, inside Lemma A's exact closed form: all 2999 l 2999 pass, 0 fail
+PASS N: bracket of c r_* certified (signs, derivative): all 2999 l 2999 pass, 0 fail
+PASS N: signs (lo, hi) = (1, -1): all 2999 l 2999 pass, 0 fail
+PASS Psi: bracket of c r_neg certified (signs, derivative): all 2999 l 2999 pass, 0 fail
+PASS Psi: signs (lo, hi) = (-1, 1): all 2999 l 2999 pass, 0 fail
+PASS S shows the same sign change (-,+) on the Psi bracket (does not use (Z)): all 2999 l 2999 pass, 0 fail
+PASS X > 0 at both ends of the Psi bracket (so sign V = sign Psi = sign S): all 2999 l 2999 pass, 0 fail
+PASS lo(c r_neg) > hi(c r_*) (the Psi bracket lies beyond r_*): all 2999 l 2999 pass, 0 fail
+PASS c r_* and c r_neg strictly decrease for every consecutive l = 2..3000 (hi(l+1) < lo(l)) violations []
+PASS c r_* and c r_neg stay above their limits for every l = 2..3000 violations []
+PASS l^2 r_* and l^2 r_neg increase strictly for every consecutive l = 5..3000 (lo(l+1)(l+1)^2/c(l+1) > hi(l) l^2/c(l)) violations []
+total time 2437 s
+SUMMARY checks=24010 failed=0

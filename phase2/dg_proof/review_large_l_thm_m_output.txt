@@ -1,0 +1,76 @@
+review_large_l_thm_m, mutation=None
+PASS planted: one root near a verdict=CERTIFIED (certified)
+PASS planted: one root near b verdict=CERTIFIED (certified)
+PASS planted: two roots a, b = a + 1e-10 in one bracket verdict=REFUSED (no sign change)
+PASS planted: three roots in one bracket verdict=REFUSED (derivative enclosure contains 0)
+PASS planted: endpoint exactly on a root verdict=REFUSED (enclosure of F at an end contains 0)
+PASS planted: no root in the bracket verdict=REFUSED (no sign change)
+PASS planted: double root at a verdict=REFUSED (no sign change)
+PASS Psi_l = Psi_inf + eps Psi_1 + eps^2 E(eps) with the typed Psi_1 and E (symbolic)
+PASS (l+1)^2 c(l) - l^2 c(l+1) = l^2 - 3l - 2 (symbolic)
+PASS c(l+1) - c(l) = 2l + 2 (symbolic)
+PASS (l^2 - 3l - 2)/(l+1)^2 is increasing for l >= 1: derivative has the sign of 5l + 1 > 0 (symbolic)
+PASS C2: majorant polynomial for Omega_a has all coefficients >= 0 in n = 5 + t (eps_max <= 1/1000)
+PASS C2: majorant polynomial for Omega_b has all coefficients >= 0 in n = 5 + t (eps_max <= 1/1000)
+PASS C2: majorant polynomial for alpha^1 has all coefficients >= 0 in n = 5 + t (eps_max <= 1/1000)
+PASS first order Theorem L (own constants) re-derived with every check passing K_* = 23.8182, K_neg = 172.034
+PASS C2: Omega_n <= n^8 g_n and |alpha^1_n| <= n^5 g_n for 3 <= n <= 400 (iv)
+
+=== configuration L2: l >= 138 ===
+PASS L2: window radii K' = 46, 339 are at least Theorem L's own constants K_*, K_neg 23.8182, 172.034
+  windows: N [8.48330263578, 8.48809929897], Psi [9.61831478148, 9.65366410369], eps_max = 5.21376e-5
+  Z (N window) <= 1492.2;  Z, Theta (Psi window) <= 5846.11, 3961.16
+  nu in [19.614131, 19.772906]  nu(rho_*) in [19.6934, 19.6934]  -N_inf' >= 5.5877376
+PASS L2: -N_inf' >= mu_N > 0 on the N window and nu_min > 0 mu_N = 5.5877376, nu_min = 19.614131
+PASS L2: nu(rho_*) - eps_max Z > 0, so N_l(rho_*) > 0 and c r_* > rho_*
+PASS L2: s_N eps_max <= window radius, so rho_* + s_N eps lies in the N window
+  Psi_1 in [-207426.03, -184608.76]  Psi_1(rho_neg) in [-195755.96, -195755.96]  Psi_inf' >= 31420.282  E_max <= 48330580.0
+PASS L2: Psi_inf' >= mu_P > 0 on the Psi window mu_P = 31420.282
+PASS L2: Psi_1 < 0 on the whole Psi window
+PASS L2: Psi_1(rho_neg) + eps_max E_max < 0, so Psi_l(rho_neg) < 0 and c r_neg > rho_neg
+PASS L2: s_P eps_max <= window radius, so rho_neg + s_P eps lies in the Psi window
+  s_N = 3.5525479, s_P = 6.6818585
+PASS L2: expansions at 5 points of each window against the exact N_l and Psi_l, l=138 |zeta| seen <= 104.1 (bound 1492), |E| seen <= 1.45e+06 (bound 4.833e+07)
+PASS L2: expansions at 5 points of each window against the exact N_l and Psi_l, l=139 |zeta| seen <= 104.1 (bound 1492), |E| seen <= 1.45e+06 (bound 4.833e+07)
+PASS L2: expansions at 5 points of each window against the exact N_l and Psi_l, l=276 |zeta| seen <= 104.1 (bound 1492), |E| seen <= 1.45e+06 (bound 4.833e+07)
+
+THEOREM L, second order refinement (own constants, l >= 138):
+  0 < c r_* - rho_* <= 3.55255/c and 0 < c r_neg - rho_neg <= 6.68186/c (first order: 23.8182, 172.034; RESULTS: 91.51, 229.87)
+  comparison (not a pass/fail criterion): own <= 91.51 and <= 229.87
+
+=== configuration M: l >= 500 ===
+PASS M: window radii K' = 46, 339 are at least Theorem L's own constants K_*, K_neg 23.8182, 172.034
+  windows: N [8.48551733317, 8.48588460157], Psi [9.63463613837, 9.6373427468], eps_max = 3.99205e-6
+  Z (N window) <= 1487.17;  Z, Theta (Psi window) <= 5749.5, 3916.69
+  nu in [19.685735, 19.701068]  nu(rho_*) in [19.6934, 19.6934]  -N_inf' >= 5.6007977
+PASS M: -N_inf' >= mu_N > 0 on the N window and nu_min > 0 mu_N = 5.6007977, nu_min = 19.685735
+PASS M: nu(rho_*) - eps_max Z > 0, so N_l(rho_*) > 0 and c r_* > rho_*
+PASS M: s_N eps_max <= window radius, so rho_* + s_N eps lies in the N window
+  Psi_1 in [-197412.04, -194106.35]  Psi_1(rho_neg) in [-195755.96, -195755.96]  Psi_inf' >= 33285.858  E_max <= 46586039.0
+PASS M: Psi_inf' >= mu_P > 0 on the Psi window mu_P = 33285.858
+PASS M: Psi_1 < 0 on the whole Psi window
+PASS M: Psi_1(rho_neg) + eps_max E_max < 0, so Psi_l(rho_neg) < 0 and c r_neg > rho_neg
+PASS M: s_P eps_max <= window radius, so rho_neg + s_P eps lies in the Psi window
+  s_N = 3.5186068, s_P = 5.9363952
+PASS M: expansions at 5 points of each window against the exact N_l and Psi_l, l=500 |zeta| seen <= 103.8 (bound 1487), |E| seen <= 1.389e+06 (bound 4.659e+07)
+PASS M: expansions at 5 points of each window against the exact N_l and Psi_l, l=501 |zeta| seen <= 103.8 (bound 1487), |E| seen <= 1.389e+06 (bound 4.659e+07)
+PASS M: expansions at 5 points of each window against the exact N_l and Psi_l, l=502 |zeta| seen <= 103.8 (bound 1487), |E| seen <= 1.389e+06 (bound 4.659e+07)
+PASS M: expansions at 5 points of each window against the exact N_l and Psi_l, l=1000 |zeta| seen <= 103.8 (bound 1487), |E| seen <= 1.389e+06 (bound 4.659e+07)
+PASS M: expansions at 5 points of each window against the exact N_l and Psi_l, l=1001 |zeta| seen <= 103.8 (bound 1487), |E| seen <= 1.389e+06 (bound 4.659e+07)
+PASS M: (2l+2) nu_min > (c(l+1)/c(l) + c(l)/c(l+1)) Z at l = 500, so N_(l+1)(rho_l) < 0 and rho_*(l+1) < rho_*(l) for all l >= 500 19725.106 vs 2974.3581
+PASS M: (2l+2) |Psi_1|_min > (...) E_max at l = 500, so Psi_(l+1)(rho_l) > 0 and rho_neg(l+1) < rho_neg(l) for all l >= 500 1.9449457e+8 vs 93172820.0
+PASS M: l^2 r_* increases: s_N < rho_* (l^2-3l-2)/(l+1)^2 at l = 500 3.5186068 < 8.4010809
+PASS M: l^2 r_neg increases: s_P < rho_neg (l^2-3l-2)/(l+1)^2 at l = 500 5.9363952 < 9.5398987
+
+THEOREM M (own constants, l >= 500):
+  c r_*(l+1) < c r_*(l) and c r_neg(l+1) < c r_neg(l); 0 < c r_* - rho_* <= 3.51861/c (RESULTS 3.709), 0 < c r_neg - rho_neg <= 5.9364/c (RESULTS 6.101);
+  (l+1)^2 r_*(l+1) > l^2 r_*(l) and the same for r_neg.
+  comparison (not a pass/fail criterion): own s_N <= 3.709, own s_P <= 6.101
+PASS Theorem M against my certified brackets, l=500 and 501: decrease, 0 < (c r - rho) c <= s, l^2 r increases, N_(l+1) < 0 and Psi_(l+1) > 0 at the lower ends (c r_* - rho_*) c <= 3.5155, (c r_neg - rho_neg) c <= 5.8394
+PASS Theorem M against my certified brackets, l=501 and 502: decrease, 0 < (c r - rho) c <= s, l^2 r increases, N_(l+1) < 0 and Psi_(l+1) > 0 at the lower ends (c r_* - rho_*) c <= 3.5155, (c r_neg - rho_neg) c <= 5.8394
+PASS Theorem M against my certified brackets, l=502 and 503: decrease, 0 < (c r - rho) c <= s, l^2 r increases, N_(l+1) < 0 and Psi_(l+1) > 0 at the lower ends (c r_* - rho_*) c <= 3.5155, (c r_neg - rho_neg) c <= 5.8394
+PASS Theorem M against my certified brackets, l=1000 and 1001: decrease, 0 < (c r - rho) c <= s, l^2 r increases, N_(l+1) < 0 and Psi_(l+1) > 0 at the lower ends (c r_* - rho_*) c <= 3.5155, (c r_neg - rho_neg) c <= 5.8394
+PASS Theorem M against my certified brackets, l=1001 and 1002: decrease, 0 < (c r - rho) c <= s, l^2 r increases, N_(l+1) < 0 and Psi_(l+1) > 0 at the lower ends (c r_* - rho_*) c <= 3.5155, (c r_neg - rho_neg) c <= 5.8394
+PASS Theorem M against my certified brackets, l=2000 and 2001: decrease, 0 < (c r - rho) c <= s, l^2 r increases, N_(l+1) < 0 and Psi_(l+1) > 0 at the lower ends (c r_* - rho_*) c <= 3.5155, (c r_neg - rho_neg) c <= 5.8394
+PASS Theorem M against my certified brackets, l=2001 and 2002: decrease, 0 < (c r - rho) c <= s, l^2 r increases, N_(l+1) < 0 and Psi_(l+1) > 0 at the lower ends (c r_* - rho_*) c <= 3.5155, (c r_neg - rho_neg) c <= 5.8394
+SUMMARY checks=163 failed=0

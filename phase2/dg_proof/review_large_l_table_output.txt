@@ -1,0 +1,13 @@
+review_large_l_table, mutation=None, 2999 brackets read from /home/nathan/Source/negative-mass-raw/I104-rpi5/sweep_brackets.csv
+PASS RESULTS table row l=2: c r_*, c r_neg, l^2 r_*, l^2 r_neg mine c r_* = 9.115121702, c r_neg = 10.696285936, l^2 r_* = 9.1151217, l^2 r_neg = 10.6962859; flags (True, True, True, True)
+PASS RESULTS table row l=3: c r_*, c r_neg, l^2 r_*, l^2 r_neg mine c r_* = 8.789041270, c r_neg = 10.143518921, l^2 r_* = 7.9101371, l^2 r_neg = 9.1291670; flags (True, True, True, True)
+PASS RESULTS table row l=5: c r_*, c r_neg, l^2 r_*, l^2 r_neg mine c r_* = 8.604503309, c r_neg = 9.833909912, l^2 r_* = 7.6825922, l^2 r_neg = 8.7802767; flags (True, True, True, True)
+PASS RESULTS table row l=10: c r_*, c r_neg, l^2 r_*, l^2 r_neg mine c r_* = 8.517778972, c r_neg = 9.689315919, l^2 r_* = 7.8868324, l^2 r_neg = 8.9715888; flags (True, True, True, True)
+PASS RESULTS table row l=20: c r_*, c r_neg, l^2 r_*, l^2 r_neg mine c r_* = 8.494079311, c r_neg = 9.649909251, l^2 r_* = 8.1283056, l^2 r_neg = 9.2343629; flags (True, True, True, True)
+PASS RESULTS table row l=80: c r_*, c r_neg, l^2 r_*, l^2 r_neg mine c r_* = 8.486243515, c r_neg = 9.636890653, l^2 r_* = 8.3840628, l^2 r_neg = 9.5208552; flags (True, True, True, True)
+PASS RESULTS table row l=100: c r_*, c r_neg, l^2 r_*, l^2 r_neg mine c r_* = 8.486049049, c r_neg = 9.636567629, l^2 r_* = 8.4036929, l^2 r_neg = 9.5430458; flags (True, True, True, True)
+PASS RESULTS table row l=500: c r_*, c r_neg, l^2 r_*, l^2 r_neg mine c r_* = 8.485715001, c r_neg = 9.636012754, l^2 r_* = 8.4688451, l^2 r_neg = 9.6168560; flags (True, True, True, True)
+PASS RESULTS table row l=1000: c r_*, c r_neg, l^2 r_*, l^2 r_neg mine c r_* = 8.485704479, c r_neg = 9.635995276, l^2 r_* = 8.4772442, l^2 r_neg = 9.6263881; flags (True, True, True, True)
+PASS RESULTS table row l=3000: c r_*, c r_neg, l^2 r_*, l^2 r_neg mine c r_* = 8.485701358, c r_neg = 9.635990091, l^2 r_* = 8.4828756, l^2 r_neg = 9.6327813; flags (True, True, True, True)
+PASS RESULTS table, row infinity: rho_* and rho_neg to 9 decimals 8.48570096737, 9.63598944259
+SUMMARY checks=11 failed=0

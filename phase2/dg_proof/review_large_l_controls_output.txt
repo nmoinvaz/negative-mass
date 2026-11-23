@@ -1,0 +1,158 @@
+review_large_l_controls: every mutation must exit non-zero and fire at its target
+OFF-TARGET review_large_l_common.py       --mutate=coef_q                   exit=1    0.1s
+           target: coefficients a_n(eps) in Lemma A's closed form, l=2
+           first FAIL: FAIL coefficients a_n(eps) in Lemma A's closed form, l=3, n<=5
+OK         review_large_l_common.py       --mutate=coef_lin                 exit=1    0.1s
+           target: coefficients a_n(eps) in Lemma A's closed form, l=2
+           first FAIL: FAIL coefficients a_n(eps) in Lemma A's closed form, l=2, n<=4
+OK         review_large_l_common.py       --mutate=nz_coef                  exit=1    0.9s
+           target: NZ(rho, eps) matches sympy at a point
+           first FAIL: FAIL NZ(rho, eps) matches sympy at a point
+SILENT     review_large_l_common.py       --mutate=accept_zero_enclosure    exit=0    0.9s
+           target: planted: endpoint exactly on a root
+           first FAIL: 
+OK         review_large_l_common.py       --mutate=no_deriv                 exit=1    0.1s
+           target: planted: three roots in one bracket
+           first FAIL: FAIL planted: three roots in one bracket verdict=CERTIFIED (certified)
+OK         review_large_l_common.py       --mutate=alpha_n                  exit=1    0.3s
+           target: alpha_1 = 3/2, alpha_2 = 0
+           first FAIL: FAIL alpha_1 = 3/2, alpha_2 = 0
+OK         review_large_l_common.py       --mutate=drop_last                exit=1    0.1s
+           target: coefficients a_n(eps) in Lemma A's closed form, l=2
+           first FAIL: FAIL coefficients a_n(eps) in Lemma A's closed form, l=2, n<=4
+OK         review_large_l_common.py       --mutate=psip_term                exit=1    0.9s
+           target: Psi' formula equals sympy
+           first FAIL: FAIL Psi' formula equals sympy d/d rho (generic X) diff=6.7e+02
+OK         review_large_l_roots.py        --mutate=bessel_coef              exit=1    0.6s
+           target: Bessel closed form: coefficient of s^n equals
+           first FAIL: FAIL Bessel closed form: coefficient of s^n equals (n-2)(n-4)/(n-1)!^2 for n = 3..13
+OK         review_large_l_roots.py        --mutate=alpha_n                  exit=1    0.6s
+           target: series of X_inf = Bessel closed form at rho=3.3
+           first FAIL: FAIL series of X_inf = Bessel closed form at rho=3.3 diff=0.0456
+OK         review_large_l_roots.py        --mutate=nz_coef                  exit=1    1.0s
+           target: rho_neg reproduces RESULTS.md's 9.635989442586144
+           first FAIL: FAIL rho_neg reproduces RESULTS.md's 9.635989442586144 to 1e-15 diff=0.236
+OK         review_large_l_roots.py        --mutate=shift_enclosure          exit=1    0.9s
+           target: rho_*: iv enclosure
+           first FAIL: FAIL rho_*: iv enclosure [848570096737353034093050082200369e-32, 848570096737353034093050082200570e-32] certified (sign change, derivative excludes 0) no sign change
+OK         review_large_l_roots.py        --mutate=no_deriv                 exit=1    0.6s
+           target: planted: three roots in one bracket
+           first FAIL: FAIL planted: three roots in one bracket verdict=CERTIFIED (certified)
+SILENT     review_large_l_roots.py        --mutate=accept_zero_enclosure    exit=0    1.0s
+           target: planted: endpoint exactly on a root
+           first FAIL: 
+OK         review_large_l_theorem3.py     --mutate=mut_Z                    exit=1    0.7s
+           target: (Z) psi_0,xx = V psi_0 exactly, l=2
+           first FAIL: FAIL (Z) psi_0,xx = V psi_0 exactly, l=2
+OK         review_large_l_theorem3.py     --mutate=mut_V_NZ                 exit=1    3.2s
+           target: V(r = rho/c, lambda = c/2) = 8c^4
+           first FAIL: FAIL V(r = rho/c, lambda = c/2) = 8c^4 (2+eps rho) N_Z / (rho^4 (rho-6)^2), symbolic in c
+OK         review_large_l_theorem3.py     --mutate=mut_Vhat                 exit=1    3.8s
+           target: 2 g^2 - V = 2c^4 (2+eps rho) Psi
+           first FAIL: FAIL 2 g^2 - V = 2c^4 (2+eps rho) Psi / (rho^4 (rho-6)^2 X^2), generic X, symbolic in c
+OK         review_large_l_theorem3.py     --mutate=mut_S                    exit=1    4.2s
+           target: Vhat = S c^3 (2c + rho)
+           first FAIL: FAIL Vhat = S c^3 (2c + rho)/(rho^3 (rho-6) X^2) for generic X (S of RESULTS 4.3) ratio=c**3*(2*c + rho)*(2*c*rho**2*X(rho)*Derivative(X(rho), (rho, 2)) - 4*c*rho**2*Deri
+OK         review_large_l_theorem3.py     --mutate=mut_P1                   exit=1    6.5s
+           target: (P1) numerator of V
+           first FAIL: FAIL (P1) numerator of V = polynomial in (sigma, mu) with all positive coefficients mu*sigma**3 + 9*mu*sigma**2 + 27*mu*sigma + 27*mu + sigma**3 + 6*sigma**2 - 18
+OK         review_large_l_theorem3.py     --mutate=mut_P2                   exit=1    7.1s
+           target: (P2) c^5 Q(tau, m) has all coefficients positive
+           first FAIL: FAIL (P2) c^5 Q(tau, m) has all coefficients positive 64 coefficients, RESULTS says 64
+OK         review_large_l_theorem3.py     --mutate=mut_lead                 exit=1    6.8s
+           target: lead coefficient of Psi
+           first FAIL: FAIL lead coefficient of Psi / a^2 = eps (l+1)^2 - (1+2 eps)/2 = (l+1)/(2(l-1)) > 0
+OK         review_large_l_theorem3.py     --mutate=mut_count_psi            exit=1    6.8s
+           target: l=2: Psi has exactly one root
+           first FAIL: FAIL l=2: Psi has exactly one root in [9.11512170, oo) (Theorem 3, exact Sturm count) and Psi < 0 there at the left end degree 11
+OK         review_large_l_theorem3.py     --mutate=mut_count_N              exit=1    6.8s
+           target: l=2: N has exactly one root in (6, oo)
+           first FAIL: FAIL l=2: N has exactly one root in (6, oo) (T2, exact Sturm count), root in [9.11512170, 9.11512170]
+OK         review_large_l_theorem3.py     --mutate=mut_NZpos                exit=1    6.8s
+           target: N_Z(6 + tau) has all coefficients positive
+           first FAIL: FAIL N_Z(6 + tau) has all coefficients positive in (tau, eps) e2*tau2**3/4 + 9*e2*tau2**2/2 + 27*e2*tau2 + 54*e2 + tau2**3/8 - 3*tau2**2/4 - 18*tau2 - 63
+OK         review_large_l_brackets.py     --mutate=coef_q                   exit=1    0.8s
+           target: coefficients a_n(eps), n <= 40, inside Lemma A's exact closed form, l=29
+           first FAIL: FAIL coefficients a_n(eps), n <= 40, inside Lemma A's exact closed form, l=29
+OK         review_large_l_brackets.py     --mutate=coef_lin                 exit=1    0.7s
+           target: coefficients a_n(eps), n <= 40, inside Lemma A's exact closed form, l=29
+           first FAIL: FAIL coefficients a_n(eps), n <= 40, inside Lemma A's exact closed form, l=29
+OK         review_large_l_brackets.py     --mutate=drop_last                exit=1    0.8s
+           target: coefficients a_n(eps), n <= 40, inside Lemma A's exact closed form, l=29
+           first FAIL: FAIL coefficients a_n(eps), n <= 40, inside Lemma A's exact closed form, l=29
+OK         review_large_l_brackets.py     --mutate=nz_coef                  exit=1    0.8s
+           target: S shows the same sign change (-,+) on the Psi bracket (does not use (Z)), l=29
+           first FAIL: FAIL S shows the same sign change (-,+) on the Psi bracket (does not use (Z)), l=29 S signs (-1, -1)
+OK         review_large_l_brackets.py     --mutate=S_flip                   exit=1    0.8s
+           target: S shows the same sign change (-,+) on the Psi bracket (does not use (Z)), l=29
+           first FAIL: FAIL S shows the same sign change (-,+) on the Psi bracket (does not use (Z)), l=29 S signs (1, -1)
+SILENT     review_large_l_brackets.py     --mutate=accept_zero_enclosure    exit=0  152.6s
+           target: planted: endpoint exactly on a root
+           first FAIL: 
+OK         review_large_l_brackets.py     --mutate=no_deriv                 exit=1    0.5s
+           target: planted: three roots in one bracket
+           first FAIL: FAIL planted: three roots in one bracket verdict=CERTIFIED (certified)
+OK         review_large_l_brackets.py     --mutate=shift_bracket            exit=1    0.8s
+           target: N: bracket of c r_* certified (signs, derivative), l=29
+           first FAIL: FAIL N: bracket of c r_* certified (signs, derivative), l=29 no sign change
+OK         review_large_l_brackets.py     --mutate=rho_limit                exit=1  158.5s
+           target: c r_* above its limit for every certified l
+           first FAIL: FAIL c r_* above its limit for every certified l (lo > rho)
+OK         review_large_l_brackets.py     --mutate=l2r_reverse              exit=1  152.0s
+           target: l^2 r with c r_*: increases along all sampled l >= 5
+           first FAIL: FAIL l^2 r with c r_*: increases along all sampled l >= 5 (lo(l2) l2^2/c2 > hi(l1) l1^2/c1) violations: [(5, 6), (6, 7), (7, 8)]
+OK         review_large_l_thm_l.py        --mutate=beta_scale               exit=1    0.9s
+           target: step 1: |a_n - alpha_n| <= eps B_n for 3 <= n <= l+10, l=138
+           first FAIL: FAIL step 1: |a_n - alpha_n| <= eps B_n for 3 <= n <= l+10, l=138 largest ratio 1000.000000 (1 only at n = 4, l = 138 where eps = eps0)
+OK         review_large_l_thm_l.py        --mutate=slope_sign               exit=1    2.7s
+           target: step 3: -N_inf' >= mu_N > 0 on the N window
+           first FAIL: FAIL step 3: -N_inf' >= mu_N > 0 on the N window mu_N = -5.6612178
+OK         review_large_l_thm_l.py        --mutate=window_small             exit=1    2.7s
+           target: step 4: eps0 E_N < mu_N delta_N
+           first FAIL: FAIL step 4: eps0 E_N < mu_N delta_N (the zero of N_l lies in the window)
+OK         review_large_l_thm_l.py        --mutate=psi_identity             exit=1    1.6s
+           target: Psi_l - Psi_inf = eps [rho^3 N_l^2
+           first FAIL: FAIL Psi_l - Psi_inf = eps [rho^3 N_l^2 + 2 rho^2 D_N (N_l + N_inf) - rho^3 X_l^2 - 4 N_Z^0 D_X (X_l + X_inf)] (symbolic)
+OK         review_large_l_thm_l.py        --mutate=bracket_k                exit=1    6.1s
+           target: Theorem L against the certified brackets, l=138
+           first FAIL: FAIL Theorem L against the certified brackets, l=138 (c r_* - rho_*) c <= 3.51519, (c r_neg - rho_neg) c <= 5.83894
+OK         review_large_l_thm_l.py        --mutate=eta_scale                exit=1   10.5s
+           target: step 2 at 11 points of each window, l=138
+           first FAIL: FAIL step 2 at 11 points of each window, l=138: |N_l - N_inf|/eps <= E_N and |Psi_l - Psi_inf|/eps <= eta largest observed 20 (bound 132), 2.112e+05 (bound 5.161e+06)
+OK         review_large_l_thm_m.py        --mutate=nu_scale                 exit=1    5.3s
+           target: L2: expansions at 5 points of each window against the exact N_l and Psi_l, l=138
+           first FAIL: FAIL L2: expansions at 5 points of each window against the exact N_l and Psi_l, l=138 |zeta| seen <= 3896 (bound 1492), |E| seen <= 5.065e+07 (bound 4.832e+07)
+OK         review_large_l_thm_m.py        --mutate=omega_scale              exit=1    5.1s
+           target: L2: expansions at 5 points of each window against the exact N_l and Psi_l, l=138
+           first FAIL: FAIL L2: expansions at 5 points of each window against the exact N_l and Psi_l, l=138 |zeta| seen <= 104.1 (bound 1.492), |E| seen <= 1.45e+06 (bound 2.055e+05)
+OK         review_large_l_thm_m.py        --mutate=cmp_reverse              exit=1   10.6s
+           target: M: (2l+2) nu_min >
+           first FAIL: FAIL M: (2l+2) nu_min > (c(l+1)/c(l) + c(l)/c(l+1)) Z at l = 500, so N_(l+1)(rho_l) < 0 and rho_*(l+1) < rho_*(l) for all l >= 500 19725.106 vs 2974.3581
+OK         review_large_l_thm_m.py        --mutate=l2r_s                    exit=1   10.5s
+           target: M: l^2 r_* increases: s_N < rho_*
+           first FAIL: FAIL M: l^2 r_* increases: s_N < rho_* (l^2-3l-2)/(l+1)^2 at l = 500 20.0 < 8.4010809
+OK         review_large_l_thm_m.py        --mutate=window_narrow            exit=1    3.9s
+           target: L2: s_N eps_max <= window radius
+           first FAIL: FAIL L2: s_N eps_max <= window radius, so rho_* + s_N eps lies in the N window
+OK         review_large_l_thm_m.py        --mutate=brk_s                    exit=1   11.2s
+           target: Theorem M against my certified brackets, l=500 and 501
+           first FAIL: FAIL Theorem M against my certified brackets, l=500 and 501: decrease, 0 < (c r - rho) c <= s, l^2 r increases, N_(l+1) < 0 and Psi_(l+1) > 0 at the lower ends (c r_* - r
+OK         review_large_l_table.py        --mutate=table_digit              exit=1    0.1s
+           target: RESULTS table row l=20
+           first FAIL: FAIL RESULTS table row l=20: c r_*, c r_neg, l^2 r_*, l^2 r_neg mine c r_* = 8.494079311, c r_neg = 9.649909251, l^2 r_* = 8.1283056, l^2 r_neg = 9.2343629; flags (False,
+OFF-TARGET review_large_l_sweep.py        --mutate=coef_q                   exit=1    0.8s
+           target: coefficients a_n(eps), n <= 40, inside Lemma A's exact closed form, l=2
+           first FAIL: FAIL coefficients a_n(eps), n <= 40, inside Lemma A's exact closed form, l=3
+OK         review_large_l_sweep.py        --mutate=shift_bracket            exit=1    0.8s
+           target: N: bracket of c r_* certified (signs, derivative), l=2
+           first FAIL: FAIL N: bracket of c r_* certified (signs, derivative), l=2 no sign change
+OK         review_large_l_sweep.py        --mutate=S_flip                   exit=1    0.8s
+           target: S shows the same sign change (-,+) on the Psi bracket (does not use (Z)), l=2
+           first FAIL: FAIL S shows the same sign change (-,+) on the Psi bracket (does not use (Z)), l=2 S signs (1, -1)
+OK         review_large_l_sweep.py        --mutate=rho_limit                exit=1    0.9s
+           target: bracket above its limit, l=
+           first FAIL: FAIL N bracket above its limit, l=13
+OK         review_large_l_sweep.py        --mutate=l2r_reverse              exit=1    0.8s
+           target: l^2 r increases (N), l=5 -> 6
+           first FAIL: FAIL l^2 r increases (N), l=5 -> 6
+SUMMARY mutations=52 on-target=47 not-on-target=5
