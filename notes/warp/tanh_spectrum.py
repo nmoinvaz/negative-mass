@@ -16,7 +16,7 @@ so f ~ r^l at 0 (regular) and f ~ r^-2 at infinity (the free decaying solution),
 S (f Om_kappa) = (f' + (1 + kappa) f / r) (sigma.rhat Om_kappa), so K is block diagonal in kappa and every radial integral
 is a polynomial or a smooth weight in y. The matrices are real, so eigenvalues are real or in conjugate pairs.
 
-    python notes/warp/tanh_spectrum.py [--part=reduce,angular,radial,vc,planted,shift,tanh,conv] [--sigmas=2,4]
+    python notes/warp/tanh_spectrum.py [--part=reduce,angular,radial,vc,planted,shift,window,tanh,conv] [--sigmas=2,4]
                                        [--ms=0.5,1.5,...] [--procs=4] [--raw=DIR] [--quick]
                                        [--p=SIG:P,...] [--npan=N] [--convtol=1e-7]
     python notes/warp/tanh_spectrum.py --controls          every --mutate control, each must make its checks fail
@@ -29,6 +29,8 @@ Parts:
   vc       v_c = 2 sqrt(S) / ||tau1||_3 by quadrature, against the values printed in mass_bounds.md.
   planted  tau1 = 6/(1 + r^2): mu = +-i/l_n, l_n = 1 + 2n/3, with multiplicities. Passes first or nothing else runs.
   shift    the same weight translated and dilated (axisymmetric, not spherical): the same spectrum.
+  window   the window helper on hand-made arrays (A, B) of known cut (#140): the cut and the window of A read one np.abs
+           array, so the cut's eigenvalue and its conjugate are always inside. Passes before tanh runs.
   tanh     the tanh profile per m and sigma R: rho(T1) v_c, the leading eigenvalues, convergence in every parameter,
            the real candidates, the identity Re(v) int tau1 |psi|^2 = 0 and the residual of each eigenfunction.
   conv     the leading eigenvalues of m = 1/2 and 3/2 with one discretisation parameter changed at a time.
@@ -38,7 +40,7 @@ are 80 at sigma R = 2 and 100 at 4, and another sigma R needs --p. --npan sets A
 1.5 times as many) and the conv part's base (160 without it, also with --quick), whose variants are npan / 2 and 2 npan. --convtol is the conv check's
 largest relative move of the leading eigenvalue (default 1e-7).
 
-Mutations (each must make its checks fail): g0block, ladder, dterm, half, lscale, sobolev, rot, trunc.
+Mutations (each must make its checks fail): g0block, ladder, dterm, half, lscale, sobolev, rot, trunc, abscut.
 Exits 1 when any check fails.
 """
 import os
@@ -51,6 +53,7 @@ import math
 import subprocess
 import sys
 import time
+from collections import namedtuple
 from concurrent.futures import ProcessPoolExecutor
 
 import numpy as np
@@ -78,6 +81,8 @@ MUTATIONS = {  # name: (what it breaks, [(the run's options, the checks that mus
     "rot": ("solves with N times i, so the planted eigenvalues are real", [("--part=planted --quick",
                                                                            ["real_identity"])]),
     "trunc": ("keeps 3 angular levels and 8 radial functions", [("--part=tanh --quick --sigmas=2", ["converged"])]),
+    "abscut": ("takes the window's cut as abs of one scalar, not from the np.abs array", [("--part=window",
+                                                                                          ["window_scalar"])]),
 }
 
 
@@ -610,16 +615,86 @@ def pfor(cfg, sig):
     return cfg["p"][sig] if isinstance(cfg["p"], dict) else cfg["p"]
 
 
-def match_stable(muA, muB, tol=1e-5, lo=1e-3):
-    """Largest |mu| above which every eigenvalue of A matches one of B to relative tol (A sorted by |mu|)."""
-    cut = 0.0
-    for z in muA:
-        if abs(z) < lo:
+Window = namedtuple("Window", "cut lo A B k asym sA")
+
+
+def match_stable(muA, ab, muB, tol=1e-5, lo=1e-3):
+    """Index in muA of the first eigenvalue, above lo in modulus, that has no eigenvalue of muB within tol relative;
+    -1 if none. muA is sorted by decreasing ab = np.abs(muA), the one array that window() reads."""
+    for i, z in enumerate(muA):
+        if ab[i] < lo:
             break
-        if np.abs(muB - z).min() > tol * abs(z):
-            cut = abs(z)
+        if np.abs(muB - z).min() > tol * ab[i]:
+            return i
+    return -1
+
+
+def window(muA, muB, tol=1e-5, floor=1e-3):
+    """The convergence window of one sector (#140). muA and muB are the eigenvalues of A and B times v_c.
+
+    The cut is the modulus of the first eigenvalue of A, by decreasing modulus, that B does not reproduce to tol
+    (match_stable). The window of A is every eigenvalue with |mu| >= max(cut, floor), so it includes the cut's own
+    eigenvalue and its conjugate, which have the same modulus. The cut and the window read one array, ab = np.abs(muA):
+    np.abs(array) and abs(scalar) differ in the last bit for many values, and with two paths that bit decides whether the
+    pair counts, so the count depended on the machine. The window of B is np.abs(muB) >= the same cut.
+    Returns Window(cut, lo = max(cut, floor), A, B, k, asym, sA): A and B the eigenvalues inside, sA muA sorted by
+    decreasing modulus, k the cut's index in sA (-1 if none), asym the largest relative distance of -mu from the
+    spectrum of A over the window."""
+    ab = np.abs(muA)
+    order = np.argsort(-ab, kind="stable")
+    sA, ab = muA[order], ab[order]
+    k = match_stable(sA, ab, muB, tol, floor)
+    cut = 0.0 if k < 0 else (abs(sA[k]) if MUT == "abscut" else ab[k])
+    lo = max(cut, floor)
+    A, B = sA[ab >= lo], muB[np.abs(muB) >= lo]
+    asym = max((np.abs(sA + z).min() / abs(z) for z in A), default=0.0)
+    return Window(float(cut), float(lo), A, B, k, float(asym), sA)
+
+
+def window_plant(z, ab_z):
+    """Hand-made (A, B) of known window: |z| = ab_z is the cut. A, shuffled: the quadruples +-5/16 +- 3i/4 (13/16) and
+    +-7/32 +- 3i/4 (25/32), the reals +-nextafter(ab_z, 1), the pair z, conj z, the reals +-nextafter(ab_z, 0) and
+    +-5/16 +- 21i/64 (29/64). B: the values above the cut times 1 + 1e-8, the pair times 1 + 1e-3 (no partner), the reals
+    below times 1 - 1e-3, the last quadruple times 1 + 1e-8."""
+    quad = lambda a, b: [complex(sa * a, sb * b) for sa in (1, -1) for sb in (1, -1)]  # noqa: E731
+    up, dn = float(np.nextafter(ab_z, 1.0)), float(np.nextafter(ab_z, 0.0))
+    above = quad(5 / 16, 3 / 4) + quad(7 / 32, 3 / 4) + [up, -up]
+    pair, below, low = [z, z.conjugate()], [dn, -dn], quad(5 / 16, 21 / 64)
+    A = np.array(above + pair + below + low)
+    B = np.concatenate([np.array(above) * (1 + 1e-8), np.array(pair) * (1 + 1e-3), np.array(below) * (1 - 1e-3),
+                        np.array(low) * (1 + 1e-8)])
+    return A[np.random.default_rng(140).permutation(len(A))], B[np.random.default_rng(141).permutation(len(B))]
+
+
+def part_window():
+    print("== window: the cut and the window of A from one np.abs array, on hand-made arrays (A, B) of known cut")
+    # P1: every modulus exact in binary, the cut pair 3/8 +- i/2 has |z| = 5/8; the symmetry value is sqrt(137)/40 (the
+    # pair's -z is not in A; the nearest value is -5/16 - 21i/64, at distance sqrt(137)/64)
+    A, B = window_plant(complex(3 / 8, 1 / 2), 0.625)
+    w = window(A, B)
+    pos = int(np.flatnonzero((w.sA == w.sA[w.k]) | (w.sA == np.conj(w.sA[w.k]))).max()) + 1 if w.k >= 0 else -1
+    sym = math.sqrt(137) / 40
+    check("window_planted", w.cut == 0.625 and w.k == 10 and len(w.A) == 12 and len(w.B) == 12 and pos == 12
+          and abs(w.asym / sym - 1) < 1e-12,
+          f"cut {w.cut!r}, k {w.k}, window of A {len(w.A)}, of B {len(w.B)}, by position {pos}, symmetry {w.asym:.6f} "
+          f"(planted: 0.625, 10, 12, 12, 12, {sym:.6f})")
+    # P2: the pair is one whose np.abs(array) is below its abs(scalar), found by a seeded search on this machine
+    rng, z2 = np.random.default_rng(140), None
+    for _ in range(100000):
+        z = complex(rng.uniform(0.30, 0.50), rng.uniform(0.30, 0.45))
+        a = float(np.abs(np.array([z, z.conjugate()]))[0])
+        if 0.5 < a < 0.75 and a < abs(np.complex128(z)):
+            z2, ab2 = z, a
             break
-    return cut
+    if z2 is None:
+        check("window_scalar", True, "vacuous: no pair on this machine has np.abs(array) below abs(scalar)")
+        return
+    A, B = window_plant(z2, ab2)
+    w = window(A, B)
+    check("window_scalar", w.k == 10 and len(w.A) == 12 and len(w.B) == 12,
+          f"pair {z2.real:.6f}{z2.imag:+.6f}i, np.abs(array) {ab2!r} below abs(scalar) "
+          f"{float(abs(np.complex128(z2)))!r}: cut {w.cut!r}, k {w.k}, window of A {len(w.A)}, of B {len(w.B)} "
+          f"(planted: k 10, 12, 12)")
 
 
 def persisting(muA_real, muB, tol=1e-4):
@@ -655,7 +730,7 @@ def part_tanh(cfg, args):
                 np.savez_compressed(f"{args.raw}/tanh_sigma{sig:g}_m{m:g}.npz", vc=vc,
                                     muA=np.concatenate([d["mu"] for d in out["A"]]),
                                     muB=np.concatenate([d["mu"] for d in out["B"]]))
-    rho_all, cuts = {}, {}
+    rho_all, cuts, wins = {}, {}, {}
     for sig in sigmas:
         vc = v_c(sig)
         print(f"-- sigma R = {sig:g}, v_c = {vc:.6f}; eigenvalues of S^-1 M times v_c; T1 has them and their negatives")
@@ -668,10 +743,9 @@ def part_tanh(cfg, args):
             muB = np.concatenate([d["mu"] for d in B]) * vc
             muA, muB = muA[np.argsort(-np.abs(muA))], muB[np.argsort(-np.abs(muB))]
             rho, rhoB = max(rho, abs(muA[0])), max(rhoB, abs(muB[0]))
-            cut = match_stable(muA, muB)
+            w = wins[(sig, m)] = window(muA, muB)
+            cut, asym = w.cut, w.asym
             cuts[(sig, m)] = cut
-            win = muA[np.abs(muA) >= max(cut, 1e-3)]
-            asym = max((np.abs(muA + z).min() / abs(z) for z in win), default=0.0)
             lead = " ".join(f"{z.real:+.6f}{z.imag:+.6f}i" for z in muA[:4])
             print(f"   {m:4.1f} | {lead} | {abs(muA[0]):.8f} / {abs(muB[0]):.8f} | {cut:20.4f} | {asym:.1e}")
         rho_all[sig] = (rho, rhoB)
@@ -702,8 +776,7 @@ def part_tanh(cfg, args):
             r = res[(sig, m)]
             muA = np.concatenate([d["mu"] for d in r["A"]]) * vc
             muB = np.concatenate([d["mu"] for d in r["B"]]) * vc
-            lo = max(cuts[(sig, m)], 1e-3)
-            winA, winB = muA[np.abs(muA) >= lo], muB[np.abs(muB) >= lo]
+            lo, winA, winB = wins[(sig, m)].lo, wins[(sig, m)].A, wins[(sig, m)].B
             anyA = real_cands(muA[np.abs(muA) > 1e-8])
             anyB = real_cands(muB[np.abs(muB) > 1e-8])
             dg = [x for d in r["A"] for x in d["diag"]]
@@ -812,7 +885,7 @@ QUICK = {"dK": 8, "p": 40, "npan": 60, "dKB": 4, "pB": 12, "ms": "0.5,1.5",
 def main():
     global MUT
     ap = argparse.ArgumentParser()
-    ap.add_argument("--part", default="reduce,angular,radial,vc,planted,shift,tanh")
+    ap.add_argument("--part", default="reduce,angular,radial,vc,planted,shift,window,tanh")
     ap.add_argument("--mutate", default="")
     ap.add_argument("--sigmas", default="2,4")
     ap.add_argument("--ms", default="")
@@ -841,14 +914,16 @@ def main():
         run_controls()
     else:
         order = [("reduce", part_reduce), ("angular", part_angular), ("radial", part_radial), ("vc", part_vc),
-                 ("planted", lambda: part_planted(cfg)), ("shift", lambda: part_shift(cfg))]
+                 ("planted", lambda: part_planted(cfg)), ("shift", lambda: part_shift(cfg)),
+                 ("window", part_window)]
         for name, fn in order:
             if name in parts:
                 fn()
         if "conv" in parts:
             part_conv(cfg, args)
         if "tanh" in parts:
-            if any(f in FAILED for f in ("planted", "shift", "angular", "radial_op", "radial_int")):
+            if any(f in FAILED for f in ("planted", "shift", "angular", "radial_op", "radial_int", "window_planted",
+                                         "window_scalar")):
                 print("== tanh skipped: a planted-truth or basis check failed, so real data are not computed")
             else:
                 part_tanh(cfg, args)
