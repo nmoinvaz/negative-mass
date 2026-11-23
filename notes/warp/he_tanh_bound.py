@@ -554,8 +554,10 @@ def check_cover(dump=None, top=P_MAX):
     if ok:
         widths = [hi(c["P"]) - lo(c["P"]) for c in cells]
         worst = max(cells, key=lambda c: c["Ehi"])
+        Zc = 4 * tanh_i(pt(2)) ** 2 - 2 / cosh_i(pt(2)) ** 2  # the tail constant of cell_proof
         detail = (f"p in [0, {mp.nstr(top, 12)}] is tiled by {len(cells)} cells (widths {mp.nstr(min(widths), 3)} to "
-                  f"{mp.nstr(max(widths), 3)}). In each, (0, {mp.nstr(YA, 4)}] and [p + 2, infinity) hold no root, the "
+                  f"{mp.nstr(max(widths), 3)}). In each, (0, {mp.nstr(YA, 4)}] and [p + 2, infinity) hold no root (the tail needs "
+                  f"4 tanh^2 2 - 2 sech^2 2 >= {mp.nstr(lo(Zc), 8)} > 0 and y_t >= 2), the "
                   f"leaves tile the rest, the roots lie in {sum(c['ncand'] for c in cells)} candidate leaves in all with "
                   f"one sign change and Psi_y > 0 per cell, F + r f' <= {E_CRIT} and r f' < 0 on every candidate. "
                   f"Largest upper bound of F + r f' over the cells: {mp.nstr(worst['Ehi'], 6)} (p in "
