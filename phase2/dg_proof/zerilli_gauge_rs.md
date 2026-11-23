@@ -56,8 +56,8 @@ system with analytic coefficients at r_s has only analytic solutions (textbook t
 
 **Discrepancies with DG06 (the arXiv TeX; the published text was not read, *(unverified)*), reported and not fixed.** (cz) is printed ζ′ = **+**2λ²/(3μ(2λ+3)) ζ at r = 3μ/(2λ). The derivation gives c\* = **−**2λ²/(3μ(2λ+3)) (R.5).
 On solutions the printed condition would force ζ(r_s) = 0 (R.5), and a smooth ζ with the printed constant gives poles in K, H1 and H2 (R.12). DG06's own (RW17) already forces c\* at r_s (R.6), so the printed (cz) disagrees with the paper's own evolution equation.
-Written with M instead of μ the same condition is c\* = λ²/(3M(2λ+3)): the printed form is what one gets by substituting M = +μ/2 instead of −μ/2. In (nv1) (R.7): K is right; H1 is (2/r) times the derived H1 (the printed one has
-dimension 1/length); H2 has the opposite sign on its ζ term, the same sign slip as (cz). (im) = (9)·(2λr − 3μ) is correct (R.8), and so are (RW17), (3)–(4), (9), (6).
+Written with M instead of μ the same condition is c\* = λ²/(3M(2λ+3)); a plausible origin of the printed form is the substitution M = +μ/2 instead of −μ/2 (hand check of the algebra, not an inference about the authors). In (nv1) (R.7): K is right; H1 is (2/r) times the derived H1 (the printed one has
+dimension 1/length); H2 has the opposite sign on its ζ term; its printed double-pole numerator vanishes at r_s exactly under the printed (cz) (a hand check, not scripted; the control `n2_sign` shows R.9 fires when the printed sign is used). (im) = (9)·(2λr − 3μ) is correct (R.8), and so are (RW17) (R.6) and (3)–(4), (9) (R.7, R.8). V of (6) is not tested here (#143).
 `phase0/RESULTS.md` quotes the condition as DG08's Lemma 1 in the form c₀ = λ²c₋₁/(3M(3+2λ)) for ψ = c₋₁/(r−r_s) + c₀ + …; since ζ = 2λ(r−r_s)ψ this is ζ′(r_s) = c\*ζ(r_s) with the derived sign (hand check; DG08 itself not read here, *(unverified)*).
 
 Status: **checked symbolically** (exact simplification to 0 in Q(r, M, s, L), also at M = −1 and l = 2, 3, 4), except the textbook steps named in §4.
