@@ -262,3 +262,32 @@ No discrepancy in the count or in a number. Three wording points of he_type3_cou
 3. The tail constant L (0.1687, 0.5237) is 3 to 8 times below the sign-aware bound (0.49998, 3.99994) and the true limit 4v³; it is correct and not tight.
 
 Not a discrepancy but recorded: my review shares the frame table with #133, so a defect of the printed table itself would be shared; it equals the metric route of `he_type3.shadow()` (compare, `tables`).
+
+## Coordinator's review
+
+Raw `I136-mac` (Mac, Python 3.14, sympy 1.14.0, mpmath 1.3.0, nice 10, at most two processes).
+
+- Scope: the branch adds five files, all `notes/warp/review_he_type3_count*`, inside the task.
+- Reruns: the full run exits 0 in 127 s and the comparison in 117 s, each with output equal to the committed one apart
+  from timings. The comparison's dump of P equals `P_table.tsv` byte for byte. All 13 controls and the comparison's two
+  exit 1, with the same failed checks as on rpi5.
+- Re-solve: G(0) by hand. With K = 1 + C, φ = v z²/(2K) + O(z⁴) and y = −v z⁴ (K − 6)/(3K²) + O(z⁶), so
+  G(0) = 774144 (v/2K)⁸ (v(K − 6)/(3K²))² = 1.0945107 × 10⁻⁶⁷ and 6.5894091 × 10⁻¹⁶⁹, the values of section 6.
+- `ind136.py` shares no code with this note's scripts or with #133's. It builds E1, E2 from sympy's det(λ − ηR) of the
+  typed table, its own P, and finds the roots by a sign scan of the tanh form at 80 digits. It re-solves the admissible
+  points by Newton in (r, w) without the resultant (*numerical evidence*). It confirms P = `P_table.tsv`, the term counts
+  17 and 42, j + k in 9..15 with k ≤ 9, the weight-24 part, the 4 + 1 and 6 + 1 roots to 5 × 10⁻¹⁰, the common w at every
+  root, the three admissible points per wall, and both ends along the curve. Six mutations each make it fail.
+- Run 1 of ind136 failed one criterion through its own defect. It required S(300) within 10⁻² of 4v³, but
+  S = Σ Lₙ z⁻ⁿ + O(e⁻ᶻ) with L₀ = 4v³, L₁ = 57v³ + 96v⁵ + 27v⁷ (1323/128 at Le, 180 at Rodal), exact from the table. So
+  this note's limit 4v³ is right, and S(300) = 0.5332 and 4.590 are the expansion's values. Run 2 crashed on a type
+  error; run 3 passes. All three are in the raw folder.
+
+Findings:
+- No discrepancy in the count or in a number.
+- Discrepancy 2 above does not hold. Lemma 4 of he_type3_count.md needs only that Π_n has degree at most n, which is
+  automatic: t^(n−9) |Π_n| ≤ M_n t^(n−9) zⁿ = z⁹ M_n (tz)^(n−9) for z ≥ 1. k ≤ 9 is needed by L9 of this note, where S is
+  a polynomial in s = 1/z. It holds. he_type3_count.md is left as it is on this point. Discrepancy 1 is applied there.
+- The two independence slips of section 1 stand as disclosed. #133 ran on the same machine, so its runner's auto-memory
+  reached this review. The code and the identities are this review's own, so the confirmation holds; the method's shape
+  is #133's.

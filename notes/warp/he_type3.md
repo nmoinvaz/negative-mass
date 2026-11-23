@@ -32,7 +32,8 @@ only E2 (section 4).
 On the tanh wall the Type III points form a curve in (r, v, cos θ). At Le's parameters (σR_b = 8, v = 1/2) and Rodal's
 (σ = 4, R_b = 5, so σR_b = 20, v = 1) the curve meets the wall in three radii each, listed in section 5, each enclosed in a
 box with a unique zero (**certified**). That these are all of them is **certified** by an interval cover of every root in
-r ∈ (0, ∞) ([he_type3_count.md](he_type3_count.md), #133).
+r ∈ (0, ∞) ([he_type3_count.md](he_type3_count.md), #133), reproduced by independent interval code in #136
+([review_he_type3_count.md](review_he_type3_count.md)).
 
 | set, off the equator and axis, on E1 = E2 = 0 | type | rank(M − λ) | root |
 |---|---|---|---|
@@ -198,7 +199,8 @@ three times, once on branch B and twice on branch A, which the quartic route and
 (`tanh_curve`). The scan found no near-tangent minimum of |P|, so no double crossing is hidden between grid radii, but that is a
 grid statement. The count of three is **certified** by #133's interval cover over r ∈ (0, ∞)
 ([he_type3_count.md](he_type3_count.md)): P has 4 roots at Le and 6 at Rodal, three of them admissible at each wall, and the
-spurious factor B′ − A′ has one root per wall, where E1 and E2 have no finite common root.
+spurious factor B′ − A′ has one root per wall, where E1 and E2 have no finite common root. #136 reproduced the count with
+independent exact-rational interval code ([review_he_type3_count.md](review_he_type3_count.md)).
 
 ## 6. What this says for the exclusion of #57
 

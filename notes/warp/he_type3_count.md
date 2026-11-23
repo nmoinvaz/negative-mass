@@ -40,7 +40,7 @@ Everything is as in he_type3.md. With φ = vF, A′ = v r f′ and B′ = v r² 
 
     E1 = e₀ + e₁ w + e₂ w²,     E2 = f₀ + f₁ w + f₂ w² + f₃ w³,     e_m, f_m ∈ ℚ[φ, A′, B′],   w = c²,
 
-with 17 and 42 terms in the variables (v, F, a, b, u, c) and more in (φ, A′, B′, w). A point of the wall off the equator and axis (0 < w < 1) with
+with 17 and 42 terms in the variables (v, F, a, b, u, c), and also 17 and 42 in (φ, A′, B′, w) (#136). A point of the wall off the equator and axis (0 < w < 1) with
 v u ≠ 0 and (a, b) ≠ (0, 0) is Type III exactly when E1 = E2 = 0 and T = b + a u ≠ 0 (he_type3.md, **certified**). On the tanh wall a = f′ < 0
 for r > 0, so (a, b) ≠ (0, 0); u = 1/r is finite; v > 0. An **admissible point** is a pair (r, w) with r > 0, 0 < w < 1, E1 = E2 = 0 and T ≠ 0.
 T and A′ + B′ differ by the positive factor v r²: A′ + B′ = v r² T.
@@ -235,6 +235,8 @@ values of he_type3_output.txt, which agree but prove nothing.
 Trusted: mpmath's `iv` (outward-rounded + − × ÷ and `exp`), sympy (`resultant`, `Poly`, `ring`, `real_roots`), Python's `Fraction`, and the table of E1, E2 and P of
 `he_type3.shadow()`. Of that table, `tables` re-derives the identity of P with the resultant, an independent determinant at five points, and E1, E2 from the printed frame
 table of he_type3.md; it does not re-derive the frame table itself, which is #101's and #102's (checked there against the metric by independent code, `I102-mac`).
+#136 reproduced the cover, the ends and the boxes without mpmath `iv`, in exact rational arithmetic, and found the table of `he_type3.shadow()` equal term by term
+to the tables built from the printed frame table ([review_he_type3_count.md](review_he_type3_count.md)).
 
 Assumed: the theorem of he_type3.md (the description by E1, E2, T), constant v, and the Alcubierre metric of he_type.md. Not covered: the Type III set of the accelerating bubble
 (#73), other speeds or wall parameters, points with |w| > 10⁴ that are not needed, and the Lean statement of the lemmas of sections 1 to 4.
@@ -258,7 +260,10 @@ The coordinator reviewed the count (raw `I133-mac`, Mac, Python 3.14, sympy 1.14
 - `cmp133.py` cross-loads the table of P from `he_type3.shadow()` that this note trusts. It equals, term by term, the P of the
   independent Ricci route.
 
-The interval cover itself was not re-derived by independent interval code.
+#136 re-derived the cover with independent code in exact rational arithmetic (`fractions.Fraction`, no mpmath `iv`, its own exp, cosh and
+sinh enclosures, E1, E2 and P from the printed frame table, the cosh form of the profile). It finds the same 4 and 6 roots of P, one root of y
+per wall, the same ends, and three admissible points per wall at the same radii to 4 × 10⁻¹²: **confirmed**
+([review_he_type3_count.md](review_he_type3_count.md), raw `I136-rpi5`; the coordinator's review of it in raw `I136-mac`).
 
 ## Discrepancies
 
