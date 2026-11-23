@@ -1,0 +1,126 @@
+# zerilli_gauge_rs: gauge attainability (e^{st} and static) and the flow at r_s against DG06 Lemma 1 (part=all)
+PASS PL.0a
+# [   0.2 s] PL.0a
+PASS PL.0b
+# [   0.3 s] PL.0b
+PASS PL.0c
+# [   0.4 s] PL.0c
+PASS PL.0d
+# [   0.9 s] PL.0d
+PASS PL.L
+# [   1.1 s] PL.L
+PASS PL.G
+# [  89.8 s] PL.G
+PASS PL.X
+# [  95.7 s] PL.X
+PASS PL.E
+# [  95.8 s] PL.E
+PASS PL.P
+# [  96.6 s] PL.P e^{st}
+PASS PL.P.static
+# [  97.1 s] PL.P static
+PASS PL.R
+# [  97.4 s] PL.R
+PASS GA.1
+# [  98.0 s] GA.1
+PASS GS.1
+# GS.1: L_xi g, e^{st}: the effect of xi = (a, b, c) on the seven functions, read off by extract (jets xa_n = d^n a/dr^n, ...):
+#   Delta Jt = (2*M*xa_0 + r*s*xc_0 - r*xa_0)/r
+#   Delta Jr = (-2*M*r*xc_1 + 4*M*xc_0 + r**2*xb_0 + r**2*xc_1 - 2*r*xc_0)/(r*(-2*M + r))
+#   Delta G = 2*xc_0/r**2
+#   Delta K = (-L*xc_0 + 2*r*xb_0)/r**2
+#   Delta H0 = 2*(2*M*r*s*xa_0 - M*xb_0 - r**2*s*xa_0)/(r*(-2*M + r))
+#   Delta H1 = (-4*M**2*xa_1 + 4*M*r*xa_1 + r**2*s*xb_0 - r**2*xa_1)/(r*(-2*M + r))
+#   Delta H2 = 2*(-2*M*r*xb_1 - M*xb_0 + r**2*xb_1)/(r*(-2*M + r))
+# GS.1: a = r*(-G_0*r**2*s + 2*Jt_0)/(2*(-2*M + r))
+# GS.1: b = (-2*G_1*M*r**2 + G_1*r**3 + 4*Jr_0*M - 2*Jr_0*r)/(2*r)
+# GS.1: c = -G_0*r**2/2
+# GS.1: H0' = (G_0*r**5*s**2 + 2*G_1*M**2*r**2 - G_1*M*r**3 - 2*H0_0*M*r**2 + H0_0*r**3 - 4*Jr_0*M**2 + 2*Jr_0*M*r - 2*Jt_0*r**3*s)/(r**2*(-2*M + r))
+# GS.1: H1' = (-3*G_0*M*r**2*s + G_0*r**3*s - 2*G_1*M*r**3*s + G_1*r**4*s - 2*H1_0*M*r + H1_0*r**2 + 2*Jr_0*M*r*s - Jr_0*r**2*s + 2*Jt_0*M + 2*Jt_1*M*r - Jt_1*r**2)/(r*(-2*M + r))
+# GS.1: H2' = (-3*G_1*M*r**2 + 2*G_1*r**3 - 2*G_2*M*r**3 + G_2*r**4 + H2_0*r**2 - 2*Jr_0*M + 4*Jr_1*M*r - 2*Jr_1*r**2)/r**2
+# GS.1: K' = (G_0*L*r**2 - 4*G_1*M*r**2 + 2*G_1*r**3 + 8*Jr_0*M - 4*Jr_0*r + 2*K_0*r**2)/(2*r**2)
+# [  98.9 s] GS.1
+PASS GS.2
+# [  99.2 s] GS.2
+# GS.3: a | denominator factor -2*M + r (multiplicity 1)
+# GS.3: b | denominator factor r (multiplicity 1)
+# GS.3: H0' | denominator factor r (multiplicity 2)
+# GS.3: H0' | denominator factor -2*M + r (multiplicity 1)
+# GS.3: H1' | denominator factor r (multiplicity 1)
+# GS.3: H1' | denominator factor -2*M + r (multiplicity 1)
+# GS.3: H2' | denominator factor r (multiplicity 2)
+# GS.3: K' | denominator factor r (multiplicity 2)
+PASS GS.3
+# GS.3: the solve divides by ['-2*M + r', 'r'] only; constants aside
+# [  99.3 s] GS.3
+PASS GU.1
+# [ 100.7 s] GU.1
+PASS GU.2
+# GU.2: at l = 1 (L = 2) the traceless angular part of L_xi g vanishes for every xi, so Jt' = Jr' = 0 leaves one free function c(r): a = s c/f, b = -f (c' - 2c/r). The RW gauge (Jt = Jr = G = 0) does not fix xi there.
+# [ 100.8 s] GU.2
+PASS GST.1
+# GST.1: static: a = Jt_0*r/(-2*M + r), b = (-2*G_1*M*r**2 + G_1*r**3 + 4*Jr_0*M - 2*Jr_0*r)/(2*r), c = -G_0*r**2/2 (algebraic in G, G', Jt, Jr: no ODE in r, no integration constant)
+# GST.1: static H0' = (-G_1*M*r**2 + H0_0*r**2 + 2*Jr_0*M)/r**2
+# GST.1: static H1' = (-2*H1_0*M*r + H1_0*r**2 + 2*Jt_0*M + 2*Jt_1*M*r - Jt_1*r**2)/(r*(-2*M + r))
+# GST.1: static H2' = (-3*G_1*M*r**2 + 2*G_1*r**3 - 2*G_2*M*r**3 + G_2*r**4 + H2_0*r**2 - 2*Jr_0*M + 4*Jr_1*M*r - 2*Jr_1*r**2)/r**2
+# GST.1: static K' = (G_0*L*r**2 - 4*G_1*M*r**2 + 2*G_1*r**3 + 8*Jr_0*M - 4*Jr_0*r + 2*K_0*r**2)/(2*r**2)
+# [ 101.2 s] GST.1
+PASS GST.2
+# [ 102.2 s] GST.2
+PASS GST.3
+# GST.3: det = 4*(-2*M + r)/r**4, nonzero for r > 0, f != 0, and (through GA.1) l >= 2: kappa = 0, so xi = t kappa adds no residual freedom
+# [ 102.2 s] GST.3
+PASS R.1
+# R.1: flow (K', H1', H') = F (K, H1, H); A = aK K + a1 H1 + aH H; det of the coefficient matrix = -s*(-2*M + r)/(4*r)
+# R.1:   K' = (-(-3*M + r)/(r*(-2*M + r))) K_0 + (L/(2*r**2*s)) H1_0 + (1/r) H_0
+# R.1:   H1' = (r*s/(-2*M + r)) K_0 + (-2*M/(r*(-2*M + r))) H1_0 + (r*s/(-2*M + r)) H_0
+# R.1:   H' = (-(-3*M + r)/(r*(-2*M + r))) K_0 + ((-2*L*M + L*r + 2*r**3*s**2)/(2*r**2*s*(-2*M + r))) H1_0 + ((-4*M + r)/(r*(-2*M + r))) H_0
+# R.1: aK = -(-2*L*M*r + L*r**2 - 6*M**2 + 6*M*r + 2*r**4*s**2 - 2*r**2)/(2*r**2*(-2*M + r)**2), a1 = (L*M + 2*r**3*s**2)/(2*r**3*s*(-2*M + r)), aH = (L*r + 6*M - 2*r)/(2*r**2*(-2*M + r))
+# [ 108.5 s] R.1
+PASS R.2
+# R.2: r_s = -6*M/(L - 2); r_s - 2M = -2*M*(L + 1)/(L - 2); aH(r_s) = 0
+# [ 108.7 s] R.2
+PASS R.3
+# R.3: the Taylor coefficients u^(k)(r_s), k = 0..4, are linear in (K, H1, H)(r_s) with finite coefficients; the flow has analytic coefficients at r_s, so every solution is analytic there
+# [ 112.5 s] R.3
+PASS R.4
+# R.4: zeta = (2*r**2) K_0 + (-2*(-2*M + r)/s) H1_0
+# R.4: zeta' = (2*M*r/(-2*M + r)) K_0 + ((L*r + 4*M - 2*r)/(r*s)) H1_0
+# R.4: T = [[2*r**2, -2*(-2*M + r)/s], [2*M*r/(-2*M + r), (L*r + 4*M - 2*r)/(r*s)]] ; det T = 2*r*(L*r + 6*M - 2*r)/s
+# R.4: c* = (L - 2)**2/(12*M*(L + 1)) (derived as T21/T11 at r_s); at M = -1: -(L - 2)**2/(12*(L + 1))
+# R.4: zeta'(r_s) = c* zeta(r_s) holds for every solution of the 3-dimensional flow, whether or not A = 0
+# [ 112.7 s] R.4
+PASS R.5
+# R.5: DISCREPANCY (arXiv TeX of DG06 against this derivation): (cz) as typed is zeta' = +2 lam^2/(3 mu (2 lam+3)) zeta at r = 3 mu/(2 lam); the flow gives zeta' = c* zeta with c* = (L - 2)**2/(12*M*(L + 1)), the opposite sign. On S the typed condition is zeta(r_s) = 0.
+# [ 112.9 s] R.5
+PASS R.6
+# R.6: alpha = 2*(-3*L*M*r + L*r**2 - 6*M**2 + 6*M*r - 2*r**2)/(r*(-2*M + r)*(L*r + 6*M - 2*r))
+# R.6: beta = (-2*L**2*M*r**2 + L**2*r**3 - 12*L*M**2*r + 14*L*M*r**2 + L*r**5*s**2 - 4*L*r**3 - 24*M**3 + 36*M**2*r + 6*M*r**4*s**2 - 20*M*r**2 - 2*r**5*s**2 + 4*r**3)/(r**2*(-2*M + r)**2*(L*r + 6*M - 2*r))
+# R.6: the residues at r_s are al = 2, be = -(L - 2)**2/(6*M*(L + 1)); al c* + be = 0
+# [ 114.7 s] R.6
+PASS R.7
+# R.7: DISCREPANCY (arXiv TeX of DG06 against the derivation and against (3)-(4)): (nv1) K is right; (nv1) H1 is (2/r) times the derived H1 (the printed one is not dimensionless); (nv1) H2 has the opposite sign on its zeta term. Corrected: H1 = s [2r(r+mu) zeta' + mu zeta]/(2 (r+mu)(2 lam r - 3 mu)), H2 with -(3mu^2 - 6 lam mu r + 4 lam^2 r^2)/(2 r^2 (2 lam r - 3 mu)^2) zeta.
+# [ 117.3 s] R.7
+PASS R.8
+# [ 117.6 s] R.8
+PASS R.9
+# R.9: K = nK/(r^2 (2 lam r - 3 mu)), H1 = s n1/((r+mu)(2 lam r - 3 mu)), H2 = N2/(2 r^2 (2 lam r - 3 mu)^2), all single/double zeros of the numerators at r_s are the one condition zeta' = c* zeta: K, H1, H2 smooth iff zeta smooth and zeta'(r_s) = c* zeta(r_s) (Lemma 1 with the derived sign).
+# [ 117.9 s] R.9
+PASS R.10
+# R.10: residue matrix R = [[(L**4 - 4*L**3 + 16*L + 432*M**2*s**2 - 16)/(2*(L - 2)**3*(L + 1)), (-L**4 + 6*L**3 - 12*L**2 + 8*L + 432*M**2*s**2)/(36*M*s*(L - 2)**2)], [-9*M*s*(L**4 - 4*L**3 + 16*L + 432*M**2*s**2 - 16)/((L - 2)**4*(L + 1)**2), -(-L**4 + 6*L**3 - 12*L**2 + 8*L + 432*M**2*s**2)/(2*(L - 2)**3*(L + 1))]] ; eigenvalues {0, 1}; w^T F1 u0 = 0
+# [ 122.2 s] R.10
+# R.11: l = 2 (M = -1): r_s = 3/2 = 6/c, c = 4; c* = -4/21 = -1/(r_s (r_s+2)); typed (cz) constant = 4/21; zeta''/zeta on S at r_s = -9*s**2/49
+# R.11: l = 3 (M = -1): r_s = 3/5 = 6/c, c = 10; c* = -25/39 = -1/(r_s (r_s+2)); typed (cz) constant = 25/39; zeta''/zeta on S at r_s = -9*s**2/169
+# R.11: l = 4 (M = -1): r_s = 1/3 = 6/c, c = 18; c* = -9/7 = -1/(r_s (r_s+2)); typed (cz) constant = 9/7; zeta''/zeta on S at r_s = -s**2/49
+PASS R.11
+# [ 122.3 s] R.11
+PASS R.12
+# R.12: l = 2, M = -1: c* = -4/21, typed (cz) constant = 4/21; a smooth zeta with zeta'(r_s) = c* zeta(r_s) gives smooth (K, H1, H2); one with the typed constant gives poles in K, H1 and H2 at r_s
+# [ 122.4 s] R.12
+PASS R.S.1
+# R.S.1: static flow K' = -(H_0*L*r + 4*H_0*M - 2*H_0*r - K_0*L*r + 2*K_0*r)/(2*M*r) ; H' = -(-2*H_0*L*M*r + H_0*L*r**2 - 4*H_0*M**2 + 8*H_0*M*r - 2*H_0*r**2 + 2*K_0*L*M*r - K_0*L*r**2 - 4*K_0*M*r + 2*K_0*r**2)/(2*M*r*(-2*M + r))
+# [ 122.7 s] R.S.1
+PASS R.S.2
+# R.S.2: every static solution has zeta'(r_s) = c* zeta(r_s), with the same c* = (L - 2)**2/(12*M*(L + 1)) as for e^{st}; no relation A is needed (there is none at s = 0)
+# [ 123.0 s] R.S.2
+# summary: 34 PASS, 0 FAIL

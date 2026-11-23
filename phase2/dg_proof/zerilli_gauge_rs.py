@@ -8,7 +8,7 @@ Sources: Dotti-Gleiser gr-qc/0604021 (TeX in I146-rpi5/dg06_src): eqs. (3)-(4) =
 Run: python zerilli_gauge_rs.py [--part=planted|gauge|static|rs|all] [--mutate=NAME[,NAME]] [--failfast] [--skip=PL.G,PL.X] > zerilli_gauge_rs_output.txt
 Mutations (targets in I146-rpi5/README.md): dual_inv ds_typo bg_nonvac leg_sign lie_drop drop_trace route2_drop ext_G solve_sign solve_drop_s l2_struct gs_a hand_typo
   gdiv_set gdiv_s l2 fam_typo st_Edep st_l2 kill_dropG flow_typo rs_typo pole_inject flow_h cz_coef cz_sign rw17_typo nv1_h1 nv1_h2 im_coef n2_sign log_inject
-  rs6c_typo sflow_typo sflow_h
+  rs6c_typo sflow_typo sflow_h nolog_blind ex_typed
 """
 import os
 import sys
@@ -345,6 +345,33 @@ for nm_, E_ in (('e^{st}', Eest), ('static', E1)):
     ok_, msg_ = planted_pure_gauge(E_)
     run.planted('PL.P' if nm_ == 'e^{st}' else 'PL.P.static', ok_, '%s: %s' % (nm_, msg_))
     lap('PL.P ' + nm_)
+
+# ----------------------------------------------------------------------- PL.R planted: the residue / no-logarithm routine of R.10 on flows with a known answer
+def laurent_test(Rm, F1):
+    """flow u' = (Rm/(r - r_s) + F1 + ...) u. Returns (eigenvalues of Rm are {0, 1}, no logarithm in the exponent-0 solution).
+    Exponent-0 solution u = u0 + u1 (r - r_s) + ...: R u0 = 0 and (I - R) u1 = F1 u0, solvable iff w^T F1 u0 = 0 for w^T (I - R) = 0."""
+    if mut('nolog_blind'):
+        F1 = sp.zeros(2, 2)                                      # mutation nolog_blind: the next Laurent coefficient is ignored
+    eig = cancel(Rm.trace() - 1) == 0 and cancel(Rm.det()) == 0 and Rm != sp.zeros(2, 2)
+    if not eig:
+        return False, False                                      # no resonance between the exponents 0 and 1: nothing to test
+    u0_ = Rm.nullspace()[0]
+    w_ = (Rm - sp.eye(2)).T.nullspace()[0]
+    return eig, cancel((w_.T * F1 * u0_)[0, 0]) == 0
+
+
+xx_ = sp.Symbol('xx_', positive=True)
+uA, uB = sp.Function('uA')(xx_), sp.Function('uB')(xx_)
+R_pl = sp.Matrix([[0, 0], [0, 1]])
+eigA, nologA = laurent_test(R_pl, sp.zeros(2, 2))                 # u' = diag(0, 1) u / x: u = (c1, c2 x), analytic
+eigB, nologB = laurent_test(R_pl, sp.Matrix([[0, 0], [1, 0]]))    # u1' = 0 ..., u2' = u2/x + u1: u2 = u1 x ln x + c x, a logarithm
+eigC, _ = laurent_test(sp.Matrix([[0, 0], [0, 2]]), sp.zeros(2, 2))   # eigenvalues {0, 2}
+solA = sp.dsolve(sp.Eq(uA.diff(xx_), uA / xx_), uA)
+solB = sp.dsolve(sp.Eq(uB.diff(xx_), uB / xx_ + 1), uB)         # the logarithm, from sympy's own ODE solver
+run.planted('PL.R', eigA and nologA and eigB and (not nologB) and (not eigC) and (not solA.rhs.has(sp.log)) and solB.rhs.has(sp.log),
+            'planted flows: analytic flow reported eig %s nolog %s; flow with a logarithm reported nolog %s (dsolve has log: %s); eigenvalues {0,2} reported eig %s' % (
+                eigA, nologA, nologB, solB.rhs.has(sp.log), eigC))
+lap('PL.R')
 stop_after('planted')
 
 # ======================================================================= gauge, e^{st}
@@ -774,10 +801,9 @@ Rres = (Fm * (L * r + 6 * M - 2 * r) / (L - 2)).applyfunc(cancel).subs(r, rs).ap
 F1m = (Fm - Rres / ((L * r + 6 * M - 2 * r) / (L - 2))).applyfunc(cancel).subs(r, rs).applyfunc(cancel)  # next Laurent coefficient
 if mut('log_inject'):
     F1m = F1m + sp.Matrix([[0, 0], [1, 0]])                      # mutation log_inject: a perturbation of the next Laurent coefficient (after R.9)
-eig_ok = cancel(Rres.trace() - 1) == 0 and cancel(Rres.det()) == 0 and Rres != sp.zeros(2, 2)
+eig_ok, nolog = laurent_test(Rres, F1m)
 u0 = (Rres.nullspace()[0]).applyfunc(cancel)
 wl = ((Rres - sp.eye(2)).T.nullspace()[0]).applyfunc(cancel)
-nolog = cancel((wl.T * F1m * u0)[0, 0]) == 0
 run.check('R.10', eig_ok and nolog, 'residue matrix at r_s has trace 1 and det 0 (eigenvalues 0 and 1): %s; resonance compatibility w^T F1 u0 = 0 (no logarithm): %s' % (eig_ok, nolog))
 run.note('R.10: residue matrix R = %s ; eigenvalues {0, 1}; w^T F1 u0 = %s' % (Rres.applyfunc(sp.factor).tolist(), sp.factor(cancel((wl.T * F1m * u0)[0, 0]))))
 lap('R.10')
@@ -804,6 +830,43 @@ for lv in (2, 3, 4):
         lv, rs_n, cc_, cst_n, cancel(cz_c.subs(sub)), sp.factor(ratio)))
 run.check('R.11', ok11, 'M = -1, l = 2, 3, 4: r_s = 6/c, aH(r_s) = 0, T(r_s) rank 1, c* = -1/(r_s(r_s+2)) = -(typed constant), zeta\'\'/zeta = -9 s^2/(L+1)^2 on S')
 lap('R.11')
+
+# ---- R.12 a concrete smooth zeta (M = -1, l = 2): the corrected (nv1) is regular at r_s iff zeta' = c* zeta there; the typed (cz) constant gives poles
+sub12 = {M: -1, L: 6}
+rs12 = rs.subs(sub12)
+lam12, mu12 = lam_.subs(sub12), mu_.subs(sub12)
+cst12 = cstar.subs(sub12)
+czt12 = cz_c.subs(sub12)
+
+
+def nv1c(Zexpr):
+    """corrected (nv1) K, H1, H2 for an explicit zeta(r) (M = -1, l = 2, s symbolic)"""
+    Zp, Zpp = diff(Zexpr, r), diff(Zexpr, r, 2)
+    K_ = ((mu12 + r) * r * Zp + (lam12 * r - mu12) * Zexpr) / (r ** 2 * (2 * lam12 * r - 3 * mu12))
+    H1_ = s * (r * (r + mu12) * Zp + mu12 / 2 * Zexpr) / ((r + mu12) * (2 * lam12 * r - 3 * mu12))
+    N2_ = (2 * r ** 2 * (r + mu12) * (2 * lam12 * r - 3 * mu12) * Zpp - r * (4 * lam12 * r ** 2 + 6 * lam12 * mu12 * r - 3 * mu12 ** 2) * Zp
+           - (3 * mu12 ** 2 - 6 * lam12 * mu12 * r + 4 * lam12 ** 2 * r ** 2) * Zexpr)
+    H2_ = N2_ / (2 * r ** 2 * (2 * lam12 * r - 3 * mu12) ** 2)
+    return K_, H1_, H2_
+
+
+def regular12(expr):
+    num, den = sp.fraction(cancel(together(expr)))
+    return cancel(den.subs(r, rs12)) != 0
+
+
+c_use = czt12 if mut('ex_typed') else cst12                       # mutation ex_typed: the conforming example is built with the typed (cz) constant
+Z_ok = 1 + c_use * (r - rs12) + (r - rs12) ** 2 + (r - rs12) ** 3
+Z_bad = sp.Integer(1) + 0 * r                                       # zeta' = 0 != c* zeta
+Z_typ = 1 + czt12 * (r - rs12)                                      # zeta' = typed constant * zeta
+reg_ok = [regular12(v_) for v_ in nv1c(Z_ok)]
+reg_bad = [regular12(v_) for v_ in nv1c(Z_bad)]
+reg_typ = [regular12(v_) for v_ in nv1c(Z_typ)]
+run.check('R.12', all(reg_ok) and not any(reg_bad) and not any(reg_typ),
+          'M = -1, l = 2, r_s = %s: zeta with zeta\' = c* zeta: (K, H1, H2) regular %s; zeta = 1: %s (poles wanted); zeta with the typed (cz) constant: %s (poles wanted)' % (
+              rs12, reg_ok, reg_bad, reg_typ))
+run.note('R.12: l = 2, M = -1: c* = %s, typed (cz) constant = %s; a smooth zeta with zeta\'(r_s) = c* zeta(r_s) gives smooth (K, H1, H2); one with the typed constant gives poles in K, H1 and H2 at r_s' % (cst12, czt12))
+lap('R.12')
 
 # ---- R.S.1, R.S.2 the static case
 st0 = {s: 0, H10: 0, H11: 0}

@@ -1,0 +1,41 @@
+# baseline: unmutated must exit 0 with no FAIL line and empty stderr
+OK   baseline exit=0 PASS=34 FAIL=0 125s
+# mutated: --mutate=NAME --failfast; target = first FAIL id, exit code as listed
+OK   dual_inv     target=PL.0a   exit=2 (want 2) first-FAIL=PL.0a   1s
+OK   ds_typo      target=PL.0b   exit=2 (want 2) first-FAIL=PL.0b   1s
+OK   bg_nonvac    target=PL.0c   exit=2 (want 2) first-FAIL=PL.0c   1s
+OK   leg_sign     target=PL.0d   exit=2 (want 2) first-FAIL=PL.0d   1s
+OK   lie_drop     target=PL.L    exit=2 (want 2) first-FAIL=PL.L    2s
+OK   drop_trace   target=PL.G    exit=2 (want 2) first-FAIL=PL.G    130s
+OK   route2_drop  target=PL.X    exit=2 (want 2) first-FAIL=PL.X    9s
+OK   ext_G        target=PL.E    exit=2 (want 2) first-FAIL=PL.E    2s
+OK   solve_sign   target=PL.P    exit=2 (want 2) first-FAIL=PL.P    4s
+OK   solve_drop_s target=PL.P    exit=2 (want 2) first-FAIL=PL.P    3s
+OK   nolog_blind  target=PL.R    exit=2 (want 2) first-FAIL=PL.R    3s
+OK   l2_struct    target=GA.1    exit=1 (want 1) first-FAIL=GA.1    4s
+OK   gs_a         target=GS.1    exit=1 (want 1) first-FAIL=GS.1    5s
+OK   hand_typo    target=GS.2    exit=1 (want 1) first-FAIL=GS.2    5s
+OK   gdiv_set     target=GS.3    exit=1 (want 1) first-FAIL=GS.3    5s
+OK   gdiv_s       target=GS.3    exit=1 (want 1) first-FAIL=GS.3    5s
+OK   l2           target=GU.1    exit=1 (want 1) first-FAIL=GU.1    7s
+OK   fam_typo     target=GU.2    exit=1 (want 1) first-FAIL=GU.2    7s
+OK   st_Edep      target=GST.1   exit=1 (want 1) first-FAIL=GST.1   7s
+OK   st_l2        target=GST.2   exit=1 (want 1) first-FAIL=GST.2   9s
+OK   kill_dropG   target=GST.3   exit=1 (want 1) first-FAIL=GST.3   9s
+OK   flow_typo    target=R.1     exit=1 (want 1) first-FAIL=R.1     15s
+OK   rs_typo      target=R.2     exit=1 (want 1) first-FAIL=R.2     16s
+OK   pole_inject  target=R.3     exit=1 (want 1) first-FAIL=R.3     57s
+OK   flow_h       target=R.4     exit=1 (want 1) first-FAIL=R.4     20s
+OK   cz_coef      target=R.5     exit=1 (want 1) first-FAIL=R.5     20s
+OK   cz_sign      target=R.5     exit=1 (want 1) first-FAIL=R.5     20s
+OK   rw17_typo    target=R.6     exit=1 (want 1) first-FAIL=R.6     22s
+OK   nv1_h1       target=R.7     exit=1 (want 1) first-FAIL=R.7     24s
+OK   nv1_h2       target=R.7     exit=1 (want 1) first-FAIL=R.7     25s
+OK   im_coef      target=R.8     exit=1 (want 1) first-FAIL=R.8     25s
+OK   n2_sign      target=R.9     exit=1 (want 1) first-FAIL=R.9     25s
+OK   log_inject   target=R.10    exit=1 (want 1) first-FAIL=R.10    30s
+OK   rs6c_typo    target=R.11    exit=1 (want 1) first-FAIL=R.11    29s
+OK   ex_typed     target=R.12    exit=1 (want 1) first-FAIL=R.12    30s
+OK   sflow_typo   target=R.S.1   exit=1 (want 1) first-FAIL=R.S.1   29s
+OK   sflow_h      target=R.S.2   exit=1 (want 1) first-FAIL=R.S.2   30s
+# summary: 38 OK, 0 MISS (of 1 baseline + 37 pairs)

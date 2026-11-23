@@ -27,6 +27,7 @@ PAIRS = [
     ('ext_G', SKIP, 'PL.E', 2),
     ('solve_sign', SKIP, 'PL.P', 2),
     ('solve_drop_s', SKIP, 'PL.P', 2),
+    ('nolog_blind', SKIP, 'PL.R', 2),
     ('l2_struct', SKIP, 'GA.1', 1),
     ('gs_a', SKIP, 'GS.1', 1),
     ('hand_typo', SKIP, 'GS.2', 1),
@@ -50,6 +51,7 @@ PAIRS = [
     ('n2_sign', SKIP, 'R.9', 1),
     ('log_inject', SKIP, 'R.10', 1),
     ('rs6c_typo', SKIP, 'R.11', 1),
+    ('ex_typed', SKIP, 'R.12', 1),
     ('sflow_typo', SKIP, 'R.S.1', 1),
     ('sflow_h', SKIP, 'R.S.2', 1),
 ]
