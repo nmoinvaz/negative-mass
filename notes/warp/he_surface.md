@@ -28,7 +28,7 @@ were all Type II ([review_he.md](review_he.md) §5).
 
 For the tanh wall the Type I set is empty. T2 needs F + r f′ > 0 at the root of (r f′)′ = 0, and F + r f′ < 0 at
 every root for every σR_b > 0 (**proved**, with the coordinator's independent check, [he_tanh_bound.md](he_tanh_bound.md),
-#132). So on the tanh wall D = 0 off the equator is
+#132; **certified** in Lean, #134). So on the tanh wall D = 0 off the equator is
 Type II, or Type III on a curve of points that Newton at 50 digits finds at σR_b = 1, 4 and 8 (**numerical evidence**).
 A Type III point of the general family is exact, in Q(√113) (**checked symbolically**). The curve has two branches. At
 Le's speed (σR_b = 8, v = 1/2) and Rodal's (σR_b = 20, v = 1) it meets the wall on three circles each, each point

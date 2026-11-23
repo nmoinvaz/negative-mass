@@ -15,7 +15,9 @@ For every σR_b > 0 and every root r > 0 of (r f′)′ = 0 of the tanh profile 
 
     r f′ < 0     and     F + r f′ < 0 .
 
-**Proved** by hand (section 2), with every identity **checked symbolically**. The proof is one variable. With w = 2σr and
+**Proved** by hand (section 2), with every identity **checked symbolically**, and **certified** in Lean: the whole
+statement, with Mathlib's derivatives, is `tanh_wall_no_typeI` in [lean/NegativeMass/TanhWall.lean](../../lean/NegativeMass/TanhWall.lean)
+(#134). The proof is one variable. With w = 2σr and
 C = cosh 2σR_b the condition (r f′)′ = 0 is linear in C, and at a root
 
     F + r f′ = − w sinh w (cosh w − 1) m(w) / [ Q(w) (cosh w + C)² ],
@@ -169,7 +171,10 @@ took 8150 s (2 h 16 min) on one core of a machine shared with another runner. Th
 **Proved** by hand: section 2, from the identities of `reduction`. **Checked symbolically**: every identity in
 `identity` and `reduction`, in sympy 1.14.0 as rational functions of a = e^y and q = e^p, and the Taylor coefficients of
 m. **Certified**: section 3, by mpmath 1.3.0 `iv` for p ∈ [0, 100], and the enclosures of section 4. The statement of the
-Answer holds for every σR_b > 0 on the strength of route 1 alone. Route 2 is a second proof on [0, 100].
+Answer holds for every σR_b > 0 on the strength of route 1 alone. Route 2 is a second proof on [0, 100]. **Certified** in
+Lean (#134): the Answer as `tanh_wall_no_typeI`, from `m_pos` (m > 0 by m(0) = m′(0) = m″(0) = 0 and m‴ = w sinh w),
+`sign_at_root` and `profile_cosh`, each depending only on the axioms propext, Classical.choice and Quot.sound; trusted
+code: the Lean 4 kernel and Mathlib v4.34.1 (`lake build` in lean/, raw `I134-mac`).
 
 Trusted: mpmath 1.3.0 `iv` (outward-rounded + − × ÷ and `exp` on intervals, from which cosh, sinh and tanh are built here),
 mpmath's `diff` in `jets`, sympy 1.14.0 `cancel`, `diff` and `series`, and Python's `Fraction`. The cover shares with route 1
