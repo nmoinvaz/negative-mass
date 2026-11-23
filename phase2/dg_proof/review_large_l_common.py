@@ -53,10 +53,11 @@ class Checker:
         self.fails = []
         self.count = 0
 
-    def check(self, name, cond, detail=""):
+    def check(self, name, cond, detail="", quiet=False):
         self.count += 1
         ok = bool(cond)
-        print(f"{'PASS' if ok else 'FAIL'} {name} {detail}".rstrip(), flush=True)
+        if not (quiet and ok):
+            print(f"{'PASS' if ok else 'FAIL'} {name} {detail}".rstrip(), flush=True)
         if not ok:
             self.fails.append(name)
             if self.failfast:
@@ -130,6 +131,8 @@ def coeffs(l, K=iv.mpf):
         out.append(K(n - 2) * (K(n - 4) + lin * K(n - 3) * eps) * w)
         # w_{n+1} = w_n (1 - q_{n-2} eps) / (2 n^2)
         w = w * (1 - K(q_of(n - 2)) * eps) / K(2 * n * n)
+    if MUT == "drop_last":
+        out[-1] = K(0)
     return out
 
 
@@ -163,16 +166,16 @@ def to_frac(x):
 # jets of X: [X, X', X'', ...] at rho
 # ----------------------------------------------------------------------------------------------------------
 def jet_from_coeffs(a, rho, kmax=2):
-    """sum_n a_n n^(falling k) rho^(n-k) for k = 0..kmax; rho an iv scalar (point or interval), rho > 0."""
-    S = [iv.mpf(0)] * (kmax + 1)
-    p = iv.mpf(1)  # rho^n
-    one = iv.mpf(1)
+    """sum_n a_n n^(falling k) rho^(n-k) for k = 0..kmax; rho an iv scalar (point or interval) or an mp number, rho > 0."""
+    zero = rho * 0
+    one = zero + 1
+    S = [zero] * (kmax + 1)
+    p = one  # rho^n
     for n in range(1, len(a)):
         p = p * rho
-        an = a[n]
         if n == 2:
             continue
-        t = an * p
+        t = a[n] * p
         S[0] = S[0] + t
         if kmax >= 1:
             u = t * n
@@ -276,6 +279,8 @@ def quantities(X, rho, eps):
     Psip = ((4 * rho + 3 * eps * rho ** 2) * N ** 2 + 2 * rho ** 2 * (2 + eps * rho) * N * Np
             - 4 * nzp * X[0] ** 2 - 8 * nz * X[0] * X[1])
     S = rho * X[0] * (eps * N + (2 + eps * rho) * Np) - (2 + eps * rho) * N * (X[0] + 2 * rho * X[1])
+    if MUT == "S_flip":
+        S = -S
     return dict(X=X[0], X1=X[1], X2=X[2], N=N, Np=Np, Psi=Psi, Psip=Psip, S=S)
 
 
@@ -376,10 +381,44 @@ def run_planted(chk, verbose=True):
     return allok
 
 
+
+# ----------------------------------------------------------------------------------------------------------
+# helpers for the perturbation scripts (Theorems L and M)
+# ----------------------------------------------------------------------------------------------------------
+def tail_majorant(D, k, rho_hi, n1):
+    """Upper bound (iv point) of sum_{n>n1} n^D rho_hi^(n-k) / (2^n (n-1)!^2), for rho_hi >= 1.
+    U(n) = n^D rho_hi^(n-k) g_n with g_n = 1/(2^n (n-1)!^2), U(n+1)/U(n) = ((n+1)/n)^D rho_hi/(2 n^2) <= r for n >= n1, so the sum is <= U(n1+1)/(1-r)."""
+    rho_hi = iv.mpf(rho_hi)
+    U = iv.mpf(n1 + 1) ** D * rho_hi ** (n1 + 1 - k) / iv.mpf(2 ** (n1 + 1) * factorial(n1) ** 2)
+    r = (iv.mpf(n1 + 1) / n1) ** D * rho_hi / (2 * n1 * n1)
+    assert r.b < 1
+    return iv.mpf((U / (1 - r)).b)
+
+
+def subintervals(lo, hi, parts):
+    """Cover [lo, hi] (iv scalars) by `parts` overlapping iv intervals."""
+    out = []
+    w = hi - lo
+    for k in range(parts):
+        a = lo + w * k / parts
+        b = lo + w * (k + 1) / parts
+        out.append(iv.mpf([a.a, b.b]))
+    return out
+
+
+def ub(x):
+    """Upper endpoint as a point iv number."""
+    return iv.mpf(x.b)
+
+
+def absub(x):
+    """Upper bound of |x| as a point iv number."""
+    return iv.mpf(max(abs(x.a), abs(x.b)))
+
 # ----------------------------------------------------------------------------------------------------------
 # self test of this module
 # ----------------------------------------------------------------------------------------------------------
-KNOWN = ["coef_q", "coef_lin", "nz_coef", "accept_zero_enclosure", "no_deriv", "alpha_n"]
+KNOWN = ["coef_q", "coef_lin", "nz_coef", "accept_zero_enclosure", "no_deriv", "alpha_n", "drop_last", "S_flip"]
 
 
 def main():
