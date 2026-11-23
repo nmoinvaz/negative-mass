@@ -330,6 +330,8 @@ Findings on this review, not fixed in its files:
   In exact rationals the bound is an equality at n = 3 for every l (α′₃ = 0, S₃ = 0, so both sides are 2ε|α₃|), and at
   n = 4 for l = 138. H3 holds, with equality there, so no conclusion changes.
 - **Overlap with #2's table.** The acceptance item "each of the 200 brackets compared with #2's table for overlap" is met
-  for 2 of the 200. #2's output prints 16 l; the other 198 were compared with #2's Theorem L and M bounds.
+  for 2 of the 200. #2's output prints 16 l; the other 198 were compared with #2's Theorem L and M bounds. #139 then
+  compared #2's bracket with this review's sweep at every l = 2..3000, which covers all 200: every pair overlaps, for c·r_*
+  and for c·r_neg (`compare_brackets_output.txt`).
 - **Controls.** 5 of 52 missed their targets: the criterion failed, and it stays failed. The silent
   `accept_zero_enclosure` is covered after the fact by `review_large_l_posthoc.py`.

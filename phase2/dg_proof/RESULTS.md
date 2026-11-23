@@ -19,7 +19,8 @@ Scripts are in this directory. Each `X.py` writes `X_output.txt`.
 | `numeric_check.py` | numerical spectra at l = 9, 10, plus 108 truncated cases at l = 6, 8, 10 |
 | `rescaled.py` | module: the rescaled coefficients a_n(ε) of §4.1 and exact rational interval arithmetic (series plus tail enclosure) |
 | `vhat_structure.py` | Theorem 3 (§4.2): V_Z > 0 and V_Z′ < 0 beyond r_s, the quadratic form Ψ, planted toy, zero counts |
-| `threshold_isolation.py` | certified isolation of c·r_* and c·r_neg for every l = 2..3000, sympy Sturm cross-check, monotonicity tables |
+| `threshold_isolation.py` | certified isolation of c·r_* and c·r_neg for every l = 2..3000, sympy Sturm cross-check, monotonicity tables; `--csv=PATH` writes every bracket as exact fractions |
+| `compare_brackets.py` | #139: compares that csv with #104's `sweep_brackets.csv` for overlap at every l (`compare_brackets_output.txt`) |
 | `large_l_proof.py` | Theorem L (§4.4): explicit constants for the limits ρ_*, ρ_neg |
 | `monotone_proof.py` | Theorem M (§4.5): monotone approach for every l ≥ 500 |
 | `check_mutations.py` | runs every new script unmutated and once per `--mutate=...`, which must exit non-zero |
@@ -219,6 +220,12 @@ terms, omitted terms enclosed by a ratio test). Uniqueness of the root is T2 and
 Cross-checks that share no machinery: sympy Sturm isolation of the polynomials built from `chi_poly` (l = 2..24, brackets inside
 sympy's intervals), the stored table of `large_l_limit_output.txt` (l = 2, 3, 5, 10, 20, 40, 80), and the Bessel closed form for the
 limits. Output: `threshold_isolation_output.txt`. Status: *certified* (trusted code: `rescaled.py`, `threshold_isolation.py`).
+
+#139 wrote every bracket (raw `I139-rpi5/brackets_i2.csv`) and compared it with #104's independent sweep: all 2999 pairs overlap,
+for c·r_* and for c·r_neg (`compare_brackets_output.txt`; widest bracket 2.0·10⁻¹³ here, 2.0·10⁻¹⁴ in #104, largest distance
+between midpoints 4.6·10⁻¹⁵). The ends of a bracket depend on the machine, since `locate` seeds each one with a float from
+scipy's `brentq`. On the coordinator's Mac, 35 of the 2999 rows differ from rpi5's, and each pair overlaps. The printed table
+does not change (raw `I139-mac`).
 
 | l | c·r_* | c·r_neg | l²·r_* | l²·r_neg |
 |---|---|---|---|---|
