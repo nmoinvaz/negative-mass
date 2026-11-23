@@ -174,7 +174,7 @@ def dump_tables(path):
                 key = tuple(key)
                 wp, ex = (key[0], key[1:]) if name != 'P' else ('', key)
                 f.write('%s\t%s\t%d\t%d\t%d\t%s\n' % (name, wp, ex[0], ex[1], ex[2], tab[key]))
-    print('tables written: P %d terms, E1 %d, E2 %d, to %s' % (len(al['Ptab']), len(al['E1tab']), len(al['E2tab']), path), flush=True)
+    print('tables written: P %d terms, E1 %d, E2 %d, to %s' % (len(al['Ptab']), len(al['E1tab']), len(al['E2tab']), os.path.basename(path)), flush=True)
 
 
 def main():

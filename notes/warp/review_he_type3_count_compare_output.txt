@@ -1,4 +1,4 @@
-tables written: P 167 terms, E1 17, E2 42, to /home/nathan/Source/negative-mass-raw/I136-rpi5/P_table.tsv
+tables written: P 167 terms, E1 17, E2 42, to P_table.tsv
 [PASS] tables: P of the frame table equals he_type3.shadow()["P"] term by term, 167 terms, ratio 1 
 [PASS] tables: E1 of the frame table equals he_type3.shadow() term by term, 17 terms, ratio 1 
 [PASS] tables: E2 of the frame table equals he_type3.shadow() term by term, 42 terms, ratio 1 
@@ -18,4 +18,4 @@ tables written: P 167 terms, E1 17, E2 42, to /home/nathan/Source/negative-mass-
        #133 root leaf widths: ['0.00091', '5.7e-5', '2.8e-5', '3.6e-6', '3.6e-6', '5.7e-5']
 [PASS] roots: Rodal y: #133 has 38 leaves (mine 58) tiling [1/4, 60]: True; its 1 root leaves each hold exactly one of my 1 refined root enclosures (width at most 1.1e-48): True
        #133 root leaf widths: ['1.9']
-summary: 0 comparisons failed [], 348 s
+summary: 0 comparisons failed [], 350 s
