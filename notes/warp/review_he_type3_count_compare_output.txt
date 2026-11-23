@@ -1,0 +1,21 @@
+tables written: P 167 terms, E1 17, E2 42, to P_table.tsv
+[PASS] tables: P of the frame table equals he_type3.shadow()["P"] term by term, 167 terms, ratio 1 
+[PASS] tables: E1 of the frame table equals he_type3.shadow() term by term, 17 terms, ratio 1 
+[PASS] tables: E2 of the frame table equals he_type3.shadow() term by term, 42 terms, ratio 1 
+[PASS] statements: P-hat in (phi, psi, delta) has 358 terms of weights 24..66 step 2 (he_type3_count.md Lemma 3: 358 terms, 24, 26, ..., 66)
+[PASS] statements: (A', B')-degrees of the terms of P are [9, 10, 11, 12, 13, 14, 15] (he_type3_count.md Lemma 1: 9 to 15)
+[PASS] statements: le Phi, Psi, Delta from the series S2, N1, N2 of he_type3_count.md Lemma 3 (60 terms) lie in my enclosures at z = 1/5, 1/4: 0 misses
+[PASS] statements: rodal Phi, Psi, Delta from the series S2, N1, N2 of he_type3_count.md Lemma 3 (60 terms) lie in my enclosures at z = 1/5, 1/4: 0 misses
+[PASS] ends: le (0, 1/4]: my lower bound of G on the whole interval 1.09109e-67 and #133's enclosure [1.09451e-67, 1.09693e-67] on [0, 1/32] both bracket G(0) = 1.09451e-67
+[PASS] ends: le [40, oo): my lower bound of S = P/(t z)^9 is 0.499983, #133's L is 0.168694, the limit of S as z -> oo is 4 v^3 = 0.5: L <= mine <= limit True
+[PASS] ends: rodal (0, 1/4]: my lower bound of G on the whole interval 6.5688e-169 and #133's enclosure [6.58941e-169, 6.604e-169] on [0, 1/32] both bracket G(0) = 6.58941e-169
+[PASS] ends: rodal [60, oo): my lower bound of S = P/(t z)^9 is 3.99994, #133's L is 0.52369, the limit of S as z -> oo is 4 v^3 = 4.0: L <= mine <= limit True
+[PASS] roots: Le P: #133 has 961 leaves (mine 1562) tiling [1/4, 40]: True; its 4 root leaves each hold exactly one of my 4 refined root enclosures (width at most 6.3e-46): True
+       #133 root leaf widths: ['0.0012', '0.0012', '0.00015', '0.0024']
+[PASS] roots: Le y: #133 has 26 leaves (mine 46) tiling [1/4, 40]: True; its 1 root leaves each hold exactly one of my 1 refined root enclosures (width at most 2.7e-40): True
+       #133 root leaf widths: ['1.2']
+[PASS] roots: Rodal P: #133 has 2356 leaves (mine 2735) tiling [1/4, 60]: True; its 6 root leaves each hold exactly one of my 6 refined root enclosures (width at most 3.0e-31): True
+       #133 root leaf widths: ['0.00091', '5.7e-5', '2.8e-5', '3.6e-6', '3.6e-6', '5.7e-5']
+[PASS] roots: Rodal y: #133 has 38 leaves (mine 58) tiling [1/4, 60]: True; its 1 root leaves each hold exactly one of my 1 refined root enclosures (width at most 1.1e-48): True
+       #133 root leaf widths: ['1.9']
+summary: 0 comparisons failed [], 350 s
