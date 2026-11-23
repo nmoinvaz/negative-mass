@@ -13,8 +13,8 @@ Run: python zerilli_certificate.py [--part=planted|odd|even|all] [--L=6] [--orde
   --attempts=N the solver tries at most N column orders (default 23: O1, reversed within k, k descending, seeds 1..20) until one passes E.den
   --dump=F     writes the even certificate (str of each coefficient) as JSON
 Mutations (each makes one check fail; names, targets and exit codes are in negative-mass-raw/I148-rpi5/README.md):
-  leg_sign l1 den_allow_M odd_v odd_psi odd_cert odd_den expl_norm v_coef psi_coef v_s2 drop_<eq> flow_target cert_coef l_spec m0_v s0_s1
-  (eq in traceless tx tr rx tt rr trace)
+  leg_sign l1 den_allow_M odd_v odd_psi odd_cert odd_den expl_norm v_coef psi_coef v_s2 drop_<eq> drop_second flow_target cert_coef l_spec m0_v s0_s1
+  (eq in traceless tx tr rx tt rr; the trace equation is dropeq_trace, because drop_trace is a mutation of the library; drop_second removes tt, rr and trace)
 """
 import json
 import os
@@ -452,7 +452,8 @@ if PART in ('even', 'all'):
     for nm_, e_ in Eev.items():
         run.note('  %s: %s' % (nm_, sp.factor_terms(e_)))
     for nm_ in ('tt', 'tr', 'rr', 'tx', 'rx', 'trace', 'traceless'):
-        if mut('drop_' + nm_):
+        flag = 'dropeq_trace' if nm_ == 'trace' else 'drop_' + nm_      # drop_trace is a mutation of #143's library (Ricci)
+        if mut(flag) or (mut('drop_second') and nm_ in ('tt', 'rr', 'trace')):
             del Eev[nm_]
             run.note('mutation: equation %s removed from the span' % nm_)
     Eev_p = {k: v.subs(L, Lp) for k, v in Eev.items()}
