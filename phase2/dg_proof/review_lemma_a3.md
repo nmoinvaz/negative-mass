@@ -269,3 +269,23 @@ verified symbolically in l, and "χ > 0 exact Sturm for l = 2..50" next to the l
    publisher. Why: V is checked against published forms only. Acceptance: V equal exactly; a changed coefficient fails.
    Depends on none.
 
+
+## Coordinator's review
+
+Raw `I142-mac` (negative-mass-raw). Mac, nice 10, at most 2 processes.
+
+| step | result |
+|---|---|
+| rerun every `review_lemma_a3_*.py` | the same outputs apart from timings, all exit 0 |
+| rerun the controls (one mutation and all others) | exit 0, 60 OK, 0 MISS, rows identical to the committed output; e.g. `dg61 --mutate=e_dg61b` fires at `E2.6b` |
+| DG09 eq. (61) at the source | the arXiv TeX of 0809.3615 (label `zm11`) prints −ℓ(ℓ+1)/(4\|M\|x), as §4 says |
+| re-solve of one case | exact series reversion at l = 2: r = 2y + (2/3)y² + y³/18 − y⁴/135 + y⁵/2160 (y = √x); V̂ has x⁻², x^{−3/2}, x⁻¹ coefficients 3/4, 5/4, 0 |
+| independent check `ind142.py` | run 1 failed H7's second line on a sympy `expand` that does not cancel a quotient (a defect of my code, kept). Run 2, with `cancel` and the criterion unchanged, exits 0. Of its 8 mutations, 7 fired on target at once. `c5` first crashed at l = 2, where χ has no r⁵ term (kept); guarded at l ≥ 3, it fires on target |
+
+`ind142.py` counts roots with `Poly.intervals` (continued fractions, not Sturm), finds the minima, the x-series of V̂ and
+the DG-mode residual in mpmath at 60–100 digits, and gets V̂ as 2g² − V, not as g² − g,ₓ. It compares V with the standard
+Zerilli form for general M, typed from memory. The hand derivation written before the run gives the x⁻¹ coefficient
+3/4 − (l²+l+3)/4 + l(l+1)/4 = 0. (H_Z + (k/2)²)Ψ_DG/Ψ_DG = (r+2)(c² + 2c − 6k)/(r²(cr − 6)), symbolic in (r, c, k).
+
+W1–W8 are applied to RESULTS.md §1 (L5 named in (iii), and a new L6 paragraph), with a #142 bullet in §4.6, a row in §5
+and a sentence in §6. Recommended task 2 is row 15 of #135, and task 3 is #143.

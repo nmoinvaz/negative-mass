@@ -37,12 +37,16 @@ On rⁿ this ODE gives a three-term recurrence 12(m−1)²c_m − 2(m−2)(c(m�
 includes the termination orders m = l+3, l+4. The orders m ≤ 3 are checked symbolically in l, and for m ≥ l+5 every
 term vanishes. The series terminates because (l−n+3)_{2n−4} = 0 for n ≥ l+3. So **ψ₀ solves the static
 Zerilli equation for every l**. DG checked this only for small l; phase 0 checked l ≤ 5.
-(iii) **χ > 0 on r > 0.** DG's argument (eqs. 57–59), checked and put in closed form:
-- For l = 2, χ/r = 3/2 − (3/4)r² + (1/4)r³, whose minimum is 1/2 at r = 2.
-- For l ≥ 3, χ/r ≥ q(r) := 3/2 − (K/32)r² + (K/96)r³ + c₅r⁴, since the dropped terms are non-negative by (i).
-  q′ = r(−2a + 3br + 4c₅r²) has exactly one positive root r₀, which is DG eq. (58). We find
-  q(r₀) = 4(K−18)(K s − 18(K−16)) / ((l−2)(l+3)(l²+l+4))³ with s = √(6(K−18)), and
-  (Ks)² − (18(K−16))² = 6(K−24)³ > 0 for K ≥ 120. So q(r₀) > 0.
+(iii) **χ > 0 on r > 0** (`lemmas_all_l.py` calls this inequality L5). DG's argument (eqs. 57–59), checked and put in
+closed form:
+- For l = 2, χ/r = 3/2 − (3/4)r² + (1/4)r³ = 1/2 + (r−2)²(r+1)/4, whose minimum is 1/2 at r = 2. The closed form below
+  is 0/0 at K = 24 (l = 2), with limits r₀ = 2 and q(r₀) = 1/2; that is why l = 2 is separate.
+- For l ≥ 3, χ/r ≥ q(r) := 3/2 − (K/32)r² + (K/96)r³ + c₅r⁴ with c₅ = K(K−24)/6144, since the dropped terms are
+  non-negative by (i). With a = K/32, b = K/96 and s = √(6(K−18)), q′ = r(−2a + 3br + 4c₅r²) has exactly one positive
+  root r₀ = 24/(s+6) = 4(s−6)/(K−24), which is DG eq. (58); the other root is −24/(s−6). We find
+  q(r₀) = 4(K−18)(K s − 18(K−16)) / (K−24)³, K − 24 = (l−2)(l+3)(l²+l+4), and
+  (Ks)² − (18(K−16))² = 6(K−24)³. For K > 24 the right side is > 0. Since Ks > 0 and 18(K−16) > 0, this gives
+  Ks > 18(K−16), and 4(K−18)/(K−24)³ > 0. So q(r₀) > 0. Only K > 24 is used; K ≥ 120 is the range l ≥ 3.
 - DG's "unique critical point" claim is correct (it is the positive root of a quadratic with roots of opposite sign).
   So is their non-negativity claim for the dropped terms.
 
@@ -55,19 +59,33 @@ gives χ′/χ(r_s) = −1/(r_s(r_s+2)), and the differentiated ODE at r_s gives
 Combined with Lemma A, V̂ is real-analytic on (0, ∞).
 
 **L2/L3 (ends).**
-- At r = 0: r⁴V̂ = 12 + 2(l²+l+3)r + O(r²). The Frobenius exponents in r are 3 and −1 for every l, i.e. x^{3/2} and
-  x^{−1/2}. The x^{−1/2} branch is not in L²(dx), so Ĥ is **limit point at 0**.
-- At ∞: V̂ ≃ (l+1)(l+2)/r², so Ĥ is limit point at ∞.
+- At r = 0: r⁴V̂ = 12 + 2(l²+l+3)r + l(l+1)r² + O(r³). The Frobenius exponents in r are 3 and −1 for every l, i.e.
+  x^{3/2} and x^{−1/2}. They differ by an integer, so the −1 branch may carry a term ∝ x^{3/2} ln x; this does not
+  change what follows. The x^{−1/2} branch is not in L²(dx), so Ĥ is **limit point at 0**. In x,
+  V̂ = 3/(4x²) + (l²+l−1)/(4x^{3/2}) + 0·x⁻¹ + O(x^{−1/2}), so V̂ ≥ 3/(4x²) near 0, which gives the same conclusion.
+  DG's eq. (61) (arXiv:0809.3615) prints −ℓ(ℓ+1)/(4|M|x) for the x⁻¹ term. The exact coefficient is 0 (#142, and an
+  exact series reversion at l = 2 in raw `I142-mac`); nothing here uses that term.
+- At ∞: V̂ ≃ (l+1)(l+2)/r² ≥ 0, so V̂ is bounded below near ∞ and Ĥ is limit point at ∞.
 - So Ĥ is essentially self-adjoint on C_c^∞(0,∞): Weyl alternative, Reed–Simon II Thm X.7, or Weidmann,
   *Spectral Theory of ODOs*, LNM 1258, §5. This is DG's "unique self-adjoint extension", with domain functions
   ~ x^{3/2}. V̂ is continuous, → +∞ at 0 and → 0 at ∞, so Ĥ ≥ inf V̂ > −∞.
 - φ₀ ∼ −4/r is the excluded branch at 0. At ∞, φ₀ ∝ r^{−(l+1)} lies in L². Since χ > 0, φ₀ has exactly one zero, at
   r_s, and it is simple (φ₀,ᵣ(r_s) = c/χ(r_s) ≠ 0).
 
-**L4 (DG mode, all l).** Ψ_DG = r(r+2)^k e^{−kr/2}/(cr−6) satisfies H_Z Ψ_DG = −(k/2)²Ψ_DG identically in l, with k kept
-symbolic and then k = c(c+2)/6. Since Ĥ A* = A* H_Z (because Ĥ = A*A and H_Z = AA*), Ψ̂ = A*Ψ_DG satisfies
-ĤΨ̂ = −(k/2)²Ψ̂. Ψ̂ = O(r³) at 0 (L6, all l), it is regular at r_s, and it decays like e^{−kr/2}r^{k+…}. So Ψ̂ ∈ D(Ĥ).
-Direct check: ĤΨ̂/Ψ̂ = −(k/2)² for l = 2..10 (`verify_small_l`).
+**L4 (DG mode, all l).** Ψ_DG = r(r+2)^k e^{−kr/2}/(cr−6) satisfies H_Z Ψ_DG = −(k/2)²Ψ_DG identically in l. With k kept
+symbolic, (H_Z + (k/2)²)Ψ_DG/Ψ_DG = (r+2)(c² + 2c − 6k)/(r²(cr−6)), so the identity holds exactly when k = c(c+2)/6
+(#142). Since Ĥ A* = A* H_Z (because Ĥ = A*A and H_Z = AA*), Ψ̂ = A*Ψ_DG satisfies
+ĤΨ̂ = −(k/2)²Ψ̂. Ψ̂ = O(r³) at 0 (L6, all l), it is regular at r_s, and it decays like e^{−kr/2}r^{k+…}. Ĥ is essentially
+self-adjoint (L2/L3), so D(Ĥ) is the maximal domain {u ∈ L²: u, u′ ∈ AC_loc, Ĥu ∈ L²}. Ψ̂ is smooth on (0, ∞) (L6), in
+L² at both ends, and ĤΨ̂ = −(k/2)²Ψ̂ ∈ L². So Ψ̂ ∈ D(Ĥ); the O(r³) is more than membership needs.
+Direct check: ĤΨ̂/Ψ̂ = −(k/2)² for l = 2..10 (`verify_small_l`), and for l = 2..20 from the definition of Ψ̂ (#142).
+
+**L6 (Ψ̂ at 0 and r_s).** With W = r(r+2)^k e^{−kr/2}, Ψ̂ = f(Wχ′ − W′χ)/((cr−6)χ).
+- At 0, Ψ̂ = (2ᵏk²/192) r³ + O(r⁴). The lower orders cancel because c₃ = −3k/16 and c₄ = k/16, and c₅ = K(K−24)/6144
+  enters the r³ coefficient.
+- At r_s, W′/W = 1/r_s + k/(r_s+2) − k/2 equals χ′/χ = −1/(r_s(r_s+2)) (L1) exactly when k = c(c+2)/6, so Ψ̂ has no pole
+  there. k = c(c+2)/6 therefore enters twice, in L4 and here. The other candidate poles are the zeros of χ, and there
+  are none (Lemma A(iii)), so Ψ̂ is smooth on (0, ∞).
 
 **Ground-state identity.** If V = φ″/φ and u = φh, then u′² + Vu² = φ²h′² + (φφ′h²)′ (`ground_state_identity.py`).
 
@@ -294,8 +312,14 @@ bracket (Ψ_{l+1} > 0 at the lower end of r_neg(l)'s) for l = 500..502.
 - **Independent review of the inputs (#138).** `review_lemma_a.md` (sympy and exact rationals, written from this file alone)
   confirms Lemma A(i) and (ii), L1, T1 and T2 for every l, and finds no error. Lemma A(ii) is an exact identity in (l, m).
   ψ₀,ₓₓ = Vψ₀ is exact for l = 2..40, and at l = 41, 45, 60 and 100 in the coordinator's check (raw `I138-mac`). Its six
-  wording notes are applied in §1 and §3. Not reviewed: Lemma A(iii), L2–L6, and the Zerilli V itself, which #2, #104 and
-  #138 all take as given.
+  wording notes are applied in §1 and §3. Lemma A(iii), L2–L6 and the Zerilli V were reviewed next (#142, next bullet).
+- **Independent review of the remaining inputs (#142).** `review_lemma_a3.md` (sympy and exact rationals, written from
+  this file alone) confirms Lemma A(iii), L2, L3, L4 and L6 and finds no error. By exact Sturm counts, χ/r has no
+  positive root for l = 2..50. The V of §4.2 at M = −1 equals four published forms: Dotti–Gleiser gr-qc/0604021 eq. (6)
+  and arXiv:0809.3615 eq. (11), Kokkotas–Schmidt gr-qc/9909058 eq. (24) and Berti–Cardoso–Starinets arXiv:0905.2975
+  eq. (15). Its eight wording notes are applied in §1. The coordinator's check (raw `I142-mac`) passes, and no number
+  of #142 disagrees with #2. Not checked: Zerilli's own papers (the publisher page was blocked, *(unverified)*), the
+  derivation of V from the linearized Einstein equations for M < 0 (#143), and DG's intertwining equivalence (§6).
 
 ## 5. Verification summary
 
@@ -306,6 +330,7 @@ bracket (Ψ_{l+1} > 0 at the lower end of r_neg(l)'s) for l = 500..502.
   - Ĥφ₀ = 0, and Res_{r_s} = 0. F′ = ψ₀² dx/dr, F > 0 on (0, r_s), and v has exactly one zero beyond r_s.
   - Ψ̂ has no pole at r_s and ĤΨ̂/Ψ̂ = −(k/2)² exactly. Ψ̂ ∼ r³.
   - N has exactly one root on (r_s, ∞).
+- **Exact Sturm counts for l = 2..50 (#142, `review_lemma_a3_a3_output.txt`):** χ/r has no positive root.
 - **Exact root isolation of N for l = 2..50:** no root in (0, r_s), one root in (r_s, ∞), one Descartes sign change.
 - **Certified, exact rational arithmetic (§4):**
   - c·r_* and c·r_neg bracketed for every l = 2..3000 (`threshold_isolation_output.txt`), with the cross-checks of 4.3.
@@ -335,4 +360,5 @@ bracket (Ψ_{l+1} > 0 at the lower end of r_neg(l)'s) for l = 500..502.
 - **Not proven:** the number of zeros of V̂ on (0, r_*) for general l (exactly one in (r_s, r_*) is exact for l = 2..16 only), and the
   convergence of its lower edge to 6.16881. The certified parts had an independent review in #104 (§4.6).
 - **Caveat on scope:** these are statements about Ĥ. Their meaning for Zerilli/metric perturbations relies on DG's
-  intertwining equivalence, which is not re-proved here.
+  intertwining equivalence, which is not re-proved here. V itself agrees with four published forms of the Zerilli
+  potential at M = −1 (#142); its derivation from the linearized Einstein equations for M < 0 is not redone here (#143).

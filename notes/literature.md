@@ -18,7 +18,8 @@
   q ∈ ℝℙ¹, q_C = 2 + log(98/9), Friedrichs extension "stable". Flaw: truncation at r_C (see phase0/RESULTS.md).
 - **Gleiser & Dotti 2006**, gr-qc/0604021 — kinematic singularity at r = 3μ/(2λ); exact smooth unstable modes.
 - **Dotti & Gleiser 2008**, arXiv:0809.3615 — intertwiner Ψ̂ = (∂ₓ − ψ₀'/ψ₀)Ψ_z; unique self-adjoint
-  extension; instability excitable by generic data. Corollary: linearly unstable.
+  extension; instability excitable by generic data. Corollary: linearly unstable. Its eq. (61) prints
+  −ℓ(ℓ+1)/(4|M|x) for the x⁻¹ term of V̂; the exact coefficient is 0 (phase2/dg_proof/RESULTS.md, L2/L3; #142).
 - Related: Dotti–Gleiser–Pullin gr-qc/0607052 (super-extremal RN/Kerr); Cardoso–Cavaglia gr-qc/0604101
   (negative-mass Schwarzschild–(A)dS).
 
