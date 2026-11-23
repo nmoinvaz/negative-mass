@@ -595,9 +595,16 @@ class bits_ctx:
         BITS = self.old
 
 
+def fr_of_mp(x):
+    """The exact value of an mpmath number as a Fraction."""
+    m, e = x.man_exp
+    m, e = int(m), int(e)
+    return Fr(m << e) if e >= 0 else Fr(m, 1 << -e)
+
+
 def dyadic(x, p=64):
-    """A short dyadic rational near x (a point, not an enclosure)."""
-    x = Fr(x)
+    """A short dyadic rational near x (a point, not an enclosure); x may be a Fraction, an int or an mpmath number."""
+    x = Fr(x) if isinstance(x, (Fr, int)) else fr_of_mp(x)
     return rd(x, p) if x != 0 else x
 
 
