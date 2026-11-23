@@ -241,9 +241,6 @@ Not covered: the count of the tanh wall's Type III points (#133). The accelerati
 
 ## Discrepancies
 
-0. **"F + r f′ ≤ −0.054" was a rounding slip** (found in #132). The Answer said it and section 4's text said −0.054
-   for small σR_b, while section 4's table says at most −0.0537, and −0.0537 > −0.054. The supremum is −0.0536756
-   (σR_b → 0). The sign, the only thing the Type I result uses, is now proved; both places are corrected.
 1. **`he_type_exact` applied `sp.nsimplify` to an exact rational D** (`he_type.py` line 85, before #103). `sp.nsimplify`
    can return a nearby radical for a rational of large height, and it returns 0 for `Rational(1, 10**60)`. At 1 of the
    356 points that went through `classify` (an a != 0 axis point in the check `axis`), the value differed from the exact
@@ -253,6 +250,9 @@ Not covered: the count of the tanh wall's Type III points (#133). The accelerati
    now compares that D with the exact D by equality at every point and records a failure of the calling check (#131).
 2. **#71's 200 points and this result do not disagree.** The Type I set and the Type III set are each codimension 1 in the
    surface D = 0, so a random sample of D = 0 almost surely misses both.
+3. **"F + r f′ ≤ −0.054" was a rounding slip** (found in #132). The Answer said it and section 4's text said −0.054
+   for small σR_b, while section 4's table says at most −0.0537, and −0.0537 > −0.054. The supremum is −0.0536756
+   (σR_b → 0). The sign, the only thing the Type I result uses, is now proved; both places are corrected.
 
 ## Recommended tasks
 
