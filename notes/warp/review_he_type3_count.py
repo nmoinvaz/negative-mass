@@ -232,6 +232,8 @@ def _exp_pt(x):
             t = t * y / (n + 1)
         R = 2 * term
         lo, hi = rd(S - R, pw), ru(S + R, pw)
+        if lo <= 0:
+            raise ValueError('exp enclosure not positive')
         for _ in range(k):
             lo, hi = rd(lo * lo, pw), ru(hi * hi, pw)
         lo, hi = rd(lo), ru(hi)
@@ -429,14 +431,18 @@ def algebra():
     E1 = sp.expand(c2 ** 2 - 3 * c1)
     E2 = sp.expand(27 * c0 - c2 ** 3)
     Res = sp.expand(sp.resultant(E1, E2, w))
-    Pq = sp.expand(sp.cancel(Res / (sp.Rational(27, 256) * phi ** 3 * (A - B) ** 3)))
-    Ptab = {m: Fr(int(c.p), int(c.q)) for m, c in sp.Poly(Pq, phi, A, B).terms()}
-    if MUT == 'drop-P-term':
+    perr = None
+    try:
+        Pq = sp.expand(sp.cancel(Res / (sp.Rational(27, 256) * phi ** 3 * (A - B) ** 3)))
+        Ptab = {m: Fr(int(c.p), int(c.q)) for m, c in sp.Poly(Pq, phi, A, B).terms()}
+    except Exception as ex:                           # the quotient is not a polynomial: reported by the check `frame`
+        Pq, Ptab, perr = None, {}, '%s: %s' % (type(ex).__name__, ex)
+    if MUT == 'drop-P-term' and Ptab:
         del Ptab[(3, 0, 9)]                           # control: the term 4 phi^3 B'^9 of P is dropped
     E1tab = {(m[3], m[0], m[1], m[2]): Fr(int(c.p), int(c.q)) for m, c in sp.Poly(E1, phi, A, B, w).terms()}
     E2tab = {(m[3], m[0], m[1], m[2]): Fr(int(c.p), int(c.q)) for m, c in sp.Poly(E2, phi, A, B, w).terms()}
     _alg = dict(key=key, sp=sp, phi=phi, A=A, B=B, w=w, x=x, cs=cs, c2=c2, c1=c1, c0=c0, E1=E1, E2=E2, Res=Res, Pq=Pq,
-                P=Poly(Ptab), E1p=Poly(E1tab), E2p=Poly(E2tab), Ptab=Ptab, E1tab=E1tab, E2tab=E2tab)
+                P=Poly(Ptab) if Ptab else None, perr=perr, E1p=Poly(E1tab), E2p=Poly(E2tab), Ptab=Ptab, E1tab=E1tab, E2tab=E2tab)
     return _alg
 
 
@@ -480,7 +486,8 @@ def phiAB(zd, wall):
     v = wall.v
     phi = (c - 1) * iD * v
     A = zd * s * iD.sq() * wall.C1 * (-v)
-    B = zd.sq() * (c.sq() * (-1) + c * C + 2) * iD.sq() * iD * wall.C1 * (-v)
+    two = 3 if MUT == 'profile-typo' else 2            # control: a constant of B' typed wrongly
+    B = zd.sq() * (c.sq() * (-1) + c * C + two) * iD.sq() * iD * wall.C1 * (-v)
     return phi, A, B
 
 
@@ -1098,7 +1105,7 @@ def check_frame():
     ok = True
     X, g, y = A ** 2, A, B - A
     c2p = sp.expand((4 * phi * (g + w * y) - X * (3 * w + 1)) / 2)
-    E1p = X ** 2 - phi * ((3 * w - 1) * g + 2 * w * y) * X + (phi ** 2 - 3) * g ** 2 + (2 * phi ** 2 * w + 3 * w - 3) * g * y \
+    E1p = X ** 2 - phi * ((3 * w - 1) * g + 2 * w * y) * X + (phi ** 2 - (2 if MUT == 'printed-typo' else 3)) * g ** 2 + (2 * phi ** 2 * w + 3 * w - 3) * g * y \
         + sp.Rational(1, 4) * (phi ** 2 * w ** 2 + 3 * phi ** 2 * w + 3 * w - 3) * y ** 2
     d_c2, d_E1 = sp.expand(al['c2'] - c2p), sp.expand(al['E1'] - sp.expand(E1p))
     log('  c2 and E1 from the frame table minus the printed c2 and E1 of he_type3.md section 1: %s, %s' % (d_c2, d_E1))
@@ -1134,6 +1141,9 @@ def check_frame():
     log('  double root p, third root q: E1 - (p-q)^2 and E2 - (p-q)^2 (8p + q) =', dd)
     ok &= dd == (0, 0)
     # resultant, P
+    if al['perr']:
+        log('  the quotient Res / ((27/256) phi^3 (A\' - B\')^3) is not a polynomial:', al['perr'])
+        return False
     Pq = sp.Poly(al['Pq'], phi, A, B)
     fac = sp.factor_list(al['Pq'])
     degs = sorted({sum(m) for m, _ in Pq.terms()})
