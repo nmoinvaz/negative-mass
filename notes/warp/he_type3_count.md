@@ -108,7 +108,7 @@ c_{n,k} = Σ_i (−1)^(n−k) cf φ^i ã^(n−k) b̃^k (an interval). Then g = �
 M_n = Σ_k |c_{n,k}|_max. Now t z = 2v(1 + C) z² e^(−z) decreases for z ≥ 2, so t z ≤ s_t = 2v(1 + C) z_t² e^(−z_t). Hence g ≥ z⁹ L with
 L = c₉ − Σ_{k<9} |c_{9,k}|_max z_t^(k−9) − Σ_{n ≥ 10} M_n s_t^(n−9), and the script's enclosure has L ≥ 0.1687 (Le) and L ≥ 0.5237 (Rodal).
 For y: Yn = (1 − ε⁴) + 2Cε(1 − ε²) + z[(1 + ε²)² − 2Cε(1 + ε²) − 8ε²]. For z ≥ z_t the bracket is at least β = 1 − 2κ_t(1 + ε_t²) − 8ε_t² > 0 with κ_t = Cε_t
-(Cε decreases in z), and the other two terms are positive, so Yn ≥ zβ > 0; the script has κ_t ≤ 2 × 10⁻¹⁰ and β ≥ 1 − 10⁻⁹. ∎
+(Cε decreases in z), and the other two terms are positive, so Yn ≥ zβ > 0; the script has κ_t ≤ 1.9 × 10⁻¹¹ (Le) and 1.1 × 10⁻⁹ (Rodal), so β > 1 − 3 × 10⁻⁹. ∎
 
 ## 3. The cover of [1/4, z_t]
 
