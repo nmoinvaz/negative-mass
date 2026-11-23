@@ -40,6 +40,12 @@ note's code, within 3.0×10⁻⁶ of #120's ([tanh_spectrum_check.md](tanh_spect
 The identity ∫τ₁|ψ|² = ∫τ₁|χ|² = 0 has nothing to evaluate on, since there is no real candidate, and for this profile it
 would hold without one (§5).
 
+Thin walls (#96, §7). ρ(T₁)v_c = 0.29951080 at σR = 8 and 0.22508330 at σR = 16. A and B agree to 1.4×10⁻¹¹ and
+1.5×10⁻¹⁰, and #94's B-spline basis gives the same leading moduli to 4×10⁻⁷. No real eigenvalue lies in any window, so
+a real zero mode needs |v| > 9.57 v_c at σR = 8 and > 8.87 v_c at σR = 16, given that the leading eigenvalue keeps
+falling beyond m = 21/2, which is assumed there. At σR = 8 the box value at L = 3.5 is 3.9×10⁻⁴ below this one, and the
+box error does not clearly account for that difference. At σR = 16 there is no box value. Status: *numerical evidence*.
+
 ## 1. What is computed
 
 τ₁ = −f′(r) cos θ is axisymmetric about the x axis. With the reduction of [frank_loss.md](frank_loss.md) §2, rederived
@@ -653,6 +659,37 @@ times (256/224)³, since the box's memory goes as N³. Scaled the same way from 
 Nine of the ten cells pass. The box comparison at σR = 16 does not: no box value exists. The σR = 16 sectors exit 0 with
 "all checks passed" (`I96-dh610/sectors-s16-p340.log.exit` holds 0), and the σR = 8 ones too.
 
+### Coordinator's review (#96)
+
+Raw `I96-mac2` (negative-mass-raw). Mac, nice 10, at most 2 processes, one thread each.
+
+| step | result |
+|---|---|
+| rerun `tanh_spectrum.py --part=vc,planted,shift --sigmas=8,16` | exit 0, the logs' values (planted's worst level error 1.1×10⁻¹⁴ here) |
+| one mutation | `--part=shift --quick --mutate=lscale`: exit 1, `shift` fails, on target |
+| re-solve one sector, σR = 8, m = 7/2, P = 200 | exit 0, 349 s, 7.31 GiB. The sector line equals the laptop's log, and the arrays match the stored ones to 9×10⁻¹⁵ of the leading modulus |
+| rerun `I96-rpi5/sector_numbers.py` | exit 1, like rpi5, but the other way round (below) |
+| independent check `ind96.py` | exit 1, G1 fails (below); G2 and G3 pass; its 3 mutations fire on target |
+
+`ind96.py` drives #94's B-spline solver (`tanh_spectrum_check.py`, ARPACK). It shares the formulation and the profile
+with `tanh_spectrum.py`, not the basis or the solver. At σR = 8 and 16, m = ½ and 21/2:
+- its two discretisations agree to 2×10⁻⁶;
+- the leading |μ|v_c agrees with the tables above to 1.7×10⁻⁵ and the second to 4.6×10⁻⁵;
+- at σR = 16 the whole difference is that checker's v_c, which is 9.7×10⁻⁶ low (0.9850202). mpmath at 30 digits gives
+  0.985029856 (`I96-mac2/vc96.txt`), as `tanh_spectrum.py` has. So criterion G1, v_c to 10⁻⁶, fails, and the fault is in
+  the checker's 400-point quadrature, not in this section.
+
+Divided by v_c, the leading |μ| agree to 4×10⁻⁷.
+
+Findings, not fixed in the text above:
+- Reading note 6's cause is now tested. On the Mac the recount matches all 132 values of the σR = 8 log, and differs from
+  the σR = 16 log at m = 15/2 (14 against 12). np.abs(array) − abs(scalar) at the cut there is −1×10⁻¹⁷ where rpi5 has 0,
+  and the reverse. So "σR = 16 recounts exactly" holds on rpi5 only. Each window count of a sector can move by 2 with
+  the machine. No real eigenvalue is involved.
+- The acceptance cells "planted and shift checks pass at the sizes used" are marked pass above. The coordinator counts
+  them as not met: the criterion meant the sector sizes, and the checks ran at p = 60. That makes 7 of the 10 cells,
+  not 9.
+
 What this section does not show: that the box error accounts for the 3.9×10⁻⁴ at σR = 8, any box value at σR = 16, a
 cause of the rise of the eigenfunction residual with m, that `planted` and `shift` pass at P = 200 or 340 (they run at
 sizes of their own), or anything beyond m = 21/2, where the leading eigenvalue is assumed to keep falling. The status of
@@ -674,6 +711,9 @@ every number is *numerical evidence*. No novelty is claimed.
   through m = 41/2 in #120). That is
   two and a half to three times #63's 4 v_c. It is *numerical evidence*. That E is empty for the tanh profile is still
   a *conjecture*, and the window does not reach large v.
+- At the thin walls σR = 8 and 16 (§7), ρ(T₁)v_c = 0.29951080 and 0.22508330, and no real eigenvalue lies in a window up to
+  9.57 v_c and 8.87 v_c, under the same condition on m > 21/2, there assumed. The box comparison is not closed at σR = 8
+  (3.9×10⁻⁴ at L = 3.5) and absent at σR = 16, and the planted and shift checks ran only at their own sizes.
 - The identity ∫τ₁|ψ|² = ∫τ₁|χ|² = 0 was evaluated on 80 to 112 eigenfunctions per sector and is zero identically, by
   the inversion symmetry of the odd weight. It has no real candidate to test and cannot exclude one for this profile.
 - Nothing here changes #63's theorem or the existence statements. They depend on §5 to §7 of frank_loss.md, which this
@@ -741,6 +781,10 @@ leading |μ| in the output's tables (it fails if it undercuts one), and it gives
 reaches |μ|v_c = 0.083 at σR = 2 and 0.097 at σR = 4. Depends on #75.
 
 ### Task 3, the thin walls σR = 8 and 16
+
+Done in #96 (§7). Not met: agreement with the box within its error at σR = 8, any box value at σR = 16, and the
+planted checks at the sizes used.
+
 
 The same code with the radial basis enlarged until `conv` shows 10⁻⁸ (a shell of width 1/σ = 0.06 at σR = 16). Why: the
 windows and the ρ(T₁)v_c column of #63 stop at σR = 4 and the walls of interest are thinner, and a real eigenvalue
