@@ -1,5 +1,6 @@
 """#143: runs zerilli_derivation.py unmutated (must exit 0, no FAIL) and once per mutation with --mutate=NAME --failfast (must exit with the
-listed code and the first FAIL id equal to the target written in I143-rpi5/README.md before the first control run).
+listed code and the first FAIL id equal to the target written in I143-rpi5/README.md before the first control run; for the last 16 pairs,
+the target written in I147-rpi5/README.md before the first run of the changed script).
 
 Run: python zerilli_derivation_controls.py > zerilli_derivation_controls_output.txt
 Environment: CTRL_LOGDIR = directory for the per-run logs (optional). Exit 0 iff the baseline and every pair is OK.
@@ -14,6 +15,7 @@ import time
 HERE = os.path.dirname(os.path.abspath(__file__))
 LOGDIR = os.environ.get('CTRL_LOGDIR')
 SKIP = ['--skip=PL.G,PL.X']
+SKIP_X = ['--skip=PL.G']                                   # the mutation acts inside PL.X; PL.G reads the unmutated h
 
 # (mutation, extra args, target first-FAIL id, expected exit code): exit 2 = a planted check, 1 = a real check
 PAIRS = [
@@ -35,6 +37,23 @@ PAIRS = [
     ('dg3_typo', SKIP, 'E.6a', 1),
     ('d2_zero', SKIP, 'D.2', 1),
     ('div_set', SKIP, 'D.1', 1),
+    # #147: one pair for each check that had no mutation of its own, in the script's order
+    ('ds_sign', [], 'PL.0b', 2),
+    ('gauge_odd', [], 'PL.G.odd', 2),
+    ('x_odd', SKIP_X, 'PL.X.odd', 2),
+    ('x_gauge', SKIP_X, 'PL.X.gauge_even', 2),
+    ('odd_norm', SKIP, 'PL.O.1', 2),
+    ('odd_flow', SKIP, 'PL.O.2', 2),
+    ('same_m0', SKIP, 'PL.O.4', 2),
+    ('grr_trace', SKIP, 'E.2', 1),
+    ('hexpr_sign', SKIP, 'E.3b', 1),
+    ('e4_drop', SKIP, 'E.4', 1),
+    ('e5a_det0', SKIP, 'E.5a', 1),
+    ('v_s2', SKIP, 'E.5c', 1),
+    ('back_coef', SKIP, 'E.6b', 1),
+    ('d3_s1', SKIP, 'D.3', 1),
+    ('d4_l2', SKIP, 'D.4', 1),
+    ('d5_ah0', SKIP, 'D.5', 1),
 ]
 
 
