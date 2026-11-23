@@ -156,7 +156,8 @@ A minimally coupled scalar has a stress tensor of Type I or II, and a perfect fl
   (r f′)′ = 0, v²(r f′ + F)(r f′ + c²F) + c² = 0 and 2r f′ + (1 + c²)F ≠ 0 (**proved**), which the tanh wall never
   meets (**proved**, [he_tanh_bound.md](he_tanh_bound.md), #132). It is Type III exactly where c₂² = 3c₁, 27c₀ = c₂³ and b + a u ≠ 0 (**certified**,
   [he_type3.md](he_type3.md), #102). The tanh wall meets that set on three circles at Le's v = 0.5 and three at Rodal's
-  v = 1, each point enclosed (**certified**); that there are no others is **numerical evidence** (#133). Type III excludes
+  v = 1, each point enclosed (**certified**); that there are no others is **certified** ([he_type3_count.md](he_type3_count.md),
+  #133). Type III excludes
   a scalar and a perfect fluid by type alone.
 
 ## Checks and controls
@@ -210,7 +211,7 @@ Assumed: constant v, as in phantom_source.md up to its accelerating bubble. The 
 profile, and the numbers use the tanh profile on the slice t = 0, which any other t translates.
 
 Not covered: the accelerating bubble of phantom_source.md. (I1) holds there, so the cubic still decides, but its D was
-not computed (#73). A rigorous count of the tanh wall's Type III points (#133). Le's graded grid.
+not computed (#73). Le's graded grid.
 
 ## References
 

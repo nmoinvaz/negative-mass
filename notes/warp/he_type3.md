@@ -31,7 +31,8 @@ only E2 (section 4).
 
 On the tanh wall the Type III points form a curve in (r, v, cos θ). At Le's parameters (σR_b = 8, v = 1/2) and Rodal's
 (σ = 4, R_b = 5, so σR_b = 20, v = 1) the curve meets the wall in three radii each, listed in section 5, each enclosed in a
-box with a unique zero (**certified**). That these are all of them is **numerical evidence**.
+box with a unique zero (**certified**). That these are all of them is **certified** by an interval cover of every root in
+r ∈ (0, ∞) ([he_type3_count.md](he_type3_count.md), #133).
 
 | set, off the equator and axis, on E1 = E2 = 0 | type | rank(M − λ) | root |
 |---|---|---|---|
@@ -195,7 +196,9 @@ All six lie inside Le's wall mask f ∈ [0.1, 0.9] or Rodal's band r ∈ [ρ −
 circle of revolution about the motion axis, and θ → π − θ gives its mirror image. At each paper speed the curve crosses v
 three times, once on branch B and twice on branch A, which the quartic route and the sign-change route both count
 (`tanh_curve`). The scan found no near-tangent minimum of |P|, so no double crossing is hidden between grid radii, but that is a
-grid statement, so the count of three is **numerical evidence**.
+grid statement. The count of three is **certified** by #133's interval cover over r ∈ (0, ∞)
+([he_type3_count.md](he_type3_count.md)): P has 4 roots at Le and 6 at Rodal, three of them admissible at each wall, and the
+spurious factor B′ − A′ has one root per wall, where E1 and E2 have no finite common root.
 
 ## 6. What this says for the exclusion of #57
 
@@ -258,14 +261,18 @@ Assumed: constant v and the Alcubierre metric of he_type.md. The theorem is for 
 Review: the coordinator's independent check (raw `I102-mac`, `ind102.py`, no code shared with this note's scripts or
 with `review_he_surface_lib.py`) derives the frame block from the metric. It reproduces section 1's table and E1, the
 certificates of section 2 (the rank certificate, and the chain at T = 0), #72's point in Q(√113) with exact rank, two
-tanh points at 50 digits, and the six points by its own resultant scan.
+tanh points at 50 digits, and the six points by its own resultant scan. That scan found 5 and 7 sign changes of the
+resultant against 4 and 6 roots of P. The closing comment on #102 said every extra one is a common root with w outside
+(0, 1). That is wrong for one per wall: there the extra sign change is the root of the spurious factor (A′ − B′)³, where E1's
+w² coefficient φ²y²/4 and E2's w³ coefficient both vanish, so E1 and E2 share only w = ∞ (#133; raw `I133-mac`, `ind133b.py`
+D5 and D6). The w that ind102 printed there, −0.358483 and −6.30241, is E1's finite root, where E2 ≠ 0.
 
-Not covered: the Type III set of the accelerating bubble (#73). A rigorous count of the
-Type III points of the wall at a given speed over all r (the box enclosures prove the six points exist, not that there are no
-others, #133). A rational Type III point.
+Not covered: the Type III set of the accelerating bubble (#73). A certified count at speeds other than the papers' two. A
+rational Type III point.
 
 ## Discrepancies
 
-None with he_surface.md or he_type.md. Three statements there are now settled: the Type III set is characterized (he_surface.md
+One in the coordinator's closing comment on #102, about the extra sign changes of its scan (Review, above). None with
+he_surface.md or he_type.md. Three statements there are now settled: the Type III set is characterized (he_surface.md
 "Not covered"), its curve on the tanh wall is mapped (he_surface.md section 4, "The extent of the curve was not mapped"), and
 the equator ends of the curve are the crossings of he_type.md's two equatorial curves.

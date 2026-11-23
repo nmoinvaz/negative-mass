@@ -239,6 +239,27 @@ table of he_type3.md; it does not re-derive the frame table itself, which is #10
 Assumed: the theorem of he_type3.md (the description by E1, E2, T), constant v, and the Alcubierre metric of he_type.md. Not covered: the Type III set of the accelerating bubble
 (#73), other speeds or wall parameters, points with |w| > 10⁴ that are not needed, and the Lean statement of the lemmas of sections 1 to 4.
 
+## Review
+
+The coordinator reviewed the count (raw `I133-mac`, Mac, Python 3.14, sympy 1.14.0, mpmath 1.3.0):
+
+- `he_type3_count.py` reran, exit 0 in 480 s, with output identical except for timings. `--mutate=eps-typo` fails exactly its six targets.
+- Rodal's root at r = 5.07635 was re-solved by Newton from 10⁻³ away. It has w = 1.03000296, outside (0, 1).
+- `ind133b.py` shares no code with this note's script or with he_type3.py. It derives E1 and E2 from the metric by the Ricci
+  route of #102's review, and evaluates the profile in the cosh form of #132.
+  - D1 and D6 are exact. D1: the resultant is (27/256) φ³ (A′ − B′)³ P, with 167 terms, the weight-24 part 774144 φ⁸ δ², and the φ³B′⁹
+    coefficient 4. D6: at y = 0 both leading coefficients vanish, which is where the factor (A′ − B′)³ comes from.
+  - The rest is numerical evidence. A 10⁻⁴ grid in z finds P's sign changes and, without the resultant, the common roots on E1's real
+    branches: 4 and 6, at this note's radii and w, with three admissible per wall. P > 0 at small and large z, where the leading terms
+    match those of Lemmas 3 and 4.
+  - Five mutations each make it fail.
+- The first version, `ind133.py`, failed its grid criterion through two defects of its own. Its float64 quadratic formula lost E1's small
+  root, and it took the root at w = ∞ for a common root. That failure is recorded in the raw folder.
+- `cmp133.py` cross-loads the table of P from `he_type3.shadow()` that this note trusts. It equals, term by term, the P of the
+  independent Ricci route.
+
+The interval cover itself was not re-derived by independent interval code.
+
 ## Discrepancies
 
 One with the wording of the review of #102: the extra sign change of the resultant scan is the root of the spurious factor (A′ − B′)³ and not a common root with w outside (0, 1)

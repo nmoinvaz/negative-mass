@@ -32,7 +32,7 @@ every root for every σR_b > 0 (**proved**, with the coordinator's independent c
 Type II, or Type III on a curve of points that Newton at 50 digits finds at σR_b = 1, 4 and 8 (**numerical evidence**).
 A Type III point of the general family is exact, in Q(√113) (**checked symbolically**). The curve has two branches. At
 Le's speed (σR_b = 8, v = 1/2) and Rodal's (σR_b = 20, v = 1) it meets the wall on three circles each, each point
-enclosed (**certified**); that there are no others is **numerical evidence** ([he_type3.md](he_type3.md) section 5, #133).
+enclosed (**certified**); that there are no others is **certified** ([he_type3_count.md](he_type3_count.md), #133).
 
 On the axis, D = 0 only where v a = 0, and there M is diagonal, Type I.
 
@@ -237,7 +237,7 @@ rank of M − λ comes from minors in `Fraction` arithmetic, which shares nothin
 Assumed: constant v and the Alcubierre metric of he_type.md. The theorem is for c ≠ 0, s ≠ 0, v ≠ 0 and (a, b) ≠ (0, 0).
 At (a, b) = (0, 0) or v = 0 the tensor is zero. The equator was settled in #71 and the axis above.
 
-Not covered: the count of the tanh wall's Type III points (#133). The accelerating bubble (#73).
+Not covered: the count of the tanh wall's Type III points at other speeds. The accelerating bubble (#73).
 
 ## Discrepancies
 
