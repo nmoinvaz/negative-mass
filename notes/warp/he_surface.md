@@ -26,8 +26,9 @@ conditions are three polynomials in (v, F, a, b, u, c), and T1 and T2 together a
 are codimension 1 in the surface D = 0. A random sample of the surface never meets them, which is why #71's 200 points
 were all Type II ([review_he.md](review_he.md) §5).
 
-For the tanh wall the Type I set is empty. T2 needs F + r f′ > 0 at the root of (r f′)′ = 0, and a scan of
-σR_b from 0.01 to 100 finds F + r f′ ≤ −0.054 there (**numerical evidence**). So on the tanh wall D = 0 off the equator is
+For the tanh wall the Type I set is empty. T2 needs F + r f′ > 0 at the root of (r f′)′ = 0, and F + r f′ < 0 at
+every root for every σR_b > 0 (**proved**, with the coordinator's independent check, [he_tanh_bound.md](he_tanh_bound.md),
+#132). So on the tanh wall D = 0 off the equator is
 Type II, or Type III on a curve of points that Newton at 50 digits finds at σR_b = 1, 4 and 8 (**numerical evidence**).
 A Type III point of the general family is exact, in Q(√113) (**checked symbolically**). The curve has two branches. At
 Le's speed (σR_b = 8, v = 1/2) and Rodal's (σR_b = 20, v = 1) it meets the wall on three circles each, each point
@@ -167,8 +168,9 @@ with mpmath's derivatives to 9 × 10⁻³¹. T1 is (r f′)′ = 0 and T2 needs 
 | planted profile f = (1/10) sech² r | root with F + r f′ = 0.895 > 0, found non-empty by the same scan |
 
 So no tanh wall has a point of T1 ∩ T2, and the Type I subset of D = 0 is empty there. The scan is **numerical
-evidence** at 49 values of the one parameter σR_b. It is not a bound. At the ends F + r f′ is
-close to −σR_b/2 + 1/2 for large σR_b and to −0.054 for small.
+evidence** at 49 values of σR_b; #132 proved the sign for every σR_b > 0 by an exact elimination
+([he_tanh_bound.md](he_tanh_bound.md)). The supremum of F + r f′ at the root is −0.0536756, the limit σR_b → 0, not
+attained. For large σR_b, F + r f′ is close to −σR_b/2 + 1/2 (**numerical evidence** to σR_b = 10⁴).
 
 Type III on the wall, by Newton at 50 digits on the two equations c₂² = 3c₁ and 27c₀ = c₂³ at fixed r, with the
 singular values of M − λ and the powers of N = M − λ (`tanh_type3`, **numerical evidence**):
@@ -224,7 +226,7 @@ It exits 1 if a check fails or a control does not fire. `--no-controls` runs the
 **Proved** by hand: section 2, from the closed forms of section 1. **Checked symbolically**: the closed forms equal route
 C, each identity of sections 1 and 2, and the Gröbner elimination. The exact points are checked in `Fraction` arithmetic
 and in Q(√5), Q(√113) and the quartic field, whose elements are polynomials modulo a monic modulus, with exact zero tests.
-**Numerical evidence**: the tanh scan and the Type III solves of section 4.
+**Numerical evidence**: the tanh scan (its sign now **proved**, #132) and the Type III solves of section 4.
 
 Trusted: sympy 1.14.0 (`groebner`, `Poly`, `factor_list`, `real_roots`, `rem`), mpmath 1.3.0, `he_type.he_type_exact` and
 `he_type.cubic`, `he_type.disc` (#64), and route C of `review_he_derive.py` (#71). The closed forms are typed here, not
@@ -235,11 +237,13 @@ rank of M − λ comes from minors in `Fraction` arithmetic, which shares nothin
 Assumed: constant v and the Alcubierre metric of he_type.md. The theorem is for c ≠ 0, s ≠ 0, v ≠ 0 and (a, b) ≠ (0, 0).
 At (a, b) = (0, 0) or v = 0 the tensor is zero. The equator was settled in #71 and the axis above.
 
-Not covered: the tanh scan is a scan, not a bound (#132). The count of the tanh wall's Type III points (#133). The
-accelerating bubble (#73).
+Not covered: the count of the tanh wall's Type III points (#133). The accelerating bubble (#73).
 
 ## Discrepancies
 
+0. **"F + r f′ ≤ −0.054" was a rounding slip** (found in #132). The Answer said it and section 4's text said −0.054
+   for small σR_b, while section 4's table says at most −0.0537, and −0.0537 > −0.054. The supremum is −0.0536756
+   (σR_b → 0). The sign, the only thing the Type I result uses, is now proved; both places are corrected.
 1. **`he_type_exact` applied `sp.nsimplify` to an exact rational D** (`he_type.py` line 85, before #103). `sp.nsimplify`
    can return a nearby radical for a rational of large height, and it returns 0 for `Rational(1, 10**60)`. At 1 of the
    356 points that went through `classify` (an a != 0 axis point in the check `axis`), the value differed from the exact

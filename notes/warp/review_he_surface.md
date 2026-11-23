@@ -64,7 +64,7 @@ The rotated frame (n, r̂, θ̂) enters only in `rotated_quantities`, `identity_
 | 4 | every other point of D = 0 is Type II except a Type III set | confirmed, given the lemma | `T3_multiplicity` (a triple root on T1 has rank ≤ 1), `exact_points`, `type3_exact` |
 | 5 | T1, T2, T3 are polynomials; T1 and T2 are codimension 2; Type I is codimension 1 in D = 0 | confirmed | Jacobian of (b + a u, Pu) has rank 2 at all 24 points; D = 0 on T1 ∩ T2 by `D_on_T1` |
 | 6 | a random sample of D = 0 never meets them | confirmed (measure zero) | #71's 200 points not rerun |
-| 7 | tanh wall: Type I set empty, F + r f′ ≤ −0.054 at the root | confirmed, **numerical evidence** | `tanh_scan` |
+| 7 | tanh wall: Type I set empty, F + r f′ ≤ −0.054 at the root | confirmed, **numerical evidence**; **proved** in #132 ([he_tanh_bound.md](he_tanh_bound.md)), with the bound −0.0537, not −0.054 | `tanh_scan` |
 | 8 | Type III points on the tanh wall at σR_b = 1, 4, 8 | confirmed, **numerical evidence** | `type3_tanh` |
 | 9 | a Type III point is exact in Q(√113) | confirmed | `type3_exact` |
 | 10 | axis: D = 0 only where v a = 0, M diagonal, Type I | confirmed | `equator_axis`, `axis_points` |
@@ -83,7 +83,7 @@ The rotated frame (n, r̂, θ̂) enters only in `rotated_quantities`, `identity_
 | 23 | A, B′, AB′ − j_r², third root μ = λ + (B′ − A), B′ − A = v²au(2ra + (1 + c²)F) | confirmed | `T3_multiplicity` |
 | 24 | disc N₂ = (A − B′)² on T1 ∩ T2, so v F s² ≥ 2\|c\|, equality where T3 fails | confirmed as (v F s²)² ≥ 4c²; **gap** for F < 0 | `D_on_T1` |
 | 25 | the six exact-point sets of section 3, with 60, 250 and 3 points | partly reproduced | my own points, below; the counts were not |
-| 26 | tanh jets, the scan of section 4, F + r f′ ≈ −σR_b/2 + 1/2 at large σR_b | scan confirmed; the asymptote not reviewed | `tanh_scan` |
+| 26 | tanh jets, the scan of section 4, F + r f′ ≈ −σR_b/2 + 1/2 at large σR_b | scan confirmed; the asymptote not reviewed (#132: **numerical evidence** to σR_b = 10⁴) | `tanh_scan` |
 | 27 | section 5, the exclusion of #57, section 6, the checks and controls of he_surface.py | not reviewed | the code was not read, by design |
 
 ## The certificate
@@ -199,7 +199,7 @@ at three points (agreement 4 × 10⁻⁴⁵). `classify` is tested on six plante
 
 Assumed: the lemma of he_type.md, (I1) with e_ϕ = d_z (checked: R(e_ϕ, ·) = 0), constant v, and the hypotheses of the
 theorem. Not covered: the Gröbner elimination, the 60, 250 and 3 point counts of section 3, section 4's large-σR_b
-asymptote, a bound for the tanh scan, and the accelerating bubble (#73).
+asymptote, and the accelerating bubble (#73). The bound for the tanh scan is #132's proof.
 
 ## For he_surface.md
 
@@ -213,7 +213,7 @@ The coordinator owns that file. Proposed changes:
 
 ## Recommended tasks
 
-1. **A bound for the tanh scan.** What. Prove F + r f′ < 0 at the root of (r f′)′ = 0 for every σR_b > 0, or enclose it
+1. **A bound for the tanh scan.** Done in #132 ([he_tanh_bound.md](he_tanh_bound.md)). What. Prove F + r f′ < 0 at the root of (r f′)′ = 0 for every σR_b > 0, or enclose it
    by interval arithmetic over σR_b ∈ [0.01, 100] with an asymptotic argument outside. Why. The empty Type I set of the
    tanh wall rests on a scan at 97 values. Acceptance. A rigorous enclosure, and the planted profile sech²(r)/10 found
    non-empty by the same code. Depends on #72.
