@@ -1,0 +1,14 @@
+review_lemma_a_t2 (mutation: None)
+PASS PL5 (t-2)(t+1)(t+3)
+PASS PL5 (t-1)(t-2)(t+3)
+PASS PL5 t^2-t+1
+PASS PL5 t^3+2t^2
+PASS T2.1 N(r_s + t) = c sum_m (1-m) d_m t^m, d_m = chi^(m)(r_s)/m!, generic chi of degree 8
+PASS T2.2a d_m = sum_{n>=m} c_n C(n,m) r_s^{n-m} for generic chi (degree 8)
+PASS T2.2b the same for the actual chi (sympy Taylor shift against the sum), l = 2..40 [l=2..40]
+PASS T2.3 d_0 = chi(r_s) > 0, d_1 = -d_0/(r_s(r_s+2)), d_2 = 0 (exact) [l=2..120]
+PASS T2.4 d_m > 0 for 4 <= m <= l+2 (exact; d_m = 0 beyond since chi has degree l+2) [l=2..120]
+info: sign of d_3 for l = 2..120: positive at 119 values of l ([2, 3, 4, 5, 6, 7]...[119, 120]), negative at 0 ([]...[]), zero at []
+PASS T2.5 coefficients of N(r_s + t) have exactly one sign change; leading coefficient -c(l+1)c_{l+2} < 0 [l=2..120]
+PASS T2.6 exact Sturm: one root of N in (r_s, inf), none in [0, r_s], N squarefree (root is simple) [l=2..40]
+ALL PASSED: 0 failing check(s)

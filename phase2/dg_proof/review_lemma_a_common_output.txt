@@ -1,0 +1,23 @@
+review_lemma_a_common: planted problems PL1..PL7 (mutation: None)
+PASS PL1 numeric C(7,k) k=0..12
+PASS PL1 numeric C(4,k) k=0..12
+PASS PL1 symbolic (N,M,k)
+PASS PL2 wrong sequence has nonzero residual
+PASS PL3 exponents E2
+PASS PL3 exponents E3
+PASS PL3 exponents E4
+PASS PL3 exponents E5
+PASS PL4 E2 y'/y = 2, y''/y = 10
+PASS PL4 E2 resonance (coef 0, rest 0)
+PASS PL4 E3 y'/y = 0, y''/y = 2
+PASS PL4 E4 y'/y = 2, y''/y = 4/3
+PASS PL5 (t-2)(t+1)(t+3)
+PASS PL5 (t-1)(t-2)(t+3)
+PASS PL5 t^2-t+1
+PASS PL5 t^3+2t^2
+PASS PL6 min on [0,3]
+PASS PL6 min on [2,3]
+PASS PL6 min on [-3,0]
+PASS PL7 psi=r^2 residual 0
+PASS PL7 perturbed V has nonzero residual
+ALL PASSED: 0 failing check(s)

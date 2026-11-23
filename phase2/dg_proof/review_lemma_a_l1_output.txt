@@ -1,0 +1,18 @@
+review_lemma_a_l1 (mutation: None)
+PASS PL3 exponents E2
+PASS PL3 exponents E3
+PASS PL3 exponents E4
+PASS PL3 exponents E5
+PASS PL4 E2 y'/y = 2, y''/y = 10
+PASS PL4 E2 resonance (coef 0, rest 0)
+PASS PL4 E3 y'/y = 0, y''/y = 2
+PASS PL4 E4 y'/y = 2, y''/y = 4/3
+PASS L1.1a exponents of the chi-ODE at r_s are {0, 3}
+PASS L1.1b local values p, q, P0(r_s), P2(r_s)
+PASS L1.2 chi'(r_s)/chi(r_s) = -1/(r_s (r_s+2))
+PASS L1.3 chi''(r_s) = 0
+PASS L1.4 resonance: coefficient of chi''' is 2p+q = 0 and the remainder vanishes
+PASS L1.5a residue of psi_0^2 dx/dr at r_s is 0
+PASS L1.5b phi_0,xx(r_s) = 0
+PASS L1.6 actual chi: chi(r_s) > 0, chi'/chi = -1/(r_s(r_s+2)), chi''(r_s) = 0 (exact) [l=2..40]
+ALL PASSED: 0 failing check(s)
