@@ -497,6 +497,8 @@ if PART in ('even', 'all'):
               ({k_: v_ for k_, v_ in summ.items() if v_[1].startswith('FORB')}, kept is not None))
     lap('E.den')
     run.note('even certificate: %d nonzero coefficients over %d unknowns' % (len(Ce), len(Eev) * (ORDER + 1)))
+    for k_, c_ in sorted(Ce.items()):
+        run.note('even certificate c[%s, k=%d] = %s' % (k_[0], k_[1], sp.factor(c_.as_expr())))
     if DUMP:
         json.dump({'%s.k%d' % k_: str(c.as_expr()) for k_, c in Ce.items()}, open(DUMP, 'w'), indent=0)
 
@@ -541,6 +543,8 @@ if PART in ('even', 'all'):
         if vanish or bad:
             ok_L = False
             why_L.append('l=%d: denominators vanishing %s, residual jets %s' % (lv, vanish, sorted(bad)[:4]))
+        run.note('E.L l=%d (L = %d): common denominator of the specialized coefficients %s' %
+                 (lv, Lv, sp.factor(sp.lcm([c.denom.as_expr().subs(L, Lv) for c in Ce.values()]))))
         lap('E.L l=%d' % lv)
     run.check('E.L', ok_L, 'identity after L = 6, 12, 20 fails: %s' % why_L)
 
