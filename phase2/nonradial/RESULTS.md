@@ -1352,7 +1352,8 @@ Two boxes fail, as computed: `p085_l3` (ratio 1.97) and `n3_l2` (8.6×10⁴, `ze
 ratios of 0.49 to 0.74 that are close to 1, with ρ = 0.25 (L = 2.5). *Reading, not tested:* that a 16-point trapezoid on
 a circle of radius 0.25 has an aliasing error of about (ρ/d)¹⁶ for a singularity of det[Y, Z] at distance d, which at d
 ≈ 0.7 would give about 4×10⁻⁵ in this quantity, as large as the values above. The test is a smaller ρ at the same point,
-`--rho=`, not run before this report (the runs are in `listF_after_report.txt` in the raw folder).
+`--rho=`, not run before this report (the runs are in `listF_after_report.txt` in the raw folder). #129 tested it:
+the failure is integrator error, not aliasing (below).
 
 #### `gap`: the projector's eigenvalue separation
 
@@ -1445,7 +1446,7 @@ fails by 1.3×10⁵ and 4.1×10⁴. Mutations: `reverse` gives −1.0000 for the
   reading, not tested here: it would have to move arg D by about the 0.4 rad of a counted step, and the failures are of
   the order 10⁻⁵ to 10⁻³ in abs(Δφ) L².
 - *Reading, not tested:* that those failures are integrator noise and that the `mean` failure at `p085_l3` is aliasing
-  (above).
+  (above). #129 tested both: integrator error at all 12 points, and not aliasing at `p085_l3` (below).
 - *Coordinator's review (#122's closing comment):* a fresh rerun of `c075_l2` on another machine fails `harm` again,
   with the same value at h at the worst point and a different one at h/2. arg D at rtol 10⁻⁸ differs from arg D at
   10⁻¹⁰ by far more than the 10⁻¹¹ of the reading above, so that estimate does not hold. A mean-value test on 64 points
@@ -1530,6 +1531,15 @@ The ratio |Δφ| L² / limit (pass at or below 1) at both radii, from `harm_circ
 | at every point the planted holomorphic phase passes and the planted non-harmonic one fails through the same code; `nonholo` fails | met: 72 of 72 rows (planted holomorphic at most 4.3×10⁻¹³, planted non-harmonic 2.0×10⁻³); `nonholo` and `half` exit 1 |
 | each point's verdict at each rtol and radius as computed; if every point passes at S12, which setting removed each failure | met: the table; all 12 pass at S12; S10 removes the 8 failures of S8, and the runs do not separate its three changes |
 | a point that still fails at rtol 10⁻¹² with fixed `nchunks` is reported as a part of D's phase that the integrator does not explain | none: 0 of 12 points fail at S12 (24 of 24 rows pass) |
+
+- *Coordinator's review (#129's closing comment):* on the Mac, `--collect` on the `I129-win` caches gives the table above
+  (one S12 entry differs in the fourth digit) and `--mutate=nonholo` exits 1. A fresh S12 run of `c075_l2` point 2 agrees
+  with the laptop's arg D to 3.3×10⁻¹² and passes at 7.9×10⁻⁴ and 2.9×10⁻³ of the limit. An independent check
+  (negative-mass-raw `I129-mac`, `ind129b.py`), with its own transform and a two-radius estimate that removes the ρ⁴
+  term, reproduces every ratio of the table and passes at S12 (at most 3.2×10⁻³). Over the 1548 cached points arg D at
+  S8 differs from S12 by at most 6.8×10⁻⁷ rad (S10: 6.3×10⁻⁹), far below the 0.4 rad of a counted step. |D| is
+  phase-normalised by `PolarProblem.D`, so log|D| is not harmonic (10⁵ to 10⁶ times the limit) and only arg D is
+  tested.
 
 - The checks are numerical, one phase of each plane, and no interval enclosure or proof. They do not look beyond the 61
   boxes or outside the part of Re s = 0 that the n3 boxes cover.
