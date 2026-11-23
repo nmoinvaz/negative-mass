@@ -150,6 +150,13 @@ def dx(expr):
     return f_of_r * sp.diff(expr, r)
 
 
+def V_results(lam):
+    """V of RESULTS 4.2 (static Zerilli potential, M = -1): 2f[lam^2 r^2((lam+1) r - 3) + 9(lam r - 1)]/(r^3 (lam r - 3)^2).
+    Mutation v_typo: 9(lam r - 2)."""
+    nine = 9 * (lam * r - (2 if mut('v_typo') else 1))
+    return 2 * f_of_r * (lam ** 2 * r ** 2 * ((lam + 1) * r - 3) + nine) / (r ** 3 * (lam * r - 3) ** 2)
+
+
 def Vhat_of_u(u):
     """V-hat = g^2 - g_x with g = f u, u = psi_r/psi. Mutation pl_vhat: g^2 + g_x (the planted checks must fire)."""
     g = f_of_r * u
