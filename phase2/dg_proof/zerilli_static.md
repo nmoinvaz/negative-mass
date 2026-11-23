@@ -30,7 +30,7 @@ vacuum equations of even parity are equivalent, for M ≠ 0 and on r ∈ (0, ∞
 
   the map (K, H) → (ψ, ψ,ₓ) has determinant −2r(r−2M)/(LM) ≠ 0, and **ψ,ₓₓ = Vψ with the ψ,ₓ coefficient exactly 0 and V equal to #143's V exactly**,
   V = 2f[λ²(λ+1)r³ + 3λ²Mr² + 9λM²r + 9M³]/(r³(λr + 3M)²), symbolic in (r, l, M); at M = −1 it equals RESULTS §4.2's V exactly.
-- **Converse.** DG06 (3)–(4) at s = 0 (H1 = 0, K = Fψ + fψ′, H0 = H2 = (f(hψ + rψ′))′ − K) solves all seven radial equations whenever ψ,ₓₓ = Vψ,
+- **Converse.** DG06 (3)–(4) at s = 0 (H1 = 0, K = f_D ψ + fψ′, H0 = H2 = (f(h_D ψ + rψ′))′ − K, with f_D and h_D the f(r) and h(r) of DG06 (4)) solves all seven radial equations whenever ψ,ₓₓ = Vψ,
   and (9)∘(3) = id on ψ and (3)∘(9) = id on (K, H): the two maps are inverse, so every static solution comes from exactly one ψ.
   The converse is an identity in M (it divides by neither M nor s).
 - **Relation to #143.** (3)–(4) at s = 0 *is* #143's map evaluated at s = 0 (the formulas are polynomial in s; H1 = s(hψ + rψ′) → 0). (9) does not contain s.
@@ -149,12 +149,40 @@ Not Lean; statements only. Each is an identity in the rational function field Q(
 
 ## 8. What RESULTS.md should now say
 
-RESULTS.md is the coordinator's; these are the proposed edits.
+The closing comment of #145 proposed four edits. All four are applied: RESULTS.md §4.2 (after V's definition), §4.6 (the
+#143 bullet and a #145 bullet), §6 (Caveat on scope), and `zerilli_derivation.md` §4. §4.6 records the coordinator's
+finding on M = 0 below.
 
-- **§4.2**, the sentence "The static case s = 0, which (Z) uses, is #145.": replace by "(Z) is the s = 0 equation. It is derived from the static linearized vacuum equations in Regge–Wheeler gauge in
-  `zerilli_static.md` (#145, checked symbolically in (r, l, M), M ≠ 0): H1 = 0, H0 = H2, and ψ of DG06 (9) satisfies ψ,ₓₓ = Vψ with the same V; conversely DG06 (3)–(4) at s = 0 gives every static
-  solution from ψ." And "for time dependence e^{st} with s ≠ 0" → "for e^{st} with s ≠ 0 (#143) and for s = 0 (#145)".
-- **§4.6**, the #143 bullet: "and the case s = 0 (#145)" is no longer open; add a #145 bullet: the static reduction, its division by M (M = 0 not covered by the flow; the converse holds for every M), what is still
-  not checked (the gauge's attainability and r_s, #146; Zerilli's papers; the forward direction at M = 0 for general l).
-- **§6**, the Caveat on scope: "The static case s = 0 is open (#145)." → "and for s = 0 in `zerilli_static.md` (#145), for M ≠ 0 on r ≠ r_s".
-- `zerilli_derivation.md` §4, the row "E.2 solve ... s = 0 (static) is not covered": add "the static case is `zerilli_static.md`".
+## Coordinator's review
+
+Raw `I145-mac` (negative-mass-raw). Mac, nice 10, at most 2 processes.
+
+| step | result |
+|---|---|
+| scope | the five files the issue names, nothing else |
+| rerun `zerilli_static.py` | exit 0, 35 PASS, 0 FAIL; output equal to rpi5's apart from the timing lines |
+| rerun the controls | 40 OK, 0 MISS, exit 0; rows equal to rpi5's apart from timings |
+| re-solve of one case | l = 2, M symbolic, s = 0, forward: ψ,ₓₓ − Vψ with ψ from (9) is a combination of the static radial equations and their first two r-derivatives, with coefficients whose only denominator is r²(2r + 3M)² |
+| independent check `ind145.py` | run 1 exits 0; all 6 mutations fire on target |
+
+`ind145.py` is #145's recommended task 4, the second operator. It reuses the coordinator's `I143-mac/ind143.py` (the
+Lichnerowicz form of δR, DG06 typed from the TeX, the span certificates) and shares no code with this note's scripts or
+#143's library. The flow it tests is typed from the closing comment.
+
+| id | what | run 1 |
+|---|---|---|
+| X0 | static planted: l = 1 odd, h0 = 1/r (Kerr, linear in the spin) and r² (rigid rotation) give δR = 0, 1/r² does not; static even pure gauge gives δR = 0 | pass |
+| X1 | δR_tr = L H1 P/(2r²), δR_tx = (f H1)′P′/2, H1 in no other component, l = 2, 3, 4 | pass |
+| X2 | converse: DG06 (3)–(4) at s = 0 solve all 10 components, l = 2, 3, 4 | pass |
+| X3 | forward: H1, H0 − H2 and ψ,ₓₓ − Vψ lie in the span of the static equations, l = 2, 3, 4, with M symbolic and at M = 0 | pass |
+| X4 | the flow of §1 solves all 10 components (l = 2, 3, 4), and every solution obeys it (certificates, l = 2, 3) | pass |
+| X5 | (3)∘(9) is the identity on solutions, l = 2, 3 | pass |
+
+So the static reduction is confirmed by a second operator, and no number of #145 disagrees. One finding answers part of
+§4's open point on M = 0. X3's forward certificates have denominators r²(λr + 3M)² only, with no M, and X3 passes at
+M = 0 directly. So for l = 2, 3, 4 the forward direction holds at M = 0, though the flow (whose certificates in X4 do
+carry M) does not. For every l this is #148.
+
+Wording: §1's converse wrote DG06 (4)'s f(r) as F, which the note does not define. It now reads f_D and h_D. Recommended
+task 1 is #148, task 2 is added to #146 (the static case of the gauge solve), task 3 is row 18 of #135, and task 4 is
+this review's `ind145.py`.

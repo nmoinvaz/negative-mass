@@ -68,7 +68,7 @@ each angular component being separate equations because P and xP′ are independ
 
 | step | divides by | where it vanishes | consequence |
 |---|---|---|---|
-| E.2 solve of (K′, H1′, H′) | s, r, r−2M | s = 0; r = 0; r = 2M | s = 0 (static) is not covered; r−2M > 0 for r > 0 when M < 0 |
+| E.2 solve of (K′, H1′, H′) | s, r, r−2M | s = 0; r = 0; r = 2M | s = 0 (static) is not covered here; it is `zerilli_static.md` (#145); r−2M > 0 for r > 0 when M < 0 |
 | E.2/E.5 elimination of H from A | λr + 3M (through a_H), r−2M | r = −3M/λ | the reduction holds on r ≠ r_s |
 | E.5 definition (9) | λ + 1 = L/2, λr + 3M, r−2M | L = 0 (l = 0, −1) | none for l ≥ 2 |
 | E.5 V | (λr + 3M)² | r = −3M/λ | genuine double pole: (λr+3M)²V there is (L−2)²(L+1)²/18 ≠ 0 |
