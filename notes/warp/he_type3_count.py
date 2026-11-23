@@ -72,6 +72,7 @@ CONTROLS = {
     "w-range": (["planted", "points"], "admissible w in (0, 1) becomes (-10^4, 10^4)"),
     "krawczyk-nocorr": (["planted", "points"], "the Krawczyk operator drops its (I - Y J)(X - m) term"),
     "double-root": (["planted"], "the planted close pair becomes a double root"),
+    "skip-y": (["planted", "spurious", "assembly"], "the roots of the spurious factor y are not classified"),
 }
 W_DIAG = 10**4  # the diagnostic range of w for the common roots
 
@@ -811,16 +812,17 @@ def planted_data():
     kap = [aff(k) for k in kz]
     E1 = sp.expand((ws - al) * (ws - al - 1))
     E2 = sp.expand(sp.prod([ws - al + k for k in kap]))
-    Pexpr = sp.expand(sp.prod([k * (1 + k) for k in kap]))
-    Pz = sp.Poly(sp.expand(sp.prod([k * (1 + k) for k in kz])), z)
+    Pfull = sp.Poly(sp.expand(sp.prod([k * (1 + k) for k in kz])), z)
+    Pz = sp.Poly(sp.cancel(Pfull.as_expr() / (z - R(11, 5))), z)  # the factor (z - 11/5) is carried by the spurious factor
+    Yz = sp.expand((z - R(11, 5)) * (z ** 2 + 1))
     Tz = sp.expand((z - R(5, 7)) * (z + 7))
 
     def table(expr):
         Pw = sp.Poly(expr, ws)
         co = Pw.all_coeffs()[::-1]
         return [[(i, j, k, int(cf.p), int(cf.q)) for (i, j, k), cf in sp.Poly(c, phs, As, Bs).terms()] if c != 0 else [] for c in co]
-    Ptab = [(i, j, k, int(cf.p), int(cf.q)) for (i, j, k), cf in sp.Poly(Pexpr, phs, As, Bs).terms()]
-    roots = [r for r in sp.real_roots(Pz) if r > 0]
+    Ptab = [(n_, 0, 0, int(c_.p), int(c_.q)) for (n_,), c_ in sp.Poly(Pz, z).terms()]  # P_pl(z) written in phi = z
+    roots = [r for r in sp.real_roots(Pfull) if r > 0]
     truth = []
     def polyv(expr, x):
         return mp.polyval([mp.mpf(int(c_.p)) / int(c_.q) for c_ in sp.Poly(expr, z).all_coeffs()], x)
@@ -854,7 +856,7 @@ def planted_data():
             lo_n = m_ + 1
     ZC = lo_n
     tail_ok = MUT != "no-tail-large"
-    _PL[key] = dict(E=[table(E1), table(E2)], P=Ptab, Tz=Tz, truth=truth, ZC=int(ZC), tail_ok=tail_ok, nroots=len(roots), deg=Pz.degree(), z=z)
+    _PL[key] = dict(E=[table(E1), table(E2)], P=Ptab, Tz=Tz, truth=truth, ZC=int(ZC), tail_ok=tail_ok, nroots=len(roots), deg=Pfull.degree(), Yz=Yz, z=z)
     return _PL[key]
 
 
@@ -874,7 +876,11 @@ def planted_prob(pd):
         for i, j, k, p, q in pd["P"]:
             tot = tot + pp[i] * pa[j] * pb[k] * cfi(p, q)
         return tot
-    return Prob("planted", pd["E"], jets, Tfun), g
+
+    def yf(X):
+        z_ = Du(X, iv.mpf(1))
+        return (z_ - du_const(iv.mpf(11) / 5)) * (z_ * z_ + du_const(1))
+    return Prob("planted", pd["E"], jets, Tfun), g, yf
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -991,8 +997,31 @@ def check_tables(h):
         res = sylvester_det(f, g)
         want = Fr(27, 256) * pt[0] ** 3 * (pt[1] - pt[2]) ** 3 * poly_at(Pt, pt)
         b_ok = b_ok and res == want
+    # exact on three random lines: a determinant of polynomials in one variable against the product, as polynomials
+    s_ = sp.Symbol("s")
+    lines_ok = True
+    for _ in range(3):
+        p0 = [sp.Integer(rnd.randint(-9, 9)) for _ in range(3)]
+        dd = [sp.Integer(rnd.randint(-9, 9)) for _ in range(3)]
+        vs = [p0[n_] + dd[n_] * s_ for n_ in range(3)]
+
+        def on_line(terms):
+            return sp.Poly(sum(sp.Rational(p, q) * vs[0] ** i * vs[1] ** j * vs[2] ** k for i, j, k, p, q in terms), s_)
+        fl = [on_line(co) for co in tb["E"][0]][::-1]
+        gl = [on_line(co) for co in tb["E"][1]][::-1]
+        Mx = sp.zeros(5, 5)
+        for r_ in range(3):
+            for c_, x in enumerate(fl):
+                Mx[r_, r_ + c_] = x.as_expr()
+        for r_ in range(2):
+            for c_, x in enumerate(gl):
+                Mx[3 + r_, r_ + c_] = x.as_expr()
+        det_l = sp.Poly(sp.expand(Mx.det(method="berkowitz")), s_)
+        want_l = sp.Poly(sp.expand(sp.Rational(27, 256) * vs[0] ** 3 * (vs[1] - vs[2]) ** 3 * on_line(Pt).as_expr()), s_)
+        lines_ok = lines_ok and (det_l - want_l).is_zero
+    b_ok = b_ok and lines_ok
     ok = ok and b_ok
-    msgs.append("Sylvester determinant in fractions equals the same product at 5 rational points: %s" % b_ok)
+    msgs.append("Sylvester determinant in fractions equals the same product at 5 rational points, and exactly as polynomials on 3 random lines: %s" % b_ok)
     # (c) E1, E2 from the characteristic polynomial of the frame table printed in he_type3.md section 1
     X_, ga_, y_, q_ = sp.symbols("X gamma y q")
     ph, w = ph_, w_
@@ -1084,6 +1113,8 @@ def check_spurious(h, walls):
         nr = sum(1 for x in lv if x[2] == "r")
         s_ok, nch = sign_agreement(lv, yn_fun(wl), lambda z: y_tanh(wl, z)) if t_ok and u == 0 else (False, -1)
         cells = root_cells(lv, yn_fun(wl)) if t_ok and u == 0 else []
+        if MUT == "skip-y":
+            cells = []
         pr = real_prob(wl)
         gcells = [c_["cell"] for c_ in points_wall(wl)]
         nadm, nunres, disj = 0, 0, True
@@ -1096,7 +1127,7 @@ def check_spurious(h, walls):
             desc.append("y = 0 at z in [%s, %s] (r = %s), common roots %d, w in %s" % (
                 fmt(a, 10), fmt(b, 10), fmt(wl.r_iv(ivr(a, b)).a, 10), len(res["points"]),
                 [fmt(mid(ivr(p_["box"][2], p_["box"][3])), 6) for p_ in res["points"]]))
-        good = t_ok and u == 0 and s_ok and nch == nr and nadm == 0 and nunres == 0 and disj
+        good = t_ok and u == 0 and s_ok and nch == nr and len(cells) == nr and nadm == 0 and nunres == 0 and disj
         ok = ok and good
         rows.append("%s: %d leaves tile: %s, %d unresolved, %d root leaves, tanh-form y changes sign %d times (agreement %s); %s; "
                     "admissible points at y-roots %d, unresolved boxes %d, cells disjoint from the P cells %s" % (
@@ -1179,17 +1210,22 @@ def check_assembly(h, walls):
 
 def check_planted(h):
     pd = planted_data()
-    pr, g = planted_prob(pd)
+    pr, g, yf = planted_prob(pd)
     ZC = pd["ZC"]
     leaves, nev = cover(g, mp.mpf(0), mp.mpf(ZC))
     t_ok = tiles(leaves, 0, ZC)
     u = sum(1 for x in leaves if x[2] == "u")
     nr = sum(1 for x in leaves if x[2] == "r")
+    yleaves, nev2 = cover(yf, mp.mpf(0), mp.mpf(ZC))
+    ty_ok = tiles(yleaves, 0, ZC) and not any(x[2] == "u" for x in yleaves)
+    nry = sum(1 for x in yleaves if x[2] == "r")
+    nev += nev2
     truth = pd["truth"]
-    cnt_ok = nr == pd["nroots"] and u == 0
+    cnt_ok = nr + nry == pd["nroots"] and u == 0 and ty_ok and nry == 1
     pts, unres = [], 0
-    if t_ok and u == 0:
-        for a, b in root_cells(leaves, g):
+    if t_ok and u == 0 and ty_ok:
+        cells = root_cells(leaves, g) + ([] if MUT == "skip-y" else root_cells(yleaves, yf))
+        for a, b in cells:
             res = classify_cell(pr, a, b)
             unres += len(res["unresolved"])
             for p_ in res["points"]:
@@ -1201,11 +1237,12 @@ def check_planted(h):
                                           for a_, b_ in zip(pts, want))
     nT0 = sum(1 for tr in truth if tr["T0"])
     nout = sum(1 for tr in truth if tr["w"] is not None and not (0 < tr["w"] < 1))
-    ok = t_ok and cnt_ok and match and pd["tail_ok"] and unres == 0
-    h.check("planted", ok, "P_pl has degree %d, %d positive roots by a Sturm sequence (exact), the cover finds %d root leaves over [0, %d] "
-            "(tile %s, %d unresolved, %d evaluations; Cauchy tail proved %s); admissible points %d found, %d expected (%d roots with w outside "
-            "(0, 1), %d with T = 0); positions within 1e-20: %s; unresolved boxes %d" % (
-                pd["deg"], pd["nroots"], nr, ZC, t_ok, u, nev, pd["tail_ok"],
+    ok = t_ok and ty_ok and cnt_ok and match and pd["tail_ok"] and unres == 0
+    h.check("planted", ok, "P_pl (the factor z - 11/5 carried by the spurious factor y_pl) and y_pl have %d positive roots by a Sturm sequence (exact); "
+            "the cover finds %d root leaves of P_pl and %d of y_pl over [0, %d] (tiles %s %s, %d unresolved, %d evaluations; Cauchy tail proved %s); "
+            "admissible points %d found, %d expected (%d roots with w outside (0, 1), %d with T = 0); positions within 1e-20: %s; "
+            "unresolved boxes %d" % (
+                pd["nroots"], nr, nry, ZC, t_ok, ty_ok, u, nev, pd["tail_ok"],
                 len(pts), len(want), nout, nT0, match, unres))
 
 
