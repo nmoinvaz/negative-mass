@@ -1,0 +1,75 @@
+review_large_l_theorem3, mutation=None
+PASS planted: one root near a verdict=CERTIFIED (certified)
+PASS planted: one root near b verdict=CERTIFIED (certified)
+PASS planted: two roots a, b = a + 1e-10 in one bracket verdict=REFUSED (no sign change)
+PASS planted: three roots in one bracket verdict=REFUSED (derivative enclosure contains 0)
+PASS planted: endpoint exactly on a root verdict=REFUSED (enclosure of F at an end contains 0)
+PASS planted: no root in the bracket verdict=REFUSED (no sign change)
+PASS planted: double root at a verdict=REFUSED (no sign change)
+PASS (Z) psi_0,xx = V psi_0 exactly, l=2
+PASS (Z) psi_0,xx = V psi_0 exactly, l=3
+PASS (Z) psi_0,xx = V psi_0 exactly, l=4
+PASS (Z) psi_0,xx = V psi_0 exactly, l=5
+PASS (Z) psi_0,xx = V psi_0 exactly, l=6
+PASS (Z) psi_0,xx = V psi_0 exactly, l=7
+PASS (Z) psi_0,xx = V psi_0 exactly, l=8
+PASS (Z) psi_0,xx = V psi_0 exactly, l=9
+PASS (Z) psi_0,xx = V psi_0 exactly, l=10
+PASS (Z) psi_0,xx = V psi_0 exactly, l=11
+PASS (Z) psi_0,xx = V psi_0 exactly, l=12
+PASS (Z) psi_0,xx = V psi_0 exactly, l=13
+PASS (Z) psi_0,xx = V psi_0 exactly, l=14
+PASS V(r = rho/c, lambda = c/2) = 8c^4 (2+eps rho) N_Z / (rho^4 (rho-6)^2), symbolic in c
+PASS g = psi_0'/psi_0 equals -c f N/((rho-6) X) for generic X
+PASS Vhat = g^2 - g' = 2 g^2 - psi_xx/psi_0 for generic X
+PASS Vhat = S c^3 (2c + rho)/(rho^3 (rho-6) X^2) for generic X (S of RESULTS 4.3) ratio=c**3*(2*c + rho)/(rho**3*(rho - 6)*X(rho)**2)
+  so sign(Vhat) = sign(S) for rho > 6 where X > 0
+PASS 2 g^2 - V = 2c^4 (2+eps rho) Psi / (rho^4 (rho-6)^2 X^2), generic X, symbolic in c
+PASS Vhat from the definition = 2c^4 (2+eps rho) Psi / (rho^4 (rho-6)^2 X^2), exact, l=2
+PASS Vhat from the definition = 2c^4 (2+eps rho) Psi / (rho^4 (rho-6)^2 X^2), exact, l=3
+PASS Vhat from the definition = 2c^4 (2+eps rho) Psi / (rho^4 (rho-6)^2 X^2), exact, l=4
+PASS Vhat from the definition = 2c^4 (2+eps rho) Psi / (rho^4 (rho-6)^2 X^2), exact, l=5
+PASS Vhat from the definition = 2c^4 (2+eps rho) Psi / (rho^4 (rho-6)^2 X^2), exact, l=6
+PASS Vhat from the definition = 2c^4 (2+eps rho) Psi / (rho^4 (rho-6)^2 X^2), exact, l=7
+PASS Vhat from the definition = 2c^4 (2+eps rho) Psi / (rho^4 (rho-6)^2 X^2), exact, l=8
+PASS Vhat from the definition = 2c^4 (2+eps rho) Psi / (rho^4 (rho-6)^2 X^2), exact, l=9
+PASS (P1) numerator of V = polynomial in (sigma, mu) with all positive coefficients mu*sigma**3 + 9*mu*sigma**2 + 27*mu*sigma + 27*mu + sigma**3 + 6*sigma**2 + 18*sigma + 18
+  (P1) other factors: f = 1 + 2/r > 0, r^3 (lam r - 3)^2 = r^3 sigma^2 > 0 for sigma > 0, lam = c/2 >= 2 > 0; hence V > 0 on (r_s, oo)
+PASS (P2) Q = -V_r r^5 (cr-6)^3/2 is a polynomial of degree 5 in r Q = c**4*r**5 + 3*c**4*r**4 + 2*c**3*r**5 - 3*c**3*r**4 - 30*c**3*r**3 + 78*c**2*r**3 + 252*c**2*r**2 - 396*c*r**2 - 1080*c*r + 648*r + 1728
+PASS (P2) c^5 Q(tau, m) has all coefficients positive 64 coefficients, RESULTS says 64
+PASS (P2) count of coefficients = 64 as stated in RESULTS
+  (P2) hence Q > 0 for tau >= 0, m >= 0 (all real l >= 2), V_r < 0 on (r_s, oo), and V_x = f V_r < 0
+PASS N_Z(6 + tau) has all coefficients positive in (tau, eps) e2*tau2**3/4 + 9*e2*tau2**2/2 + 27*e2*tau2 + 54*e2 + tau2**3/8 + 3*tau2**2/2 + 9*tau2 + 18
+PASS lead coefficient of Psi / a^2 = eps (l+1)^2 - (1+2 eps)/2 = (l+1)/(2(l-1)) > 0
+PASS Vhat r^2 -> (l+1)(l+2) at infinity (L3 of RESULTS), symbolic in l (l + 1)*(l + 2)
+PASS l=2: N has exactly one root in (6, oo) (T2, exact Sturm count), root in [9.11512170, 9.11512170]
+PASS l=2: Psi has exactly one root in [9.11512170, oo) (Theorem 3, exact Sturm count) and Psi < 0 there at the left end degree 11
+PASS l=3: N has exactly one root in (6, oo) (T2, exact Sturm count), root in [8.78904127, 8.78904127]
+PASS l=3: Psi has exactly one root in [8.78904127, oo) (Theorem 3, exact Sturm count) and Psi < 0 there at the left end degree 13
+PASS l=4: N has exactly one root in (6, oo) (T2, exact Sturm count), root in [8.66514954, 8.66514954]
+PASS l=4: Psi has exactly one root in [8.66514954, oo) (Theorem 3, exact Sturm count) and Psi < 0 there at the left end degree 15
+PASS l=5: N has exactly one root in (6, oo) (T2, exact Sturm count), root in [8.60450330, 8.60450331]
+PASS l=5: Psi has exactly one root in [8.60450331, oo) (Theorem 3, exact Sturm count) and Psi < 0 there at the left end degree 17
+PASS l=6: N has exactly one root in (6, oo) (T2, exact Sturm count), root in [8.57022541, 8.57022542]
+PASS l=6: Psi has exactly one root in [8.57022542, oo) (Theorem 3, exact Sturm count) and Psi < 0 there at the left end degree 19
+PASS l=7: N has exactly one root in (6, oo) (T2, exact Sturm count), root in [8.54893876, 8.54893877]
+PASS l=7: Psi has exactly one root in [8.54893877, oo) (Theorem 3, exact Sturm count) and Psi < 0 there at the left end degree 21
+PASS l=8: N has exactly one root in (6, oo) (T2, exact Sturm count), root in [8.53480565, 8.53480566]
+PASS l=8: Psi has exactly one root in [8.53480566, oo) (Theorem 3, exact Sturm count) and Psi < 0 there at the left end degree 23
+PASS l=9: N has exactly one root in (6, oo) (T2, exact Sturm count), root in [8.52493992, 8.52493993]
+PASS l=9: Psi has exactly one root in [8.52493993, oo) (Theorem 3, exact Sturm count) and Psi < 0 there at the left end degree 25
+PASS l=10: N has exactly one root in (6, oo) (T2, exact Sturm count), root in [8.51777897, 8.51777898]
+PASS l=10: Psi has exactly one root in [8.51777898, oo) (Theorem 3, exact Sturm count) and Psi < 0 there at the left end degree 27
+PASS l=11: N has exactly one root in (6, oo) (T2, exact Sturm count), root in [8.51241604, 8.51241605]
+PASS l=11: Psi has exactly one root in [8.51241605, oo) (Theorem 3, exact Sturm count) and Psi < 0 there at the left end degree 29
+PASS l=12: N has exactly one root in (6, oo) (T2, exact Sturm count), root in [8.50829524, 8.50829525]
+PASS l=12: Psi has exactly one root in [8.50829525, oo) (Theorem 3, exact Sturm count) and Psi < 0 there at the left end degree 31
+PASS l=13: N has exactly one root in (6, oo) (T2, exact Sturm count), root in [8.50506023, 8.50506024]
+PASS l=13: Psi has exactly one root in [8.50506024, oo) (Theorem 3, exact Sturm count) and Psi < 0 there at the left end degree 33
+PASS l=14: N has exactly one root in (6, oo) (T2, exact Sturm count), root in [8.50247397, 8.50247397]
+PASS l=14: Psi has exactly one root in [8.50247397, oo) (Theorem 3, exact Sturm count) and Psi < 0 there at the left end degree 35
+PASS l=15: N has exactly one root in (6, oo) (T2, exact Sturm count), root in [8.50037377, 8.50037377]
+PASS l=15: Psi has exactly one root in [8.50037377, oo) (Theorem 3, exact Sturm count) and Psi < 0 there at the left end degree 37
+PASS l=16: N has exactly one root in (6, oo) (T2, exact Sturm count), root in [8.49864497, 8.49864497]
+PASS l=16: Psi has exactly one root in [8.49864497, oo) (Theorem 3, exact Sturm count) and Psi < 0 there at the left end degree 39
+SUMMARY checks=70 failed=0

@@ -1,0 +1,27 @@
+review_large_l_roots, mutation=None
+PASS planted: one root near a verdict=CERTIFIED (certified)
+PASS planted: one root near b verdict=CERTIFIED (certified)
+PASS planted: two roots a, b = a + 1e-10 in one bracket verdict=REFUSED (no sign change)
+PASS planted: three roots in one bracket verdict=REFUSED (derivative enclosure contains 0)
+PASS planted: endpoint exactly on a root verdict=REFUSED (enclosure of F at an end contains 0)
+PASS planted: no root in the bracket verdict=REFUSED (no sign change)
+PASS planted: double root at a verdict=REFUSED (no sign change)
+PASS Bessel closed form: coefficient of s^n equals (n-2)(n-4)/(n-1)!^2 for n = 3..13
+PASS series of X_inf = Bessel closed form at rho=3.3 diff=3.11e-61
+PASS series of X_inf = Bessel closed form at rho=6.0 diff=2.18e-60
+PASS series of X_inf = Bessel closed form at rho=8.4857 diff=4.98e-60
+PASS series of X_inf = Bessel closed form at rho=9.636 diff=4.48e-59
+PASS series of X_inf = Bessel closed form at rho=11.0 diff=7.47e-59
+rho_*   = 8.485700967373530340930500822
+rho_neg = 9.6359894425861440206961577
+PASS residual of N_inf at rho_* below 1e-50
+PASS residual of Psi_inf at rho_neg below 1e-45
+PASS rho_*: iv enclosure [848570096737353034093050082190369e-32, 848570096737353034093050082190570e-32] certified (sign change, derivative excludes 0) certified
+  rho_* in [8.48570096737353034093050082190369, 8.48570096737353034093050082190570]  (decimal endpoints, width 201e-32)
+  rho_*: F' enclosure over it = [-5.601900037623129029462712479907638374533250328224387587962374111, -5.601900037623129029462712479893932010233057075738278729288445495]
+PASS rho_neg: iv enclosure [963598944258614402069615769983633e-32, 963598944258614402069615769983834e-32] certified (sign change, derivative excludes 0) certified
+  rho_neg in [9.63598944258614402069615769983633, 9.63598944258614402069615769983834]  (decimal endpoints, width 201e-32)
+  rho_neg: F' enclosure over it = [33523.34243561089515495405451357307491872797751189567148308228098, 33523.34243561089515495405451488311537949864242006698885336138902]
+PASS rho_* reproduces RESULTS.md's 8.485700967373530 to 1e-15 diff=3.41e-16
+PASS rho_neg reproduces RESULTS.md's 9.635989442586144 to 1e-15 diff=2.07e-17
+SUMMARY checks=19 failed=0

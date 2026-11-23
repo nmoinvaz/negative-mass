@@ -1,0 +1,51 @@
+review_large_l_common self test, mutation=None
+PASS planted: one root near a verdict=CERTIFIED (certified)
+PASS planted: one root near b verdict=CERTIFIED (certified)
+PASS planted: two roots a, b = a + 1e-10 in one bracket verdict=REFUSED (no sign change)
+PASS planted: three roots in one bracket verdict=REFUSED (derivative enclosure contains 0)
+PASS planted: endpoint exactly on a root verdict=REFUSED (enclosure of F at an end contains 0)
+PASS planted: no root in the bracket verdict=REFUSED (no sign change)
+PASS planted: double root at a verdict=REFUSED (no sign change)
+PASS coefficients a_n(eps) in Lemma A's closed form, l=2, n<=4
+PASS Lemma A: c_n = 0 for n = l+3..l+6 and a_{l+2} > 0, l=2
+PASS coefficients a_n(eps) in Lemma A's closed form, l=3, n<=5
+PASS Lemma A: c_n = 0 for n = l+3..l+6 and a_{l+2} > 0, l=3
+PASS coefficients a_n(eps) in Lemma A's closed form, l=4, n<=6
+PASS Lemma A: c_n = 0 for n = l+3..l+6 and a_{l+2} > 0, l=4
+PASS coefficients a_n(eps) in Lemma A's closed form, l=5, n<=7
+PASS Lemma A: c_n = 0 for n = l+3..l+6 and a_{l+2} > 0, l=5
+PASS coefficients a_n(eps) in Lemma A's closed form, l=6, n<=8
+PASS Lemma A: c_n = 0 for n = l+3..l+6 and a_{l+2} > 0, l=6
+PASS coefficients a_n(eps) in Lemma A's closed form, l=7, n<=9
+PASS Lemma A: c_n = 0 for n = l+3..l+6 and a_{l+2} > 0, l=7
+PASS coefficients a_n(eps) in Lemma A's closed form, l=8, n<=10
+PASS Lemma A: c_n = 0 for n = l+3..l+6 and a_{l+2} > 0, l=8
+PASS coefficients a_n(eps) in Lemma A's closed form, l=9, n<=11
+PASS Lemma A: c_n = 0 for n = l+3..l+6 and a_{l+2} > 0, l=9
+PASS coefficients a_n(eps) in Lemma A's closed form, l=10, n<=12
+PASS Lemma A: c_n = 0 for n = l+3..l+6 and a_{l+2} > 0, l=10
+PASS coefficients a_n(eps) in Lemma A's closed form, l=11, n<=13
+PASS Lemma A: c_n = 0 for n = l+3..l+6 and a_{l+2} > 0, l=11
+PASS coefficients a_n(eps) in Lemma A's closed form, l=12, n<=14
+PASS Lemma A: c_n = 0 for n = l+3..l+6 and a_{l+2} > 0, l=12
+PASS coefficients a_n(eps) in Lemma A's closed form, l=30, n<=32
+PASS Lemma A: c_n = 0 for n = l+3..l+6 and a_{l+2} > 0, l=30
+PASS coefficients a_n(eps) in Lemma A's closed form, l=60, n<=62
+PASS Lemma A: c_n = 0 for n = l+3..l+6 and a_{l+2} > 0, l=60
+PASS coefficients a_n(eps) in Lemma A's closed form, l=150, n<=152
+PASS Lemma A: c_n = 0 for n = l+3..l+6 and a_{l+2} > 0, l=150
+PASS coefficients a_n(eps) in Lemma A's closed form, l=500, n<=40
+PASS Lemma A: c_n = 0 for n = l+3..l+6 and a_{l+2} > 0, l=500
+PASS coefficients a_n(eps) in Lemma A's closed form, l=3000, n<=40
+PASS Lemma A: c_n = 0 for n = l+3..l+6 and a_{l+2} > 0, l=3000
+PASS factor a = l vanishes: q_l = c, l=2
+PASS factor a = l vanishes: q_l = c, l=5
+PASS factor a = l vanishes: q_l = c, l=10
+PASS alpha_1 = 3/2, alpha_2 = 0
+PASS N_Z(6+tau) polynomial in (tau, eps), all coefficients positive [((3, 1), 1/4), ((3, 0), 1/8), ((2, 1), 9/2), ((2, 0), 3/2), ((1, 1), 27), ((1, 0), 9), ((0, 1), 54), ((0, 0), 18)]
+PASS NZ(rho, eps) matches sympy at a point
+PASS Psi' formula equals sympy d/d rho (generic X) diff=1.6e-37
+PASS Psi' of quantities() equals sympy d/d rho exactly (symbolic, generic X, eps)
+PASS S of quantities() equals the S of RESULTS 4.3 typed again in sympy (N' = -(rho-6) X'')
+PASS N of quantities() equals X - (rho-6) X'
+SUMMARY checks=49 failed=0

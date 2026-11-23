@@ -489,6 +489,13 @@ def main():
     qd = quantities(Xi, iv.mpf(25) / 3, iv.mpf(1) / 100)
     diff = abs(qd["Psip"].mid - iv.mpf(sp.Float(ref, 40).__str__()).mid)
     chk.check("Psi' formula equals sympy d/d rho (generic X)", diff < 1e-30, f"diff={float(diff):.1e}")
+    # the same code path, symbolically: quantities() called with sympy symbols against the definitions typed in sympy
+    qs = quantities([x0, x1, x2], rho_s, e_s)
+    d_exact = d_sub
+    chk.check("Psi' of quantities() equals sympy d/d rho exactly (symbolic, generic X, eps)", sp.expand(sp.nsimplify(qs["Psip"]) - d_exact) == 0)
+    S_def = rho_s * x0 * (e_s * (x0 - (rho_s - 6) * x1) + (2 + e_s * rho_s) * (-(rho_s - 6) * x2)) - (2 + e_s * rho_s) * (x0 - (rho_s - 6) * x1) * (x0 + 2 * rho_s * x1)
+    chk.check("S of quantities() equals the S of RESULTS 4.3 typed again in sympy (N' = -(rho-6) X'')", sp.expand(sp.nsimplify(qs["S"]) - S_def) == 0)
+    chk.check("N of quantities() equals X - (rho-6) X'", sp.expand(qs["N"] - (x0 - (rho_s - 6) * x1)) == 0)
     chk.finish()
 
 
