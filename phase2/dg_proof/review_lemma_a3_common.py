@@ -30,6 +30,7 @@ class Run:
     def __init__(self, title):
         self.nfail = 0
         self.npass = 0
+        self.ndiff = 0
         print('#', title, flush=True)
         if _MUT:
             print('# mutations on:', ','.join(sorted(_MUT)), flush=True)
@@ -51,11 +52,20 @@ class Run:
             print('FAIL', cid + ':', why, flush=True)
             self.nfail += 1
 
+    def published(self, cid, cond, why=''):
+        """Comparison with a formula printed in a source: a difference is reported (DIFFERS), not counted as a failure."""
+        if cond:
+            print('PASS', cid, flush=True)
+            self.npass += 1
+        else:
+            print('DIFFERS', cid + ':', why, flush=True)
+            self.ndiff += 1
+
     def note(self, text):
         print('#', text, flush=True)
 
     def finish(self):
-        print('# summary: %d PASS, %d FAIL' % (self.npass, self.nfail), flush=True)
+        print('# summary: %d PASS, %d FAIL, %d DIFFERS' % (self.npass, self.nfail, self.ndiff), flush=True)
         sys.exit(1 if self.nfail else 0)
 
 
@@ -79,7 +89,7 @@ def K_of(lv):
 
 
 def k_of(lv):
-    return c_of(lv) * (c_of(lv) + 2) / 6
+    return sp.Rational(1, 6) * c_of(lv) * (c_of(lv) + 2)   # never Python float division
 
 
 def rs_of(lv):
@@ -140,7 +150,60 @@ def dx(expr):
     return f_of_r * sp.diff(expr, r)
 
 
-def Vhat_of_psi(psi):
-    """V-hat = g^2 - g_x, g = psi_x/psi (RESULTS line 4). Mutation pl_vhat: g^2 + g_x (planted check must fire)."""
-    g = dx(psi) / psi
+def Vhat_of_u(u):
+    """V-hat = g^2 - g_x with g = f u, u = psi_r/psi. Mutation pl_vhat: g^2 + g_x (the planted checks must fire)."""
+    g = f_of_r * u
     return g ** 2 + dx(g) if mut('pl_vhat') else g ** 2 - dx(g)
+
+
+def Vhat_of_psi(psi):
+    """V-hat = g^2 - g_x, g = psi_x/psi (RESULTS line 4)."""
+    return Vhat_of_u(sp.diff(psi, r) / psi)
+
+
+# ---------------------------------------------------------------- series, exponents, planted-ODE builder
+E = Symbol('E')
+def lead(expr, where):
+    """(power, coeff) with expr ~ coeff * r**power as r -> 0 (where = 0) or r -> oo (where = 'inf'); expr rational in r."""
+    num, den = sp.fraction(cancel(together(expr)))
+    pn, pd = Poly(num, r), Poly(den, r)
+    if where == 0:
+        mn = min(m[0] for m in pn.monoms())
+        md = min(m[0] for m in pd.monoms())
+        cn_ = pn.coeff_monomial(r ** mn)
+        cd_ = pd.coeff_monomial(r ** md)
+        return mn - md + (1 if mut('pl_order') else 0), cancel(cn_ / cd_)   # mutation pl_order: power off by one
+    return pn.degree() - pd.degree(), cancel(pn.LC() / pd.LC())
+
+
+def taylor(num, den, n):
+    """First n Taylor coefficients at r = 0 of num/den (Polys in r), den(0) != 0."""
+    nc = num.all_coeffs()[::-1] + [0] * n
+    dc = den.all_coeffs()[::-1]
+    assert dc[0] != 0
+    out = []
+    for i in range(n):
+        v = nc[i] - sum(dc[j] * out[i - j] for j in range(1, min(i, len(dc) - 1) + 1))
+        out.append(cancel(v / dc[0]))
+    return out
+
+
+def indicial(P2, P1, P0, x0):
+    """Exponents at the regular singular point x0 of P2 u'' + P1 u' + P0 u = 0 (rational coefficients in r):
+    s(s-1) + p0 s + q0 = 0 with p0 = lim (r-x0) P1/P2, q0 = lim (r-x0)^2 P0/P2."""
+    t = r - x0
+    A = cancel(together(t * P1 / P2))
+    B = cancel(together(t ** 2 * P0 / P2))
+    assert sp.fraction(A)[1].subs(r, x0) != 0 and sp.fraction(B)[1].subs(r, x0) != 0, 'not a regular singular point'
+    p0, q0 = A.subs(r, x0), B.subs(r, x0)
+    if mut('pl_indicial'):   # mutation pl_indicial: wrong sign of q0
+        q0 = -q0
+    ss = Symbol('ss')
+    return set(sp.solve(ss * (ss - 1) + p0 * ss + q0, ss))
+
+
+def wronskian_ode(y1, y2):
+    """P2, P1, P0 of the ODE with solutions y1, y2: det [[u,u',u''],[y1,y1',y1''],[y2,y2',y2'']] = 0."""
+    d1, d2 = sp.diff(y1, r), sp.diff(y2, r)
+    e1, e2 = sp.diff(y1, r, 2), sp.diff(y2, r, 2)
+    return (y1 * d2 - d1 * y2, -(y1 * e2 - e1 * y2), d1 * e2 - e1 * d2)
