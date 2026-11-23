@@ -6,7 +6,7 @@ Order: planted checks (exit 2 on failure) -> odd parity (Regge-Wheeler) -> even 
 Sources: Dotti-Gleiser gr-qc/0604021 eqs. (2)-(9) (data; typed, see I143-rpi5/README.md); Zerilli's papers were not read (publisher HTTP 403).
 Run: python zerilli_derivation.py [--part=planted|odd|even|all] [--mutate=NAME] [--failfast] > zerilli_derivation_output.txt
 Mutations: fsign_bg fsign_mv mv_coef drop_trace v_typo rw_typo l1 dual_inv leg_sign route2_drop res_typo dg3_typo skip_s
-           ans_rr ang_norm d2_zero div_set
+           ans_rr ang_norm d2_zero div_set fsign_ans
 Other flags: --skip=PL.G,PL.X skips those planted checks (their code and results are unaffected by mutations that act later; used by the controls)
 """
 import os
@@ -264,7 +264,8 @@ for lv in range(2, 31):
     q_ = sp.Poly(sp.expand(x * diff(sp.legendre(lv, x), x)), x)
     rows = sp.Matrix([[pl_.coeff_monomial(x ** k) for k in range(lv + 1)], [q_.coeff_monomial(x ** k) for k in range(lv + 1)]])
     rank_ok = rank_ok and rows.rank() == 2
-rank1 = sp.Matrix([[0, 1], [0, 1]]).rank() == 1                # l = 1: P = x and x P' = x
+rank1 = sp.Matrix([[sp.Poly(sp.legendre(1, x), x).coeff_monomial(x ** k) for k in range(2)],
+                   [sp.Poly(sp.expand(x * diff(sp.legendre(1, x), x)), x).coeff_monomial(x ** k) for k in range(2)]]).rank() == 1   # l = 1: P = x, xP' = x
 run.check('A.1', ok_sym and rank_ok and rank1,
           'P and xP\' can be dependent at L in %s; this run has L = %s; ranks l=2..30 ok: %s, l=1 rank 1: %s' % (dep_L, Lq, rank_ok, rank1))
 lap('A.1')
@@ -293,6 +294,10 @@ run.check('A.2', ok_a2 and ident1 == 0 and ident2 == 0,
           'angular form of the even components: %s; identities (%s, %s)' % (why_a2, ident1, ident2))
 lap('A.2')
 Ett, Etr, Err, Etx, Erx = ev['tt.P0'], ev['tr.P0'], ev['rr.P0'], ev['tx.P1'], ev['rx.P1']
+run.note('even radial equations before H0 = H2 (jets F_n = d^n F/dr^n; each is the coefficient of its angular structure, equal to 0):')
+for nm_, e_ in (('tt  (P)', ev['tt.P0']), ('tr  (P)', ev['tr.P0']), ('rr  (P)', ev['rr.P0']), ('tx  (P\')', ev['tx.P1']), ('rx  (P\')', ev['rx.P1']),
+                ('xx  (P)', ev['xx.P0']), ('xx  (xP\')', ev['xx.xP1']), ('pp  (P)', ev['pp.P0']), ('pp  (xP\')', ev['pp.xP1'])):
+    run.note('  %s: %s' % (nm_, sp.factor_terms(e_)))
 Ec2 = ev['xx.xP1']                                          # traceless angular equation
 EtrP = cancel(ev['xx.P0'] + ev['pp.P0'])                    # angular trace (times 2)
 run.note('even radial equations: 7 (tt, tr, rr, tx, rx, angular trace, traceless)')
@@ -327,22 +332,19 @@ rhs3 = sp.Matrix([-(eqsH[nm] - sum(diff(eqsH[nm], v) * v for v in unk)) for nm i
 sol3 = Mat3.LUsolve(rhs3).applyfunc(cancel)
 lap('E.2 solve')
 div('E.2: flow', 'det of the coefficient matrix of (K\', H1\', H\') in (tr, tx, rx)', det3)
-for k_, nm_ in enumerate(('K', 'H1', 'H')):
-    for d_ in sp.factor_list(sp.fraction(cancel(together(sol3[k_])))[1])[1]:
-        pass
 FK, FH1, FH = sol3[0], sol3[1], sol3[2]
 states3 = [K0, H10, Hh0]
 F3 = [FK, FH1, FH]
 vm3 = {'K': K0, 'H1': H10, 'H': Hh0}
 fsq = fq ** 2
 Grr = Err / 2 + Ett / (2 * fsq) - EtrP / (2 * fq * r ** 2)  # delta G_rr = delta R_rr - (1/2) g_rr (g^ab delta R_ab); delta R_ab = 0 in vacuum
-Grr = Grr.subs(Hs, simultaneous=True)
-ok_G_first = Grr.free_symbols <= {K0, K1, K2, H10, H11, Hh0, Hh1, Hh2, r, s, L, M}
+Grr = cancel(together(Grr.subs(Hs, simultaneous=True)))
+ok_G_first = Grr.free_symbols <= {K0, K1, H10, H11, Hh0, Hh1, r, s, L, M}   # no second derivative in delta G_rr
 lap('E.2 Grr built')
 Aflow = cancel(flow_sub(Grr, vm3, states3, F3))
 lap('E.2 A on flow')
-run.check('E.2', ok_first and det3 != 0 and Aflow.free_symbols <= set(states3) | {r, s, L, M},
-          'first-order equations: no second derivatives %s, det %s, A free symbols %s' % (ok_first, det3, Aflow.free_symbols))
+run.check('E.2', ok_first and ok_G_first and det3 != 0 and Aflow.free_symbols <= set(states3) | {r, s, L, M},
+          'first-order equations: no second derivatives in tr, tx, rx %s and in delta G_rr %s, det %s, A free symbols %s' % (ok_first, ok_G_first, det3, Aflow.free_symbols))
 aK, a1, aH = (cancel(diff(Aflow, v)) for v in states3)
 if mut('skip_s'):
     a1 = 2 * a1                                           # mutation skip_s: H1 coefficient of A scaled by 2 after the derivation
@@ -369,6 +371,8 @@ for nm in ('tt', 'tr', 'rr', 'tx', 'rx', 'trace'):
     mu = cancel(diff(ef, Hh0) / aH)
     res4[nm] = (mu, cancel(ef - mu * A))
 ok_e4 = all(v[1] == 0 for v in res4.values())
+for nm_, v_ in res4.items():
+    run.note('E.4: on the flow, equation %s = (%s) A' % (nm_, sp.factor(v_[0])))
 run.check('E.4', ok_e4, 'equations not multiples of A: %s' % [k_ for k_, v in res4.items() if v[1] != 0])
 lap('E.4')
 div('E.2: H from A', 'coefficient of H in A', aH)
@@ -377,8 +381,6 @@ div('E.2: H from A', 'coefficient of H in A', aH)
 Hexpr = cancel(-(aK * K0 + a1 * H10) / aH)                  # H from A = 0
 states2 = [K0, H10]
 F2 = [cancel(FK.subs(Hh0, Hexpr)), cancel(FH1.subs(Hh0, Hexpr))]
-for d_ in (FK, FH1, FH, Hexpr):
-    pass
 def D2(e):
     return diff(e, r) + sum(diff(e, states2[i]) * F2[i] for i in range(2))
 # E.3b: the third flow component agrees with d(Hexpr)/dr along the two-dimensional flow

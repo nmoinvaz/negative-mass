@@ -22,6 +22,7 @@ PAIRS = [
     ('leg_sign', [], 'PL.0d', 2),
     ('drop_trace', [], 'PL.G.even', 2),
     ('route2_drop', ['--skip=PL.G'], 'PL.X.even', 2),
+    ('fsign_ans', SKIP, 'PL.O.3', 2),
     ('rw_typo', SKIP, 'PL.O.3', 2),
     ('l1', SKIP, 'A.1', 1),
     ('ang_norm', SKIP, 'A.2', 1),

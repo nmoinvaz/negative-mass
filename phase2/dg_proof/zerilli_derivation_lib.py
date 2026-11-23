@@ -76,12 +76,13 @@ P = Function('P')(x)          # P_l(x), Legendre's equation (1-x^2)P'' - 2xP' + 
 
 
 def fM(Mv=None):
-    """f = 1 - 2M/r. Mutation fsign_bg: the wrong sign, used by the background metric."""
+    """f = 1 - 2M/r, used by the ansatz, the master variables and the tortoise factor. Mutation fsign_ans: the wrong sign there."""
     Mv = M if Mv is None else Mv
-    return 1 - 2 * Mv / r
+    return 1 + 2 * Mv / r if mut('fsign_ans') else 1 - 2 * Mv / r
 
 
 def f_bg():
+    """f of the background metric. Mutation fsign_bg: the wrong sign (the Schwarzschild solution of mass -M: a vacuum solution)."""
     return 1 + 2 * M / r if mut('fsign_bg') else 1 - 2 * M / r
 
 
@@ -297,21 +298,27 @@ def coef_eqs(e, norm, basis, cid):
 
 
 def master_reduce(u, flow, psi, ftort):
-    """Two-dimensional first-order system d u_i/dr = flow_i(u, r) (u = [u1, u2], linear forms). psi = linear form in u.
-    d/dx = ftort d/dr. Returns (a, b, det T) with psi_xx = a psi + b psi_x exactly, T the matrix (psi, psi_x) = T u."""
-    def D(expr):
-        return diff(expr, r) + sum(diff(expr, u[i]) * flow[i] for i in range(2))
+    """Two-dimensional first-order system d u_i/dr = flow_i(u, r) (u = [u1, u2], linear forms with coefficients rational in r, M, s, L).
+    psi = linear form in u. d/dx = ftort d/dr. Returns (a, b, det T) with psi_xx = a psi + b psi_x exactly, T the matrix (psi, psi_x) = T u.
+    Arithmetic in the rational function field Q(r, M, s, L) (sympy.polys), exact and cancelled at every step."""
+    from sympy import QQ
+    from sympy.polys.fields import field
+    FFm, rf, Mf, sf, Lf = field((r, M, s, L), QQ)
 
-    def Dx(expr):
-        return ftort * D(expr)
+    def to(e):
+        return FFm.from_expr(sp.sympify(e))
+    fl = [[to(diff(flow[i], u[j])) for j in range(2)] for i in range(2)]      # d u_i/dr = sum_j fl[i][j] u_j
+    ps = [to(diff(psi, u[j])) for j in range(2)]
+    ft = to(ftort)
 
-    psi_x = cancel(Dx(psi))
-    psi_xx = cancel(Dx(psi_x))
-    T = sp.Matrix([[diff(psi, u[0]), diff(psi, u[1])], [diff(psi_x, u[0]), diff(psi_x, u[1])]]).applyfunc(cancel)
-    w = sp.Matrix([[diff(psi_xx, u[0]), diff(psi_xx, u[1])]]).applyfunc(cancel)
-    det = cancel(T.det())
-    ab = (w * T.inv()).applyfunc(cancel)
-    return cancel(ab[0]), cancel(ab[1]), det
+    def Dvec(v):                                                              # r-derivative of the linear form sum_j v_j u_j
+        return [v[j].diff(rf) + sum(v[i] * fl[i][j] for i in range(2)) for j in range(2)]
+    psi_x = [ft * c for c in Dvec(ps)]
+    psi_xx = [ft * c for c in Dvec(psi_x)]
+    det = ps[0] * psi_x[1] - ps[1] * psi_x[0]
+    a = (psi_xx[0] * psi_x[1] - psi_xx[1] * psi_x[0]) / det                   # (psi_xx coefficients) * T^-1
+    b = (-psi_xx[0] * ps[1] + psi_xx[1] * ps[0]) / det
+    return cancel(a.as_expr()), cancel(b.as_expr()), cancel(det.as_expr())
 
 
 def jet_sym(nm, n):
