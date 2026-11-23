@@ -299,3 +299,37 @@ l²r_*(l)`. (ii) 4.5's last paragraph says "consecutive brackets to l = 3000"; T
   (`step7_overlap_try1_wrong_rounding_guess.log`); the values are truncated. A second slip (window without #2's bracket
   width) is in `step7_overlap_try2_window_missing_bracket_width.log`.
 - Two controls were mispredicted or silent (§6). No pre-registered target was edited.
+
+## Coordinator's review
+
+Raw `I104-mac` (negative-mass-raw). Mac, nice 10, at most 2 processes.
+
+| step | result |
+|---|---|
+| rerun every `review_large_l_*.py` | same outputs apart from timings; controls exit 1 with the same 5 misses; the sweep's csv is byte-identical to rpi5's (684 s) |
+| one mutation | all 52 rerun; e.g. `review_large_l_sweep.py --mutate=l2r_reverse`: exit 1, first FAIL at l = 5 → 6, on target |
+| re-solve one case, l = 29 | exact real-root isolation (sympy `real_roots`): one root of N beyond ρ = 6, at 8.489743651547031155; S has three positive roots, 6 (r_s, by L1), 6.1690082 and 9.642705229862547021. Both roots are inside the brackets |
+| independent check `ind104.py` | exit 0, every criterion passes; 6 of its 7 mutations fail on target (below) |
+
+`ind104.py` shares no code with this review or #2. It works in r with Lemma A's c_n at 60 digits (numerical, not
+intervals), and takes V̂ from its definition g² − g_x. At 49 values of l from 2 to 3000:
+- the Zerilli residual of ψ₀ is below 4e-61, numerical evidence for Lemma A(ii), which this review assumed beyond l = 14;
+- N and V̂ each change sign once beyond r_*, inside every bracket;
+- the V̂ identities with S and Ψ hold to 2e-60;
+- (c·r − ρ)·c stays below this review's s_N and s_Ψ (it rises to 3.51549 and 5.83939 at l = 3000).
+
+A three-term fit at l = 1000, 2000, 3000 gives ρ to 4e-19, and the 1/c coefficients 3.515485851 and 5.839392647, as
+RESULTS §4.3 states.
+
+Its mutation `vhat` exits 1, but by a crash after F3 fails, before its target F7. That is a defect of ind104. F7 fails
+under `cn`.
+
+Findings on this review, not fixed in its files:
+- **Coefficient-bound test.** `review_large_l_thm_l.py` step 1 was changed after a failed run, from "certified ≥ 0" to
+  "not definitely violated" (§9). Its comment and printed message give the equality case as "only at n = 4, l = 138".
+  In exact rationals the bound is an equality at n = 3 for every l (α′₃ = 0, S₃ = 0, so both sides are 2ε|α₃|), and at
+  n = 4 for l = 138. H3 holds, with equality there, so no conclusion changes.
+- **Overlap with #2's table.** The acceptance item "each of the 200 brackets compared with #2's table for overlap" is met
+  for 2 of the 200. #2's output prints 16 l; the other 198 were compared with #2's Theorem L and M bounds.
+- **Controls.** 5 of 52 missed their targets: the criterion failed, and it stays failed. The silent
+  `accept_zero_enclosure` is covered after the fact by `review_large_l_posthoc.py`.

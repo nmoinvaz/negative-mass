@@ -251,7 +251,8 @@ brackets of 4.3 for l = 138, 139, 145, 276, 690, 1000, 2000, 3000.
 ### 4.5 Theorem M: monotone approach
 
 **Theorem M.** For every integer l ≥ 500: c·r_*(l+1) < c·r_*(l) and c·r_neg(l+1) < c·r_neg(l), with
-0 < c·r_*(l) − ρ_* ≤ 3.709/c and 0 < c·r_neg(l) − ρ_neg ≤ 6.101/c, and l²·r_*(l+1) > l²·r_*(l), l²·r_neg(l+1) > l²·r_neg(l).
+0 < c·r_*(l) − ρ_* ≤ 3.709/c and 0 < c·r_neg(l) − ρ_neg ≤ 6.101/c, and (l+1)²·r_*(l+1) > l²·r_*(l), (l+1)²·r_neg(l+1) > l²·r_neg(l)
+(this read "l²·r_*(l+1) > l²·r_*(l)" before #104's review, which is false as written).
 
 *Proof.* Expand to second order: aₙ = αₙ + εα¹ₙ + ε²ωₙ with α¹ₙ = α′ₙ − αₙe₁(n), e₁(n) = Σqₐ = (n−2)(n²−4n−3)/3 and
 |ωₙ| ≤ (|αₙ| + εα′ₙ)·½(e₁+4)²(1+2ε) + α′ₙ|e₁| (Taylor remainder of Pₙ, using |Pₙ″| ≤ (Σ|qₐ|)²(1+2ε) and Σ|qₐ| = e₁+4).
@@ -266,7 +267,7 @@ So N_l = N_∞ + εν + ε²ζ and Ψ_l = Ψ_∞ + εΨ₁ + ε²E, with explici
 - The decrease of l²r: l²r_{l+1} > l²r_l iff ρ_l − ρ_{l+1} < ρ_l(l²−3l−2)/((l+1)²c_l). Since ρ_{l+1} > ρ_∞, the left side is below
   s/c_l, and s < ρ_∞(l²−3l−2)/(l+1)² (3.709 < 8.40, 6.101 < 9.54, increasing in l). ∎
 
-With 4.3 (consecutive brackets to l = 3000) this gives: **c·r_* and c·r_neg decrease strictly for every l ≥ 2, so they approach ρ_* and ρ_neg
+With 4.3 (consecutive brackets, needed for l < 500) this gives: **c·r_* and c·r_neg decrease strictly for every l ≥ 2, so they approach ρ_* and ρ_neg
 from above; l²·r_* and l²·r_neg increase strictly for every l ≥ 5.** Status: *certified*, with the same reading as 4.4. `monotone_proof.py`
 also checks the expansions at l = 500, 501, 502, 1000, 1001 against exact evaluation, and N_{l+1} < 0 at the lower end of r_*(l)'s
 bracket (Ψ_{l+1} > 0 at the lower end of r_neg(l)'s) for l = 500..502.
@@ -281,7 +282,11 @@ bracket (Ψ_{l+1} > 0 at the lower end of r_neg(l)'s) for l = 500..502.
   only guesses brackets, every bracket is certified in rationals). The facts assumed beyond that: T1, T2 and Lemma A(ii) of this file, L3 (the
   sign of V̂ at infinity, also seen from the leading coefficient of Ψ), the hand-proved coefficient and tail bounds (stated in the proofs,
   tested numerically for n ≤ 400), and elementary analysis (intermediate value, Taylor, Weierstrass' product inequality).
-- None of 4.2–4.5 has had an independent review. Per AGENTS.md they should not be relied on until one has been done.
+- **Independent review (#104).** `review_large_l.md` (mpmath `iv` and sympy, written from this file alone) confirms 4.2–4.5 and
+  finds no error: Theorem 3's (P1), (P2) and V̂ identities, the brackets for every l = 2..3000, and Theorems L and M with its own,
+  smaller constants (L: 23.82 and 172.03; M: 3.519 and 5.936). Like the certified results, it assumes T1, T2 and Lemma A(ii) for
+  l > 14. Five of its 52 controls missed their targets (`review_large_l.md` §6). The coordinator's check of the review is in
+  negative-mass-raw `I104-mac`; its findings are in `review_large_l.md`, Coordinator's review.
 
 ## 5. Verification summary
 
@@ -319,7 +324,6 @@ bracket (Ψ_{l+1} > 0 at the lower end of r_neg(l)'s) for l = 500..502.
   - *numerical evidence*: the next coefficients, c·r_* ≈ ρ_* + 3.5155/c and c·r_neg ≈ ρ_neg + 5.8394/c (certified only as the bounds 3.709/c and
     6.101/c for l ≥ 500).
 - **Not proven:** the number of zeros of V̂ on (0, r_*) for general l (exactly one in (r_s, r_*) is exact for l = 2..16 only), and the
-  convergence of its lower edge to 6.16881. The certified parts have had no independent review (computer-assisted proofs are relied on only
-  after one).
+  convergence of its lower edge to 6.16881. The certified parts had an independent review in #104 (§4.6).
 - **Caveat on scope:** these are statements about Ĥ. Their meaning for Zerilli/metric perturbations relies on DG's
   intertwining equivalence, which is not re-proved here.

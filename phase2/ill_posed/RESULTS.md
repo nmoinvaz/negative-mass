@@ -209,7 +209,7 @@ A bounded operator maps null sequences to null sequences, so **no sequence of da
   Not checked.
 - Boundary condition. The result is for the DG self-adjoint dynamics (H2). dg_spectrum finds that cut-offs at R → 0 with κx_R > −1/2 give the same modes
   (*numerical evidence*), so the rates ω_l are robust within that class.
-- Hypotheses beyond this note. Theorem 1, Theorem 2 and the certified §4 results of dg_proof (no independent review yet) support C, D and E. A and B use only Theorem 1.
+- Hypotheses beyond this note. Theorem 1, Theorem 2 and the certified §4 results of dg_proof (independently reviewed in #104) support C, D and E. A and B use only Theorem 1.
 - Even parity only, linear only, no matter fields. The sectors l = 0, 1 are finitely many and cannot affect boundedness in l. Time is the Schwarzschild t, so "t > x₁" is in the static frame.
 - Novelty is not claimed. No literature check was made for this note.
 

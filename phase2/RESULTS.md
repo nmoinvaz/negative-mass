@@ -100,7 +100,8 @@ by an independent FD pencil including complex eigenvalues.
 - Supporting lemmas for all l: closed-form χ coefficients, ψ₀ solves static Zerilli identically in l (previously checked
   l ≤ 5), χ > 0 on r > 0 (DG's argument verified and put in closed form), limit-point at both ends.
 - κ_c asymptotics: large R, κ_c = −(l+1)/R − (l⁴+3l³+4l²+4)/(l(l−1)(l+2))R⁻² + …; small R, κ_c x_R = −1/2 − (l²+l−1)R/12 + ….
-- Derived, not proven: large-l scaling r_neg ≈ 9.636/((l+2)(l−1)) and r_* ≈ 8.486/((l+2)(l−1)) (the earlier "≈ 9/l²" is
+- Large l (*certified*, independently reviewed in #104; `dg_proof/RESULTS.md` §4): r_* < r_neg for every l (*proved*), and
+  r_neg ≈ 9.636/((l+2)(l−1)) and r_* ≈ 8.486/((l+2)(l−1)) are limits, approached monotonically (the earlier "≈ 9/l²" is
   this law at moderate l).
 - Conditional on: the sympy identities (symbolic in l; exact checks l = 2..10, root isolation l ≤ 50) and textbook
   theorems (Weyl limit-point/limit-circle, Kato form representation, Glazman's lemma); the link to metric perturbations
