@@ -13,7 +13,7 @@ from mpmath import besseli, iv, mp, mpf, sqrt
 
 import review_large_l_common as C
 
-KNOWN = ["alpha_n", "nz_coef", "shift_enclosure", "no_deriv", "accept_zero_enclosure"]
+KNOWN = ["alpha_n", "nz_coef", "shift_enclosure", "no_deriv", "accept_zero_enclosure", "bessel_coef"]
 
 iv.prec = 200
 mp.dps = 60
@@ -58,7 +58,7 @@ def main():
     # 2. X_inf: sympy termwise identity of the Bessel closed form, then numerical agreement with the series
     n_, s_ = sp.symbols("n s", positive=True)
     # coefficient of s^n in s[(s+3) I0(2 sqrt s) - 4 sqrt(s) I1(2 sqrt s)], I0(2 sqrt s) = sum s^k/k!^2, sqrt(s) I1(2 sqrt s) = sum s^(k+1)/(k!(k+1)!)
-    coef = (1 / sp.factorial(n_ - 2) ** 2 + 3 / sp.factorial(n_ - 1) ** 2 - 4 / (sp.factorial(n_ - 2) * sp.factorial(n_ - 1)))
+    coef = (1 / sp.factorial(n_ - 2) ** 2 + 3 / sp.factorial(n_ - 1) ** 2 - (4 if mut != "bessel_coef" else 3) / (sp.factorial(n_ - 2) * sp.factorial(n_ - 1)))
     target = (n_ - 2) * (n_ - 4) / sp.factorial(n_ - 1) ** 2
     okc = all(sp.simplify((coef - target).subs(n_, k)) == 0 for k in range(3, 14))
     chk.check("Bessel closed form: coefficient of s^n equals (n-2)(n-4)/(n-1)!^2 for n = 3..13", okc)

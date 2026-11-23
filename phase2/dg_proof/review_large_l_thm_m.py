@@ -20,7 +20,7 @@ import review_large_l_common as C
 import review_large_l_brackets as B
 import review_large_l_thm_l as TL
 
-KNOWN = ["nu_sign", "omega_scale", "cmp_reverse", "l2r_s", "window_narrow"]
+KNOWN = ["nu_scale", "omega_scale", "cmp_reverse", "l2r_s", "window_narrow", "brk_s"]
 
 N1 = 60
 RESULTS_M = (iv.mpf("3.709"), iv.mpf("6.101"))
@@ -33,9 +33,10 @@ def g(n):
 
 def alpha1(n):
     """alpha^1_n = alpha'_n - alpha_n e1(n)  (the coefficient of eps in a_n)."""
-    if C.MUT == "nu_sign":
-        return C.alpha_p(n) + C.alpha(n) * TL.e1(n)
-    return C.alpha_p(n) - C.alpha(n) * TL.e1(n)
+    v = C.alpha_p(n) - C.alpha(n) * TL.e1(n)
+    if C.MUT == "nu_scale":
+        return v * iv.mpf("1.01")
+    return v
 
 
 def Omega_n(n, epsb, uniform=False):
@@ -289,8 +290,9 @@ def main():
         r1 = B.certify_l(l + 1, r_star, r_neg, cnt, chk, mut)
         c0 = C.c_of(l)
         dec_ok = F(r1["N"][1]) < F(r0["N"][0]) and F(r1["P"][1]) < F(r0["P"][0])
-        up_ok = ((F(r0["N"][0]) - D["zs"][1]).a > 0 and (F(r0["N"][1]) - D["zs"][0]).b * c0 <= sN.b and
-                 (F(r0["P"][0]) - D["zn"][1]).a > 0 and (F(r0["P"][1]) - D["zn"][0]).b * c0 <= sP.b)
+        bs = 0.1 if mut == "brk_s" else 1
+        up_ok = ((F(r0["N"][0]) - D["zs"][1]).a > 0 and (F(r0["N"][1]) - D["zs"][0]).b * c0 <= sN.b * bs and
+                 (F(r0["P"][0]) - D["zn"][1]).a > 0 and (F(r0["P"][1]) - D["zn"][0]).b * c0 <= sP.b * bs)
         l2 = all((l + 1) ** 2 * F(r1[w][0]) / C.c_of(l + 1) > l ** 2 * F(r0[w][1]) / c0 for w in ("N", "P"))
         # N_(l+1)(lo of r_*(l)) < 0 and Psi_(l+1)(lo of r_neg(l)) > 0
         ev1 = B.Evaluator(l + 1)

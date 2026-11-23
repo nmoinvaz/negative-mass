@@ -16,7 +16,7 @@ from sympy import Symbol, rf, symbols
 
 import review_large_l_common as C
 
-KNOWN = ["mut_Z", "mut_V_NZ", "mut_Vhat", "mut_S", "mut_P1", "mut_P2", "mut_lead", "mut_count_psi", "mut_count_N"]
+KNOWN = ["mut_Z", "mut_V_NZ", "mut_Vhat", "mut_S", "mut_P1", "mut_P2", "mut_lead", "mut_count_psi", "mut_count_N", "mut_NZpos"]
 
 r = Symbol("r", positive=True)
 rho = Symbol("rho", positive=True)
@@ -136,7 +136,7 @@ def main():
     Qp = sp.Poly(Q, r)
     chk.check("(P2) Q = -V_r r^5 (cr-6)^3/2 is a polynomial of degree 5 in r", Qp.degree() == 5 and Q.is_polynomial(r), f"Q = {sp.factor(Q)}")
     tau, m = symbols("tau m", nonnegative=True)
-    shift = 5 if mut == "mut_P2" else 6
+    shift = 0 if mut == "mut_P2" else 6  # mut_P2 forgets the shift r = (6 + tau)/c
     Qtm = sp.expand(sp.cancel((cc ** 5 * Q).subs(r, (shift + tau) / cc).subs(cc, (m + 4) * (m + 1))))
     P2 = sp.Poly(Qtm, tau, m)
     terms = P2.terms()
@@ -146,7 +146,7 @@ def main():
 
     # N_Z(6 + tau)
     tau2, e2 = symbols("tau2 e2", nonnegative=True)
-    nzs = sp.expand(NZ_sym(6 + tau2, e2, None))
+    nzs = sp.expand((1 + 2 * e2) * (6 + tau2) ** 3 / 8 - (3 if mut == "mut_NZpos" else R(3, 4)) * (6 + tau2) ** 2 + R(9, 2) * (6 + tau2) - 9)
     chk.check("N_Z(6 + tau) has all coefficients positive in (tau, eps)", all(co > 0 for _, co in sp.Poly(nzs, tau2, e2).terms()), str(nzs))
 
     # leading coefficient of Psi at infinity, symbolic in l: X ~ a rho^(l+2), N ~ -(l+1) a rho^(l+2)

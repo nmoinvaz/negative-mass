@@ -20,7 +20,7 @@ import review_large_l_common as C
 import review_large_l_brackets as B
 import review_large_l_roots as RT
 
-KNOWN = ["beta_scale", "slope_sign", "window_small", "psi_identity"]
+KNOWN = ["beta_scale", "slope_sign", "window_small", "psi_identity", "bracket_k", "eta_scale"]
 
 LMIN = 138
 EPS0 = iv.mpf(1) / (140 * 137)  # 1/c(138)
@@ -243,8 +243,9 @@ def main():
         res = B.certify_l(l, r_star, r_neg, cnt, chk, mut)
         c = C.c_of(l)
         F = lambda n_: iv.mpf(n_) / iv.mpf(10 ** B.DIG)
-        okN = max(abs((F(res["N"][0]) - zs[1]).a), abs((F(res["N"][1]) - zs[0]).b)) * c <= K_N.b
-        okP = max(abs((F(res["P"][0]) - zn[1]).a), abs((F(res["P"][1]) - zn[0]).b)) * c <= K_P.b
+        kscale = 0.001 if mut == "bracket_k" else 1
+        okN = max(abs((F(res["N"][0]) - zs[1]).a), abs((F(res["N"][1]) - zs[0]).b)) * c <= K_N.b * kscale
+        okP = max(abs((F(res["P"][0]) - zn[1]).a), abs((F(res["P"][1]) - zn[0]).b)) * c <= K_P.b * kscale
         kN = (F(res["N"][1]) - zs[0]).b * c
         kP = (F(res["P"][1]) - zn[0]).b * c
         chk.check(f"Theorem L against the certified brackets, l={l}", okN and okP, f"(c r_* - rho_*) c <= {C.fmtu(kN, 6)}, (c r_neg - rho_neg) c <= {C.fmtu(kP, 6)}")
@@ -261,12 +262,13 @@ def main():
             ql = exact_pair(l, xN)
             qi = C.quantities(C.jet_inf(xN, 2), xN, iv.mpf(0))
             d = abs(ql["N"] - qi["N"]) / eps
-            ok &= (EN_N.b - d.b) >= 0
+            escale = 0.001 if mut == "eta_scale" else 1
+            ok &= (EN_N.b * escale - d.b) >= 0
             worstN = max(worstN, float(d.b))
             ql = exact_pair(l, xP)
             qi = C.quantities(C.jet_inf(xP, 2), xP, iv.mpf(0))
             d = abs(ql["Psi"] - qi["Psi"]) / eps
-            ok &= (eta.b - d.b) >= 0
+            ok &= (eta.b * escale - d.b) >= 0
             worstP = max(worstP, float(d.b))
         chk.check(f"step 2 at 11 points of each window, l={l}: |N_l - N_inf|/eps <= E_N and |Psi_l - Psi_inf|/eps <= eta", ok, f"largest observed {worstN:.4g} (bound {float(EN_N.b):.4g}), {worstP:.4g} (bound {float(eta.b):.4g})")
     chk.finish()

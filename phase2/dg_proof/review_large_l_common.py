@@ -276,8 +276,11 @@ def quantities(X, rho, eps):
     nz = NZ(rho, eps)
     nzp = NZp(rho, eps)
     Psi = rho ** 2 * (2 + eps * rho) * N ** 2 - 4 * nz * X[0] ** 2
+    last = 8 * nz * X[0] * X[1]
+    if MUT == "psip_term":
+        last = 0 * last  # the mutation drops the last term of Psi'
     Psip = ((4 * rho + 3 * eps * rho ** 2) * N ** 2 + 2 * rho ** 2 * (2 + eps * rho) * N * Np
-            - 4 * nzp * X[0] ** 2 - 8 * nz * X[0] * X[1])
+            - 4 * nzp * X[0] ** 2 - last)
     S = rho * X[0] * (eps * N + (2 + eps * rho) * Np) - (2 + eps * rho) * N * (X[0] + 2 * rho * X[1])
     if MUT == "S_flip":
         S = -S
@@ -434,7 +437,7 @@ def absub(x):
 # ----------------------------------------------------------------------------------------------------------
 # self test of this module
 # ----------------------------------------------------------------------------------------------------------
-KNOWN = ["coef_q", "coef_lin", "nz_coef", "accept_zero_enclosure", "no_deriv", "alpha_n", "drop_last", "S_flip"]
+KNOWN = ["coef_q", "coef_lin", "nz_coef", "accept_zero_enclosure", "no_deriv", "alpha_n", "drop_last", "psip_term"]
 
 
 def main():
