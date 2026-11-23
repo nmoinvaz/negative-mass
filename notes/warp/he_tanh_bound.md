@@ -188,6 +188,8 @@ The coordinator owns those files. Proposed changes:
 
 1. he_surface.md, Answer, third paragraph: "a scan of σR_b from 0.01 to 100 finds F + r f′ ≤ −0.054 there (**numerical
    evidence**)" becomes "F + r f′ < 0 at every root for every σR_b > 0 (**proved**, [he_tanh_bound.md](he_tanh_bound.md))".
+   The old "≤ −0.054" is a rounding slip: its own section 4 table says "at most −0.0537" (σR_b = 0.01), and −0.0537 >
+   −0.054. The supremum is −0.0536756. The same "≤ −0.054" is in claim 7 of review_he_surface.md.
 2. he_surface.md section 4, the paragraph after the table: "The scan is **numerical evidence** … It is not a bound" becomes a
    pointer to he_tanh_bound.md, with the supremum −0.0536756 as σR_b → 0. "At the ends F + r f′ is close to −σR_b/2 + 1/2
    for large σR_b" is **numerical evidence** at σR_b = 100, 10³, 10⁴ (section 4 above), with the next term 1/(8σR_b).
