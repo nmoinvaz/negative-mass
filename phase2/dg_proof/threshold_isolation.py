@@ -17,6 +17,8 @@ Checks (each prints PASS/FAIL, the exit status is non-zero if any fails):
      l^2 r_* and l^2 r_neg increasing from some l and below the limit, for every l = 2..LMAX (interval separation)
   F  a sparse set of larger l
 Mutations: --mutate=coef | sterm | ntail | mono | planted.
+--csv=PATH writes the certified brackets of E, one row per l = 2..LMAX, to PATH (columns l, c, rstar_lo, rstar_hi, rneg_lo,
+rneg_hi; the ends are exact fractions p/q, r_* = c r_*, r_neg = c r_neg).  It prints nothing and changes nothing else.
 """
 import argparse
 import os
@@ -32,6 +34,7 @@ import rescaled as R
 ap = argparse.ArgumentParser()
 ap.add_argument('--lmax', type=int, default=3000)
 ap.add_argument('--mutate', default='')
+ap.add_argument('--csv', default='')
 args = ap.parse_args()
 R.MUT = set(m for m in args.mutate.split(',') if m)
 MONO_MUT = 'mono' in R.MUT
@@ -226,6 +229,13 @@ check("E6: l^2 r_* < rho_* and l^2 r_neg < rho_neg for every l = 3..LMAX (approa
           for l in range(3, args.lmax + 1)))
 dmax = max((rows[l]['hi_n'] - rows[l]['lo_n'] for l in rows), default=0)
 print(f"   widest bracket in the table: {float(dmax):.3g}")
+if args.csv:
+    q = lambda x: f"{x.numerator}/{x.denominator}"
+    with open(args.csv, 'w') as fh:
+        fh.write("l,c,rstar_lo,rstar_hi,rneg_lo,rneg_hi\n")
+        for l in range(2, args.lmax + 1):
+            row = rows[l]
+            fh.write(f"{l},{(l + 2) * (l - 1)},{q(row['lo_n'])},{q(row['hi_n'])},{q(row['lo_s'])},{q(row['hi_s'])}\n")
 
 print("\n== F: sparse larger l (brackets refined by exact bisection to 1e-22) ==")
 print("      l          c r_* - rho_*            (c r_* - rho_*) c      c r_neg - rho_neg       (c r_neg - rho_neg) c")

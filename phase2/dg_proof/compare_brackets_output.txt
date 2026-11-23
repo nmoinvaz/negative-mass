@@ -1,0 +1,16 @@
+ours   brackets_i2.csv  sha256 32cc6b61df502e6a0f3e7e4bf5862b0b40959d1eabdbbe12f00a3a93ede79c84
+theirs sweep_brackets.csv  sha256 451734cfdd080e0dbfbfa675b1f95f0a97e9bd4f0cce4e4c1aeb7148c69dffb2
+PASS  C1: l = 2..3000 once each in both files (ours 2999 rows, theirs 2999 rows)
+PASS  C2: c = (l+2)(l-1) in every row of ours
+PASS  C2: c = (l+2)(l-1) in every row of theirs
+PASS  C3: lo < hi in both brackets of every row of ours
+PASS  C3: lo < hi in both brackets of every row of theirs
+PASS  C4: c r_* brackets intersect for every l (2999 l)
+PASS  C5: c r_neg brackets intersect for every l (2999 l)
+
+largest bracket width, ours:      2.000000e-13  (c r_*, l = 2)
+largest bracket width, theirs:    2.000001e-14  (c r_*, l = 2)
+smallest overlap:                 2.000001e-14  (c r_*, l = 2)
+largest midpoint gap:             4.592673e-15  (c r_neg, l = 2497)
+
+all checks pass
