@@ -1,0 +1,15 @@
+# review_lemma_a3_dg61: V-hat in x near 0 against DG09 (61)
+PASS PLE.4a
+PASS PLE.4b
+# r^4 V-hat = 12 + (2*(l**2 + l + 3)) r + (l*(l + 1)) r^2 + ...
+# r(s) = -s**4/135 + s**3/18 + 2*s**2/3 + 2*s, s = sqrt(x)
+PASS E2.6[x^-2]
+PASS E2.6[x^-3/2]
+DIFFERS E2.6[x^-1]: coefficient of x^-1: series gives 0, DG09 (61) prints -l*(l + 1)/4
+PASS E2.6b
+# l=2: x (V-hat - 3/(4x^2) - (l^2+l-1)/(4 x^1.5)) at r = 1e-8: -4.65278e-10 (DG09 prints -1.5)
+# l=3: x (V-hat - 3/(4x^2) - (l^2+l-1)/(4 x^1.5)) at r = 1e-8: -1.09028e-9 (DG09 prints -3.0)
+# l=5: x (V-hat - 3/(4x^2) - (l^2+l-1)/(4 x^1.5)) at r = 1e-8: -2.96516e-9 (DG09 prints -7.5)
+PASS E2.6c
+# elapsed 2.1 s
+# summary: 6 PASS, 0 FAIL, 1 DIFFERS

@@ -1,0 +1,47 @@
+# review_lemma_a3_l4: L4, the DG mode and the intertwining
+PASS PLL.1
+PASS PLL.2
+PASS L4.1
+PASS L4.2
+# numerator factored: (r + 2)*(c**2 + 2*c - 6*k)
+PASS L4.3
+PASS L4.4[l=2]
+PASS L4.4[l=3]
+PASS L4.4[l=4]
+PASS L4.4[l=5]
+PASS L4.4[l=6]
+PASS L4.4[l=7]
+PASS L4.4[l=8]
+PASS L4.4[l=9]
+PASS L4.4[l=10]
+PASS L4.4[l=11]
+PASS L4.4[l=12]
+PASS L4.4[l=13]
+PASS L4.4[l=14]
+PASS L4.4[l=15]
+PASS L4.4[l=16]
+PASS L4.4[l=17]
+PASS L4.4[l=18]
+PASS L4.4[l=19]
+PASS L4.4[l=20]
+PASS L4.5[l=2]
+PASS L4.5[l=3]
+PASS L4.5[l=4]
+PASS L4.5[l=5]
+PASS L4.5[l=6]
+PASS L4.5[l=7]
+PASS L4.5[l=8]
+PASS L4.5[l=9]
+PASS L4.5[l=10]
+PASS L4.5[l=11]
+PASS L4.5[l=12]
+PASS L4.5[l=13]
+PASS L4.5[l=14]
+PASS L4.5[l=15]
+PASS L4.5[l=16]
+PASS L4.5[l=17]
+PASS L4.5[l=18]
+PASS L4.5[l=19]
+PASS L4.5[l=20]
+# elapsed 67.7 s
+# summary: 43 PASS, 0 FAIL, 0 DIFFERS
