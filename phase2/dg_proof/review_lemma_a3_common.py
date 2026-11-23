@@ -15,6 +15,7 @@ r = Symbol('r', positive=True)
 l = Symbol('l', positive=True)
 
 _MUT = set()
+_FAILFAST = '--failfast' in sys.argv    # control runs only: exit 1 at the first FAIL (the id of the first FAIL is what a target names)
 for _a in sys.argv[1:]:
     if _a.startswith('--mutate='):
         _MUT |= set(_a[len('--mutate='):].split(','))
@@ -51,6 +52,8 @@ class Run:
         else:
             print('FAIL', cid + ':', why, flush=True)
             self.nfail += 1
+            if _FAILFAST:
+                self.finish()
 
     def published(self, cid, cond, why=''):
         """Comparison with a formula printed in a source: a difference is reported (DIFFERS), not counted as a failure."""
@@ -190,7 +193,7 @@ def taylor(num, den, n):
     assert dc[0] != 0
     out = []
     for i in range(n):
-        v = nc[i] - sum(dc[j] * out[i - j] for j in range(1, min(i, len(dc) - 1) + 1))
+        v = nc[i] - sum(dc[j] * out[i - j] for j in range(2 if mut('pl_taylor') else 1, min(i, len(dc) - 1) + 1))   # mutation pl_taylor: drops the j = 1 term
         out.append(cancel(v / dc[0]))
     return out
 
@@ -214,3 +217,30 @@ def wronskian_ode(y1, y2):
     d1, d2 = sp.diff(y1, r), sp.diff(y2, r)
     e1, e2 = sp.diff(y1, r, 2), sp.diff(y2, r, 2)
     return (y1 * d2 - d1 * y2, -(y1 * e2 - e1 * y2), d1 * e2 - e1 * d2)
+
+
+# ---------------------------------------------------------------- planted problems shared by several scripts
+def planted_sturm(run):
+    for pid, poly, want in [
+        ('PLS.1', (r - 1) * (r - 2) * (r + 3), 2),
+        ('PLS.2', r ** 2 + 1, 0),
+        ('PLS.3', (r - 1) ** 2 * (r + 2), 1),
+        ('PLS.4', r ** 3 - 2, 1),
+        ('PLS.5', r ** 3 + r + 2, 0),
+        ('PLS.6', r ** 4 - 3 * r ** 2 + Q(3, 2), 2),
+    ]:
+        got = positive_root_count(sp.expand(poly))
+        run.planted(pid, got == want, 'positive roots of %s: got %s want %s' % (poly, got, want))
+
+
+def planted_lead(run):
+    run.planted('PLE.3a', lead((r ** 2 + 1) / (r ** 4 * (1 + r)), 0) == (-4, 1), 'got %s' % (lead((r ** 2 + 1) / (r ** 4 * (1 + r)), 0),))
+    run.planted('PLE.3b', lead((r ** 2 + 1) / r ** 4, 'inf') == (-2, 1), 'got %s' % (lead((r ** 2 + 1) / r ** 4, 'inf'),))
+    run.planted('PLE.3c', lead(r ** 3 * (2 - r), 0) == (3, 2), 'got %s' % (lead(r ** 3 * (2 - r), 0),))
+
+
+def planted_taylor(run):
+    got = taylor(Poly(sp.Integer(1), r), Poly(1 + r, r), 4)
+    run.planted('PLE.4a', got == [1, -1, 1, -1], '1/(1+r): got %s' % got)
+    got = taylor(Poly((1 + r) ** 2, r), Poly(1 - r, r), 4)
+    run.planted('PLE.4b', got == [1, 3, 4, 4], '(1+r)^2/(1-r): got %s' % got)

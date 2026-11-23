@@ -6,7 +6,7 @@ E2.6  compares each printed coefficient with the series of RESULTS' V-hat (publi
 E2.6b states what the series is (checked exactly): the coefficient of 1/x is 0, and where DG's -l(l+1)/4 comes from.
 E2.6c numeric cross-check (mpmath, 50 digits) of E2.6b.
 Run: python review_lemma_a3_dg61.py [--mutate=NAME] > review_lemma_a3_dg61_output.txt
-Mutations: e_dg61b.
+Mutations: pl_taylor, e_dg61b, cn_n4to3.
 """
 import sys
 import time
@@ -16,6 +16,7 @@ import mpmath as mp
 
 run = Run('review_lemma_a3_dg61: V-hat in x near 0 against DG09 (61)')
 T0 = time.time()
+planted_taylor(run)
 s = Symbol('s', positive=True)
 c, h2 = symbols('c h2')
 

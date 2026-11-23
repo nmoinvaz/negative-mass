@@ -1,8 +1,8 @@
 """#142: L2 and L3 of RESULTS.md (V-hat and the Frobenius exponents at r = 0, V-hat at infinity), from RESULTS.md alone.
 
 Run: python review_lemma_a3_ends.py [--mutate=NAME] > review_lemma_a3_ends_output.txt
-Planted PLE.1 (indicial routine), PLE.2 (V-hat routine), PLE.3 (order/leading-coefficient routine) run first.
-Mutations: pl_indicial, pl_vhat, pl_order, e_const12, e_linear, e_exp, e_den, e_nn1, e_lead_inf, e_phi, cn_n4to3.
+Planted PLE.1 (indicial routine), PLE.3 (order/leading-coefficient routine), PLE.4 (Taylor routine) and PLE.2 (V-hat routine) run first.
+Mutations: pl_indicial, pl_vhat, pl_order, pl_taylor, e_const12, e_linear, e_exp, e_den, e_nn1, e_lead_inf, e_phi, cn_n4to3.
 """
 import sys
 import time
@@ -29,6 +29,8 @@ P2_, P1_, P0_ = wronskian_ode((r - 1) ** 2 * (1 + r), 1 / (r - 1))
 got = indicial(P2_, P1_, P0_, 1)
 run.planted('PLE.1e', got == {2, -1}, 'Wronskian-built ODE at r=1: got %s want {2, -1}' % got)
 
+planted_lead(run)
+planted_taylor(run)
 for n in (1, 2, 3, 5):
     V = cancel(together(Vhat_of_psi(r ** n)))
     p0_, c0_ = lead(V, 0)
@@ -37,10 +39,6 @@ for n in (1, 2, 3, 5):
                 'n=%d: at 0 %s, at inf %s; want (-4, %d), (-2, %d)' % (n, (p0_, c0_), (pi_, ci_), 4 * n * (n + 2), n * (n + 1)))
 V = cancel(together(Vhat_of_psi(r ** 3 * (1 + 3 / r))))
 run.planted('PLE.2[n=3, shifted]', lead(V, 'inf') == (-2, 12), 'got %s' % (lead(V, 'inf'),))
-
-run.planted('PLE.3a', lead((r ** 2 + 1) / (r ** 4 * (1 + r)), 0) == (-4, 1), 'got %s' % (lead((r ** 2 + 1) / (r ** 4 * (1 + r)), 0),))
-run.planted('PLE.3b', lead((r ** 2 + 1) / r ** 4, 'inf') == (-2, 1), 'got %s' % (lead((r ** 2 + 1) / r ** 4, 'inf'),))
-run.planted('PLE.3c', lead(r ** 3 * (2 - r), 0) == (3, 2), 'got %s' % (lead(r ** 3 * (2 - r), 0),))
 
 # ------------------------------------------------------------------ E2.1 symbolic: r^4 V-hat = 12 + 2(c+5) r + O(r^2)
 c, h2, h3 = symbols('c h2 h3')

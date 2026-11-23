@@ -33,16 +33,7 @@ r0s, _ = crit_min(1, a_, b_, d_)
 res = sp.simplify(4 * d_ * r0s ** 2 + 3 * b_ * r0s - 2 * a_)
 run.planted('PLA.3', res == 0, 'quadratic residual %s' % res)
 
-for pid, poly, want in [
-    ('PLS.1', (r - 1) * (r - 2) * (r + 3), 2),
-    ('PLS.2', r ** 2 + 1, 0),
-    ('PLS.3', (r - 1) ** 2 * (r + 2), 1),
-    ('PLS.4', r ** 3 - 2, 1),
-    ('PLS.5', r ** 3 + r + 2, 0),
-    ('PLS.6', r ** 4 - 3 * r ** 2 + Q(3, 2), 2),
-]:
-    got = positive_root_count(sp.expand(poly))
-    run.planted(pid, got == want, 'positive roots of %s: got %s want %s' % (poly, got, want))
+planted_sturm(run)
 
 # ------------------------------------------------------------------ A3.1 c3, c4, c5 closed forms (symbolic in l)
 Kl = K_of(l)

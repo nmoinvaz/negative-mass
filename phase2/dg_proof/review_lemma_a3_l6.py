@@ -3,7 +3,7 @@
 Psi_DG = r (r+2)^k e^{-kr/2}/(cr-6), psi_0 = chi/(cr-6), g = psi_0,x/psi_0, A* = -d/dx + g, f = 1 + 2/r.
 With W = r (r+2)^k e^{-kr/2} = r E: A* Psi_DG = -f psi_0 (Psi_DG/psi_0)_r = -f (W' chi - W chi')/((cr-6) chi).
 Run: python review_lemma_a3_l6.py [--mutate=NAME] > review_lemma_a3_l6_output.txt
-Mutations: pl_wronsk, l6_gen, l6_w, l6_c4, cn_n4to3, l6_k, l6_rs, l6_chip.
+Mutations: pl_wronsk, pl_order, pl_sturm_sign, l6_gen, l6_w, l6_c4, cn_n4to3, l6_k, l6_rs, l6_chip.
 """
 import sys
 import time
@@ -34,6 +34,9 @@ def wr_order(W, chi, n=NSER):
 run.planted('PLW.1', wr_order(r, r + r ** 3) == (3, -2), 'got %s' % (wr_order(r, r + r ** 3),))
 run.planted('PLW.2', wr_order(r + 2 * r ** 2, r ** 2) == (2, -1), 'got %s' % (wr_order(r + 2 * r ** 2, r ** 2),))
 run.planted('PLW.3', wr_order(sp.exp(r), sp.exp(2 * r)) == (0, -1), 'got %s' % (wr_order(sp.exp(r), sp.exp(2 * r)),))
+
+planted_lead(run)
+planted_sturm(run)
 
 # ------------------------------------------------------------------ L6.1 generic algebra
 Wf, chif = sp.Function('W')(r), sp.Function('chi')(r)
