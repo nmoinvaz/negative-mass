@@ -1,0 +1,122 @@
+# zerilli_static: static even-parity equation and master variable from the linearized Einstein equations (part=all)
+PASS PL.0a
+# [   0.2 s] PL.0a
+PASS PL.0b
+# [   0.3 s] PL.0b
+PASS PL.0c
+# [   0.4 s] PL.0c
+PASS PL.0d
+# [   0.8 s] PL.0d
+PASS PL.G
+# [  76.2 s] PL.G
+PASS PL.X
+# [ 156.9 s] PL.X
+PASS PL.O.1
+# static odd radial equations (jets h0_n, h1_n):
+#   t-phi: -(-L*h0_0*r + 4*M*h0_0 - 2*M*h0_2*r**2 + h0_2*r**3)/(2*r**3)
+#   r-phi: h1_0*(L - 2)/(2*r**2)
+#   x-phi: (2*M*h1_0 - 2*M*h1_1*r + h1_1*r**2)/r**2
+PASS PL.O.2
+# PL.O.2: r-phi = ((L - 2)/(2*r**2)) h1, so h1 = 0 for L != 2; x-phi has h1 jets only, so it is implied; t-phi is the ODE of h0
+# PL.O.2: h0'' = h0_0*(L*r - 4*M)/(r**2*(-2*M + r))   (divisor: -(-2*M + r)/(2*r))
+PASS PL.O.3
+PASS PL.O.4
+# static odd: Psi = r h0' - 2 h0, Psi_xx = V_RW Psi, V_RW = (-2*M + r)*(L*r - 6*M)/r**4 (det of (Psi, Psi_x) against (h0, h0') = 2 - L)
+# [ 158.2 s] odd done
+PASS A.1
+# [ 162.6 s] A.1
+PASS A.2
+# [ 163.1 s] A.2
+# static even radial equations before H0 = H2 (jets F_n = d^n F/dr^n; each is the coefficient of its angular structure, equal to 0):
+#   tt.P0  : (-2*H0_0*L*M + H0_0*L*r - 2*H0_1*M**2 + 5*H0_1*M*r - 2*H0_1*r**2 - 4*H0_2*M**2*r + 4*H0_2*M*r**2 - H0_2*r**3 + 2*H2_1*M**2 - H2_1*M*r - 4*K_1*M**2 + 2*K_1*M*r)/(2*r**3)
+#   tr.P0  : H1_0*L/(2*r**2)
+#   rr.P0  : (3*H0_1*M - 2*H0_2*M*r + H0_2*r**2 + H2_0*L - 3*H2_1*M + 2*H2_1*r + 6*K_1*M - 4*K_1*r + 4*K_2*M*r - 2*K_2*r**2)/(2*r*(-2*M + r))
+#   tx.P1  : (2*H1_0*M - 2*H1_1*M*r + H1_1*r**2)/(2*r**2)
+#   rx.P1  : (3*H0_0*M - H0_0*r - 2*H0_1*M*r + H0_1*r**2 - H2_0*M + H2_0*r + 2*K_1*M*r - K_1*r**2)/(2*r*(-2*M + r))
+#   xx.P0  : -H0_0*L/2 - H0_1*M + H0_1*r/2 + H2_0*L/2 + H2_0 - H2_1*M + H2_1*r/2 + K_0*L/2 - K_0 + 3*K_1*M - 2*K_1*r + K_2*M*r - K_2*r**2/2
+#   xx.xP1 : (H0_0 - H2_0)/2
+#   pp.P0  : -H0_1*M + H0_1*r/2 + H2_0 - H2_1*M + H2_1*r/2 + K_0*L/2 - K_0 + 3*K_1*M - 2*K_1*r + K_2*M*r - K_2*r**2/2
+#   pp.xP1 : (-H0_0 + H2_0)/2
+PASS S.1
+# [ 163.1 s] S.1
+PASS H.1
+# H.1: delta R_tr = (L/(2*r**2)) H1  =>  H1 = 0 wherever that factor is nonzero (L != 0, r != 0, r != 2M)
+PASS H.2
+# H.2: delta R_tx = (2*H1_0*M - 2*H1_1*M*r + H1_1*r**2)/(2*r**2)  (H1 jets only; zero when H1 = 0)
+PASS H.3
+# [ 163.1 s] H.*
+PASS E.1
+# E.1: traceless equation = (1/2) (H0 - H2), so H0 = H2 =: H (l >= 2 by A.1)
+# [ 163.1 s] E.1
+PASS E.2
+# [ 163.3 s] E.2
+# E.2: static flow, det of the coefficient matrix of (K', H') in (rx, G_rr) = -M/(2*r*(-2*M + r))
+# E.2:   K' = ((L - 2)/(2*M)) K_0 + (-(L*r + 4*M - 2*r)/(2*M*r)) H_0
+# E.2:   H' = ((L - 2)/(2*M)) K_0 + (-(-2*L*M*r + L*r**2 - 4*M**2 + 8*M*r - 2*r**2)/(2*M*r*(-2*M + r))) H_0
+# E.4: on the flow, equation tt = 0
+# E.4: on the flow, equation rr = 0
+# E.4: on the flow, equation trace = 0
+PASS E.4
+# [ 163.8 s] E.4
+PASS E.5a
+# E.5a: psi = (-2*r*(-3*L*M*r + L*r**2 - 6*M**2 + 6*M*r - 2*r**2)/(L*M*(L*r + 6*M - 2*r))) K + (2*r*(-2*M + r)/(L*M)) H;  det of (psi, psi_x) against (K, H) = -2*r*(-2*M + r)/(L*M)
+PASS E.5b
+PASS E.5d
+# E.5: V = (-2*M + r)*(L**3*r**3 + 6*L**2*M*r**2 - 4*L**2*r**3 + 36*L*M**2*r - 24*L*M*r**2 + 4*L*r**3 + 72*M**3 - 72*M**2*r + 24*M*r**2)/(r**4*(L*r + 6*M - 2*r)**2)
+PASS E.5e
+# [ 164.4 s] E.5
+PASS E.6a
+# [ 164.6 s] E.6a
+PASS E.6b
+# [ 164.6 s] E.6b
+# [ 170.7 s] time-dependent equations
+PASS S.0
+# [ 170.9 s] S.0
+PASS S.R1
+# S.R1: (delta R_tr / s)|_{s=0} = (-1) [K' + (r-3M)/(r(r-2M)) K - H/r - L h1t/(2r^2)], h1t = H1/s
+PASS S.R2
+# S.R2: h1t = -r*(-2*H_0*L*M*r + H_0*L*r**2 - 12*H_0*M**2 + 10*H_0*M*r - 2*H_0*r**2 + 2*K_0*L*M*r - K_0*L*r**2 + 6*K_0*M**2 - 6*K_0*M*r + 2*K_0*r**2)/(L*M*(-2*M + r));  (delta R_tx / s)|_{s=0} = (-H_0*r**2 - K_0*r**2 + 2*M*h1t_0 - 2*M*h1t_1*r + h1t_1*r**2)/(2*r**2)
+PASS S.R3
+PASS S.R4
+# [ 171.3 s] S.R
+# divisors met (step | what | expression):
+#   H.1: H1 = 0 | coefficient c_tr of H1 in delta R_tr | L/(2*r**2)
+#   E.1: H0 = H2 | coefficient of (H0 - H2) in the traceless equation | 1/2
+#   E.2: flow | det of the coefficient matrix of (K', H') in (rx, G_rr) | -M/(2*r*(-2*M + r))
+#   E.2: flow K' | denominator factor (multiplicity 1) | M
+#   E.2: flow K' | denominator factor (multiplicity 1) | r
+#   E.2: flow H' | denominator factor (multiplicity 1) | M
+#   E.2: flow H' | denominator factor (multiplicity 1) | r
+#   E.2: flow H' | denominator factor (multiplicity 1) | -2*M + r
+#   E.5: psi coefficient of K | denominator factor (multiplicity 1) | M
+#   E.5: psi coefficient of K | denominator factor (multiplicity 1) | L
+#   E.5: psi coefficient of K | denominator factor (multiplicity 1) | L*r + 6*M - 2*r
+#   E.5: psi coefficient of H | denominator factor (multiplicity 1) | M
+#   E.5: psi coefficient of H | denominator factor (multiplicity 1) | L
+#   E.5: V | denominator factor (multiplicity 4) | r
+#   E.5: V | denominator factor (multiplicity 2) | L*r + 6*M - 2*r
+#   S.R2: h1t | denominator factor (multiplicity 1) | M
+#   S.R2: h1t | denominator factor (multiplicity 1) | L
+#   S.R2: h1t | denominator factor (multiplicity 1) | -2*M + r
+#   E.5: definition (9) | denominator (lam + 1) of both terms | L/2
+#   E.5: definition (9) | denominator (lam r + 3M) | (L*r + 6*M - 2*r)/2
+#   E.5: definition (9) | denominator (r - 2M) of the inverse formula (4) | -2*M + r
+PASS D.1
+#   factor -2*M + r met at 4 step(s)
+#   factor 6*M + r*(L - 2) met at 3 step(s)
+#   factor L met at 5 step(s)
+#   factor M met at 6 step(s)
+#   factor r met at 5 step(s)
+# [ 171.4 s] D.1
+PASS D.2
+# D.2: lam r + 3M = 0 at r = -6*M/(L - 2); (lam r + 3M)^2 V at that r = (L - 2)**2*(L + 1)**2/18 (nonzero: a genuine double pole); at M = -1 the zero is 6/c = r_s of dg_proof
+PASS D.3
+# D.3: no step of the static derivation divides by s; the symbol s occurs in none of the static equations (S.1)
+PASS D.4
+# D.4: L = l(l+1) is a divisor at: E.5: definition (9); E.5: psi coefficient of H; E.5: psi coefficient of K; H.1: H1 = 0; S.R2: h1t
+# D.4: r - 2M (= r f) is a divisor at: E.2: flow; E.2: flow H'; E.5: definition (9); S.R2: h1t; r - 2M > 0 for r > 0 and M < 0, and vanishes at r = 2M for M > 0
+# D.4: the restriction l >= 2 enters through A.1 and the nonvanishing of c_tr (H1 = 0) and c0 (H0 = H2), not through a division by L - 2
+PASS D.5
+# D.5: det of the static flow system = -M/(2*r*(-2*M + r)); c_tr = L/(2*r**2); det of (psi, psi_x) against (K, H) = -2*r*(-2*M + r)/(L*M)
+# [ 171.5 s] D
+# summary: 35 PASS, 0 FAIL
