@@ -1434,6 +1434,86 @@ fails by 1.3×10⁵ and 4.1×10⁴. Mutations: `reverse` gives −1.0000 for the
   10⁻¹⁰ by far more than the 10⁻¹¹ of the reading above, so that estimate does not hold. A mean-value test on 64 points
   at the worst point fails narrowly in `c075_l2` at rtol 10⁻⁸ and passes there at 10⁻¹⁰, and passes in `p085_l3` at
   10⁻⁸: at those points the failure is the integrator's error. #129 tests every point.
+
+**Integrator error or a non-holomorphic part (#129).** Status: numerical evidence. `harm` failed at 9 of 12 points of
+the four boxes with Re s ≥ 0.1, and the paragraphs above read that as integrator error without testing it.
+`harm_circles.py` tests φ = arg D by the mean value property at those 12 points: 64 points of circles of radius ρ = 0.05
+L and 0.025 L (L = 2.5), 4 mean(φ_k − φ₀) / ρ² for Δφ, `harm`'s criterion |Δφ| L² ≤ 10⁻⁶ (1 + |∇φ| L) unchanged. The
+mean does not amplify a point error by 1/h²: an error ε in a point moves |Δφ| L² by at most 4 ε L² / ρ², that is 1600 ε
+at 0.05 L and 6400 ε at 0.025 L. D is winding2's D at three settings. S8: rtol 10⁻⁸, `nchunks` as `polar_solver` chooses
+it at each point, `zerilli_q` at its own 10⁻¹¹. S10: rtol 10⁻¹⁰, `nchunks` fixed across each circle at the centre's
+value, `zerilli_q` at 10⁻¹². S12: 10⁻¹², fixed, 10⁻¹³. The fixed `nchunks` and `zerilli_q`'s tolerance are set on a
+subclass in the script; `polar_solver.py` is unchanged. At every point and radius a planted holomorphic phase, (s − a)(s
+− c) e²ˢ, must pass at 10⁻³ of the limit, and the same times exp(i 10⁻³ (Re s)² / L²) must fail, through the same circle
+code.
+
+What ran, from `phase2/nonradial` (the raw folder is `I129-win` of negative-mass-raw, beside this checkout; each
+`<setting>` run is 3 points × 129 evaluations, cached after every point):
+
+```
+python harm_circles.py --box=<box> --setting=<setting> --raw=../../../negative-mass-raw/I129-win
+python harm_circles.py --box=c075_l2 --setting=S12 --raw=../../../negative-mass-raw/I129-win --mutate=nonholo
+python harm_circles.py --box=c075_l2 --setting=S12 --raw=../../../negative-mass-raw/I129-win --mutate=half
+python harm_circles.py --collect --raw=../../../negative-mass-raw/I129-win > harm_circles_output.txt
+```
+
+The twelve runs (`<box>` in `p7603_l2`, `p7603_l3`, `c075_l2`, `p085_l3`; `<setting>` in S12, S10, S8) exited 0 at S12
+and S10 (eight runs) and 1 at S8 (four runs: a failed check, a result). Both mutations, on the cached S12 data of
+`c075_l2` with no new evaluation, exit 1, and `--collect` exits 0 (`RESULT PASS`, every control passing, no cache
+missing, D passing at S12). Time per evaluation on one thread of `win`: 17.6 to 45.2 s at S12 and 7.0 to 19.2 s at S8.
+The ratio |Δφ| L² / limit (pass at or below 1) at both radii, from `harm_circles_output.txt` (pivoted by
+`results_table.py` in the raw folder):
+
+| box | point | S8, 0.05 L | S8, 0.025 L | S10, 0.05 L | S10, 0.025 L | S12, 0.05 L | S12, 0.025 L | first passing |
+|---|---|---|---|---|---|---|---|---|
+| `p7603_l2` | +0.575+0.75i | 8.47 **FAIL** | 8.35 **FAIL** | 0.0767 | 0.102 | 0.000771 | 0.00134 | S10 |
+| `p7603_l2` | +1.05+1.5i | 0.799 | 0.692 | 0.0086 | 0.0091 | 5.01×10⁻⁶ | 0.000671 | S8 |
+| `p7603_l2` | +1.525+2.25i | 1.43 **FAIL** | 1.32 **FAIL** | 0.0131 | 0.0139 | 0.000422 | 0.00114 | S10 |
+| `p7603_l3` | +0.575+0.75i | 5.68 **FAIL** | 5.61 **FAIL** | 0.0511 | 0.0678 | 0.000193 | 0.000507 | S10 |
+| `p7603_l3` | +1.05+1.5i | 0.502 | 0.405 | 0.00607 | 0.00675 | 4.32×10⁻⁵ | 0.000551 | S8 |
+| `p7603_l3` | +1.525+2.25i | 1.07 **FAIL** | 1.08 **FAIL** | 0.00971 | 0.0103 | 0.000181 | 0.000683 | S10 |
+| `c075_l2` | +0.575+0.75i | 11.8 **FAIL** | 11.4 **FAIL** | 0.0926 | 0.0918 | 0.000718 | 0.000446 | S10 |
+| `c075_l2` | +1.05+1.5i | 0.749 | 0.823 | 0.00939 | 0.00981 | 0.00022 | 0.00154 | S8 |
+| `c075_l2` | +1.525+2.25i | 1.78 **FAIL** | 1.54 **FAIL** | 0.0176 | 0.0203 | 0.000664 | 0.00253 | S10 |
+| `p085_l3` | +0.575+0.75i | 1.08 **FAIL** | 1.13 **FAIL** | 0.0173 | 0.0151 | 0.000206 | 0.000175 | S10 |
+| `p085_l3` | +1.05+1.5i | 2.11 **FAIL** | 2.16 **FAIL** | 0.00358 | 0.0357 | 0.000378 | 0.000761 | S10 |
+| `p085_l3` | +1.525+2.25i | 0.261 | 0.0579 | 0.00405 | 0.00336 | 0.000232 | 0.000692 | S8 |
+
+- *Every point passes at S12*, at ratios 5.0×10⁻⁶ to 2.5×10⁻³ (|Δφ| L² at most 1.4×10⁻⁸ against limits of 5.2×10⁻⁶ to
+  1.6×10⁻⁵). No point fails at rtol 10⁻¹² with `nchunks` fixed, so none of the 12 is, by this test, a part of D's phase
+  that the integrator does not explain.
+- *Which setting removed each failure.* S8 fails 8 of the 12 points (16 of 24 rows, ratios 1.07 to 11.8): point 0 and 2
+  of `p7603_l2`, `p7603_l3` and `c075_l2`, and points 0 and 1 of `p085_l3`. S10 passes all eight (3.6×10⁻³ to 0.102), so
+  S10 is the first setting that passes there. The other four points pass at S8 (0.058 to 0.82) and S8 is their first.
+  S10 changes rtol, the fixed `nchunks` and `zerilli_q`'s tolerance at once, so these runs do not say which of the three
+  removes a failure.
+- *The values fall with rtol.* The largest |Δφ| L² is 1.06×10⁻⁴, 1.07×10⁻⁶ and 1.4×10⁻⁸ at S8, S10 and S12 (99 and 77
+  times smaller per two decades of rtol), and the smallest point error that explains it under the bound above is
+  6.6×10⁻⁸, 5.2×10⁻¹⁰ and 5.0×10⁻¹², 6.6, 5.2 and 5.0 times rtol. A part of arg D that did not depend on rtol would not
+  fall. What remains at S12 is below 1.4×10⁻⁸ in |Δφ| L² on these discs, 7×10⁻⁶ of the planted non-harmonic part's
+  2.0×10⁻³.
+- *Controls.* In all 72 rows (12 points, 2 radii, 3 settings) the planted holomorphic phase gives at most 4.3×10⁻¹³
+  (passes) and the planted non-harmonic one 2.0×10⁻³ (fails). `nonholo` fails D at all six rows, at 224 to 384 times the
+  limit, and `half` fails the planted holomorphic control (240 and 480, where at most 10⁻³ of its limit passes) and D
+  (2.4×10⁷ to 6.8×10⁷ times).
+- *Against the text above.* The `mean` failure at `p085_l3` (1.97, 16 points at ρ = 0.25) was read as aliasing, about
+  (ρ/d)ᴺ. It is not: with 64 points at ρ = 0.125 and 0.0625 that estimate is about 10⁻⁴⁸ at d ≈ 0.7, yet `p085_l3` point
+  1 fails at S8 by 2.11 and 2.16, and passes at S10 (3.6×10⁻³, 3.6×10⁻²). The review's mean-value result holds:
+  `c075_l2` point 2 fails narrowly at S8 (1.78 and 1.54) and passes at S10 (0.018, 0.020), and `p085_l3` point 2 passes
+  at S8 (0.26, 0.058); the other two points of `p085_l3` fail at S8. `harm` and the circles do not agree at every point:
+  at point 2 of `c075_l2` and `p085_l3` `harm` gave 6.7×10⁻⁴ and 1.0×10⁻³ and the circles at S8 (0.05 L) give 9.3×10⁻⁶
+  and 2.4×10⁻⁶, while at point 0 of `p7603_l2` and `c075_l2` they are alike (9.1×10⁻⁵ and 1.1×10⁻⁴ against 8.8×10⁻⁵ and
+  1.1×10⁻⁴).
+- *Not shown.* That `harm`'s stencil (h = 10⁻³ L) passes at S12, which was not run, so the reading that rtol alone does
+  not remove its failure at 10⁻¹² is neither confirmed nor contradicted. That arg D is harmonic at any other point than
+  these 12, at other radii, or in `n3_l2` (where `zerilli_q` is the cause). The `harm` rows above stay as recorded.
+
+| #129 acceptance criterion | verdict |
+|---|---|
+| at every point the planted holomorphic phase passes and the planted non-harmonic one fails through the same code; `nonholo` fails | met: 72 of 72 rows (planted holomorphic at most 4.3×10⁻¹³, planted non-harmonic 2.0×10⁻³); `nonholo` and `half` exit 1 |
+| each point's verdict at each rtol and radius as computed; if every point passes at S12, which setting removed each failure | met: the table; all 12 pass at S12; S10 removes the 8 failures of S8, and the runs do not separate its three changes |
+| a point that still fails at rtol 10⁻¹² with fixed `nchunks` is reported as a part of D's phase that the integrator does not explain | none: 0 of 12 points fail at S12 (24 of 24 rows pass) |
+
 - The checks are numerical, one phase of each plane, and no interval enclosure or proof. They do not look beyond the 61
   boxes or outside the part of Re s = 0 that the n3 boxes cover.
 
@@ -1542,6 +1622,7 @@ fails by 1.3×10⁵ and 4.1×10⁴. Mutations: `reverse` gives −1.0000 for the
 | `diagnose_plant.py`, `i115_replay_output.txt` | the replay of a lost step on a cached box, and its two runs on #115's s1 at l = 5 before and after the guard-all rerun (§5.4) |
 | `replay_i126.py`, `i126_replay_output.txt` | the dense-chain replay of §5.4's 61 boxes at `--guard=all` on the caches of negative-mass-raw `I126-rpi5` (`diagnose_plant.py --y0` for the upper boxes); exits 1 when a box fails (§5.4, #128) |
 | `d_factors.py`, `d_factors_output.txt` | the checks of D's factors and its pole sources of §5.5 (`--part=factors,gap,norm,pole,axis,mean`, each with a `--mutate=`), 61 boxes, its output from the caches of negative-mass-raw `I122-rpi5`; exits 1 because `harm` and `mean` fail (§5.5, #122) |
+| `harm_circles.py`, `harm_circles_output.txt` | #129's mean value test of arg D at the 12 `harm` points of the four boxes with Re s ≥ 0.1, at S8, S10 and S12 (§5.5), with `--mutate=nonholo` and `--mutate=half`; `--collect` reads the caches of negative-mass-raw `I129-win` and exits 1 when a control fails, a cache is missing or D fails at S12 |
 | `l456_graph.py` → `l456_mode_condition.svg` | the figure of §3a |
 | `boxes_graph.py` → `complex_s_boxes.svg` | the figure of §5.1 |
 | `data_graphs.py` | SVG drawing primitives of both figures, vendored unchanged (its docstring names the canonical copy) |
