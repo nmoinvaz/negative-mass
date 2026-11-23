@@ -104,13 +104,22 @@ each angular component being separate equations because P and xP′ are independ
 | E.6a, E.6b | DG06 (3)–(4) solves everything; (9) inverts it | PASS |
 | D.1–D.5 | divisors in the stated set; zero and double pole of λr+3M; s, r−2M, L−2; determinants nonzero | PASS |
 
-Controls (`zerilli_derivation_controls.py`, 742 s, peak rss 120 MB): the unmutated baseline exits 0 with 32 PASS and no FAIL, and **17 of 18** mutated runs exit with the expected
-code and the first FAIL id equal to the target written in the raw README before the first control run. Planted-code mutations (exit 2): `dual_inv` PL.0a, `leg_sign` PL.0d,
+Controls (`zerilli_derivation_controls.py`, 1118 s, peak rss 120 MB): the unmutated baseline exits 0 with 32 PASS and no FAIL, and **33 of 34** mutated runs exit with the expected
+code and the first FAIL id equal to the target written in the raw README before the first run (#143's 18 in `I143-rpi5`, #147's 16 in `I147-rpi5`). Planted-code mutations (exit 2): `dual_inv` PL.0a, `leg_sign` PL.0d,
 `drop_trace` PL.G.even (the dropped first-order part of −∂_νΓ^a_μa is invisible to the odd checks: they pass under it, `ctrl_drop_trace_odd.log`), `route2_drop` PL.X.even, `fsign_ans` PL.O.3,
 `rw_typo` PL.O.3. Real-check mutations (exit 1): `l1` A.1, `ang_norm` A.2, `ans_rr` E.1, `skip_s` E.3, `mv_coef` and `fsign_mv` E.5b, `v_typo` E.5d, `res_typo` E.5e, `dg3_typo` E.6a,
 `d2_zero` D.2, `div_set` D.1. **One miss:** `fsign_bg` (the background metric with f = 1 + 2M/r) was predicted to fire at PL.0c and fired at PL.O.3 (exit 2). The prediction was wrong:
 that background is the Schwarzschild vacuum solution of mass −M, so its Ricci tensor is 0 and PL.0c cannot see the sign. The target is left as written and the line is a MISS in the output; the
 control that does isolate a wrong sign of M in f against a correct background is `fsign_ans`, added before it was run. A first controls run (before `master_reduce` moved to field arithmetic and before `fsign_ans` existed; see the raw README) had 16 of its 17 pairs on target and the same miss.
+
+#147 gave each of the 16 remaining checks a mutation, so every one of the 32 checks has one: planted (exit 2) `ds_sign` PL.0b, `gauge_odd` PL.G.odd,
+`x_odd` PL.X.odd, `x_gauge` PL.X.gauge_even, `odd_norm` PL.O.1, `odd_flow` PL.O.2, `same_m0` PL.O.4; real (exit 1) `grr_trace` E.2, `hexpr_sign` E.3b, `e4_drop` E.4,
+`e5a_det0` E.5a, `v_s2` E.5c, `back_coef` E.6b, `d3_s1` D.3, `d4_l2` D.4, `d5_ah0` D.5. E.5a and D.5 test a quantity that is a divisor earlier, so their mutations set the value
+the check reads to 0: they show the comparison fires, not that a degenerate input reaches it (`master_reduce` with ψ = 0 raises ZeroDivisionError).
+*Coordinator's decision (#147, recommended tasks 2 and 3):* a degenerate ψ already makes the run exit non-zero, through that ZeroDivisionError, and
+`zerilli_derivation_lib.py` is imported unchanged by #145 and #146, so it is not changed. D.5 stays as the recorded statement that det3, aH and det_e are
+nonzero; a zero of any of them would end the run before D.5. The coordinator's check of #147 (raw `I147-mac`) confirms the 16 pairs against the
+pre-registration and finds every new behavior behind its `mut` switch.
 
 What the checks share: the dual-number route and the covariant route (PL.X) share the background Christoffel symbols and h and nothing else; they agree in every component of three different h
 (even ansatz, odd ansatz, a pure-gauge h). The odd planted case and the even derivation share the Ricci routine, the Legendre reduction and `master_reduce`.
