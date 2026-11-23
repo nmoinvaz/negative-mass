@@ -64,6 +64,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 CONTROLS = {
     "sigma-1e-3": (["points", "cross"], "sigma + 1e-3 at both walls (C and the radii; v fixed)"),
     "drop-P-term": (["tables", "small_z", "points", "cross", "assembly"], "the first term of P's table is dropped everywhere"),
+    "drop-P-term-low": (["tables", "small_z", "points", "cross", "assembly"], "the last term of P's table (total degree 10) is dropped everywhere"),
     "no-tail-large": (["tail_z", "planted", "assembly"], "the proof on [z_t, infinity) is removed"),
     "no-tail-small": (["small_z", "assembly"], "the proof on (0, z_s] is removed"),
     "cell-gap": (["cover", "assembly"], "one leaf is removed from the tiling of each wall's cover"),
@@ -238,6 +239,8 @@ def P_table():
     pt = tables()["P"]
     if MUT == "drop-P-term":
         return pt[1:]
+    if MUT == "drop-P-term-low":
+        return pt[:-1]
     return pt
 
 
@@ -758,14 +761,27 @@ def root_cells(leaves, fun):
     return [newton_shrink(fun, a, b) for a, b, kd in leaves if kd == "r"]
 
 
+def cells_are_sign_changes(cells, tanh_fun):
+    """The tanh-form function changes sign across every shrunk root cell (an independent confirmation of each cell)."""
+    return all(tanh_fun(a) * tanh_fun(b) < 0 for a, b in cells)
+
+
+_PC = {}
+
+
+def points_cells(wl):
+    """The Newton-shrunk root cells of g at the wall."""
+    if wl.name not in _PC:
+        _PC[wl.name] = root_cells(cover_wall(wl)["leaves"], g_fun(wl))
+    return _PC[wl.name]
+
+
 def points_wall(wl):
     if wl.name in _PTS:
         return _PTS[wl.name]
-    cov = cover_wall(wl)
-    g = g_fun(wl)
     pr = real_prob(wl)
     out = []
-    for a, b in root_cells(cov["leaves"], g):
+    for a, b in points_cells(wl):
         out.append(dict(cell=(a, b), res=classify_cell(pr, a, b)))
     _PTS[wl.name] = out
     return out
@@ -1096,10 +1112,12 @@ def check_cover(h, walls):
         u = sum(1 for x in lv if x[2] == "u")
         nr = sum(1 for x in lv if x[2] == "r")
         s_ok, nch = sign_agreement(lv, g_fun(wl), lambda z: P_tanh(wl, z)) if t_ok and u == 0 else (False, -1)
-        good = t_ok and u == 0 and s_ok and nch == nr
+        c_ok = t_ok and u == 0 and cells_are_sign_changes(points_cells(wl), lambda z: P_tanh(wl, z))
+        good = t_ok and u == 0 and s_ok and nch == nr and c_ok
         ok = ok and good
         rows.append("%s: %d leaves tile [%s, %s]: %s, %d unresolved, %d root leaves, tanh-form P changes sign %d times at the leaf ends "
-                    "(agreement %s), %d evaluations, %.0f s" % (name, len(lv), wl.zs, wl.zt, t_ok, u, nr, nch, s_ok, cv["nev"], cv["time"]))
+                    "(agreement %s) and across each shrunk root cell (%s), %d evaluations, %.0f s" % (
+                        name, len(lv), wl.zs, wl.zt, t_ok, u, nr, nch, s_ok, c_ok, cv["nev"], cv["time"]))
     h.check("cover", ok, "; ".join(rows))
 
 
@@ -1113,6 +1131,7 @@ def check_spurious(h, walls):
         nr = sum(1 for x in lv if x[2] == "r")
         s_ok, nch = sign_agreement(lv, yn_fun(wl), lambda z: y_tanh(wl, z)) if t_ok and u == 0 else (False, -1)
         cells = root_cells(lv, yn_fun(wl)) if t_ok and u == 0 else []
+        c_ok = t_ok and u == 0 and cells_are_sign_changes(cells, lambda z: y_tanh(wl, z))
         if MUT == "skip-y":
             cells = []
         pr = real_prob(wl)
@@ -1127,11 +1146,11 @@ def check_spurious(h, walls):
             desc.append("y = 0 at z in [%s, %s] (r = %s), common roots %d, w in %s" % (
                 fmt(a, 10), fmt(b, 10), fmt(wl.r_iv(ivr(a, b)).a, 10), len(res["points"]),
                 [fmt(mid(ivr(p_["box"][2], p_["box"][3])), 6) for p_ in res["points"]]))
-        good = t_ok and u == 0 and s_ok and nch == nr and len(cells) == nr and nadm == 0 and nunres == 0 and disj
+        good = t_ok and u == 0 and s_ok and c_ok and nch == nr and len(cells) == nr and nadm == 0 and nunres == 0 and disj
         ok = ok and good
-        rows.append("%s: %d leaves tile: %s, %d unresolved, %d root leaves, tanh-form y changes sign %d times (agreement %s); %s; "
+        rows.append("%s: %d leaves tile: %s, %d unresolved, %d root leaves, tanh-form y changes sign %d times (agreement %s, across each shrunk root cell %s); %s; "
                     "admissible points at y-roots %d, unresolved boxes %d, cells disjoint from the P cells %s" % (
-                        name, len(lv), t_ok, u, nr, nch, s_ok, "; ".join(desc), nadm, nunres, disj))
+                        name, len(lv), t_ok, u, nr, nch, s_ok, c_ok, "; ".join(desc), nadm, nunres, disj))
     h.check("spurious", ok, " ... ".join(rows))
 
 
@@ -1324,8 +1343,13 @@ def main():
         out = subprocess.run([sys.executable, os.path.abspath(__file__), "--mutate=" + cn, "--only-targets"], capture_output=True, text=True)
         last = [ln for ln in out.stdout.splitlines() if ln.startswith("control %s: failed" % cn)]
         failed = eval(last[0].split("failed ", 1)[1].split(", targets")[0]) if last else None
-        fired = failed is not None and all(t_ in failed for t_ in targets) and out.returncode == 1
-        say("control %-16s targets %-60s failed %-60s %s (%.0f s)" % (cn, targets, failed, "FIRED" if fired else "SILENT", time.time() - t))
+        hit = [t_ for t_ in targets if failed is not None and t_ in failed]
+        fired = bool(hit) and out.returncode == 1
+        miss = [t_ for t_ in targets if t_ not in hit]
+        extra = [f_ for f_ in (failed or []) if f_ not in targets]
+        verdict = "FIRED" if fired and not miss else ("FIRED (silent on %s)" % miss if fired else "SILENT")
+        say("control %-16s targets %-60s failed %-60s %s%s (%.0f s)" % (
+            cn, targets, failed, verdict, (", also failed %s" % extra) if extra else "", time.time() - t))
         if not fired:
             silent.append(cn)
     say("checks failed: %s; controls silent: %s; wall %.1f s" % (base or "none", silent or "none", time.time() - T0))
