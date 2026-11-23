@@ -1,0 +1,22 @@
+# baseline: unmutated must exit 0 with no FAIL line and empty stderr
+OK   baseline exit=0 PASS=32 FAIL=0 203s
+# mutated: --mutate=NAME --failfast; target = first FAIL id, exit code as listed
+OK   dual_inv     target=PL.0a      exit=2 (want 2) first-FAIL=PL.0a      1s
+MISS fsign_bg     target=PL.0c      exit=2 (want 2) first-FAIL=PL.O.3     229s
+OK   leg_sign     target=PL.0d      exit=2 (want 2) first-FAIL=PL.0d      1s
+OK   drop_trace   target=PL.G.even  exit=2 (want 2) first-FAIL=PL.G.even  129s
+OK   route2_drop  target=PL.X.even  exit=2 (want 2) first-FAIL=PL.X.even  8s
+OK   fsign_ans    target=PL.O.3     exit=2 (want 2) first-FAIL=PL.O.3     4s
+OK   rw_typo      target=PL.O.3     exit=2 (want 2) first-FAIL=PL.O.3     4s
+OK   l1           target=A.1        exit=1 (want 1) first-FAIL=A.1        10s
+OK   ang_norm     target=A.2        exit=1 (want 1) first-FAIL=A.2        11s
+OK   ans_rr       target=E.1        exit=1 (want 1) first-FAIL=E.1        12s
+OK   skip_s       target=E.3        exit=1 (want 1) first-FAIL=E.3        13s
+OK   mv_coef      target=E.5b       exit=1 (want 1) first-FAIL=E.5b       16s
+OK   fsign_mv     target=E.5b       exit=1 (want 1) first-FAIL=E.5b       16s
+OK   v_typo       target=E.5d       exit=1 (want 1) first-FAIL=E.5d       16s
+OK   res_typo     target=E.5e       exit=1 (want 1) first-FAIL=E.5e       16s
+OK   dg3_typo     target=E.6a       exit=1 (want 1) first-FAIL=E.6a       18s
+OK   d2_zero      target=D.2        exit=1 (want 1) first-FAIL=D.2        17s
+OK   div_set      target=D.1        exit=1 (want 1) first-FAIL=D.1        17s
+# summary: 18 OK, 1 MISS (of 1 baseline + 18 pairs)

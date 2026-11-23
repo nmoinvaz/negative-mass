@@ -1,0 +1,132 @@
+# zerilli_derivation: Zerilli potential from the linearized Einstein equations (part=all)
+PASS PL.0a
+# [   0.2 s] PL.0a
+PASS PL.0b
+# [   0.3 s] PL.0b
+PASS PL.0c
+# [   0.4 s] PL.0c
+PASS PL.0d
+# [   0.8 s] PL.0d
+PASS PL.G.even
+# [  91.9 s] PL.G.even
+PASS PL.G.odd
+# [  93.3 s] PL.G.odd
+PASS PL.X.even
+# [  99.4 s] PL.X.even
+PASS PL.X.odd
+# [ 101.4 s] PL.X.odd
+PASS PL.X.gauge_even
+# [ 191.9 s] PL.X.gauge_even
+PASS PL.O.1
+# odd radial equations (jets h0_n, h1_n):
+#   t-phi: (L*h0_0*r - 4*M*h0_0 + 2*M*h0_2*r**2 - 4*M*h1_0*r*s - 2*M*h1_1*r**2*s - h0_2*r**3 + 2*h1_0*r**2*s + h1_1*r**3*s)/(2*r**3)
+#   r-phi: (-2*L*M*h1_0 + L*h1_0*r + 4*M*h1_0 + 2*h0_0*r**2*s - h0_1*r**3*s + h1_0*r**3*s**2 - 2*h1_0*r)/(2*r**2*(-2*M + r))
+#   x-phi: -(4*M**2*h1_0 - 4*M**2*h1_1*r - 2*M*h1_0*r + 4*M*h1_1*r**2 + h0_0*r**3*s - h1_1*r**3)/(r**2*(-2*M + r))
+PASS PL.O.2
+PASS PL.O.3
+PASS PL.O.4
+# odd: Psi = f h1 / r, Psi_xx = (V_RW + s^2) Psi, V_RW = (-2*M + r)*(L*r - 6*M)/r**4
+# [ 194.6 s] odd done
+PASS A.1
+# [ 200.0 s] A.1
+PASS A.2
+# [ 201.0 s] A.2
+# even radial equations before H0 = H2 (jets F_n = d^n F/dr^n; each is the coefficient of its angular structure, equal to 0):
+#   tt  (P): (-2*H0_0*L*M + H0_0*L*r - 2*H0_1*M**2 + 5*H0_1*M*r - 2*H0_1*r**2 - 4*H0_2*M**2*r + 4*H0_2*M*r**2 - H0_2*r**3 - 6*H1_0*M*r*s + 4*H1_0*r**2*s - 4*H1_1*M*r**2*s + 2*H1_1*r**3*s - H2_0*r**3*s**2 + 2*H2_1*M**2 - H2_1*M*r - 2*K_0*r**3*s**2 - 4*K_1*M**2 + 2*K_1*M*r)/(2*r**3)
+#   tr  (P): (-2*H1_0*L*M + H1_0*L*r - 4*H2_0*M*r*s + 2*H2_0*r**2*s + 6*K_0*M*r*s - 2*K_0*r**2*s + 4*K_1*M*r**2*s - 2*K_1*r**3*s)/(2*r**2*(-2*M + r))
+#   rr  (P): (-6*H0_1*M**2 + 3*H0_1*M*r + 4*H0_2*M**2*r - 4*H0_2*M*r**2 + H0_2*r**3 - 2*H1_0*M*r*s + 4*H1_1*M*r**2*s - 2*H1_1*r**3*s - 2*H2_0*L*M + H2_0*L*r + H2_0*r**3*s**2 + 6*H2_1*M**2 - 7*H2_1*M*r + 2*H2_1*r**2 - 12*K_1*M**2 + 14*K_1*M*r - 4*K_1*r**2 - 8*K_2*M**2*r + 8*K_2*M*r**2 - 2*K_2*r**3)/(2*r*(4*M**2 - 4*M*r + r**2))
+#   tx  (P'): (2*H1_0*M - 2*H1_1*M*r + H1_1*r**2 - H2_0*r**2*s - K_0*r**2*s)/(2*r**2)
+#   rx  (P'): (3*H0_0*M - H0_0*r - 2*H0_1*M*r + H0_1*r**2 - H1_0*r**2*s - H2_0*M + H2_0*r + 2*K_1*M*r - K_1*r**2)/(2*r*(-2*M + r))
+#   xx  (P): (2*H0_0*L*M - H0_0*L*r + 4*H0_1*M**2 - 4*H0_1*M*r + H0_1*r**2 + 4*H1_0*M*r*s - 2*H1_0*r**2*s - 2*H2_0*L*M + H2_0*L*r - 4*H2_0*M + 2*H2_0*r + 4*H2_1*M**2 - 4*H2_1*M*r + H2_1*r**2 - 2*K_0*L*M + K_0*L*r + 4*K_0*M + K_0*r**3*s**2 - 2*K_0*r - 12*K_1*M**2 + 14*K_1*M*r - 4*K_1*r**2 - 4*K_2*M**2*r + 4*K_2*M*r**2 - K_2*r**3)/(2*(-2*M + r))
+#   xx  (xP'): (H0_0 - H2_0)/2
+#   pp  (P): (4*H0_1*M**2 - 4*H0_1*M*r + H0_1*r**2 + 4*H1_0*M*r*s - 2*H1_0*r**2*s - 4*H2_0*M + 2*H2_0*r + 4*H2_1*M**2 - 4*H2_1*M*r + H2_1*r**2 - 2*K_0*L*M + K_0*L*r + 4*K_0*M + K_0*r**3*s**2 - 2*K_0*r - 12*K_1*M**2 + 14*K_1*M*r - 4*K_1*r**2 - 4*K_2*M**2*r + 4*K_2*M*r**2 - K_2*r**3)/(2*(-2*M + r))
+#   pp  (xP'): (-H0_0 + H2_0)/2
+# even radial equations: 7 (tt, tr, rr, tx, rx, angular trace, traceless)
+PASS E.1
+# E.1: traceless equation = (1/2) (H0 - H2), so H0 = H2 =: H (l >= 2 by A.1)
+# [ 201.0 s] E.1
+# [ 201.2 s] E.2 det
+# [ 201.3 s] E.2 solve
+# [ 201.4 s] E.2 Grr built
+# [ 201.5 s] E.2 A on flow
+PASS E.2
+# E.2: first-order system (K', H1', H') = flow in (K, H1, H), det of its coefficient matrix = -s*(-2*M + r)/(4*r)
+# E.2:   K' = (-(-3*M + r)/(r*(-2*M + r))) K_0 + (L/(2*r**2*s)) H1_0 + (1/r) H_0
+# E.2:   H1' = (r*s/(-2*M + r)) K_0 + (-2*M/(r*(-2*M + r))) H1_0 + (r*s/(-2*M + r)) H_0
+# E.2:   H' = (-(-3*M + r)/(r*(-2*M + r))) K_0 + ((-2*L*M + L*r + 2*r**3*s**2)/(2*r**2*s*(-2*M + r))) H1_0 + ((-4*M + r)/(r*(-2*M + r))) H_0
+# E.2: algebraic relation A = aK K + a1 H1 + aH H, aK = -(-2*L*M*r + L*r**2 - 6*M**2 + 6*M*r + 2*r**4*s**2 - 2*r**2)/(2*r**2*(-2*M + r)**2), a1 = (L*M + 2*r**3*s**2)/(2*r**3*s*(-2*M + r)), aH = (L*r + 6*M - 2*r)/(2*r**2*(-2*M + r))
+# [ 201.6 s] E.2
+PASS E.3
+# E.3: dA/dr = (-(-M + 2*r)/(r*(-2*M + r))) A
+# [ 202.3 s] E.3
+# E.4: on the flow, equation tt = ((-2*M + r)**2/(2*r**2)) A
+# E.4: on the flow, equation tr = (0) A
+# E.4: on the flow, equation rr = (1/2) A
+# E.4: on the flow, equation tx = (0) A
+# E.4: on the flow, equation rx = (0) A
+# E.4: on the flow, equation trace = (-r*(-2*M + r)) A
+PASS E.4
+# [ 203.7 s] E.4
+PASS E.3b
+# [ 205.4 s] E.3b
+# E.5a: psi = (2*r**2/(L*r + 6*M - 2*r)) K + (-2*(-2*M + r)/(s*(L*r + 6*M - 2*r))) H1
+PASS E.5a
+PASS E.5b
+PASS E.5c
+PASS E.5d
+# E.5: V = (-2*M + r)*(L**3*r**3 + 6*L**2*M*r**2 - 4*L**2*r**3 + 36*L*M**2*r - 24*L*M*r**2 + 4*L*r**3 + 72*M**3 - 72*M**2*r + 24*M*r**2)/(r**4*(L*r + 6*M - 2*r)**2)
+# [ 206.0 s] E.5
+PASS E.5e
+# [ 206.1 s] E.5e
+PASS E.6a
+# [ 206.6 s] E.6a
+PASS E.6b
+# [ 206.6 s] E.6b
+# divisors met (step : expression):
+#   odd: h0 from x-phi | coefficient of h0 in the x-phi equation | -r*s/(-2*M + r)
+#   odd: ODE of h1 | coefficient of h1_2 after h0 is eliminated | -(-2*M + r)/(2*r)
+#   odd: master variable | det of (Psi, Psi_x) against (h1, h1_r) | (-2*M + r)**3/r**5
+#   E.2: flow | det of the coefficient matrix of (K', H1', H') in (tr, tx, rx) | -s*(-2*M + r)/(4*r)
+#   E.2: H from A | coefficient of H in A | (L*r + 6*M - 2*r)/(2*r**2*(-2*M + r))
+#   E.5: master variable | det of (psi, psi_x) against (K, H1) | 2*(-2*M + r)/(s*(L*r + 6*M - 2*r))
+#   E.2: flow K' | denominator factor (multiplicity 1) | s
+#   E.2: flow K' | denominator factor (multiplicity 2) | r
+#   E.2: flow K' | denominator factor (multiplicity 1) | -2*M + r
+#   E.2: flow H1' | denominator factor (multiplicity 1) | r
+#   E.2: flow H1' | denominator factor (multiplicity 1) | -2*M + r
+#   E.2: flow H' | denominator factor (multiplicity 1) | s
+#   E.2: flow H' | denominator factor (multiplicity 2) | r
+#   E.2: flow H' | denominator factor (multiplicity 1) | -2*M + r
+#   E.2: H from A | denominator factor (multiplicity 1) | s
+#   E.2: H from A | denominator factor (multiplicity 1) | r
+#   E.2: H from A | denominator factor (multiplicity 1) | -2*M + r
+#   E.2: H from A | denominator factor (multiplicity 1) | L*r + 6*M - 2*r
+#   E.5: psi coefficient of K | denominator factor (multiplicity 1) | L*r + 6*M - 2*r
+#   E.5: psi coefficient of H1 | denominator factor (multiplicity 1) | s
+#   E.5: psi coefficient of H1 | denominator factor (multiplicity 1) | L*r + 6*M - 2*r
+#   E.5: V | denominator factor (multiplicity 4) | r
+#   E.5: V | denominator factor (multiplicity 2) | L*r + 6*M - 2*r
+#   E.5: a (psi_xx = a psi) | denominator factor (multiplicity 4) | r
+#   E.5: a (psi_xx = a psi) | denominator factor (multiplicity 2) | L*r + 6*M - 2*r
+#   E.5: definition (9) | denominator (lam + 1) of both terms | L/2
+#   E.5: definition (9) | denominator (lam r + 3M) | (L*r + 6*M - 2*r)/2
+PASS D.1
+#   factor -2*M + r met at 10 step(s)
+#   factor 6*M + r*(L - 2) met at 8 step(s)
+#   factor L met at 1 step(s)
+#   factor r met at 11 step(s)
+#   factor s met at 7 step(s)
+# [ 206.9 s] D.1
+PASS D.2
+# D.2: lam r + 3M = 0 at r = -6*M/(L - 2); (lam r + 3M)^2 V at that r = (L - 2)**2*(L + 1)**2/18 (nonzero: a genuine double pole); at M = -1 the zero is 6/c = r_s of dg_proof
+# D.2: lam > 0 for l >= 2, so the zero -3M/lam is positive iff M < 0 (checked at L = 6: positive at M = -1, negative at M = 1)
+PASS D.3
+# D.3: s is a divisor at: E.2: H from A; E.2: flow; E.2: flow H'; E.2: flow K'; E.5: master variable; E.5: psi coefficient of H1; odd: h0 from x-phi; the derivation needs s != 0 (the static case is not covered)
+PASS D.4
+# D.4: r - 2M (= r f) is a divisor at: E.2: H from A; E.2: flow; E.2: flow H'; E.2: flow H1'; E.2: flow K'; E.5: master variable; odd: ODE of h1; odd: h0 from x-phi; odd: master variable; r - 2M > 0 for r > 0 and M < 0, and vanishes at r = 2M for M > 0
+# D.4: L = l(l+1) is a divisor at: E.5: definition (9) (only in the definition (9), as lam + 1 = L/2); no step divides by L - 2 = (l-1)(l+2)
+# D.4: the restriction l >= 2 enters through A.1 (P and xP' independent, so each angular coefficient is its own equation: E.1 and the seven radial equations), not through a division; for l = 1 (L = 2, lam = 0) the zero of lam r + 3M leaves the domain and the traceless equation is empty
+PASS D.5
+# D.5: det of the first-order system = -s*(-2*M + r)/(4*r); coefficient of H in A = (L*r + 6*M - 2*r)/(2*r**2*(-2*M + r)); det of (psi, psi_x) against (K, H1) = 2*(-2*M + r)/(s*(L*r + 6*M - 2*r))
+# [ 207.0 s] D
+# summary: 32 PASS, 0 FAIL
