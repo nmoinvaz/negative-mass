@@ -238,8 +238,8 @@ def exponents(P2, P1, P0, x, x0):
     """Indicial roots {root: multiplicity} at x0 of P2 y'' + P1 y' + P0 y = 0 (regular singular point)."""
     t = sp.Symbol("t")
     Q2, Q1, Q0 = (sp.expand(P.subs(x, x0 + t)) for P in (P2, P1, P0))
-    p0 = sp.cancel(t * Q1 / Q2).subs(t, 0)
-    q0 = sp.cancel(t**2 * Q0 / Q2).subs(t, 0)
+    p0 = sp.simplify(sp.cancel(t * Q1 / Q2).subs(t, 0))
+    q0 = sp.simplify(sp.cancel(t**2 * Q0 / Q2).subs(t, 0))
     rho = sp.Symbol("rho")
     ind = rho * (rho - 1) + (-p0 if MUT == "plant_exp" else p0) * rho + q0
     return sp.roots(sp.Poly(sp.expand(ind), rho))
