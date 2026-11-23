@@ -8,7 +8,7 @@ Sources: Dotti-Gleiser gr-qc/0604021 eqs. (2)-(4), (6), (9) (typed, see I145-rpi
 Run: python zerilli_static.py [--part=planted|odd|h1|even|rel|all] [--mutate=NAME[,NAME]] [--failfast] [--skip=PL.G,PL.X] > zerilli_static_output.txt
 Mutations (target in I145-rpi5/README.md): dual_inv ds_typo bg_nonvac leg_sign drop_trace route2_drop ang_norm_odd inj_rphi rw_typo fsign_ans cpm_typo
   cmp_blind l1 ang_norm s_leak inj_tr inj_tx inj_h1 ans_rr grr_drop tt_drop_H psi_zero mv_coef fsign_mv mv_lam v_typo res_typo dg3_typo inv_typo
-  dep_typo tr_typo h1t_typo sr_typo div_set d2_zero div_s div_l2 d5_zero
+  dep_typo tr_typo h1t_typo sr_typo h1p_typo div_set d2_zero div_s div_l2 d5_zero
 """
 import os
 import sys
@@ -520,6 +520,11 @@ run.note('S.R2: h1t = %s;  (delta R_tx / s)|_{s=0} = %s' % (sp.factor(ht_form), 
 lam3t = lam * r + (2 if mut('sr_typo') else 3) * M           # mutation sr_typo: lam r + 3M -> lam r + 2M in the typed #143 map
 psi143 = cancel((r ** 2 * K0 - (r - 2 * M) * ht_form) / lam3t)
 run.check('S.R3', cancel(psi143 - psi_e) == 0, 'DG06 (9) on the static flow differs from [r^2 K - (r-2M) h1t]/(lam r + 3M): %s' % sp.factor(cancel(psi143 - psi_e)))
+# S.R4: the O(s) part of DG06 (3)'s H1 = s (h psi + r psi') is h1t; it equals the h1t that the tr equation defines
+RPN = 2 * rF if mut('h1p_typo') else rF                       # mutation h1p_typo: r psi' -> 2 r psi' in the typed H1 of (3)
+h1_dg = [hk * ps_e[j] + RPN * px_e[j] / fF for j in range(2)]
+ht_pair = [toF(diff(ht_form, K0)), toF(diff(ht_form, Hh0))]
+run.check('S.R4', all(h1_dg[j] == ht_pair[j] for j in range(2)), 'h1t from the tr equation differs from the O(s) part h psi + r psi\' of DG06 (3): %s vs %s' % (ht_pair, h1_dg))
 lap('S.R')
 stop_after('rel')
 
