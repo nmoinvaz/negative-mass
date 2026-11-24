@@ -1,0 +1,76 @@
+[PASS] e_from_d: E = 8D/R'^2 equals det_classify.E_mult_poly: True; E/X^2 = s^2 - delta^2 - tau^2 (symbolic v): True; v = 0: E = R^2 X^4 Ehat: True; numerical-derivative D vs E at 10 points, worst relative error 4.19e-131: True
+  (0.3 s)
+[PASS] decomp_static: v = 0: Ehat = sum_(i<=6) f_i g_i with f = (X^2, X^2 m, X^2 Theta, m, Psi, 1), g = (R^2 c^2, 9 R^2 c, R^2, c - 6 s2, 1, -s2^2): True; exact rank of E in x-monomials (9) x rho-monomials (7) = 6: True
+  (0.0 s)
+[PASS] rank_lemma: 5 planted draws, r = 6: sum f_i g_i = 0 with d_F = 4, d_G = 2 (d_F + d_G <= 6): True; with d_G = 3 (sum 7 > 6) the sum is nonzero at a sample point in every draw: True; per draw (identity, d_F, d_G, 7-case nonzero) = [(True, 4, 2, True), (True, 4, 2, True), (True, 4, 2, True), (True, 4, 2, True), (True, 4, 2, True)]
+  (0.1 s)
+[PASS] lemma_x: Moebius step beta = (am+b)(cm+d)/(ad-bc): True; c != 0: t, m rho, rho in span: True, Psi cubic coefficient -2ac/(ad-bc): True, at a = 0 quadratic coefficient -2: True; c = 0: cubic coefficient of rho Theta is 18a/d: True; smallest exact rank of the six functions over 1170 parameter sets = 4 (needs >= 4; at (Fraction(-2, 1), Fraction(-2, 1), Fraction(0, 1), Fraction(-2, 1)))
+  (1.8 s)
+[PASS] lemma_rho: (alpha + gamma y)^2 = p y + q y^2 forces alpha = 0: True; coefficient of 1/rho^2 in s2^2 for exp(kappa rho) is kappa^2: True; numerical ranks of the six g_i (need >= 3): {'exp(rho/2)': 4, 'exp(-rho)': 4, 'exp(2 rho)': 4, 'rho^(1/2)': 6, 'rho': 4, 'rho^2': 5, 'rho^3': 6, '1/rho': 4, 'rho^(5/2)': 6, 'rho^4': 6, 'rho^2+1': 5, 'rho+rho^3': 6, 'cosh(rho)': 5}
+  (0.3 s)
+[PASS] const_m: coefficient of X^2 in Ehat (m = lam^2, beta = 0) is R^2 (c + 4 lam^2)(c + 5 lam^2): True; (c + 4 lam^2)(c + 5 lam^2) > 0 for c = +n/10 (n <= 60), lam = k/4 (k <= 8): True; numerical d_f at lam in {1/2, 1, 3/2} = {'0.5': 2, '1.0': 2, '1.5': 2}: True
+  (0.0 s)
+[PASS] mult_subcases: X1 = X2 = 0: E = X0^6 R1^4 - X0^4 S0^2 (rank 2 = True): True; E = 0 on R = -(eps/X0) ln(C1 + C2 ln rho), eps = +1, -1: [True, True]; planar R1 = S0 = 0: D = 0: True
+  (0.1 s)
+[PASS] add_decomp: E_add = D/h equals det_classify.E_add_poly: True; E_add = sum_(i<=5) f_i g_i: True; exact rank 5 (needs 5)
+  (0.0 s)
+[PASS] add_stratum: elimination of {f_i(a) - k_i} with X0 free: conditions on k [k3, -k4, k4, -k2**2 + k5, k2**2*k3 - k3*k5 - k4**2]; X2^2 in the ideal (so X2 = 0): True; k5 - k2^2 in the ideal: True; k2 (= c^2) unconstrained: True
+  (0.0 s)
+[PASS] add_planted: u = c x - eps ln(J0(z) + 0.3 Y0(z)) + d, c in {3/10, 1/2, 1, 3/2, 2}, eps = +-1, 5 z-points each: largest relative residual of f0.g 9.03e-131 (needs <= 1e-50); d_F = 1; numerical d_G per case [4, 4, 4, 4, 4, 4, 4, 4, 4, 4] (needs <= 4); amplitude c >= 3/10: True
+  (20.1 s)
+[FAIL] add_perturbed: R + delta, delta in {rho^2/10, rho^3/10}: smallest relative residual over 100 points 0.000372 (needs >= 1e-3)
+  (11.5 s)
+[PASS] add_perturbed_exact: E_pert = (R1^2/2 + c^2)^2 - S0^2/4 for u = c x + g + delta, nonzero polynomial in (gamma, rho, c) for eps = +-1 and delta in {rho^2/10, rho^3/10}: True; nonzero at the three exact points (c, eps, rho, gamma) = (1/2, 1, 1, 1/3), (1, -1, 3/2, 2), (2, 1, 1/2, -1) for both delta, values ['-1717/16875', '-132431/360000', '217841/40000', '159239601/10240000', '-107439/40000', '-27853839/10240000']: True
+  (0.2 s)
+[PASS] add_xperturbed: X = c x + x^2/10: exact d_F per case [3, 3, 3, 3, 3, 3, 3, 3, 3, 3] (needs >= 2); numerical d_G [4, 4, 4, 4, 4, 4, 4, 4, 4, 4] (needs 4); d_F + d_G > 5 so Lemma L rejects it: True
+  (13.4 s)
+[PASS] trav_decomp: E/X0^2 = sum_(k=1..4) U^k E_k: True; ten-term separation F.G = E/X0^2: True; exact ranks of E at v = 1/3, 2, 5/7, 3/2, -2: {'1/3': 10, '2': 10, '5/7': 10, '3/2': 10, '-2': 10} (needs 10). Observation, rank at v = 0, 1, -1: {'0': 6, '1': 9, '-1': 9}
+  (0.2 s)
+[PASS] trav_gap: v = 1/3, R = rho^2: numerical d_G of the ten rho-functions = 5 (needs 5): the rank bound d_F + d_G <= 10 alone does not exclude the traveling case
+  (0.1 s)
+[PASS] trav_exp: m = lam^2, beta = 0: F_8 G_8 + F_9 G_9 + F_10 G_10 = X^4 R^4 (c + 4 lam^2)(c + 5 lam^2): True; F_1..F_7 are constants times X^1, X^2, X^3: True; product > 0 on c = +n/10, lam = k/4: True; numerical d_F = [4] (needs 4): True
+  (0.2 s)
+[PASS] trav_dg5: R P, R^2 P, P^2, S^2 in P4 leave P = a1 R + a2 R^2, S = s1 R + s2 R^2: True; the consistency identity has only solutions with q = 0: True (solutions [{'a1': '0', 'a2': 's1', 's2': '0'}]); numerical d_G >= 5 for the 13 families at v = 1/3: True {'exp(rho/2)': 7, 'exp(-rho)': 7, 'exp(2 rho)': 7, 'rho^(1/2)': 10, 'rho': 7, 'rho^2': 5, 'rho^3': 10, '1/rho': 7, 'rho^(5/2)': 10, 'rho^4': 8, 'rho^2+1': 5, 'rho+rho^3': 10, 'cosh(rho)': 8}
+  (0.6 s)
+[PASS] trav_dg4_unit: v = +-1 (or the mutated values (1, -1)): F_1 = 0, E/X0^2 = sum_(i>=2) F_i G_i, exact rank of E = {'1': 9, '-1': 9} (needs 9): True; members in span(R^2, R^3, R^4) leave P = a R^2, S = s R^2 (True) and the identity forces a = 0 (True; observation: with + P q_R the solutions are [{a2: 0, s2: 0}], also a = 0 only); numerical rank of G_2..G_10 >= 4 for 14 R at v = 1, -1 (min 5): True
+  (1.1 s)
+[PASS] trav_exponents: leading monomials of F_1, F_3, F_5, F_6, F_8, F_10 for m = c X^b: True; 2b^2 - 3b - 26 has no integer root: True; allowed top exponents b in [-15, 15]: v^2 != 1 [0, 1] (needs [0, 1]), v^2 = 1 [-2, -1, 0, 1] (needs [-2, -1, 0, 1]): True; b >= 2 and b <= -3 are excluded by the inequalities: True
+  (0.1 s)
+[PASS] trav_y0: m = X/(p0 + p1 X): 60 nonzero 6x6 minors of the 10x9 coefficient matrix (1637 draws), Groebner basis with the saturation t p0 p1 v - 1 is [1]: rank >= 6 for p0 p1 v != 0
+  (24.6 s)
+[PASS] trav_laurent: m = km2/X^2 + km1/X + k0 + k1 X: Gamma_6 = 20 R0^4 k1^2: True; Gamma_5 vanishes at k1 = 0: True; Gamma_4 (k1 = 0) = R0^4 (c1^2 + 4 k0)(c1^2 + 5 k0): True; Groebner bases for c1^2 = -4 k0 and c1^2 = -5 k0 (Gamma_-2 .. Gamma_3, saturation t kappa a v - 1): [True, True]
+  (0.8 s)
+[PASS] trav_pole: Theta (X - X1)^(2k+2) at X1 for k = 1..6 equals -k^2 X1^2 mu^2 (pole order 2k + 2 > k): True
+  (0.1 s)
+
+verdicts:
+  static v = 0: no solution with X X' R R' != 0 (d_F >= 4 unless m is constant, d_G >= 3, 4 + 3 > 6; m constant: c >= 0 against a positive product)
+  traveling v != 0: no solution with X X' R R' != 0 (4 <= d_F <= 5, m rational, then a Laurent polynomial with exponents in [-2, 1], whose coefficients of X^k cannot all vanish)
+  planted additive truth through the same code: found, perturbations rejected (exact check; the thresholded check add_perturbed FAILED at one point)
+
+checks: 21 passed, 1 failed ['add_perturbed']. 76 s
+
+== Controls: each mutation must make exactly its target check fail ==
+[FIRED] --mutate=m-d-sign (Y := u_x u_rho - u u_x_rho/2 in D): exit 1, failed ['e_from_d', 'add_perturbed']
+[FIRED] --mutate=m-theta (Theta with 19 m^2 in place of 20 m^2 in f_3): exit 1, failed ['decomp_static', 'add_perturbed']
+[FIRED] --mutate=m-rank-off (the planted pass uses N' = N with one column not orthogonal to col(B)): exit 1, failed ['rank_lemma', 'add_perturbed']
+[FIRED] --mutate=m-fdrop (f_3 and f_5 (rho Theta, Psi) set to 0 in the rank test): exit 1, failed ['lemma_x', 'add_perturbed']
+[FIRED] --mutate=m-gdrop (g_4 := c and g_6 := 1): exit 1, failed ['lemma_rho', 'add_perturbed']
+[FIRED] --mutate=m-const-sign (the exact product test over c = -n/10 in place of c = +n/10): exit 1, failed ['const_m', 'add_perturbed']
+[FIRED] --mutate=m-sub-drop (E_sub built with S0 in place of S0^2): exit 1, failed ['mult_subcases', 'add_perturbed']
+[FIRED] --mutate=m-add-drop (u = X0 in the additive jets, i.e. (X0 + R0)^2 replaced by X0^2): exit 1, failed ['add_decomp', 'add_perturbed']
+[FIRED] --mutate=m-stratum (f_4 and f_5 dropped from the elimination): exit 1, failed ['add_stratum', 'add_perturbed']
+[FIRED] --mutate=m-add-freq (J0(c rho), Y0(c rho) in place of J0(sqrt2 c rho), Y0(sqrt2 c rho)): exit 1, failed ['add_planted', 'add_perturbed']
+[FIRED] --mutate=m-pexact-zero (delta = 0): exit 1, failed ['add_perturbed', 'add_perturbed_exact']
+[FIRED] --mutate=m-xperturb-zero (X = c x (no x^2/10)): exit 1, failed ['add_perturbed', 'add_xperturbed']
+[FIRED] --mutate=m-trav-rank (rank expected 9 at v = 1/3): exit 1, failed ['add_perturbed', 'trav_decomp']
+[FIRED] --mutate=m-gap-d (R = rho^2 replaced by R = exp(rho)): exit 1, failed ['add_perturbed', 'trav_gap']
+[FIRED] --mutate=m-exp-sign (the exact product test over c = -n/10 in place of c = +n/10): exit 1, failed ['add_perturbed', 'trav_exp']
+[FIRED] --mutate=m-dg-sign (the consistency identity with + P q_R in place of - P q_R): exit 1, failed ['add_perturbed', 'trav_dg5']
+[FIRED] --mutate=m-unit-v (part (i) at v = 1/3 and v = -1 instead of v = 1 and v = -1): exit 1, failed ['add_perturbed', 'trav_dg4_unit']
+[FIRED] --mutate=m-exp-allow (the exponent 4 removed from the present exponents): exit 1, failed ['add_perturbed', 'trav_exponents']
+[FIRED] --mutate=m-y0-p1 (the saturation t p0 v - 1 (p1 = 0 allowed)): exit 1, failed ['add_perturbed', 'trav_y0']
+[FIRED] --mutate=m-laurent-coef (Gamma_6 expected 10 R0^4 k1^2): exit 1, failed ['add_perturbed', 'trav_laurent']
+[FIRED] --mutate=m-pole-theta (Theta without -4 beta^2): exit 1, failed ['add_perturbed', 'trav_pole']
+[SILENT (declared in README A7, not counted)] --mutate=m-unit-sign (the unit identity with + P q_R): exit 1, failed ['add_perturbed']
+controls: all fired on their target only
