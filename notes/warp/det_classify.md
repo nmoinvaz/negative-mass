@@ -157,7 +157,8 @@ shift, also on the additive equation that has solutions. The scratch evidence is
 
 ## 6. Conical shifts b = F(x/ρ)
 
-D = N(F, F′, F″; η)/(8ρ⁶) with η = x/ρ (`conical`, exact). N is cubic in F″ and printed in the script. The dilation (t, x, ρ) → s(t, x, ρ) is the only symmetry of D = 0 besides translations and Galilean boosts, so F(x/ρ) is the natural similarity form of a static shift.
+D = N(F, F′, F″; η)/(8ρ⁶) with η = x/ρ (`conical`, exact). N is cubic in F″ and printed in the script. The dilation (t, x, ρ) → s(t, x, ρ) is the only symmetry of D = 0 besides translations and Galilean boosts, so F(x/ρ) is the natural similarity form of a static shift. *Added by the coordinator:* no symmetry computation backs
+"the only symmetry"; read it as a conjecture.
 At fixed ρ the shift tends to limits as x → ±∞ iff F has limits as η → ±∞. The shift is singular at ρ = 0, so these would be open-set solutions only.
 
 **A failure on record.** In the README I wrote the degree-3 part of N in (F′, F″) as 2F w²(F²F″ − ηw), w = F′ + ηF″, and its lowest part with F, F′, F″ all small as −w²((η² + 1)(η² + 2)F′² + 2ηFw). Both are wrong. The formulas came from the script's printed N first, and my
@@ -174,7 +175,9 @@ With F, F′, F″ all small: Ŷ = −(ηF′² + F w/2) of degree 2, ĥ of degr
 **C9b (ii): limits at η → ∞, tested directly.** Substituting F = F_∞ + c η^{−k} (k ∈ {½, 1, 3/2, 2, 5/2, 3, 4, 5, 6}) or F_∞ + c e^{−κη} (κ ∈ {½, 1, 2}) with F_∞ ∈ {0, ⅓, 1, −1, 2} into N and reading the lowest order, `conical_limit` finds that
 no exponential is allowed and that no power is allowed except **k = 2 with c = −2F_∞ for F_∞ = ⅓, 1, −1, 2** (and none for F_∞ = 0). So leading order does **not** exclude F = F_∞(1 − 2/η²). The criterion "no case is open" fails, as README's C9b (ii) words it, and the failure gates the exit code.
 Observation, not a criterion (printed by `conical_limit`): in F = F_∞ + a₂/η² + a₃/η³ + … the order η^{−8} of N gives a₂ = 0 or a₂ = −2F_∞, the next order gives a₃ = 0, and the third order after the leading one gives
-F_∞⁴(F_∞² + 7) = 0 with no unknown left, so for F_∞ ≠ 0 there is no pure power series on the a₂ = −2F_∞ branch. Logarithmic terms are not tested.
+F_∞⁴(F_∞² + 7) = 0 with no unknown left, so for F_∞ ≠ 0 there is no pure power series on the a₂ = −2F_∞ branch. Logarithmic terms are not tested. *Added by the
+coordinator:* `I80-mac/ind80.py` (K7) finds a₃ = 0 at η⁻⁹ and the condition −512F_∞⁴(F_∞² + 7) = 0 at η⁻¹⁰, which is the
+second order after the leading η⁻⁸, not the third.
 The planted detections work (`conical_planted`): the same scan applied to F″ + 2F′/η finds the limit F_∞ + c/η at k = 1 for every F_∞ and not at k = 2, and applied to F″ + F′ it finds F_∞ + c e^{−η} at κ = 1 and not at κ = 2.
 
 **Verdict for the conical reduction: "no limit at η → ±∞" is not established; localization in x for conical shifts is not decided.** Evidence: leading order allows F = F_∞(1 − 2/η²) at k = 2 (**checked symbolically**); a pure power series in 1/η with a₂ = −2F_∞ fails at third order (an observation, **checked symbolically**);
@@ -267,7 +270,59 @@ traveling planar shifts that cross |u| = 1 (§2); closure on the conical family.
 **For #158 (one-sign pairs), by hand, not in the script.** For a planar shift R₃ − λη₃ = diag(P + λ, −P − λ, −λ), which has rank 1 at λ = −P = K (the φ direction supplies the second square), so planar shifts pass the algebraic stage of
 [`same_sign_scalars.md`](same_sign_scalars.md) with λ = K and gradients along y and z. M = R − λg = K (dy² + dz²) is invariant along the (t, x) kernel only if K is constant, which is then dS₂ × ℝ² or AdS₂ × ℝ² (#78's P1, P2) in a
 Painlevé–Gullstrand chart; by the formulas of §2 such a shift has Θ′ = −2K ≠ 0, so the (1, 1) pair of this note fails closure on it, consistently. Whether #158 needs more than this is for that issue.
+*Added by the coordinator:* the sign is M = R − λg = −K(dy² + dz²) (`I80-mac/ind80.py`, K9), as #78's Lemma S needs for
+(+,+) at λ = K < 0.
 
 Suggested replacement for the bullet "Shifts b(t, x, ρ) other than the bubble and b(ρ)": "Shifts b(t, x, ρ) other than the bubble and b(ρ): [`det_classify.md`](det_classify.md) (#80). D = 0 on an open set for every planar shift b(t, x) (*proved*), which can be localized in x but is constant in ρ.
 Traveling planar shifts with |u| ≠ 1 everywhere fail closure unless flat (*proved*). Within the additive-separable reduction every shift that depends on ρ and solves D = 0 is u = c x + d + g(ρ) with g from a Bessel equation, which is not localized in x and fails closure at the jets tested (*proved*, *checked symbolically*).
 Multiplicative separable and conical shifts, and the general static PDE, are not classified."
+
+## Coordinator's review
+
+Raw `I80-mac` (negative-mass-raw). Mac, nice 10, at most 2 processes.
+
+| step | result |
+|---|---|
+| scope | the three files the issue names, and raw `I80-rpi5` |
+| rerun `det_classify.py` | exit 1 in 6 min 22 s, as ruled: `bessel_pert` and `conical_limit` fail, 13 of 15 checks pass, 19 of 19 controls fire on their targets only. The output equals rpi5's apart from timings |
+| hand proofs | Theorem T (planar, traveling) and Theorem A (additive) were read and their steps checked; no gap found |
+| re-solve | the series on the branch a₂ = −2F_∞ (§6), order by order with the coordinator's own code (K7) |
+| independent check `ind80.py` | run 1 exits 0 in 3 s, and all 10 mutations fire on target |
+
+`ind80.py` imports nothing from the repository. It builds D from #65's formula, which `I79-mac/ind79.py` checked against
+the coordinator's own Ricci routine, and it uses that routine for the planar metric. It shares with this note the
+reductions, the printed formulas and the claims it tests.
+
+| id | what | run 1 |
+|---|---|---|
+| K0 | planted: Painlevé–Gullstrand Ricci-flat | pass |
+| K1 | P = a_x, Y = ½(b_x b_ρ − a_ρ); planar shifts have D ≡ 0 | pass |
+| K2 | traveling = static with u = B + v; Galilean covariance | pass |
+| K3 | planar R = (uu′)′g₂; the null coordinates; R_pq = −Φ/2 | pass |
+| K4 | the factorization of D for u = cx + g(ρ), the Bessel reduction, \|D\| ≤ 4.4e-60 at 8 own points | pass |
+| K5 | D = hE and E = Σ f_i g_i for additive shifts | pass |
+| K6 | the conical entries, the corrected parts of degree 3 and 4, and the k = 2 balance c = −2F_∞ | pass |
+| K7 | the series condition F_∞⁴(F_∞² + 7) = 0, at η⁻¹⁰ | pass |
+| K8 | the far-field ε³ coefficient | pass |
+| K9 | R − Kg = −K(dy² + dz²) for a planar static shift | pass |
+
+So the reductions, the Bessel family, the additive identity, the conical parts and the far field are confirmed by code
+that shares nothing with `det_classify.py`.
+
+**Discrepancies.**
+- Two criteria failed on the real data and stay failed: `bessel_pert` (C6 (b): perturbed \|D\| = 9.06e-6, under its
+  1e-3 threshold) and `conical_limit` (C9b (ii)). The script exits 1, and the conical verdict is "not decided".
+- C9 (b), (c), the hand formulas for the conical parts, failed first and were replaced by C9b after the failure.
+- The control `conical-limit` was dropped because its target fails at baseline. The series search `mult_series` was
+  withdrawn before any run of record.
+- In §6 the series condition is at the second order after the leading one, not the third (coordinator sentence there).
+- In §12 the remark for #158 has the wrong sign of M (coordinator sentence there).
+- In §6 "the only symmetry" has no symmetry computation behind it (coordinator sentence there).
+- Many prose lines here are much longer than AGENTS.md's 120 characters.
+
+**Recommended tasks.**
+- 1 is #159.
+- 2 is #160.
+- 3 is #161.
+- 4 is #162.
+- 5, the Lean statements of §11, is row 24 of #135.

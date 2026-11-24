@@ -246,7 +246,12 @@ and a profile with f(r_s) C² on ℝ³. The bubble moves at a constant v ≠ 0, 
   profiles and random jets, not decided for an arbitrary C⁴ profile. *Added by the coordinator:* at λ = 0 the failure
   is *checked symbolically* at the bump and random-jet points and is *numerical evidence* at the tanh points, whose
   jets were rounded to 55 digits; at λ ≠ 0 it is *numerical evidence*. Four or more scalars are not covered.
-- Shifts b(t, x, ρ) other than the bubble and b(ρ). The lemma applies to them, but D may vanish on open sets.
+- Shifts b(t, x, ρ) other than the bubble and b(ρ): [`det_classify.md`](det_classify.md) (#80). D = 0 on an open set
+  for every planar shift b(t, x) (*proved*), which can be localized in x but is constant in ρ. Traveling planar shifts
+  with |u| ≠ 1 everywhere fail closure unless flat (*proved*). Within the additive-separable reduction every shift that
+  depends on ρ and solves D = 0 is u = c x + d + g(ρ) with g from a Bessel equation, which is not localized in x and
+  fails closure at the jets tested (*proved*, *checked symbolically*). Multiplicative separable and conical shifts, and
+  the general static PDE, are not classified (#159 to #162).
 - Non-minimal coupling, kinetic terms that are not quadratic, and scalars with other matter.
 
 ## Prior work
