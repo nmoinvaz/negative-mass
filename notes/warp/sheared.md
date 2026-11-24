@@ -139,6 +139,10 @@ Status: **numerical evidence**, since the minors are zero to 60 digits and not r
 says nothing about closure, potential or any neighborhood: the point lies on a line, which has empty interior. The
 formulas come from the reduction below, and the check does not use them to decide, only to choose the point.
 
+By hand, not checked by code: c3 to c5 cannot hold along a segment of the z axis for any profile. With c3, the sum
+c3 + c4 = −(r0² + r1²)/λ and (I2) reduce to 1 + p = 1/(32p) at every z, so p = v²(1 − f)² is pinned to its root. Then f is
+constant on the segment, f′ = 0, and c3 needs f′ ≠ 0.
+
 ## The reduction (by hand, not reviewed, for #82)
 
 At a point with R(e_3, e_3) = R(e_3, e_2) = 0, which holds for every b, let M = R − λη = s u uᵀ in the frame
