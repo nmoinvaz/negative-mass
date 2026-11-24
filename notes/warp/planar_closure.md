@@ -218,7 +218,8 @@ the onset of the lump is made here.
 Run of record: `run_final.run1` of script commit 20d1fa4, in the raw folder `I161-rpi5` of negative-mass-raw (stdout
 copied to `planar_closure_output.txt`). Checks only: `python3 notes/warp/planar_closure.py --no-controls` (91 s on a
 Raspberry Pi 5 at nice 10); one control: `--mutate=NAME`; everything: no argument (checks, then 19 controls, 31 min on
-the unit; one process, under 100 MB). Exit 1: `crit_pg_iv` and `E_hol` fail as worded (§7), 12 of 14 checks pass.
+the unit; one process; peak resident 95 MB for the checks, measured by `/usr/bin/time -v`, raw
+`run_nocontrols.run1.time`). Exit 1: `crit_pg_iv` and `E_hol` fail as worded (§7), 12 of 14 checks pass.
 
 | check | what it tests | result | s | controls |
 |---|---|---|---|---|
@@ -371,3 +372,4 @@ with equal limits it is *not decided*."
 
 Nothing in #158's Theorem P changes: it concerns constant K, which closure of the one-sign pair allows, and here K is
 not constant.
+
