@@ -99,6 +99,14 @@ a shift that crosses |u| = 1 (a superluminal bubble crosses it twice, at its hor
 For those, closure-passing local solutions exist (the family above), and **whether one is x-localized is not decided**. As a planted
 failure through the same code, the 1+1 bubble u = ½(1 − 1/(1 + ξ²)²) has Θ′ ≠ 0 at 5 exact points (`planar_closure` (iii)); a jet with Θ′(0) = 0 passes.
 
+**Update from #161** ([`planar_closure.md`](planar_closure.md)): Theorem T′ (*proved*) extends Theorem T. A
+traveling planar shift with limits |u_±| ≠ 1 and K bounded fails closure unless flat, whether or not it crosses
+|u| = 1, so a superluminal planar bubble of constant speed is excluded. Non-traveling planar shifts: the
+closure-passing metrics −2 exp(2H(p)J(q)) dp dq with H′, J′ ≥ 0 of bounded support have a global PG chart with b = 0
+for t ≤ 0, b constant in x outside a compact set at every t, and unequal limits b_− = 0, b_+ → −2ΔHΔJ (Theorem E,
+*proved*; the example is *numerical evidence*). With equal limits at every t the question is *not decided*; it is
+impossible for K ≥ 0, and at linear order for compactly supported data.
+
 ## 3. The family u = c x + g(ρ), which contains #65's b(ρ)
 
 For u = c x + g(ρ): D = g′²(2c² + g′² − S)(2c² + g′² + S)/8 with S = g″ + g′/ρ (`bessel` (a), **checked symbolically**, exact), so where g′ ≠ 0, D = 0 iff
@@ -281,8 +289,7 @@ Statements only; `ℝ` throughout; D as in §Setup.
 
 ## 12. Not covered, and what `two_scalars.md`'s "Not covered" bullet should say
 
-Not classified here: the general static or traveling PDE D = 0; time-dependent shifts beyond planar b(t, x) and the traveling reduction; multiplicative separable shifts (§5); the conical reduction's behavior at η → ±∞ (§6); non-traveling planar shifts with closure (§2);
-traveling planar shifts that cross |u| = 1 (§2); closure on the conical family. Two scalars of one sign, three scalars and non-minimal coupling are as in [`two_scalars.md`](two_scalars.md).
+Not classified here: the general static or traveling PDE D = 0; time-dependent shifts beyond planar b(t, x) and the traveling reduction; multiplicative separable shifts (§5); the conical reduction's behavior at η → ±∞ (§6); planar shifts with closure and equal limits at every t, with K of both signs (§2, #161); closure on the conical family. Two scalars of one sign, three scalars and non-minimal coupling are as in [`two_scalars.md`](two_scalars.md).
 
 **For #158 (one-sign pairs), by hand, not in the script.** For a planar shift R₃ − λη₃ = diag(P + λ, −P − λ, −λ), which has rank 1 at λ = −P = K (the φ direction supplies the second square), so planar shifts pass the algebraic stage of
 [`same_sign_scalars.md`](same_sign_scalars.md) with λ = K and gradients along y and z. M = R − λg = K (dy² + dz²) is invariant along the (t, x) kernel only if K is constant, which is then dS₂ × ℝ² or AdS₂ × ℝ² (#78's P1, P2) in a

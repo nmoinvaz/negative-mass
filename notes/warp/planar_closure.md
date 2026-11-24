@@ -375,3 +375,32 @@ Nothing in #158's Theorem P changes: it concerns constant K, which closure of th
 not constant.
 
 
+
+## Coordinator's review
+
+Merged as dccb4a0. Raw negative-mass-raw `I161-mac` at 773f663 (criteria at 29e51f2, before the first run).
+
+| step | result |
+|---|---|
+| scope | the three files the brief names, and raw `I161-rpi5` |
+| rerun on the Mac | exit 1 as ruled: `crit_pg_iv` and `E_hol` fail as worded, 12 of 14 checks pass, `E-ext` silent, `E-ext5` fires; output equals rpi5's apart from timings and the `E-ext5` line |
+| hand proofs | Theorem T′, Theorem E (geodesic completeness, the Jacobi field, properness and covering, the exterior, the bounds), Proposition L and the Paley–Wiener step read and rederived; no gap found |
+| re-solve | Theorem E's example, L′(10) = 2H₁J₁ = 4.5, by the coordinator's own geodesic and Jacobi integration |
+| independent check `ind161.py` | run 1 exits 1 (Q4 fails on one clause, below); 6 of 6 mutations fire on target |
+
+ind161 shares no code with this note's script, `two_scalars.py` or `phantom_source.py`.
+
+| id | what | result |
+|---|---|---|
+| Q0–Q2 | own Ricci of −2e^{2σ}dp dq and of the PG metric: K = 2σ_pq e^{−2σ}, K = −a_x; the closure criterion identity; C[u] = Θ′ | pass |
+| Q3 | u_s = 3/(1 + ξ²): horizons ±√2 with α = ∓2√2/3; on each component s′ one-signed, s divergent at both ends, Φ → 0; γ = −(α + u₁)/u₁ | pass |
+| Q4 | own integration of Theorem E's example: L′(10) = 4.4999999998 (within 1e-9), A ≥ 1, A_τ ≥ 0 | **fails** on the normalization clause: 1.6e-8 against the coordinator's 1e-10, which is RK4 truncation at the fixed steps (error ∝ dt⁴, diagnostic in the raw folder); the L′ and sign clauses pass |
+| Q5 | the linearization of C; ∫K₁ dx = (F ∗ G)(2t) at three exact t; F ∗ G ≢ 0 | pass |
+
+**Discrepancies and process.**
+- `crit_pg_iv` and `E_hol` failed as worded and stay failed, by the coordinator's rulings during the run.
+  `crit_pg_ivb` and `E_hol_b` were added under rules fixed before their runs, and `E_hol_b` kept the README's 1e-9
+  slack. `E-ext` was silent because its effect was guessed; `E-ext5` replaced it after its effect was computed.
+- The coordinator's own Q4 failed in the same way as `E_hol`: a tolerance tighter than the integration step allows. It
+  stays failed, with its diagnostic.
+- Not computed: the residual stage G − 8πT = 0 with the explicit scalars of Theorem E (§3, by hand).

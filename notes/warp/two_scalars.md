@@ -248,7 +248,9 @@ and a profile with f(r_s) C² on ℝ³. The bubble moves at a constant v ≠ 0, 
   jets were rounded to 55 digits; at λ ≠ 0 it is *numerical evidence*. Four or more scalars are not covered.
 - Shifts b(t, x, ρ) other than the bubble and b(ρ): [`det_classify.md`](det_classify.md) (#80). D = 0 on an open set
   for every planar shift b(t, x) (*proved*), which can be localized in x but is constant in ρ. Traveling planar shifts
-  with |u| ≠ 1 everywhere fail closure unless flat (*proved*). Within the additive-separable reduction every shift that
+  fail closure unless flat, whether or not they cross |u| = 1 (*proved*, [`planar_closure.md`](planar_closure.md),
+  #161). A non-traveling planar shift from −2 exp(2H(p)J(q)) dp dq with H′, J′ ≥ 0 passes closure and is localized in
+  x with unequal limits (*proved*); with equal limits it is *not decided*. Within the additive-separable reduction every shift that
   depends on ρ and solves D = 0 is u = c x + d + g(ρ) with g from a Bessel equation, which is not localized in x and
   fails closure at the jets tested (*proved*, *checked symbolically*). Conical shifts b = F(x/ρ): the ODE N = 0 has
   limits F_∞ ≠ 0 at x/ρ → ±∞, a two-parameter family with a logarithm ([`conical_limit.md`](conical_limit.md), #159),
