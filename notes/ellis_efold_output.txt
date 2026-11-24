@@ -1,0 +1,76 @@
+ellis_efold.py   python 3.14.10 numpy 2.5.4 sympy 1.14.0 mpmath 1.3.0 on aarch64
+mutation: None
+PASS  U1: atan g + atan(1/g) = pi/2 True; identities (R_min, r_throat, lapse, mass, g_tt, g_rr, isotropic map, T) all 0: True
+PASS  U1: printed numbers: R_star(2,1) = 3.88955 (3.8895), alpha_th = 0.57489 (0.575), 5.13 alpha_th/R_star = 0.75823 (0.7584)
+PASS  U2: code T(beta, g) against [SN26]'s tau alpha_th/R_star, worst rel 3.40e-16
+PASS  S1: R_mn - kappa dPhi_m dPhi_n = 0 for tt, tx, xx, thth, phph, xth with kappa Phi_1^2 = -2(1+g^2)
+      L1 tt: max residual 1.29e-26
+      L1 tx: max residual 1.58e-30
+      L1 xx: max residual 1.77e-28
+      L1 thth: max residual 5.05e-29
+      L1 scalar: max residual 4.67e-31
+PASS  L1: the five linearized equations (tt, tx, xx, thth, scalar) hold for the reconstructed (dc, da, dd) of the ODE of method C, worst residual 1.29e-26
+PASS  W1: gamma_1 = 0.0: printed Eq. (32) against -V + 2(dPsi0/Psi0)^2, worst rel 6.26e-30
+PASS  W1: gamma_1 = 0.5: printed Eq. (32) against -V + 2(dPsi0/Psi0)^2, worst rel 9.06e-30
+PASS  W1: gamma_1 = 2.0: printed Eq. (32) against -V + 2(dPsi0/Psi0)^2, worst rel 6.44e-30
+PASS  W1: static V (p. 5) against Eq. (24) with the background, worst rel 9.38e-30
+PASS  W1: gamma_1 = 0: W = -3/(1+x^2)^2, worst rel 4.32e-30
+PASS  W1: W(gamma_1) closed form of p. 7, worst rel 1.25e-31
+PASS  W1: x^2 W -> 2 e^(+-2 pi g) at |x| = 1e6, worst rel 1.93e-05
+PASS  P-A: gamma_1 = 0.0, ell = 0.9: A beta = 0.900000000000 (exact 0.9), rel 3.6e-15, 1 bound states (exact 1)
+PASS  P-B: gamma_1 = 0.0, ell = 0.9: B beta = 0.900000000000, rel 1.1e-13, 1 negative eigenvalues (exact 1)
+PASS  P-A: gamma_1 = 0.0, ell = 1.6: A beta = 1.600000000000 (exact 1.6), rel 5.6e-16, 2 bound states (exact 2)
+PASS  P-B: gamma_1 = 0.0, ell = 1.6: B beta = 1.600000000003, rel 1.7e-12, 2 negative eigenvalues (exact 2)
+PASS  P-A: gamma_1 = 0.5, ell = 0.9: A beta = 0.899999999997 (exact 0.9), rel 3.6e-12, 1 bound states (exact 1)
+PASS  P-B: gamma_1 = 0.5, ell = 0.9: B beta = 0.899999999998, rel 1.9e-12, 1 negative eigenvalues (exact 1)
+PASS  P-A: gamma_1 = 0.5, ell = 1.6: A beta = 1.599999999995 (exact 1.6), rel 2.9e-12, 2 bound states (exact 2)
+PASS  P-B: gamma_1 = 0.5, ell = 1.6: B beta = 1.599999999999, rel 3.2e-13, 2 negative eigenvalues (exact 2)
+PASS  P-A: gamma_1 = 1.0, ell = 0.9: A beta = 0.899999999999 (exact 0.9), rel 1.0e-12, 1 bound states (exact 1)
+PASS  P-B: gamma_1 = 1.0, ell = 0.9: B beta = 0.899999999997, rel 3.0e-12, 1 negative eigenvalues (exact 1)
+PASS  P-A: gamma_1 = 1.0, ell = 1.6: A beta = 1.599999999990 (exact 1.6), rel 6.1e-12, 2 bound states (exact 2)
+PASS  P-B: gamma_1 = 1.0, ell = 1.6: B beta = 1.599999999995, rel 3.3e-12, 2 negative eigenvalues (exact 2)
+PASS  P-C: gamma_1 = 0.0: manufactured solution carried across the throat on both semicircles, worst rel error 2.40e-14
+PASS  P-C: gamma_1 = 0.5: manufactured solution carried across the throat on both semicircles, worst rel error 3.68e-13
+PASS  P-C: gamma_1 = 1.0: manufactured solution carried across the throat on both semicircles, worst rel error 1.04e-12
+      gamma_1 = 0.0: beta_A = 1.181969726488, beta_B = 1.181969726491, T_A = 0.846045358, T_B = 0.846045358
+PASS  G1: gamma_1 = 0.0: A against B, rel 2.71e-12
+      gamma_1 = 0.5: beta_A = 1.875127511869, beta_B = 1.875127511870, T_A = 0.758357150, T_B = 0.758357150
+PASS  G1: gamma_1 = 0.5: A against B, rel 5.75e-13
+      gamma_1 = 1.0: beta_A = 5.041327581056, beta_B = 5.041327581051, T_A = 0.674727266, T_B = 0.674727266
+PASS  G1: gamma_1 = 1.0: A against B, rel 1.03e-12
+PASS  G0: gamma_1 = 0, method A: T = 0.846045 (0.846), beta^2 = 1.39705243 (1.397; repo 1.39705243, rel 3.1e-09)
+PASS  G0: gamma_1 = 0, method B: T = 0.846045 (0.846), beta^2 = 1.39705243 (1.397; repo 1.39705243, rel 3.1e-09)
+PASS  G0: gamma_1 = 0: A with the repo's D = 4 potential -3/r^4 (r^2 = 1 + l^2): beta^2 = 1.3970524343, rel to A with W 0.0e+00
+PASS  G2: gamma_1 = 0.0: C beta = 1.181969726488 (upper) 1.181969726488 (lower), roots in [0.2, 1.74]: [1.18197]; rel to A 1.52e-13; max |Im det| 2.7e-13
+PASS  G2: gamma_1 = 0.5: C beta = 1.875127511869 (upper) 1.875127511869 (lower), roots in [0.2, 2.67]: [1.875128]; rel to A 1.04e-13; max |Im det| 1.7e-13
+PASS  G2: gamma_1 = 1.0: C beta = 5.041327581056 (upper) 5.041327581056 (lower), roots in [0.2, 7.14]: [5.041328]; rel to A 4.81e-14; max |Im det| 6.9e-13
+      gamma_1 = 1/2 (m/a): beta = 1.8751275119; T = 0.75835715; tau_[SN26] (evolution time, units of m) = 5.13083 (their 5.13); alpha_th = 0.574891; R_star = 3.88955; tau alpha_th/R_star = 0.75835715
+PASS  G3: T(1/2) = 0.758357 against [SN26] linear 0.7584: -0.006 %
+PASS  G4: T(1/2) = 0.758357 against [GGS09a] Table I 0.758: +0.000357
+PASS  G6: [SN26] measured tau 5.12 -> T = 0.75676 (-0.211 %, they print 0.2 %), 5.23 -> T = 0.77302 (+1.933 %, they print 1.9 %)
+      Table I: gamma_1 = 0.0  T = 0.846045  printed 0.846  diff +0.000045
+      Table I: gamma_1 = 0.1  T = 0.840635  printed 0.841  diff -0.000365
+      Table I: gamma_1 = 0.2  T = 0.825817  printed 0.826  diff -0.000183
+      Table I: gamma_1 = 0.3  T = 0.804938  printed 0.805  diff -0.000062
+      Table I: gamma_1 = 0.4  T = 0.781564  printed 0.782  diff -0.000436
+      Table I: gamma_1 = 0.5  T = 0.758357  printed 0.758  diff +0.000357
+      Table I: gamma_1 = 0.6  T = 0.736856  printed 0.737  diff -0.000144
+      Table I: gamma_1 = 0.7  T = 0.717729  printed 0.718  diff -0.000271
+      Table I: gamma_1 = 0.8  T = 0.701113  printed 0.701  diff +0.000113
+      Table I: gamma_1 = 0.9  T = 0.686866  printed 0.687  diff -0.000134
+      Table I: gamma_1 = 1.0  T = 0.674727  printed 0.675  diff -0.000273
+      Table I: gamma_1 = 1.2  T = 0.655627  printed 0.656  diff -0.000373
+      Table I: gamma_1 = 1.4  T = 0.641734  printed 0.642  diff -0.000266
+      Table I: gamma_1 = 1.6  T = 0.631481  printed 0.631  diff +0.000481
+      Table I: gamma_1 = 1.8  T = 0.623781  printed 0.624  diff -0.000219
+      Table I: gamma_1 = 2.0  T = 0.617888  printed 0.618  diff -0.000112
+PASS  G5: 16 values of Table I, worst |T - printed| = 0.000481
+PASS  G7: gamma_1 = 0.0: A finds 1 root(s) in the scan, B has 1 negative eigenvalue(s) (lowest -1.397052; the next is >= 0)
+PASS  G7: gamma_1 = 0.5: A finds 1 root(s) in the scan, B has 1 negative eigenvalue(s) (lowest -3.516103; the next is >= 0)
+PASS  G7: gamma_1 = 1.0: A finds 1 root(s) in the scan, B has 1 negative eigenvalue(s) (lowest -25.414984; the next is >= 0)
+PASS  G7: gamma_1 = 2.0: A finds 1 root(s) in the scan, B has 1 negative eigenvalue(s) (lowest -3677.487084; the next is >= 0)
+PASS  D1: gamma_1 = 0.0: max relative spread of beta: A (rtol 1e-13 -> 1e-11, L +10) 5.6e-13; B (N 3000 -> 6000, L +10) 1.2e-11; C (r/dist 0.5 -> 0.3, 0.7; L 25 -> 30) 5.1e-13
+      gamma_1 = 0.0: beta_A = 1.181969726488, beta_B = 1.181969726491; error bar of T from the spreads: 9.8e-12
+PASS  D1: gamma_1 = 0.5: max relative spread of beta: A (rtol 1e-13 -> 1e-11, L +10) 3.5e-13; B (N 3000 -> 6000, L +10) 7.4e-12; C (r/dist 0.5 -> 0.3, 0.7; L 25 -> 30) 2.1e-13
+      gamma_1 = 0.5: beta_A = 1.875127511869, beta_B = 1.875127511870; error bar of T from the spreads: 5.6e-12
+checks: 46 run, failed ids: []  (135 s)
