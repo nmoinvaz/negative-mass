@@ -1134,16 +1134,27 @@ def Wscale(x, g):
                               + 4 * g / (1 + g * g) * abs(x - g) / (F * q * q))
 
 
+def derived_wbar_mp(x, g):
+    """derived W-bar at the current mpmath precision; the removable 0/0 exactly at the throat by the symmetric average."""
+    f, _ = derived_W()
+    xm, gm = mp.mpf(x), mp.mpf(g)
+    pref = mp.exp(-4 * gm * mp.atan(gm))
+    if abs(xm - gm) < mp.mpf("1e-14"):
+        dl = mp.mpf("1e-8")
+        return (f(xm + dl, gm) + f(xm - dl, gm)) / 2 * pref
+    return f(xm, gm) * pref
+
+
 def check_far_field():
     """N1a, N2, and the diagnostic on the printed bracket at large x. Points where |W-bar| < 1e-3 of the size of its terms (next
     to a zero crossing, where a relative error is not meaningful) are skipped and counted."""
-    f, _ = derived_W()
+    derived_W()
     mp.mp.dps = 60
     worst, wp, skipped = 0.0, 0.0, 0
     for g in (2.5, 10.0):
         for k in (1, 2, 3, 4, 6, 8, 10, 12):
             x = 10.0 ** k
-            ref = f(mp.mpf(x), mp.mpf(g)) * mp.exp(-4 * mp.mpf(g) * mp.atan(mp.mpf(g)))
+            ref = derived_wbar_mp(x, g)
             if abs(float(ref)) < 1e-3 * Wscale(x, g):
                 skipped += 1
                 continue
