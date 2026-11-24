@@ -319,7 +319,7 @@ def main():
         check("closed_form", not bad, "R_ab of route D equals the closed form of any b(t, x, y, z) in its derivatives, "
               "for b = -v f(q) with q the sheared one, as a polynomial identity in X, y, z, v, f, f', f''. Components "
               f"that differ: {bad}")
-        D = ps.JetD(na.q_rule(QS, False))
+        D = ps.JetD(na.q_rule(q, False))  # the measured q, so `unsheared` reaches this check
         b0 = -v * G[0]
         bx = D(b0, 1)
         cr = sp.expand(D(bx, 2) * D(b0, 3) - D(bx, 3) * D(b0, 2))
