@@ -95,7 +95,7 @@ The places where a real connection could still exist, all untested:
 | Ghost scalar with a potential: Ellis–Bronnikov and an AdS wormhole | Ellis–Bronnikov: a unique bound state; the asymmetric case also has a zero-energy mode growing linearly in t (a move along the family). AdS wormhole: exactly one unstable mode | [CPS20] |
 | All static V = 0 scalar-vacuum solutions, both signs | All unstable under spherical perturbations: Fisher (normal; solutions for *every* ω² < 0), anti-Fisher branches A, B and wormhole branch C. Branch A tends to Schwarzschild and its instability fades there | [BFZ11] |
 | Phantom with a specific potential (M-AdS wormholes, "black universes") | Unstable, except black universes whose horizon sits at the area minimum | [BKZ12] |
-| Rotating 5D Ellis wormholes | The unstable mode disappears above a critical angular momentum. A later study reports that the two imaginary frequencies merge at \|J\|/A = 0.100628 and continue as an oscillatory instability, "not stabilization" (arXiv:2610.38659, abstract only read, #50) | [DFKKR13] |
+| Rotating 5D Ellis wormholes, equal angular momenta J₁ = J₂ | Rotation adds a second unstable mode, the descendant of the static wormhole's non-normalizable zero mode [BGKKKN26]. The two merge at \|J\|/A = 0.10063 for symmetric wormholes and at 0.1381 for a non-symmetric family (\|a₋∞\| = 1) [DFKKR13]. [DFKKR13] found no unstable mode beyond the merger "within the type of modes investigated" and concluded that rotation "may stabilize wormholes" if "no new unstable modes of a different type appear"; its abstract says the static mode "vanishes when the angular momentum exceeds some critical value". [BGKKKN26] (exact background, symmetric family only, cohomogeneity-one gravitational sector) puts the merger at 0.100628 and follows the pair past it as ω± = ±ω_R + iω_I, ω_I > 0: an oscillatory instability, "not stabilization". It says [DFKKR13] "correctly located the merger" but could not follow the modes past it. ω_I A^{1/3} falls to order 10⁻⁶ toward the extremal Myers–Perry limit \|J\|/A = 0.5, consistent with ω_I ∼ (\|J\|/A − 0.5)⁶, and the symmetric wormholes are linearly unstable in that sector. A is the throat area; the printed \|J\|/A need 4πG = 1, which neither paper states (recomputed from the exact solution, #152) | [DFKKR13], [BGKKKN26] |
 | Neutron star with a wormhole core (ghost with quartic coupling) | Linearly unstable | [DFKK13] |
 
 Two remarks.
@@ -144,6 +144,22 @@ Two remarks.
       ε-independent t× ≃ 13.0 (units of the drainhole mass parameter m);
     - horizons form at t = 11 and 25 for ε = +10⁻² and +10⁻³: lifetime ≈ τ ln(1/ε), a decade costing 11–12 M;
     - horizon radius at formation 3.88 and 3.81 against R⋆ = 3.89 M.
+  - [SN26b] (4D, 3+1 numerical relativity; rotating Ellis–Bronnikov drainholes, C = 1; v2, 6 Nov 2026; angular momentum as
+    a percentage of its extremal value A/8π, A the throat area, G = c = 1):
+    - rotation slows the collapse: the areal radius's e-fold time rises from 5.4 (static) to 13.3 at 24 %; the fitted rate
+      extrapolates to zero at 32 %, against 33 % from second-order perturbation theory, an extrapolation and not a measured
+      endpoint;
+    - the 28.8 % and 33 % models expand instead; the direction depends on the effective perturbation, and the authors say this
+      shows growth "without identifying a second eigenmode";
+    - at 81 % (D90) no growing departure through t = 150, about 28 static e-folding times, at three resolutions; D75 and D80
+      likewise over shorter intervals. The authors call this "evidence of prolonged radial stability" under the numerical
+      perturbations present, and say the runs "bound growth only over that span";
+    - only axisymmetric data and only C = 1 were evolved; the perturbative mode crossings they compare with concern C ≤ 0.2,
+      and the perturbative τ is a linear mode in Killing time while theirs is a fit of the nonlinear areal radius;
+    - v1 (21 Oct 2026) said "no evidence of instability"; v2 drops it (#152);
+    - *Added by the coordinator:* the paper also notes that above about 29 % the throat's equator lies inside an ergoregion,
+      and that horizonless rotating objects with an ergoregion are generically subject to a slow nonaxisymmetric instability,
+      which axisymmetric runs cannot show.
 
 ### 1.3 Has the boundary been treated as a critical phenomenon?
 
@@ -511,6 +527,9 @@ signs ε_i (ε₁ = +1, ε₂ = −1) give:
   - the GMG96 perturbation section (only its abstract and the LRR summary);
   - [MGM26] (quoted from choptuik-large-d);
   - the citers of [SH02] other than those opened (title and abstract only).
+  - the slow-rotation and charged-wormhole papers that [BGKKKN26] and [SN26b] cite for the 4D and charged cases (Azad et
+    al., arXiv:2301.05243 and 2403.08387; Blázquez-Salcedo et al., arXiv:2510.11406 and 2607.18399; ids from [BGKKKN26]'s
+    TeX comments, *(unverified)*): their results appear here only as [BGKKKN26] and [SN26b] state them.
 - **Citers of [SH02]:** INSPIRE record 586606 had 222 citing records on 2026-11-24. All titles and 34 abstracts were read,
   and 11 papers were opened (#50; negative-mass-raw `I50-rpi5/quotes.md`, item 5). Only [SN26] calls the wormhole
   threshold a "type-I critical solution".
@@ -546,11 +565,16 @@ signs ε_i (ε₁ = +1, ε₂ = −1) give:
   (journal from the DOI on the arXiv page).
 - [DFKKR13] V. Dzhunushaliev, V. Folomeev, B. Kleihaus, J. Kunz, E. Radu, "Rotating wormholes in five dimensions",
   arXiv:1309.2448 (PRD 88, 124028 (2013)).
+- [BGKKKN26] J. L. Blázquez-Salcedo, L. M. González-Romero, F. S. Khoo, B. Kleihaus, J. Kunz, P. Navarro Moreno, "Exact
+  rotating wormholes in five dimensions and their exceptional-point instability", arXiv:2610.38659 (v1, 28 Oct 2026; no
+  journal reference on the arXiv page).
 - [DFKK13] V. Dzhunushaliev, V. Folomeev, B. Kleihaus, J. Kunz, "Mixed neutron-star-plus-wormhole systems: linear stability
   analysis", PRD 87, 104036 (2013), arXiv:1302.5217.
 - [Kai26] B. Kain, "Dynamical wormholes", arXiv:2602.18231 (2026).
 - [SN26] N. M. Shirokov, I. Nachevsky, "Binary Ellis-Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and
   gravitational waves", arXiv:2610.13206 (v2, 24 Oct 2026; no journal reference on the arXiv page).
+- [SN26b] N. M. Shirokov, I. Nachevsky, "Rotation slows the instability of Ellis-Bronnikov wormholes", arXiv:2610.29941
+  (v2, 6 Nov 2026; no journal reference on the arXiv page).
 - [Bra94] P. R. Brady, "Does scalar field collapse produce 'zero mass' black holes?", arXiv:gr-qc/9402023 (1994); journal
   CQG 11, 1255 (1994) from [Fro97]'s bibliography *(unverified against the publisher)*.
 - [Hay03] S. A. Hayward, "Recent progress in wormhole dynamics", arXiv:gr-qc/0306051 (conference proceedings).
