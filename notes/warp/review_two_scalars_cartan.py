@@ -27,13 +27,13 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 OPTS = dict(a[2:].split("=", 1) if "=" in a else (a[2:], "1") for a in sys.argv[1:] if a.startswith("--"))
 MUT = OPTS.get("mutate", "")
 CONTROLS = {
-    "d-qyz-sign": ("printed D with -2QYZ", ["D_identity", "D_cartan_jets", "D_coordinate"]),
-    "d-drop-z2": ("printed D without the Z^2 terms", ["D_identity", "D_cartan_jets", "D_coordinate"]),
-    "blocks-q-sign": ("expected R_01 = +Delta_perp b / 2", ["blocks_jets", "D_cartan_jets"]),
+    "d-qyz-sign": ("printed D with -2QYZ", ["D_identity", "D_cartan_jets", "D_coordinate", "D_slice_bz0"]),
+    "d-drop-z2": ("printed D without the Z^2 terms", ["D_identity", "D_cartan_jets", "D_coordinate", "D_slice_bz0"]),
+    "blocks-q-sign": ("expected R_01 = +Delta_perp b / 2", ["blocks_jets", "D_cartan_jets", "D_slice_bz0", "D_slice_offslice"]),
     "cartan-lapse": ("imported routine with lapse 1 + b", ["blocks_jets", "D_cartan_jets"]),
     "cartan-sign": ("imported routine, sign of omega^omega flipped", ["cartan_planted", "blocks_jets", "D_cartan_jets"]),
-    "nonaxi": ("shift a function of y^2 + 2 z^2", ["blocks_jets", "planted_D"]),
-    "coord-gamma": ("my Christoffel symbol with a wrong index order", ["coord_planted", "D_coordinate", "planted_D"]),
+    "nonaxi": ("shift a function of y^2 + 2 z^2", ["blocks_jets", "planted_D"]),  # README A1: original target list [blocks_jets, D_cartan_jets]; D_cartan_jets stayed silent
+    "coord-gamma": ("my Christoffel symbol with a wrong index order", ["coord_planted", "D_coordinate", "planted_D", "D_slice_bz0", "D_slice_offslice"]),
     "planted-h": ("planted expectation with h doubled", ["planted_D"]),
 }
 if MUT and MUT not in CONTROLS:
@@ -239,8 +239,9 @@ def main():
     rows = [sp.expand(R[2, c].subs(ax)) for c in range(4)] + [sp.expand(R[3, c].subs(ax)) for c in range(4)]
     R3a = sp.Matrix([[R[0, 0], R[0, 1], R[0, 2]], [R[0, 1], R[1, 1], R[1, 2]], [R[0, 2], R[1, 2], R[2, 2]]]).subs(ax)
     Da = sp.expand(D_printed(Pm, Qm, Zm, Ym, hm).subs(rho, 0))
-    check("axis_D", all(r_ == 0 for r_ in rows) and sp.expand(R3a.det()) == 0 and Da == 0,
-          "on y = z = 0: R(E_2, .), R(E_3, .) = 0, det R_3 = 0, D(printed)(rho = 0) = %s" % Da)
+    i2_axis = sp.expand((R[0, 0] + R[1, 1]).subs(ax))
+    check("axis_D", all(r_ == 0 for r_ in rows) and sp.expand(R3a.det()) == 0 and Da == 0 and i2_axis == 0,
+          "on y = z = 0: R(E_2, .), R(E_3, .) = 0, R_00 + R_11 = %s, det R_3 = 0, D(printed)(rho = 0) = %s" % (i2_axis, Da))
 
     # ---- 4. My coordinate route at exact points, three explicit shifts ------------------------------------------
     print("\n== 4. Coordinate-Christoffel Ricci at exact points: the entries of R_3 and D against the printed formulas ==")
@@ -272,6 +273,70 @@ def main():
             nonz += e_det == 0 and sp.simplify(R3c.det()) != 0
     check("D_coordinate", worst == 0 and nonz == 9, "%d of %d (shift, point) pairs agree exactly in every entry of R_3 and "
           "in D; D != 0 at %d of them; frame orthonormal" % (count - worst, count, nonz))
+
+    # ---- 4b. Non-axisymmetric shifts (README A4: written after the claim "D(printed) = det R(n, d_x, d_y) for every b" failed) ----
+    print("\n== 4b. Non-axisymmetric b(t, x, y, z): the block R(n, d_x, d_y) against [[P-h, Q, Z], [Q, -P-h, Y], [Z, Y, h]], h = b_y^2/2 ==")
+
+    def slice_block(bexpr, pt):
+        """my coordinate Ricci in the frame (n, d_x, d_y) at the point, the printed block from derivatives of b, b_z, and R_zz."""
+        ptd = dict(zip(X4, pt))
+        g0, Rc = coord_ricci_at(shift_metric(bexpr), X4, ptd)
+        bv = bexpr.subs(ptd)
+        V = [sp.Matrix([1, -bv, 0, 0]), sp.Matrix([0, 1, 0, 0]), sp.Matrix([0, 0, 1, 0])]
+        R3c = sp.Matrix(3, 3, lambda i, j: (V[i].T * Rc * V[j])[0])
+        nb = lambda e: sp.diff(e, t) - bexpr * sp.diff(e, x)
+        by_, bx_, bz_ = sp.diff(bexpr, y), sp.diff(bexpr, x), sp.diff(bexpr, z)
+        Pp = nb(bx_) - bx_**2
+        Qp = Q_sign() * (sp.diff(bexpr, y, y) + sp.diff(bexpr, z, z)) / 2
+        Zp = sp.diff(by_, x) / 2
+        Yp = -nb(by_) / 2 + bx_ * by_
+        hp = by_**2 / 2
+        Pp, Qp, Zp, Yp, hp, bzv = (sp.simplify(e.subs(ptd)) for e in (Pp, Qp, Zp, Yp, hp, bz_))
+        Rexp = sp.Matrix([[Pp - hp, Qp, Zp], [Qp, -Pp - hp, Yp], [Zp, Yp, hp]])
+        return R3c, Rexp, (Pp, Qp, Zp, Yp, hp), bzv
+
+    even_z = {  # not functions of rho, even in z
+        "b1 = (y + 2 z^2 + t x)/(1 + y^2 + x^2)": (y + 2 * z**2 + t * x) / (1 + y**2 + x**2),
+        "b2 = (1 + t)(x^2 + y z^2)/(2 + y^2 + 3 z^2)": (1 + t) * (x**2 + y * z**2) / (2 + y**2 + 3 * z**2),
+        "b3 = t y^3 + x z^2/(1 + z^2) + x y^2": t * y**3 + x * z**2 / (1 + z**2) + x * y**2,
+    }
+    pts0 = [(sp.Rational(1, 3), -sp.Rational(2, 5), sp.Rational(3, 7), 0), (-sp.Rational(1, 2), sp.Rational(3, 4), sp.Rational(5, 13), 0),
+            (sp.Rational(2, 3), sp.Rational(1, 5), -sp.Rational(8, 17), 0)]
+    bad0 = 0
+    for name, bexpr in even_z.items():
+        for pt in pts0:
+            R3c, Rexp, (Pp, Qp, Zp, Yp, hp), bzv = slice_block(bexpr, pt)
+            ok = sp.simplify(R3c - Rexp) == sp.zeros(3) and sp.simplify(R3c.det() - D_printed(Pp, Qp, Zp, Yp, hp)) == 0 and bzv == 0
+            bad0 += not ok
+    bzj = sp.expand(J.total(b, 3).subs(z, 0))  # b = G(t, x, y^2 + z^2) jets, imported axisymmetric_shift
+    check("D_slice_bz0", bad0 == 0 and bzj == 0,
+          "%d of 9 (shift even in z and not a function of rho, point with z = 0): all six entries of R(n, d_x, d_y) equal the printed block "
+          "and det = D(printed); for the axisymmetric b = G(t, x, y^2 + z^2) of section 2, b_z on z = 0 is %s exactly in the jets"
+          % (9 - bad0, bzj))
+
+    gen = {
+        "b1 = (y + 2 z^2 + t x)/(1 + y^2 + x^2)": (y + 2 * z**2 + t * x) / (1 + y**2 + x**2),
+        "b2 = (1 + t)(x^2 + y z)/(2 + y^2 + 3 z^2)": (1 + t) * (x**2 + y * z) / (2 + y**2 + 3 * z**2),
+        "b3 = t y^3 + x z/(1 + z^2) + x y^2": t * y**3 + x * z / (1 + z**2) + x * y**2,
+    }
+    npts = [(sp.Rational(1, 3), -sp.Rational(2, 5), sp.Rational(3, 7), sp.Rational(4, 7)),
+            (-sp.Rational(1, 2), sp.Rational(3, 4), sp.Rational(5, 13), sp.Rational(12, 13)),
+            (sp.Rational(2, 3), sp.Rational(1, 5), -sp.Rational(8, 17), sp.Rational(15, 17))]
+    bad1, nbz, ndet = 0, 0, 0
+    for name, bexpr in gen.items():
+        for pt in npts:
+            R3c, Rexp, (Pp, Qp, Zp, Yp, hp), bzv = slice_block(bexpr, pt)
+            diff = (R3c - Rexp).applyfunc(sp.simplify)
+            half = bzv**2 / 2
+            ok = (diff[0, 0] == -half and diff[1, 1] == -half and diff[0, 1] == 0 and diff[0, 2] == 0 and diff[1, 2] == 0
+                  and diff[2, 2] == 0)
+            bad1 += not ok
+            nbz += bzv != 0
+            ndet += sp.simplify(R3c.det() - D_printed(Pp, Qp, Zp, Yp, hp)) != 0
+    check("D_slice_offslice", bad1 == 0 and nbz == 9 and ndet == 9,
+          "%d of 9 (non-axisymmetric shift, point with z != 0): only R_00 and R_11 differ from the block, each by exactly -b_z^2/2 "
+          "(R_00 = P - h - b_z^2/2, R_11 = -P - h - b_z^2/2), the other four entries agree; b_z != 0 at %d, "
+          "det R(n, d_x, d_y) != D(printed) at %d" % (9 - bad1, nbz, ndet))
 
     # ---- 5. Planted values of D: b = k rho^2 and the two b(rho) solutions ----------------------------------------
     print("\n== 5. Planted D: b = k rho^2 (D = h (h^2 - 4k^2)) and b = -eps ln|C - eps ln rho| (D = 0), both routes ==")

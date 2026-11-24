@@ -1,0 +1,49 @@
+review_two_scalars_ideals.py, issue #79. sympy 1.14.0, python 3.14.10. mutation: none
+imports from review_cartan.py: Jets, alcubierre_shift, cartan_ricci
+
+== 1. R_3 for constant v: blocks from my jet code, the imported Cartan Ricci, and the note's table ==
+[PASS] r3_const: R_3 entries from my jet code equal the note's table (nonzero: []) and the imported Cartan Ricci of b = -v H((x - vt)^2 + y^2 + z^2) (nonzero: []; structure-equation violations 0)
+
+== 2. 16 r^3 D as a polynomial in c^2 for constant v ==
+[PASS] coeffs_const: 16 r^3 D has degree 6 in c, no odd powers; c^0 and c^6 equal the printed ones
+  c^2 coefficient: 2*(r**3*w**2*w1**2*w2**2 + 4*r**3*w*w1**4*w2 - 2*r**3*w*w2**3 + r**3*w1**6 + 2*r**2*w**3*w1*w2**2 - 2*r**2*w**2*w1**3*w2 - 4*r**2*w*w1**5 - 4*r*w**3*w1**2*w2 + 5*r*w**2*w1**4 + 6*r*w*w1**2*w2 + 4*r*w1**4 + 2*w**3*w1**3 - 4*w*w1**3)
+  c^4 coefficient: 2*(2*r**3*w**3*w2**3 + 4*r**3*w**2*w1**2*w2**2 + 2*r**3*w*w2**3 - r**3*w1**6 + r**3*w1**2*w2**2 - 8*r**2*w**3*w1*w2**2 - 8*r**2*w**2*w1**3*w2 + 2*r**2*w1**3*w2 + 10*r*w**3*w1**2*w2 + 4*r*w**2*w1**4 - 6*r*w*w1**2*w2 - 3*r*w1**4 - 4*w**3*w1**3 + 4*w*w1**3)
+
+== 3. ideal(c_0, c_1, c_2, c_3) = ideal(A, B^2) in Q[r, w, w1, w2][1/(r w1)], by cofactors ==
+[PASS] ideal_const: each c_k = alpha_k A + beta_k B^2 (lost monomials []); A and B^2 are combinations of the c_k with cofactors of degree {'A': 5, 'B^2': 5} in (A, B), {'A': 39, 'B^2': 39} nonzero cofactor coefficients, denominators monomials in r, w1: True, verified by exact expansion
+  c_0 = -2*r*w1**2*(A**2*w1**2 + 2*A*r*w1**3 + B**2)
+
+== 4. Planted jets: A = B = 0 gives D = 0 for every c; A = 0, B != 0 or B = 0, A != 0 gives D != 0 ==
+[PASS] zero_set_const: A = 0, B = 0 at (r, w1) = (2, 3): D = 0 at 10 random c: True; A = 0, B = 3/2: D != 0 at 10 of 10; B = 0, A = 5/2: D != 0 at 10 of 10
+
+== 5. A = 0 and B = 0 on an interval force w' = 0 ==
+  dsolve(A = 0): Eq(W(r), C1*r**2)   dsolve(second relation = 0): Eq(W(r), C1 + C2*log(r))
+[PASS] no_open_set: dA/dr - (2 w1 - B) = 0; A = 0 gives W = C1*r**2, the second relation gives W = C1 + C2*log(r); the functions [r**2, 1, log(r)] have Wronskian 4/r, so the only common solution is W = 0 and then w' = 0
+
+== 6. Accelerating bubble b = -V(t) H((x - X(t))^2 + y^2 + z^2): comoving R_3 with the A terms ==
+[PASS] acc_R3: comoving R_3 (P and Y shifted by +A w1 c and -A w1 s / 2, A = V'/V) equals the imported Cartan Ricci in lab coordinates, generic jets of V, X, H; entries that differ: []
+
+== 7. 16 r^3 D for the accelerating bubble: seven coefficients ==
+[PASS] acc_coeffs: 16 r^3 D has degree 6 in c; the odd coefficients c^1, c^3, c^5 are divisible by 4 aa r w1: True; at aa = 0 the seven reduce to section 2's four
+  c^6 = -2*(r*w*w2 + r*w1**2 - w*w1)**2*(2*r*w*w2 + r*w1**2 - 2*w*w1)
+  c^5 / (4 aa r w1) = (r*w*w2 + r*w1**2 - w*w1)*(3*r*w*w2 + 2*r*w1**2 - 3*w*w1)
+
+== 8. The seven coefficients generate the unit ideal in Q[r, w1, aa, 1/(aa r w1)][w, w2] ==
+[PASS] acc_unit: support c_0,4,5,6: sum g_k c_k = 1 with cofactors of degree 3 in (w, omega), 25 nonzero coefficients, monomial denominators in r, w1, aa, verified by exact expansion also in (w, w2)
+  chain: c^5/(4 aa r w1) = Lam (3 Lam - r w1^2), c^6 = -2 Lam^2 (2 Lam - r w1^2), Lam = r w1^2 (1 - w omega), c^6 = (2 (r w1^2)^2 / 9) Lam + e_5 (2 r w1^2/9 - 4 Lam/3), F and G0 of degree 3 and 4: [True, True, True, True]; Res_w(F, G0) = 512*aa**2*r**4*w1**9
+
+== 9. A shift b(rho): D = h (h^2 - Q^2); the solutions of b'' + b'/rho = eps b'^2 ==
+[PASS] brho_D: for b(rho): P = Z = Y = 0 (True) and Delta_perp b = b'' + b'/rho (3 test functions, 0 differ), so D = h (h^2 - Q^2); b = -eps ln(C - eps ln rho) solves b'' + b'/rho = eps b'^2 and has D = 0 for eps = +-1 and C = 0, 3: [True, True, True, True]
+
+checks: 9 passed, 0 failed []. 19 s
+
+== Controls: each mutation must make its target checks fail ==
+[FIRED] --mutate=alc-lapse (imported Cartan with lapse 1 + b): exit 1, failed ['r3_const', 'acc_R3']
+[FIRED] --mutate=coef-c0-sign (expected c_0 with the opposite sign): exit 1, failed ['coeffs_const']
+[FIRED] --mutate=ideal-cofactor (one cofactor of the certificate altered): exit 1, failed ['ideal_const']
+[FIRED] --mutate=planted-ideal (planted jets with A = 1, expecting D = 0): exit 1, failed ['zero_set_const']
+[FIRED] --mutate=ode-sign (second relation r w2 = +w1): exit 1, failed ['no_open_set']
+[FIRED] --mutate=acc-no-A (my comoving R_3 without the A terms): exit 1, failed ['acc_R3']
+[FIRED] --mutate=acc-drop-odd (odd coefficients dropped from the certificate): exit 1, failed ['acc_unit']
+[FIRED] --mutate=brho-h2 (expected h doubled): exit 1, failed ['brho_D']
+controls: all fired
