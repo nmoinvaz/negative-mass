@@ -1,0 +1,80 @@
+# zerilli_certificate: certificate of the Zerilli forward direction (part=all, L=symbolic, order=2)
+PASS PL.0c
+# [   0.1 s] PL.0c
+PASS PL.0d
+# [   0.6 s] PL.0d
+PASS PL.D.1
+# [   0.6 s] PL.D.1
+PASS PL.O.1
+# [   2.7 s] PL.O.1 equations
+# odd radial equations (jets h_n):
+#   tphi: (L*h0_0*r - 4*M*h0_0 + 2*M*h0_2*r**2 - 4*M*h1_0*r*s - 2*M*h1_1*r**2*s - h0_2*r**3 + 2*h1_0*r**2*s + h1_1*r**3*s)/(2*r**3)
+#   rphi: (-2*L*M*h1_0 + L*h1_0*r + 4*M*h1_0 + 2*h0_0*r**2*s - h0_1*r**3*s + h1_0*r**3*s**2 - 2*h1_0*r)/(2*r**2*(-2*M + r))
+#   xphi: (-4*M**2*h1_0 + 4*M**2*h1_1*r + 2*M*h1_0*r - 4*M*h1_1*r**2 - h0_0*r**3*s + h1_1*r**3)/(r**2*(-2*M + r))
+# odd attempt O1: solution found (rank 7, 9 jets, 9 unknowns, 0.1 s), denominators allowed
+PASS PL.O.2
+# [   3.1 s] PL.O.2
+PASS PL.O.3
+# [   3.2 s] PL.O.3
+# odd c[rphi, k=0]: denominator (r)^3 (1 terms), numerator 3 terms
+# odd c[xphi, k=0]: denominator (r)^4 (1 terms), numerator 3 terms
+# odd c[xphi, k=1]: denominator (r)^3 (1 terms), numerator 3 terms
+# odd denominator factors, highest exponent over all coefficients: (r)^4 allowed
+PASS PL.O.4
+# [   3.2 s] PL.O.4
+# odd certificate c[rphi, k=0] = -2*(-2*M + r)**2/r**3
+# odd certificate c[xphi, k=0] = -2*(-3*M + r)*(-2*M + r)/r**4
+# odd certificate c[xphi, k=1] = (-2*M + r)**2/r**3
+# odd: Psi,xx = (V_RW + s^2) Psi is a combination of the three odd radial equations and their first 2 r-derivatives
+PASS A.1
+# [   4.0 s] A.1
+PASS E.1
+# [  10.2 s] E.1 equations
+# even radial equations (jets F_n = d^n F / dr^n):
+#   tt: (-2*H0_0*L*M + H0_0*L*r - 2*H0_1*M**2 + 5*H0_1*M*r - 2*H0_1*r**2 - 4*H0_2*M**2*r + 4*H0_2*M*r**2 - H0_2*r**3 - 6*H1_0*M*r*s + 4*H1_0*r**2*s - 4*H1_1*M*r**2*s + 2*H1_1*r**3*s - H2_0*r**3*s**2 + 2*H2_1*M**2 - H2_1*M*r - 2*K_0*r**3*s**2 - 4*K_1*M**2 + 2*K_1*M*r)/(2*r**3)
+#   tr: (-2*H1_0*L*M + H1_0*L*r - 4*H2_0*M*r*s + 2*H2_0*r**2*s + 6*K_0*M*r*s - 2*K_0*r**2*s + 4*K_1*M*r**2*s - 2*K_1*r**3*s)/(2*r**2*(-2*M + r))
+#   rr: (-6*H0_1*M**2 + 3*H0_1*M*r + 4*H0_2*M**2*r - 4*H0_2*M*r**2 + H0_2*r**3 - 2*H1_0*M*r*s + 4*H1_1*M*r**2*s - 2*H1_1*r**3*s - 2*H2_0*L*M + H2_0*L*r + H2_0*r**3*s**2 + 6*H2_1*M**2 - 7*H2_1*M*r + 2*H2_1*r**2 - 12*K_1*M**2 + 14*K_1*M*r - 4*K_1*r**2 - 8*K_2*M**2*r + 8*K_2*M*r**2 - 2*K_2*r**3)/(2*r*(4*M**2 - 4*M*r + r**2))
+#   tx: (2*H1_0*M - 2*H1_1*M*r + H1_1*r**2 - H2_0*r**2*s - K_0*r**2*s)/(2*r**2)
+#   rx: (3*H0_0*M - H0_0*r - 2*H0_1*M*r + H0_1*r**2 - H1_0*r**2*s - H2_0*M + H2_0*r + 2*K_1*M*r - K_1*r**2)/(2*r*(-2*M + r))
+#   trace: (2*H0_0*L*M - H0_0*L*r + 8*H0_1*M**2 - 8*H0_1*M*r + 2*H0_1*r**2 + 8*H1_0*M*r*s - 4*H1_0*r**2*s - 2*H2_0*L*M + H2_0*L*r - 8*H2_0*M + 4*H2_0*r + 8*H2_1*M**2 - 8*H2_1*M*r + 2*H2_1*r**2 - 4*K_0*L*M + 2*K_0*L*r + 8*K_0*M + 2*K_0*r**3*s**2 - 4*K_0*r - 24*K_1*M**2 + 28*K_1*M*r - 8*K_1*r**2 - 8*K_2*M**2*r + 8*K_2*M*r**2 - 2*K_2*r**3)/(2*(-2*M + r))
+#   traceless: (H0_0 - H2_0)/2
+# even attempt O1: solution found (rank 15, 18 jets, 21 unknowns, 1.8 s), denominators allowed
+# [  44.8 s] solve
+PASS E.cert
+PASS E.id
+# [  46.6 s] E.id
+# even c[rr, k=0]: denominator (L)^1 (r)^1 (L*r + 6*M - 2*r)^2 (6 terms), numerator 9 terms
+# even c[rr, k=1]: denominator (L)^1 (L*r + 6*M - 2*r)^1 (3 terms), numerator 4 terms
+# even c[tr, k=0]: denominator (L)^1 (L*r + 6*M - 2*r)^1 (3 terms), numerator 2 terms
+# even c[trace, k=0]: denominator (L)^1 (r)^2 (L*r + 6*M - 2*r)^2 (6 terms), numerator 8 terms
+# even c[traceless, k=0]: denominator (r)^2 (1 terms), numerator 2 terms
+# even c[tt, k=0]: denominator (L)^1 (L*r + 6*M - 2*r)^2 (6 terms), numerator 5 terms
+# even c[tt, k=1]: denominator (L)^1 (L*r + 6*M - 2*r)^1 (3 terms), numerator 2 terms
+# even denominator factors, highest exponent over all coefficients: (L)^1 allowed (L only); (L*r + 6*M - 2*r)^2 allowed; (r)^2 allowed
+PASS E.den
+# [  46.6 s] E.den
+# even certificate: 7 nonzero coefficients over 21 unknowns
+# even certificate c[rr, k=0] = 4*(-2*M + r)**2*(-2*L*M*r + 3*L*r**2 - 24*M**2 + 28*M*r - 6*r**2)/(L*r*(L*r + 6*M - 2*r)**2)
+# even certificate c[rr, k=1] = 4*(-2*M + r)**3/(L*(L*r + 6*M - 2*r))
+# even certificate c[tr, k=0] = -8*r**2*s*(-2*M + r)/(L*(L*r + 6*M - 2*r))
+# even certificate c[trace, k=0] = -2*(-2*M + r)*(L**2*r**2 + 4*L*M*r - 2*L*r**2 + 12*M**2 - 8*M*r)/(L*r**2*(L*r + 6*M - 2*r)**2)
+# even certificate c[traceless, k=0] = -2*(-2*M + r)/r**2
+# even certificate c[tt, k=0] = 4*r*(-2*M + r)*(L*r + 12*M - 2*r)/(L*(L*r + 6*M - 2*r)**2)
+# even certificate c[tt, k=1] = 4*r**2*(-2*M + r)/(L*(L*r + 6*M - 2*r))
+# [  55.0 s] S.explicit l=2
+# [  63.7 s] S.explicit l=3
+# [  76.0 s] S.explicit l=4
+PASS S.explicit
+# E.L l=2 (L = 6): common denominator of the specialized coefficients 24*r**2*(3*M + 2*r)**2
+# [  77.0 s] E.L l=2
+# E.L l=3 (L = 12): common denominator of the specialized coefficients 48*r**2*(3*M + 5*r)**2
+# [  78.1 s] E.L l=3
+# E.L l=4 (L = 20): common denominator of the specialized coefficients 720*r**2*(M + 3*r)**2
+# [  79.1 s] E.L l=4
+PASS E.L
+PASS E.M0
+# [  79.5 s] E.M0
+PASS E.S0
+# [  80.2 s] E.S0
+# peak rss 155 MB
+# summary: 16 PASS, 0 FAIL
