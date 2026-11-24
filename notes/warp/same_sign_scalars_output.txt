@@ -1,0 +1,90 @@
+same_sign_scalars.py, issue #78. sympy 1.14.0, mpmath 1.3.0, python 3.14.10. mutation: none
+
+== 1. Planted truth: R = lam eta + s (a a + b b) passes for s = +1 and -1, other forms fail ==
+[PASS] planted_pass: 12 random lam eta + s (a a + b b), six with s = +1 and six with s = -1, transformed: lam recovered with rank 2 and the planted pattern in all but 0 []
+[PASS] planted_fail: 12 random forms with squares (+,-), (-,+), (+,+,+), (-,-,-), (+,+,-), (+,-,-): no admissible root in all but 0 []
+
+== 2. Lemma: with R_a3 = 0 and (I2), the form holds iff R_3 - lam eta_3 has rank 1 for a real lam != 0 ==
+[PASS] lemmaS_samples: 24 random tensors with (I1), (I2) in random Lorentz frames (8 of the form lam eta_3 + eps n n^T, 8 mixed rank 2, 8 generic): the 4 x 4 test and the 3 x 3 rank-1 criterion give the same roots and patterns (lam < 0 is (+,+), lam > 0 is (-,-)), none at lam = 0, in all but 0 []
+
+== 3. Planted metrics: (2D Lorentzian space of constant curvature) x (plane), sheared polar coordinates ==
+  P1: AdS_2 x R^2, ds^2 = (-dto^2 + dzo^2)/zo^2 + dRo^2 + Ro^2 dTho^2, two normal scalars, lam = -1
+  P2: dS_2 x R^2, ds^2 = (-dto^2 + dzo^2)/to^2 + dRo^2 + Ro^2 dTho^2, two phantoms, lam = +1
+[PASS] p1_algebraic: lam = [-1.0, -1.0, -1.0] is a real root of the rank-<=2 locus with inertia (2, 0) at 3 exact points; found [[(-1.0, (2, 0)), (0.0, (1, 1))], [(-1.0, (2, 0)), (0.0, (1, 1))], [(-1.0, (2, 0)), (0.0, (1, 1))]] (0 s)
+[PASS] p1_closed: kernel dimension 2; [K_1, K_2] = 0: True; L_X M = 0 for both: True; Ricci of the quotient block zero: True; Lambda = J A^T (A A^T)^-1 from a 60-digit factorization at 3 points: max error 6.22e-61 in Lambda A = J, Lambda^T Lambda = 1, J^T J = s M; Lambda differs between points by 1.89 (0 s)
+[PASS] p1_potential: K_1(lam) = 0, K_2(lam) = 0, lam = -1
+[PASS] p1_residual: G_ab - 8 pi T_ab with a^I = dX^I, signs [1, 1], V = lam/(8 pi), substituted back: 0 (0 s)
+[PASS] p2_algebraic: lam = [1.0, 1.0, 1.0] is a real root of the rank-<=2 locus with inertia (0, 2) at 3 exact points; found [[(0.0, (1, 1)), (1.0, (0, 2))], [(0.0, (1, 1)), (1.0, (0, 2))], [(0.0, (1, 1)), (1.0, (0, 2))]] (0 s)
+[PASS] p2_closed: kernel dimension 2; [K_1, K_2] = 0: True; L_X M = 0 for both: True; Ricci of the quotient block zero: True; Lambda = J A^T (A A^T)^-1 from a 60-digit factorization at 3 points: max error 6.22e-61 in Lambda A = J, Lambda^T Lambda = 1, J^T J = s M; Lambda differs between points by 0.929 (0 s)
+[PASS] p2_potential: K_1(lam) = 0, K_2(lam) = 0, lam = 1
+[PASS] p2_residual: G_ab - 8 pi T_ab with a^I = dX^I, signs [-1, -1], V = lam/(8 pi), substituted back: 0 (1 s)
+  (4 s)
+
+== 3b. Deformed metrics: D1 curves the plane, D2 puts the Lorentzian factor off shell ==
+  D1: AdS_2 x (plane with Ro^2 -> Ro^2 (1 + Ro^2/10)): kernel integrable, L_X M = 0, quotient not flat
+  D2: ds^2 = -dto^2 + dzo^2 + E^2 (dX^2 + dY^2), E = 1 + gamma (zo^2 - to^2), lam = -4 gamma/E: R - lam g = gamma^2 4 (to^2 - zo^2) (dX^2 + dY^2)
+[PASS] d1_algebraic: lam = [-1.0, -1.0, -1.0] is a real root of the rank-<=2 locus with inertia (2, 0) at 3 exact points; found [[(-1.0, (2, 0)), (-0.18017888069152832, (1, 1))], [(-1.0, (2, 0)), (-0.1938774585723877, (1, 1))], [(-1.0, (2, 0)), (-0.1869509220123291, (1, 1))]] (0 s)
+[PASS] d1_closure_fails: kernel dimension 2, integrable True, L_X M = 0: True, quotient flat: False (1 s)
+[PASS] d2_algebraic: lam = [-1.0250569476082005, -2.380952380952381, -1.0112359550561798] is a real root of the rank-<=2 locus with inertia (2, 0) at 3 exact points; found [[(-1.0250568389892578, (2, 0)), (0.5767402648925781, (1, 1))], [(-2.380950927734375, (2, 0)), (9.410430908203125, (1, 1))], [(-1.0112361907958984, (2, 0)), (0.5340232849121094, (1, 1))]] (0 s)
+[PASS] d2_closure_fails: kernel dimension 2, integrable True, L_X M = 0: False, K(lam) = [(-648*T - 216*Z)/(81*T**4 + 108*T**3*Z - 108*T**2*Z**2 - 1620*T**2 - 96*T*Z**3 - 1080*T*Z + 64*Z**4 + 1440*Z**2 + 8100), (-216*T + 576*Z)/(81*T**4 + 108*T**3*Z - 108*T**2*Z**2 - 1620*T**2 - 96*T*Z**3 - 1080*T*Z + 64*Z**4 + 1440*Z**2 + 8100)] (1 s)
+  (5 s)
+
+== 4. Alcubierre wall, constant v: R_3 on (E_0 = n, E_1 = d_x, e_rho), general profile w = v (1 - f) ==
+[PASS] wall_identities: R(e_phi, .) and R_00 + R_11 + 2 R_rho,rho: [0, 0, 0, 0, 0] (22 s)
+[PASS] wall_entries: with u = r w'' - w', v = w u + 2 r w'^2, z = 2 w' + u s^2: R_00 = -(2 w w' + 2 w u c^2 + r w'^2 (1 + c^2))/(2r), 2r R_01 = -z, 2r R_0rho = u s c, 2r R_1rho = v s c, R_rho,rho = w'^2 s^2/2: differences [0, 0, 0, 0, 0, 0]
+[PASS] wall_F: F = R_01 (R_0rho^2 + R_1rho^2) + 2 R_rho,rho R_0rho R_1rho equals s^2 c^2 (-z (u^2 + v^2) + 2 r u v w'^2 s^2)/(8 r^3): difference 0; the certificate R_0rho (N_00 N_1rho - N_01 N_0rho) + R_1rho (N_11 N_0rho - N_01 N_1rho) + F = 0
+[PASS] wall_ideal: coefficients of the bracket in s^2: -2*W1*(W0**2*W1**2 - 2*W0**2*W1*W2*r + W0**2*W2**2*r**2 - 4*W0*W1**3*r + 4*W0*W1**2*W2*r**2 + 4*W1**4*r**2 + W1**2 - 2*W1*W2*r + W2**2*r**2) and -(-W1 + W2*r)**2*(-W0**2*W1 + W0**2*W2*r + 2*W0*W1**2*r - W1 + W2*r); with w' r != 0 they generate the unit ideal (Groebner basis [1]), so at each r with w' != 0 the bracket, linear in s^2 with the constant term 2 w'(u^2 + v^2) != 0, vanishes at one s^2 at most (23 s)
+  (23 s)
+
+== 5. Exact points (lab frame route of phantom_source.py): the algebraic stage through same_sign_form ==
+         bump Rb=2, off the axis: 3 points, rank-<=2 roots (lam, inertia) at the points: ['[]']
+         bump Rb=2, on the axis: 1 points, rank-<=2 roots (lam, inertia) at the points: ['[(0.0, (1, 1))]']
+       random jets, off the axis: 4 points, rank-<=2 roots (lam, inertia) at the points: ['[]']
+   tanh sig=8 Rb=1, off the axis: 18 points, rank-<=2 roots (lam, inertia) at the points: ['[]']
+   tanh sig=8 Rb=1, on the axis: 6 points, rank-<=2 roots (lam, inertia) at the points: ['[(0.0, (1, 1))]']
+[PASS] wall_points: 32 exact points (25 off the axis, 7 on it): the same function as the planted forms finds no real lam with R - lam g semidefinite of rank <= 2, at lam = 0 or lam != 0; real roots of the rank-<=2 locus at off-axis points: 0; admissible roots at any point: 0
+[PASS] wall_lambda0: at lam = 0, R has both signs (inertia with n+ >= 1 and n- >= 1, 60 digits) at 25 of 25 off-axis points, so M = R is not semidefinite; failures []
+  (24 s)
+
+== 6. Accelerating bubble b = -v_s(t) f(r_s): the frame block with A = v_s'/v_s ==
+[PASS] acc_jets: route D's frame block depends on x_s', v_s, v_s', f, f', f'' only through w~, w~', w~'' and A = v_s'/v_s: True
+[PASS] acc_entries: the entries equal the constant-speed ones with R_00 += A w' c, R_11 -= A w' c and R_1rho = s (v c - A r w')/(2 r): differences [0, 0, 0, 0, 0, 0]
+[PASS] acc_const_limit: at v_s' = 0, x_s' = v_s the 4 x 4 frame Ricci tensor of route D equals route C's lab-frame tensor at 3 exact points
+[PASS] acc_F: F = s^2 B(c)/(8 r^3) with B = -z (u^2 c^2 + (v c - A r w')^2) + 2 r w'^2 u s^2 c (v c - A r w'): difference 0; c^0 coefficient -A**2*R**2*W1**2*(R*W2 + W1) = -(2 w' + u)(A r w')^2: True, c^1 coefficient = 2 A r w' (v (2 w' + u) - r w'^2 u): True
+[PASS] acc_ideal: with A w' r != 0 the 5 coefficients of B generate the unit ideal (Groebner basis [1]), so B vanishes on no interval of c at fixed r_s and t (25 s)
+[PASS] acc_vs0: at v_s = 0 the block of route D is [[-k c, 0, 0], [0, k c, k s/2], [0, k s/2, 0]] with k = v_s' f' (differences [0, 0, 0, 0, 0, 0, 0, 0, 0]), and the 2 x 2 minors of R_3 - lam eta_3 with k s != 0 generate the unit ideal (Groebner basis [1]), so N has rank >= 2 off the axis; on the axis (s = 0) lam = k c gives rank 1
+[PASS] acc_points: random jets of v_s (v_s' != 0), x_s and f at 6 exact points of the half-plane: no admissible root at all but 0 [] (26 s)
+
+== 7. A shift b(rho) alone: R_3 = [[-h, Q, 0], [Q, -h, 0], [0, 0, h]], h = b'^2/2, Q = -(b'' + b'/rho)/2 ==
+[PASS] brho_rank1: R_3 of a shift b(rho) equals [[-h, Q, 0], [Q, -h, 0], [0, 0, h]] (differences [0, 0, 0, 0, 0, 0]); the zero set of the 2 x 2 minors of R_3 - lam eta_3 with h != 0 is {-h + lm = 0, Q = 0}: (a) every minor reduces to 0 modulo <-h + lm, Q>: True; (b) -h + lm and Q are in the radical (Rabinowitsch): [True, True]. Information, not gating: the Groebner basis of the saturated ideal is [Q**2, h*zz - 1, -h + lm]. Q = 0 for b = C ln rho + b_0: True. So lam = h > 0 and Q = 0, pattern (-,-) (26 s)
+
+== 7b. D3: b = C ln rho + b_0, ds^2 = -dt^2 + (dx + b dt)^2 + drho^2 + rho^2 dphi^2, passes the algebraic stage on an open set ==
+[PASS] d3_algebraic: lam = h = C^2/(2 rho^2) = [0.3780718336483932, 1.6528925619834711, 0.23781212841854935] is a root with inertia (0,2), two phantoms, at 3 exact points; found [[(0.37807178497314453, (0, 2))], [(1.65289306640625, (0, 2))], [(0.23781204223632812, (0, 2))]]
+[PASS] d3_closure_fails: kernel dimension 2, [K_1, K_2] = ['0', '2/rho', '0', '0'], plane integrable: False (Frobenius: no d phi_I with the kernel as common null space exists) (26 s)
+
+checks: 31 passed, 0 failed []. 26 s
+
+== Controls: each mutation must make its target checks fail ==
+[FIRED] --mutate=planted-sign (builds the planted forms as lam eta + a a - b b): exit 1, failed ['planted_pass']
+[FIRED] --mutate=planted-fail-sign (builds the planted failures as two squares of one sign): exit 1, failed ['planted_fail']
+[FIRED] --mutate=lemmaS-weight (builds the lemma's samples with R_00 - R_11 + 2 R_22 = 0 in place of (I2)): exit 1, failed ['lemmaS_samples']
+[FIRED] --mutate=p1-mixed (gives P1's plane the signature (-,+): -dR^2 + R^2 dTheta^2): exit 1, failed ['p1_algebraic']
+[FIRED] --mutate=p2-mixed (gives P2's plane the signature (-,+)): exit 1, failed ['p2_algebraic']
+[FIRED] --mutate=p1-fiber (curves P1's plane, R^2 (1 + R^2/10)): exit 1, failed ['p1_closed']
+[FIRED] --mutate=p1-lambda (adds T/10 to lam in P1's potential stage): exit 1, failed ['p1_potential']
+[FIRED] --mutate=p2-lambda (adds T/10 to lam in P2's potential stage): exit 1, failed ['p2_potential']
+[FIRED] --mutate=p1-sign (flips one kinetic sign in T of P1): exit 1, failed ['p1_residual']
+[FIRED] --mutate=p2-sign (flips one kinetic sign in T of P2): exit 1, failed ['p2_residual']
+[FIRED] --mutate=d1-flat (sets D1's plane curvature to 0): exit 1, failed ['d1_closure_fails']
+[FIRED] --mutate=d2-gamma0 (sets gamma = 0 in D2, so that M = 0): exit 1, failed ['d2_algebraic', 'd2_closure_fails']
+[FIRED] --mutate=d3-bracket (computes the kernel commutator without the term K_2(K_1^mu)): exit 1, failed ['d3_closure_fails']
+[FIRED] --mutate=alc-drop-w2 (drops the shift's square from g_tt in the spherical route (as in phantom_source.py)): exit 1, failed ['wall_identities', 'wall_entries', 'wall_F']
+[FIRED] --mutate=wall-F-sign (takes the claimed F formula with +z in place of -z): exit 1, failed ['wall_F']
+[FIRED] --mutate=ideal-nosat (drops the saturation 1 - zz w' r from the ideal of the s^2 coefficients): exit 1, failed ['wall_ideal']
+[FIRED] --mutate=wall-planted (replaces R at the off-axis exact points by a planted lam eta + a a + b b): exit 1, failed ['wall_points', 'wall_lambda0']
+[FIRED] --mutate=wall-psd (replaces R at the off-axis exact points by a positive definite tensor): exit 1, failed ['wall_lambda0']
+[FIRED] --mutate=acc-static (drops every t-derivative of v_s, x_s and f from route D's jets): exit 1, failed ['acc_jets', 'acc_entries', 'acc_const_limit', 'acc_vs0']
+[FIRED] --mutate=acc-drop-A (drops the A terms from the expected entries): exit 1, failed ['acc_entries']
+[FIRED] --mutate=acc-drop-odd (keeps only the even powers of c in the accelerating ideal): exit 1, failed ['acc_ideal']
+[FIRED] --mutate=brho-q (takes the claimed rank-1 solution set with Q = h in place of Q = 0): exit 1, failed ['brho_rank1']
+controls: all fired
