@@ -55,6 +55,7 @@ MUTATIONS = {
     "drop-accel": (["closed_vs_numeric", "drop_detected"], "evaluates D at al = 0, u = v (the constant-speed D)"),
     "time-lemma-sign": (["time_lemma"], "flips the sign of the DeltaT_rho term in the time lemma's claim"),
     "weight-break": (["structure"], "counts al as weight 1, not 2, in the scaling of the entries"),
+    "parity-break": (["parity"], "flips al but not c in the parity identity"),
     "axis-flip": (["axis"], "claims D = +4 R_01^2 (R_00^2 + R_01^2)^2 on the axis"),
     "rest-v": (["rest"], "takes the rest slice at t = 0.05 (v = tanh 0.1), and v = 1/10 at the exact points"),
 }
@@ -331,7 +332,10 @@ class RouteN:
 def compare(cf, rn, name, t0, sig, Rb, r, c, label, seed):
     """Sign of D (cf) against the eigenvalue type of route N''s G^a_b at the points (r, cos theta), random azimuths. Points
     where float64 disagrees, or |D| < 1e-10 scale^6, and the three nearest D = 0 are rechecked at 50 digits (both routes in
-    mpmath), up to 100. Returns (points, float64 disagreements, unresolved, D, scale)."""
+    mpmath), up to 1000 per grid. A point is D = 0 only by an exact factor: at v = 0 exactly, D = al^6 f'^6 s^4 / 16 (the
+    `structure` check), and s^4 = (1 - c^2)^2 is evaluated in exact rationals from the float c. Then D = 0, which is not Type
+    IV (a real repeated root, the rank test decides among I, II and III), and route N' must show no complex eigenvalue. No
+    tolerance decides D = 0. Returns (points, float64 disagreements, unresolved, D, scale)."""
     v, al, u, xs0 = motion(name, t0)
     rng = np.random.default_rng(seed)
     phi = rng.uniform(0, 2 * np.pi, r.size)
@@ -346,24 +350,26 @@ def compare(cf, rn, name, t0, sig, Rb, r, c, label, seed):
     near = np.abs(D) < 1e-10 * scale**6
     closest = np.argsort(np.abs(D) / scale**6)[:3]
     redo = np.union1d(closest, np.where((ivC != ivN) | near)[0])
-    unresolved = [None] * max(0, redo.size - 100)
+    unresolved = [None] * max(0, redo.size - 1000)
     mp.mp.dps = 50
     vm, alm, um, xsm = motion_mp(name, t0)
     t0m = mp.mpf(t0)
-    for i in redo[:100]:
+    for i in redo[:1000]:
         rm, cm, ph = mp.mpf(float(r[i])), mp.mpf(float(c[i])), mp.mpf(float(phi[i]))
         sm = mp.sqrt(1 - cm**2)
         Dm, _, _ = cf.D(vm, alm, um, sig, Rb, rm, cm, mpm=True)
+        exact_zero = v == 0 and (1 - sp.Rational(float(c[i]))**2)**2 == 0
+        ivCm = bool(Dm < 0) and not exact_zero
         Gm, _ = rn.mixed_mp(t0m, xsm + rm * cm, rm * sm * mp.cos(ph), rm * sm * mp.sin(ph))
         ev = mp.eig(mp.matrix(Gm[0].tolist()))[0]
         sc = max(abs(e) for e in ev)
         ivNm = max(abs(mp.im(e)) for e in ev) > mp.mpf(10)**-30 * sc
-        if (Dm < 0) != ivNm:
+        if ivCm != ivNm:
             unresolved.append((float(r[i]), float(c[i]), float(Dm), float(max(abs(mp.im(e)) for e in ev))))
     mp.mp.dps = 15
     nd = int((ivC != ivN).sum())
     print(f"  {label}: {r.size} points, Type IV by D < 0 at {int(ivC.sum())}, by eigenvalues at {int(ivN.sum())}; "
-          f"float64 disagreements {nd}, near D = 0 {int(near.sum())}, rechecked at 50 digits {min(redo.size, 100)}, "
+          f"float64 disagreements {nd}, near D = 0 {int(near.sum())}, rechecked at 50 digits {min(redo.size, 1000)}, "
           f"unresolved {len(unresolved)}", flush=True)
     return r.size, nd, unresolved, D, scale
 
@@ -549,12 +555,25 @@ def main():
           f"part (pq + h^2)^2 ((p + q)^2 + 4h^2) [{ok_w12}]; the bubble's D has weights {wts}, u only with v, al^6 at most "
           f"[{ok_pw}]; al^6 coefficient f'^6 s^4/16 and D(v = 0) = al^6 f'^6 s^4/16 [{ok_lead}]")
 
+    # 5b. Parity: (al, cos theta) -> (-al, -cos theta) leaves D unchanged, for every v and u.
+    flip = {AL: -AL} if MUT == "parity-break" else {AL: -AL, C_: -C_}
+    ok_par = reduce_s(sp.expand(num) - sp.expand(num.subs(flip, simultaneous=True))) == 0
+    rr_, cc_, _ = pgrid(*le_r)
+    v, al, u, _ = motion("P1", 0.3)
+    cf = ClosedFormAccel(blk)
+    D1, scl1, _ = cf._D(v, al, u, *LE, rr_, cc_, False)
+    D2, _, _ = cf._D(v, -al, u, *LE, rr_, cc_ if MUT == "parity-break" else -cc_, False)
+    par_num = float(np.max(np.abs(D1 - D2) / scl1**6))
+    check("parity", ok_par and par_num < 1e-9, f"64 r^6 D(v, -al, u; -c) - 64 r^6 D(v, al, u; c) reduces to 0 as a polynomial in "
+          f"(v, al, u, f, f', f'', r, c) [{ok_par}], so the type at (theta, al) is the type at (pi - theta, -al) and every "
+          f"wall fraction is even in al; on Le's grid at P1 t = 0.3 the largest |D(-al, -c) - D(al, c)| / scale^6 is "
+          f"{par_num:.1e} (< 1e-9)")
+
     # 6. The constant-speed limit against #64.
     print("\n== 6. Constant-speed limit (al = 0, u = v) against #64: entries, maps and fractions ==")
     Rc = ht.route_C()
     ok_ent = (blk.subs({AL: 0, U: V_}).applyfunc(reduce_s) - Rc).applyfunc(reduce_s) == sp.zeros(4, 4)
     print(f"  the block at (al, u) = (0, v) equals ht.route_C()'s frame Ricci tensor entry by entry: {ok_ent}")
-    cf = ClosedFormAccel(blk)
     cfh = ht.ClosedForm(Rc)
     mp.mp.dps = 15
     ndiff = ntot = 0
@@ -697,7 +716,7 @@ def main():
     if unres:
         print(f"  unresolved at 50 digits (r, cos theta, D, max|Im lam|), first 5: {[x for x in unres if x is not None][:5]}")
     check("closed_vs_numeric", not unres, f"the sign of D gives the eigenvalues' type at all {total} grid points "
-          f"({nd_tot} float64 disagreements; {len(unres)} unresolved after up to 100 rechecks per grid at 50 digits)")
+          f"({nd_tot} float64 disagreements; {len(unres)} unresolved after up to 1000 rechecks per grid at 50 digits)")
 
     # 9. Dropping the acceleration terms changes the map.
     print("\n== 9. The map with the acceleration terms dropped (al = 0, u = v at the same v), against the full one ==")
