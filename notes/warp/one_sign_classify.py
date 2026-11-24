@@ -54,11 +54,13 @@ MUTATIONS = {
     "add-quad": (["additive_solve"], "claims X'' in the radical in place of (X + R) X''"),
     "add-pert": (["additive_points"], "replaces the planted solution by u = 3/2 x + 2 ln rho + x^2/10"),
     "add-C0": (["additive_closure"], "replaces the two members with C != 0 by their C = 0 member u = x"),
+    "add-block": (["additive_block"], "claims P = -X'' - X'^2 (u dropped from the product with X'')"),
     "mult-W": (["mult"], "takes W = 2 X R + v in the claimed F"),
     "conical-Q": (["conical_entries"], "takes Q = -eta w in place of -eta w/2"),
     "conical-Eb": (["conical_solve"], "E_b with (eta^2 - 1) replaced by (eta^2 + 1)"),
     "bubble-sign": (["bubble_F"], "the claimed bracket with +z in place of -z"),
     "bubble-planted": (["bubble_points"], "replaces the block at the exact points by a planted rank-1 block"),
+    "compat-s1": (["static_compat"], "draws the three points on s = 1, the planted family, where C = 0"),
     "compat-Phi1": (["static_system"], "builds Phi1 with the opposite sign of a^2"),
     "lin-claim": (["linearized"], "claims the first-order part of P as +u0 w_xx"),
 }
@@ -66,8 +68,8 @@ MUTATIONS = {
 # the last section a control needs: its target checks are all in sections up to this one
 STOP_AT = {"block-Y-sign": 1, "travel-offset": 1, "gauge-drop": 1, "lemmaR-sign": 2, "lemmaR-F": 2, "brho-Q": 3,
            "brho-pert": 3, "brho-bracket": 3, "planar-sign": 4, "planar-constK": 4, "planar-ode": 4, "add-quad": 5,
-           "add-pert": 5, "add-C0": 5, "mult-W": 6, "conical-Q": 7, "conical-Eb": 7, "bubble-sign": 8,
-           "bubble-planted": 8, "compat-Phi1": 9, "lin-claim": 10}
+           "add-pert": 5, "add-C0": 5, "add-block": 5, "mult-W": 6, "conical-Q": 7, "conical-Eb": 7, "bubble-sign": 8,
+           "bubble-planted": 8, "compat-Phi1": 9, "compat-s1": 9, "lin-claim": 10}
 
 RESULTS = []
 MUT = None
@@ -419,7 +421,8 @@ def main():
     uA = Xf + Rf + vv
     jA = static_blocks(uA, sp.diff(Xf, x), sp.diff(Rf, rho), sp.diff(Xf, x, 2), 0, sp.diff(Rf, rho, 2), rho)
     SA = sp.diff(Rf, rho, 2) + sp.diff(Rf, rho) / rho
-    claimA = (-uA * sp.diff(Xf, x, 2) - sp.diff(Xf, x)**2, -SA / 2, 0, sp.diff(Xf, x) * sp.diff(Rf, rho),
+    claimA = ((-uA if MUT != "add-block" else -1) * sp.diff(Xf, x, 2) - sp.diff(Xf, x)**2, -SA / 2, 0,
+              sp.diff(Xf, x) * sp.diff(Rf, rho),
               sp.diff(Rf, rho)**2 / 2)
     blkA = all(zero(p - q) for p, q in zip(jA, claimA))
     Uu, X1, X2, R1, Sx = sp.symbols("Uu X1 X2 R1 Sx")
@@ -649,7 +652,7 @@ def main():
     random.seed(1592)
     gen_pts, dets, cv = [], [], []
     redraws = 0
-    for s_val in (sp.Rational(1, 2), 2, 3):
+    for s_val in ((1, 1, 1) if MUT == "compat-s1" else (sp.Rational(1, 2), 2, 3)):
         while True:  # positive rationals; a draw on a pole of the expressions (non-finite value) is redrawn
             p = {k_: sp.Rational(random.randint(1, 9), random.randint(1, 4)) for k_ in (rho, us, as_, bs)}
             p[ss] = s_val
