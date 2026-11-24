@@ -263,3 +263,36 @@ general PDE remain, as in `det_classify.md` §12. For #158's note, which decided
 Not covered here: shifts that are not separable (the general static PDE, time-dependent shifts beyond planar and the
 traveling reduction), the conical family's global solutions (#167), closure on the Bessel family for every member
 (#162).
+## Coordinator's review
+
+Merged as c8a0ca7. Raw negative-mass-raw `I160-mac` at 43e9153 (criteria at eded39d, before the first run).
+
+| step | result |
+|---|---|
+| scope | the three files the brief names, and raw `I160-rpi5` |
+| rerun on the Mac | exit 1 from `add_perturbed` alone, as reported; 21 of 22 checks, 21 controls fire on target, `m-unit-sign` silent as declared; output equals rpi5's apart from timings |
+| hand proofs | Lemma L, Lemma X (both Möbius cases), Lemma R, Lemma K, Theorem S, and steps 1 to 6 of §4 (the d_G ≥ 5 argument with the consistency identity, the rationality of m, the pole order, the exponent count, the Laurent step) read and rederived; no gap found that changes the result |
+| re-solve | steps 4 to 6 recomputed by the coordinator's own code (N5–N7 below) |
+| independent check `ind160.py` | runs exit 0; 8 of 10 mutations fire on target, 2 were silent (`I160-mac` README) |
+
+ind160 shares no code with this note's script.
+
+| id | what | result |
+|---|---|---|
+| N0–N2 | E from the coordinator's block; the sum-of-squares form; the six- and ten-term separations | pass |
+| N3 | Lemma X: β from the Möbius form; Ψ ∉ span{1, m, 1/(cm + d)} as a unit ideal; the c = 0 cubic | pass |
+| N4 | step 2's consistency identity, and polynomial P, S forcing q ≡ 0 | pass |
+| N5 | step 4: β = X m_X/2 and the pole coefficient −k²X₁²μ², k = 1 … 4 | pass |
+| N6 | step 5, by a count that uses only F₅, F₈, F₆ and F₁₀, whose leading coefficients never vanish for the b that matter: exponents in [−2, 1] at both ends | pass |
+| N7 | step 6: the X⁶ and X⁴ coefficients and the unit ideals of both branches | pass |
+
+**A remark on step 5.** The tables of `trav_exponents` include F₁ and F₃. For special v their leading coefficients
+vanish: F₃'s at b = 0 when v² = 1/3, and F₁'s at b = −2. The count of N6 avoids them and reaches the same range,
+[−2, 1], for every v ≠ 0. Step 5 therefore stands, with F₅, F₈ and F₆ as the exponents that decide it.
+
+**Discrepancies and process.**
+- `add_perturbed` failed and stays failed, by the coordinator's ruling during the run. `add_perturbed_exact` was
+  written before it ran and passes.
+- #80 counted Γ's degree as 17 in ρ; #160 finds degree 16 in (p₁, p₂, c₁, s₂, 1/ρ). That is a counting convention,
+  and `det_classify.md` §5 now says so.
+- In the coordinator's own check, two mutations were silent and a third replaced them; all three are recorded.

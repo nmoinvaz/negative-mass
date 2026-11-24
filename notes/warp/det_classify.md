@@ -18,7 +18,7 @@ D = det R₃ vanishes on an open set for many shifts, so "classify" is done insi
 | planar b(t, x) (b_ρ ≡ 0) | **all of them**: D ≡ 0 | yes, e.g. b = −v f(x − vt) | traveling and \|u\| ≠ 1 everywhere: fails unless flat; other cases: see §2 | **proved**, **checked symbolically** |
 | b(ρ) of #65 and its linear-in-x deformation u = c x + g(ρ) | g = −ε ln(α J₀(√2 c ρ) + β Y₀(√2 c ρ)); c = 0 is #65 | no (linear or constant in x) | fails at 6 exact jets (c = 0, 2, 6) | **proved**, **checked symbolically** |
 | additive b = X(x) + R(ρ) | exactly planar, or u = c x + d + g(ρ) as above | only the planar ones | as above | **proved** (hand argument), **checked symbolically** |
-| multiplicative b = X(ξ) R(ρ) | reduced equation and one compatibility relation derived | **not decided** | not run | not classified; the numerical search was withdrawn, see §5 |
+| multiplicative b = X(ξ) R(ρ) | none with X X′ R R′ ≠ 0, for every v (#160); X′ ≡ 0 is #65's b(ρ), R′ ≡ 0 is planar | — | not needed | **proved** in [`mult_classify.md`](mult_classify.md), steps **checked symbolically** (§5) |
 | conical b = F(x/ρ) | ODE of second order, cubic in F″ | **not decided**: "no limit at η → ±∞" is not established (§6) | not run | ODE **checked symbolically** |
 | static or traveling b(x, ρ), general | one second-order PDE, many local solutions | only inside the rows above | not run | not classified |
 
@@ -154,6 +154,11 @@ The subcases R′ ≡ 0 (planar) and X′ ≡ 0 (b(ρ) of #65) are recovered (`m
 fixes (s₂)′, and their mutual compatibility gives *one* polynomial relation of degree 17 in (p₁, p₂, c₁, s₂, ρ) (after removing the factors c₁, p₁ and the two factors of A), because the numerators of the two compatibility conditions are equal (`multiplicative` (d)). I did not finish the prolongation.
 **The multiplicative case is not classified.** A numerical formal-series search (README C8 (e)) was written and then withdrawn before any run of record (README A5): its converged starts were all of tiny amplitude, so it could not tell a solution from a small
 shift, also on the additive equation that has solutions. The scratch evidence is in the raw folder (`scratch_series_search.log`). A properly normalized search is a recommended task.
+
+**Update from #160** ([`mult_classify.md`](mult_classify.md)): decided. For every real v there is no solution of
+D = 0 with X X′ R R′ ≠ 0 on an open box (*proved*, steps *checked symbolically*), by separating E into a sum of 6, 10
+or 9 products and bounding the dimensions of the two spans. The relation of degree 17 above, which #160 counts as
+degree 16 in (p₁, p₂, c₁, s₂, 1/ρ), was not needed, and the prolongation ideal itself was not computed.
 
 ## 6. Conical shifts b = F(x/ρ)
 
