@@ -13,7 +13,7 @@ one_sign_classify.py, issue #158. sympy 1.14.0, python 3.14.10. mutation: none
 [PASS] brho_closure: closure2 of M = R - h g for b = 2 ln rho + 1/3: kernel dimension 2, [K_1, K_2] = ['0', '2/rho', '0', '0'], plane integrable: False (Frobenius: no closed pair exists) (2 s)
 
 == 4. Planar shifts b(t, x): lam = K = -P, closure iff K constant, Theorem P ==
-[PASS] planar_stage: R_3 of a generic planar b = diag(P, -P, 0), P = a_x: True; the 2 x 2 minors of diag(P, -P, 0) - lam eta_3 vanish only at lam = -Pl (solve: [-Pl]): True; 4D, 3 exact points each, lam = K with inertia (2,0) for K < 0 and (0,2) for K > 0: [('3/2 x', '9/4', True), ('tan(t) x', '-1', True), ('-tanh(t) x', '1', True)] (2 s)
+[PASS] planar_stage: R_3 of a generic planar b = diag(P, -P, 0), P = a_x: True; the 2 x 2 minors of diag(P, -P, 0) - lam eta_3 vanish only at lam = -Pl (solve: [-Pl]): True; 4D, 3 exact points each, lam = K with inertia (2,0) for K < 0 and (0,2) for K > 0: [('3/2 x', '9/4', True), ('tan(t) x', '-1', True), ('-tanh(t) x', '1', True)] (3 s)
 [PASS] planar_closure: closure2 of M = R - K g, (name, K, dim, integrable, L_X M = 0, flat): must pass for K constant: [('3/2 x', '9/4', 2, True, True, True), ('tan(t) x', '-1', 2, True, True, True), ('-tanh(t) x', '1', 2, True, True, True)]; must fail on L_X M = 0 (K not constant) with the kernel integrable: [('x^2/10', '3*x**2/50', 2, True, False), ('1/(1 + x^2)', '2*(5*x**2 - 1)/(x**2 + 1)**4', 2, True, False)] (3 s)
 [PASS] planar_thm: along dx/dt = -b the chain rule gives x'' = -a, so with a = -K0 x + alpha(t) (i.e. K = -a_x = K0 constant) x'' = K0 x - alpha: True; the family x_X(t) through (t1, X) solves it for K0 = +kappa^2 and -kappa^2, and d_X x'/d_X x = kappa tanh(kappa (t* - t1)) resp. -kappa tan(kappa (t* - t1)): [True, True]. So -b(t*, .) = x' grows linearly in the comoving position: no bounded b, so no localized one (Theorem P, by hand)
 
@@ -59,11 +59,13 @@ one_sign_classify.py, issue #158. sympy 1.14.0, python 3.14.10. mutation: none
 [FIRED] --mutate=add-quad (claims X'' in the radical in place of (X + R) X''): exit 1, failed ['additive_solve']
 [FIRED] --mutate=add-pert (replaces the planted solution by u = 3/2 x + 2 ln rho + x^2/10): exit 1, failed ['additive_points']
 [FIRED] --mutate=add-C0 (replaces the two members with C != 0 by their C = 0 member u = x): exit 1, failed ['additive_closure']
+[FIRED] --mutate=add-block (claims P = -X'' - X'^2 (u dropped from the product with X'')): exit 1, failed ['additive_block']
 [FIRED] --mutate=mult-W (takes W = 2 X R + v in the claimed F): exit 1, failed ['mult']
 [FIRED] --mutate=conical-Q (takes Q = -eta w in place of -eta w/2): exit 1, failed ['conical_entries']
 [FIRED] --mutate=conical-Eb (E_b with (eta^2 - 1) replaced by (eta^2 + 1)): exit 1, failed ['conical_solve']
 [FIRED] --mutate=bubble-sign (the claimed bracket with +z in place of -z): exit 1, failed ['bubble_F']
 [FIRED] --mutate=bubble-planted (replaces the block at the exact points by a planted rank-1 block): exit 1, failed ['bubble_points']
+[FIRED] --mutate=compat-s1 (draws the three points on s = 1, the planted family, where C = 0): exit 1, failed ['static_compat']
 [FIRED] --mutate=compat-Phi1 (builds Phi1 with the opposite sign of a^2): exit 1, failed ['static_system']
 [FIRED] --mutate=lin-claim (claims the first-order part of P as +u0 w_xx): exit 1, failed ['linearized']
 controls: all fired

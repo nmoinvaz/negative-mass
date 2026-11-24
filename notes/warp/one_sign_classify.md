@@ -272,7 +272,7 @@ Per check, by section: 1 `block`, `travel`; 2 `lemmaR`; 3 `brho_solve`, `brho_po
 | `planar_stage` | R₃ = diag(P, −P, 0), λ = −P only; 3 planar metrics at 3 points each | `planar-sign` | λ = +P expected |
 | `planar_closure` | closure iff K constant, 3 pass and 2 fail | `planar-constK` | the two failing shifts replaced by b = x, 2x |
 | `planar_thm` | x″ = K₀x − α, the family x_X, the growth ratio | `planar-ode` | x″ = −K₀x + α |
-| `additive_block` | R₃ of X(x) + R(ρ) + v | | |
+| `additive_block` | R₃ of X(x) + R(ρ) + v | `add-block` | P = −X″ − X′² claimed |
 | `additive_solve` | S, v₀, u X″ in the radical | `add-quad` | X″ claimed in place of u X″ |
 | `additive_points` | c x + C ln ρ + d passes at 3 points; + x²/10 does not | `add-pert` | the planted solution perturbed |
 | `additive_closure` | non-integrable kernel for C ≠ 0, passes for C = 0 | `add-C0` | the two C ≠ 0 members replaced by u = x |
@@ -282,15 +282,17 @@ Per check, by section: 1 `block`, `travel`; 2 `lemmaR`; 3 `brho_solve`, `brho_po
 | `bubble_F` | chain-rule jets, F = s²c²B/(8r³), unit ideal | `bubble-sign` | +z |
 | `bubble_points` | 20 exact points: no rank-1 λ | `bubble-planted` | planted rank-1 blocks |
 | `static_system` | A, B in the radical, the parametrization identity, the planted family, C = 0 at 6 points | `compat-Phi1` | opposite sign of a² in Φ₁ |
-| `static_compat` | det ≠ 0 and C ≠ 0 at 3 exact points (a result) | | |
+| `static_compat` | det ≠ 0 and C ≠ 0 at 3 exact points (a result) | `compat-s1` | the points drawn on s = 1, where C = 0 |
 | `linearized` | the first-order parts, the planted tangent family | `lin-claim` | +u₀ w_xx |
 
-All controls fire on their target check and on no other: 21 of 21 (`controls: all fired`). **One control was silent in
-the first batch.** `add-bracket` (the kernel commutator without K₂(K₁^μ), target `additive_closure`) exited 0: for the
-additive family the nonzero part of the commutator is K₁(K₂^μ), so the mutated commutator is still nonzero and the plane
-still looks non-integrable. It is reported as silent (`ctl_add-bracket.log` in the raw folder, README amendment A6) and
-was replaced after seeing the data by `add-C0`, which feeds the check the integrable C = 0 member and fires. The
-original `brho-bracket` (D3) fired. The other 20 controls of the first batch fired on their named target alone.
+All controls fire on their target check and on no other: 23 of 23 (`controls: all fired`), one or two for each of the 21
+checks. **One control was silent in the first batch.** `add-bracket` (the kernel commutator without K₂(K₁^μ), target
+`additive_closure`) exited 0: for the additive family the nonzero part of the commutator is K₁(K₂^μ), so the mutated
+commutator is still nonzero and the plane still looks non-integrable. It is reported as silent (`ctl_add-bracket.log` in
+the raw folder, README amendment A6) and was replaced after seeing the data by `add-C0`, which feeds the check the
+integrable C = 0 member and fires. Two controls were added after the first full run (`add-block`, `compat-s1`) because
+two checks had none (README A7). The original `brho-bracket` (D3) fired. The other 20 controls of the first batch fired
+on their named target alone, and so did the two added later.
 
 `planar_thm`'s statement in the README as worded holds at a fixed initial velocity; the bound on β(X) in Theorem P is by
 hand (README A1). Failed development runs are kept in the raw folder and described in its README (the float zero in
@@ -304,7 +306,7 @@ From the repository root, in the environment of [`setup.md`](../../setup.md):
     python3 notes/warp/one_sign_classify.py --mutate=NAME   # one control
 
 The checks take 26 s on a Raspberry Pi 5 (aarch64, one process at nice 10, shared with other jobs) and the whole run
-with its 21 controls 171 s, at 82 MB peak resident for the largest process (`/usr/bin/time -v`: 99% of one core).
+with its 23 controls 203 s, at 82 MB peak resident for the largest process (`/usr/bin/time -v`: 99% of one core).
 
 ## What the code proves, and what is assumed
 
