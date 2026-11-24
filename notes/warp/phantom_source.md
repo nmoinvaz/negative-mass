@@ -265,7 +265,9 @@ the coordinator:* three scalars of mixed signs fail closure at every exact point
 decided ([three_scalars.md](three_scalars.md), #77). Two scalars of one sign fail the algebraic stage on every open set
 that meets the wall, at constant speed and for the accelerating bubble ([same_sign_scalars.md](same_sign_scalars.md),
 #78, *proved*). #70 shows that (I1) and (I2) hold for every shift b(t, x, σ(y, z)) with unit lapse, in the frame adapted
-to ∇⊥σ, so the lemma covers some shifts that are not axisymmetric ([nonaxisymmetric.md](nonaxisymmetric.md)).
+to ∇⊥σ, so the lemma covers some shifts that are not axisymmetric ([nonaxisymmetric.md](nonaxisymmetric.md)). *Added by
+the coordinator:* for a sheared shift outside that class (#81, [sheared.md](sheared.md)) a scalar form at a point forces
+R_ab = 0 or X = y = 0, so none holds on an open set with R_ab ≠ 0 (*proved* by hand, reviewed by the coordinator).
 
 The answer rests on computer algebra, so it should get an independent review before it is relied on.
 

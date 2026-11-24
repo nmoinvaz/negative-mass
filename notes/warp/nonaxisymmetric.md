@@ -125,11 +125,15 @@ the same `scalar_form` (`planted_pass`, `planted_sign`, `planted_deform`, `plant
 
 ## A shift that is not of this class
 
-`--mutate=shear` adds X y/2 to q, so ∇_⊥∂_x b is no longer along ∇_⊥b. The premises then hold at only 11 of the 27
-points, and the lemma says nothing where they fail. The same `scalar_form` on the same points still returns `algebraic` at all 25 points with
-f′ ≠ 0 (the controls section of the output echoes both counts). That is **numerical evidence** only, from a control, not a
-result of this note. The codimension count makes it unsurprising, since a symmetric 4×4 matrix has 10 components and
-λη + s u uᵀ has 5 parameters.
+`--mutate=shear` adds X y/2 to q, so ∇_⊥∂_x b is no longer along ∇_⊥b. #81 ([sheared.md](sheared.md)) runs this shift, b
+= −v f(q), q = X² + y² + 2z² + Xy/2, as a result. With w = ∇⊥q, (I2) holds identically and (I1) fails exactly where v f′
+z ≠ 0, at 21 of its 29 exact points, so the lemma does not apply there, and `scalar_form` returns `algebraic` at both
+signs at all 28 points with R_ab ≠ 0 (**numerical evidence**, points only). The codimension count is not an argument:
+R_ab has 7 parameters at a point (v, f, f′, f″, X, y, z) against the 5 of λη + s u uᵀ, and on the z axis X = y = 0 tuned
+jets give a phantom scalar form exactly at that point. *Added by the coordinator:* sheared.md's reduction (by hand; read
+and rederived in the coordinator's review, its ingredients checked by `I81-mac/ind81.py`) shows that a scalar form at a
+point of this shift forces R_ab = 0 or X = y = 0, so no open set with R_ab ≠ 0 carries one, for any C² profile f. That
+answers #82.
 
 ## Checks and controls
 

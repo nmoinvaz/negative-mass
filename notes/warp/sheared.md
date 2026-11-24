@@ -262,3 +262,29 @@ so the lemma does not apply there, and `scalar_form` returns `algebraic` at both
 (**numerical evidence**, points only). The codimension count is not an argument: R_ab has 7 parameters at a point
 (v, f, f′, f″, X, y, z) against the 5 of λη + s u uᵀ, and on the z axis X = y = 0 tuned jets give a phantom scalar form
 exactly at that point.*
+
+## Coordinator's review
+
+Raw `I81-mac` (negative-mass-raw). Mac, nice 10, at most 2 processes.
+
+| step | result |
+|---|---|
+| scope | the three files the issue names, and raw `I81-rpi5` |
+| rerun `sheared.py` | exit 0 in 96 s: 20 of 20 checks pass and 20 of 20 controls fire, and the output equals rpi5's apart from the timings |
+| re-solve | the z-axis point with the coordinator's own Ricci tensor: largest minor 9.6e-64, trace < 0, 0.0378231 with F″ + 1/10 |
+| the reduction and corollary | read and rederived step by step: (A) and the lemma; (B) forcing u₂ = 0 and c1–c5; r₀ ≠ 0 forcing (B); the identity giving q_X = 0, then q_y = 0, then X = y = 0. No gap found |
+| independent check `ind81.py` | run 1 exits 0 in 1 s, and all 5 mutations fire on target |
+
+`ind81.py` imports nothing from the repository. Its Ricci routine is the coordinator's. It checks this note's closed
+forms for a generic b(t, x, y, z) (L1). For the sheared shift it checks the cross product, the (I1) residues, (I2),
+the reduction identity and R(w, E₀) (L2). It also checks the case (B) algebra (L3) and the z-axis point (L4).
+
+So the corollary rests on a hand argument that the coordinator rederived, with every algebraic ingredient checked by two
+codes that share nothing. With that review its status is **proved** by hand. #82's question, whether the algebraic
+stage can pass on an open set, is answered for this shift: it cannot where R_ab ≠ 0. The corollary is row 25 of #135.
+
+**Discrepancies.** Run 1's control `unsheared` was silent on `shear_cross`, because the check did not use the q the
+README names. It was fixed in run 2, which leaves the unmutated output identical. Both runs are recorded above and in
+`I81-rpi5`.
+
+**Recommended tasks.** The independent review of the corollary is this review. #82 is closed as answered here.
