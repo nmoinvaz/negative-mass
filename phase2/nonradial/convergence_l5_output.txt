@@ -14,4 +14,4 @@ gamma=      40: D_base=-3.007967e-06  signs=[np.float64(-1.0)]  rel.spread (same
 gamma=     137: D_base=-7.504837e-08  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-3.728e-08  q_int=+1.370002e+02 q_ext=-1.370002e+02  (545s)
 gamma=     300: D_base=-7.148531e-09  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-3.551e-09  q_int=+3.000001e+02 q_ext=-3.000001e+02  (1386s)
 gamma=   1e+03: D_base=-1.930186e-10  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-9.588e-11  q_int=+1.000000e+03 q_ext=-1.000000e+03  (4250s)
-gamma=   6e+03: D_base=-8.936083e-13  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-4.439e-13  q_int=+6.000000e+03 q_ext=-6.000000e+03  (27140s)  [rtol 1e-12 not completed, stopped after its worker had run 18129s of wall time, past the 5 h cap (18000s); signs and spread are over 4 variants]
+gamma=   6e+03: D_base=-8.936083e-13  signs=[np.float64(-1.0)]  rel.spread (same r_m)=2.1e-04  D(r_m~34)=-4.439e-13  q_int=+6.000000e+03 q_ext=-6.000000e+03  (107868s)
