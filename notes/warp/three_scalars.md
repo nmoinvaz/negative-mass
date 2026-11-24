@@ -24,7 +24,7 @@ nonzero on an open dense set once it is nonzero at one point (**checked symbolic
 For Alcubierre's tanh profile the jets were rounded to 55 digits, so that is **numerical evidence**, as in #57.
 
 The λ ≠ 0 branches pass the algebraic stage too: 27 admissible rank-3 roots at the 25 off-axis exact points
-(**checked** by exact roots and 60-digit inertia). They fail closure at all 27, by L_K M ≠ 0, computed as a field at
+(exact roots, inertia from 60-digit eigenvalues: **numerical evidence**). They fail closure at all 27, by L_K M ≠ 0, computed as a field at
 120 digits (**numerical evidence**). The test that K(λ) ≠ 0 alone, as first coded, failed at 4 of the 27 roots, all on
 the equator c = 0 (see "The λ ≠ 0 branches"). The accelerating bubble does not change the answer at the 6 exact
 points tested (**checked symbolically** at those points).
