@@ -61,8 +61,8 @@ MUTATIONS = {
     "tfactor": ("T drops e^{2 g atan g}", ["U2", "G3", "G4", "G5", "G6", "U3"]),
     "count": ("G7 uses W + a second well", ["G7", "G7b", "LE4"]),
     "domain": ("A and B use L = 4; the new path uses L' = 2", ["D1", "G0", "G1", "D1b", "G5b", "R2", "P-A2", "P-B2", "G1b", "LE3"]),
-    "deltaphi": ("the 2 in 2 e^{2(d-c)}/c' of method C becomes 1", ["L1", "G2", "G2b"]),
-    "cpath": ("method C's semicircle radius -> 0", ["P-C", "G2", "P-C2", "G2b"]),
+    "deltaphi": ("the 2 in 2 e^{2(d-c)}/c' of method C becomes 1", ["L1", "G2", "G2b", "P-C2b"]),
+    "cpath": ("method C's semicircle radius -> 0", ["P-C", "G2", "P-C2b", "G2b"]),
     "background": ("kappa Phi1^2 = -2(1+g^2) -> -2(1+2 g^2) in S1", ["S1"]),
     "largex": ("far-field bracket (x > 2 max(1, g)): 3(g^2-1-2gx) -> 3(g^2-1-gx)",
                ["N1a", "N2", "R2", "R3", "G5b", "G1b", "G2b"]),
@@ -1076,38 +1076,62 @@ def odeC2_rhs(x, C, Cp, bt, g, ns=cmath):
     return -2 * x / (1 + x * x) * Cp + bt * bt / a2 * C + k * (Cp - g * C / (1 + x * x)) / (x - g)
 
 
-def C2_det(b, g, L=20.0, rfrac=0.5, side=+1, rtol=1e-12):
-    sc = sc_of(g)
-    bt = b / sc
-    sd = sysd_ggs(g)
-    xR, xL = x_ends(sd, L)
+def C2_geometry(g, L, rfrac):
+    """(x at +L', x at -L', throat, semicircle radius) of method C: the path of the real roots and of P-C2b."""
+    xR, xL = x_ends(sysd_ggs(g), L)
     xt = g
     r = rfrac * math.sqrt(1 + g * g)
     r = min(r, rfrac * (xt - xL)) if xt - xL > 0 else r
     if mut("cpath"):
         r = 0.0
+    return xR, xL, xt, r
 
-    def real_rhs(x, y):
-        v = [y[1], odeC2_rhs(x, y[0], y[1], bt, g, ns=math)]
-        if not (math.isfinite(v[0]) and math.isfinite(v[1])):
-            raise ValueError("non-finite right-hand side")
-        return v
 
-    sR = solve_ivp(real_rhs, (xR, xt + r), [1.0, -bt / a_of(xR, g)], method="DOP853", rtol=rtol, atol=[1e-16, 1e-16])
-    sL = solve_ivp(real_rhs, (xL, xt - r), [1.0, bt / a_of(xL, g)], method="DOP853", rtol=rtol, atol=[1e-16, 1e-16])
+def C2_det(b, g, L=20.0, rfrac=0.5, side=+1, rtol=1e-12, plant=None):
+    """(Re, |Im|) of the normalized determinant of the right- and left-decaying solutions at x_t - r. With plant (P-C2b): the same
+    path, radius, direction and integrator with a source and one extra state, returning the raw end vectors (cR, pR, cL, pL)."""
+    sc = sc_of(g)
+    bt = b / sc
+    xR, xL, xt, r = C2_geometry(g, L, rfrac)
+
+    def real_rhs_for(which):
+        def f(x, y):
+            v = [y[1], odeC2_rhs(x, y[0], y[1], bt, g, ns=math)]
+            if plant is not None:
+                s2, ds = plant[which](x, y, math)
+                v[1] += s2
+                v.append(ds)
+            if not all(math.isfinite(z) for z in v):
+                raise ValueError("non-finite right-hand side")
+            return v
+
+        return f
+
+    if plant is None:
+        yR0, yL0, atol = [1.0, -bt / a_of(xR, g)], [1.0, bt / a_of(xL, g)], [1e-16, 1e-16]
+    else:
+        yR0, yL0, atol = [1.0, plant["R0"], 0.0], [1.0, bt / a_of(xL, g), 0.0], [1e-16, 1e-16, 1e-14]
+    sR = solve_ivp(real_rhs_for("R"), (xR, xt + r), yR0, method="DOP853", rtol=rtol, atol=atol)
+    sL = solve_ivp(real_rhs_for("L"), (xL, xt - r), yL0, method="DOP853", rtol=rtol, atol=atol)
 
     def arc_rhs(th, y):
         x = xt + r * cmath.exp(1j * th)
         d = 1j * r * cmath.exp(1j * th)
         v = [d * y[1], d * odeC2_rhs(x, y[0], y[1], bt, g)]
-        if not (cmath.isfinite(v[0]) and cmath.isfinite(v[1])):
+        if plant is not None:
+            s2, ds = plant["R"](x, y, cmath)
+            v[1] += d * s2
+            v.append(d * ds)
+        if not all(cmath.isfinite(z) for z in v):
             raise ValueError("non-finite right-hand side")
         return v
 
-    sA = solve_ivp(arc_rhs, (0.0, side * math.pi), [complex(sR.y[0, -1]), complex(sR.y[1, -1])], method="DOP853", rtol=rtol,
-                   atol=[1e-16, 1e-16])
+    y0 = [complex(v) for v in sR.y[:, -1]]
+    sA = solve_ivp(arc_rhs, (0.0, side * math.pi), y0, method="DOP853", rtol=rtol, atol=atol)
     cR, pR = sA.y[0, -1], sA.y[1, -1]
     cL, pL = sL.y[0, -1], sL.y[1, -1]
+    if plant is not None:
+        return cR, pR, cL, pL
     nR, nL = math.hypot(abs(cR), abs(pR)), math.hypot(cL, pL)
     det = (cR / nR) * (pL / nL) - (pR / nR) * (cL / nL)
     return det.real, abs(det.imag)
@@ -1297,6 +1321,80 @@ def check_planted_C2(gammas):
             worst = float("inf")
         report("P-C2", worst < 1e-8, f"gamma_1 = {gv}: manufactured solution of the rescaled ODE carried across the throat on both "
                                      f"semicircles, worst rel error {worst:.2e}")
+
+
+def make_plant_C2b(b, g, xR):
+    """sources of P-C2b: right C_R* = exp(-bt s) h(x)/h(xR), s = int_{xR}^x dy/a (third state), left C_L* = exp(+bt s_L). S = C*'' - R_true(C*, C*')
+    with R_true the ODE of L1 (k = 2) retyped here."""
+    bt = b / sc_of(g)
+    kap = bt + g / (1 + g * g)
+    w = math.sqrt(1 + g * g)
+    hnorm = math.exp(kap * w * math.tanh((xR - g) / w))
+
+    def aa(x, ns):
+        return a_of(x, g) if ns is math else ns.exp(2 * g * (ns.atan(x) - math.atan(g)))
+
+    def R_true(x, C, Cp, a):
+        return -2 * x / (1 + x * x) * Cp + bt * bt / (a * a) * C + 2 * (Cp - g * C / (1 + x * x)) / (x - g)
+
+    def right(x, y, ns):
+        a = aa(x, ns)
+        z = (x - g) / w
+        c = ns.cosh(z)
+        sech2, th = 1 / (c * c), ns.tanh(z)
+        C = ns.exp(-bt * y[2]) * ns.exp(kap * w * th) / hnorm
+        L = -bt / a + kap * sech2
+        Lp = 2 * bt * g / ((1 + x * x) * a) - 2 * kap * sech2 * th / w
+        return (Lp + L * L) * C - R_true(x, C, L * C, a), 1 / a
+
+    def left(x, y, ns):
+        a = aa(x, ns)
+        C = ns.exp(bt * y[2])
+        L = bt / a
+        Lp = -2 * bt * g / ((1 + x * x) * a)
+        return (Lp + L * L) * C - R_true(x, C, L * C, a), 1 / a
+
+    R0 = -bt / a_of(xR, g) + kap / math.cosh((xR - g) / w) ** 2
+    return {"R": right, "L": left, "R0": R0, "bt": bt, "kap": kap, "w": w, "hnorm": hnorm}
+
+
+def check_planted_C2b(BN, L, gammas=(2.5, 4.0, 6.0, 8.0, 10.0)):
+    for g in gammas:
+        try:
+            b = BN[g]
+            xR, xL, xt, r = C2_geometry(g, L, 0.5)
+            pl = make_plant_C2b(b, g, xR)
+            bt, kap, w = pl["bt"], pl["kap"], pl["w"]
+
+            def Iq(x1, x2):
+                return quad(lambda y: math.exp(-2 * g * datan(y, g)), x1, x2, epsabs=0, epsrel=1e-13, limit=500)[0]
+
+            xe = xt - r
+            ae = a_of(xe, g)
+            CR = math.exp(bt * Iq(xe, xR)) * math.exp(kap * w * math.tanh((xe - g) / w)) / pl["hnorm"]
+            LR = -bt / ae + kap / math.cosh((xe - g) / w) ** 2
+            exR = np.array([CR, LR * CR])
+            CL = math.exp(bt * Iq(xL, xe))
+            exL = np.array([CL, bt / ae * CL])
+            worst, detail = 0.0, []
+            for side in (+1, -1):
+                plant = make_plant_C2b(b, g, xR)
+                cR, pR, cL, pL = C2_det(b, g, L, 0.5, side, 1e-12, plant=plant)
+                eR = float(np.linalg.norm(np.array([cR, pR]) - exR) / np.linalg.norm(exR))
+                eL = float(np.linalg.norm(np.array([cL, pL]) - exL) / np.linalg.norm(exL))
+                detail.append((eR, eL))
+                worst = max(worst, eR if np.isfinite(eR) else float("inf"), eL if np.isfinite(eL) else float("inf"))
+            report("P-C2b", worst < 1e-8, f"gamma_1 = {g}: manufactured C* through method C's path (b = {b:.9f}, r = {r:.4g}): right + upper arc "
+                                          f"{detail[0][0]:.1e}, right + lower arc {detail[1][0]:.1e}, left segment {detail[0][1]:.1e}; worst rel error {worst:.2e}")
+        except Exception as exc:  # noqa: BLE001
+            report("P-C2b", False, f"gamma_1 = {g}: raised {type(exc).__name__}: {exc}")
+
+
+def run_only_pc2b(L):
+    BN = {}
+    for g in (2.5, 4.0, 6.0, 8.0, 10.0):
+        BN[g] = gshoot(sysd_ggs(g), L=L)[0]
+    check_planted_C2b(BN, L)
 
 
 def check_planted_LE(L):
@@ -1549,6 +1647,7 @@ def run_new():
     run_R3(L, BN)
     run_G1b(L, BN)
     run_G2b(L, BN)
+    check_planted_C2b(BN, L)
     run_G7b(L)
     run_D1b(L)
     LE = run_LE(L)
@@ -1557,7 +1656,7 @@ def run_new():
 
 OLD_IDS = {"U1", "U2", "S1", "L1", "W1", "P-A", "P-B", "P-C", "G0", "G1", "G2", "G3", "G4", "G5", "G6", "G7", "D1", "R1"}
 NEW_IDS = {"N1a", "N1b", "N2", "N3a", "N3b", "U3", "LE0", "P-A2", "P-B2", "P-C2", "P-LA", "P-LB", "P-LC", "R2", "R3", "G5b", "G1b",
-           "G2b", "G7b", "D1b", "LE3", "LE4", "LE5", "LE6"}
+           "G2b", "G7b", "D1b", "LE3", "LE4", "LE5", "LE6", "P-C2b"}
 
 
 def main():
@@ -1565,6 +1664,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--mutate", default=None, choices=sorted(MUTATIONS))
     ap.add_argument("--gamma", default=None, help="0: only the gamma_1 = 0 control and its supporting checks")
+    ap.add_argument("--only", default=None, choices=["P-C2b"], help="development: only this check")
     ap.add_argument("--section", default="all", choices=["all", "old", "new"], help="old: #151's checks; new: #163's (second row, limit)")
     args = ap.parse_args()
     MUT = args.mutate
@@ -1574,6 +1674,10 @@ def main():
     print(f"ellis_efold.py {' '.join(sys.argv[1:])}  python {platform.python_version()} numpy {np.__version__} "
           f"sympy {sp.__version__} mpmath {mp.__version__} on {platform.machine()}")
     print(f"mutation: {MUT}" + (f" ({MUTATIONS[MUT][0]})" if MUT else ""))
+    if args.only == "P-C2b":
+        run_only_pc2b(LN())
+        print(f"only P-C2b under mutation {MUT}: failed ids {FAILED}")
+        sys.exit(1 if FAILED else 0)
     if sect in ("all", "old"):
         check_units()
         check_T_formula()
