@@ -291,12 +291,13 @@ the trapezoid sum in s, not the time step and not a violation of the bound. L′
 The excess falls faster than any power of the spacing, as for a C^∞ integrand of compact support; the 5e-12 left is
 the RK4 time-step error (it changes with dt, not with the grid). Domain and ends are not the cause: [−3, 3] gives the
 same values as [−6, 6], and A′ = 0 exactly for |s| > 0.64 at t = 10. The true value L′(10) = 2hj is the total
-curvature, by hand: L′(t) = ∫K dA over the part of the plane below the slice (§3), K e^{2σ} = 2H′J′, so the total is
-2ΔHΔJ = 2hj, and it is reached once the slice lies above the diamond. The coordinator refused a check with a slack of
-1e-5 (a threshold picked after seeing the excess) and accepted `E_hol_b` (README A6, A7), with the README's own slack
-1e-9, composite Gauss–Legendre in s (order 10, 48 panels; 96 for the estimate) and RK4 at dt = 0.001: L′(10) − 2hj =
-+2.1e-12, with error estimates e_q = 2.4e-12 (panels 48 vs 96) and e_t = 3.6e-13 (dt 0.001 vs 0.0005). These estimates
-are spreads over two resolutions, not enclosures. `E_hol_b` passes. `E_hol` stays failed as worded.
+curvature, by a Gauss–Bonnet-type hand argument: L′(t) = ∫K dA over the part of the plane below the slice (§3), K
+e^{2σ} = 2H′J′, so the total is 2ΔHΔJ = 2hj, and it is reached once the slice lies above the diamond. The coordinator
+refused a check with a slack of 1e-5 (a threshold picked after seeing the excess) and accepted `E_hol_b` (README A6,
+A7), with the README's own slack 1e-9, composite Gauss–Legendre in s (order 10, 48 panels; 96 for the estimate) and
+RK4 at dt = 0.001: L′(10) − 2hj = +2.1e-12, with error estimates e_q = 2.4e-12 (panels 48 vs 96) and e_t = 3.6e-13 (dt
+0.001 vs 0.0005). These estimates are spreads over two resolutions, not enclosures. `E_hol_b` passes. `E_hol` stays
+failed as worded.
 
 **Defects fixed, logs kept** (raw `dev_*`): a helper compared a matrix with 0 (`dev_crit_null.run1.log`, C1 failed,
 rerun passes); a `limit` with a symbolic exponent hung C3 (`dev_pg_horizon.run1.log`, stopped by hand after 13 min,
@@ -372,4 +373,5 @@ with equal limits it is *not decided*."
 
 Nothing in #158's Theorem P changes: it concerns constant K, which closure of the one-sign pair allows, and here K is
 not constant.
+
 
