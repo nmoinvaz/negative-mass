@@ -53,7 +53,7 @@ MUTATIONS = {
     "planar-ode": (["planar_thm"], "takes the comoving ODE x'' = -K0 x + alpha"),
     "add-quad": (["additive_solve"], "claims X'' in the radical in place of (X + R) X''"),
     "add-pert": (["additive_points"], "replaces the planted solution by u = 3/2 x + 2 ln rho + x^2/10"),
-    "add-bracket": (["additive_closure"], "computes the kernel commutator without the term K_2(K_1^mu)"),
+    "add-C0": (["additive_closure"], "replaces the two members with C != 0 by their C = 0 member u = x"),
     "mult-W": (["mult"], "takes W = 2 X R + v in the claimed F"),
     "conical-Q": (["conical_entries"], "takes Q = -eta w in place of -eta w/2"),
     "conical-Eb": (["conical_solve"], "E_b with (eta^2 - 1) replaced by (eta^2 + 1)"),
@@ -66,7 +66,7 @@ MUTATIONS = {
 # the last section a control needs: its target checks are all in sections up to this one
 STOP_AT = {"block-Y-sign": 1, "travel-offset": 1, "gauge-drop": 1, "lemmaR-sign": 2, "lemmaR-F": 2, "brho-Q": 3,
            "brho-pert": 3, "brho-bracket": 3, "planar-sign": 4, "planar-constK": 4, "planar-ode": 4, "add-quad": 5,
-           "add-pert": 5, "add-bracket": 5, "mult-W": 6, "conical-Q": 7, "conical-Eb": 7, "bubble-sign": 8,
+           "add-pert": 5, "add-C0": 5, "mult-W": 6, "conical-Q": 7, "conical-Eb": 7, "bubble-sign": 8,
            "bubble-planted": 8, "compat-Phi1": 9, "lin-claim": 10}
 
 RESULTS = []
@@ -456,12 +456,9 @@ def main():
           f"at 3 points: {none3} ({time.time() - t0:.0f} s)")
     clA = []
     okc = True
-    for nm, u_, want_int in (("A1", uA1, False), ("A2", uA2, False)):
+    for nm, u_ in ((("A1", uA1), ("A2", uA2)) if MUT != "add-C0" else (("A0", uA0), ("A0", uA0))):
         lam_u = lamA(u_)
-        if MUT == "add-bracket":
-            sss.MUT = "d3-bracket"
         cl = sss.closure2((RA[nm] - lam_u * shift_g(u_)).applyfunc(simp_r), Dfun4, simp_r, lam_u)
-        sss.MUT = None
         okc &= cl["dim"] == 2 and not cl["integrable"]
         clA.append((nm, cl["dim"], cl["integrable"], [str(e_) for e_ in cl.get("bracket", [])]))
     cl0 = sss.closure2((RA["A0"] - lamA(uA0) * shift_g(uA0)).applyfunc(simp_r), Dfun4, simp_r, lamA(uA0))
