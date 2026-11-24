@@ -10,8 +10,9 @@ as in AGENTS.md: **proved** (by hand), **checked symbolically**, **numerical evi
 
 **No solution.** On a box I × J in (x, ρ), ρ > 0, with X X′ R R′ ≠ 0 (X, R real and C²) there is no u = X(x) R(ρ) + v
 with D = det R₃ = 0, for v = 0 (static) and for every v ≠ 0 (traveling). The multiplicative solutions of D = 0 that
-remain have X′ ≡ 0 (#65's b(ρ), which fails closure) or R′ ≡ 0 (planar). So the multiplicative row of [`det_classify.md`](det_classify.md)'s table becomes: no solution with X′R′ ≠ 0, and there is nothing to
-send through closure.
+remain have X′ ≡ 0 (#65's b(ρ), which fails closure) or R′ ≡ 0 (planar). So the multiplicative row of
+[`det_classify.md`](det_classify.md)'s table becomes: no solution with X′R′ ≠ 0, and there is nothing to send through
+closure.
 
 | case | verdict | status |
 |---|---|---|
