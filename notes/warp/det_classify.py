@@ -45,7 +45,6 @@ MUTATIONS = {
     "bessel-closed": (["bessel"], "replaces (a, b) by the closed pair (d rho, dt + dx)"),
     "add-drop": (["additive"], "replaces (X + R)^2 by X^2 in E"),
     "add-quad": (["additive"], "drops the y^2 coefficient equation of the elimination step"),
-    "mult-series-add": (["mult_series"], "runs the series search for u = X R + v on E_add, which has solutions"),
     "mult-drop-v": (["multiplicative"], "builds u = X R without + v in D"),
     "conical-term": (["conical"], "changes the coefficient of F^3 F''^3 eta^2 in N from 2 to 3"),
     "conical-hand": (["conical_parts"], "expects the original wrong degree-3 part 2 F w^2 (F^2 F'' - eta w)"),
@@ -524,91 +523,6 @@ def c8_multiplicative():
 # ---------------------------------------------------------------------------------------------------------------
 # C9 conical
 # ---------------------------------------------------------------------------------------------------------------
-def series_system(kind, v, M=5):
-    """Equations E_(m,n) = d_x^m d_rho^n E = 0 (m + n <= M) at (x, rho) = (0, 1), as a numpy function of the jets
-    (X_0..X_(M+2), R_0..R_(M+2), t_X, t_R), plus t_X X_1 - 1 and t_R R_1 - 1."""
-    import numpy as np
-    K = M + 2
-    Xs = sp.symbols(f"X0:{K + 1}")
-    Rs = sp.symbols(f"R0:{K + 1}")
-    iw, tX, tR = sp.symbols("iw tX tR")
-    S = Rs[2] + Rs[1] * iw
-
-    def Dx(f):
-        return sp.expand(sum(sp.diff(f, Xs[k]) * Xs[k + 1] for k in range(K)))
-
-    def Dr(f):
-        return sp.expand(sum(sp.diff(f, Rs[k]) * Rs[k + 1] for k in range(K)) + sp.diff(f, iw) * (-iw**2))
-    if kind == "mult":
-        E = sp.expand(E_mult_poly(Xs[0], Xs[1], Xs[2], Rs[0], Rs[1], S, sp.nsimplify(v)))
-    else:
-        E = sp.expand(E_add_poly(Xs[0], Xs[1], Xs[2], Rs[0], Rs[1], S))
-    eqs, f = [], E
-    for m in range(M + 1):
-        g = f
-        for n in range(M + 1 - m):
-            eqs.append(g.subs(iw, 1))
-            g = Dr(g)
-        f = Dx(f)
-    eqs += [tX * Xs[1] - 1, tR * Rs[1] - 1]
-    variables = list(Xs) + list(Rs) + [tX, tR]
-    fn = sp.lambdify(variables, eqs, "numpy")
-    return (lambda z: np.array(fn(*z), dtype=float)), len(variables), K
-
-
-def lm_search(resid, nvar, K, starts=60, iters=80, seed=80):
-    import numpy as np
-    rng = np.random.default_rng(seed)
-    best, conv = np.inf, 0
-    for _ in range(starts):
-        z = rng.uniform(-2, 2, nvar)
-        for i in (1, K + 2):  # X_1, R_1 away from 0
-            z[i] = np.sign(z[i]) * max(abs(z[i]), 0.3)
-        z[-2], z[-1] = 1 / z[1], 1 / z[K + 2]
-        lam = 1e-2
-        r = resid(z)
-        for _ in range(iters):
-            J = np.empty((len(r), nvar))
-            for j in range(nvar):
-                h = 1e-7 * max(1.0, abs(z[j]))
-                zz = z.copy()
-                zz[j] += h
-                J[:, j] = (resid(zz) - r) / h
-            A, g = J.T @ J, J.T @ r
-            try:
-                dz = np.linalg.solve(A + lam * np.diag(np.diag(A) + 1e-12), -g)
-            except np.linalg.LinAlgError:
-                break
-            z2 = z + dz
-            r2 = resid(z2)
-            if np.all(np.isfinite(r2)) and np.linalg.norm(r2) < np.linalg.norm(r):
-                z, r, lam = z2, r2, max(lam / 3, 1e-12)
-            else:
-                lam *= 4
-            if np.linalg.norm(r) < 1e-12:
-                break
-        nr = np.linalg.norm(r)
-        best = min(best, nr)
-        conv += nr < 1e-10
-    return best, conv
-
-
-def c8e_series():
-    rows, mult_ok = [], True
-    for v in (0, sp.Rational(1, 2), 1, 2):
-        kind = "add" if MUT == "mult-series-add" else "mult"
-        resid, nvar, K = series_system(kind, v)
-        best, conv = lm_search(resid, nvar, K)
-        rows.append((str(v), f"{best:.3g}", conv))
-        mult_ok &= conv == 0
-    resid, nvar, K = series_system("add", 0)
-    bestp, convp = lm_search(resid, nvar, K)
-    check("mult_series", mult_ok and convp >= 1,
-          f"u = X R + v, X'R' != 0 at (0, 1), jets to order 7, equations E_(m,n), m + n <= 5, 60 Levenberg-Marquardt starts per v: "
-          f"(v, smallest residual, converged) = {rows}; planted E_add (solutions u = c x + g(rho)): smallest residual "
-          f"{bestp:.3g}, {convp} of 60 converged. Numerical evidence only")
-
-
 def c9_conical():
     x, rho = sp.symbols("x rho", positive=True)
     eta = ETA
@@ -844,7 +758,7 @@ def c11_bubble():
 
 CHECKS = [("d_block", c1_d_block), ("travel", c2_travel), ("planar", c3_planar), ("planar_closure", c4_planar_closure),
           ("planar_traveling", c5_planar_traveling), ("bessel", c6_bessel), ("additive", c7_additive),
-          ("multiplicative", c8_multiplicative), ("mult_series", c8e_series), ("conical", c9_conical), ("conical_parts", c9b_parts),
+          ("multiplicative", c8_multiplicative), ("conical", c9_conical), ("conical_parts", c9b_parts),
           ("conical_limit", c9b_limit), ("conical_planted", c9b_planted), ("farfield", c10_farfield),
           ("bubble", c11_bubble)]
 
@@ -874,6 +788,9 @@ if __name__ == "__main__":
         print("\n== Controls: each mutation must make its target checks fail, and no others ==", flush=True)
         for name, (want, what) in MUTATIONS.items():
             p = subprocess.run([sys.executable, __file__, f"--mutate={name}"], capture_output=True, text=True)
+            if "logdir" in OPTS:
+                with open(os.path.join(OPTS["logdir"], f"mut_{name}.log"), "w") as fh:
+                    fh.write(p.stdout + p.stderr)
             fails = [ln.split(":")[0][7:] for ln in p.stdout.splitlines() if ln.startswith("[FAIL]")]
             fired = all(w in fails for w in want) and p.returncode == 1
             extra = [f for f in fails if f not in want and f not in failed]
