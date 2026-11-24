@@ -16,13 +16,23 @@
 ## Linear stability of negative-mass Schwarzschild
 - **Gibbons, Hartnoll & Ishibashi 2004**, hep-th/0409307 — vector modes stable; scalar modes: family of BCs
   q ∈ ℝℙ¹, q_C = 2 + log(98/9), Friedrichs extension "stable". Flaw: truncation at r_C (see phase0/RESULTS.md).
-- **Gleiser & Dotti 2006**, gr-qc/0604021 — kinematic singularity at r = 3μ/(2λ); exact smooth unstable modes.
-  Its arXiv TeX (read 2026-11-23) prints Lemma 1's (cz) as ζ′ = +2λ²/(3μ(2λ+3))ζ; its own (RW17) and (nv1)'s K force
-  the minus sign. (nv1)'s H₁ is 2/r times too large and its H₂ ζ term has the wrong sign (#146, phase2/dg_proof/
-  zerilli_gauge_rs.md; other versions and the journal text: #149).
+- **Gleiser & Dotti 2006**, gr-qc/0604021, Class. Quantum Grav. 23 (2006) 5063–5078, doi:10.1088/0264-9381/23/15/021
+  (arXiv listing and INSPIRE) — kinematic singularity at r = 3μ/(2λ); exact smooth unstable modes. Two arXiv versions,
+  read 2026-11-23 (#149). v1 (5 Apr 2006) has no Lemma 1, (nv1), (im) or (cz); its expansion (exp) of the ζ-ODE at r_s
+  forces ζ′(r_s) = −2λ²/(3μ(2λ+3)) ζ(r_s). v2 (29 May 2006) prints Lemma 1's (cz) (eq. 16) with +2λ²/(3μ(2λ+3)), the
+  opposite of its own (exp) and (RW17). Its (nv1) (eq. 14) has the K that follows from (3)–(4), an H₁ 2/r times the
+  derived one, and the sign of H₂'s ζ term reversed. The paper's explicit mode (RW24a) fits the derived map, not the
+  printed H₁ and H₂ (#146, #149; phase2/dg_proof/zerilli_gauge_rs.md). Journal text not read (publisher HTTP 403),
+  *(unverified)*.
 - **Dotti & Gleiser 2008**, arXiv:0809.3615 — intertwiner Ψ̂ = (∂ₓ − ψ₀'/ψ₀)Ψ_z; unique self-adjoint
   extension; instability excitable by generic data. Corollary: linearly unstable. Its eq. (61) prints
   −ℓ(ℓ+1)/(4|M|x) for the x⁻¹ term of V̂; the exact coefficient is 0 (phase2/dg_proof/RESULTS.md, L2/L3; #142).
+  Three arXiv versions (21 Sep 2008, 19 Jun 2009, 17 Sep 2009); Class. Quantum Grav. 26 (2009) 215002,
+  doi:10.1088/0264-9381/26/21/215002 (listing and INSPIRE; journal text not read, HTTP 403, *(unverified)*). Lemma 1
+  (v2, v3; unnumbered (crc) in v1): a metric perturbation is smooth iff Ψ_z is C^∞ off r_s = −3M/λ with a Laurent
+  expansion Σ_{j≥−1} c_j(r − r_s)^j, c₀ = λ²c₋₁/(3M(3+2λ)). With ζ = (2λr − 3μ)Ψ_z, μ = −2M, this is
+  ζ′(r_s) = −2λ²/(3μ(2λ+3)) ζ(r_s), the sign #146 derives. v1 says (crc) "fixes a sign error in the analogous equation
+  (16)" of DG06 (#149).
 - Related: Dotti–Gleiser–Pullin gr-qc/0607052 (super-extremal RN/Kerr); Cardoso–Cavaglia gr-qc/0604101
   (negative-mass Schwarzschild–(A)dS).
 

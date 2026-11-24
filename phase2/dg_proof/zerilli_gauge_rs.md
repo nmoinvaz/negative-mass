@@ -58,7 +58,9 @@ system with analytic coefficients at r_s has only analytic solutions (textbook t
 On solutions the printed condition would force ζ(r_s) = 0 (R.5), and a smooth ζ with the printed constant gives poles in K, H1 and H2 (R.12). DG06's own (RW17) already forces c\* at r_s (R.6), so the printed (cz) disagrees with the paper's own evolution equation.
 Written with M instead of μ the same condition is c\* = λ²/(3M(2λ+3)); a plausible origin of the printed form is the substitution M = +μ/2 instead of −μ/2 (hand check of the algebra, not an inference about the authors). In (nv1) (R.7): K is right; H1 is (2/r) times the derived H1 (the printed one has
 dimension 1/length); H2 has the opposite sign on its ζ term; its printed double-pole numerator vanishes at r_s exactly under the printed (cz) (a hand check, not scripted; the control `n2_sign` shows R.9 fires when the printed sign is used). (im) = (9)·(2λr − 3μ) is correct (R.8), and so are (RW17) (R.6) and (3)–(4), (9) (R.7, R.8). V of (6) is not tested here (#143).
-`phase0/RESULTS.md` quotes the condition as DG08's Lemma 1 in the form c₀ = λ²c₋₁/(3M(3+2λ)) for ψ = c₋₁/(r−r_s) + c₀ + …; since ζ = 2λ(r−r_s)ψ this is ζ′(r_s) = c\*ζ(r_s) with the derived sign (hand check; DG08 itself not read here, *(unverified)*).
+`phase0/RESULTS.md` quotes the condition as DG08's Lemma 1 in the form c₀ = λ²c₋₁/(3M(3+2λ)) for ψ = c₋₁/(r−r_s) + c₀ + …; since ζ = 2λ(r−r_s)ψ this is ζ′(r_s) = c\*ζ(r_s) with the derived sign (hand check; DG08 itself not read here, *(unverified)*). *Added by the coordinator:* #149 read
+DG08's three arXiv versions: Lemma 1 (v2, v3) and its (crc) (v1) print this form, and v1 says it fixes a sign error in
+DG06's eq. (16), which is (cz) (`notes/literature.md`).
 
 Status: **checked symbolically** (exact simplification to 0 in Q(r, M, s, L), also at M = −1 and l = 2, 3, 4), except the textbook steps named in §4.
 
@@ -161,7 +163,8 @@ The flow comes from the library's Ricci code (PL.X checks it against the covaria
   The published (CQG) text was not read, *(unverified)*: the discrepancies above are against this TeX.
 - #143, #145 notes and libraries (read; the library imported unchanged); #138 `review_lemma_a.md` §5 (L1.2: χ′/χ(r_s) = −1/(r_s(r_s+2)), L1.3: χ″(r_s) = 0, at M = −1, s = 0, i.e. c\* and the s = 0 value of §1, 4 at M = −1);
   #142 `review_lemma_a3.md` §6 (L6.5, LL11, LL12: Ψ̂ regular at r_s; consistent, not used).
-- `phase0/RESULTS.md` (the DG08 Lemma 1 form quoted there, and its check c₀ = −0.533655 at M = −1, l = 2): read for the remark in §1; DG08 not read, *(unverified)*.
+- `phase0/RESULTS.md` (the DG08 Lemma 1 form quoted there, and its check c₀ = −0.533655 at M = −1, l = 2): read for the remark in §1; DG08 not read, *(unverified)*. *Added by the coordinator:* DG08 v1–v3 were read in #149
+  (raw `I149-rpi5`); the journal text was not, *(unverified)*.
 - Regge–Wheeler 1957, Zerilli 1970 (publisher HTTP 403 in #143), Martel–Poisson 2005: **not read**; I name no source for the gauge-invariant combinations the solve prints, *(unverified)*.
 - No novelty claim is made. The gauge solve is the standard Regge–Wheeler gauge fixing; what this adds to the project is the exact symbolic solve with its divisors, and the r_s analysis with the sign of (cz).
 

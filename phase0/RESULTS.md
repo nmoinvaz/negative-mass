@@ -20,7 +20,7 @@ GHI truncate their marginal mode (Φ = 0 for r > r_C). Reconstructing the metric
 The implied metric perturbation is discontinuous, confirming Gleiser–Dotti's objection.
 
 Smooth metric perturbations instead have a simple pole in Ψ at r_s = −3M/λ with
-c₀ = λ² c₋₁ / (3M(3 + 2λ)) (DG08 Lemma 1). The unstable mode satisfies it:
+c₀ = λ² c₋₁ / (3M(3 + 2λ)) (DG08 Lemma 1; arXiv v2 and v3, read in #149). The unstable mode satisfies it:
 c₀ = −0.533655 computed vs. −0.533655 predicted (M = −1, l = 2).
 
 **Status of gap 4:** closed in the literature. DG08 remove the pole with an intertwining operator; the
