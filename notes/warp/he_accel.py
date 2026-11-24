@@ -761,7 +761,10 @@ def main():
 
 def finish(t0):
     failed = [nm for nm, ok in RESULTS if not ok]
-    rss = [ln for ln in open("/proc/self/status") if ln.startswith("VmHWM")]
+    try:
+        rss = [ln for ln in open("/proc/self/status") if ln.startswith("VmHWM")]
+    except OSError:  # not Linux
+        rss = []
     print(f"\nchecks: {len(RESULTS) - len(failed)} passed, {len(failed)} failed {failed}. {time.time() - t0:.0f} s, "
           f"{rss[0].split(':')[1].strip() if rss else '?'} peak")
     if MUT is not None:
