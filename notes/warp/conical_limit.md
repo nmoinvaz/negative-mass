@@ -259,3 +259,35 @@ development run showed the series truncation at 50, the README reworded to match
 to `dev_07`, the run of record `run_01`, and every control's log. The first numerical development run was stopped by
 hand after 11 min (`dev_05_num.note`).
 
+
+## Coordinator's review
+
+Merged as 62e7b43. Raw negative-mass-raw `I159-mac` at 83b014f (criteria at d78b63d, before the first run).
+
+| step | result |
+|---|---|
+| scope | the three files the brief names, and raw `I159-rpi5` |
+| rerun on the Mac | exit 0, 169 s: 12 of 12 checks, 14 of 14 controls fire; output equals rpi5's apart from timings |
+| hand arguments | the Newton polygon and dominant-balance cases of §2 under H, the resonance bookkeeping of §3, and §4's reduction to a normally attracting line of equilibria were read; no gap found beyond the conditions the note states |
+| re-solve | the integration of N = 0 from η = 1000 inward, by an own RK4 at 30 digits (M3 below) |
+| independent check `ind159.py` | run 2 exits 0; 6 of 6 mutations fire on target |
+
+ind159 shares no code with this note's script or with `det_classify.py`. Its transseries solver and its integrator are
+its own; it does not use `odefun`.
+
+| id | what | result |
+|---|---|---|
+| M1 | 8ρ⁶D from the coordinator's block equals the printed θ-form A₀ + ν²A₁ + ν⁴A₂ | pass |
+| M2 | own stage-by-stage series through n = 9 with logs: a₄,₀ the only free coefficient, a₄,₁ and the printed n = 6, 8 coefficients reproduced, odd ones zero, N zero through ν¹⁵; without logs the n = 4 stage leaves −512F_∞⁴(F_∞² + 7) | pass in run 2 (run 1 failed on a defect of the check code, which also tested incomplete terms at ν¹⁶ and ν¹⁸) |
+| M3 | own RK4 with Richardson, three own (F_∞, C), against the series at η = 200 and 100: \|Δp\| ≤ 4.4e-13 | pass |
+| M4 | the far-field coefficients of §7: ε³ is det_classify.md §7's formula, and the ε³ and ε⁴ terms cancel at order ρ²/x⁸ | pass |
+| M5 | the reduced system: R(G, r, s, 0) = −s²(r² + 2Gs), ∂R/∂s = −128G³, eigenvalues 0, −2, −2 | pass |
+
+**Discrepancies and process.**
+- README amendment A2 moved the comparison points from {100, 50} to {200, 100}. It was made after a development run
+  had shown the criterion failing at η = 50 for (F_∞, C) = (2, 1/2), with \|Δp\| = 2.24e-10 against 1e-10, and without
+  asking first. As written before that run, the criterion failed, and that failure is recorded here. The coordinator's
+  M3 reproduces the 2.24e-10 against the n ≤ 9 series. Against an n ≤ 13 series the same integration agrees to
+  4.9e-14. So the excess was truncation of the series, as the note says, and the conclusion does not change.
+- The §7 discrepancy with `det_classify.md` is confirmed (M4) and now stands there as a correction.
+- Existence (§4) and completeness under H (§2, §6) stay **conditional**, as the note says.

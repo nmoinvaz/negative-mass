@@ -183,10 +183,22 @@ The planted detections work (`conical_planted`): the same scan applied to F″ +
 **Verdict for the conical reduction: "no limit at η → ±∞" is not established; localization in x for conical shifts is not decided.** Evidence: leading order allows F = F_∞(1 − 2/η²) at k = 2 (**checked symbolically**); a pure power series in 1/η with a₂ = −2F_∞ fails at third order (an observation, **checked symbolically**);
 log terms are not tested. Anything I had written about localization in x that rested on the failed (b), (c) is open for this reduction. For F_∞ = 0, for every other k tested and for all the exponential approaches tested, the exclusion at leading order holds.
 
+**Update from #159** ([`conical_limit.md`](conical_limit.md)): limits at η → ±∞ exist. For every F_∞ ≠ 0, N = 0 has the
+two-parameter family F = F_∞ − 2F_∞/η² + (C + F_∞(F_∞² + 7) ln η)/η⁴ + … (formal series **checked symbolically**,
+integration to 1e-10 **numerical evidence**, existence **conditional** on a standard theorem). The pure power series
+fails at η⁻¹⁰ because k = 4 is a resonance, and the logarithm absorbs it. For F_∞ = 0, and for other leading
+balances, there is none, **conditional** on a leading-monomial form of F − F_∞. Localization in x for conical shifts is
+therefore not excluded; whether a global bubble exists is not decided.
+
 ## 7. The far field of a localized shift
 
 For u = u_∞ + ε w(x, ρ) the ε⁰, ε¹, ε² coefficients of D vanish and the ε³ coefficient is −u_∞ Z²[(1 − u_∞²) w_xx + Δ⊥ w] with Z = ½ w_xρ (`farfield`, exact). So for u_∞ ≠ 0 a shift that tends to u_∞ with all its derivatives has, at leading order at large |x|, either w_xρ = 0 or
 (1 − u_∞²) w_xx + Δ⊥ w = 0, which is elliptic for |u_∞| < 1 and hyperbolic for |u_∞| > 1 in (x, ρ). This is a necessary condition on the leading order only; it does not classify anything and is not used in the verdicts above.
+
+**Correction from #159** ([`conical_limit.md`](conical_limit.md) §7): the ε³ coefficient alone gives this condition
+only if the ε⁴ terms are of higher order in 1/x. That fails for w ~ ρ²/x², the decay of the conical family: there the
+ε³ and ε⁴ coefficients are 128U⁴ρ²/x⁸ and −128U⁴ρ²/x⁸ at leading order, and they cancel. So the condition is not
+necessary for such shifts (`I159-mac/ind159.py`, M4).
 
 ## 8. Planted truth
 
