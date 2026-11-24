@@ -542,14 +542,20 @@ def check_planted(gammas, L):
             exact = ell * (1.01 if mut("planted") else 1.0)
             nb = sum(1 for n in range(0, 5) if ell - n > 0)
             Wsc, Wv = planted_W(ell, g)
-            roots = method_A(g, Wsc, L=L, scan_n=30, beta_hi=math.sqrt(ell * (ell + 1)) + 0.01)
-            ok = len(roots) == nb and rel(roots[0], exact) < 1e-9
-            report("P-A", ok, f"gamma_1 = {g}, ell = {ell}: A beta = {roots[0]:.12f} (exact {exact}), rel {rel(roots[0], exact):.1e}, "
-                              f"{len(roots)} bound states (exact {nb})")
-            b0, nneg, _ = method_B(g, Wv, L=L)
-            ok = nneg == nb and rel(b0, exact) < 1e-8
-            report("P-B", ok, f"gamma_1 = {g}, ell = {ell}: B beta = {b0:.12f}, rel {rel(b0, exact):.1e}, {nneg} negative "
-                              f"eigenvalues (exact {nb})")
+            try:
+                roots = method_A(g, Wsc, L=L, scan_n=30, beta_hi=math.sqrt(ell * (ell + 1)) + 0.01)
+                ok = len(roots) == nb and rel(roots[0], exact) < 1e-9
+                report("P-A", ok, f"gamma_1 = {g}, ell = {ell}: A beta = {roots[0]:.12f} (exact {exact}), rel {rel(roots[0], exact):.1e}, "
+                                  f"{len(roots)} bound states (exact {nb})")
+            except Exception as exc:  # noqa: BLE001
+                report("P-A", False, f"gamma_1 = {g}, ell = {ell}: A raised {type(exc).__name__}: {exc}")
+            try:
+                b0, nneg, _ = method_B(g, Wv, L=L)
+                ok = nneg == nb and rel(b0, exact) < 1e-8
+                report("P-B", ok, f"gamma_1 = {g}, ell = {ell}: B beta = {b0:.12f}, rel {rel(b0, exact):.1e}, {nneg} negative "
+                                  f"eigenvalues (exact {nb})")
+            except Exception as exc:  # noqa: BLE001
+                report("P-B", False, f"gamma_1 = {g}, ell = {ell}: B raised {type(exc).__name__}: {exc}")
 
 
 def check_planted_C(gammas):
@@ -573,7 +579,10 @@ def check_planted_C(gammas):
                     def rhs(th, y):
                         xx = xt + r * cmath.exp(1j * th)
                         dx = 1j * r * cmath.exp(1j * th)
-                        return [dx * y[1], dx * (odeC_rhs(xx, y[0], y[1], beta, gv) + complex(fS(xx, gv)))]
+                        v = [dx * y[1], dx * (odeC_rhs(xx, y[0], y[1], beta, gv) + complex(fS(xx, gv)))]
+                        if not all(cmath.isfinite(z) for z in v):
+                            raise ValueError("non-finite right-hand side")
+                        return v
 
                     x0 = xt + r
                     sol = solve_ivp(rhs, (0.0, side * math.pi), [complex(fC(x0, gv)), complex(fCp(x0, gv))], method="DOP853",
@@ -609,107 +618,134 @@ def run_G(gammas, L, full):
     ctrl = [g for g in (0.0, 0.5, 1.0) if g in gammas]
     for g in ctrl:
         lam = lam_of(g)
-        rootsA = method_A(g, W_A, L=L, lam=lam)
-        bA = rootsA[0]
-        bB, nB, evB = method_B(g, W_B_vec, L=L, lam=lam)
-        out[g] = {"A": bA, "B": bB}
-        print(f"      gamma_1 = {g}: beta_A = {bA:.12f}, beta_B = {bB:.12f}, T_A = {T_of(bA, g):.9f}, T_B = {T_of(bB, g):.9f}",
-              flush=True)
-        report("G1", rel(bA, bB) < 1e-7, f"gamma_1 = {g}: A against B, rel {rel(bA, bB):.2e}")
+        out[g] = {}
+        try:
+            out[g]["A"] = method_A(g, W_A, L=L, lam=lam)[0]
+        except Exception as exc:  # noqa: BLE001
+            report("G1", False, f"gamma_1 = {g}: A raised {type(exc).__name__}: {exc}")
+        try:
+            out[g]["B"] = method_B(g, W_B_vec, L=L, lam=lam)[0]
+        except Exception as exc:  # noqa: BLE001
+            report("G1", False, f"gamma_1 = {g}: B raised {type(exc).__name__}: {exc}")
+        if "A" in out[g] and "B" in out[g]:
+            bA, bB = out[g]["A"], out[g]["B"]
+            print(f"      gamma_1 = {g}: beta_A = {bA:.12f}, beta_B = {bB:.12f}, T_A = {T_of(bA, g):.9f}, T_B = {T_of(bB, g):.9f}",
+                  flush=True)
+            report("G1", rel(bA, bB) < 1e-7, f"gamma_1 = {g}: A against B, rel {rel(bA, bB):.2e}")
     # ------- G0
-    if 0.0 in out:
-        bA, bB = out[0.0]["A"], out[0.0]["B"]
-        for nm, b in (("A", bA), ("B", bB)):
-            T = T_of(b, 0.0)
-            ok = 0.8455 <= T <= 0.8465 and 1.3965 <= b * b <= 1.3975 and rel(b * b, 1.39705243) < 1e-6
-            report("G0", ok, f"gamma_1 = 0, method {nm}: T = {T:.6f} (0.846), beta^2 = {b * b:.8f} (1.397; repo 1.39705243, rel "
-                             f"{rel(b * b, 1.39705243):.1e})")
-        Wrepo = lambda x, gg: -3.0 / (1.0 + x * x) ** 2 + (0.1 / (1 + x * x) ** 2 if mut("potential") else 0.0)  # one_mode.py S3, n = 2
-        bR = method_A(0.0, Wrepo, L=L)[0]
-        report("G0", rel(bA * bA, bR * bR) < 1e-9, f"gamma_1 = 0: A with the repo's D = 4 potential -3/r^4 (r^2 = 1 + l^2): "
-                                                   f"beta^2 = {bR * bR:.10f}, rel to A with W {rel(bA * bA, bR * bR):.1e}")
+    if 0.0 in gammas:
+        if "A" in out[0.0] and "B" in out[0.0]:
+            bA, bB = out[0.0]["A"], out[0.0]["B"]
+            for nm, b in (("A", bA), ("B", bB)):
+                T = T_of(b, 0.0)
+                ok = 0.8455 <= T <= 0.8465 and 1.3965 <= b * b <= 1.3975 and rel(b * b, 1.39705243) < 1e-6
+                report("G0", ok, f"gamma_1 = 0, method {nm}: T = {T:.6f} (0.846), beta^2 = {b * b:.8f} (1.397; repo 1.39705243, rel "
+                                 f"{rel(b * b, 1.39705243):.1e})")
+            Wrepo = lambda x, gg: -3.0 / (1.0 + x * x) ** 2 + (0.1 / (1 + x * x) ** 2 if mut("potential") else 0.0)  # one_mode.py S3, n = 2
+            try:
+                bR = method_A(0.0, Wrepo, L=L)[0]
+                report("G0", rel(bA * bA, bR * bR) < 1e-9, f"gamma_1 = 0: A with the repo's D = 4 potential -3/r^4 (r^2 = 1 + l^2): "
+                                                           f"beta^2 = {bR * bR:.10f}, rel to A with W {rel(bA * bA, bR * bR):.1e}")
+            except Exception as exc:  # noqa: BLE001
+                report("G0", False, f"gamma_1 = 0: A with the repo's potential raised {type(exc).__name__}: {exc}")
+        else:
+            report("G0", False, "gamma_1 = 0: A or B gave no value")
     # ------- method C
     for g in ctrl:
         lam = lam_of(g)
-        bhi = beta_hi_of(g, W_A)
         try:
+            bhi = beta_hi_of(g, W_A)
             rp = method_C(g, side=+1, scan=(0.2, bhi, 60), lam=lam)
             rm = method_C(g, side=-1, scan=(0.2, bhi, 60), lam=lam)
             bC = rp[0]
             bC2 = rm[0]
             dets = [C_det(b, g, 25.0, 0.5, sd, 1e-12, lam)[1] for b in (0.8 * bC, 1.1 * bC) for sd in (+1, -1)]
-            ok = rel(bC, out[g]["A"]) < 1e-6 and rel(bC, bC2) < 1e-9
+            bA = out[g]["A"]
+            ok = rel(bC, bA) < 1e-6 and rel(bC, bC2) < 1e-9
             report("G2", ok, f"gamma_1 = {g}: C beta = {bC:.12f} (upper) {bC2:.12f} (lower), roots in [0.2, {bhi:.2f}]: "
-                             f"{[round(v, 6) for v in rp]}; rel to A {rel(bC, out[g]['A']):.2e}; max |Im det| {max(dets):.1e}")
+                             f"{[round(v, 6) for v in rp]}; rel to A {rel(bC, bA):.2e}; max |Im det| {max(dets):.1e}")
             out[g]["C"] = bC
         except Exception as exc:  # noqa: BLE001
-            report("G2", False, f"gamma_1 = {g}: method C failed: {type(exc).__name__}: {exc}")
-    if 0.5 in out:
+            report("G2", False, f"gamma_1 = {g}: method C or its comparison failed: {type(exc).__name__}: {exc}")
+    if 0.5 in gammas:
         g = 0.5
-        bA = out[g]["A"]
-        T = T_of(bA, g)
-        a, m = 2.0, 1.0
-        Rs = math.sqrt(a * a + m * m) * math.exp((m / a) * math.atan(a / m))
-        al = math.exp(-(m / a) * math.atan(a / m))
-        tau_sn = a * math.exp(math.pi * g) / bA
-        print(f"      gamma_1 = 1/2 (m/a): beta = {bA:.10f}; T = {T:.8f}; tau_[SN26] (evolution time, units of m) = {tau_sn:.5f} "
-              f"(their 5.13); alpha_th = {al:.6f}; R_star = {Rs:.5f}; tau alpha_th/R_star = {tau_sn * al / Rs:.8f}")
-        report("G3", abs(T / 0.7584 - 1) <= 0.002, f"T(1/2) = {T:.6f} against [SN26] linear 0.7584: {100 * (T / 0.7584 - 1):+.3f} %")
-        report("G4", abs(T - 0.758) <= 0.0006, f"T(1/2) = {T:.6f} against [GGS09a] Table I 0.758: {T - 0.758:+.6f}")
-        T3, T4 = 5.12 * al / Rs, 5.23 * al / Rs
-        d3, d4 = 100 * (T3 / T - 1), 100 * (T4 / T - 1)
-        report("G6", -0.25 <= d3 <= -0.15 and 1.85 <= d4 <= 1.95, f"[SN26] measured tau 5.12 -> T = {T3:.5f} ({d3:+.3f} %, they print "
-                                                                  f"0.2 %), 5.23 -> T = {T4:.5f} ({d4:+.3f} %, they print 1.9 %)")
+        if "A" in out[g]:
+            bA = out[g]["A"]
+            T = T_of(bA, g)
+            a, m = 2.0, 1.0
+            Rs = math.sqrt(a * a + m * m) * math.exp((m / a) * math.atan(a / m))
+            al = math.exp(-(m / a) * math.atan(a / m))
+            tau_sn = a * math.exp(math.pi * g) / bA
+            print(f"      gamma_1 = 1/2 (m/a): beta = {bA:.10f}; T = {T:.8f}; tau_[SN26] (evolution time, units of m) = {tau_sn:.5f} "
+                  f"(their 5.13); alpha_th = {al:.6f}; R_star = {Rs:.5f}; tau alpha_th/R_star = {tau_sn * al / Rs:.8f}")
+            report("G3", abs(T / 0.7584 - 1) <= 0.002, f"T(1/2) = {T:.6f} against [SN26] linear 0.7584: {100 * (T / 0.7584 - 1):+.3f} %")
+            report("G4", abs(T - 0.758) <= 0.0006, f"T(1/2) = {T:.6f} against [GGS09a] Table I 0.758: {T - 0.758:+.6f}")
+            T3, T4 = 5.12 * al / Rs, 5.23 * al / Rs
+            d3, d4 = 100 * (T3 / T - 1), 100 * (T4 / T - 1)
+            report("G6", -0.25 <= d3 <= -0.15 and 1.85 <= d4 <= 1.95, f"[SN26] measured tau 5.12 -> T = {T3:.5f} ({d3:+.3f} %, they print "
+                                                                      f"0.2 %), 5.23 -> T = {T4:.5f} ({d4:+.3f} %, they print 1.9 %)")
+        else:
+            for cid in ("G3", "G4", "G6"):
+                report(cid, False, "gamma_1 = 1/2: A gave no value")
     # ------- G5: the table, A only
     if full:
         worst = 0.0
         row = []
-        for g, tv in TABLE.items():
-            b = out[g]["A"] if g in out and "A" in out[g] else method_A(g, W_A, L=L, lam=lam_of(g))[0]
-            T = T_of(b, g)
-            row.append((g, T, tv))
-            worst = max(worst, abs(T - tv))
-        for g, T, tv in row:
-            print(f"      Table I: gamma_1 = {g:3.1f}  T = {T:.6f}  printed {tv:.3f}  diff {T - tv:+.6f}")
-        report("G5", worst <= 0.001, f"16 values of Table I, worst |T - printed| = {worst:.6f}")
+        try:
+            for g, tv in TABLE.items():
+                b = out[g]["A"] if g in out and "A" in out[g] else method_A(g, W_A, L=L, lam=lam_of(g))[0]
+                T = T_of(b, g)
+                row.append((g, T, tv))
+                worst = max(worst, abs(T - tv))
+            for g, T, tv in row:
+                print(f"      Table I: gamma_1 = {g:3.1f}  T = {T:.6f}  printed {tv:.3f}  diff {T - tv:+.6f}")
+            report("G5", worst <= 0.001, f"16 values of Table I, worst |T - printed| = {worst:.6f}")
+        except Exception as exc:  # noqa: BLE001
+            report("G5", False, f"table incomplete after {len(row)} values: {type(exc).__name__}: {exc}")
     # ------- G7: counts
     for g in [v for v in (0.0, 0.5, 1.0, 2.0) if v in gammas]:
         lam = lam_of(g)
         Wc = (lambda x, gg: W_A(x, gg) - 60.0 / math.cosh(x - 8.0) ** 2) if mut("count") else W_A
         Wcv = (lambda xs, gg: W_B_vec(xs, gg) - 60.0 / np.cosh(xs - 8.0) ** 2) if mut("count") else W_B_vec
-        rootsA = method_A(g, Wc, L=L, lam=lam)
-        bB, nB, evB = method_B(g, Wcv, L=L, lam=lam)
-        ok = len(rootsA) == 1 and nB == 1
-        report("G7", ok, f"gamma_1 = {g}: A finds {len(rootsA)} root(s) in the scan, B has {nB} negative eigenvalue(s) "
-                         f"(lowest {evB[0] if len(evB) else float('nan'):.6f}; the next is >= 0)")
+        try:
+            rootsA = method_A(g, Wc, L=L, lam=lam)
+            bB, nB, evB = method_B(g, Wcv, L=L, lam=lam)
+            ok = len(rootsA) == 1 and nB == 1
+            report("G7", ok, f"gamma_1 = {g}: A finds {len(rootsA)} root(s) in the scan, B has {nB} negative eigenvalue(s) "
+                             f"(lowest {evB[0] if len(evB) else float('nan'):.6f}; the next is >= 0)")
+        except Exception as exc:  # noqa: BLE001
+            report("G7", False, f"gamma_1 = {g}: raised {type(exc).__name__}: {exc}")
     return out
 
 
 def run_D1(gammas, L):
     for g in [v for v in (0.0, 0.5) if v in gammas]:
         lam = lam_of(g)
-        base = method_A(g, W_A, L=L, lam=lam)[0]
-        vA = [method_A(g, W_A, L=L, lam=lam, rtol=1e-11)[0], method_A(g, W_A, L=L + 10, lam=lam)[0]]
-        sA = max(rel(v, base) for v in vA)
-        bB = method_B(g, W_B_vec, L=L, lam=lam)[0]
-        vB = [method_B(g, W_B_vec, L=L, N=6000, lam=lam)[0], method_B(g, W_B_vec, L=L + 10, lam=lam)[0]]
-        sB = max(rel(v, bB) for v in vB)
-        ok = sA < 1e-7 and sB < 1e-7
-        sC = float("nan")
-        if not mut("domain") and not mut("cpath"):
-            try:
-                bhi = beta_hi_of(g, W_A)
-                bC = method_C(g, scan=(0.2, bhi, 60), lam=lam)[0]
-                vC = [method_C(g, rfrac=0.3, centre=bC, lam=lam)[0], method_C(g, L=30.0, rfrac=0.7, centre=bC, lam=lam)[0]]
-                sC = max(rel(v, bC) for v in vC)
-                ok = ok and sC < 1e-7
-            except Exception as exc:  # noqa: BLE001
-                ok = False
-                print(f"      method C variants failed: {exc}")
-        report("D1", ok, f"gamma_1 = {g}: max relative spread of beta: A (rtol 1e-13 -> 1e-11, L +10) {sA:.1e}; B (N 3000 -> 6000, "
-                         f"L +10) {sB:.1e}; C (r/dist 0.5 -> 0.3, 0.7; L 25 -> 30) {sC:.1e}")
-        print(f"      gamma_1 = {g}: beta_A = {base:.12f}, beta_B = {bB:.12f}; error bar of T from the spreads: "
-              f"{max(sA, sB, 0.0 if math.isnan(sC) else sC) * T_of(base, g):.1e}")
+        try:
+            base = method_A(g, W_A, L=L, lam=lam)[0]
+            vA = [method_A(g, W_A, L=L, lam=lam, rtol=1e-11)[0], method_A(g, W_A, L=L + 10, lam=lam)[0]]
+            sA = max(rel(v, base) for v in vA)
+            bB = method_B(g, W_B_vec, L=L, lam=lam)[0]
+            vB = [method_B(g, W_B_vec, L=L, N=6000, lam=lam)[0], method_B(g, W_B_vec, L=L + 10, lam=lam)[0]]
+            sB = max(rel(v, bB) for v in vB)
+            ok = sA < 1e-7 and sB < 1e-7
+            sC = float("nan")
+            if not mut("domain") and not mut("cpath"):
+                try:
+                    bhi = beta_hi_of(g, W_A)
+                    bC = method_C(g, scan=(0.2, bhi, 60), lam=lam)[0]
+                    vC = [method_C(g, rfrac=0.3, centre=bC, lam=lam)[0], method_C(g, L=30.0, rfrac=0.7, centre=bC, lam=lam)[0]]
+                    sC = max(rel(v, bC) for v in vC)
+                    ok = ok and sC < 1e-7
+                except Exception as exc:  # noqa: BLE001
+                    ok = False
+                    print(f"      method C variants failed: {exc}")
+            report("D1", ok, f"gamma_1 = {g}: max relative spread of beta: A (rtol 1e-13 -> 1e-11, L +10) {sA:.1e}; B (N 3000 -> 6000, "
+                             f"L +10) {sB:.1e}; C (r/dist 0.5 -> 0.3, 0.7; L 25 -> 30) {sC:.1e}")
+            print(f"      gamma_1 = {g}: beta_A = {base:.12f}, beta_B = {bB:.12f}; error bar of T from the spreads: "
+                  f"{max(sA, sB, 0.0 if math.isnan(sC) else sC) * T_of(base, g):.1e}")
+        except Exception as exc:  # noqa: BLE001
+            report("D1", False, f"gamma_1 = {g}: raised {type(exc).__name__}: {exc}")
 
 
 def main():
