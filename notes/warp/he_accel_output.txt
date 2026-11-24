@@ -1,0 +1,185 @@
+he_accel.py, issue #73. sympy 1.14.0, numpy 2.5.4, mpmath 1.3.0, python 3.14.10. mutation: none. grids: full
+
+== 1. Planted truth: #64's nine tensors of known type through he_type_exact ==
+                 perfect fluid mu = 3/2, p = 1/5: D =              0, type   I, expected I
+                                     dust mu = 2: D =              0, type   I, expected I
+                anisotropic fluid (2, 1/3, -1/7): D =     16900/3969, type   I, expected I
+  Type IV canonical (rho, nu, p) = (1/2, 2/3, 1/7): D = -2289169/1750329, type  IV, expected IV
+   Type IV canonical (rho, nu, p) = (-3, 1/9, 5): D = -422500/531441, type  IV, expected IV
+                   null dust + lam eta + q e2 e2: D =              0, type  II, expected II
+                             null dust + lam eta: D =              0, type  II, expected II
+       Le's Type III example l m + m l + lam eta: D =              0, type III, expected III
+                                         lam eta: D =              0, type   I, expected I
+[PASS] planted_cls: every planted tensor gets its type from D and the rank test; wrong: []
+
+== 2. Route N': planted against he_type's route N (constant speed) and against route E (accelerating) ==
+[PASS] routeN_planted: route N' for b = -v f(x - v t, y, z), v = 3/4, equals ht.einstein_N's mixed G at 40 random points, t = 0.35 (relative error 4.6e-15)
+[PASS] routeN_vs_E: route N''s mixed Ricci tensor has the characteristic polynomial of route E's (exact rationals, explicit v_s, x_s, f) at 6 points with t != 0 (worst relative coefficient error 4.7e-15)
+
+== 3. Route D: the frame Ricci tensor of the bubble at z = 0, and the block (E_0, E_1, e_rho) ==
+  jets of v_s, x_s and f in the frame Ricci tensor: ['F0', 'F1', 'F2', 'vs0', 'vs1', 'xs1']
+  R_(0,0) = (-2*alpha*c*f1*r + 2*c**2*f*f1*v**2 - 2*c**2*f*f2*r*v**2 - c**2*f1**2*r*v**2 - 2*c**2*f1*u*v + 2*c**2*f2*r*u*v - 2*f*f1*v**2 - f1**2*r*v**2 + 2*f1*u*v)/(2*r)
+  R_(0,1) = -v*(-c**2*f1 + c**2*f2*r - f1 - f2*r)/(2*r)
+  R_(0,rho) = -c*s*v*(-f1 + f2*r)/(2*r)
+  R_(0,varphi) = 0
+  R_(1,1) = -(-2*alpha*c*f1*r + 2*c**2*f*f1*v**2 - 2*c**2*f*f2*r*v**2 - 3*c**2*f1**2*r*v**2 - 2*c**2*f1*u*v + 2*c**2*f2*r*u*v - 2*f*f1*v**2 + f1**2*r*v**2 + 2*f1*u*v)/(2*r)
+  R_(1,rho) = -s*(-alpha*f1*r + c*f*f1*v**2 - c*f*f2*r*v**2 - 2*c*f1**2*r*v**2 - c*f1*u*v + c*f2*r*u*v)/(2*r)
+  R_(1,varphi) = 0
+  R_(rho,rho) = -f1**2*v**2*(c - 1)*(c + 1)/2
+  R_(rho,varphi) = 0
+  R_(varphi,varphi) = 0
+[PASS] entries_E: route D's block at z = 0 equals route E at 8 of 8 exact points (explicit v_s = (3 + 2t)/(2 + t^2), x_s = t^3/5 - t^2/3 + t/2, f = (2 + r^2)/(3 + r^4)); symbols other than (v, al, u, f, f', f'', r, c, s) in the block: []
+[PASS] decouple: (I1) R(e_varphi, .) and (I2) R_00 + R_11 + 2 R_rho,rho reduce to [0, 0, 0, 0, 0]
+
+== 4. The entries in closed form, and the time lemma ==
+  Tx = -alpha*c*f1 + u*v*(c**2*f2 + f1*s**2/r)
+  Tr = -alpha*f1*s + c*s*u*v*(-f1/r + f2)
+  A = v**2*(2*f*(c**2*f2*r + f1*s**2) + f1**2*r*(c**2 + 1))/(2*r)
+  B = c*s*v**2*(-f*f1 + f*f2*r + 2*f1**2*r)/(2*r)
+  q = f1**2*s**2*v**2
+  j1 = v*(f1*(c**2 + 1) + f2*r*s**2)/(2*r)
+  jr = c*s*v*(f1 - f2*r)/(2*r)
+  dTx = (-alpha*c*f1*r + c**2*f2*r*u*v - c**2*f2*r*v**2 + f1*s**2*u*v - f1*s**2*v**2)/r
+  dTr = s*(-alpha*f1*r - c*f1*u*v + c*f1*v**2 + c*f2*r*u*v - c*f2*r*v**2)/r
+[PASS] time_lemma: the block equals R_00 = Tx - A, R_01 = j1, R_0rho = jr, R_11 = A - q - Tx, R_1rho = B - Tr/2, R_rhorho = q/2 [True], and R(v, u, al) - R(v, v, 0) = DeltaTx (E_00 - E_11) - DeltaTr/2 (E_1rho + E_rho1) [True]
+
+== 5. D: the shifted cubic, the weights and the powers of v, al and u ==
+  D = 18 c2 c1 c0 - 4 c2^3 c0 + c2^2 c1^2 - 4 c1^3 - 27 c0^2, c2 = q - p, c1 = j1^2 + jr^2 - p q - h^2, c0 = 2 j1 jr h - p j1^2 + q jr^2: 52 terms, degree 4 in p
+  weight 8 part: 12*h**2*j1**4 - 84*h**2*j1**2*jr**2 + 12*h**2*jr**4 + 72*h*j1**3*jr*p + 36*h*j1**3*jr*q - 36*h*j1*jr**3*p - 72*h*j1*jr**3*q - 8*j1**4*p**2 - 8*j1**4*p*q + j1**4*q**2 + 20*j1**2*jr**2*p**2 + 38*j1**2*jr**2*p*q + 20*j1**2*jr**2*q**2 + jr**4*p**2 - 8*jr**4*p*q - 8*jr**4*q**2
+  weight 10 part: -2*(6*h**4*j1**2 + 6*h**4*jr**2 - 18*h**3*j1*jr*p + 18*h**3*j1*jr*q + 10*h**2*j1**2*p**2 + h**2*j1**2*p*q + h**2*j1**2*q**2 + h**2*jr**2*p**2 + h**2*jr**2*p*q + 10*h**2*jr**2*q**2 - 4*h*j1*jr*p**3 - 6*h*j1*jr*p**2*q + 6*h*j1*jr*p*q**2 + 4*h*j1*jr*q**3 + 2*j1**2*p**4 + 4*j1**2*p**3*q + j1**2*p**2*q**2 - j1**2*p*q**3 - jr**2*p**3*q + jr**2*p**2*q**2 + 4*jr**2*p*q**3 + 2*jr**2*q**4)
+  monomials v^i al^j u^k of 64 r^6 D, as (i, j, k): [(0, 6, 0), (1, 5, 1), (2, 4, 0), (2, 4, 2), (2, 5, 0), (3, 3, 1), (3, 3, 3), (3, 4, 1), (4, 2, 0), (4, 2, 2), (4, 2, 4), (4, 3, 0), (4, 3, 2), (4, 4, 0), (5, 1, 1), (5, 1, 3), (5, 1, 5), (5, 2, 1), (5, 2, 3), (5, 3, 1), (6, 0, 0), (6, 0, 2), (6, 0, 4), (6, 0, 6), (6, 1, 0), (6, 1, 2), (6, 1, 4), (6, 2, 0), (6, 2, 2), (6, 3, 0), (7, 0, 1), (7, 0, 3), (7, 0, 5), (7, 1, 1), (7, 1, 3), (7, 2, 1), (8, 0, 0), (8, 0, 2), (8, 0, 4), (8, 1, 0), (8, 1, 2), (8, 2, 0), (9, 0, 1), (9, 0, 3), (9, 1, 1), (10, 0, 0), (10, 0, 2), (10, 1, 0), (11, 0, 1), (12, 0, 0)]
+  D of the bubble: 64 r^6 D is a polynomial in (v, al, u) with 50 monomials, denominator 16*r**6; weights i + k + 2j of v^i al^j u^k: [6, 8, 10, 12]; highest power of v 12, of al 6, of u 6
+  al^6 coefficient of D = f'^6 s^4/16 [True]; D at v = 0 equals al^6 f'^6 s^4/16 [True]
+  D at (al, u) = (0, v) equals he_type's D, entry by entry, in `const_limit`
+[PASS] structure: D of the block = D(j1, jr, q, h, p) of the shifted cubic [True]; the scaling (v, u, al) -> (w v, w u, w^2 al) gives R_0i w, the other entries w^2 [True] and D the weights [6, 8, 10, 12] with w^6 part -4|j|^6 [True] and w^12 part (pq + h^2)^2 ((p + q)^2 + 4h^2) [True]; the bubble's D has weights [6, 8, 10, 12], u only with v, al^6 at most [True]; al^6 coefficient f'^6 s^4/16 and D(v = 0) = al^6 f'^6 s^4/16 [True]
+[PASS] parity: 64 r^6 D(v, -al, u; -c) - 64 r^6 D(v, al, u; c) reduces to 0 as a polynomial in (v, al, u, f, f', f'', r, c) [True], so the type at (theta, al) is the type at (pi - theta, -al) and every wall fraction is even in al; on Le's grid at P1 t = 0.3 the largest |D(-al, -c) - D(al, c)| / scale^6 is 0.0e+00 (< 1e-9)
+
+== 6. Constant-speed limit (al = 0, u = v) against #64: entries, maps and fractions ==
+  the block at (al, u) = (0, v) equals ht.route_C()'s frame Ricci tensor entry by entry: True
+  type maps (D < 0) of the two closed forms at 288000 points of Le's wall at v = 0.5, 1, 2, 2.5 and Rodal's band at v = 1: float64 sign differences 0, unresolved at 50 digits 0
+  P1 at t = 0: (v, al, u) = (1.0, 0.0, 1.0); its map on Le's wall equals the constant-speed map at v = 1: True
+  Type I fractions of Le's wall, polar 1000^2, (al, u) = (0, v): v = 0.5: 1.151 % against he_type_output.txt's 1.151 %; v = 1.0: 5.599 % against he_type_output.txt's 5.599 %; v = 2.0: 17.280 % against he_type_output.txt's 17.28 %; v = 2.5: 22.625 % against he_type_output.txt's 22.625 %
+[PASS] const_limit: at (al, u) = (0, v) the block equals #64's entry by entry [True]; its type map equals #64's at 288000 grid points (0 float64 sign differences, 0 unresolved at 50 digits); P1 at t = 0 gives the v = 1 map [True]; Le's Type I fractions equal he_type_output.txt's to 3 digits [True]
+
+== 7. The axis (Type IV for every al and u) and the instant of rest (Type I) ==
+[PASS] axis: on c = +-1, D = -4 R_01^2 (R_00^2 + R_01^2)^2 as a polynomial identity in (v, al, u, f, f', f'', r) [True], so Type IV wherever v f' != 0 for every al and u; he_type_exact gives IV at 12 exact axis points [True]; D < 0 at all 10836 axis points of the slices with v != 0, both walls, after 50-digit rechecks of the flagged ones (failures [])
+[PASS] rest: at v = 0 the momentum entries R_01, R_0rho vanish identically [True]; he_type_exact gives I at 32 exact points including the axis and D = 0 [True]; on 115200 grid points of both walls at P2, t = 0.0 (v = 0.0000, al = 2.0000, u = 0.2500) the smallest D / scale^6 is 0.00e+00 (>= -1e-12)
+
+== 8. Closed form (sign of D) against route N''s eigenvalues at every grid point ==
+  P1, t = -0.6: v = 0.305020, al = 1.017125, u = 0.305020, x_s = -0.416827
+  Le's wall, polar grid: 57600 points, Type IV by D < 0 at 53858, by eigenvalues at 53858; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's wall, polar grid: 57600 points, Type IV by D < 0 at 48301, by eigenvalues at 48301; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's axis, theta = 0 and pi: 602 points, Type IV by D < 0 at 602, by eigenvalues at 602; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  P1, t = -0.3: v = 0.711578, al = 1.528610, u = 0.711578, x_s = -0.268525
+  Le's wall, polar grid: 57600 points, Type IV by D < 0 at 55853, by eigenvalues at 55853; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's wall, polar grid: 57600 points, Type IV by D < 0 at 49346, by eigenvalues at 49346; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's axis, theta = 0 and pi: 602 points, Type IV by D < 0 at 602, by eigenvalues at 602; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  P1, t = 0.0: v = 1.000000, al = 0.000000, u = 1.000000, x_s = 0.000000
+  Le's wall, polar grid: 57600 points, Type IV by D < 0 at 54834, by eigenvalues at 54834; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's wall, polar grid: 57600 points, Type IV by D < 0 at 49514, by eigenvalues at 49514; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's axis, theta = 0 and pi: 602 points, Type IV by D < 0 at 602, by eigenvalues at 602; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  P1, t = 0.3: v = 0.711578, al = -1.528610, u = 0.711578, x_s = 0.268525
+  Le's wall, polar grid: 57600 points, Type IV by D < 0 at 55853, by eigenvalues at 55853; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's wall, polar grid: 57600 points, Type IV by D < 0 at 49346, by eigenvalues at 49346; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's axis, theta = 0 and pi: 602 points, Type IV by D < 0 at 602, by eigenvalues at 602; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  P1, t = 0.6: v = 0.305020, al = -1.017125, u = 0.305020, x_s = 0.416827
+  Le's wall, polar grid: 57600 points, Type IV by D < 0 at 53858, by eigenvalues at 53858; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's wall, polar grid: 57600 points, Type IV by D < 0 at 48301, by eigenvalues at 48301; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's axis, theta = 0 and pi: 602 points, Type IV by D < 0 at 602, by eigenvalues at 602; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  P2, t = -0.6: v = -0.833655, al = 0.610040, u = -0.639732, x_s = 0.058400
+  Le's wall, polar grid: 57600 points, Type IV by D < 0 at 56496, by eigenvalues at 56496; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's wall, polar grid: 57600 points, Type IV by D < 0 at 52498, by eigenvalues at 52498; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's axis, theta = 0 and pi: 602 points, Type IV by D < 0 at 602, by eigenvalues at 602; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  P2, t = -0.3: v = -0.537050, al = 1.423156, u = -0.385561, x_s = -0.106841
+  Le's wall, polar grid: 57600 points, Type IV by D < 0 at 55286, by eigenvalues at 55286; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's wall, polar grid: 57600 points, Type IV by D < 0 at 50137, by eigenvalues at 50137; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's axis, theta = 0 and pi: 602 points, Type IV by D < 0 at 602, by eigenvalues at 602; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  P2, t = 0.0: v = 0.000000, al = 2.000000, u = 0.250000, x_s = -0.133333
+  Le's wall, polar grid: 57600 points, Type IV by D < 0 at 0, by eigenvalues at 0; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's wall, polar grid: 57600 points, Type IV by D < 0 at 0, by eigenvalues at 0; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's axis, theta = 0 and pi: 602 points, Type IV by D < 0 at 86, by eigenvalues at 0; float64 disagreements 86, near D = 0 602, rechecked at 50 digits 602, unresolved 0
+  P2, t = 0.3: v = 0.537050, al = 1.423156, u = 0.885561, x_s = 0.043159
+  Le's wall, polar grid: 57600 points, Type IV by D < 0 at 54248, by eigenvalues at 54248; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's wall, polar grid: 57600 points, Type IV by D < 0 at 47334, by eigenvalues at 47334; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's axis, theta = 0 and pi: 602 points, Type IV by D < 0 at 602, by eigenvalues at 602; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  P2, t = 0.6: v = 0.833655, al = 0.610040, u = 1.139732, x_s = 0.358400
+  Le's wall, polar grid: 57600 points, Type IV by D < 0 at 53778, by eigenvalues at 53778; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's wall, polar grid: 57600 points, Type IV by D < 0 at 48420, by eigenvalues at 48420; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+  Rodal's axis, theta = 0 and pi: 602 points, Type IV by D < 0 at 602, by eigenvalues at 602; float64 disagreements 0, near D = 0 0, rechecked at 50 digits 3, unresolved 0
+[PASS] closed_vs_numeric: the sign of D gives the eigenvalues' type at all 1158020 grid points (86 float64 disagreements; 0 unresolved after up to 1000 rechecks per grid at 50 digits)
+
+== 9. The map with the acceleration terms dropped (al = 0, u = v at the same v), against the full one ==
+  | profile | t | wall | v | al | u | points whose type differs | of | Type I % full | Type I % dropped |
+  | P1 | -0.6 | Le | 0.3050 | 1.0171 | 0.3050 | 3604 | 57600 | 8.604 | 0.379 |
+  | P1 | -0.6 | Rodal | 0.3050 | 1.0171 | 0.3050 | 9583 | 57600 | 16.943 | 1.148 |
+  | P1 | -0.3 | Le | 0.7116 | 1.5286 | 0.7116 | 2473 | 57600 | 3.385 | 2.704 |
+  | P1 | -0.3 | Rodal | 0.7116 | 1.5286 | 0.7116 | 6624 | 57600 | 13.851 | 7.306 |
+  | P1 | 0.0 | Le | 1.0000 | 0.0000 | 1.0000 | 0 | 57600 | 5.617 | 5.617 |
+  | P1 | 0.0 | Rodal | 1.0000 | 0.0000 | 1.0000 | 0 | 57600 | 12.527 | 12.527 |
+  | P1 | 0.3 | Le | 0.7116 | -1.5286 | 0.7116 | 2473 | 57600 | 3.385 | 2.704 |
+  | P1 | 0.3 | Rodal | 0.7116 | -1.5286 | 0.7116 | 6624 | 57600 | 13.851 | 7.306 |
+  | P1 | 0.6 | Le | 0.3050 | -1.0171 | 0.3050 | 3604 | 57600 | 8.604 | 0.379 |
+  | P1 | 0.6 | Rodal | 0.3050 | -1.0171 | 0.3050 | 9583 | 57600 | 16.943 | 1.148 |
+  | P2 | -0.6 | Le | -0.8337 | 0.6100 | -0.6397 | 1800 | 57600 | 2.491 | 3.893 |
+  | P2 | -0.6 | Rodal | -0.8337 | 0.6100 | -0.6397 | 3280 | 57600 | 7.110 | 9.496 |
+  | P2 | -0.3 | Le | -0.5370 | 1.4232 | -0.3856 | 2156 | 57600 | 5.535 | 1.391 |
+  | P2 | -0.3 | Rodal | -0.5370 | 1.4232 | -0.3856 | 7373 | 57600 | 13.265 | 4.281 |
+  | P2 | 0.0 | Le | 0.0000 | 2.0000 | 0.2500 | 0 | 57600 | 100.000 | 0.000 |
+  | P2 | 0.0 | Rodal | 0.0000 | 2.0000 | 0.2500 | 0 | 57600 | 100.000 | 0.000 |
+  | P2 | 0.3 | Le | 0.5370 | 1.4232 | 0.8856 | 3700 | 57600 | 6.293 | 1.391 |
+  | P2 | 0.3 | Rodal | 0.5370 | 1.4232 | 0.8856 | 7590 | 57600 | 18.498 | 4.281 |
+  | P2 | 0.6 | Le | 0.8337 | 0.6100 | 1.1397 | 2744 | 57600 | 7.520 | 3.893 |
+  | P2 | 0.6 | Rodal | 0.8337 | 0.6100 | 1.1397 | 3874 | 57600 | 14.448 | 9.496 |
+[PASS] drop_detected: at all 16 (profile, time, wall) slices with v != 0 and (al != 0 or u != v) the type differs at >= 1 grid point [True], the Le Type I fraction differs by >= 1 percentage point at some slice of each profile [True], and at P1 t = 0 (al = 0, u = v) no point differs [True]
+
+== 10. The map as the acceleration changes (numerical evidence, polar 1000^2, u = v) ==
+  Type I % of Le's wall (sigma = 8, R_b = 1, f in [0.1, 0.9]) at speed v and acceleration al:
+  | v \ al | -32 | -16 | -8 | -4 | -2 | -1 | -0.5 | 0 | 0.5 | 1 | 2 | 4 | 8 | 16 | 32 |
+  |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+  | 0.5 | 93.92 | 87.31 | 71.32 | 34.12 | 11.99 | 2.98 | 1.14 | 1.15 | 1.14 | 2.98 | 11.99 | 34.12 | 71.32 | 87.31 | 93.92 |
+  | 1.0 | 87.20 | 69.88 | 31.72 | 10.55 | 5.17 | 5.44 | 5.56 | 5.60 | 5.56 | 5.44 | 5.17 | 10.55 | 31.72 | 69.88 | 87.20 |
+  | 2.0 | 58.46 | 25.96 | 15.19 | 16.70 | 17.13 | 17.25 | 17.27 | 17.28 | 17.27 | 17.25 | 17.13 | 16.70 | 15.19 | 25.96 | 58.46 |
+  Type I % of Rodal's band (sigma = 4, rho = 5, r in [4.25, 5.75]) at v = 1:
+  | al | -32 | -16 | -8 | -4 | -2 | -1 | -0.5 | 0 | 0.5 | 1 | 2 | 4 | 8 | 16 | 32 |
+  |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+  | Type I % | 97.33 | 92.88 | 49.52 | 26.24 | 17.02 | 12.70 | 12.41 | 12.48 | 12.41 | 12.70 | 17.02 | 26.24 | 49.52 | 92.88 | 97.33 |
+  Type I % of Le's wall at v = 0.5 for u != v (al = 0): u = 0, 0.25, 0.5, 1, 2:  2.50, 1.03, 1.15, 6.56, 19.42
+  Type I % of Le's wall along Alcubierre's journey P1 (u = v), full against dropped:
+  | t | v | al | Type I % full | Type I % dropped |
+  |---|---|---|---|---|
+  | -0.9 | 0.1036 | 0.3922 | 10.641 | 0.045 |
+  | -0.6 | 0.3050 | 1.0171 | 8.597 | 0.377 |
+  | -0.3 | 0.7116 | 1.5286 | 3.383 | 2.704 |
+  | 0.0 | 1.0000 | 0.0000 | 5.599 | 5.599 |
+  | 0.3 | 0.7116 | -1.5286 | 3.383 | 2.704 |
+  | 0.6 | 0.3050 | -1.0171 | 8.597 | 0.377 |
+  | 0.9 | 0.1036 | -0.3922 | 10.641 | 0.045 |
+  Equatorial cut of Rodal's band (theta = pi/2), v = 1, u = v: the radii where D changes sign, so the Type I intervals, for each al:
+    al = -4.0: Type I at 20550 of 150001 radii, D changes sign at [4.8981, 5.1036]
+    al = -2.0: Type I at 7145 of 150001 radii, D changes sign at [4.9175, 4.9209, 4.9706, 5.0386]
+    al = -1.0: Type I at 2691 of 150001 radii, D changes sign at [4.9378, 4.951, 5.0032, 5.009, 5.0668, 5.0747]
+    al = -0.5: Type I at 6385 of 150001 radii, D changes sign at [4.9438, 4.9656, 4.9945, 5.0191, 5.0509, 5.0683]
+    al = +0.0: Type I at 12016 of 150001 radii, D changes sign at [4.9458, 5.066]
+    al = +0.5: Type I at 6385 of 150001 radii, D changes sign at [4.9438, 4.9656, 4.9945, 5.0191, 5.0509, 5.0683]
+    al = +1.0: Type I at 2691 of 150001 radii, D changes sign at [4.9378, 4.951, 5.0032, 5.009, 5.0668, 5.0747]
+    al = +2.0: Type I at 7145 of 150001 radii, D changes sign at [4.9175, 4.9209, 4.9706, 5.0386]
+    al = +4.0: Type I at 20550 of 150001 radii, D changes sign at [4.8981, 5.1036]
+
+checks: 13 passed, 0 failed []. 192 s, 433560 kB peak
+
+== Controls: each mutation must make its target checks fail ==
+[FIRED] --mutate=disc-sign (flips the sign of the cubic discriminant (he_type's switch)): exit 1, failed ['planted_cls', 'structure', 'const_limit', 'axis', 'rest', 'closed_vs_numeric'], 204 s
+[FIRED] --mutate=no-rank (labels every D = 0 tensor Type II, without the rank test (he_type's switch)): exit 1, failed ['planted_cls', 'rest'], 142 s
+[FIRED] --mutate=num-drop-w2 (drops b^2 from g_tt in route N'): exit 1, failed ['routeN_planted', 'routeN_vs_E', 'closed_vs_numeric'], 140 s
+[FIRED] --mutate=num-static (zeroes every t-derivative of b in route N'): exit 1, failed ['routeN_planted', 'routeN_vs_E', 'closed_vs_numeric'], 142 s
+[FIRED] --mutate=accel-static (phantom_source's control: drops every t-derivative of b, v_s and x_s in route D's jets): exit 1, failed ['entries_E', 'time_lemma', 'structure', 'const_limit', 'closed_vs_numeric', 'drop_detected'], 106 s
+[FIRED] --mutate=accel-lapse (phantom_source's control: lapse 1 + b in route D): exit 1, failed ['entries_E', 'decouple'], 46 s
+[FIRED] --mutate=alc-drop-w2 (drops b^2 from g_tt in route D): exit 1, failed ['entries_E', 'decouple', 'time_lemma', 'structure', 'parity', 'const_limit', 'axis', 'closed_vs_numeric'], 544 s
+[FIRED] --mutate=drop-accel (evaluates D at al = 0, u = v (the constant-speed D)): exit 1, failed ['closed_vs_numeric', 'drop_detected'], 137 s
+[FIRED] --mutate=time-lemma-sign (flips the sign of the DeltaT_rho term in the time lemma's claim): exit 1, failed ['time_lemma'], 143 s
+[FIRED] --mutate=weight-break (counts al as weight 1, not 2, in the scaling of the entries): exit 1, failed ['structure'], 143 s
+[FIRED] --mutate=parity-break (flips al but not c in the parity identity): exit 1, failed ['parity'], 156 s
+[FIRED] --mutate=axis-flip (claims D = +4 R_01^2 (R_00^2 + R_01^2)^2 on the axis): exit 1, failed ['axis'], 143 s
+[FIRED] --mutate=rest-v (takes the rest slice at t = 0.05 (v = tanh 0.1), and v = 1/10 at the exact points): exit 1, failed ['rest'], 142 s
+[FIRED] phantom_source.py --mutate=accel-static: exit 1, failed ['gen_xcheck', 'accel_xcheck']
+controls: all fired
