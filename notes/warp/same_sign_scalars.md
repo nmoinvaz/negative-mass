@@ -305,3 +305,43 @@ perfect fluid only where its gradient is timelike, so their mixtures and these p
 Entries as in [`../literature.md`](../literature.md), "Warp drives".
 
 - [BD20] Béatrix-Drouhet, arXiv:2012.09941 (2020, preprint).
+
+## Coordinator's review
+
+Raw `I78-mac` (negative-mass-raw). Mac, nice 10, at most 2 processes.
+
+| step | result |
+|---|---|
+| scope | the three files the issue names, and raw `I78-rpi5` |
+| rerun `same_sign_scalars.py` | exit 0 in 85 s: 31 of 31 checks pass, 22 of 22 controls fire, and the output equals rpi5's apart from the timings |
+| re-solve | at the 43 wall points of `I77-mac`, by the gcd of the 2 × 2 minors of R₃ − λη₃ in λ: no real λ gives rank ≤ 1, and R₃ is indefinite (F2) |
+| hand proofs | Lemma S, Proposition W, the c⁰ and c¹ coefficients of B_A, the b(ρ) minors and Lemma K were read and rederived by hand; no gap found |
+| independent check `ind78.py` | run 2 exits 0 in 1 s, and all 8 mutations fire on target |
+
+`ind78.py` imports nothing from the repository. Its Ricci routine, polar wall route (generic w(r)) and Cartesian
+truncated-Taylor route are the coordinator's, from `I77-mac/ind77.py`. It decides rank 1 by the gcd of the minors, and
+b(ρ) by `sympy.solve`. This note's code uses the 3 × 3 minors of the 4 × 4 pencil, Gröbner bases and Rabinowitsch. It
+shares with this note the metrics, the frame, the profiles, #77's point lists, and the printed formulas it tests.
+
+| id | what | run 2 |
+|---|---|---|
+| F0 | planted: Painlevé–Gullstrand Ricci-flat; P1, P2 and D2's R − λg exactly as printed | pass |
+| F1 | the wall's six entries, F = s²c²B/(8r³), B affine in s² with constant term −2w′(u² + v²), the certificate | pass |
+| F2 | 25 exact and 18 tanh points: R₃ indefinite, no real λ with rank(R₃ − λη₃) ≤ 1 | pass |
+| F3 | the accelerating entries with A = v_s′/v_s at 3 exact points by the Cartesian route, no rank-1 λ there; the v_s = 0 block at 2 points | pass |
+| F4 | b(ρ)'s R₃; `sympy.solve` of the minors gives exactly λ = h, Q = 0; D3 has inertia (0, 2) and a non-integrable kernel | pass |
+
+So the entries, F, B, the accelerating entries, the b(ρ) set and the absence of an admissible λ at the wall points are
+confirmed by code that shares nothing with `same_sign_form`, `closure2` or phantom_source.py.
+
+**Discrepancies.**
+- C8 as coded (ideal equality) failed, and that FAIL stands. C8 as worded passes.
+- `acc-static` and `wall-planted` fail more checks than the README predicted.
+- `ind78.py`, the coordinator's check: run 1 passed. A mutation added afterward for its 60-digit branch crashed in
+  mpmath's `polyroots` on a double root. Run 2 uses the quadratic formula there (recorded in `I78-mac`).
+
+**Recommended tasks.**
+- A is declined: `ind78.py` is that check.
+- B is declined as a separate task: the hand proofs were rederived in this review, and the Lean statements are row 23 of
+  #135.
+- C is #158.

@@ -262,9 +262,10 @@ coupling, and matter whose Ricci tensor is not of the form λ g_ab + s u_a u_b. 
 − λ g_ab of rank 2 with mixed signs, which the lemma does not exclude. #65 excludes that pair on every open set of the
 wall, for constant v and the accelerating bubble ([two_scalars.md](two_scalars.md), *checked symbolically*). *Added by
 the coordinator:* three scalars of mixed signs fail closure at every exact point tested, and an arbitrary profile is not
-decided ([three_scalars.md](three_scalars.md), #77). #70 shows that (I1) and (I2) hold for every shift b(t, x, σ(y, z))
-with unit lapse, in the frame adapted to ∇⊥σ, so the lemma covers some shifts that are not axisymmetric
-([nonaxisymmetric.md](nonaxisymmetric.md)).
+decided ([three_scalars.md](three_scalars.md), #77). Two scalars of one sign fail the algebraic stage on every open set
+that meets the wall, at constant speed and for the accelerating bubble ([same_sign_scalars.md](same_sign_scalars.md),
+#78, *proved*). #70 shows that (I1) and (I2) hold for every shift b(t, x, σ(y, z)) with unit lapse, in the frame adapted
+to ∇⊥σ, so the lemma covers some shifts that are not axisymmetric ([nonaxisymmetric.md](nonaxisymmetric.md)).
 
 The answer rests on computer algebra, so it should get an independent review before it is relied on.
 

@@ -222,7 +222,12 @@ and a profile with f(r_s) C² on ℝ³. The bubble moves at a constant v ≠ 0, 
 
 ## Not covered
 
-- Two scalars of one sign (#78). The lemma's argument allows λ ≠ 0 there.
+- Two scalars of one sign: [`same_sign_scalars.md`](same_sign_scalars.md) (#78). With (I1), (I2) the algebraic stage
+  holds iff R = 0 or λ ≠ 0 and rank(R₃ − λη₃) = 1, with pair (+,+) iff λ < 0. It fails on every open set that meets the
+  wall, for constant speed and for the accelerating bubble (*proved* by hand, with the identities *checked
+  symbolically*), so closure is never reached. The shift b = C ln ρ + b₀ passes the algebraic stage on an open set with
+  two phantoms and fails closure (non-integrable kernel). Shifts b(t, x, ρ) other than the bubble and b(ρ) are not
+  classified.
 - Three scalars of mixed signs: [`three_scalars.md`](three_scalars.md) (#77). The algebraic stage passes on {D ≠ 0}
   with pattern (+,+,−) where D < 0 and (+,−,−) where D > 0; closure under O(2,1) or O(1,2) is flatness of the
   orbit-space metric h. It fails at every exact point tested (λ = 0) and at 27 of 27 roots λ ≠ 0, for the tanh and bump
