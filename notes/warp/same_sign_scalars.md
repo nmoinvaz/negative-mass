@@ -275,8 +275,14 @@ the local leaf space of 𝒦 regular where Lemma K is used.
 
 ## Not covered
 
-- A non-axisymmetric shift and a general shift b(t, x, ρ): Lemma S and the certificate (F) apply to them, but #80's
-  classification of the shifts that pass on an open set is not done here.
+- A non-axisymmetric shift, and a general shift b(t, x, ρ) beyond the reductions of
+  [`one_sign_classify.md`](one_sign_classify.md) (#158). There, with (I1), (I2), the stage holds iff R = 0 or λ ≠ 0 and
+  rank(R₃ − λη₃) = 1, and for h > 0 iff R₃ − λη₃ = −v vᵀ (Lemma R), two phantoms. Within b(ρ), planar b(t, x), additive
+  u = X(x) + R(ρ), multiplicative, conical and spherical profiles it is decided (*proved*, with the identities *checked
+  symbolically*). The ρ-dependent families that pass are b = C ln ρ + b₀ and u = c x + C ln ρ + d, and closure fails for
+  both. Every planar shift with K = −a_x ≠ 0 passes with λ = K; closure holds iff K is constant (#78's P1, P2), and no
+  planar shift with constant K ≠ 0 is bounded in x at two close times. Static shifts with u_xρ ≠ 0 and time-dependent
+  shifts beyond the planar and the gauge x → x + D(t) are *not classified*.
 - The isolated angles that pass F = 0, the equator and θ₀. The stage may pass on a curve of the wall for special profiles;
   closure is a statement on a neighborhood, so it is not asked there. No such profile was found, and 40 random trials of
   a numerical search found no passing point at all (`explore_iso0` in the raw folder, not a claim).

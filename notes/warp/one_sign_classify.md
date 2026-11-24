@@ -395,3 +395,37 @@ None beyond the notes cited. No new claim of novelty is made, and no literature 
 - **Independent check `ind158.py`** (coordinator): Lemma R, the additive, multiplicative and conical eliminations and
   Theorem P's growth, by code that shares nothing with this script.
 - **The Lean statements** of §Lemmas for Lean are rows of #135.
+
+## Coordinator's review
+
+Merged as 84dc9fb. Raw negative-mass-raw `I158-mac` at 770c6bd (criteria at a2a6ad9, before the first run).
+
+| step | result |
+|---|---|
+| scope | the three files the brief names, and raw `I158-rpi5` |
+| rerun on the Mac | exit 0, 47 s: 21 of 21 checks, 23 of 23 controls fire; output equals rpi5's apart from timings |
+| hand proofs | Lemma R, Lemma E, Theorem P, Theorem A, Proposition C and the additive closure argument were read and rederived; no gap found |
+| re-solve | the static class u_xρ ≠ 0, by the coordinator's own jet test (K8 below) |
+| independent check `ind158.py` | run 2 exits 0; 9 of 9 mutations fire on target |
+
+ind158 shares no code with this note's script or with `same_sign_scalars.py`.
+
+| id | what | result |
+|---|---|---|
+| K0, K1 | planted Ricci; the block from the coordinator's own frame Ricci tensor, R(e_φ, ·) = 0 | pass |
+| K2 | Lemma R: N = −vvᵀ; the relations reduce to A = B = 0 with QYZ < 0 automatic; 30 v-blocks with one rank-1 root, 30 generic blocks with none | pass |
+| K3–K5 | b(ρ), planar, additive: blocks, radical memberships, and involutivity of the kernel of M from its own brackets | pass |
+| K6, K7 | the multiplicative identity and unit ideal; the conical entries, E_a and E_b in the saturation, the ODE and the contradiction | pass |
+| K8 | at 3 exact 2-jets of the static system A = B = 0 with YZ ≠ 0, the third-order jets are unique and the fourth-order equations are inconsistent (rank 5, augmented rank 6); planted consistent and inconsistent systems behave as expected | pass |
+
+K8 confirms §General static's "not Frobenius closed" by a separate route. Generic admissible 2-jets have no 4-jet
+extension, so solutions with u_xρ ≠ 0, if any, lie on the compatibility hypersurface.
+
+**Discrepancies and process.**
+- `add-bracket` was silent and was replaced by `add-C0` after the data (README A6), as the note says. The replacement
+  keeps the target `additive_closure`, and no criterion moved.
+- Two wording corrections in `same_sign_scalars.md`'s "Not covered" text, which carries the proposed bullet: "every
+  planar shift passes" now says "with K = −a_x ≠ 0", and "no such shift is bounded" now says "no planar shift with
+  constant K ≠ 0".
+- In the coordinator's own check, the `conEb` mutation hung in run 1 and was silent there. A cap on the saturation
+  power fixed it in run 2.
