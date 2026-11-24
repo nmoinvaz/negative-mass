@@ -312,8 +312,8 @@ def main():
         for a in range(4):
             for b in range(a, 4):
                 print(f"  R_({a},{b}): {len(sp.Add.make_args(Rt[a, b]))} terms")
-        print("  (frame E_0 = n, E_1 = d_x, E_2 = d_y, E_3 = d_z. G_k = f^(k)(q). The expressions are in the log of the "
-              "run's raw folder, not printed here.)")
+        print("  (frame E_0 = n, E_1 = d_x, E_2 = d_y, E_3 = d_z. G_k = f^(k)(q). The components are polynomials in X, y, "
+              "z, v, G_0, G_1, G_2, equal to the closed form checked next.)")
         Rc = closed_form_tensor(mut)
         bad = [(a, b) for a in range(4) for b in range(a, 4) if sp.expand(Rt[a, b] - Rc[a, b]) != 0]
         check("closed_form", not bad, "R_ab of route D equals the closed form of any b(t, x, y, z) in its derivatives, "
