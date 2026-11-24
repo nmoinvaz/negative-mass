@@ -65,7 +65,7 @@ MUTATIONS = {
     "acc-static": (["acc_entries"], "drops every t-derivative of v_s, x_s and f from route D's jets"),
     "acc-drop-A": (["acc_entries"], "drops the A terms from the expected entries"),
     "acc-drop-odd": (["acc_ideal"], "keeps only the even powers of c in the accelerating ideal"),
-    "brho-q": (["brho_rank1"], "takes the expected rank-1 solution with Q = h in place of Q = 0"),
+    "brho-q": (["brho_rank1"], "takes the claimed rank-1 solution set with Q = h in place of Q = 0"),
 }
 
 # the last section a control needs: its target checks are all in sections up to this one
@@ -728,18 +728,23 @@ def main():
     Nb = sp.Matrix([[lm - hh, QQ, 0], [QQ, -lm - hh, 0], [0, 0, hh - lm]])
     minb = [sp.expand(Nb[i, k] * Nb[j, l] - Nb[i, l] * Nb[j, k]) for (i, j) in itertools.combinations(range(3), 2)
             for (k, l) in itertools.combinations(range(3), 2)]
-    Gb1 = sp.groebner(minb + [1 - zz * hh], zz, lm, QQ, hh, order="grevlex")
-    want = [lm - hh, QQ - hh if mut == "brho-q" else QQ]
-    Gw = sp.groebner(want + [1 - zz * hh], zz, lm, QQ, hh, order="grevlex")
-    subs_ = [Gw.contains(p_) for p_ in minb]
-    sups_ = [Gb1.contains(p_) for p_ in want]
+    Ih = minb + [1 - zz * hh]  # the minors saturated by h != 0
+    Gb1 = sp.groebner(Ih, zz, lm, QQ, hh, order="grevlex")
+    want = [lm - hh, QQ - hh if mut == "brho-q" else QQ]  # the claimed solution set: lam = h, Q = 0
+    # (a) every generator vanishes on the claimed solutions: it reduces to 0 modulo <lam - h, Q>
+    Gw = sp.groebner(want, lm, QQ, hh, order="grevlex")
+    part_a = all(Gw.contains(p_) for p_ in minb)
+    # (b) lam - h and Q lie in the radical of the saturated ideal: 1 is in Ih + <1 - y g> (Rabinowitsch), no exponent chosen
+    yy = sp.Symbol("yy")
+    part_b = [list(sp.groebner(Ih + [1 - yy * g_], yy, zz, lm, QQ, hh, order="grevlex").exprs) == [1] for g_ in want]
     bsol = sp.Symbol("C0") * sp.log(rho) + sp.Symbol("b0")
     qsol = sp.simplify(-(sp.diff(bsol, rho, 2) + sp.diff(bsol, rho) / rho) / 2)
-    check("brho_rank1", all(x == 0 for x in dR3) and all(subs_) and all(sups_) and qsol == 0,
-          f"R_3 of a shift b(rho) equals [[-h, Q, 0], [Q, -h, 0], [0, 0, h]] (differences {dR3}); with h != 0 the 2 x 2 "
-          f"minors of R_3 - lam eta_3 generate the same ideal as lam - h and {want[1]} (inclusions {all(subs_)}, "
-          f"{all(sups_)}); Q = 0 for b = C ln rho + b_0: {qsol == 0}. So lam = h > 0 and Q = 0, pattern (-,-) "
-          f"({time.time() - t0:.0f} s)")
+    check("brho_rank1", all(x == 0 for x in dR3) and part_a and all(part_b) and qsol == 0,
+          f"R_3 of a shift b(rho) equals [[-h, Q, 0], [Q, -h, 0], [0, 0, h]] (differences {dR3}); the zero set of the 2 x 2 "
+          f"minors of R_3 - lam eta_3 with h != 0 is {{{want[0]} = 0, {want[1]} = 0}}: (a) every minor reduces to 0 modulo "
+          f"<{want[0]}, {want[1]}>: {part_a}; (b) {want[0]} and {want[1]} are in the radical (Rabinowitsch): {part_b}. "
+          f"Information, not gating: the Groebner basis of the saturated ideal is {list(Gb1.exprs)}. Q = 0 for "
+          f"b = C ln rho + b_0: {qsol == 0}. So lam = h > 0 and Q = 0, pattern (-,-) ({time.time() - t0:.0f} s)")
     print("\n== 7b. D3: b = C ln rho + b_0, ds^2 = -dt^2 + (dx + b dt)^2 + drho^2 + rho^2 dphi^2, passes the algebraic "
           "stage on an open set ==")
     tt, xx, ph = sp.symbols("t x varphi", real=True)
@@ -766,8 +771,9 @@ def main():
     M3 = (Ricc - lam_c * gc).applyfunc(simp_r)
     cl3 = closure2(M3, Dc, simp_r, lam_c)
     check("d3_closure_fails", ok3 and cl3["dim"] == 2 and not cl3["integrable"],
-          f"kernel dimension {cl3['dim']}, [K_1, K_2] = {[str(x) for x in cl3.get('bracket', [])]}: the plane is not "
-          f"integrable (Frobenius), so no d phi_I with the kernel as common null space exists ({time.time() - t0:.0f} s)")
+          f"kernel dimension {cl3['dim']}, [K_1, K_2] = {[str(x) for x in cl3.get('bracket', [])]}, plane integrable: "
+          f"{cl3['integrable']}" + (" (Frobenius: no d phi_I with the kernel as common null space exists)"
+                                    if not cl3["integrable"] else "") + f" ({time.time() - t0:.0f} s)")
     return fin(t0, mut)
 
 
