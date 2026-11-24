@@ -121,14 +121,17 @@ Its eigenvalues are −R_00 ± i R_01, a complex pair. At x − v t = ±1 on the
 bubble radius R = 1 and v = 1, the script prints 16 ± 4i and 0.
 
 G^a_b differs from R^a_b by a multiple of the identity, so it has the same complex pair, and the Einstein tensor is of
-Hawking–Ellis Type IV there. [Rod26] finds Type IV along the whole axis, numerically, for one parameter set. On the
-axis ρ_n = S_∥ = 0, so [Le26]'s criterion 2|j| > |ρ_n + S_∥| holds wherever j ≠ 0. Off the axis, [Le26] finds the
-sampled wall Type IV except at 1.3 % of points at v = 0.5 and 24.9 % at v = 2.5, while [Rod26] finds the wall annulus
-of the equatorial cut Type I ([prior_work.md](prior_work.md), discrepancy 4). The two agree: #64
-([he_type.md](he_type.md)) gives the type in closed form, and the Type I set is a thin band at the equator in the
-middle of the wall, whose equatorial cut is Rodal's annulus and whose volume is Le's fraction. A scalar (Type I or
-II) or a perfect fluid (Type I, or II for a null flow) cannot be the source at a Type IV point, so these maps already
-exclude both at their Type IV points ([prior_work.md](prior_work.md) §1–2).
+Hawking–Ellis Type IV there. [Rod26] finds Type IV along the whole axis, numerically, for one parameter set. On the axis
+ρ_n = S_∥ = 0, so [Le26]'s criterion 2|j| > |ρ_n + S_∥| holds wherever j ≠ 0. Off the axis, [Le26] finds the sampled
+wall Type IV except at 1.3 % of points at v = 0.5 and 24.9 % at v = 2.5, while [Rod26] finds the wall annulus of the
+equatorial cut Type I ([prior_work.md](prior_work.md), discrepancy 4). The two agree: #64 ([he_type.md](he_type.md))
+gives the type in closed form, and the Type I set is a thin band at the equator in the middle of the wall, whose
+equatorial cut is Rodal's annulus and whose volume is Le's fraction. A scalar (Type I or II) or a perfect fluid (Type I,
+or II for a null flow) cannot be the source at a Type IV point, so these maps already exclude both at their Type IV
+points ([prior_work.md](prior_work.md) §1–2). These maps are for constant speed. For the accelerating bubble
+([he_accel.md](he_accel.md), #73) the axis stays Type IV wherever v_s f′ ≠ 0, but at v_s = 0 every wall point is Type I.
+*Added by the coordinator:* there only the lemma excludes both. It applies where R_ab ≠ 0, and at v_s = 0 R_00 = −v_s′
+cos θ f′ and R_1ρ = v_s′ sin θ f′/2, so R_ab ≠ 0 wherever v_s′ f′ ≠ 0.
 
 ## An accelerating bubble
 
@@ -139,8 +142,9 @@ exclude both at their Type IV points ([prior_work.md](prior_work.md) §1–2).
 with v_s(t) and x_s(t) independent free functions. Alcubierre's v_s = dx_s/dt is a special case. It also takes a
 general shift b(t, x, ρ), not assumed even in ρ, off the axis. The frame is the one above, E_0 = ∂_t − b ∂_x = n,
 E_1 = ∂_x, e_ρ and e_ϕ. The Ricci tensor comes from `ricci` with the jets of v_s, x_s and f, or of b, as free symbols
-(route D). Time derivatives enter it. For the bubble the frame Ricci tensor contains v_s′ and x_s′, both already in
-R_00, and for the general shift it contains ∂_t∂_x b and ∂_t∂_ρ b.
+(route D). Time derivatives enter it. For the bubble the frame Ricci tensor contains v_s′ and x_s′, in R_00, R_11 and
+R_1ρ, through ∂_t∂_x b and ∂_t∂_ρ b. It contains neither v_s″ nor x_s″ ([he_accel.md](he_accel.md), #73). For the
+general shift it contains ∂_t∂_x b and ∂_t∂_ρ b.
 
 The results, each an exact identity in the jets and the point (**checked symbolically**), are these.
 

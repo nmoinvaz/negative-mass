@@ -103,7 +103,8 @@ h²)²[(p + q)² + 4h²].
 
 For the bubble, 64 r⁶ D is a polynomial in (v, α, u) with 50 monomials v^i α^j u^k. Their weights i + k + 2j are 6, 8,
 10, 12, every u comes with a v (k ≤ i), the highest powers are v¹², α⁶ and u⁶, and the α⁶ coefficient is f₁⁶ s⁴/16
-(`structure`). The weight 8 and 10 parts in the five symbols are printed in he_accel_output.txt §5.
+(`structure`). *Added by the coordinator:* this α⁶ coefficient is that of D; for 64 r⁶ D it is
+4 r⁶ f₁⁶ s⁴. The weight 8 and 10 parts in the five symbols are printed in he_accel_output.txt §5.
 
 ## Lemmas stated for Lean (#135)
 
@@ -173,7 +174,8 @@ changes of D.
 At the equator j_ρ = 0 and h = α f₁/2. For α ≠ 0 the cubic no longer splits off the root p, which is why the annulus
 changes. For α = 0 and any u it does: the cubic is (λ − p)(λ² + qλ + j₁²), so D = (q² − 4j₁²)(p² + pq + j₁²)² and #64's
 criterion v r f′² > |(r f′)′| holds at the equator for every u (**proved**, by hand from the cubic; the script does not
-check it).
+check it). *Added by the coordinator:* `ind73.py` A3(f) checks the identity symbolically, for every
+u (negative-mass-raw `I73-mac`).
 
 The type labels with the acceleration terms dropped differ from the full ones at 1800 to 9583 of the 57 600 points of
 each wall, at every slice with v ≠ 0 (`drop_detected`; the table is in he_accel_output.txt §9). At the instant of rest,
@@ -258,3 +260,45 @@ From the repository root, in the environment of [`setup.md`](../../setup.md):
 
 It exits 1 if a check fails or a control does not fire. `--no-controls` runs the checks alone, `--mutate=NAME` one
 control, `--stop=7` the symbolic sections only, and `--quick` the subset of the grids.
+
+## Coordinator's review
+
+Raw `I73-mac` (negative-mass-raw). Mac, nice 10, at most 2 processes.
+
+| step | result |
+|---|---|
+| scope | the three files the issue names, and f5c8a45 below |
+| rerun `he_accel.py` | at d9b2df0 it exits 1 on macOS after the 13 checks pass, because `finish()` opens `/proc/self/status`. f5c8a45 guards that read, and with it the full run exits 0 in 9 min 42 s |
+| rerun the controls | all 13 fire, with the same failed-check lists as rpi5, and so does `phantom_source.py --mutate=accel-static`. Every table of §10 equals rpi5's. The Mac finds 84 float64 disagreements on Rodal's axis at P2, t = 0, where rpi5 found 86. Both are at D = 0 exactly, and none is unresolved |
+| re-solve | from the coordinator's own entries and eigenvalues: 12 Type I fractions and Rodal's equatorial intervals at α = 0, 0.5 and 4 (A4, A5) |
+| independent check `ind73.py` | run 1 exits 0 in 27 s, and all 7 mutations fire on target |
+
+`ind73.py` imports nothing from the repository. It has its own Christoffel and Ricci routine on a generic shift
+B(t, x, y, z). The 2-jets of b come from its own chain rule through Q = r_s², with v_s″ and x_s″ as free symbols. It
+then uses sympy's `charpoly` and `discriminant`, and numpy's eigenvalues for the map. It shares with this note the
+metric, the frame, the tanh profile, the walls' parameters, and the printed claims it tests.
+
+| id | what | run 1 |
+|---|---|---|
+| A0 | planted: Schwarzschild in Painlevé–Gullstrand form is Ricci-flat, and de Sitter has R_μν = 3H²g_μν | pass |
+| A1 | the six entries of "Answer", mod s²; R(e_ϕ, ·) = 0; neither v_s″ nor x_s″ enters | pass |
+| A2 | sympy's discriminant equals the printed D: 52 terms, quartic in p, j-degrees 0, 2, 4, 6, both end parts as printed | pass |
+| A3 | D at v = 0, on the axis, at the equator (α = 0, every u); the α⁶ coefficient; 50 monomials with weights 6 to 12; parity | pass |
+| A4 | 12 printed Type I fractions, each reproduced within 0.005 percentage points (tolerance 0.10) | pass |
+| A5 | Rodal's equatorial intervals at α = 0, 0.5 and 4, each end within 5e-5 | pass |
+
+So the entries, D, its structure and the map are confirmed by code that shares nothing with route D or route E.
+
+**Discrepancies.**
+- Run 1's `closed_vs_numeric` FAIL stands, as recorded above.
+- The issue expected x_s″, but neither x_s″ nor v_s″ enters (A1).
+- `I73-rpi5`'s README counts 1 156 120 grid points. The grids have 10 × (2 × 57 600 + 602) = 1 158 020, as the run and
+  this note print.
+- The command of the last section failed off Linux until f5c8a45.
+
+**Recommended tasks.**
+- 1 is declined: `ind73.py` derives the entries with its own Ricci code, as asked.
+- 2 is #156.
+- 3 is declined: the closed form gives the type at every (v, α, u), and the ten slices cover every sign pattern. No
+  claim depends on a time series.
+- 4 is row 21 of #135.

@@ -210,8 +210,9 @@ Eq. (19) and the axis eigenvalues. `planted` tests `cubic`, `disc` and `he_type_
 Assumed: constant v, as in phantom_source.md up to its accelerating bubble. The closed form holds for every C²
 profile, and the numbers use the tanh profile on the slice t = 0, which any other t translates.
 
-Not covered: the accelerating bubble of phantom_source.md. (I1) holds there, so the cubic still decides, but its D was
-not computed (#73). Le's graded grid.
+Not covered: Le's graded grid. The accelerating bubble of phantom_source.md is [he_accel.md](he_accel.md) (#73). Its
+block and D are in closed form, and at constant speed it is this note's block entry by entry. The statement "as v → 0
+the wall is Type IV" holds at constant speed only: with v_s′ ≠ 0, v_s = 0 gives Type I at every point.
 
 ## References
 
