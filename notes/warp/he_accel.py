@@ -351,10 +351,12 @@ def compare(cf, rn, name, t0, sig, Rb, r, c, label, seed):
     closest = np.argsort(np.abs(D) / scale**6)[:3]
     redo = np.union1d(closest, np.where((ivC != ivN) | near)[0])
     unresolved = [None] * max(0, redo.size - 1000)
+    # More than 1000 points in doubt: the check fails whatever the first 1000 give, so they are not rechecked.
+    todo = redo[:1000] if redo.size <= 1000 else redo[:0]
     mp.mp.dps = 50
     vm, alm, um, xsm = motion_mp(name, t0)
     t0m = mp.mpf(t0)
-    for i in redo[:1000]:
+    for i in todo:
         rm, cm, ph = mp.mpf(float(r[i])), mp.mpf(float(c[i])), mp.mpf(float(phi[i]))
         sm = mp.sqrt(1 - cm**2)
         Dm, _, _ = cf.D(vm, alm, um, sig, Rb, rm, cm, mpm=True)
@@ -369,7 +371,7 @@ def compare(cf, rn, name, t0, sig, Rb, r, c, label, seed):
     mp.mp.dps = 15
     nd = int((ivC != ivN).sum())
     print(f"  {label}: {r.size} points, Type IV by D < 0 at {int(ivC.sum())}, by eigenvalues at {int(ivN.sum())}; "
-          f"float64 disagreements {nd}, near D = 0 {int(near.sum())}, rechecked at 50 digits {min(redo.size, 1000)}, "
+          f"float64 disagreements {nd}, near D = 0 {int(near.sum())}, rechecked at 50 digits {todo.size}{'' if redo.size <= 1000 else ' (' + str(redo.size) + ' in doubt, more than the cap of 1000, so not rechecked)'}, "
           f"unresolved {len(unresolved)}", flush=True)
     return r.size, nd, unresolved, D, scale
 
@@ -539,6 +541,7 @@ def main():
     Pn = sp.Poly(sp.expand(num), V_, AL, U)
     mons = Pn.monoms()
     wts = sorted({i + k + 2 * j for (i, j, k) in mons})
+    print(f"  monomials v^i al^j u^k of 64 r^6 D, as (i, j, k): {sorted(mons)}")
     print(f"  D of the bubble: 64 r^6 D is a polynomial in (v, al, u) with {len(mons)} monomials, denominator {den}; "
           f"weights i + k + 2j of v^i al^j u^k: {wts}; highest power of v {max(m[0] for m in mons)}, of al "
           f"{max(m[1] for m in mons)}, of u {max(m[2] for m in mons)}")
