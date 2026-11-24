@@ -46,7 +46,7 @@ MUTATIONS = {
     "E-norm": ("E_norm", "initial velocity (1, 1)"),
     "E-kneg": ("E_focus", "A'' = -K A"),
     "E-ext": ("E_ext", "support of J' is [0, 2]"),
-    "E-hol": ("E_hol", "expects L'(10) = h j"),
+    "E-hol": ("E_hol_b", "expects L'(10) = h j"),
     "E-geo": ("E_geo", "finite-difference spacing 0.5"),
 }
 
@@ -54,6 +54,7 @@ RESULTS = []
 OPTS = dict(a[2:].split("=", 1) if "=" in a else (a[2:], "1") for a in sys.argv[1:] if a.startswith("--"))
 MUT = OPTS.get("mutate")
 ONLY = OPTS["only"].split(",") if "only" in OPTS else None
+SKIP = OPTS["skip"].split(",") if "skip" in OPTS else []
 
 
 def check(name, ok, detail):
@@ -615,14 +616,56 @@ def e5_geo():
           f"{delta}) at 5 s values and tau = 2, 3, 5, 8: max relative difference {worst:.2e} (<= 1e-5)")
 
 
+def gl_panels(refine):
+    """panel edges on [-3, 3]: width 0.25 on [-3, -0.75] and [0.75, 3], 0.05 on [-0.75, 0.75]; refine halves every width."""
+    edges = list(np.linspace(-3.0, -0.75, 10)) + list(np.linspace(-0.75, 0.75, 31)[1:]) + list(np.linspace(0.75, 3.0, 10)[1:])
+    edges = np.array(edges)
+    if refine:
+        mid = (edges[1:] + edges[:-1]) / 2
+        edges = np.sort(np.concatenate([edges, mid]))
+    return edges
+
+
+def hol_b_run(refine, dt, order=10):
+    edges = gl_panels(refine)
+    x, w = np.polynomial.legendre.leggauss(order)
+    a, b = edges[:-1][:, None], edges[1:][:, None]
+    nodes = ((b - a) / 2 * x + (a + b) / 2).ravel()
+    wts = ((b - a) / 2 * w).ravel()
+    out, H, J = geodesics(nodes, T=10.0, dt=dt)
+    Lp, bmin, bmax = [], 0.0, 0.0
+    for y in out:
+        per_panel = (wts * y[5]).reshape(-1, order).sum(axis=1)
+        cum = np.cumsum(per_panel)
+        Lp.append(cum[-1])
+        bmin, bmax = min(bmin, -cum.max()), max(bmax, -cum.min())
+    return np.array(Lp), bmin, bmax
+
+
+def e6_hol_b():
+    t0 = time.time()
+    L1, bmin, bmax = hol_b_run(False, 0.001)
+    L2, _, _ = hol_b_run(True, 0.001)
+    L3, _, _ = hol_b_run(False, 0.0005)
+    e_q, e_t = abs(L2[-1] - L1[-1]), abs(L3[-1] - L1[-1])
+    target = HJ_H * HJ_J if MUT == "E-hol" else 2 * HJ_H * HJ_J
+    mono = bool(np.all(np.diff(L1) >= -1e-12))
+    rng = bmin >= -2 * HJ_H * HJ_J - 1e-9 and bmax <= 1e-9
+    check("E_hol_b", e_q <= 1e-11 and e_t <= 1e-11 and abs(L1[-1] - target) <= 1e-5 and mono and rng,
+          f"L'(10) = {L1[-1]:.12f}, L'(10) - 2 h j = {L1[-1] - 2 * HJ_H * HJ_J:+.2e}; error estimates (spreads over two "
+          f"resolutions, not enclosures) e_q = {e_q:.1e} (panels 48 vs 96), e_t = {e_t:.1e} (dt 0.001 vs 0.0005), each <= 1e-11; "
+          f"|L'(10) - {target}| <= 1e-5: {abs(L1[-1] - target) <= 1e-5}; nondecreasing: {mono}; b at the panel boundaries in "
+          f"[{bmin:.12f}, {bmax:.1e}] within [-2 h j - 1e-9, 1e-9]: {rng} ({time.time() - t0:.0f} s)")
+
+
 CHECKS = [(("crit_null",), c1_crit_null), (("crit_pg", "crit_pg_iv", "crit_pg_ivb"), c2_crit_pg),
           (("horizon",), c3_horizon), (("jacobi",), c4_jacobi), (("exterior",), c5_exterior),
           (("limits_necessary",), c6_limits_necessary), (("E_norm",), e1_norm), (("E_focus",), e2_focus), (("E_ext",), e3_ext),
-          (("E_hol",), e4_hol), (("E_geo",), e5_geo)]
+          (("E_hol",), e4_hol), (("E_hol_b",), e6_hol_b), (("E_geo",), e5_geo)]
 
 
 def wanted(name):
-    return ONLY is None or name in ONLY
+    return name not in SKIP and (ONLY is None or name in ONLY)
 
 
 def main():
@@ -649,7 +692,8 @@ if __name__ == "__main__":
     if MUT is None and "no-controls" not in OPTS and ONLY is None:
         print("\n== Controls: each mutation must make its target check fail ==", flush=True)
         for name, (want, what) in MUTATIONS.items():
-            p = subprocess.run([sys.executable, __file__, f"--mutate={name}"], capture_output=True, text=True)
+            extra_args = [f"--skip={OPTS['skip']}"] if "skip" in OPTS else []
+            p = subprocess.run([sys.executable, __file__, f"--mutate={name}"] + extra_args, capture_output=True, text=True)
             if "logdir" in OPTS:
                 with open(os.path.join(OPTS["logdir"], f"mut_{name}.log"), "w") as fh:
                     fh.write(p.stdout + p.stderr)
