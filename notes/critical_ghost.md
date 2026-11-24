@@ -33,7 +33,8 @@ That last number is what type I scaling predicts from the single unstable mode. 
 [GGS09a, TS13], and converting to their null coordinate x⁻ = (t − l)/√2 gives 0.846/√2 = 0.598 (**checked here**; neither
 paper makes this comparison). Shinkai and Torii found the same finite-mass behaviour in 5 and 6 dimensions and in
 Einstein–Gauss–Bonnet gravity [ST17]. Nobody has done a careful bisection, and the published threshold masses disagree:
-0.30 a [SH02] against 0.22 a [GGS09b].
+0.30 a [SH02] against 0.22 a [GGS09b]. The 3+1 runs of [SN26] (massive throat, two amplitudes) follow the lifetime law
+τ ln(1/ε) but, in their words, "do not establish the scaling".
 
 **Choptuik's threshold is type II, and in the massless normal + ghost model the two live in different sectors of initial
 data.**
@@ -94,7 +95,7 @@ The places where a real connection could still exist, all untested:
 | Ghost scalar with a potential: Ellis–Bronnikov and an AdS wormhole | Ellis–Bronnikov: a unique bound state; the asymmetric case also has a zero-energy mode growing linearly in t (a move along the family). AdS wormhole: exactly one unstable mode | [CPS20] |
 | All static V = 0 scalar-vacuum solutions, both signs | All unstable under spherical perturbations: Fisher (normal; solutions for *every* ω² < 0), anti-Fisher branches A, B and wormhole branch C. Branch A tends to Schwarzschild and its instability fades there | [BFZ11] |
 | Phantom with a specific potential (M-AdS wormholes, "black universes") | Unstable, except black universes whose horizon sits at the area minimum | [BKZ12] |
-| Rotating 5D Ellis wormholes | The unstable mode disappears above a critical angular momentum | [DFKKR13] |
+| Rotating 5D Ellis wormholes | The unstable mode disappears above a critical angular momentum. A later study reports that the two imaginary frequencies merge at \|J\|/A = 0.100628 and continue as an oscillatory instability, "not stabilization" (arXiv:2610.38659, abstract only read, #50) | [DFKKR13] |
 | Neutron star with a wormhole core (ghost with quartic coupling) | Linearly unstable | [DFKK13] |
 
 Two remarks.
@@ -131,15 +132,20 @@ Two remarks.
 - **Recent:**
   - [Kai26] evolves Ellis–Bronnikov and quantum-corrected Schwarzschild wormholes: same expand/collapse dichotomy, no
     fine-tuning.
-  - [Shi26a] (3D, single-author preprint) gets a collapse with ℓ = 2 gravitational waves and a "phantom bounce", from
-    hand-picked runs.
-  - Shirokov & Nachevsky 2026 (arXiv:2610.13206, binary wormholes) is listed in `notes/novelty/search_log.md` and was not
-    read.
+  - [Shi26a] (3D, single-author preprint) gets a collapse with ℓ = 2 gravitational waves and a "phantom bounce", from two
+    runs. The collapse run scales the phantom stress-energy by 1/2 (Sec. II); the unperturbed run expands. [SN26] says the
+    bounce and horizon shedding are artifacts of that halving.
+  - [SN26] (3+1 numerical relativity, adaptive mesh; massive Ellis–Bronnikov throat, m/a = 1/2; v2, 24 Oct 2026):
+    - one exponential mode, proper-time e-folding time 0.76–0.77 R⋆ measured against its linear 0.7584;
+    - ε = ±10⁻², ±10⁻³: the outward perturbation collapses and the inward one inflates; each ±ε pair's radii cross at an
+      ε-independent t× ≃ 13.0 (units of the drainhole mass parameter m);
+    - horizons form at t = 11 and 25 for ε = +10⁻² and +10⁻³: lifetime ≈ τ ln(1/ε), a decade costing 11–12 M;
+    - horizon radius at formation 3.88 and 3.81 against R⋆ = 3.89 M.
 
 ### 1.3 Has the boundary been treated as a critical phenomenon?
 
-Yes, by [SH02], and partly by [GGS09b] and [ST17]. Nobody did it with the standard protocol: bisection to p* in a generic
-family, the lifetime against ln|p − p*|, and comparison with the linear growth rate.
+Yes, by [SH02], and partly by [GGS09b], [ST17] and [SN26]. Nobody did it with the standard protocol: bisection to p* in a
+generic family, the lifetime against ln|p − p*|, and comparison with the linear growth rate.
 
 **What [SH02] measured** (their eq. 3.5, Tables I–II):
 - Ghost pulses: e^{x_H⁻ − 3} ∝ E₀^{−0.60}. Normal pulses: E₀^{−0.61}. Here x_H⁻ is the null coordinate where the final
@@ -164,6 +170,16 @@ where λ₀ is the single growing rate of a static critical solution [GHMG25, Se
 Two more details fit the same picture:
 - the expansion rate on the other side tends to the same rate ([GGS09b]: e-folding → 0.85);
 - [SH02]'s H ≈ 1.1/a is close to 1/(0.846 a) = 1.18/a.
+
+**Later measurements** (none is a bisection):
+- [SN26], Sec. IV H: the static throat is "consistent with a type-I critical solution"; its two amplitudes "show both
+  type-I signatures but do not establish the scaling" (time scaling τ ln(1/ε) and a mass gap). Its horizons form at
+  0.98–1.00 R⋆, a massive throat, so not comparable with 0.30 a or 0.22 a. Its linear e-folding time is not reconciled
+  here with [GGS09a]'s normalization.
+- [Hay03] restates [SH02]'s critical behaviour with no new data. [ST15] writes that [SH02] suggests "an existence of
+  critical solution", and that similar behaviour in their runs is "reported elsewhere".
+- [Kai26], Sec. III D: the static phase lasts longer as the discretization error falls, no number. [Xu25]: collapse is
+  faster for a larger pulse and slower for a larger mass, no law.
 
 **Is the threshold black-hole mass finite?** Yes in every study, as type I requires:
 - [SH02]: M → 0.30 a;
@@ -286,7 +302,13 @@ None was found. Five obstructions, the first four **argued**, the fifth from the
       (0 < C₁ < 1/(4C₂)), Minkowski, and ghost members (C₁ > 1/(4C₂)). The sign structure is checked here. The placement
       of the black-hole threshold at C₁ = 0, first read off [Mae09]'s citation of Brady 1994 for the C₁ = 0 solution, is
       checked in [bh_to_wormhole.md](bh_to_wormhole.md) §2: the horizon becomes null and shrinks to zero size there.
-      Brady 1994 and Roberts 1989 were not read, and the map to [Fro97]'s parameter was not checked.
+      [Bra94] writes the family as r² = αv² + βu² − uv, (α, β) = (C₁, C₂): α < 0 black hole, α = 0 critical, 0 < α < 1/4
+      dispersal, flat space at 1/4 (β = 1). Roberts 1989 was not read. [Fro97] writes R² = u² − uv − pv², p > 0 black
+      hole, p < 0 dispersal. The map is p = −C₁C₂ for C₂ > 0 (U = √C₂ u, V = v/√C₂, Φ_F = 2√π φ with the lower sign of
+      [Mae09]'s ±). It sends C₁ = 0 to p = 0 and 4C₁C₂ = 1 to p = −1/4 (Minkowski) and keeps the Misner–Sharp mass.
+      **Checked symbolically** in #50 (`I50-rpi5/frolov_map.py` in negative-mass-raw) and by the coordinator from the two
+      papers' own formulas (`I50-mac`). Φ_F is real for p > −1/4 and imaginary for p < −1/4 (the ghost members), a range
+      [Fro97] does not discuss (#50).
     - In the ghost members R² is positive definite, and the construction forms a wormhole [Mae09].
     - The normal-side critical member has a continuous unstable spectrum, 1/2 < Re k < 1, giving β = 1 instead of the
       in-family 1/2 [Fro97]. It is not a codimension-one critical solution.
@@ -345,9 +367,9 @@ Beyond `notes/literature.md` and the repo's phase 2 and phase 5 results:
   - a normal scalar plus a phantom dilaton gives transient "dynamical wormholes" [NRM12];
   - the ghost Roberts solution forms a wormhole after an instantaneous weak singularity [Mae09].
 - **NR with mixed-sign energy and zero total mass**:
-  - a collapsing warp bubble, NEC-violating fluid [CDK24]. In the extract read, the bubble "collapses inwards and then
-    dissipate[s] to infinity", with alternating positive- and negative-energy waves and an apparently stable remnant. No
-    black hole was mentioned. The results section was not read.
+  - a collapsing warp bubble, NEC-violating fluid [CDK24]. The bubble "collapses inwards and then dissipate[s] to
+    infinity" (Fig. 1 caption), with alternating positive- and negative-energy matter waves; "the remnant is not a black
+    hole" and appears to settle (Sec. III). v = 0.1–0.2, one outcome type: no threshold, exponent or throat.
   - The opposite-sign point-mass pair of Cao 2012 is already covered in `notes/novelty`.
 - **No study fine-tunes a mixed (normal + ghost) star or cloud to a collapse threshold.**
 
@@ -477,19 +499,22 @@ signs ε_i (ε₁ = +1, ε₂ = −1) give:
   - mixed star + wormhole; phantom boson-star collapse; Clough et al.; recent wormhole NR (Kain, Shirokov);
   - the 2025 review [GHMG25].
 - **Not covered:**
-  - INSPIRE citation lists (the site needs JavaScript and the API URL was refused), so citers of [SH02] were found only
-    through search and through [Kai26]'s and [Shi26a]'s reference lists.
-  - [Kai26]'s bibliography (refs. 22–29: "further dynamical evolutions") could not be retrieved; none is described there
-    as studying critical behaviour.
+  - The full text of Novikov–Novikov 2019 (JETP 129, 495; paywalled, abstract read) and the journal versions of [CDK24],
+    [NRM12] and [Fro97] (arXiv versions read).
 - **Not read:**
-  - Shirokov & Nachevsky 2026 (2610.13206);
-  - Brady 1994;
+  - Roberts 1989;
   - the GMG96 perturbation section (only its abstract and the LRR summary);
   - [MGM26] (quoted from choptuik-large-d);
-  - the results sections of [CDK24] and [NRM12]'s figures.
+  - the citers of [SH02] other than those opened (title and abstract only).
+- **Citers of [SH02]:** INSPIRE record 586606 had 222 citing records on 2026-11-24. All titles and 34 abstracts were read,
+  and 11 papers were opened (#50; negative-mass-raw `I50-rpi5/quotes.md`, item 5). Only [SN26] calls the wormhole
+  threshold a "type-I critical solution".
+- **[Kai26] refs. 22–29**, from its TeX bibliography: [GGS09b], [DHNS09], [ST15], [ST17], Novikov–Novikov 2019, [NNR20],
+  [CFK22], [Xu25]. Only [ST15] (one sentence), [ST17] and [Xu25] (qualitative) bear on a threshold.
+- **[NRM12]'s figures** (#50): all are causal diagrams of constant-r lines; no mass, lifetime or exponent is plotted.
 - **Journal references** were checked on 2026-11-13 against INSPIRE, arXiv and Crossref (#49,
   [references_check.md](references_check.md)). All arXiv ids were opened.
-- **Coverage:** results posted after about 2026-10-21.
+- **Coverage:** arXiv and INSPIRE as read on 2026-11-24 (#50).
 - **AI-directed text:** none was found in the pages read.
 
 ## References
@@ -519,6 +544,17 @@ signs ε_i (ε₁ = +1, ε₂ = −1) give:
 - [DFKK13] V. Dzhunushaliev, V. Folomeev, B. Kleihaus, J. Kunz, "Mixed neutron-star-plus-wormhole systems: linear stability
   analysis", PRD 87, 104036 (2013), arXiv:1302.5217.
 - [Kai26] B. Kain, "Dynamical wormholes", arXiv:2602.18231 (2026).
+- [SN26] N. M. Shirokov, I. Nachevsky, "Binary Ellis-Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and
+  gravitational waves", arXiv:2610.13206 (v2, 24 Oct 2026; no journal reference on the arXiv page).
+- [Bra94] P. R. Brady, "Does scalar field collapse produce 'zero mass' black holes?", arXiv:gr-qc/9402023 (1994); journal
+  CQG 11, 1255 (1994) from [Fro97]'s bibliography *(unverified against the publisher)*.
+- [Hay03] S. A. Hayward, "Recent progress in wormhole dynamics", arXiv:gr-qc/0306051 (conference proceedings).
+- [ST15] H. Shinkai, T. Torii, "Wormhole Dynamics", J. Phys. Conf. Ser. 574, 012056 (2015), doi:10.1088/1742-6596/574/1/012056.
+- [NNR20] I. D. Novikov, D. I. Novikov, S. V. Repin, "Disintegration and expansion of wormholes", PRD 102, 124073 (2020),
+  arXiv:2012.13788.
+- [CFK22] K. Calhoun, B. Fay, B. Kain, "Matter traveling through a wormhole", PRD 106, 104054 (2022), arXiv:2210.04905.
+- [Xu25] A. Xu, X. Y. Chew, D.-h. Yeom, "Dynamics of Bronnikov-Ellis wormhole with double-null simulation", JCAP 08 (2025)
+  012, arXiv:2503.07610.
 - [Shi26a] N. M. Shirokov, "Wormhole dynamics: nonlinear collapse and gravitational-wave emission", arXiv:2604.00071
   (2026, single-author preprint).
 - [CCP26] G. Caridi, F. Corelli, P. Pani, "Challenging the weak cosmic censorship with phantom fields", arXiv:2603.13210
