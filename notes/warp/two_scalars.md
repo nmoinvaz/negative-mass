@@ -252,7 +252,7 @@ and a profile with f(r_s) C² on ℝ³. The bubble moves at a constant v ≠ 0, 
   #161). A non-traveling planar shift from −2 exp(2H(p)J(q)) dp dq with H′, J′ ≥ 0 passes closure and is localized in
   x with unequal limits (*proved*); with equal limits it is *not decided*. Within the additive-separable reduction every shift that
   depends on ρ and solves D = 0 is u = c x + d + g(ρ) with g from a Bessel equation, which is not localized in x and
-  fails closure at the jets tested (*proved*, *checked symbolically*). Conical shifts b = F(x/ρ): the ODE N = 0 has
+  fails closure on every open set ([`bessel_closure.md`](bessel_closure.md), #162, *proved*). Conical shifts b = F(x/ρ): the ODE N = 0 has
   limits F_∞ ≠ 0 at x/ρ → ±∞, a two-parameter family with a logarithm ([`conical_limit.md`](conical_limit.md), #159),
   so localization in x is not excluded; whether a global bubble exists, and what closure says, is not decided.
   Multiplicative separable shifts u = X(x)R(ρ) + v have no solution with X X′ R R′ ≠ 0

@@ -16,7 +16,7 @@ D = det R₃ vanishes on an open set for many shifts, so "classify" is done insi
 | reduction | solutions of D = 0 on an open set | localized in x? | closure (ω) | status |
 |---|---|---|---|---|
 | planar b(t, x) (b_ρ ≡ 0) | **all of them**: D ≡ 0 | yes, e.g. b = −v f(x − vt) | traveling and \|u\| ≠ 1 everywhere: fails unless flat; other cases: see §2 | **proved**, **checked symbolically** |
-| b(ρ) of #65 and its linear-in-x deformation u = c x + g(ρ) | g = −ε ln(α J₀(√2 c ρ) + β Y₀(√2 c ρ)); c = 0 is #65 | no (linear or constant in x) | fails at 6 exact jets (c = 0, 2, 6) | **proved**, **checked symbolically** |
+| b(ρ) of #65 and its linear-in-x deformation u = c x + g(ρ) | g = −ε ln(α J₀(√2 c ρ) + β Y₀(√2 c ρ)); c = 0 is #65 | no (linear or constant in x) | fails on every open set, every member (#162) | **proved**, **checked symbolically** |
 | additive b = X(x) + R(ρ) | exactly planar, or u = c x + d + g(ρ) as above | only the planar ones | as above | **proved** (hand argument), **checked symbolically** |
 | multiplicative b = X(ξ) R(ρ) | none with X X′ R R′ ≠ 0, for every v (#160); X′ ≡ 0 is #65's b(ρ), R′ ≡ 0 is planar | — | not needed | **proved** in [`mult_classify.md`](mult_classify.md), steps **checked symbolically** (§5) |
 | conical b = F(x/ρ) | ODE of second order, cubic in F″ | **not decided**: "no limit at η → ±∞" is not established (§6) | not run | ODE **checked symbolically** |
@@ -125,6 +125,12 @@ So the algebraic stage passes with λ = 0 on an open set: the normal gradient a 
 at the exact jets (c, g′(ρ₀)) = (2, 1), (6, 17), (0, ½), at ρ₀ = 5/7, x₀ = 1/3, and both signs of ε, the two 2-form equations ω ∧ k = −dk and ω ∧ m = dm of the ω construction have
 no common solution, with the ODE substituted for g″ and g‴ (**checked symbolically**, at a point). Any jet (g, g′) at ρ₀ lies on a member of the family, so closure fails at a point of a member for each of
 these parameter values. For c = 0 this agrees with #65's Frobenius argument (**proved** there). A Frobenius argument for c ≠ 0, which would give failure on every member, was not made.
+
+**Update from #162** ([`bessel_closure.md`](bessel_closure.md)): decided. For every member with c ≠ 0, every ε, α, β,
+closure fails on every open set (*proved*, identities *checked symbolically*). The null covectors k = a + b, m = a − b
+of R have k̃ ∧ dk̃ = O_k dt ∧ dx ∧ dρ and m̃ ∧ dm̃ = O_m dt ∧ dx ∧ dρ with O_k + O_m = 2g′(g′² + 4c²), so the pair is
+Frobenius-integrable only where g′ = 0, and there g″ = 2εc² ≠ 0 makes the zeros isolated. For c = 0 this is #65's
+ν ∧ dν = b′ dx ∧ dρ ∧ dt.
 These shifts are linear in x for c ≠ 0 and independent of x for c = 0. Neither is localized in x.
 
 **`bessel_pert`: a failed criterion, kept.** The README asked, as a second part of (b), that for ψ + ρ²/10 the value |D| exceed 1e-3 at the same points, as a sensitivity test.

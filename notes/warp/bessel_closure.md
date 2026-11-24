@@ -297,3 +297,28 @@ closure at the jets tested" becomes "fails closure on every open set (#162, *pro
 closure at the jets tested (*proved*, *checked symbolically*)" with "which is not localized in x and fails closure on
 every open set ([`bessel_closure.md`](bessel_closure.md), #162, *proved*)". The Frobenius sentence for b(ρ) in "A shift
 b(ρ)" is unchanged.
+
+## Coordinator's review
+
+Merged as e0cb221. Raw negative-mass-raw `I162-mac` (criteria at 465e966, before the first run).
+
+| step | result |
+|---|---|
+| scope | the three files the brief names, and raw `I162-rpi5` |
+| rerun on the Mac | exit 0, 14 min: 10 of 10 checks, 13 of 13 controls on target only; output equals rpi5's apart from timings |
+| hand proofs | §1's necessity of k ∧ dk = 0 and m ∧ dm = 0, Lemma 1, Lemma 2, Theorem 1 and Theorem 2 read and rederived; no gap found |
+| re-solve | the exact jets of §4 and #80's six jets, and Theorem 2's elimination, by the coordinator's own code |
+| independent check `ind162.py` | run 1 exits 1 (R3 fails as worded, below); 5 of 5 mutations fire on target |
+
+ind162 shares no code with this note's script or with `two_scalars.py`.
+
+| id | what | result |
+|---|---|---|
+| R0, R1 | planted Ricci; R = a ⊗ a − b ⊗ b on the ODE from the coordinator's own Ricci tensor, ε = ±1 | pass |
+| R2 | the own Frobenius coefficients in coordinates equal O_k, O_m; the sum 2g′(g′² + 4c²) without the ODE; planted integrable and non-integrable forms | pass |
+| R3 | Theorem 2's elimination for (k, m) × (ε = ±1) | **fails as worded**: the own N is P itself, without the positive factor G² + 2c² that the criterion asked for; Theorem 2, which needs N ≢ 0, holds |
+| R4 | (−2, 1, 4/39, +1) → (0, 34), (2, 1, 4/39, +1) → (34, 0); #80's six jets nonzero; g′³ at c = 0 | pass |
+
+**Discrepancies.** None in the result. The issue's wording "nonzero for all g′" is wrong at g′ = 0, as the note says,
+and Theorem 1 covers that point. The note's N = −(G² + 2c²)P and the coordinator's N = P differ by a positive factor
+that depends on how denominators are cleared.
