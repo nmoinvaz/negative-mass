@@ -21,6 +21,9 @@ Its Ricci tensor is nonzero at every one of 25 off-axis exact points (Alcubierre
 and at 18 of 18 exact points of an explicit analytic profile (**checked symbolically** at those points). So no (φ₁,
 φ₂, φ₃, V) of either sign pattern sources the metric on an open set of the bump profile, since an analytic function is
 nonzero on an open dense set once it is nonzero at one point (**checked symbolically**, with the continuation by hand).
+*Added by the coordinator:* that sentence is about the λ = 0 branch; the λ ≠ 0 branches rest on 27 roots (**numerical
+evidence**, below). The continuation should use the numerator det(h)² Ric(h), which is analytic on all of r < 2 off
+the axis. Ric(h) itself is analytic only where det h ≠ 0, a set that may not be connected.
 For Alcubierre's tanh profile the jets were rounded to 55 digits, so that is **numerical evidence**, as in #57.
 
 The λ ≠ 0 branches pass the algebraic stage too: 27 admissible rank-3 roots at the 25 off-axis exact points
@@ -291,3 +294,55 @@ same class.
 Entries as in [`../literature.md`](../literature.md), "Warp drives".
 
 - [BD20] Béatrix-Drouhet, arXiv:2012.09941 (2020, preprint).
+
+## Coordinator's review
+
+Raw `I77-mac` (negative-mass-raw). Mac, nice 10, at most 2 processes.
+
+| step | result |
+|---|---|
+| scope | the three files the issue names, and raw `I77-rpi5` |
+| rerun `three_scalars.py` | exit 0 in 2 min 20 s: 23 of 23 checks pass, 20 of 20 controls fire with rpi5's failed-check lists, and the output equals rpi5's apart from the timings |
+| re-solve | from the coordinator's own Ricci tensor, Jacobi derivative and bordered system: the 21 roots λ ≠ 0 at the bump and tanh points, their L_K M and K(λ) (B4) |
+| independent check `ind77.py` | run 3 exits 0 in 6 s, and all 10 mutations fire on target. Runs 1 and 2 failed in the coordinator's own code (below) |
+
+`ind77.py` imports nothing from the repository. It works in comoving polar coordinates (t, r, θ, ϕ) with a generic w(r)
+and its own Ricci routine. It takes h as the (t, r, θ) block of the coordinate Ricci tensor, and computes Ric(h) from
+the values and derivatives of h. For λ ≠ 0 it computes dλ by Jacobi's formula and dK from the bordered system
+(dN) K + N dK = 0, Kᵀ dK = 0, at 60 digits, where `lie_numeric` uses central differences. The accelerating bubble goes
+through a second route: Cartesian coordinates with a polynomial shift, Taylor series truncated at degree 4. It shares
+with this note the metric, the frame, the profiles, the point lists, the printed q of `wall_D`, and the claims it tests.
+
+| id | what | run 3 |
+|---|---|---|
+| B0 | planted: Painlevé–Gullstrand Schwarzschild is Ricci-flat; P1 and P2 have R = λg + κ² Σ s_I dX^I dX^I exactly | pass |
+| B1 | planted 3D Ricci (flat polar, S² × time, the P1 and P2 blocks flat, D1's not) and L_K M (P2: 6.6e-59 where 0 is planted; D2′ with a = 1 + L²/2: 0.1) | pass |
+| B2 | R_ϕμ = 0, (I2), and 16 r³ det R₃ = (1 − c²) q(c²) with the printed q | pass |
+| B3 | 43 points (bump, tanh, the explicit bump, 4 random jet sets of the coordinator's): λ = 0 has kernel ∂_ϕ, the pattern follows the sign of D, Ric(h) ≠ 0 at all 43 | pass |
+| B4 | one admissible root λ ≠ 0 at each of the 21 bump and tanh points; pattern A with λ < 0, B with λ > 0; L_K M ≠ 0 at all 21 (relative 0.15 to 0.32); K(λ) = 0 at the 4 roots with c = 0 and ≠ 0 at the other 17 | pass |
+| B5 | accelerating bubble: Ric(h) ≠ 0 at 3 exact points; the scalar curvature of h at one point is the same rational number by both routes | pass |
+
+So the patterns, the failure of closure at λ = 0 and the 21 L_K M ≠ 0 verdicts at λ ≠ 0 are confirmed by code that
+shares nothing with `form3`, `closure3`, `ricci_pt` or `lie_numeric`. B1 also gives `lie_numeric`'s verdicts the
+planted L_K M = 0 case that the section above says it lacks. Lemmas A and C were read by the coordinator, not
+reviewed independently; they are row 22 of #135.
+
+**Discrepancies.**
+- C7 as coded at b56280c: FAIL at 4 of 27 roots, all at c = 0. It stays in the record; C7 as written passes.
+- C5 is not decided, and the control `ideal-equator-only` was not run.
+- `deform-euclid` was partly silent on its first run. The planted checks of D1 and D2 were then tightened, which
+  makes them stricter. That run's log was overwritten, so raw output was lost.
+- The closing comment's proposed text for two_scalars.md said "*checked symbolically* at points" for λ = 0 at every
+  profile. For the tanh points it is *numerical evidence*, as this note's "Answer" says. The text applied there says
+  so.
+- `ind77.py`, the coordinator's check, had three runs. Run 1 crashed in mpmath's `det`. In run 2, B1 failed in two
+  planted cases and B3 crashed. All three faults were in the coordinator's code: a coordinate order in the sphere
+  test, a relative size that was 0/0 when L_K M = 0, and a radius truncated to 0. They are recorded in `I77-mac`.
+
+**Recommended tasks.**
+- A is #157.
+- B waits for #157's outcome.
+- C is #78.
+- D is declined. `ind77.py` checks the closure and L_K M independently, and Lemmas A and C go to Lean (#135, row 22).
+- E is declined. At λ = 0 the accelerating bubble already fails closure at exact points (C8, B5). Its λ ≠ 0 branches
+  fall under B.

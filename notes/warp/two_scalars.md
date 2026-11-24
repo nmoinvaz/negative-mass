@@ -222,9 +222,13 @@ and a profile with f(r_s) C² on ℝ³. The bubble moves at a constant v ≠ 0, 
 
 ## Not covered
 
-- Two scalars of one sign. The lemma's argument allows λ ≠ 0 there.
-- Three or more scalars. With λ = 0, R₃ ⊕ 0 has rank 3 at generic wall points and is indefinite, so a form with
-  three squares of mixed signs passes the algebraic stage there. Closure would decide.
+- Two scalars of one sign (#78). The lemma's argument allows λ ≠ 0 there.
+- Three scalars of mixed signs: [`three_scalars.md`](three_scalars.md) (#77). The algebraic stage passes on {D ≠ 0}
+  with pattern (+,+,−) where D < 0 and (+,−,−) where D > 0; closure under O(2,1) or O(1,2) is flatness of the
+  orbit-space metric h. It fails at every exact point tested (λ = 0) and at 27 of 27 roots λ ≠ 0, for the tanh and bump
+  profiles and random jets, not decided for an arbitrary C⁴ profile. *Added by the coordinator:* at λ = 0 the failure
+  is *checked symbolically* at the bump and random-jet points and is *numerical evidence* at the tanh points, whose
+  jets were rounded to 55 digits; at λ ≠ 0 it is *numerical evidence*. Four or more scalars are not covered.
 - Shifts b(t, x, ρ) other than the bubble and b(ρ). The lemma applies to them, but D may vanish on open sets.
 - Non-minimal coupling, kinetic terms that are not quadratic, and scalars with other matter.
 
