@@ -8,6 +8,14 @@ November 2026, issue [#65](https://github.com/nmoinvaz/negative-mass/issues/65).
 Status words: **proved** (by hand), **checked symbolically** (sympy, exact, with a control that fails), **numerical
 evidence**.
 
+Reviewed independently in #79 ([`review_two_scalars.md`](review_two_scalars.md)): D, the lemma, the constant-speed
+coefficients and ideals, the accelerating bubble, b(ρ) and the ω construction were re-derived or re-checked with code
+that shares only sympy and `review_cartan.py`'s Cartan routine with `phantom_source.py`. No error was found. The lemma
+is *proved* by hand and was re-derived; the rest is *checked symbolically*. *Added by the coordinator:* the
+coordinator's `ind79.py` (negative-mass-raw `I79-mac`), which shares no code with this note's script or with #79's,
+reproduces D for a generic b(t, x, ρ), the constant-speed coefficients, both of #79's ideal certificates, the
+"no open set" step, the accelerating entries, the ω formula and the b(ρ) tensor.
+
 ## Answer
 
 No (**checked symbolically**, with a lemma **proved** by hand). For every C² profile and any potential V(φ₁, φ₂), no
@@ -69,7 +77,8 @@ N_00 + N_11 + 2N_22 = −2λ. The form a a − b b has at most one positive and 
   indefinite. It then has at most one square of each sign exactly when its rank is ≤ 2, that is when det R₃ = 0. ∎
 
 It applies with (e_2, e_3) = (e_ρ, e_ϕ) off the axis and (E_2, E_3) on it, where #57's identities (I1) and (I2) hold.
-On the axis R₃ has a zero row, so det R₃ = 0 and the form holds with λ = 0.
+On the axis R₃ has a zero row, so det R₃ = 0 and the form holds with λ = 0. *Added by the coordinator:* this also
+uses R₀₀ + R₁₁ = 0 on the axis (`identity_axis` in phantom_source.md), so that R₃ is indefinite or zero (#79, §8).
 
 The proof uses only the signature of the kinetic form. So it covers any two-field sigma model whose target metric is
 Lorentzian, with any potential, since that metric can be diagonalized at each point. It does not cover two scalars of
@@ -91,7 +100,8 @@ and the other two are printed there. It vanishes at c² = 1, the axis (`det_axis
 
 With w′ r ≠ 0, the four coefficients generate the same ideal as 2w − r w′ and (w′ + r w″)² (`det_jets`, inclusion
 both ways with Gröbner bases). So at a radius in the wall, D(r, ·) vanishes for every θ exactly where 2w = r w′ and
-r w″ = −w′ there.
+r w″ = −w′ there. *Added by the coordinator:* the two ideals are equal in ℚ[r, w, w′, w″][1/(r w′)], with explicit
+cofactors in `review_two_scalars_ideals_certs_output.txt` (#79, §3).
 
 These relations hold on no interval with w′ ≠ 0 (**proved**, and `no_open_set`). Differentiating 2w = r w′ gives
 w′ = r w″, which with r w″ = −w′ is w′ = 0.
@@ -210,7 +220,9 @@ By hand: the lemma, the uniqueness of ω, the Bianchi step behind stage 3, the s
 empty interior of the zero set of D, the solutions of the Bernoulli equation, and the Frobenius obstruction for b(ρ).
 
 Numerical evidence only: the signs that the control's splitting needs where sympy's assumptions do not decide them,
-which are sampled at 8 random points of 0 < β < 1/2 (1 < β < 3 for `eb2-ads`).
+which are sampled at 8 random points of 0 < β < 1/2 (1 < β < 3 for `eb2-ads`). *Added by the coordinator:* for
+0 < β < 1 the split is an identity with b_l² = (1 − β²)/(2κ²r⁴) > 0, so those signs hold by hand (#79, §6 and §8). The
+range of `eb2-ads` was not reviewed.
 
 Trusted: sympy 1.14.0 (`groebner`, `factor`, `simplify`) and the routines imported from phantom_source.py, `ricci`,
 `sph_tetrad_ricci`, `lab_tetrad_ricci` and `shift_tetrad_ricci`, tested there and reviewed in #59. `acc_static_limit`

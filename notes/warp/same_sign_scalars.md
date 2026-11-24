@@ -7,8 +7,9 @@ builds on [`two_scalars.md`](two_scalars.md) (#65), whose "Not covered" names th
 tensors and identities (I1), (I2) it imports.
 
 Status words: **proved** (by hand), **checked symbolically** (sympy, exact, with a control that fails), **numerical
-evidence**. #65's lemma has not been independently reviewed (#79). This result does not use it, nor #65's determinant
-ideal. It uses #57's identities (I1), (I2) and frame Ricci tensor, reviewed in #59.
+evidence**. #65's lemma has not been independently reviewed (#79). *Added by the coordinator:* #79 has since reviewed it
+and found no error ([`review_two_scalars.md`](review_two_scalars.md)). This result does not use it, nor #65's
+determinant ideal. It uses #57's identities (I1), (I2) and frame Ricci tensor, reviewed in #59.
 
 ## Answer
 

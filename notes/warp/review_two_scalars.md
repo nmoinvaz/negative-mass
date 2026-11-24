@@ -395,3 +395,47 @@ routine with `phantom_source.py`. No error was found. The lemma is *proved* by h
 *checked symbolically*."
 The status words in `two_scalars.md` stand. The wording points of §8 (1, 2, 4) are optional. The sampled-sign sentence
 for the control can be dropped.
+
+## Coordinator's review
+
+Raw `I79-mac` (negative-mass-raw). Mac, nice 10, at most 2 processes.
+
+| step | result |
+|---|---|
+| scope | the twelve files the issue allows, and raw `I79-rpi5` |
+| rerun the five scripts | all exit 0 and all 32 controls fire. Each output equals the committed one line for line, apart from the timings, including every residual in e-notation |
+| rerun the certificates | `python3 notes/warp/review_two_scalars_ideals.py --certs --no-controls` reproduces `review_two_scalars_ideals_certs_output.txt`. *Added by the coordinator:* that is the command for that file, which the table above does not state |
+| re-solve | #65's D for a generic b(t, x, ρ), fully symbolic, with the coordinator's own Ricci routine (H1) |
+| independent check `ind79.py` | run 2 exits 0 in 2 s, and all 9 mutations fire on target. Run 1 stopped at an assertion in the coordinator's code |
+
+`ind79.py` imports nothing from the repository. Its Ricci routine and its polar and Cartesian routes are the
+coordinator's, from `I77-mac` and `I78-mac`. This review's cofactors enter it only as data, multiplied into the
+coordinator's own coefficients.
+
+| id | what | run 2 |
+|---|---|---|
+| H0 | planted: Painlevé–Gullstrand Ricci-flat | pass |
+| H1 | generic b(t, x, ρ): R(e_ϕ, ·) = 0, the block of §1 and det = D, exactly | pass |
+| H2 | c₀ and c₃ as printed, each c_k in (A, B²), and this review's 39 + 39 cofactors give A and B² | pass |
+| H3 | 2w = rw′ and w′ + rw″ = 0 force w′ = 0 (`dsolve`) | pass |
+| H4 | the accelerating entries at 3 exact points (Cartesian route); the 25 accelerating cofactors give 1 | pass |
+| H5 | the ω formula on 6 random instances, uniqueness (rank 4), a violated random dk | pass |
+| H6 | b(ρ): R = h((dρ)² − ν′²) and (ν ∧ dν)_{txρ} = b′ | pass |
+
+So D, the ideals by both certificates, the step to "no open set", the accelerating unit ideal, ω and b(ρ) are confirmed
+a third time, by code that shares nothing with `two_scalars.py` or with this review's scripts. The lemma's proof (§2)
+was read and holds. With this review, #65's status words stand. two_scalars.md now carries the review sentence of §11
+and wording points 1, 2 and 4 of §8, as marked sentences.
+
+**Discrepancies.**
+- `nonaxi` was silent on its named target `D_cartan_jets`, and the target list was changed after the run. §7 records
+  this, and `D_cartan_jets` has five controls that fire.
+- Claim A1 was false (`D_slice_nonaxi` 0 of 9). It was replaced by `D_slice_bz0` and `D_slice_offslice` with the
+  coordinator's approval. It does not concern #65.
+- `acc-drop-odd` was stopped at 12 min, and its method changed to a numeric pre-check; its target did not change.
+- Three bugs in this review's own checks failed first runs. They were fixed, with the logs kept.
+- The command that writes the certificates file is not stated in the note's table (see the step table above).
+
+**Recommended tasks.** A review of `two_scalars.py`'s algebraic-stage code (`sign_of`'s sampling) is declined. The wall
+verdict rests on D ≠ 0 and the lemma, so `split_form` and `sign_of` never decide it. At the sample points, D ≠ 0 was
+recomputed here and in §9. The sampled signs of the control's split hold by hand on 0 < β < 1 (§8, item 4).

@@ -5,10 +5,11 @@ November 2026, issue [#77](https://github.com/nmoinvaz/negative-mass/issues/77).
 [`two_scalars.md`](two_scalars.md) (#65), whose "Not covered" names this case, and on
 [`phantom_source.md`](phantom_source.md) (#57, #61), whose frame Ricci tensor and identities (I1), (I2) it imports.
 
-Status words: **proved** (by hand), **checked symbolically** (sympy, exact, with a control that fails),
-**numerical evidence**, **conditional**. #65's lemma has not been independently reviewed (#79). This note's result
-uses #65 only through the statement that D = det R₃ vanishes on a nowhere dense part of the wall (see "Rank 3 and the
-two patterns"); the three-scalar lemma below is new and is proved here by hand.
+Status words: **proved** (by hand), **checked symbolically** (sympy, exact, with a control that fails), **numerical
+evidence**, **conditional**. #65's lemma has not been independently reviewed (#79). *Added by the coordinator:* #79 has
+since reviewed it and found no error ([`review_two_scalars.md`](review_two_scalars.md)). This note's result uses #65
+only through the statement that D = det R₃ vanishes on a nowhere dense part of the wall (see "Rank 3 and the two
+patterns"); the three-scalar lemma below is new and is proved here by hand.
 
 ## Answer
 
