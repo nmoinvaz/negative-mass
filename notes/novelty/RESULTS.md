@@ -1,6 +1,7 @@
 # Novelty check: are the candidate results already published?
 
-Search run 2026-10-22. Raw log: `search_log.md` (same directory).
+Search run 2026-10-22; rerun 2026-11-24 for work posted 2026-10-21 to 2026-11-24 (#51, `negative-mass-raw/I51-rpi5`).
+Raw log: `search_log.md` (same directory).
 
 Tools used:
 - WebSearch, about 50 queries in standard and extended modes.
@@ -20,13 +21,13 @@ Note on INSPIRE: `refersto:arxiv:<id>` returns garbage for some IDs (about 25k u
 
 | | Candidate | Verdict | Closest prior work |
 |---|---|---|---|
-| A1 | Exact zero mode φ₀ = 1/ψ₀ of the intertwined operator Ĥ | **Partially known** (implicit) | Dotti–Gleiser 2008 (0809.3615) §IV.1: the intertwiner maps 1/ψ to a solution of Ĥ; it is the SUSY-QM zero mode "missing in the spectrum" |
+| A1 | Exact zero mode φ₀ = 1/ψ₀ of the intertwined operator Ĥ | **Partially known** | Dotti–Gleiser 2008 (0809.3615) §IV A (v2, v3; §III in v1): for any solution ψ of Hψ = ω₀²ψ, Ĥ(1/ψ) = ω₀²/ψ, and they set ψ̂⁽²⁾ := 1/ψ. Not applied to the Zerilli ψ₀ and its pole, no node discussed |
 | A2 | Closed-form count #neg = [R<r_s] + [κ<κ_c(R)] for a truncated exterior with a Robin condition; thresholds r_s, r_* (l=2: 1.5, 2.279 \|M\|) | **Apparently new** | None found. Dotti 2022 review (2201.03640) §V *conjectures the opposite* |
 | A3 | The ~l⁴ growth is a property of the point singularity; any finite star with l-independent κ caps it | **Apparently new** | Not stated anywhere found. DG08 has k ∝ l⁴ but no discussion of a cap |
 | A4 | Non-radial stability of regular negative-mass stars | **Open in the literature** | Only radial results exist: Johnson–Paranjape et al. 2020 (radial, thin wall); de Aguiar Alves–Landulfo–Arderucio Costa 2025 (radial, barotropic ⇒ unstable) |
 | B | Radial stability of phantom (ε=−1) boson stars; turning point holds in N, flips in M; first law dM = εω dN | **Apparently new** | No linear stability analysis of ε=−1 complex boson stars found. Shirokov 2608.24577 gives only nonlinear evolution of one star; Bernal et al. 2603.04400 (a different ghost model) disperses |
 | C1 | Separation evolution d̈ = −E_tot/d²; rigidity \|μ₋\| = μ₊(1+μ₊/d); midpoint acceleration m/d² | **Known** (Ivanov 2012) | Ivanov, Phys. Usp. 55, 1232 (2012), arXiv:1204.1269: same equations by a different route |
-| C2 | First-principles derivation from the signed-mass EIH Lagrangian; velocity-dependent 1PN formulas; Lorentz-covariance check; signed conserved integrals; application to Shirokov | **Apparently new**, as a derivation and an application | Ivanov explicitly leaves the EIH treatment "for possible future work" |
+| C2 | First-principles derivation from the signed-mass EIH Lagrangian; velocity-dependent 1PN formulas; Lorentz-covariance check; signed conserved integrals; application to Shirokov | **Apparently new**, as a derivation and an application | Ivanov leaves the second-order Havas–Goldberg treatment "for a possible future work"; his abstract says the leading-order equations are equivalent to Havas–Goldberg's weak-field ones. Havas–Goldberg 1962 (Phys. Rev. 128, 398) is not read, so this verdict waits for #153 |
 | D | Witten-type bounds with a signed source | **Not novel** (unchanged) | Shi–Tam 2004 (math/0406559); nothing newer in 2024–26 changes this |
 | E | Responses to Shirokov 2608.24577 | **None exist** | Only a self-citation (Shirokov & Nachevsky 2610.13206). Earlier NR work on opposite-sign masses: Cao 2012, IJMPD 21, 1250061 |
 
@@ -49,10 +50,12 @@ Note on INSPIRE: `refersto:arxiv:<id>` returns garbage for some IDs (about 25k u
 **Closest prior work.**
 
 1. **Dotti & Gleiser 2008**, CQG 26, 215002 (2009), arXiv:0809.3615 (https://arxiv.org/abs/0809.3615).
-   - Sec. IV.1, SUSY-QM remark: the partner solution "ψ^ωo(j=2) := 1/ψ_ωo(j=1)" satisfies Ĥ(1/ψ) = ω₀²/ψ. At ω₀ = 0 this is our φ₀. They note it is "missing in the spectrum" of Ĥ.
+   - §IV A (v1: §III): "we obtain Ĥ(1/ψ_{ω_o}^{(j=1)}) = ω_o²/ψ_{ω_o}^{(j=1)}. We will set ψ̂_{ω_o}^{(j=2)} := 1/ψ_{ω_o}^{(j=1)}" (TeX, quotes I1, I2). At ω₀ = 0 and ψ = ψ₀, the zero mode of Zerilli's Hamiltonian (ℓ = 2: ψ₀ = r(r³+3Mr²−6M³)/(8M⁴(3M+2r)), with a pole at r_s), this is our φ₀.
+   - v2 and v3 only: "In the supersymmetric quantum mechanics context, ω_o = 0 and ψ^{(j=1)} satisfies appropriate boundary conditions to make it an eigenfunction of H. ... H and Ĥ are isospectral, except for ω_o² = 0, which is missing in the spectrum of Ĥ." That is the case of a normalizable ψ; the Zerilli ψ₀ has a pole at r_s, so the remark is not about our φ₀.
    - They never use it to count modes. The count of exactly one unstable mode is "numerical evidence".
-   - They impose the boundary condition only at r = 0. Their artificial Robin condition at r = 10⁻⁴ is a numerical device.
-   - **Conclusion: the φ₀ = 1/ψ₀ identity is implicit in DG08 and must be credited to them.** The node, critical-point and Sturm consequences (r_s, r_*, κ_c(R) and the count formula) do not appear.
+   - They impose the boundary condition only at r = 0: §V, "the spatial piece of the modified wave equation has a unique self adjoint extension, that naturally selects the boundary condition that is physically relevant". The numerics (§III) enforce Ψ̂ ≃ x^{3/2} "by imposing Robin type boundary conditions in the form 3Ψ̂ − ∂Ψ̂/∂r = 0 at r = 10⁻⁴", a numerical device.
+   - §V (Summary, identical in v2 and v3; v1's differs) contains no matter source, truncation, node, Sturm count, threshold or l-cap; the words star, fluid, Sturm, node, truncat, cap, threshold have 0 hits in all three versions.
+   - **Conclusion: the identity Ĥ(1/ψ) = ω₀²/ψ is stated in DG08 (§IV A) and must be credited to them; they do not apply it to the Zerilli ψ₀.** The node, critical-point and Sturm consequences (r_s, r_*, κ_c(R) and the count formula) do not appear.
 2. **Dotti 2022**, "Linear Stability of Black Holes and Naked Singularities", Universe 8, 38, arXiv:2201.03640 (https://arxiv.org/abs/2201.03640).
    - §III.A covers M < 0. §V (Conclusions) states: "If the singularity were replaced by a small spherically symmetric negative mass distribution, away from r=0 … this potential would not change substantially, and an unstable mode could be found anyway."
    - It also says: "An analysis of these cases suggests that the singularity plays no role in the instability."
@@ -74,7 +77,8 @@ Note on INSPIRE: `refersto:arxiv:<id>` returns garbage for some IDs (about 25k u
    - Johnson, Paranjape, Savard & Tapia-Arellano 2020, GRG 52, 80, arXiv:1910.01774: thin-wall bubbles in dS, stable against *radial wall motion only*.
    - Novikov, Bisnovatyi-Kogan & Novikov 2018, PRD 98, 063528, arXiv:1807.06468: negative-density, positive-pressure stars. The paper says: "We did not consider here the issues of the stability."
    - **de Aguiar Alves, Landulfo & Arderucio Costa 2025**, PRD 111, 044027, arXiv:2408.00154: "any barotropic negative-mass star must be dynamically unstable". The analysis is radial (Chandrasekhar variational); non-radial instability is only heuristic. It does not cite Gleiser–Dotti.
-   - Paranjape 2025, "Puzzles with Negative Mass" (Springer proceedings, ISBN 9783031912665, pp. 167–173): calls dynamical stability of the smoothed star "possible", i.e. open.
+   - Paranjape 2025, "Puzzles with Negative Mass" (CRM Series in Mathematical Physics, Springer, doi 10.1007/978-3-031-91266-5_14, ISBN 9783031912665, pp. 167–173). Abstract: "It was shown [1–3] how to fill in a "negative mass star" so that the singularity is smoothed out, and the energy-momentum satisfies the dominant energy condition and can even gives rise to a dynamically stable configuration." [1–3] are Belletête–Paranjape 2013 (arXiv:1304.1566, no stability analysis of the bubble), Mbarek–Paranjape 2014 and Johnson et al. 2020, so the stability meant is presumably the radial thin-wall one of [3] (chapter text unread). The chapter cites none of Gleiser–Dotti, Dotti 2022, de Aguiar Alves et al. 2025. Its puzzles are repulsion against graviton exchange and the thermodynamics of a negative-mass gas. (The word "possible" in the earlier text of this note is not in the abstract.)
+   - Laguna 2026, "Singustars: Between Black Holes and Compact Stars", arXiv:2611.14482 (2026-11-10): TOV solutions with a negative point mass inside a fluid shell and a positive-mass Schwarzschild exterior. Radial modes and spherical evolutions only: "singustars with Γ = 2 are stable only for M ≲ 0.63 and C ≲ 0.25". "We analyze geodesics and nonradial perturbations of singustars in a forthcoming paper." Not a regular negative-mass star; A4 stands.
 9. **Methods precedent** (cite for the technique, not the result): Araneda & Dotti 2017, PRD 96, 104020, arXiv:1611.03534, on Robin conditions at a timelike boundary producing a single unstable state; S-deformation literature (Kimura 2017, CQG, arXiv:1706.01447; Kodama–Ishibashi).
 
 **Verdict.**
@@ -107,7 +111,7 @@ Note on INSPIRE: `refersto:arxiv:<id>` returns garbage for some IDs (about 25k u
 **Closest prior work.**
 1. **Shirokov 2026**, arXiv:2608.24577 (https://arxiv.org/abs/2608.24577).
    - Constructs the ε = −1 star and claims it is "the first asymptotically flat body of negative ADM mass evolved in numerical relativity".
-   - The lone star survives to t = 1000 with a peak decay of 0.63 % per 100 time units. He says this is not asymptotic stability.
+   - v1 (2026-08-25): the lone star survives to t = 1000 with a peak decay of 0.63 % per 100 time units, "not asymptotic stability". v2 (2026-10-26; all simulations rerun, fourth-order time integration, corrected initial data, second author I. Nachevsky): peak amplitude changes by 0.11 % to t = 1000, "A star of negative ADM mass thus shows no sign of instability over the evolved time". Both keep the "first asymptotically flat bod(y/ies) of negative ADM mass evolved in numerical relativity" claim and list sideways stability as untested. Neither version cites Ivanov, Cao, Price or Havas–Goldberg. Numbers: #83.
    - No linear analysis, no N, no first law, no turning point. "Stability against sideways perturbations" is listed as open.
 2. **Dzhunushaliev, Folomeev, Hoffmann, Kleihaus & Kunz 2014**, PRD 90, 124038, arXiv:1409.6978.
    - A *canonical* boson field plus a *real* phantom field supporting a wormhole core. The Ellis-throat instability persists.
@@ -156,7 +160,7 @@ Note on INSPIRE: `refersto:arxiv:<id>` returns garbage for some IDs (about 25k u
      - midpoint acceleration a = μ/D_FW² (eq. 19);
      - constant separation requires Δμ < 0 with |Δμ| = μ²/(2D). The text has a typo, "D_FW = 2|Δμ|".
    - **These are exactly our d̈ = −E_tot/d², E_tot = μ₊ + μ₋ − μ₊μ₋/d, the rigidity condition |μ₋| = μ₊(1 + μ₊/d), and a_mid = m/d².**
-   - His derivation comes from conservation of the four-momentum norm plus Fermi–Walker kinematics. He calls the μ²/D³ term "technically … post-Newtonian" and says an EIH / Havas–Goldberg treatment is "left for a possible future work".
+   - His derivation comes from conservation of the four-momentum norm plus Fermi–Walker kinematics. He calls the μ²/D³ term "technically … post-Newtonian" and, citing a handbook ([6], Landau–Lifshitz), says the post-Newtonian corrections "are either proportional to Δμ or ẏ". Abstract (v2): "when only leading terms in the ratio of a characteristic gravitational radius to the distance between the particles are retained our elementary analysis leads to equations of motion equivalent to those derived from relativistic weak-field equations of motion of Havas and Goldberg 1962". Discussion: the Einstein–Infeld–Hoffmann equations are named as a route for V ≪ c, and "a self-consistent relativistic treatment of the problem in the next to the weak field approximation must be based on the second-order formalism of Havas and Goldberg 1962. Such an approach is left for a possible future work."
    - Only 3 citers: Novikov et al. 2018, arXiv:2411.00933, arXiv:1406.0841. **Shirokov does not cite it.**
 2. **Forward 1990**, J. Propulsion Power 6, 28 (https://lweb.cfa.harvard.edu/~loeb/forward1990.pdf): citing Bonnor–Swaminarayan, "the negative mass should be very slightly larger than the positive mass, depending on the initial separation". Qualitative statement of the rigidity condition.
 3. **Bondi 1957**, RMP 29, 423 (https://www.januscosmologicalmodel.com/pdf/bondi1957.pdf): "the masses are not quite equal and opposite … since their accelerations must be unequal in the uniformly accelerated model." Qualitative.
@@ -179,7 +183,7 @@ Note on INSPIRE: `refersto:arxiv:<id>` returns garbage for some IDs (about 25k u
 **Recommended framing.**
 - Do **not** claim the rigidity condition or the separation law as new. Write "we recover, from the EIH Lagrangian with signed masses, the relations obtained by Ivanov [Phys. Usp. 55, 1232 (2012)] from energy–momentum conservation", and credit Forward 1990 and Bondi 1957 for the qualitative statement.
 - Claim the first-principles derivation and its use to diagnose Shirokov's runs.
-- Shirokov's "mass ladder" flips at ratio 0.995 against a predicted 1.000. The 1PN / Ivanov prediction is 1 + μ₊/d ≈ 1.0014. Both are well inside his ±0.03 uncertainty, which is worth a footnote.
+- Shirokov's v1 "mass ladder" flips at ratio 0.995 against a predicted 1.000 (±0.03); the word "ladder" and the 0.995 are not in v2, which lists unequal-mass runs |M₋|/M₊ = 0.60, 0.80, 1.33 in its run table. Recheck in #83 before the footnote is kept. The 1PN / Ivanov prediction is 1 + μ₊/d ≈ 1.0014.
 
 ## D. Witten-type bounds (brief re-check, 2024–2026)
 
@@ -212,7 +216,7 @@ Note on INSPIRE: `refersto:arxiv:<id>` returns garbage for some IDs (about 25k u
 
 **Found.**
 - Only one citing record: **Shirokov & Nachevsky 2026**, arXiv:2610.13206, "Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity" (a self-citation, ghost-scalar wormholes).
-- No comments, replies or errata. arXiv shows only v1 (2026-08-25).
+- No comments, replies or errata as of 2026-11-24: INSPIRE still lists one citer (Shirokov & Nachevsky 2610.13206, a self-citation). arXiv shows v1 (2026-08-25) and v2 (2026-10-26).
 - **Earlier NR of opposite-sign masses:** Cao Zhou-Jian 2012, "Numerical study of the interaction between positive and negative mass objects in general relativity", IJMPD 21, 1250061, DOI 10.1142/S0218271812500617.
   - Uses BSSN with moving punctures and excises the negative-mass naked singularity, with a custom outer boundary condition.
   - Recovers the Newtonian "chase" in the weak-field limit.
@@ -227,17 +231,16 @@ Note on INSPIRE: `refersto:arxiv:<id>` returns garbage for some IDs (about 25k u
 
 ## Limits of this search
 
-- **arXiv full-text and listing API** (export.arxiv.org) was blocked by a permission timeout, so systematic arXiv abstract queries could not be run. The direct curl route to arXiv and INSPIRE was refused by the proxy; WebFetch to INSPIRE worked.
+- **arXiv listing API** (export.arxiv.org) was blocked by a permission timeout on 2026-10-22. On 2026-11-24 it answers 200 and was used for the rerun (#51); `lastUpdatedDate` is rewritten by the server to `submittedDate`, so revisions are read from `id_list` requests. On 2026-10-22 the direct curl route to arXiv and INSPIRE was refused by the proxy; WebFetch to INSPIRE worked.
 - INSPIRE abstract-field queries returned 0 hits even for terms that should match, so that index is unreliable. The citation trails (recid-based) are reliable.
 - No Google Scholar access, so non-INSPIRE literature (pure mathematics, AJP, J. Propulsion) is covered only by web search.
-- **Paywalled or not read:**
-  - Price 1993 (AJP 61, 216);
-  - Bonnor & Swaminarayan 1964;
-  - Bičák, Hoenselaers & Schmidt 1983;
-  - Cao 2012 full text (abstract only);
-  - Paranjape 2025 proceedings (abstract only);
-  - the full text of Dotti–Gleiser 2008 §V (ar5iv was truncated, so the conclusion section was not read).
+- **Paywalled or not read** (status 2026-11-24, #51):
+  - Price 1993 (AJP 61, 216, doi 10.1119/1.17293): not read. pubs.aip.org (article and PDF) and doi.org answer 403; OpenAlex and Semantic Scholar list no open copy; no INSPIRE record; no arXiv version; no open copy found by web search. Still taken to be a Newtonian pedagogical note, unverified.
+  - Bonnor & Swaminarayan 1964; Bičák, Hoenselaers & Schmidt 1983: see #17.
+  - Cao 2012 (IJMPD 21, 1250061): abstract (Crossref) and 30-entry reference list (INSPIRE) read; full text not read (worldscientific.com 403; no arXiv version: four arXiv API queries and INSPIRE show none).
+  - Paranjape 2025: abstract and 10 references read; chapter text behind the paywall, the `.pdf` URL returns the landing page; no arXiv version.
+  - Dotti–Gleiser 2008: all five sections read in v1, v2 and v3 from the e-print TeX (§V is the Summary).
 - de Aguiar Alves et al. 2025 and Ivanov 2012 were read through tool summaries of the PDFs. The equations quoted for Ivanov were checked for internal consistency (one typo found in his text).
 - Russian-language follow-ups to Ivanov (UFN) and Chinese-language follow-ups to Cao may exist outside INSPIRE.
-- Results posted after about 2026-10-21 are not covered.
+- Work posted 2026-10-21 to 2026-11-24 was searched by the rerun of #51 (arXiv API and INSPIRE, 146 runs; web queries of this note, standard mode; `queries.md`): one record bears on a verdict (Laguna 2611.14482, A4); three known papers were revised (Shirokov 2608.24577 v2, Shirokov & Nachevsky 2610.13206 v2 text only, Caridi et al. 2603.13210 v2 accepted by PRD, D unchanged). Later work is not covered.
 - The journal references of this note were checked on 2026-11-13 against INSPIRE, arXiv and Crossref (#49, [references_check.md](../references_check.md)). DG08 CQG 26, 215002; GD06 CQG 23, 5063; Cardoso–Cavaglià PRD 74, 024027; Dzhunushaliev et al. JHEP 0807:094; Bičák–Kofroň GRG 41, 153; Mbarek–Paranjape PRD 90, 101502 are correct. The arXiv IDs were all verified.
