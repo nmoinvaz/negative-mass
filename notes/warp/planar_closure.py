@@ -40,6 +40,7 @@ MUTATIONS = {
     "jacobi-theta": ("jacobi", "b_x = +A_t/A"),
     "ext-hol": ("exterior", "expects integral of K dA = h j"),
     "ext-null": ("exterior", "Gamma^p_pp = sigma_p"),
+    "ext-geo": ("exterior", "p'' = -sigma_p p'^2 in the derivation of A_tt = K A"),
     "lin-order": ("limits_necessary", "K1 = -b1_tt"),
     "conv-zero": ("limits_necessary", "G = 0 in the convolution"),
     "E-norm": ("E_norm", "initial velocity (1, 1)"),
@@ -345,8 +346,279 @@ def c3_horizon():
           f"Phi = C e^(alpha s) forces C = 0: {i_d}")
 
 
+# ---------------------------------------------------------------------------------------------------------------
+# C4 jacobi
+# ---------------------------------------------------------------------------------------------------------------
+def c4_jacobi():
+    t, s, x = sp.symbols("t s x", real=True)
+    A = sp.Function("A")(t, s)
+    g = sp.Matrix([[-1, 0], [0, A**2]])
+    X = [t, s]
+    R = ps.ricci(g, X, lambda E, k: sp.diff(E, X[k]), sp.simplify)
+    Kj = -sp.diff(A, t, 2) / A if MUT == "jacobi-sign" else sp.diff(A, t, 2) / A
+    i_a = zero(R - Kj * g)
+    # (ii) x = X(t, s) with X_s = A, b = -X_t; derivatives at fixed x by the chain rule
+    Xf = sp.Function("X")(t, s)
+    Xs, Xt = sp.diff(Xf, s), sp.diff(Xf, t)
+    bb = -Xt
+    dx = lambda f: sp.diff(f, s) / Xs
+    dtx = lambda f: sp.diff(f, t) - Xt / Xs * sp.diff(f, s)
+    nvec = lambda f: dtx(f) - bb * dx(f)
+    fgen = sp.Function("f")(t, s)
+    i_b1 = zero(nvec(fgen) - sp.diff(fgen, t))
+    Jm = sp.Matrix([[1, 0], [Xt, Xs]])
+    i_b2 = zero(Jm.T * pg_metric(bb) * Jm - sp.Matrix([[-1, 0], [0, Xs**2]]))
+    bx = dx(bb)
+    claim = sp.diff(Xs, t) / Xs if MUT == "jacobi-theta" else -sp.diff(Xs, t) / Xs
+    i_b3 = zero(bx - claim)
+    i_b4 = zero(nvec(bx) - bx**2 + sp.diff(Xs, t, 2) / Xs)
+    a_ = nvec(bb)
+    i_b5 = zero(a_ + sp.diff(Xf, t, 2)) and zero(-dx(a_) - sp.diff(Xs, t, 2) / Xs)
+    # (iii) integral of K dx = a_- - a_+ for b = gamma(t) + beta(t) (1 + tanh x)/2 (limits gamma, gamma + beta)
+    ga, be = sp.Function("gamma")(t), sp.Function("beta")(t)
+    bex = ga + be * (1 + sp.tanh(x)) / 2
+    aex = sp.diff(bex, t) - bex * sp.diff(bex, x)
+    aminus, aplus = sp.limit(aex, x, -sp.oo), sp.limit(aex, x, sp.oo)
+    i_c = zero(aminus - sp.diff(ga, t)) and zero(aplus - sp.diff(ga + be, t)) and zero(
+        sp.integrate(-sp.diff(aex, x), (x, -sp.Symbol("L", positive=True), sp.Symbol("L", positive=True))) -
+        (aex.subs(x, -sp.Symbol("L", positive=True)) - aex.subs(x, sp.Symbol("L", positive=True))))
+    check("jacobi", i_a and i_b1 and i_b2 and i_b3 and i_b4 and i_b5 and i_c,
+          f"(i) R = (A_tt/A) g for -dt^2 + A^2 ds^2: {i_a}; (ii) x = X(t, s), X_s = A, b = -X_t: n = d_t|_s {i_b1}, metric = "
+          f"PG form {i_b2}, b_x = -A_t/A {i_b3}, n(b_x) - b_x^2 = -A_tt/A {i_b4}, a = -X_tt and -a_x = A_tt/A {i_b5}; "
+          f"(iii) integral of K dx = a_- - a_+ = -beta' for b = gamma + beta (1 + tanh x)/2: {i_c}")
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# C5 exterior
+# ---------------------------------------------------------------------------------------------------------------
+def c5_exterior():
+    p, q = sp.symbols("p q", real=True)
+    H, Jf = sp.Function("H")(p), sp.Function("J")(q)
+    sig = H * Jf
+    g = sp.Matrix([[0, -sp.exp(2 * sig)], [-sp.exp(2 * sig), 0]])
+    X = [p, q]
+    R = ps.ricci(g, X, lambda E, k: sp.diff(E, X[k]), sp.simplify)
+    Hp, Jp = sp.diff(H, p), sp.diff(Jf, q)
+    K = 2 * sp.diff(sig, p, q) * sp.exp(-2 * sig)
+    i_a = zero(R[0, 1] + 2 * Hp * Jp) and zero(R[0, 0]) and zero(R[1, 1]) and zero(K * sp.exp(2 * sig) - 2 * Hp * Jp)
+    Gam = christoffel(g, X)
+    gp = 1 if MUT == "ext-null" else 2
+    i_b = (zero(Gam[0][0][0] - gp * sp.diff(sig, p)) and zero(Gam[1][1][1] - 2 * sp.diff(sig, q)) and
+           all(zero(Gam[a][b][c]) for a in range(2) for b in range(2) for c in range(2)
+               if (a, b, c) not in [(0, 0, 0), (1, 1, 1)]))
+    # (ii) A = p_s/p_tau and A_tau tau = K A from the geodesic equations, normalization and orthogonality only.
+    # Jet symbols: v = p_tau, ps = p_s, w = p_tau_s, Sp, Sq, Spp, Spq, Sqq = derivatives of sigma, e2 = e^(-2 sigma).
+    v, ps_, w, Sp, Sq, Spp, Spq, Sqq, e2 = sp.symbols("v ps w Sp Sq Spp Spq Sqq e2")
+    gc = 1 if MUT == "ext-geo" else 2   # geodesic equation p'' = -gc sigma_p p'^2
+    qt = e2 / (2 * v)                  # normalization 2 e^(2 sigma) p_tau q_tau = 1
+    qs = -ps_ * qt / v                 # orthogonality p_s q_tau + p_tau q_s = 0
+    # derivations along tau and s (chain rule on the jets)
+    def D_tau(e):
+        rules = {v: -gc * Sp * v**2, ps_: w, Sp: Spp * v + Spq * qt, Sq: Spq * v + Sqq * qt,
+                 e2: -2 * e2 * (Sp * v + Sq * qt)}
+        return sum(sp.diff(e, k) * r for k, r in rules.items()) + sp.diff(e, w) * Dtau_w
+    def D_s(e):
+        rules = {v: w, Sp: Spp * ps_ + Spq * qs}
+        return sum(sp.diff(e, k) * r for k, r in rules.items())
+    Dtau_w = D_s(-gc * Sp * v**2)       # p_tau_tau_s = d_s (p_tau_tau), p_tau_tau = -2 sigma_p p_tau^2
+    Aexpr = ps_ / v
+    geo_A = sp.simplify(-2 * qs * ps_ / e2 - Aexpr**2) == 0      # A^2 = -2 e^(2 sigma) p_s q_s
+    Att = D_tau(D_tau(Aexpr))
+    i_c = geo_A and sp.simplify(Att - 2 * Spq * e2 * Aexpr) == 0
+    # (iii) the C^infinity step S(x) = f(x)/(f(x) + f(1 - x)), f(x) = e^(-1/x): S = 0 for x <= 0, 1 for x >= 1, S' >= 0
+    xx = sp.Symbol("x", positive=True)
+    f = lambda y: sp.exp(-1 / y)
+    S = f(xx) / (f(xx) + f(1 - xx))
+    sym = zero(S.subs(xx, 1 - xx) + S - 1)
+    fp = lambda y: sp.exp(-1 / y) / y**2
+    Sprime_pos = zero(sp.diff(S, xx) - (fp(xx) * f(1 - xx) + f(xx) * fp(1 - xx)) / (f(xx) + f(1 - xx))**2)
+    lim0, lim1 = sp.limit(S, xx, 0, "+"), sp.limit(S, xx, 1, "-")
+    h, j = sp.symbols("h j", positive=True)
+    total = 2 * (h * (lim1 - lim0)) * (j * (lim1 - lim0))        # integral of K dA = 2 int H' dp int J' dq
+    expect = h * j if MUT == "ext-hol" else 2 * h * j
+    i_d = sym and Sprime_pos and lim0 == 0 and lim1 == 1 and sp.simplify(total - expect) == 0
+    check("exterior", i_a and i_b and i_c and i_d,
+          f"(i) R_pq = -2 H'J', K e^(2 sigma) = 2 H'J': {i_a}; Gamma^p_pp = {gp} sigma_p, Gamma^q_qq = 2 sigma_q, no others: "
+          f"{i_b}; (ii) A = p_s/p_tau and A_tau tau = K A from the geodesic equations: {i_c}; (iii) S(1 - x) + S(x) = 1, "
+          f"S' = positive sum, S(0+) = {lim0}, S(1-) = {lim1}, integral of K dA = {sp.simplify(total)} = {expect}: {i_d}")
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# C6 limits_necessary
+# ---------------------------------------------------------------------------------------------------------------
+def c6_limits_necessary():
+    t, x, eps = sp.symbols("t x epsilon", real=True)
+    b1 = sp.Function("b1")(t, x)
+    b = eps * b1
+    K = K_of(b, t, x)
+    Kr = sp.expand(sp.simplify(K / eps))                    # K1 + eps K2
+    f = sp.log(Kr**2) / 2
+    Cexpr = box_pg(f, b, t, x) - 2 * K
+    lead = sp.simplify(Cexpr.subs(eps, 0))
+    K1 = -sp.diff(b1, t, 2) if MUT == "lin-order" else -sp.diff(b1, t, x)
+    f0 = sp.log(K1**2) / 2
+    i_a = zero(lead - (-sp.diff(f0, t, 2) + sp.diff(f0, x, 2)))
+    # (ii) integral over x at fixed t of F(t - x) G(t + x) equals (F * G)(2t); F = G = u(1 - u)(1 - 2u) on [0, 1]
+    u, tt, y = sp.symbols("u tt y", real=True)
+    Fp = u * (1 - u) * (1 - 2 * u)
+    Gp = 0 * u if MUT == "conv-zero" else Fp
+    F = lambda z: Fp.subs(u, z)
+    G = lambda z: Gp.subs(u, z)
+    half = sp.Rational(1, 2)
+    # 0 <= tt <= 1/2: x in [-tt, tt], u in [0, 2 tt];  1/2 <= tt <= 1: x in [tt - 1, 1 - tt], u in [2 tt - 1, 1]
+    lhs_a = sp.integrate(sp.expand(F(tt - y) * G(tt + y)), (y, -tt, tt))
+    rhs_a = sp.integrate(sp.expand(F(y) * G(2 * tt - y)), (y, 0, 2 * tt))
+    lhs_b = sp.integrate(sp.expand(F(tt - y) * G(tt + y)), (y, tt - 1, 1 - tt))
+    rhs_b = sp.integrate(sp.expand(F(y) * G(2 * tt - y)), (y, 2 * tt - 1, 1))
+    i_b = zero(lhs_a - rhs_a) and zero(lhs_b - rhs_b)
+    nonzero = sp.simplify(rhs_a) != 0 and sp.simplify(rhs_b) != 0
+    print(f"  (F*G)(2t) = {sp.factor(rhs_a)} on [0, 1/2] and {sp.factor(rhs_b)} on [1/2, 1]", flush=True)
+    check("limits_necessary", i_a and i_b and nonzero,
+          f"(i) C[eps b1] = (-d_t^2 + d_x^2) ln|K1| + O(eps), K1 = -b1_tx, exactly: {i_a}; (ii) integral of F(t - x) G(t + x) dx "
+          f"= (F*G)(2t) on both pieces: {i_b}; (iii) F*G is not identically zero for the sign-changing compactly supported "
+          f"F = G = u(1 - u)(1 - 2u): {nonzero}")
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# E1-E5: normal geodesics of -2 exp(2 H(p) J(q)) dp dq from S0 = {p + q = -2}  (numerical evidence)
+# ---------------------------------------------------------------------------------------------------------------
+HJ_H = 1.5
+HJ_J = 1.5
+
+
+def S_np(x):
+    x = np.asarray(x, float)
+    def f(y):
+        out = np.zeros_like(y)
+        m = y > 0
+        out[m] = np.exp(-1.0 / y[m])
+        return out
+    fx, f1 = f(x), f(1.0 - x)
+    return fx / (fx + f1)
+
+
+def dS_np(x):
+    x = np.asarray(x, float)
+    def f(y):
+        out = np.zeros_like(y)
+        m = y > 0
+        out[m] = np.exp(-1.0 / y[m])
+        return out
+    def fp(y):
+        out = np.zeros_like(y)
+        m = y > 0
+        out[m] = np.exp(-1.0 / y[m]) / y[m]**2
+        return out
+    fx, f1 = f(x), f(1.0 - x)
+    return (fp(x) * f1 + fx * fp(1.0 - x)) / (fx + f1)**2
+
+
+def geodesics(svals, T=10.0, dt=0.002, store_every=1.0):
+    """RK4 for p, q, p', q', A, A' (A'' = K A) from (p, q) = (-1 - s/sqrt2, -1 + s/sqrt2), velocity (v0, v0)."""
+    jscale = 2.0 if MUT == "E-ext" else 1.0
+    v0 = 1.0 if MUT == "E-norm" else 1.0 / np.sqrt(2.0)
+    kneg = MUT == "E-kneg"
+    H = lambda p: HJ_H * S_np(p)
+    Hp = lambda p: HJ_H * dS_np(p)
+    J = lambda q: HJ_J * S_np(q / jscale)
+    Jp = lambda q: HJ_J * dS_np(q / jscale) / jscale
+    def rhs(y):
+        p, q, pd, qd, A, At = y
+        Hv, Hpv, Jv, Jpv = H(p), Hp(p), J(q), Jp(q)
+        K = 2.0 * Hpv * Jpv * np.exp(-2.0 * Hv * Jv)
+        if kneg:
+            K = -K
+        return np.array([pd, qd, -2.0 * Hpv * Jv * pd**2, -2.0 * Hv * Jpv * qd**2, At, K * A])
+    sv = np.asarray(svals, float)
+    y = np.array([-1.0 - sv / np.sqrt(2.0), -1.0 + sv / np.sqrt(2.0), np.full(len(sv), v0), np.full(len(sv), v0),
+                  np.ones(len(sv)), np.zeros(len(sv))])
+    nper = int(round(store_every / dt))
+    out = [y.copy()]
+    for i in range(int(round(T / dt))):
+        k1 = rhs(y)
+        k2 = rhs(y + dt / 2 * k1)
+        k3 = rhs(y + dt / 2 * k2)
+        k4 = rhs(y + dt * k3)
+        y = y + dt / 6 * (k1 + 2 * k2 + 2 * k3 + k4)
+        if (i + 1) % nper == 0:
+            out.append(y.copy())
+    return np.array(out), H, J
+
+
+_CACHE = {}
+_trapz = getattr(np, 'trapezoid', None) or np.trapz
+
+
+def main_run():
+    if "main" not in _CACHE:
+        t0 = time.time()
+        sgrid = np.linspace(-6.0, 6.0, 601)
+        out, H, J = geodesics(sgrid)
+        _CACHE["main"] = (sgrid, out, H, J)
+        print(f"  [E main run: 601 geodesics, t in [0, 10], {time.time() - t0:.0f} s]", flush=True)
+    return _CACHE["main"]
+
+
+def e1_norm():
+    sgrid, out, H, J = main_run()
+    err = max(np.abs(2.0 * np.exp(2.0 * H(y[0]) * J(y[1])) * y[2] * y[3] - 1.0).max() for y in out)
+    check("E_norm", err <= 1e-8, f"max |2 e^(2 sigma) p' q' - 1| = {err:.2e} over 11 stored times and 601 geodesics (<= 1e-8)")
+
+
+def e2_focus():
+    sgrid, out, H, J = main_run()
+    amin = min(y[4].min() for y in out)
+    amax = out[-1][4].max()
+    check("E_focus", amin >= 1 - 1e-12 and amax >= 2.0,
+          f"min A = {amin:.12f} over all s and times (>= 1 - 1e-12); max_s A(10, s) = {amax:.3f} (>= 2)")
+
+
+def e3_ext():
+    sgrid, out, H, J = main_run()
+    idx = [int(np.argmin(np.abs(sgrid - sv))) for sv in (-6, -5, -4, -3, 3, 4, 5, 6)]
+    dev = max(np.abs(y[4][idx] - 1.0).max() for y in out)
+    inner = np.where(np.abs(out[-1][5]) > 1e-9)[0]
+    lo, hi = (sgrid[inner].min(), sgrid[inner].max()) if len(inner) else (0, 0)
+    check("E_ext", dev <= 1e-12, f"max |A - 1| = {dev:.2e} for s in +-3..+-6 (<= 1e-12); A' != 0 (> 1e-9) only for s in "
+          f"[{lo:.2f}, {hi:.2f}] at t = 10")
+
+
+def e4_hol():
+    sgrid, out, H, J = main_run()
+    Lp = np.array([_trapz(y[5], sgrid) for y in out])
+    b = np.array([-np.concatenate([[0.0], np.cumsum((y[5][1:] + y[5][:-1]) / 2 * np.diff(sgrid))]) for y in out])
+    target = HJ_H * HJ_J if MUT == "E-hol" else 2 * HJ_H * HJ_J
+    mono = bool(np.all(np.diff(Lp) >= -1e-12))
+    rng = b.min() >= -2 * HJ_H * HJ_J - 1e-9 and b.max() <= 1e-9
+    check("E_hol", abs(Lp[-1] - target) <= 1e-5 and mono and rng,
+          f"L'(t) = {', '.join(f'{v:.5f}' for v in Lp[::2])} at t = 0, 2, .., 10; |L'(10) - {target}| = {abs(Lp[-1] - target):.2e} "
+          f"(<= 1e-5); nondecreasing: {mono}; b in [{b.min():.5f}, {b.max():.1e}] within [-2 h j, 0]: {rng}")
+
+
+def e5_geo():
+    delta = 0.5 if MUT == "E-geo" else 1e-4
+    s0s = [-0.6, -0.2, 0.1, 0.4, 0.65]
+    sv = []
+    for s0 in s0s:
+        sv += [s0 - delta, s0, s0 + delta]
+    out, H, J = geodesics(sv, T=8.0)
+    worst = 0.0
+    for k in range(len(s0s)):
+        for tau in (2, 3, 5, 8):
+            y = out[tau]
+            m, c, pl = y[:, 3 * k], y[:, 3 * k + 1], y[:, 3 * k + 2]
+            ps_ = (pl[0] - m[0]) / (2 * delta)
+            qs_ = (pl[1] - m[1]) / (2 * delta)
+            Ageo = np.exp(H(c[0]) * J(c[1])) * np.sqrt(-2.0 * ps_ * qs_)
+            worst = max(worst, abs(c[4] - Ageo) / c[4])
+    check("E_geo", worst <= 1e-5, f"A from the Jacobi ODE vs A = e^sigma sqrt(-2 p_s q_s) from neighboring geodesics (spacing "
+          f"{delta}) at 5 s values and tau = 2, 3, 5, 8: max relative difference {worst:.2e} (<= 1e-5)")
+
+
 CHECKS = [(("crit_null",), c1_crit_null), (("crit_pg", "crit_pg_iv", "crit_pg_ivb"), c2_crit_pg),
-          (("horizon",), c3_horizon)]
+          (("horizon",), c3_horizon), (("jacobi",), c4_jacobi), (("exterior",), c5_exterior),
+          (("limits_necessary",), c6_limits_necessary), (("E_norm",), e1_norm), (("E_focus",), e2_focus), (("E_ext",), e3_ext),
+          (("E_hol",), e4_hol), (("E_geo",), e5_geo)]
 
 
 def wanted(name):
