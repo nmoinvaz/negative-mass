@@ -298,7 +298,10 @@ def C_det(beta, g, L=25.0, rfrac=0.5, side=+1, rtol=1e-12, lam=1.0):
     xR, xL = x_of_rho_end(g, L, lam)
 
     def real_rhs(x, y):
-        return [y[1], odeC_rhs(x, y[0], y[1], beta, g, ns=math)]
+        v = [y[1], odeC_rhs(x, y[0], y[1], beta, g, ns=math)]
+        if not (math.isfinite(v[0]) and math.isfinite(v[1])):
+            raise ValueError("non-finite right-hand side")
+        return v
 
     sR = solve_ivp(real_rhs, (xR, xt + r), [1.0, -beta * math.exp(-2 * g * math.atan(xR))], method="DOP853", rtol=rtol,
                    atol=[1e-16, 1e-16])
@@ -307,7 +310,10 @@ def C_det(beta, g, L=25.0, rfrac=0.5, side=+1, rtol=1e-12, lam=1.0):
 
     def arc_rhs(th, y):
         x = xt + r * cmath.exp(1j * th)
-        return [1j * r * cmath.exp(1j * th) * y[1], 1j * r * cmath.exp(1j * th) * odeC_rhs(x, y[0], y[1], beta, g)]
+        v = [1j * r * cmath.exp(1j * th) * y[1], 1j * r * cmath.exp(1j * th) * odeC_rhs(x, y[0], y[1], beta, g)]
+        if not (cmath.isfinite(v[0]) and cmath.isfinite(v[1])):
+            raise ValueError("non-finite right-hand side")
+        return v
 
     sA = solve_ivp(arc_rhs, (0.0, side * math.pi), [complex(sR.y[0, -1]), complex(sR.y[1, -1])], method="DOP853", rtol=rtol,
                    atol=[1e-16, 1e-16])
