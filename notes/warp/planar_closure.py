@@ -45,7 +45,8 @@ MUTATIONS = {
     "conv-zero": ("limits_necessary", "G = 0 in the convolution"),
     "E-norm": ("E_norm", "initial velocity (1, 1)"),
     "E-kneg": ("E_focus", "A'' = -K A"),
-    "E-ext": ("E_ext", "support of J' is [0, 2]"),
+    "E-ext": ("E_ext", "support of J' is [0, 2] (silent in run 1, README A8)"),
+    "E-ext5": ("E_ext", "support of J' is [0, 5]"),
     "E-hol": ("E_hol_b", "expects L'(10) = h j"),
     "E-geo": ("E_geo", "finite-difference spacing 0.5"),
 }
@@ -516,7 +517,7 @@ def dS_np(x):
 
 def geodesics(svals, T=10.0, dt=0.002, store_every=1.0):
     """RK4 for p, q, p', q', A, A' (A'' = K A) from (p, q) = (-1 - s/sqrt2, -1 + s/sqrt2), velocity (v0, v0)."""
-    jscale = 2.0 if MUT == "E-ext" else 1.0
+    jscale = {"E-ext": 2.0, "E-ext5": 5.0}.get(MUT, 1.0)
     v0 = 1.0 if MUT == "E-norm" else 1.0 / np.sqrt(2.0)
     kneg = MUT == "E-kneg"
     H = lambda p: HJ_H * S_np(p)
