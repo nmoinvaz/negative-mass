@@ -19,8 +19,9 @@ then fails. Closure under O(2,1) or O(1,2) is equivalent, for a rank-3 form with
 the quotient (**proved**). For the wall at λ = 0, K = ∂_ϕ and the quotient is the orbit-space metric h on (t, r, θ).
 Its Ricci tensor is nonzero at every one of 25 off-axis exact points (Alcubierre's tanh profile, a bump, random jets)
 and at 18 of 18 exact points of an explicit analytic profile (**checked symbolically** at those points). So no (φ₁,
-φ₂, φ₃, V) of either sign pattern sources the metric on an open set of the bump profile, and of the tanh profile with
-its jets rounded to 55 digits, as an analytic function is nonzero on an open dense set once it is nonzero at one point.
+φ₂, φ₃, V) of either sign pattern sources the metric on an open set of the bump profile, since an analytic function is
+nonzero on an open dense set once it is nonzero at one point (**checked symbolically**, with the continuation by hand).
+For Alcubierre's tanh profile the jets were rounded to 55 digits, so that is **numerical evidence**, as in #57.
 
 The λ ≠ 0 branches pass the algebraic stage too: 27 admissible rank-3 roots at the 25 off-axis exact points
 (**checked** by exact roots and 60-digit inertia). They fail closure at all 27, by L_K M ≠ 0, computed as a field at
@@ -85,8 +86,8 @@ holds on an open dense part. The accelerating bubble was treated there in the sa
 
 At 32 exact points of the lab-frame Ricci tensor (`wall_points`, through `form3`, the function that runs the planted
 forms), λ = 0 is a root at every point. Off the axis the form has rank 3 and the pattern predicted by the sign of D at
-all 25: pattern (+,+,−) at 4 (the bump and random jets) and (+,−,−) at 21 (the tanh profile at σ = 8, R_b = 1 at all
-three speeds). On the axis the rank is ≤ 2 at 7 points, the complex-pair locus of #57.
+all 25: pattern (+,+,−) at 4 (the 3 bump points and 1 random-jet point) and (+,−,−) at 21 (the 18 tanh points at σ = 8,
+R_b = 1, speeds 1, ½, 3, and 3 random-jet points). On the axis the rank is ≤ 2 at 7 points, the complex-pair locus of #57.
 
 Rank ≤ 2 remainders with two squares of one sign belong to a pattern (+,+,−) with a³ = 0, that is two normal scalars.
 They are not treated here: that is #78.
@@ -110,10 +111,10 @@ fiber. Both are exact solutions (`p1_residual`, `p2_residual`: G_ab − 8πT_ab 
 Whether they are in print was not searched.
 
 Each passes all four stages. `p1_closed` and `p2_closed` find K, show L_K M = 0 and that the Ricci tensor of the 3 × 3
-block on the slice L = const vanishes, split M into three squares with Lagrange's reduction, build Λ = J Aᵀ(A Aᵀ)⁻¹
+block on the slice T = const (K^T = 1) vanishes, split M into three squares with Lagrange's reduction, build Λ = J Aᵀ(A Aᵀ)⁻¹
 from the gradients J of the known fields and the split A, and check Λ A = J, ΛᵀSΛ = S′ and JᵀSJ = M. Λ is a function
-of position (it depends on Θ). A cone over a flat fiber is also sourced by one scalar with λ = −2/l²; `form3` lists that
-second root, and the test is applied to the root with rank 3.
+of position (it depends on Θ). `form3` lists every real root of det(R − λg), including roots of lower rank; the test is applied to the root with
+rank 3.
 
 The deformed controls pass the algebraic stage and fail closure, each at its own sub-test.
 
@@ -134,7 +135,7 @@ rationals (the same function that finds the planted block flat).
 | tanh σ = 8, R_b = 1 (jets rounded to 55 digits), v = 1, ½, 3 | 18 off the axis | Ric(h) ≠ 0 at all |
 | bump (1 − r²/4)³ for r < 2, v = 7/4 | 3 | Ric(h) ≠ 0 at all |
 | random rational jets | 4 | Ric(h) ≠ 0 at all |
-| explicit w = v (1 − (1 − r²/4)³), v = 1, ½, 7/4, 3 angles, r = 1, 3/2 | 18 | Ric(h) ≠ 0 at all |
+| explicit w = v (1 − (1 − r²/4)³), v = 1, ½, 7/4; 3 angles; r = 1, 3/2 | 18 | Ric(h) ≠ 0 at all |
 
 This is `wall_flat_points` (25 of 25) and `wall_flat_explicit` (18 of 18). A rational jet set at one point is the jets of
 a polynomial profile, so a nonzero Ricci tensor at one point excludes closure on an open neighborhood for that profile.
@@ -147,8 +148,8 @@ The control `wall-flat-sub` replaces h by a flat block; the check then fails.
 
 At a fixed θ₀ the numerators of det(h)² Ric(h) are polynomials in (r, w, …, w⁗), linear in w⁗. If h is flat on a box in
 (r, θ), they vanish at every θ₀ and every r of the box. A Gröbner basis of those polynomials, and the ODE step for w(r),
-would decide it, as in #65. At θ₀ = π/2 they have 78, 66, 87 and 42 terms; the Gröbner computation over ℚ and modulo a
-prime, with the flow derivatives, did not finish in 20 min and was stopped. The scratch scripts are in
+would decide it, as in #65. At θ₀ = π/2 they have 78, 66, 87 and 42 terms; the Gröbner computation over ℚ did not
+finish in 5 min, nor did the one modulo a prime with the flow derivatives in 20 min, and both were stopped. The scratch scripts are in
 `negative-mass-raw/I77-rpi5/explore/`; they are not claims. **C5 is not decided.** The control `ideal-equator-only` was
 not run, since the check it targets does not exist. A smooth profile needs w ∈ C⁴ for the Ricci tensor of h to exist;
 for a C² profile the closure condition is not even defined classically.
@@ -191,15 +192,44 @@ algebraic stage for it was not rerun: its D-structure is #65's. The same arbitra
 Each check has a control that breaks its input once. The script runs every control after the checks and confirms that
 its target checks fail, stopping each after the section that holds its targets (`STOP_AT`).
 
-CHECKS_TABLE
+| check | what it tests | control `--mutate=` | the control's change |
+|---|---|---|---|
+| `planted3_pass` | 12 random λη + Σ s_I a_I a_I, six of each pattern, are recovered | `planted3-sign` | all squares positive |
+| `planted3_fail` | 12 forms with three same-sign squares or four squares: the planted λ is not admissible | `planted3-fail-sign` | an admissible pattern |
+| `lemma3_samples` | Lemma A on 24 tensors with (I1), (I2) | `lemma3-weight` | R_00 − R_11 + 2R_22 = 0 |
+| `p1_algebraic` | the cone: λ = 0 a root, rank 3, inertia (1,2) | `p1-euclid` | a Euclidean fiber |
+| `p1_closed` | K, L_K M = 0, flat quotient, Λ(x) in O(p,q) | `p1-fiber` | a curved fiber |
+| `p1_potential` | K(λ) = 0 | `p1-lambda` | λ + L/10 |
+| `p1_residual` | G_ab − 8πT_ab = 0 | `p1-sign` | one kinetic sign flipped in T |
+| `p2_algebraic` | the cosh control: λ = −3, rank 3, inertia (2,1) | `p2-euclid` | a Euclidean fiber |
+| `p2_closed` | the same as `p1_closed` | `p2-fiber` | a curved fiber |
+| `p2_potential` | K(λ) = 0 | `p2-lambda` | λ + L/10 |
+| `p2_residual` | G_ab − 8πT_ab = 0 | `p2-sign` | one kinetic sign flipped in T |
+| `d1_algebraic` | D1 passes the algebraic stage at its root | `deform-euclid` | a Euclidean fiber |
+| `d1_closure_fails` | D1: L_K M = 0, quotient not flat | `d1-flat` | the curvature set to 0 |
+| `d2_algebraic` | D2 passes the algebraic stage at its root | `deform-euclid` | a Euclidean fiber |
+| `d2_closure_fails` | D2: L_K M ≠ 0 and K(λ) ≠ 0 | `d2-onshell` | the warp factor on shell |
+| `wall_identities` | R(e_ϕ, ·) = 0 and (I2) for the general profile | `alc-drop-w2` | the shift's square dropped from g_tt |
+| `wall_D` | 16 r³ det R₃ = (1 − c²) q(c²) | `alc-drop-w2` | the same |
+| `wall_points` | 32 exact points: λ = 0 root, rank, pattern predicted by sign D | `alc-drop-w2` | the same |
+| `wall_flat_points` | Ric(h) ≠ 0 at 25 off-axis exact points | `wall-flat-sub` | h replaced by diag(−1, 1, 1) |
+| `wall_flat_explicit` | Ric(h) ≠ 0 at 18 points of the explicit bump | `wall-flat-sub` | the same |
+| `wall_lam_potential` | K(λ) ≠ 0 or L_K M ≠ 0 at 27 roots λ ≠ 0 | `lam-const`, `lie-dk` | dλ = 0 and L_K M = 0; the dK terms dropped |
+| `acc_const_limit` | lab-route Ricci of h equals the polar one at constant speed | `acc-static` | no t-derivatives in the jets |
+| `acc_flat_points` | Ric(h) ≠ 0 at 6 exact points of the accelerating bubble | `acc-flat-sub` | h replaced by diag(−1, 1, 1) |
+
+All 23 checks pass and all 20 controls fire (`three_scalars_output.txt`). Two things the table does not say. First, the
+`wall_*` and `acc_*` checks assert a failure of closure, so a flat block makes them fail, which is what the controls do.
+Second, the control `lemma3-weight` is weak: 1 of the 24 samples disagrees with the lemma in that control (`pilot_ctl_lemma3-weight.log`); it fires,
+but a lemma that is wrong by a small margin would need more samples.
 
 From the repository root, in the environment of [`setup.md`](../../setup.md):
 
     python3 notes/warp/three_scalars.py
 
 It exits 1 if a check fails or a control does not fire. `--no-controls` runs the checks alone, `--mutate=NAME` one
-control and `--stop=N` the sections up to N. On rpi5 (Raspberry Pi 5, one process, nice 10) the checks took TIMECHECKS
-and the whole run RUNTIME at MEMORY peak resident.
+control and `--stop=N` the sections up to N. On rpi5 (Raspberry Pi 5, one process, nice 10) the checks took 115 s
+and the whole run with its 20 controls 9 min 35 s, at 88 MB peak resident.
 
 ## What the code proves, and what is assumed
 
@@ -223,7 +253,7 @@ shift, and the identities (I1), (I2) of #57.
 ## Lemmas stated for Lean (#135)
 
 1. **(A)** Lemma A above, for real symmetric R with R_a3 = 0 and R_00 + R_11 + 2R_22 = 0. Status: proved.
-2. **(C)** Lemma C above. Status: proved (needs the local leaf space; the frame bundle argument for Λ).
+2. **(C)** Lemma C above. Status: proved, with the local leaf space of K assumed regular.
 3. **(P)** For a rank-3 M = Σ s_I dφ^I dφ^I with constant s_I, K(λ) = 0 where λ is a function of φ. Status: proved.
 4. **(D)** At a rank-3 point of the wall, det R₃ < 0 iff signature (2,1). Status: proved.
 5. **(E)** (I1), (I2), and the entries of R₃. Status: checked symbolically (#57, #59).
