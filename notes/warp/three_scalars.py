@@ -53,8 +53,15 @@ MUTATIONS = {
     "alc-drop-w2": (["wall_identities", "wall_D", "wall_points"],
                     "drops the shift's square from g_tt in the wall (as in phantom_source.py)"),
     "wall-flat-sub": (["wall_flat_points"], "replaces the wall's orbit-space block by a flat one"),
-    "lam-const": (["wall_lam_potential"], "takes d lam = 0 in the wall's lam != 0 potential test"),
+    "lam-const": (["wall_lam_potential"], "takes d lam = 0 and L_K M = 0 at every lam != 0 root of the wall"),
+    "lie-dk": (["wall_lam_potential"], "drops the d K terms of L_K M in the lam != 0 test, so that (L_K M)(K, .) != 0"),
+    "acc-static": (["acc_const_limit"], "drops every t-derivative of v_s, x_s and f in the accelerating bubble's jets"),
 }
+
+# the last section a control needs: its target checks are all in sections up to this one
+STOP_AT = {"planted3-sign": 1, "planted3-fail-sign": 1, "lemma3-weight": 2, "p1-sign": 3, "p2-lambda": 3,
+           "p2-fiber": 3, "d1-flat": 3, "d2-onshell": 3, "alc-drop-w2": 4, "wall-flat-sub": 5, "lam-const": 6,
+           "lie-dk": 6, "acc-static": 7}
 
 RESULTS = []
 MUT = None
@@ -450,6 +457,66 @@ def bump_jets_n(r0, Rb, n):
     return [sp.diff(fb, rr, k).subs(rr, r0) if r0 < Rb else 0 for k in range(n)]
 
 
+def lie_numeric(fR3, pnt_r, cc, ss, Wv, lam0, dps=120):
+    """C7's second test at one root: the Lie derivative L_K M of M = R - lam g along its kernel K, as fields, at dps
+    digits. Near the point the profile is the Taylor polynomial of w with the jets Wv = (W0, ..., W3), so R_3(r, theta)
+    is known exactly. At each of the points r +- h, theta +- h (h = 1e-35) lam is the root of det(R_3 - lam eta_3)
+    nearest to lam0, K the unit null vector of N = R_3 - lam eta_3 with the sign of the base one, M = E^T N E on
+    (t, r, theta) and M_varphi,varphi = -lam (r sin theta)^2. Central differences give d_r, d_theta of M, K^mu and lam.
+    Returns (relative size of L_K M, K(lam), the scale |lam| / r, the residual of the identities M K = 0 and
+    (L_K M)(K, .) = 0, the second a consequence of M K = 0 and a test of the derivatives)."""
+    mp.mp.dps = dps
+    h = mp.mpf(10) ** -35
+    r0 = mp.mpf(sp.N(pnt_r, dps))
+    th0 = mp.atan2(mp.mpf(sp.N(ss, dps)), mp.mpf(sp.N(cc, dps)))
+    W = [mp.mpf(sp.N(x, dps)) for x in Wv]
+    eta3 = mp.diag([-1, 1, 1])
+
+    def wj(r):
+        d = r - r0
+        return [sum(W[k + j] * d**j / mp.factorial(j) for j in range(len(W) - k)) for k in range(3)]
+
+    def state(r, th, lamg, Kref):
+        c, S = mp.cos(th), mp.sin(th)
+        w0, w1, w2 = wj(r)
+        R3n = mp.matrix(fR3(r, c, S, w0, w1, w2))
+        lam_ = mp.findroot(lambda x: mp.det(R3n - x * eta3), lamg, tol=mp.mpf(10) ** -(dps - 20), maxsteps=60)
+        N = R3n - lam_ * eta3
+        ev, V = mp.eigsy(N)
+        k = min(range(3), key=lambda i: abs(ev[i]))
+        K = V[:, k]
+        K = K / mp.norm(K)
+        if Kref is not None and sum(K[i] * Kref[i] for i in range(3)) < 0:
+            K = -K
+        E = mp.matrix([[1, 0, 0], [w0, c, -r * S], [0, S, r * c]])
+        M = mp.zeros(4, 4)
+        M[:3, :3] = E.T * N * E
+        M[3, 3] = -lam_ * (r * S) ** 2
+        K1 = K[1] - w0 * K[0]
+        Kc = [K[0], K1 * c + K[2] * S, -K1 * S / r + K[2] * c / r, mp.mpf(0)]
+        return lam_, K, M, Kc
+    lam_b, K_b, M_b, Kc = state(r0, th0, mp.mpf(sp.N(lam0, dps)), None)
+    sr = [state(r0 + s * h, th0, lam_b, K_b) for s in (1, -1)]
+    st = [state(r0, th0 + s * h, lam_b, K_b) for s in (1, -1)]
+    dM = [(sr[0][2] - sr[1][2]) / (2 * h), (st[0][2] - st[1][2]) / (2 * h)]
+    dK = [[(sr[0][3][a] - sr[1][3][a]) / (2 * h) for a in range(4)], [(st[0][3][a] - st[1][3][a]) / (2 * h) for a in range(4)]]
+    dl = [(sr[0][0] - sr[1][0]) / (2 * h), (st[0][0] - st[1][0]) / (2 * h)]
+    LK = mp.zeros(4, 4)
+    for m in range(4):
+        for n in range(4):
+            v_ = sum(Kc[a] * dM[a - 1][m, n] for a in (1, 2))
+            for a in range(4):
+                if m in (1, 2) and MUT != "lie-dk":
+                    v_ += M_b[a, n] * dK[m - 1][a]
+                if n in (1, 2) and MUT != "lie-dk":
+                    v_ += M_b[m, a] * dK[n - 1][a]
+            LK[m, n] = v_
+    mx = lambda A: max(abs(A[i, j]) for i in range(A.rows) for j in range(A.cols))
+    res = max(mx(M_b * mp.matrix(Kc)), mx(LK * mp.matrix(Kc)) * r0 / (max(abs(x) for x in Kc) ** 2 * mx(M_b)))
+    rel = mx(LK) * r0 / (max(abs(x) for x in Kc) * mx(M_b))
+    return rel, Kc[1] * dl[0] + Kc[2] * dl[1], abs(lam_b) / r0, res
+
+
 # ---------------------------------------------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------------------------------------------
@@ -461,7 +528,7 @@ def main():
         sys.exit(f"unknown mutation {mut!r}. Known: {', '.join(MUTATIONS)}")
     random.seed(77)
     t0 = time.time()
-    stop = int(opts.get("stop", 99))
+    stop = int(opts.get("stop", STOP_AT.get(mut, 99)))
     print(f"three_scalars.py, issue #77. sympy {sp.__version__}, mpmath {mp.__version__}, python "
           f"{sys.version.split()[0]}. mutation: {mut or 'none'}" + (f" ({MUTATIONS[mut][1]})" if mut else ""))
 
@@ -669,12 +736,13 @@ def main():
     if stop < 6:
         return fin(t0, mut)
 
-    # 6. The wall, lam != 0: the potential stage, K(lam) = 0, at the admissible rank-3 roots of 4b.
-    print("\n== 6. lam != 0 branches: at each admissible root, K(lam) with lam from the implicit function theorem ==")
+    # 6. The wall, lam != 0: the potential stage K(lam) = 0 and the closure sub-test L_K M = 0, at every admissible root.
+    print("\n== 6. lam != 0 branches: at each admissible root, K(lam) (implicit function) and L_K M (finite differences) ==")
     eta3 = sp.diag(-1, 1, 1)
     Pl = sp.expand((R3 - lam * eta3).det(method="berkowitz"))
     Pr, Pth, Plam = D_jets(Pl, 1), D_jets(Pl, 2), sp.diff(Pl, lam)
-    rels, nfail = [], 0
+    fR3 = sp.lambdify((RW, CC, SS, WJ[0], WJ[1], WJ[2]), R3, "mpmath")
+    rows6 = []
     for (pnt, vv, jets, c) in lam_cases:
         mp.mp.dps = 80
         cc, ss = pnt[0] / pnt[3], sp.sqrt(pnt[1]**2 + pnt[2]**2) / pnt[3]
@@ -691,17 +759,30 @@ def main():
         Kv = [V[i, k] for i in range(3)]
         ev_ = lambda e: mp.mpf(sp.N(sp.sympify(e).subs(pt).subs(lam, lamv), 80))
         lam_r, lam_t = -ev_(Pr) / ev_(Plam), -ev_(Pth) / ev_(Plam)
-        if mut == "lam-const":
-            lam_r = lam_t = mp.mpf(0)
         w_, c_, s_, r0 = [mp.mpf(sp.N(x, 80)) for x in (pt[WJ[0]], cc, ss, pnt[3])]
         klam = (Kv[1] - w_ * Kv[0]) * (c_ * lam_r - s_ / r0 * lam_t) + Kv[2] * (s_ * lam_r + c_ / r0 * lam_t)
-        rel = abs(klam) * r0 / (abs(mp.mpf(sp.N(lamv, 80))) * mp.sqrt(sum(x * x for x in Kv)))
-        rels.append(float(rel))
-        nfail += int(rel > mp.mpf(10) ** -8)
-    check("wall_lam_potential", len(lam_cases) >= 1 and nfail == len(lam_cases),
-          f"{len(lam_cases)} admissible rank-3 roots lam != 0 at the off-axis exact points; K(lam) != 0 at {nfail} "
-          f"(|K(lam)| r / (|lam| |K|) between {min(rels or [0]):.2e} and {max(rels or [0]):.2e}), so the potential "
-          f"stage fails at each ({time.time() - t0:.0f} s). Numerical evidence, 80 digits")
+        rel_k = abs(klam) * r0 / (abs(mp.mpf(sp.N(lamv, 80))) * mp.sqrt(sum(x * x for x in Kv)))
+        rel_l, klam_fd, scl, res = lie_numeric(fR3, pnt[3], cc, ss, [pt[WJ[k_]] for k_ in range(4)], c["lam"])
+        agree = abs(klam_fd - klam) / scl
+        if mut == "lam-const":  # the control: d lam = 0 and L_K M = 0 at every root
+            rel_k = rel_l = mp.mpf(0)
+        rows6.append((cc == 0, float(rel_k), float(rel_l), float(agree), float(res)))
+    thr = 1e-8
+    n = len(rows6)
+    k_only = sum(r[1] > thr for r in rows6)
+    l_only = sum(r[2] > thr for r in rows6)
+    either = sum((r[1] > thr or r[2] > thr) for r in rows6)
+    eq = [r for r in rows6 if r[0]]
+    print(f"  K(lam) alone (the test coded at b56280c): != 0 at {k_only} of {n} roots, = 0 at "
+          f"{sum(1 for r in rows6 if r[1] <= thr)}, of which at c = 0: {sum(1 for r in rows6 if r[1] <= thr and r[0])}")
+    print(f"  L_K M alone: != 0 at {l_only} of {n}; at the {len(eq)} roots with c = 0: K(lam) relative sizes "
+          f"{[f'{r[1]:.1e}' for r in eq]}, L_K M relative sizes {[f'{r[2]:.1e}' for r in eq]}")
+    check("wall_lam_potential", n >= 1 and either == n and all(r[3] < 1e-20 for r in rows6)
+          and all(r[4] < 1e-60 for r in rows6),
+          f"{n} admissible rank-3 roots lam != 0 at the off-axis exact points ({len(eq)} of them at c = 0): K(lam) != 0 "
+          f"or L_K M != 0 at {either} (K(lam) != 0 at {k_only}, L_K M != 0 at {l_only}); the finite-difference K(lam) "
+          f"agrees with the implicit-function one to {max([r[3] for r in rows6] or [0]):.1e} (relative to |lam|/r), "
+          f"M K = 0 and (L_K M)(K, .) = 0 to {max([r[4] for r in rows6] or [0]):.1e} ({time.time() - t0:.0f} s). Numerical evidence")
     if stop < 7:
         return fin(t0, mut)
 
