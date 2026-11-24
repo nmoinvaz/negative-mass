@@ -1,0 +1,71 @@
+one_sign_classify.py, issue #158. sympy 1.14.0, python 3.14.10. mutation: none
+
+== 1. The block R_3 of a generic b(t, x, rho); traveling = static; the gauge ==
+[PASS] block: coordinate Ricci of an undefined b(t, x, rho) on the frame (n, d_x, d_rho, d_phi/rho) equals [[P-h, Q, Z], [Q, -P-h, Y], [Z, Y, h]] with P = n(b_x) - b_x^2 = a_x, a = b_t - b b_x; R(e_phi, .) = 0 and (I2) hold; nonzero differences: none (1 s)
+[PASS] travel: (P, Q, Z, Y, h) of b = B(x - v t, rho) minus those of the static u = B + v: [0, 0, 0, 0, 0]; of b~(t, x) = b(t, x - D(t)) - D'(t) minus those of b at (t, x - D): [0, 0, 0, 0, 0]. So a traveling shift is a static one, and the classification is up to the gauge x -> x + D(t)
+
+== 2. Lemma R: rank(R_3 - lam eta_3) = 1 <=> N = -v v^T (h > 0), planted forms ==
+[PASS] lemmaR: (a) R_3(v) - (h + v2^2) eta_3 + v v^T = 0 identically: True; (b) F = 0 on it: True; (c) the certificate R_0rho m_d + R_1rho m_e + F = 0 for a generic R_3 with (I2): True; (d) planted: 16 random v-blocks give exactly [(h + v2^2, MM)], 8 planar blocks [(-P, PP if P > 0 else MM)], P = 0 gives [], 16 generic blocks give []: wrong in 0 []
+
+== 3. b(rho): the planted solution b = C ln rho + b_0 and Lemma E ==
+[PASS] brho_solve: R_3 of b(rho) = [[-h, Q, 0], [Q, -h, 0], [0, 0, h]]: True; with P = Z = Y = 0 in Lemma R's equations v0 and v2 lie in the radical (True, True) and Qs does (True), so lam = h and Q = 0 (Lemma E: the same for a limit of a localized shift); dsolve(b'' + b'/rho = 0) = C1 + C2*log(rho)
+[PASS] brho_points: b = 2 ln rho + 1/3, 4D, 3 exact points: lam = h is a root with inertia (0,2) and pattern MM: True [('200/121', [(1.65289306640625, (0, 2), ['MM'])])]; planted failure b = 2 ln rho + rho^2/10: no admissible candidate at 3 points: True (2 s)
+[PASS] brho_closure: closure2 of M = R - h g for b = 2 ln rho + 1/3: kernel dimension 2, [K_1, K_2] = ['0', '2/rho', '0', '0'], plane integrable: False (Frobenius: no closed pair exists) (2 s)
+
+== 4. Planar shifts b(t, x): lam = K = -P, closure iff K constant, Theorem P ==
+[PASS] planar_stage: R_3 of a generic planar b = diag(P, -P, 0), P = a_x: True; the 2 x 2 minors of diag(P, -P, 0) - lam eta_3 vanish only at lam = -Pl (solve: [-Pl]): True; 4D, 3 exact points each, lam = K with inertia (2,0) for K < 0 and (0,2) for K > 0: [('3/2 x', '9/4', True), ('tan(t) x', '-1', True), ('-tanh(t) x', '1', True)] (3 s)
+[PASS] planar_closure: closure2 of M = R - K g, (name, K, dim, integrable, L_X M = 0, flat): must pass for K constant: [('3/2 x', '9/4', 2, True, True, True), ('tan(t) x', '-1', 2, True, True, True), ('-tanh(t) x', '1', 2, True, True, True)]; must fail on L_X M = 0 (K not constant) with the kernel integrable: [('x^2/10', '3*x**2/50', 2, True, False), ('1/(1 + x^2)', '2*(5*x**2 - 1)/(x**2 + 1)**4', 2, True, False)] (3 s)
+[PASS] planar_thm: along dx/dt = -b the chain rule gives x'' = -a, so with a = -K0 x + alpha(t) (i.e. K = -a_x = K0 constant) x'' = K0 x - alpha: True; the family x_X(t) through (t1, X) solves it for K0 = +kappa^2 and -kappa^2, and d_X x'/d_X x = kappa tanh(kappa (t* - t1)) resp. -kappa tan(kappa (t* - t1)): [True, True]. So -b(t*, .) = x' grows linearly in the comoving position: no bounded b, so no localized one (Theorem P, by hand)
+
+== 5. Additive shifts u = X(x) + R(rho) + v: u = c x + C ln rho + d, closure ==
+[PASS] additive_block: R_3 of u = X(x) + R(rho) + v equals Z = 0, Y = X' R', Q = -S/2, P = -u X'' - X'^2, h = R'^2/2, S = R'' + R'/rho: True
+[PASS] additive_solve: with X' R' != 0: S = R'' + R'/rho, v0 and Uu*X2 lie in the radical of Lemma R's ideal saturated by R' X' (True, True, True); X'' alone does not (False, information). By hand: S = 0 gives R = C ln rho + R_0, u X'' = 0 with u = X + R + v varying in rho gives X'' = 0, so X = c x + d_0 and u = c x + C ln rho + d; X' = 0 on an open set is b(rho) (Section 3); R' = 0 is planar (Section 4)
+[PASS] additive_points: u = 3/2 x + 2 ln rho + 1/5 and u = x + 3 ln rho, 4D, 3 exact points each: lam = C^2/(2 rho^2) + c^2 is a root with inertia (0,2) and pattern MM: True; planted failure u = 3/2 x + 2 ln rho + x^2/10: no admissible candidate at 3 points: True (5 s)
+[PASS] additive_closure: closure2 of M = R - lam g: u = 3/2 x + 2 ln rho + 1/5 and u = x + 3 ln rho have a 2D kernel that is not integrable (name, dim, integrable, [K_1, K_2]): [('A1', 2, False, ['0', '0', '(-18*rho**2 - 32)/(9*rho**3)', '0']), ('A2', 2, False, ['0', '0', '(-3*rho**2 - 27)/rho**3', '0'])]; for C = 0, u = x: integrable True, L_X M = 0 True, quotient flat True (the planar K = c^2, dS_2 x R^2) (6 s)
+
+== 6. Multiplicative shifts u = X(x) R(rho) + v: F = 0 alone leaves only X' R' = 0 ==
+[PASS] mult: F of u = X R + v equals -X X'^2 R'^2 (S (1 + W^2) - 2 X R'^2 W)/8, W = 3 X R + v, S = R'' + R'/rho: True; the three coefficients of X^2, X, 1 of S (1 + W^2) - 2 X R'^2 W with 1 - t R R' generate the unit ideal: True, so with X' R' X != 0 and X ranging over an interval F = 0 has no solution; the remaining cases X' = 0 (b(rho)) and R' = 0 (planar) are Sections 3 and 4
+
+== 7. Conical shifts u = F(x/rho) + v (static and traveling): no solution with F' != 0 ==
+[PASS] conical_entries: rho^2 (P, Q, Z, Y, h) of F(x/rho) + v at x = eta rho equals (-(G^2 + U H), -eta w Q', -w/2, -(eta G^2 + U w/2), eta^2 G^2/2), w = G + eta H, Q' = 1/2, from the jets of a quadratic F: True; Q = eta Z (hand claim) holds for the computed entries: True
+[PASS] conical_solve: Lemma R's equations in these jets, saturated by eta G U w: E_a reduces to 0, E_b to 0 modulo the Groebner basis (47 elements); the branch w = 0 with 1 - t eta G U is the unit ideal: True; E_b is G' = -(eta^2 - 1) G/(eta (eta^2 + 1)) with dsolve C1*eta/(eta**2 + 1): True; then E_a = (2G/(eta^2 + 1)) (1 + F^2 + C eta^2 F): True; d/d eta of that bracket vanishes only at F = -Cc*eta**2/(2*eta**2 + 4), whose F' - G = -Cc*eta*(eta**4 + 6*eta**2 + 6)/((eta**2 + 1)*(eta**2 + 2)**2) = -C eta (eta^4 + 6 eta^2 + 6)/(...) != 0 for C eta != 0: True. So no solution with F' != 0 (7 s)
+
+== 8. Spherical profile u = w(r), r = sqrt(x^2 + rho^2): the bubble at constant speed passes on no open set ==
+[PASS] bubble_F: chain-rule jets of w(r) against a sample w at (x, rho) = (3, 4): True; 8 r^3 F = s^2 c^2 (-z (a1^2 + a2^2) + 2 r a1 a2 w'^2 s^2) with a1 = r w'' - w', a2 = w a1 + 2 r w'^2, z = 2 w' + a1 s^2 (#78's B): True; the s^0 and s^2 coefficients of the bracket with 1 - t w' r generate the unit ideal: True (7 s)
+[PASS] bubble_points: 20 exact points (random w, w' != 0, w'', r and a rational angle with s c != 0): rank1_lams of the block is empty at 20 of 20
+
+== 9. General static shifts u(x, rho) with Z != 0: the resolved system and its compatibility condition ==
+[PASS] static_system: with h > 0 and Z Y Q != 0, A = Q (Z^2 + Y^2) + 2 h Z Y and B = P Q Y - Z (Q^2 + Y^2) lie in the radical of Lemma R's ideal (True, True); with v0 = beta cos th, v1 = beta sin th, v2 = a/(u cos th - sin th) the block built from u_xx = Phi1, u_x rho = Psi, u_rho rho = Phi3 equals Lemma R's: True; planted, on the jets of u = c x + C ln rho + d (s = tan(th/2) = 1): E1 = E2 = 0 with sigma = 0: True; C = [0, 0, 0, 0, 0, 0] at 6 exact points (20 s)
+[PASS] static_compat: at 3 exact points (rho, u, a, beta, s) with s not in {0, 1, -1}: det of the 2 x 2 matrix of (E1, E2) in (sigma_x, sigma_rho) = [-1194.959616, -9.266567, 0.028744086005624128] != 0 and the compatibility C = [-25.93496670422187, 39.560616231788416, 30.19529656093703] != 0 (exact rationals in the raw log). So the finite-type system is not Frobenius closed: a solution lies in C = 0 and the general static class is NOT classified
+[info] points [{'rho': '3', 'us': '4', 'as_': '6', 'bs': '4', 'ss': '1/2'}, {'rho': '2', 'us': '4/3', 'as_': '5', 'bs': '2', 'ss': '2'}, {'rho': '2/3', 'us': '7', 'as_': '1/3', 'bs': '7/4', 'ss': '3'}]; exact C = -4018367804383785/154940156670016, 217410623862070275/5495632893791296, 46165560025931196664220/1528899043358114743581; exact det = -18671244/15625, -9266567/1000000, 6636441763/230880250000; redraws 0
+
+== 10. The linearization at the log solution u0 = C ln rho + b_0 ==
+[PASS] linearized: at eps = 0: (P, Q, Z, Y) = 0 and h = C^2/(2 rho^2): True; Lemma R with v1 != 0 gives Z v1^2 + Q Y = 0, P v1^2 + Q^2 + Y^2 = 0, v1^4 - 2 h v1^2 + Q^2 = 0 (True, True, True); their O(eps) parts are (w_x rho/2) v1^2 and (-1) u0 w_xx v1^2 with v1^2 = C^2/rho^2 != 0 (True, True), so the tangent space at u0 is w_x rho = 0 and u0 w_xx = 0, i.e. w = c x + g(rho) (planted: this family satisfies both: True); no decaying w
+
+21 checks, 21 pass (26 s)
+
+== Controls: each mutation must make its target checks fail ==
+[FIRED] --mutate=block-Y-sign (builds Y as +n(b_rho)/2 + b_x b_rho): exit 1, failed ['block']
+[FIRED] --mutate=travel-offset (takes u = B without + v): exit 1, failed ['travel']
+[FIRED] --mutate=gauge-drop (the gauge-transformed shift without - D'(t)): exit 1, failed ['travel']
+[FIRED] --mutate=lemmaR-sign (builds the planted blocks with P = +(v0^2 + v2^2)): exit 1, failed ['lemmaR']
+[FIRED] --mutate=lemmaR-F (F with 2 h Z Y replaced by h Z Y): exit 1, failed ['lemmaR']
+[FIRED] --mutate=brho-Q (claims the rank-1 solution Q = h in place of Q = 0): exit 1, failed ['brho_solve']
+[FIRED] --mutate=brho-pert (replaces the planted solution by b = 2 ln rho + rho^2/10): exit 1, failed ['brho_points']
+[FIRED] --mutate=brho-bracket (computes the kernel commutator without the term K_2(K_1^mu)): exit 1, failed ['brho_closure']
+[FIRED] --mutate=planar-sign (expects lam = +P in place of -P): exit 1, failed ['planar_stage']
+[FIRED] --mutate=planar-constK (replaces the two planar shifts that must fail closure by b = x and b = 2 x): exit 1, failed ['planar_closure']
+[FIRED] --mutate=planar-ode (takes the comoving ODE x'' = -K0 x + alpha): exit 1, failed ['planar_thm']
+[FIRED] --mutate=add-quad (claims X'' in the radical in place of (X + R) X''): exit 1, failed ['additive_solve']
+[FIRED] --mutate=add-pert (replaces the planted solution by u = 3/2 x + 2 ln rho + x^2/10): exit 1, failed ['additive_points']
+[FIRED] --mutate=add-C0 (replaces the two members with C != 0 by their C = 0 member u = x): exit 1, failed ['additive_closure']
+[FIRED] --mutate=add-block (claims P = -X'' - X'^2 (u dropped from the product with X'')): exit 1, failed ['additive_block']
+[FIRED] --mutate=mult-W (takes W = 2 X R + v in the claimed F): exit 1, failed ['mult']
+[FIRED] --mutate=conical-Q (takes Q = -eta w in place of -eta w/2): exit 1, failed ['conical_entries']
+[FIRED] --mutate=conical-Eb (E_b with (eta^2 - 1) replaced by (eta^2 + 1)): exit 1, failed ['conical_solve']
+[FIRED] --mutate=bubble-sign (the claimed bracket with +z in place of -z): exit 1, failed ['bubble_F']
+[FIRED] --mutate=bubble-planted (replaces the block at the exact points by a planted rank-1 block): exit 1, failed ['bubble_points']
+[FIRED] --mutate=compat-s1 (draws the three points on s = 1, the planted family, where C = 0): exit 1, failed ['static_compat']
+[FIRED] --mutate=compat-Phi1 (builds Phi1 with the opposite sign of a^2): exit 1, failed ['static_system']
+[FIRED] --mutate=lin-claim (claims the first-order part of P as +u0 w_xx): exit 1, failed ['linearized']
+controls: all fired
