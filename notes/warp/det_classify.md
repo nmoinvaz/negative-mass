@@ -18,11 +18,11 @@ D = det R₃ vanishes on an open set for many shifts, so "classify" is done insi
 | planar b(t, x) (b_ρ ≡ 0) | **all of them**: D ≡ 0 | yes, e.g. b = −v f(x − vt) | traveling and \|u\| ≠ 1 everywhere: fails unless flat; other cases: see §2 | **proved**, **checked symbolically** |
 | b(ρ) of #65 and its linear-in-x deformation u = c x + g(ρ) | g = −ε ln(α J₀(√2 c ρ) + β Y₀(√2 c ρ)); c = 0 is #65 | no (linear or constant in x) | fails at 6 exact jets (c = 0, 2, 6) | **proved**, **checked symbolically** |
 | additive b = X(x) + R(ρ) | exactly planar, or u = c x + d + g(ρ) as above | only the planar ones | as above | **proved** (hand argument), **checked symbolically** |
-| multiplicative b = X(ξ) R(ρ) | reduced equation and one compatibility relation derived | **not decided** | not run | not classified; **numerical evidence** only, see §5 |
+| multiplicative b = X(ξ) R(ρ) | reduced equation and one compatibility relation derived | **not decided** | not run | not classified; the numerical search was withdrawn, see §5 |
 | conical b = F(x/ρ) | ODE of second order, cubic in F″ | **not decided**: "no limit at η → ±∞" is not established (§6) | not run | ODE **checked symbolically** |
 | static or traveling b(x, ρ), general | one second-order PDE, many local solutions | only inside the rows above | not run | not classified |
 
-So the answer to the issue's question is: **yes**, shifts localized in x with D = 0 on an open set exist, and they are the planar
+So the answer to the issue's question is: **yes**, shifts localized in x with D = 0 on an open set exist, and the ones found are the planar
 ones, which are constant in ρ and so are not bubbles. Within the additive-separable reduction no shift that depends on ρ is
 localized in x (**proved**). For the other reductions whether a shift with u_ρ ≢ 0 is localized in x is **not decided**.
 The traveling bubble of constant speed passes on no open set (planted truth, §8).
@@ -55,8 +55,8 @@ both. Smoothness: C² where D is evaluated, C³ in the planar theorem, C^∞ not
 ## 1. What a local solution looks like
 
 Solving D = 0 for Q gives a quadratic with the leading coefficient −h, so where h ≠ 0 the equation can be solved for
-b_ρρ in terms of the other jets. Cauchy–Kovalevskaya then gives analytic local solutions for analytic data on ρ = const, with two free
-functions of one variable, where the discriminant is positive. So the full set of local solutions is not a finite-dimensional
+b_ρρ in terms of the other jets. Cauchy–Kovalevskaya then gives analytic local solutions for analytic data b and b_ρ on ρ = const, two free
+functions of (t, x) (of x for a static shift), where h ≠ 0 and the discriminant is positive (the other jets in D have ρ-order at most 1). So the full set of local solutions is not a finite-dimensional
 family, and no classification without a reduction is attempted. (This paragraph is not a theorem about global solutions; it is
 why the reductions below are the only way to say anything exact.)
 
@@ -76,7 +76,7 @@ Every shift b(t, x) with compact support or limits in x is *x-localized* and has
 Reparametrizing p and q absorbs f and g, so the planar closure-passing metrics are exactly g₂ = −2 e^{2H(p)J(q)} dp dq, two
 arbitrary functions of one variable. Proof of the equivalence: k and m with R = ½(k ⊗ m + m ⊗ k) must be the two null covector
 fields, k = κ₁ dp, m = κ₂ dq, and e^χ k, e^{−χ} m are closed iff e^χ κ₁ = A(p) and e^{−χ} κ₂ = B(q), which needs κ₁κ₂ =
-−2R_pq = A(p)B(q). This is a local statement.
+2R_pq = A(p)B(q). This is a local statement.
 
 **Traveling planar shifts.** For a static planar shift u(ξ) (a traveling shift, §Setup) the null coordinates are p = t − A(ξ), q = t + B(ξ),
 A′ = 1/(1 − u), B′ = 1/(1 + u), with −(1 − u²) dp dq equal to the metric (`planar_traveling` (a), **checked symbolically**), and R_ab = (uu′)′ g_ab,
@@ -110,18 +110,20 @@ With g = −ε ln ψ this is ψ″ + ψ′/ρ + 2c²ψ = 0 (**proved**: R″ + R
 
     u = c x − ε ln(α J₀(√2 c ρ) + β Y₀(√2 c ρ)) + d,   and for c = 0   u = −ε ln(C₁ + C₂ ln ρ) + d,
 
-which is #65's b(ρ) family (its b = −ε ln|C − ε ln ρ| is the case C₂ = −ε C₁... up to constants). D = 0 at 36 points of 12 parameter sets, |D| < 1e-50 (60 digits).
+which is #65's b(ρ) family (its b = −ε ln|C − ε ln ρ| is C₁ = C, C₂ = −ε). D = 0 at 36 points of 6 parameter sets (c ∈ {½, 3/2, 0}, ε = ±1, 6 points each, random rational α, β), with the largest |D| 8.9e-117 at 130 working digits (`bessel`).
 
 R = a a − b b on the ODE (`bessel` (c), exact), with a = (g′ dρ + 2c θ¹)/√2, b = √(g′² + 2c²) ((1 + εu) dt + ε dx)/√2, θ¹ = dx + u dt, for ε = ±1.
-So the algebraic stage passes with λ = 0 on an open set, with the normal gradient a spacelike and the phantom gradient b timelike or null. (For c = 0, b is null as in #65.)
-**Closure fails** (`bessel` (d)): at exact jets (c, g′) = (2, 1), (6, 17), (0, ½) and both signs of ε the two 2-form equations ω ∧ k = −dk and ω ∧ m = dm of the ω construction have
-no common solution. The evaluation is at a point with the ODE substituted for g″ and g‴, so it shows failure at those points. For c ≠ 0 these jets are on the family, not a
-proof for every point; it is the same level of evidence as #65's closure check for b(ρ), which was proved by Frobenius. A Frobenius argument for c ≠ 0 was not made.
+So the algebraic stage passes with λ = 0 on an open set: the normal gradient a is spacelike and the phantom gradient b is null (ν = (1 + εu)dt + ε dx is null). **Closure fails** (`bessel` (d)):
+at the exact jets (c, g′(ρ₀)) = (2, 1), (6, 17), (0, ½), at ρ₀ = 5/7, x₀ = 1/3, and both signs of ε, the two 2-form equations ω ∧ k = −dk and ω ∧ m = dm of the ω construction have
+no common solution, with the ODE substituted for g″ and g‴ (**checked symbolically**, at a point). Any jet (g, g′) at ρ₀ lies on a member of the family, so closure fails at a point of a member for each of
+these parameter values. For c = 0 this agrees with #65's Frobenius argument (**proved** there). A Frobenius argument for c ≠ 0, which would give failure on every member, was not made.
 These shifts are linear in x for c ≠ 0 and independent of x for c = 0. Neither is localized in x.
 
 **`bessel_pert`: a failed criterion, kept.** The README asked, as a second part of (b), that for ψ + ρ²/10 the value |D| exceed 1e-3 at the same points, as a sensitivity test.
-It fails: TBD_BESSEL_PERT. The threshold was not changed, by the coordinator's ruling. Observation, not a criterion: the unperturbed |D| is below 1e-50 at all points, and the smallest perturbed value is
-TBD_BESSEL_WHERE; whether the small value comes from small ρ is stated in §10.
+It fails: the smallest |D| over the 36 perturbed points is 9.06e-6, at c = 0, ε = −1, ρ = 23/7. The threshold was not changed, by the coordinator's ruling, and the failure gates the exit code.
+Observation, not a criterion: the unperturbed |D| is below 1e-50 at all 36 points (largest 8.9e-117). The small values do not come from small ρ. They are at c = 0 at every ρ tested (1.6e-5 to 8.2e-5 for ε = +1,
+9e-6 to 3e-3 for ε = −1) and at the largest ρ for c = ½ (6.1e-5 at ρ = 23/7 for ε = +1), while the points at ρ = 3/7 give 2e-5 and 3e-3 (c = 0), 2e-3 and 8e-3 (c = ½) and 0.7 and 2.3 (c = 3/2). I expect, and did not test, that the value is small where
+h = ½ g′² is small, since D carries the factor h, and g′ = −ε ψ′/ψ is small for c = 0 and at large ρ.
 
 ## 4. Additive separable shifts b = X(x) + R(ρ)
 
@@ -146,15 +148,16 @@ Gröbner basis computation: the equations together with m t = 1 generate the uni
 
 ## 5. Multiplicative separable shifts b = X(ξ) R(ρ), u = X R + v
 
-The reduced equation is 8D/R′² = E(X, X′, X″, R, R′, S; v), a polynomial with 21 terms printed in the script (`multiplicative` (a), **checked symbolically**; v ≠ 0 is the traveling case, v = 0 the static one).
+The reduced equation is 8D/R′² = E(X, X′, X″, R, R′, S; v), a polynomial in the jets printed in the script (`multiplicative` (a), **checked symbolically**; v ≠ 0 is the traveling case, v = 0 the static one).
 For v = 0 and the log derivatives p₁ = X′/X, p₂ = (ln X)″, c₁ = R′/R, s₂ = R″/R + R′/(ρR): E = R²X⁴ [X²R² A + B] with T = 5p₁² + c₁² − 2p₂, A = T(9p₁² + 2c₁² − T), B = p₁²T − (s₂ + 3p₁²)² (`multiplicative` (b)).
 The subcases R′ ≡ 0 (planar) and X′ ≡ 0 (b(ρ) of #65) are recovered (`multiplicative` (c)). Eliminating the exponential factor e^{2ψ+2χ} = −B/A leaves two conditions, one that fixes ψ‴ and one that
-fixes (s₂)′, and their mutual compatibility gives *one* polynomial relation of degree TBD_GAMMA in (p₁, p₂, c₁, s₂, ρ), because the numerators of the two compatibility conditions are equal (`multiplicative` (d)). I did not finish the prolongation.
-**The multiplicative case is not classified.** TBD_SERIES
+fixes (s₂)′, and their mutual compatibility gives *one* polynomial relation of degree 17 in (p₁, p₂, c₁, s₂, ρ) (after removing the factors c₁, p₁ and the two factors of A), because the numerators of the two compatibility conditions are equal (`multiplicative` (d)). I did not finish the prolongation.
+**The multiplicative case is not classified.** A numerical formal-series search (README C8 (e)) was written and then withdrawn before any run of record (README A5): its converged starts were all of tiny amplitude, so it could not tell a solution from a small
+shift, also on the additive equation that has solutions. The scratch evidence is in the raw folder (`scratch_series_search.log`). A properly normalized search is a recommended task.
 
 ## 6. Conical shifts b = F(x/ρ)
 
-D = N(F, F′, F″; η)/(8ρ⁶) with η = x/ρ (`conical`, exact). N is cubic in F″ and printed in the script. The scale invariance (x, ρ) → s(x, ρ), t → s t of the metric is the only one besides translations, so F(x/ρ) is the natural similarity form.
+D = N(F, F′, F″; η)/(8ρ⁶) with η = x/ρ (`conical`, exact). N is cubic in F″ and printed in the script. The dilation (t, x, ρ) → s(t, x, ρ) is the only symmetry of D = 0 besides translations and Galilean boosts, so F(x/ρ) is the natural similarity form of a static shift.
 At fixed ρ the shift tends to limits as x → ±∞ iff F has limits as η → ±∞. The shift is singular at ρ = 0, so these would be open-set solutions only.
 
 **A failure on record.** In the README I wrote the degree-3 part of N in (F′, F″) as 2F w²(F²F″ − ηw), w = F′ + ηF″, and its lowest part with F, F′, F″ all small as −w²((η² + 1)(η² + 2)F′² + 2ηFw). Both are wrong. The formulas came from the script's printed N first, and my
@@ -170,11 +173,12 @@ With F, F′, F″ all small: Ŷ = −(ηF′² + F w/2) of degree 2, ĥ of degr
 
 **C9b (ii): limits at η → ∞, tested directly.** Substituting F = F_∞ + c η^{−k} (k ∈ {½, 1, 3/2, 2, 5/2, 3, 4, 5, 6}) or F_∞ + c e^{−κη} (κ ∈ {½, 1, 2}) with F_∞ ∈ {0, ⅓, 1, −1, 2} into N and reading the lowest order, `conical_limit` finds that
 no exponential is allowed and that no power is allowed except **k = 2 with c = −2F_∞ for F_∞ = ⅓, 1, −1, 2** (and none for F_∞ = 0). So leading order does **not** exclude F = F_∞(1 − 2/η²). The criterion "no case is open" fails, as README's C9b (ii) words it, and the failure gates the exit code.
-Observation, not a criterion: TBD_FORMAL. Logarithmic terms are not tested.
+Observation, not a criterion (printed by `conical_limit`): in F = F_∞ + a₂/η² + a₃/η³ + … the order η^{−8} of N gives a₂ = 0 or a₂ = −2F_∞, the next order gives a₃ = 0, and the third order after the leading one gives
+F_∞⁴(F_∞² + 7) = 0 with no unknown left, so for F_∞ ≠ 0 there is no pure power series on the a₂ = −2F_∞ branch. Logarithmic terms are not tested.
 The planted detections work (`conical_planted`): the same scan applied to F″ + 2F′/η finds the limit F_∞ + c/η at k = 1 for every F_∞ and not at k = 2, and applied to F″ + F′ it finds F_∞ + c e^{−η} at κ = 1 and not at κ = 2.
 
 **Verdict for the conical reduction: "no limit at η → ±∞" is not established; localization in x for conical shifts is not decided.** Evidence: leading order allows F = F_∞(1 − 2/η²) at k = 2 (**checked symbolically**); a pure power series in 1/η with a₂ = −2F_∞ fails at third order (an observation, **checked symbolically**);
-log terms are not tested. Anything I had written about localization in x that rested on the failed (b), (c) is open for this reduction. For F_∞ → 0 and for all exponential approaches the exclusion at leading order holds.
+log terms are not tested. Anything I had written about localization in x that rested on the failed (b), (c) is open for this reduction. For F_∞ = 0, for every other k tested and for all the exponential approaches tested, the exclusion at leading order holds.
 
 ## 7. The far field of a localized shift
 
@@ -183,19 +187,62 @@ For u = u_∞ + ε w(x, ρ) the ε⁰, ε¹, ε² coefficients of D vanish and t
 
 ## 8. Planted truth
 
-- #65's b(ρ) families are found with D = 0 (§3, c = 0, 12 parameter sets with ε = ±1, 6 points each of 36) and fail closure (6 exact jets).
+- #65's b(ρ) families are found with D = 0 (§3, c = 0 with ε = ±1, 6 points each) and fail closure (6 exact jets).
 - The bubble at constant speed passes on no open set (`bubble`): u = w(r), 16 r³D is a cubic in c² = cos²θ whose c⁰ and c⁶ coefficients equal the printed ones of [`two_scalars.md`](two_scalars.md), its coefficients and (2w − r w′, (w′ + r w″)²) generate the same ideal after inverting r w′
   (Gröbner bases, both inclusions), and 2w = r w′ with w′ + r w″ = 0 on an interval force w′ = 0 (differentiating the first gives w′ = r w″). This reuses #65's route with a re-derived D (not imported).
 - The planar closure criterion and the closure code are tested on three planted passes and three planted failures (§2).
-- The series search of §5 is tested on the additive equation, which has solutions.
+- The series search of §5 was to be tested on the additive equation; it was withdrawn (README A5).
 
 ## 9. Checks and controls
 
-TBD_TABLE
+15 checks, 13 pass and 2 fail (`bessel_pert`, `conical_limit`: criteria that failed on the real data and stay as written, §3 and §6); 19 controls, each fires on its target and on no other check
+(`det_classify_output.txt`; the 2 baseline failures are not counted as extra failures of a control; each control's own stdout is in the raw folder, `final_mut/`). The script exits 1 because of the two failed checks. Per check, in seconds:
+`d_block` 2, `travel` 0, `planar` 2, `planar_closure` 13, `planar_traveling` 0, `bessel` and `bessel_pert` 14, `additive` 0, `multiplicative` 3, `conical` 1, `conical_parts` 0, `conical_limit` 5, `conical_planted` 0, `farfield` 0, `bubble` 2; 43 s in all.
+
+| check | what it tests | control `--mutate=` | the control's change |
+|---|---|---|---|
+| `d_block` | block of R₃ for a generic b, P = a_x, Y = (b_xb_ρ − a_ρ)/2, det = D | `d-sign` | Y built as (b_xb_ρ + a_ρ)/2 |
+| `travel` | traveling = static with u = B + v; Galilean covariance | `travel-offset` | u = B, without + v |
+| `planar` | R₃ = diag(P, −P, 0), D = 0; 8 + 8 exact points | `planar-leak`, `planar-point` | + ρ²/10 in the symbolic check; + ρ²/10 in the 'form' points |
+| `planar_closure` | null-coordinate criterion, dω = Θ′/2, planted jet, bubble | `closure-deform`, `theta-factor`, `planted-bubble` | + pq²/10 in the planted passes; Θ′/4; the bubble replaced by the jet with Θ′(0) = 0 |
+| `planar_traveling` | null coordinates, R_ab = (uu′)′ g_ab, d_pd_q Λ(q − p) = −Λ″ | `pg-null` | A′ = 1/(1 + u) |
+| `bessel` | factorization of D, D = 0 at 36 points, R = aa − bb, no ω at 6 jets | `bessel-freq`, `bessel-closed` | J₀(cρ) in place of J₀(√2 cρ); the closed pair (dρ, dt + dx) |
+| `bessel_pert` | perturbed |D| > 1e-3 (**fails**) | none (its target already fails at baseline) | |
+| `additive` | D = hE, E = Σ f_ig_i, Wronskian, unit ideal of the elimination step, X″ = 0 reduction | `add-drop`, `add-quad` | X² for (X + R)²; the y² coefficient equation dropped |
+| `multiplicative` | the polynomial E, the log form, the subcases, equal numerators of the compatibility conditions | `mult-drop-v` | u = X R without + v |
+| `conical` | 8ρ⁶D = N | `conical-term` | coefficient 2 → 3 of F³F″³η² |
+| `conical_parts` | hand entries, corrected parts of degree 3 and 4 | `conical-hand` | the original wrong degree-3 part |
+| `conical_limit` | no limit at η → ∞ by a power or an exponential (**fails**) | `conical-limit` **dropped** (target already fails at baseline), README A3 | |
+| `conical_planted` | the same scan finds the limits of two planted equations | `conical-plant` | F″ + F′/η in place of F″ + 2F′/η |
+| `farfield` | the ε³ coefficient of D | `far-sign` | + u_∞ |
+| `bubble` | cubic in c², printed c⁰ and c⁶, ideal equality, ODE step | `bubble-w2`, `bubble-ode` | uu_xx dropped from P; rw″ = +w′ |
+
+From the repository root, in the environment of [`setup.md`](../../setup.md):
+
+    python3 notes/warp/det_classify.py --no-controls      # the 15 checks
+    python3 notes/warp/det_classify.py --mutate=NAME       # one control
+    python3 notes/warp/det_classify.py                     # the checks, then every control (about 15 min on a Raspberry Pi 5)
+
+Times are on a Raspberry Pi 5 (aarch64, 4 cores shared with other jobs), one process at nice 10; memory was sampled, not measured by `/usr/bin/time`: 73 MB resident at the start of the final run (systemd `MemoryPeak` 64 MB then).
+The withdrawn controls and checks: `mult_series` and `mult-series-add` (README C8 (e), A5) and `conical-limit` (A3). Failed and stopped runs are kept in the raw folder (`dev_*`, README amendments A1 to A5).
 
 ## 10. What the code proves, and what is assumed
 
-TBD_PROVES
+The code proves, as exact identities (sympy, rational or symbolic jets): the block of R₃ for a generic b against the coordinate Ricci tensor (`d_block`); the reductions of §Setup (`travel`); R₃ = diag(P, −P, 0) for planar shifts (`planar`);
+the null-coordinate form of the planar metric and R_ab = (uu′)′ g_ab (`planar_traveling`); the obstruction identity dω_{tξ} = ½Θ′ (`planar_closure`); the factorization of D for u = c x + g(ρ) and R = a a − b b on the ODE (`bessel`); the identity D = h·E and the expansion of E (`additive`),
+and the unit ideal of the elimination step by Gröbner bases (`additive`); the polynomial E for u = X R + v and the equal numerators of the compatibility conditions (`multiplicative`); the ODE N of the conical shifts, the hand entries, the corrected parts of degree 3 and 4, and the leading-order scan (`conical`, `conical_parts`, `conical_limit`);
+the far-field coefficient (`farfield`); the bubble's coefficients and the ideal equality (`bubble`). Exact outcomes at the sample points: `planar` (8 + 8 points, exact rationals), `planar_closure` (iii) (5 points), `bessel` (d) (6 jets, exact algebraic numbers).
+
+The 36 values of |D| in `bessel` (b) are **numerical evidence** at 130 working digits (not exact), as are the perturbed values.
+
+By hand: the lemma (#65, reviewed in #79); the closure criterion for planar shifts (uniqueness of the null factors k, m); Theorem T; Theorem A, steps (1) to (3) and (5) (linear algebra; step (4) uses the Gröbner result for the polynomial identity and a hand computation of the slope);
+the Bessel reduction of §3; the hand derivation of the conical parts (§6), which the script checks.
+
+Imported and trusted: `ricci` (used in `d_block`, `bessel` (c), `planar_closure`, `planar_traveling`), `ricci_at_point` and `two_scalar_form` (`planar`), `closure` and `dform` (`planar_closure`, `bessel` (d)), all from the code of #57 and #65, reviewed in #59 and #79. The checks that call them are not independent of #65.
+`closure` at a point (`bessel` (d)) evaluates ω at the point, so only the failure of the two 2-form equations is a sound conclusion there; the script marks any other outcome as not decided, and none occurred.
+Assumed: two real, minimally coupled scalars with a Lorentzian kinetic form and any potential (so λ = 0 by the lemma), G_ab = 8π T_ab, axisymmetric b of class C² (C³ in Theorem T), sympy 1.14.0.
+
+Not tested at all: closure on the conical family; the hypothesis |u| ≠ 1 of Theorem T beyond the cases named in §2; any non-polynomial asymptotic form at η → ±∞ in §6.
 
 ## 11. Lemmas for Lean (#135)
 
@@ -216,6 +263,10 @@ Statements only; `ℝ` throughout; D as in §Setup.
 
 Not classified here: the general static or traveling PDE D = 0; time-dependent shifts beyond planar b(t, x) and the traveling reduction; multiplicative separable shifts (§5); the conical reduction's behavior at η → ±∞ (§6); non-traveling planar shifts with closure (§2);
 traveling planar shifts that cross |u| = 1 (§2); closure on the conical family. Two scalars of one sign, three scalars and non-minimal coupling are as in [`two_scalars.md`](two_scalars.md).
+
+**For #158 (one-sign pairs), by hand, not in the script.** For a planar shift R₃ − λη₃ = diag(P + λ, −P − λ, −λ), which has rank 1 at λ = −P = K (the φ direction supplies the second square), so planar shifts pass the algebraic stage of
+[`same_sign_scalars.md`](same_sign_scalars.md) with λ = K and gradients along y and z. M = R − λg = K (dy² + dz²) is invariant along the (t, x) kernel only if K is constant, which is then dS₂ × ℝ² or AdS₂ × ℝ² (#78's P1, P2) in a
+Painlevé–Gullstrand chart; by the formulas of §2 such a shift has Θ′ = −2K ≠ 0, so the (1, 1) pair of this note fails closure on it, consistently. Whether #158 needs more than this is for that issue.
 
 Suggested replacement for the bullet "Shifts b(t, x, ρ) other than the bubble and b(ρ)": "Shifts b(t, x, ρ) other than the bubble and b(ρ): [`det_classify.md`](det_classify.md) (#80). D = 0 on an open set for every planar shift b(t, x) (*proved*), which can be localized in x but is constant in ρ.
 Traveling planar shifts with |u| ≠ 1 everywhere fail closure unless flat (*proved*). Within the additive-separable reduction every shift that depends on ρ and solves D = 0 is u = c x + d + g(ρ) with g from a Bessel equation, which is not localized in x and fails closure at the jets tested (*proved*, *checked symbolically*).
