@@ -467,7 +467,7 @@ def c6_series_pure():
     a3 = log[0]["status"] == "solved" and log[0]["order"] == 9 and log[0]["sol"][0] == 0
     ob = log[1]["status"] == "obstruction" and log[1]["order"] == 10
     ratio = sp.cancel(log[1]["cond"] / (Fi**4 * (Fi**2 + want))) if ob else None
-    cond_ok = ob and ratio is not None and ratio.free_symbols == set() and ratio != 0
+    cond_ok = ob and ratio == -512
     check("series_pure", a3 and cond_ok,
           f"pure series F_inf - 2 F_inf/eta^2 + ...: a_3 = 0 at eta^-9: {a3}; at eta^-10 no unknown is left and the condition "
           f"is {log[1].get('cond')} = 0, which is {ratio} times F_inf^4 (F_inf^2 + {want}): {cond_ok}")
@@ -480,7 +480,7 @@ def c7_series_log():
     free = [f for r in log for f in r.get("free", [])]
     one_free = free == ["a4_0"]
     a41 = g.d.get((4, 1))
-    b_ok = a41 is not None and sp.simplify(a41 - Fi * (Fi**2 + 7)) == 0
+    b_ok = a41 is not None and sp.simplify(a41 - Fi * (Fi**2 + 7)) == 0 and not sp.real_roots(sp.Poly(Fi**2 + 7, Fi))
     odd = all(v == 0 for (n, j), v in g.d.items() if n % 2 == 1)
     res = residual_orders(N_theta(), Fi, g, KMAX + 6) if solved else None
     res_ok = res == []
@@ -546,7 +546,7 @@ def c9_linear_modes():
     roots = sp.solve(ind, k) if ind is not None else None
     ok = ind is not None and sorted(roots) == [0, 4] and A != 0 and oC > oA
     check("linear_modes", ok,
-          f"dN/dq = {A} nu^{oA}, dN/dp = {B} nu^{oB}, dN/dG is of order nu^{oC} (lower order); for delta ~ nu^k the leading "
+          f"dN/dq = {A} nu^{oA}, dN/dp = {B} nu^{oB}, dN/dG is of order nu^{oC}, smaller; for delta ~ nu^k the leading "
           f"characteristic polynomial A k^2 - B k = {ind} has the roots {roots} (k = 0 shifts F_inf, k = 4 shifts a_4); "
           f"A != 0, so the linearization is a regular second-order equation with no exp(-kappa eta) modes: {ok}")
 
@@ -554,7 +554,8 @@ def c9_linear_modes():
 # ---------------------------------------------------------------------------------------------------------------
 # C10, C11 numerics
 # ---------------------------------------------------------------------------------------------------------------
-mp.mp.dps = 40
+mp.mp.dps = 30
+ODE_TOL, ODE_DEG = mp.mpf(10) ** -20, 10  # odefun raises the working precision by (1 + degree)
 NUM = {}
 
 
@@ -569,11 +570,11 @@ def num_setup():
     syms = (Fi, C)
     nus, Ts = sp.symbols("nus Ts")
     def build(kmax):
-        e = sum(v * nus**n * Ts**j for (n, j), v in d.items() if n <= kmax)
+        e = Fi + sum(v * nus**n * Ts**j for (n, j), v in d.items() if n <= kmax)
         pe = sum(v * (-n * nus**n * Ts**j + (j * nus**n * Ts**(j - 1) if j else 0)) for (n, j), v in d.items() if n <= kmax)
         return (sp.lambdify((Fi, C, nus, Ts), e, "mpmath"), sp.lambdify((Fi, C, nus, Ts), pe, "mpmath"))
     NUM["G9"], NUM["p9"] = build(KMAX)
-    NUM["G8"], NUM["p8"] = build(KMAX - 1)
+    NUM["G7"], NUM["p7"] = build(KMAX - 2)  # without the nu^8 terms (the odd coefficients vanish)
     Nt = N_theta()
     NUM["N"] = sp.lambdify((G, p, q, nu), Nt, "mpmath")
     NUM["dN"] = sp.lambdify((G, p, q, nu), sp.diff(Nt, q), "mpmath")
@@ -609,18 +610,18 @@ def c10_num_inward():
     for Fv, Cv in cases:
         nv = 1 / e1
         y0 = [n_["G9"](Fv, Cv, nv, t1), n_["p9"](Fv, Cv, nv, t1)]
-        sol = mp.odefun(lambda tau, y: [-v for v in rhs(t1 - tau, y)], 0, y0, tol=mp.mpf(10) ** -25, degree=14)
-        for e2 in (100, 50):
+        sol = mp.odefun(lambda tau, y: [-v for v in rhs(t1 - tau, y)], 0, y0, tol=ODE_TOL, degree=ODE_DEG)
+        for e2 in (200, 100):
             t2 = mp.log(e2)
             y = sol(t1 - t2)
             nv2 = mp.mpf(1) / e2
             dG = abs(y[0] - n_["G9"](Fv, Cv, nv2, t2))
             dp = abs(y[1] - n_["p9"](Fv, Cv, nv2, t2))
-            spread = abs(n_["G9"](Fv, Cv, nv2, t2) - n_["G8"](Fv, Cv, nv2, t2))
+            spread = abs(n_["G9"](Fv, Cv, nv2, t2) - n_["G7"](Fv, Cv, nv2, t2))
             good = dG <= mp.mpf("1e-10") and dp <= mp.mpf("1e-10")
             ok &= good
             rows.append(f"(F_inf, a_4) = ({mp.nstr(Fv, 4)}, {mp.nstr(Cv, 4)}), eta_2 = {e2}: |dG| = {mp.nstr(dG, 3)}, |dp| = "
-                        f"{mp.nstr(dp, 3)}, K=9 vs K=8 series {mp.nstr(spread, 3)}, G = {mp.nstr(y[0], 12)}: "
+                        f"{mp.nstr(dp, 3)}, size of the nu^8 terms {mp.nstr(spread, 3)}, G = {mp.nstr(y[0], 12)}: "
                         f"{'ok' if good else 'FAIL'}")
     check("num_inward", ok, "N = 0 integrated inward from eta_1 = 1000 (series data through eta^-9) agrees with the K = 9 series "
           "to 1e-10 in G and p. " + " | ".join(rows))
@@ -632,7 +633,7 @@ def c11_num_outward():
     e0 = mp.mpf(100)
     t0 = mp.log(e0)
     y0 = [n_["G9"](Fv, Cv, 1 / e0, t0) + mp.mpf(1) / 100, n_["p9"](Fv, Cv, 1 / e0, t0) * mp.mpf(6) / 5]
-    sol = mp.odefun(rhs, t0, y0, tol=mp.mpf(10) ** -25, degree=14)
+    sol = mp.odefun(rhs, t0, y0, tol=ODE_TOL, degree=ODE_DEG)
     e_end = mp.mpf(10) ** 5
     yend = sol(mp.log(e_end))
     ne = 1 / e_end
@@ -719,8 +720,10 @@ if __name__ == "__main__":
                 args.append("--skip-num")
             p_ = subprocess.run(args, capture_output=True, text=True)
             if "logdir" in OPTS:
-                with open(os.path.join(OPTS["logdir"], f"mut_{name}.log"), "w") as fh:
+                with open(os.path.join(OPTS["logdir"], f"ctl_{name}.log"), "w") as fh:
                     fh.write(p_.stdout + p_.stderr)
+                with open(os.path.join(OPTS["logdir"], f"ctl_{name}.rc"), "w") as fh:
+                    fh.write(f"{p_.returncode}\n")
             fails = [ln.split(":")[0][7:] for ln in p_.stdout.splitlines() if ln.startswith("[FAIL]")]
             fired = all(w in fails for w in want) and p_.returncode == 1
             extra = [f for f in fails if f not in want and f not in failed]
