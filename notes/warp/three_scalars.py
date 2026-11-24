@@ -52,7 +52,14 @@ MUTATIONS = {
     "d2-onshell": (["d2_closure_fails"], "puts the deformed warp factor on shell"),
     "alc-drop-w2": (["wall_identities", "wall_D", "wall_points"],
                     "drops the shift's square from g_tt in the wall (as in phantom_source.py)"),
-    "wall-flat-sub": (["wall_flat_points"], "replaces the wall's orbit-space block by a flat one"),
+    "wall-flat-sub": (["wall_flat_points", "wall_flat_explicit"], "replaces the wall's orbit-space block by a flat one"),
+    "p1-fiber": (["p1_closed"], "curves the fiber of the cone"),
+    "p1-euclid": (["p1_algebraic"], "gives the cone a Euclidean fiber, dt^2 in place of -dt^2"),
+    "p2-euclid": (["p2_algebraic"], "gives the cosh control a Euclidean fiber"),
+    "p1-lambda": (["p1_potential"], "adds L/10 to lam in the potential stage of the cone"),
+    "p2-sign": (["p2_residual"], "flips one scalar's kinetic sign in T of the cosh control"),
+    "deform-euclid": (["d1_algebraic", "d2_algebraic"], "gives D1 and D2 a Euclidean fiber"),
+    "acc-flat-sub": (["acc_flat_points"], "replaces the accelerating bubble's block by a flat one"),
     "lam-const": (["wall_lam_potential"], "takes d lam = 0 and L_K M = 0 at every lam != 0 root of the wall"),
     "lie-dk": (["wall_lam_potential"], "drops the d K terms of L_K M in the lam != 0 test, so that (L_K M)(K, .) != 0"),
     "acc-static": (["acc_const_limit"], "drops every t-derivative of v_s, x_s and f in the accelerating bubble's jets"),
@@ -60,7 +67,8 @@ MUTATIONS = {
 
 # the last section a control needs: its target checks are all in sections up to this one
 STOP_AT = {"planted3-sign": 1, "planted3-fail-sign": 1, "lemma3-weight": 2, "p1-sign": 3, "p2-lambda": 3,
-           "p2-fiber": 3, "d1-flat": 3, "d2-onshell": 3, "alc-drop-w2": 4, "wall-flat-sub": 5, "lam-const": 6,
+           "p2-fiber": 3, "d1-flat": 3, "d2-onshell": 3, "p1-fiber": 3, "p1-euclid": 3, "p2-euclid": 3,
+           "p1-lambda": 3, "p2-sign": 3, "deform-euclid": 3, "acc-flat-sub": 7, "alc-drop-w2": 4, "wall-flat-sub": 5, "lam-const": 6,
            "lie-dk": 6, "acc-static": 7}
 
 RESULTS = []
@@ -274,10 +282,10 @@ def warp(kind, onshell=True):
     return a, (-1, 1, 1), -3, sp.Integer(1)
 
 
-def planted_geometry(a, eps=0):
+def planted_geometry(a, eps=0, euclid=False):
     """g, Ricci and Einstein tensors in the sheared coordinates, from the diagonal old-coordinates metric."""
     f2 = Rr**2 * (1 + eps * Rr**2)
-    go = sp.diag(-a**2, a**2, a**2 * f2, 1).applyfunc(sp.cancel)
+    go = sp.diag(a**2 if euclid else -a**2, a**2, a**2 * f2, 1).applyfunc(sp.cancel)
     Ric = ps.ricci(go, XO, Dold, simp_r)
     gi = go.inv().applyfunc(simp_r)
     Rs = simp_r(sum(gi[i, j] * Ric[i, j] for i in range(4) for j in range(4)))
@@ -313,29 +321,27 @@ def planted_stages(tag, kind, eps, mut, onshell=True, fields=True):
     """The stages on the planted metric of the given kind, with a fiber curvature eps. Emits the checks `<tag>_*`."""
     a, s, lam0, kap = warp(kind, onshell)
     t0 = time.time()
-    g, Ric, G = planted_geometry(a, eps)
+    euclid = (mut == "p1-euclid" and tag == "p1") or (mut == "p2-euclid" and tag == "p2") or \
+        (mut == "deform-euclid" and tag in ("d1", "d2"))
+    g, Ric, G = planted_geometry(a, eps, euclid)
     Dfun = Dnew
     samp = samp_poly if kind == "P1" else samp_planted
-    res = []
+    # the planted root as a function of position: lam0 for the planted metrics, -3 a''/a for D2, with kernel d_l
+    lam_expr = simp_r(sp.Integer(lam0) if kind != "D2" else -3 * Dnew(Dnew(a.subs(Lo, L), 3), 3) / a.subs(Lo, L))
+    res, lam_at = [], []
     for _ in range(3):  # the algebraic stage at exact points
         p = samp()
         pr = lambda e: sp.Rational(sp.cancel(sp.sympify(e).subs(p)))
         res.append(form3(Ric.applyfunc(pr), g.applyfunc(pr)))
+        lam_at.append(pr(lam_expr))
     admiss = [[c for c in cands if c["rank"] == 3 and c["pats"]] for cands in res]
-    if not fields:
-        ok_alg = all(len(cc) >= 1 for cc in admiss)
-        detail = (f"admissible rank-3 roots at 3 exact points: {[[sp.N(c['lam'], 5) for c in cc] for cc in admiss]}, "
-                  f"inertia {[[c['sig'] for c in cc] for cc in admiss]}")
-    else:
-        ok_alg = all(any(c["lam"] == lam0 and c["sig"] in ((2, 1), (1, 2)) for c in cc) for cc in admiss)
-        detail = (f"lam = {lam0} is a real root with a rank-3 admissible form at 3 exact points, inertia "
-                  f"{sorted(set(c['sig'] for cc in admiss for c in cc if c['lam'] == lam0))}; admissible rank-3 roots "
-                  f"{sorted(set(float(sp.N(c['lam'], 4)) for cc in admiss for c in cc))}")
+    ok_alg = all(any(c["lam"] == l_ and c["sig"] in ((2, 1), (1, 2)) for c in cc) for cc, l_ in zip(admiss, lam_at))
+    detail = (f"lam = {[sp.N(x, 5) for x in lam_at]} is a real root with a rank-3 admissible form at 3 exact points, "
+              f"inertia {[[c['sig'] for c in cc if c['lam'] == l_] for cc, l_ in zip(admiss, lam_at)]}; admissible "
+              f"rank-3 roots {[[float(sp.N(c['lam'], 4)) for c in cc] for cc in admiss]}")
     check(f"{tag}_algebraic", ok_alg, detail + f" ({time.time() - t0:.0f} s)")
     if not ok_alg:
         return None
-    # the root as a function of position, verified as a root: the kernel of R - lam g is d_l
-    lam_expr = simp_r(sp.Integer(lam0) if kind != "D2" else -3 * Dnew(Dnew(a.subs(Lo, L), 3), 3) / a.subs(Lo, L))
     M = (Ric - lam_expr * g).applyfunc(simp_r)
     ok_root = simp_r(M.det()) == 0
     cl = closure3(M, Dfun, simp_r, lam_expr=lam_expr)
@@ -374,11 +380,11 @@ def planted_stages(tag, kind, eps, mut, onshell=True, fields=True):
           f"zero: {cl['flat']}{lam_detail} ({time.time() - t0:.0f} s)")
     if not ok_closed:
         return cl
-    pot_lam = lam_expr + (L / 10 if mut == "p2-lambda" and kind == "P2" else 0)
+    pot_lam = lam_expr + (L / 10 if (mut == "p2-lambda" and kind == "P2") or (mut == "p1-lambda" and kind == "P1") else 0)
     klam = simp_r(sum(cl["K"][k] * Dfun(pot_lam, k) for k in range(4)))
     check(f"{tag}_potential", klam == 0, f"K(lam) = {klam}, lam = {lam_expr}")
     sres = list(s)
-    if mut == "p1-sign" and kind == "P1":
+    if (mut == "p1-sign" and kind == "P1") or (mut == "p2-sign" and kind == "P2"):
         sres[0] = -sres[0]
     u = [sp.Matrix([sp.diff(p_, x) for x in XP]).applyfunc(lambda e: e.subs(Ee, sp.exp(L))) * sp.sqrt(8 * sp.pi)
          for p_ in phis]
@@ -613,7 +619,7 @@ def main():
     print("  P1: ds^2 = dl^2 + l^2 (-dt^2 + dR^2 + R^2 dTheta^2), phi = sqrt(2) (t, R cos Theta, R sin Theta) / sqrt(8 pi), "
           "signs (+,-,-), lam = 0")
     print("  P2: a = cosh(l)/sqrt(2), phi = (t, R cos Theta, R sin Theta) / sqrt(8 pi), signs (-,+,+), lam = -3")
-    planted_stages("p1", "P1", 0, mut)
+    planted_stages("p1", "P1", sp.Rational(1, 10) if mut == "p1-fiber" else 0, mut)
     planted_stages("p2", "P2", sp.Rational(1, 10) if mut == "p2-fiber" else 0, mut)
     print(f"  ({time.time() - t0:.0f} s)")
     print("\n== 3b. Deformed controls: D1 curves the fiber (R^2 -> R^2 (1 + R^2 / 10)), D2 puts a(l) off shell ==")
@@ -724,7 +730,7 @@ def main():
         wexp = vv * (1 - (1 - rr**2 / 4)**3)
         sub = {WJ[k]: sp.diff(wexp, rr, k) for k in range(3)}
         R3e = R3.subs(sub)
-        he = orbit_metric(R3e, wexp)
+        he = sp.diag(-1, 1, 1) if mut == "wall-flat-sub" else orbit_metric(R3e, wexp)
         for (cc, ss) in ((sp.Rational(3, 5), sp.Rational(4, 5)), (sp.Rational(5, 13), sp.Rational(12, 13)),
                          (sp.Rational(-4, 5), sp.Rational(3, 5))):
             for r0 in (sp.Rational(1), sp.Rational(3, 2)):
@@ -833,7 +839,7 @@ def main():
         vs = [sp.Rational(random.randint(1, 9), random.randint(2, 5)), rn(), rn(), rn()]
         xs = [0, rn(), rn(), rn()]
         fj = [rn() for _ in range(5)]
-        cl = closure3(block4(hacc), Dacc, sp.expand, pt=acc_pt(Xv, yv, Rv, vs, xs, fj))
+        cl = closure3(block4(sp.diag(-1, 1, 1) if mut == "acc-flat-sub" else hacc), Dacc, sp.expand, pt=acc_pt(Xv, yv, Rv, vs, xs, fj))
         ntot += 1
         nz += int(not cl["flat"])
     check("acc_flat_points", nz == ntot, f"random jets of v_s (v_s' != 0), x_s and f at {ntot} exact points of the "
