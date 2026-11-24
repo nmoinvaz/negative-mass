@@ -148,12 +148,12 @@ def T_of(beta, g):
 # ---------------------------------------------------------------------------------------------------------------------
 # the map x(rho), planted potentials
 # ---------------------------------------------------------------------------------------------------------------------
-def x_of_rho_end(g, L):
-    """x at rho = +L and -L from x_rho = e^{2 g atan x}, x(0) = 0 (A's own integration)."""
+def x_of_rho_end(g, L, lam=1.0):
+    """x at rho~ = +L and -L from x_rho~ = e^{2 g atan x}/lam, x(0) = 0 (A's own integration); rho~ = lam rho."""
     s = -1.0 if mut("xmap") else 1.0
     out = []
     for sg in (1.0, -1.0):
-        sol = solve_ivp(lambda r, y: [math.exp(s * 2 * g * math.atan(y[0]))], (0.0, sg * L), [0.0], method="DOP853",
+        sol = solve_ivp(lambda r, y: [math.exp(s * 2 * g * math.atan(y[0])) / lam], (0.0, sg * L), [0.0], method="DOP853",
                         rtol=1e-13, atol=1e-14)
         out.append(float(sol.y[0, -1]))
     return out[0], out[1]
@@ -201,53 +201,70 @@ def planted_W(ell, g):
 # ---------------------------------------------------------------------------------------------------------------------
 # method A: shooting in rho
 # ---------------------------------------------------------------------------------------------------------------------
-def A_match(beta, g, Wsc, L, xR, xL, rtol):
-    out = []
+def A_match(beta, g, Wsc, L, lam, xR, xL, rtol):
+    """normalized Wronskian of the right- and left-decaying solutions at rho~ = 0. beta is in the rescaled units rho~ = lam rho
+    (beta~ = beta/lam, W~ = W/lam^2). The unit vectors (chi, P) are renormalized every 2.5 in rho~ (the system is linear)."""
     s = -1.0 if mut("xmap") else 1.0
     gb = beta + (1.0 / (beta * L * L)) / (1.0 + 1.0 / (beta * L))
+    nseg = max(1, int(math.ceil(L / 2.5)))
+    vecs = []
+
+    def rhs(r, y):
+        return [y[1], (Wsc(y[2], g) / (lam * lam) + beta * beta) * y[0], math.exp(s * 2 * g * math.atan(y[2])) / lam]
+
     for sg, x0 in ((1.0, xR), (-1.0, xL)):
-        def rhs(r, y):
-            return [y[1], (Wsc(y[2], g) + beta * beta) * y[0], math.exp(s * 2 * g * math.atan(y[2]))]
+        y = [1.0, -sg * gb, x0]
+        edges = np.linspace(sg * L, 0.0, nseg + 1)
+        for lo, hi in zip(edges[:-1], edges[1:]):
+            sol = solve_ivp(rhs, (lo, hi), y, method="DOP853", rtol=rtol, atol=[1e-16, 1e-16, 1e-14])
+            y = [float(v) for v in sol.y[:, -1]]
+            h = math.hypot(y[0], y[1])
+            y[0] /= h
+            y[1] /= h
+        vecs.append((y[0], y[1]))
+    (cR, pR), (cL, pL) = vecs
+    return cR * pL - cL * pR
 
-        sol = solve_ivp(rhs, (sg * L, 0.0), [1.0, -sg * gb, x0], method="DOP853", rtol=rtol, atol=[1e-16, 1e-16, 1e-14])
-        out.append((sol.y[0, -1], sol.y[1, -1]))
-    (cR, pR), (cL, pL) = out
-    return (cR * pL - cL * pR) / math.sqrt((cR * cR + pR * pR) * (cL * cL + pL * pL))
+
+def beta_hi_of(g, Wsc):
+    grid = np.linspace(-60, 60, 2401)
+    return math.sqrt(-min(Wsc(float(v), g) for v in grid)) + 0.01
 
 
-def method_A(g, Wsc, L=30.0, rtol=1e-13, scan_n=40, beta_hi=None, beta_lo=0.05):
-    """all roots (descending) of the matching function in [beta_lo, beta_hi]; the first is the ground state."""
-    xR, xL = x_of_rho_end(g, L)
+def method_A(g, Wsc, L=30.0, rtol=1e-13, scan_n=40, beta_hi=None, beta_lo=0.05, lam=1.0):
+    """all roots (descending, in the original units of rho) of the matching function; the first is the ground state. The search
+    is done in beta~ = beta/lam over [beta_lo, beta_hi/lam]."""
+    xR, xL = x_of_rho_end(g, L, lam)
     if beta_hi is None:
-        grid = np.linspace(-60, 60, 2401)
-        beta_hi = math.sqrt(-min(Wsc(float(v), g) for v in grid)) + 0.01
-    bs = np.linspace(beta_lo, beta_hi, scan_n)
-    fs = [A_match(b, g, Wsc, L, xR, xL, 1e-9) for b in bs]
+        beta_hi = beta_hi_of(g, Wsc)
+    bs = np.linspace(beta_lo, beta_hi / lam, scan_n)
+    fs = [A_match(b, g, Wsc, L, lam, xR, xL, 1e-9) for b in bs]
     roots = []
     for i in range(scan_n - 1):
         if fs[i] == 0.0 or fs[i] * fs[i + 1] < 0:
-            roots.append(brentq(lambda b: A_match(b, g, Wsc, L, xR, xL, rtol), bs[i], bs[i + 1], xtol=1e-14, rtol=1e-14,
-                                maxiter=200))
+            roots.append(lam * brentq(lambda b: A_match(b, g, Wsc, L, lam, xR, xL, rtol), bs[i], bs[i + 1], xtol=1e-14,
+                                      rtol=1e-14, maxiter=200))
     return sorted(roots, reverse=True)
 
 
 # ---------------------------------------------------------------------------------------------------------------------
 # method B: finite differences in rho
 # ---------------------------------------------------------------------------------------------------------------------
-def method_B(g, Wvec, L=30.0, N=3000):
-    """(beta_0, number of negative eigenvalues, eigenvalues) of -d^2/drho^2 + W on [-L, L], Dirichlet, sixth order."""
+def method_B(g, Wvec, L=30.0, N=3000, lam=1.0):
+    """(beta_0, number of negative eigenvalues, eigenvalues) of -d^2/drho~^2 + W/lam^2 on [-L, L] in rho~ = lam rho, Dirichlet,
+    sixth order. beta_0 and the eigenvalues are returned in the original units (beta = lam beta~, E = lam^2 E~)."""
     h = 2.0 * L / N
     rho = h * (np.arange(N + 1) - N // 2)  # exact zero at the centre
     npos = rho[N // 2:]
     nneg = rho[:N // 2 + 1][::-1]
-    sp_ = solve_ivp(lambda r, y: [math.exp(2 * g * math.atan(y[0]))], (0.0, npos[-1]), [0.0], method="DOP853", rtol=1e-13,
+    sp_ = solve_ivp(lambda r, y: [math.exp(2 * g * math.atan(y[0])) / lam], (0.0, npos[-1]), [0.0], method="DOP853", rtol=1e-13,
                     atol=1e-14, t_eval=npos)
-    sn_ = solve_ivp(lambda r, y: [math.exp(2 * g * math.atan(y[0]))], (0.0, nneg[-1]), [0.0], method="DOP853", rtol=1e-13,
+    sn_ = solve_ivp(lambda r, y: [math.exp(2 * g * math.atan(y[0])) / lam], (0.0, nneg[-1]), [0.0], method="DOP853", rtol=1e-13,
                     atol=1e-14, t_eval=nneg)
     xs = np.concatenate([sn_.y[0][::-1][:-1], sp_.y[0]])
     xi = xs[1:-1]
     M = N - 1
-    Wi = Wvec(xi, g)
+    Wi = Wvec(xi, g) / (lam * lam)
     c0 = -2.7 if mut("matrix") else -49.0 / 18.0
     c1, c2, c3 = 3.0 / 2.0, -3.0 / 20.0, 1.0 / 90.0
     ab = np.zeros((4, M))
@@ -259,7 +276,7 @@ def method_B(g, Wvec, L=30.0, N=3000):
     ev = np.sort(ev)
     if len(ev) == 0:
         return float("nan"), 0, ev
-    return math.sqrt(-ev[0]), len(ev), ev
+    return lam * math.sqrt(-ev[0]), len(ev), ev * lam * lam
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -271,14 +288,14 @@ def odeC_rhs(x, C, Cp, beta, g, ns=cmath):
     return -2 * x / (1 + x * x) * Cp + beta * beta * ns.exp(-4 * g * ns.atan(x)) * C + k * (Cp - g * C / (1 + x * x)) / (x - g)
 
 
-def C_det(beta, g, L=25.0, rfrac=0.5, side=+1, rtol=1e-12):
+def C_det(beta, g, L=25.0, rfrac=0.5, side=+1, rtol=1e-12, lam=1.0):
     """(Re, |Im|) of the normalized determinant of (C, C') of the right- and left-decaying solutions at x_t - r, the right one
     continued on the upper (side=+1) or lower (side=-1) semicircle of radius r about the throat x_t = g."""
     xt = g
     r = rfrac * math.sqrt(1 + g * g)
     if mut("cpath"):
         r = 0.0
-    xR, xL = x_of_rho_end(g, L)
+    xR, xL = x_of_rho_end(g, L, lam)
 
     def real_rhs(x, y):
         return [y[1], odeC_rhs(x, y[0], y[1], beta, g, ns=math)]
@@ -296,21 +313,22 @@ def C_det(beta, g, L=25.0, rfrac=0.5, side=+1, rtol=1e-12):
                    atol=[1e-16, 1e-16])
     cR, pR = sA.y[0, -1], sA.y[1, -1]
     cL, pL = sL.y[0, -1], sL.y[1, -1]
-    det = (cR * pL - pR * cL) / (math.sqrt(abs(cR) ** 2 + abs(pR) ** 2) * math.sqrt(cL * cL + pL * pL))
+    nR, nL = math.hypot(abs(cR), abs(pR)), math.hypot(cL, pL)
+    det = (cR / nR) * (pL / nL) - (pR / nR) * (cL / nL)
     return det.real, abs(det.imag)
 
 
-def method_C(g, L=25.0, rfrac=0.5, side=+1, scan=(0.2, 4.0, 40), rtol=1e-12, centre=None):
+def method_C(g, L=25.0, rfrac=0.5, side=+1, scan=(0.2, 4.0, 60), rtol=1e-12, centre=None, lam=1.0):
     """roots (descending) of Re det over the scan; with centre, only the bracket centre*(1 +- 0.1)."""
     if centre is not None:
         bs = np.linspace(centre * 0.9, centre * 1.1, 5)
     else:
         bs = np.linspace(scan[0], scan[1], scan[2])
-    fs = [C_det(b, g, L, rfrac, side, rtol)[0] for b in bs]
+    fs = [C_det(b, g, L, rfrac, side, rtol, lam)[0] for b in bs]
     roots = []
     for i in range(len(bs) - 1):
         if fs[i] * fs[i + 1] < 0:
-            roots.append(brentq(lambda b: C_det(b, g, L, rfrac, side, rtol)[0], bs[i], bs[i + 1], xtol=1e-14, rtol=1e-14,
+            roots.append(brentq(lambda b: C_det(b, g, L, rfrac, side, rtol, lam)[0], bs[i], bs[i + 1], xtol=1e-14, rtol=1e-14,
                                 maxiter=200))
     return sorted(roots, reverse=True)
 
@@ -579,14 +597,21 @@ TABLE = {0.0: 0.846, 0.1: 0.841, 0.2: 0.826, 0.3: 0.805, 0.4: 0.782, 0.5: 0.758,
          0.9: 0.687, 1.0: 0.675, 1.2: 0.656, 1.4: 0.642, 1.6: 0.631, 1.8: 0.624, 2.0: 0.618}
 
 
+def lam_of(g):
+    """rho~ = lam rho, lam = e^{2 g atan g}: [GGS09a]'s beta-bar scaling (p. 9), which keeps beta~ = beta/lam and W~ = W/lam^2 of
+    order one at the throat for large g. Pure conditioning: T = 1/(sqrt(1+g^2) beta~)."""
+    return math.exp(2 * g * math.atan(g))
+
+
 def run_G(gammas, L, full):
     out = {}
     # ------- A and B at the control points
     ctrl = [g for g in (0.0, 0.5, 1.0) if g in gammas]
     for g in ctrl:
-        rootsA = method_A(g, lambda x, gg: W_A(x, gg), L=L)
+        lam = lam_of(g)
+        rootsA = method_A(g, W_A, L=L, lam=lam)
         bA = rootsA[0]
-        bB, nB, evB = method_B(g, lambda xs, gg: W_B_vec(xs, gg), L=L)
+        bB, nB, evB = method_B(g, W_B_vec, L=L, lam=lam)
         out[g] = {"A": bA, "B": bB}
         print(f"      gamma_1 = {g}: beta_A = {bA:.12f}, beta_B = {bB:.12f}, T_A = {T_of(bA, g):.9f}, T_B = {T_of(bB, g):.9f}",
               flush=True)
@@ -605,14 +630,16 @@ def run_G(gammas, L, full):
                                                    f"beta^2 = {bR * bR:.10f}, rel to A with W {rel(bA * bA, bR * bR):.1e}")
     # ------- method C
     for g in ctrl:
+        lam = lam_of(g)
+        bhi = beta_hi_of(g, W_A)
         try:
-            rp = method_C(g, side=+1)
-            rm = method_C(g, side=-1)
+            rp = method_C(g, side=+1, scan=(0.2, bhi, 60), lam=lam)
+            rm = method_C(g, side=-1, scan=(0.2, bhi, 60), lam=lam)
             bC = rp[0]
             bC2 = rm[0]
-            dets = [C_det(b, g, 25.0, 0.5, s)[1] for b in (0.8, 1.7) for s in (+1, -1)]
+            dets = [C_det(b, g, 25.0, 0.5, sd, 1e-12, lam)[1] for b in (0.8 * bC, 1.1 * bC) for sd in (+1, -1)]
             ok = rel(bC, out[g]["A"]) < 1e-6 and rel(bC, bC2) < 1e-9
-            report("G2", ok, f"gamma_1 = {g}: C beta = {bC:.12f} (upper) {bC2:.12f} (lower), roots in [0.2, 4]: "
+            report("G2", ok, f"gamma_1 = {g}: C beta = {bC:.12f} (upper) {bC2:.12f} (lower), roots in [0.2, {bhi:.2f}]: "
                              f"{[round(v, 6) for v in rp]}; rel to A {rel(bC, out[g]['A']):.2e}; max |Im det| {max(dets):.1e}")
             out[g]["C"] = bC
         except Exception as exc:  # noqa: BLE001
@@ -638,7 +665,7 @@ def run_G(gammas, L, full):
         worst = 0.0
         row = []
         for g, tv in TABLE.items():
-            b = out[g]["A"] if g in out and "A" in out[g] else method_A(g, lambda x, gg: W_A(x, gg), L=L)[0]
+            b = out[g]["A"] if g in out and "A" in out[g] else method_A(g, W_A, L=L, lam=lam_of(g))[0]
             T = T_of(b, g)
             row.append((g, T, tv))
             worst = max(worst, abs(T - tv))
@@ -647,11 +674,11 @@ def run_G(gammas, L, full):
         report("G5", worst <= 0.001, f"16 values of Table I, worst |T - printed| = {worst:.6f}")
     # ------- G7: counts
     for g in [v for v in (0.0, 0.5, 1.0, 2.0) if v in gammas]:
-        Wc = (lambda x, gg: W_A(x, gg) - 60.0 / math.cosh(x - 8.0) ** 2) if mut("count") else (lambda x, gg: W_A(x, gg))
-        Wcv = (lambda xs, gg: W_B_vec(xs, gg) - 60.0 / np.cosh(xs - 8.0) ** 2) if mut("count") else (lambda xs, gg: W_B_vec(xs, gg))
-        rootsA = method_A(g, Wc, L=L)
-        bB, nB, evB = method_B(g, Wcv, L=L)
-        nxt = evB[1] if len(evB) > 1 else float("nan")
+        lam = lam_of(g)
+        Wc = (lambda x, gg: W_A(x, gg) - 60.0 / math.cosh(x - 8.0) ** 2) if mut("count") else W_A
+        Wcv = (lambda xs, gg: W_B_vec(xs, gg) - 60.0 / np.cosh(xs - 8.0) ** 2) if mut("count") else W_B_vec
+        rootsA = method_A(g, Wc, L=L, lam=lam)
+        bB, nB, evB = method_B(g, Wcv, L=L, lam=lam)
         ok = len(rootsA) == 1 and nB == 1
         report("G7", ok, f"gamma_1 = {g}: A finds {len(rootsA)} root(s) in the scan, B has {nB} negative eigenvalue(s) "
                          f"(lowest {evB[0] if len(evB) else float('nan'):.6f}; the next is >= 0)")
@@ -660,18 +687,20 @@ def run_G(gammas, L, full):
 
 def run_D1(gammas, L):
     for g in [v for v in (0.0, 0.5) if v in gammas]:
-        base = method_A(g, lambda x, gg: W_A(x, gg), L=L)[0]
-        vA = [method_A(g, lambda x, gg: W_A(x, gg), L=L, rtol=1e-11)[0], method_A(g, lambda x, gg: W_A(x, gg), L=L + 10)[0]]
+        lam = lam_of(g)
+        base = method_A(g, W_A, L=L, lam=lam)[0]
+        vA = [method_A(g, W_A, L=L, lam=lam, rtol=1e-11)[0], method_A(g, W_A, L=L + 10, lam=lam)[0]]
         sA = max(rel(v, base) for v in vA)
-        bB = method_B(g, lambda xs, gg: W_B_vec(xs, gg), L=L)[0]
-        vB = [method_B(g, lambda xs, gg: W_B_vec(xs, gg), L=L, N=6000)[0], method_B(g, lambda xs, gg: W_B_vec(xs, gg), L=L + 10)[0]]
+        bB = method_B(g, W_B_vec, L=L, lam=lam)[0]
+        vB = [method_B(g, W_B_vec, L=L, N=6000, lam=lam)[0], method_B(g, W_B_vec, L=L + 10, lam=lam)[0]]
         sB = max(rel(v, bB) for v in vB)
         ok = sA < 1e-7 and sB < 1e-7
         sC = float("nan")
         if not mut("domain") and not mut("cpath"):
             try:
-                bC = method_C(g)[0]
-                vC = [method_C(g, rfrac=0.3, centre=bC)[0], method_C(g, L=30.0, rfrac=0.7, centre=bC)[0]]
+                bhi = beta_hi_of(g, W_A)
+                bC = method_C(g, scan=(0.2, bhi, 60), lam=lam)[0]
+                vC = [method_C(g, rfrac=0.3, centre=bC, lam=lam)[0], method_C(g, L=30.0, rfrac=0.7, centre=bC, lam=lam)[0]]
                 sC = max(rel(v, bC) for v in vC)
                 ok = ok and sC < 1e-7
             except Exception as exc:  # noqa: BLE001
