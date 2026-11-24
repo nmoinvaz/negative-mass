@@ -91,7 +91,7 @@ No step divides by **s** (S.1, D.3) or by **L − 2 = 2λ** (D.4). Compared with
   (its denominators are M, r, r − 2M). This note does not treat r_s itself (DG06's Lemma 1 is not re-derived). *Added by the coordinator:* `zerilli_gauge_rs.md` (#146) shows the static solutions satisfy the same
   condition ζ′(r_s) = c*ζ(r_s) as for s ≠ 0.
 - **M = 0.** The converse holds for every M (an identity). The forward direction at M = 0 is **not** shown here: the flow in (K, H) is singular, and a different elimination (using the second-order
-  equations) is needed. The coordinator's certificate `ind143.py` Y3 for l = 2 (M symbolic) has the denominator 3r²(2r+3M)² only, so the forward direction holds at M = 0 for l = 2 (the l = 3 certificate is at M = −1 only);
+  equations) is needed. *Added by the coordinator:* `zerilli_certificate.md` (#148) shows it for every l ≥ 2; the flow in (K, H) still divides by M. The coordinator's certificate `ind143.py` Y3 for l = 2 (M symbolic) has the denominator 3r²(2r+3M)² only, so the forward direction holds at M = 0 for l = 2 (the l = 3 certificate is at M = −1 only);
   for every l it is a recommended task of the closing comment of #145. The project's case is M < 0, where M ≠ 0.
 - **Assumed, not derived here** (as in #143): (i) Regge–Wheeler gauge is attainable and keeps full generality for l ≥ 2 (the checks show gauge invariance of the equations, PL.G; they do not
   construct ξ; #146 constructs it, and at s = 0 the solve closes algebraically with no residual freedom, `zerilli_gauge_rs.md`); (ii) m = 0 loses no generality; (iii) the sign of M is arbitrary in the derivation; (iv) boundary conditions

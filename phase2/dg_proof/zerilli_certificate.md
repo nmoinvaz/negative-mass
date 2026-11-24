@@ -151,13 +151,38 @@ Not Lean; statements only. LC1 to LC3 are identities in the rational function fi
 
 ## 8. What RESULTS.md and the three notes should now say
 
-- RESULTS.md §4.6, #145 bullet, last sentence ("For every l, a certificate free of M and s is #148."): replace by "For every l ≥ 2 it is `zerilli_certificate.md` (#148): ψ,ₓₓ − (V + s²)ψ with ψ from (9) is an exact combination of five radial equations and their first r-derivatives, with coefficients in Q(r, M, s, L) whose denominators are L, r and (L−2)r + 6M only; so the forward direction holds at s = 0 and at M = 0."
-- RESULTS.md §4.6, #143 bullet ("The reduction divides by s, r − 2M and λr + 3M"): add "the forward direction itself needs no division by s or r − 2M (#148)". Caveat on scope: the forward direction holds at s = 0 and at M = 0 (#148); the converse is an identity in M (#145); (3)∘(9) = id at M = 0 is not shown.
-- `zerilli_derivation.md` (#143) §4: the row "E.2 solve" and the bullet on s ("The static case s = 0 is not covered") keep their meaning for the reduction; add that the forward direction at s = 0 for every l is #148.
-- `zerilli_static.md` (#145) §4, bullet "M = 0": replace "The forward direction at M = 0 is not shown here" with "It is shown for every l ≥ 2 in `zerilli_certificate.md` (#148); the flow in (K, H) still divides by M".
-- `zerilli_gauge_rs.md` (#146): no change. Its assumption (v) is about the e^{st} flow at M = 0 and s = 0, which this note does not use.
+The closing comment of #148 proposed these edits; all are applied. RESULTS.md §4.6 has a #148 bullet and the #143 bullet
+points to it, §6's caveat names the forward direction, and the file table has a row. `zerilli_derivation.md` §4's E.2
+row and `zerilli_static.md` §4's M = 0 bullet point here. `zerilli_gauge_rs.md` is unchanged.
 
 ## 9. Sources
 
 - DG06 gr-qc/0604021 (TeX read in #143, #146): (2) ansatz, (6) V, (9) ψ_Z. The V of the issue is the V of #143's derived form (`zerilli_derivation.md` §1).
 - #143, #145, #146 notes and `negative-mass-raw` `I143-mac`, `I145-mac` READMEs (read); `ind143.py`, `ind145.py`, `ind146.py` not opened. #143's library imported unchanged.
+
+## Coordinator's review
+
+Raw `I148-mac` (negative-mass-raw). Mac, nice 10, at most 2 processes.
+
+| step | result |
+|---|---|
+| scope | the five files the issue names, nothing else |
+| rerun `zerilli_certificate.py` | exit 0, 16 PASS; output equal to rpi5's apart from timings |
+| rerun the controls | 17 of 18 on target, the same `drop_traceless` miss (E.den, not E.cert); rows equal to rpi5's apart from timings |
+| re-solve | the certificate at symbolic L, checked with the coordinator's operator (R2 below) |
+| independent check `ind148.py` | run 1 exits 0 in 4 s; all 5 mutations fire on target |
+
+`ind148.py` reuses the coordinator's Lichnerowicz operator from `I143-mac/ind143.py` with P abstract, Legendre's equation
+and L symbolic. It shares no code with this note's scripts or #143's library, and reads #148's printed equations and
+coefficients from the output as data.
+
+| id | what | run 1 |
+|---|---|---|
+| R0 | planted: abstract P at L = 6, 12 equals explicit P_2, P_3 (all 10 components); odd Regge–Wheeler vanishes with L symbolic | pass |
+| R1 | #148's tt, tr, rr, tx, rx are constant multiples of the coordinator's forms; trace and traceless lie in the span of the angular forms | pass |
+| R2 | the 7-coefficient certificate holds exactly, jet by jet; denominators L, r, (L − 2)r + 6M only | pass |
+
+So the forward direction for every l ≥ 2, at s = 0 and at M = 0 included, is confirmed with a second operator. No number
+of #148 disagrees. Recommended task 1 (M = 0 static inverses) is declined: the project's case is M < 0, and M = 0 is
+flat space. It is recorded under §6 as not shown. Task 2 is row 20 of #135. Task 3 (which equations a denominator-free
+certificate needs) is declined: no claim of the project depends on minimality, and §5 records the observations made.

@@ -23,6 +23,7 @@ Scripts are in this directory. Each `X.py` writes `X_output.txt`.
 | `compare_brackets.py` | #139: compares that csv with #104's `sweep_brackets.csv` for overlap at every l (`compare_brackets_output.txt`) |
 | `zerilli_derivation.py` | #143: V from the linearized Einstein equations, M symbolic, s ≠ 0 (§4.2, §4.6; note `zerilli_derivation.md`; controls in `zerilli_derivation_controls.py`) |
 | `zerilli_static.py` | #145: the same at s = 0, the equation (Z) uses (§4.2, §4.6; note `zerilli_static.md`; controls in `zerilli_static_controls.py`) |
+| `zerilli_certificate.py` | #148: the forward direction for every l as one exact certificate (§4.6; note `zerilli_certificate.md`; controls in `zerilli_certificate_controls.py`) |
 | `zerilli_gauge_rs.py` | #146: Regge–Wheeler gauge attained for l ≥ 2, and the condition at r_s (§4.6; note `zerilli_gauge_rs.md`; controls in `zerilli_gauge_rs_controls.py`) |
 | `large_l_proof.py` | Theorem L (§4.4): explicit constants for the limits ρ_*, ρ_neg |
 | `monotone_proof.py` | Theorem M (§4.5): monotone approach for every l ≥ 500 |
@@ -337,7 +338,8 @@ bracket (Ψ_{l+1} > 0 at the lower end of r_neg(l)'s) for l = 500..502.
 - **Derivation of V (#143).** `zerilli_derivation.md` (sympy, exact) derives V from the linearized vacuum Einstein
   equations for symbolic M: Regge–Wheeler gauge, e^{st} with s ≠ 0, l ≥ 2. The even-parity system is a two-dimensional
   first-order flow, and DG06's master variable (9) turns it into −ψ,ₓₓ + Vψ = −s²ψ; at M = −1 this V equals §4.2's
-  exactly. The reduction divides by s, r − 2M and λr + 3M, so it holds on r ≠ r_s; the gauge and r_s are the #146 bullet.
+  exactly. The reduction divides by s, r − 2M and λr + 3M, so it holds on r ≠ r_s; the gauge and r_s are the #146 bullet. The forward direction alone
+  needs no division by s or r − 2M (#148).
   The coordinator's check (raw `I143-mac`, its own Lichnerowicz operator) confirms the converse for l = 2, 3, 4 and the
   forward direction by an exact certificate for l = 2 (M symbolic) and l = 3 (M = −1). Still not checked: Zerilli's own
   papers (publisher HTTP 403, *(unverified)*) and DG's intertwining equivalence.
@@ -346,7 +348,13 @@ bracket (Ψ_{l+1} > 0 at the lower end of r_neg(l)'s) for l = 500..502.
   ψ,ₓₓ = Vψ with V exactly as above. The converse, DG06 (3)–(4) at s = 0, is an identity in M, and (9) and (3) are
   inverse. The coordinator's check (raw `I145-mac`, a second operator) confirms the static equations, the flow and both
   directions for l = 2, 3, 4. Its forward certificates have no M or s in their denominators, so for those l the forward
-  direction also holds at M = 0. For every l, a certificate free of M and s is #148.
+  direction also holds at M = 0.
+- **The forward direction for every l (#148).** `zerilli_certificate.md` writes ψ,ₓₓ − (V + s²)ψ, with ψ from (9), as
+  an exact combination of the traceless, tr, tt, rr and angular-trace equations and the first r-derivatives of tt and
+  rr, with seven coefficients in Q(r, M, s, L). Their denominators are L, r² and ((L − 2)r + 6M)² only, so the forward
+  direction holds for every l ≥ 2 at s = 0 and at M = 0 too, without #143's division by s or #145's by M. The
+  coordinator's check (raw `I148-mac`: its own operator with P abstract and L symbolic) finds #148's seven equations
+  to be consequences of δR = 0 and the certificate exact. Not shown: (3)∘(9) = id at M = 0.
 - **Gauge and r_s (#146).** `zerilli_gauge_rs.md` shows Regge–Wheeler gauge is attained for l ≥ 2, with e^{st} and at
   s = 0. The gauge vector is algebraic and unique (c = −r²G/2, b = −f(J_r − r²G′/2), a = (J_t − sr²G/2)/f), divides
   only by r and r − 2M, and leaves no residual freedom; at l = 1 one function stays free. #143's flow is regular at
@@ -399,4 +407,5 @@ bracket (Ψ_{l+1} > 0 at the lower end of r_neg(l)'s) for l = 500..502.
   intertwining equivalence, which is not re-proved here. V itself agrees with four published forms of the Zerilli
   potential at M = −1 (#142), and it is derived from the linearized Einstein equations on r ≠ r_s, for s ≠ 0 in
   `zerilli_derivation.md` (#143) and for s = 0 in `zerilli_static.md` (#145, M ≠ 0), in Regge–Wheeler gauge, which is
-  attained for l ≥ 2 (#146). The flow is regular at r_s itself (#146).
+  attained for l ≥ 2 (#146). The flow is regular at r_s itself (#146). The forward direction, from a solution to ψ,
+  holds for every l ≥ 2 at s = 0 and at M = 0 as well (#148).
