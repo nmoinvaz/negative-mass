@@ -1,0 +1,16 @@
+[PASS] compare_coeffs: c^0, c^2, c^4, c^6 printed in two_scalars_output.txt section 4 minus mine: {0: 0, 2: 0, 4: 0, 6: 0}
+[PASS] compare_odd: c^1, c^3, c^5 printed in section 6 minus mine: ['0', '0', '0']
+[PASS] compare_points: my D at the sample points of two_scalars.py (tanh sigma = 8 R = 1, bump R_b = 2, and the random-jet draws of seed 57): D != 0 at the 16 off-axis points and D = 0 on the 7 on-axis points, as its section 5 reports (16 and 7 in all, with 4 random-jet points reproduced by draw order)
+[PASS] compare_eigs: eigenvalues -R_00 +- i R_01 on the axis from my table at x - v t = 1: 16 +- 4i (v = 1) and 4 +- 2i (v = 1/2), as printed
+[PASS] compare_eb: printed lambda = 2 kappa^2 and b_l equal mine, sqrt(1 - beta^2)/(sqrt2 kappa r^2), at 6 random (kappa, beta, l)
+[PASS] compare_brho: printed R_3 for b(rho) equals [[-h, Q, 0], [Q, -h, 0], [0, 0, h]] with h = b'^2/2, Q = -(b'' + b'/rho)/2
+
+checks: 6 passed, 0 failed []
+
+== Controls: each mutation must make its target checks fail ==
+[FIRED] --mutate=coef-sign (my c^2 coefficient with the opposite sign): exit 1, failed ['compare_coeffs']
+[FIRED] --mutate=odd-sign (my c^3 coefficient with the opposite sign): exit 1, failed ['compare_odd']
+[FIRED] --mutate=axis-eps (the on-axis points evaluated at c = 99/100): exit 1, failed ['compare_points']
+[FIRED] --mutate=eig-v2 (v doubled in my eigenvalues): exit 1, failed ['compare_eigs']
+[FIRED] --mutate=eb-kappa (kappa doubled in my b_l): exit 1, failed ['compare_eb']
+controls: all fired

@@ -1,0 +1,24 @@
+review_two_scalars_omega.py, issue #79. sympy 1.14.0, mpmath 1.3.0, python 3.14.10. mutation: none
+
+== 1. Planted pairs: k = e^{-chi} (d phi1 + d phi2), m = e^{chi} (d phi1 - d phi2), omega = d chi ==
+[PASS] omega_planted: 8 of 8 planted pairs: the candidate equals d chi at the point for two different (K, M), solves omega ^ k = -dk and omega ^ m = dm, and d omega = 0 for the symbolic field on 2 of them; failing samples []
+
+== 2. Pairs with k ^ dk != 0: no chi exists, the candidate must violate omega ^ k = -dk ==
+[PASS] omega_planted_fail: 4 of 4 planted non-closable pairs: the candidate violates omega ^ k = -dk or omega ^ m = dm
+
+== 3. Ellis-Bronnikov with a normal scalar: my coordinate Ricci, lambda = 2 kappa^2, omega = 0 and omega = -d chi ==
+[PASS] omega_eb: R_ab = lambda g_ab + a a - b b with lambda = 2*kappa**2 (symbolic in l, kappa, beta; identically zero residual: True); phi2' = C/r^2 against the arctan formula at 6 random points (80 digits): True; G - 8 pi T = 0: True; omega = 0 for the closed split: True; omega = -d chi after the boost chi = t l + l^2/3 (50 digits at 3 points, kappa = 3/5, beta = 1/3): True
+
+== 4. b(rho) with b'' + b'/rho = eps b'^2: the split, the candidate omega and the Frobenius obstruction ==
+[PASS] omega_brho: for b'' + b'/rho = eps b'^2, eps = +-1, exact in (b, b', rho): R_ab = h ((d rho)^2 - ((1 + eps b) dt + eps dx)^2); for both signs of sqrt(h) the candidate omega violates omega ^ k = -dk or omega ^ m = dm; (nu ^ d nu)_{t x rho} = b' (eps, split, violation, Frobenius): [(1, True, [True, True], True), (-1, True, [True, True], True)]
+
+checks: 4 passed, 0 failed []. 485 s
+
+== Controls: each mutation must make its target checks fail ==
+[FIRED] --mutate=omega-sign (omega = -dm(K, M) k + i_K dk): exit 1, failed ['omega_planted', 'omega_eb']
+[FIRED] --mutate=omega-swap (omega = dm(K, M) m + i_M dm): exit 1, failed ['omega_planted', 'omega_eb']
+[FIRED] --mutate=omega-nodk (omega = dm(K, M) k): exit 1, failed ['omega_planted', 'omega_eb']
+[FIRED] --mutate=plant-open (planted k replaced by a non-closed form, recovery expected): exit 1, failed ['omega_planted']
+[FIRED] --mutate=eb-lambda (lambda = 2 kappa^2 replaced by kappa^2): exit 1, failed ['omega_eb']
+[FIRED] --mutate=brho-eps (split with theta^0 - eps theta^1): exit 1, failed ['omega_brho']
+controls: all fired
