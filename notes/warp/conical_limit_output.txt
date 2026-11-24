@@ -1,0 +1,54 @@
+[PASS] n_build: N = 8 rho^6 D from the jets of F(x/rho) equals det_classify.conical_N(): True; lowest part in (F', F'') is the printed degree-3 part 2 F w^2((F^2 - 1)F'' - eta w), lower parts 0: True; lowest part in (F, F', F'') is the printed degree-4 part -w^2((eta^2+1)(eta^2+2)F'^2 + 2F(eta w + F'')), lower parts 0: True; D from direct derivatives of F(x/rho) = (x/rho)^3 - 2x/rho + 1/3 equals N/(8 rho^6) at 5 exact points: True
+  (1 s)
+[PASS] theta_parity: N(G, p, q, nu) has the powers nu^[0, 2, 4] and equals A0 + nu^2 A1 + nu^4 A2 with A0 = p^2 (p^2 - q)(p^2 + q), A1 = G^2 p^2 q^2 + 4G p^4 q - 2G q^3 + 4p^6 - 3p^2 q^2, A2 = 2(G(q - p) + p^2)(G^2 q^2 + 2G p^3 + 2G p^2 q + 2p^4 - q^2): True; N(F0, -F1, F2; -eta) = N(F0, F1, F2; eta), so F(-eta) solves N = 0 when F(eta) does: True
+  (0 s)
+[PASS] planted: P1 F'' + 2F'/eta = 0 gives exactly F_inf + c1/eta through eta^-8, no other coefficient: True; P2 the terms c (ln eta)^j, j = 1..3, are rejected: True; P3 F'' + F'/eta = 0 accepts one c ln eta (a0_1 free, j = 2, 3 zero): True, and c1/eta is then an obstruction (c1 = 0): True; P4 q + 4p = 8 nu^4: the pure series fails at nu^4: True, with logs g = (a4_0 - 2 T) nu^4 and nothing else through nu^8: True
+  (0 s)
+[PASS] polygon: F_inf != 0: points (d, m) [(3, 2), (3, 4), (4, 0), (4, 2), (4, 4), (5, 2), (5, 4), (6, 0), (6, 2), (6, 4)], edges [('2', {-2*Fi: 1, 0: 3})], vertex balances with k > 0 []; F_inf = 0: points (d, m) [(4, 0), (4, 2), (4, 4), (6, 0), (6, 2), (6, 4)], edges [], vertex balances with k > 0 []
+  (0 s)
+[PASS] a2_zero: g = nu^k (u0 + u1 T + u2 T^2) from g = 0, k = 1..8, F_inf symbolic nonzero and F_inf = 0: only u = 0 except (F_inf != 0, k = 2) with u = (-2 F_inf, 0, 0); F_inf != 0, k = 1: lowest order nu^4, nonzero solutions []; F_inf != 0, k = 2: lowest order nu^8, nonzero solutions [(-2*Fi, 0, 0)]; F_inf != 0, k = 3: lowest order nu^11, nonzero solutions []; F_inf = 0, k = 1: lowest order nu^4, nonzero solutions []; F_inf = 0, k = 4: lowest order nu^16, nonzero solutions []
+  (14 s)
+[PASS] series_pure: pure series F_inf - 2 F_inf/eta^2 + ...: a_3 = 0 at eta^-9: True; at eta^-10 no unknown is left and the condition is -512*Fi**4*(Fi**2 + 7) = 0, which is -512 times F_inf^4 (F_inf^2 + 7): True
+  (0 s)
+[PASS] series_log: with logs every stage k = 3..9 is solvable: True; free parameters ['a4_0']; a_{4,1} = F_inf (F_inf^2 + 7), nonzero for every real F_inf != 0: True; odd coefficients zero: True; the series through eta^-9 leaves N nonzero only from nu^16 on (orders <= nu^15 that do not vanish: [])
+  series (g = F - F_inf, nu = 1/eta, T = ln eta):
+    nu^2 T^0: -2*Fi
+    nu^4 T^0: a4_0
+    nu^4 T^1: Fi*(Fi**2 + 7)
+    nu^6 T^0: -(107*Fi**6 - 134*Fi**4 + 48*Fi**3*a4_0 + 587*Fi**2 - 384*Fi*a4_0 + 144*a4_0**2)/(216*Fi)
+    nu^6 T^1: -2*(Fi**2 + 7)*(Fi**3 - 8*Fi + 6*a4_0)/9
+    nu^6 T^2: -2*Fi*(Fi**2 + 7)**2/3
+    nu^8 T^0: -(1647*Fi**9 - 5893*Fi**7 - 8424*Fi**6*a4_0 - 17651*Fi**5 + 21072*Fi**4*a4_0 - 4320*Fi**3*a4_0**2 + 78089*Fi**3 - 104424*Fi**2*a4_0 + 41184*Fi*a4_0**2 - 6912*a4_0**3)/(13824*Fi**2)
+    nu^8 T^1: (Fi**2 + 7)*(351*Fi**6 - 878*Fi**4 + 360*Fi**3*a4_0 + 4351*Fi**2 - 3432*Fi*a4_0 + 864*a4_0**2)/(576*Fi)
+    nu^8 T^2: (Fi**2 + 7)**2*(15*Fi**3 - 143*Fi + 72*a4_0)/48
+    nu^8 T^3: Fi*(Fi**2 + 7)**3/2
+  (13 s)
+[PASS] reduced_system: N/nu^8 = -s^2 (r^2 + 2 G s) + O(nu^2) with s = r' - 2r: True; at (r, s, nu^2) = (4G, -8G, 0) the equation holds and its derivative in s is -128*G**3 != 0, so r' = 2r + s(G, r, nu^2) is analytic there: True; the line r = 4G, nu^2 = 0 is a line of equilibria of (G' = nu^2 r, r', (nu^2)' = -2 nu^2) with eigenvalues {-2: 2, 0: 1} (d s/d r = -4, d s/d G = 8): True
+  (0 s)
+[PASS] linear_modes: dN/dq = -128*Fi**3 nu^6, dN/dp = -512*Fi**3 nu^6, dN/dG is of order nu^8, smaller; for delta ~ nu^k the leading characteristic polynomial A k^2 - B k = -128*Fi**3*k*(k - 4) has the roots [0, 4] (k = 0 shifts F_inf, k = 4 shifts a_4); A != 0, so the linearization is a regular second-order equation with no exp(-kappa eta) modes: True
+  (1 s)
+[PASS] num_inward: N = 0 integrated inward from eta_1 = 1000 (series data through eta^-9) agrees with the K = 9 series to 1e-10 in G and p. (F_inf, a_4) = (1.0, 0.0), eta_2 = 200: |dG| = 1.02e-17, |dp| = 9.44e-17, size of the nu^8 terms 1.31e-14, G = 0.999950026474: ok | (F_inf, a_4) = (1.0, 0.0), eta_2 = 100: |dG| = 5.8e-15, |dp| = 5.26e-14, size of the nu^8 terms 2.16e-12, G = 0.999800367566: ok | (F_inf, a_4) = (-1.0, 2.0), eta_2 = 200: |dG| = 8.36e-18, |dp| = 7.66e-17, size of the nu^8 terms 1.13e-14, G = -0.999950025226: ok | (F_inf, a_4) = (-1.0, 2.0), eta_2 = 100: |dG| = 4.57e-15, |dp| = 4.12e-14, size of the nu^8 terms 1.81e-12, G = -0.999800347658: ok | (F_inf, a_4) = (0.3333, -1.0), eta_2 = 200: |dG| = 1.42e-18, |dp| = 1.3e-17, size of the nu^8 terms 2.29e-15, G = 0.333316673887: ok | (F_inf, a_4) = (0.3333, -1.0), eta_2 = 100: |dG| = 7.53e-16, |dp| = 6.74e-15, size of the nu^8 terms 3.59e-13, G = 0.333266765646: ok | (F_inf, a_4) = (2.0, 0.5), eta_2 = 200: |dG| = 8.33e-17, |dp| = 7.69e-16, size of the nu^8 terms 7.42e-14, G = 1.99990007309: ok | (F_inf, a_4) = (2.0, 0.5), eta_2 = 100: |dG| = 4.81e-14, |dp| = 4.38e-13, size of the nu^8 terms 1.24e-11, G = 1.99960101477: ok
+  (48 s)
+[PASS] num_outward: from eta_0 = 100 with G + 1/100 and p x 6/5 of the (1, 0) series, N = 0 integrated outward to eta = 1e5 tends to the limit F_inf' = 1.01001988377 (a_4' = -1604.5235), different from 1: True; at eta = 1e3, 1e4 it equals the K = 9 series with these two parameters to 1e-10: eta = 1000: |dG| = 2.23e-18, |dp| = 2.25e-17: ok | eta = 10000: |dG| = 1.45e-24, |dp| = 5.79e-24: ok
+  (34 s)
+[PASS] farfield_scale: u = U + eps w, w = -2 U rho^2/x^2: the eps^0, eps^1, eps^2 coefficients of D vanish: True; the eps^3 coefficient is section 7's -U Z^2[(1 - U^2) w_xx + Delta_perp w]: True; at fixed rho and x -> infinity (x^8/rho^2) times the eps^3, eps^4, eps^5, eps^6 coefficients tends to 128*U**4, -128*U**4, 0, 0, so the eps^3 and eps^4 terms are of the same order in 1/x and cancel at that order: True
+  (0 s)
+
+checks: 12 passed, 0 failed []. 113 s
+
+== Controls: each mutation must make its target checks fail, and no others ==
+[FIRED] --mutate=d-sign (builds Y as u u_xrho/2 - u_x u_rho): exit 1, failed ['n_build']
+[FIRED] --mutate=parity-break (replaces one term eta^3 of the typed N by eta^2): exit 1, failed ['theta_parity']
+[FIRED] --mutate=theta-sub (takes F'' = (q + p)/eta^2 in the substitution): exit 1, failed ['theta_parity']
+[FIRED] --mutate=plant-wrong (P1 uses F'' + F'/eta): exit 1, failed ['planted']
+[FIRED] --mutate=plant-res (P4 with the forcing 0 in place of 8 nu^4): exit 1, failed ['planted']
+[FIRED] --mutate=poly-drop (drops the term -p^2 q^2 from N before the polygon): exit 1, failed ['polygon']
+[FIRED] --mutate=poly0-edge (adds nu^4 q^2 to N (an edge at k = 2 appears for F_inf = 0)): exit 1, failed ['polygon']
+[FIRED] --mutate=a2zero-edge (replaces -2 G nu^2 q^3 by -2 G nu^3 q^3 (an edge at k = 3)): exit 1, failed ['a2_zero']
+[FIRED] --mutate=series-8 (expects F_inf^4 (F_inf^2 + 8)): exit 1, failed ['series_pure']
+[FIRED] --mutate=series-nolog (uses jmax = 0 in the log run): exit 1, failed ['series_log']
+[FIRED] --mutate=reduced-eig (expects the eigenvalue +2 in place of -2 for r): exit 1, failed ['reduced_system']
+[FIRED] --mutate=modes-a2 (the series with a_2 = -(11/5) F_inf in place of -2 F_inf): exit 1, failed ['linear_modes']
+[FIRED] --mutate=num-nolog (the series without the term a_{4,1}, as data and as comparison): exit 1, failed ['num_inward', 'num_outward']
+[FIRED] --mutate=ff-drop (drops the eps^4 coefficient): exit 1, failed ['farfield_scale']
+controls: all fired on target only
