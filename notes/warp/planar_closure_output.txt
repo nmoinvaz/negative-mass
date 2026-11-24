@@ -1,0 +1,71 @@
+  sigma = sin(p) e^(q/2)/3: R = a a - b b True, closure True, C = 0 True, expected True
+  sigma = p q + p^2 q: R = a a - b b True, closure True, C = 0 True, expected True
+  sigma = (p + q)^2/5: R = a a - b b True, closure True, C = 0 True, expected True
+  sigma = p^2 q/2 + p q^2/2: R = a a - b b True, closure False, C = 0 False, expected False
+  sigma = e^(p q): R = a a - b b True, closure False, C = 0 False, expected False
+  sigma = p^3 q^2/6 + p q: R = a a - b b True, closure False, C = 0 False, expected False
+[PASS] crit_null: (i) R = K g, K = 2 sigma_pq e^(-2 sigma), R_pq = -2 sigma_pq: True; box f = -2 e^(-2 sigma) f_pq: True; d_p d_q ln|R_pq| = -e^(2 sigma)/2 C: True; (ii) 3 planted passes and 3 planted failures agree with `closure` and with C = 0: True
+  (3 s)
+  (iv) u1 = (1 - 1/(1 + xi^2)^2)/2: K != 0 and C != 0 at the 5 points: True
+  (iv) u2 = 1/(2(1 + xi^2)): K != 0 and C != 0 at the 5 points: True
+  (iv) u3 = 1/(3(1 + xi^2)^2): K != 0 and C != 0 at the 5 points: False; K = 0 or C = 0 at xi = 1/3
+  (iv-b) u1 = (1 - 1/(1 + xi^2)^2)/2: points taken ['1/5', '1/3', '1/2', '2/3', '1'], C != 0 at all: True
+  (iv-b) u2 = 1/(2(1 + xi^2)): points taken ['1/5', '1/3', '1/2', '2/3', '1'], C != 0 at all: True
+  (iv-b) u3 = 1/(3(1 + xi^2)^2): points taken ['1/5', '1/2', '2/3', '1', '3/2'], C != 0 at all: True
+  planted jets c0..c8 = ['1/3', '1/2', '1/5', '2/7', '785237/1489600', '2305586117/792467200', '17578614477761/4215925504000', '4883040383638843/44857447362560', '-602823069212981242459/2983020249610240000']
+[PASS] crit_pg: (i) R = K g, K = -(b_tx - b b_xx - b_x^2): True; (ii) C[u] = Theta' for an undefined static u: True; (iii) the obstruction of `closure` is Theta'/2: True; (v) a formal solution of C = 0 with C = O(xi^5): True, the same with c6 + 1/7 has a nonzero xi^2 coefficient: True
+[FAIL] crit_pg_iv: (iv) 3 subluminal traveling bubbles have K != 0 and C != 0 at 5 fixed exact points each: False (as worded in the README; coordinator ruling A keeps it as worded)
+[PASS] crit_pg_ivb: (iv-b) the same 3 profiles at the first 5 points of a fixed list where K != 0 is verified exactly: C != 0 at all 15 points: True
+  (28 s)
+  (i) leading order: gamma = [(-alpha - u1)/u1]
+  (ii) u_s = 3/(1 + xi^2): |u_s| = 1 at xi = +-sqrt2, K(+-sqrt2) != 0: True; alpha = 2*sqrt(2)/3 and -2*sqrt(2)/3
+  (iii) component (-oo, -sqrt(2)) of u_s: sign s' = 1, s diverges with sign -1 at the left end and 1 at the right, Phi -> 0 at both: True, K != 0 inside: True -> excludes Phi = C e^(alpha s), C != 0: True
+  (iii) component (-sqrt(2), sqrt(2)) of u_s: sign s' = -1, s diverges with sign 1 at the left end and -1 at the right, Phi -> 0 at both: True, K != 0 inside: True -> excludes Phi = C e^(alpha s), C != 0: True
+  (iii) component (sqrt(2), oo) of u_s: sign s' = 1, s diverges with sign -1 at the left end and 1 at the right, Phi -> 0 at both: True, K != 0 inside: True -> excludes Phi = C e^(alpha s), C != 0: True
+  (iii) component (-oo, oo) of u2: sign s' = 1, s diverges with sign -1 at the left end and 1 at the right, Phi -> 0 at both: True, K != 0 inside: True -> excludes Phi = C e^(alpha s), C != 0: True
+[PASS] horizon: (i) Theta' = 0 at a simple crossing: K ~ |eta|^gamma, gamma = -(alpha + u1)/u1: True; alpha = -u u'(xi0) when K(xi0) != 0: True; (ii) u_s has opposite alpha at its two horizons: True; (iii) on each of 4 components s runs from one infinity to the other and Phi -> 0 at both ends, so Phi = C e^(alpha s) forces C = 0: True
+  (0 s)
+[PASS] jacobi: (i) R = (A_tt/A) g for -dt^2 + A^2 ds^2: True; (ii) x = X(t, s), X_s = A, b = -X_t: n = d_t|_s True, metric = PG form True, b_x = -A_t/A True, n(b_x) - b_x^2 = -A_tt/A True, a = -X_tt and -a_x = A_tt/A True; (iii) integral of K dx = a_- - a_+ = -beta' for b = gamma + beta (1 + tanh x)/2: True
+  (3 s)
+[PASS] exterior: (i) R_pq = -2 H'J', K e^(2 sigma) = 2 H'J': True; Gamma^p_pp = 2 sigma_p, Gamma^q_qq = 2 sigma_q, no others: True; (ii) A = p_s/p_tau and A_tau tau = K A from the geodesic equations: True; (iii) S(1 - x) + S(x) = 1, S' = positive sum, S(0+) = 0, S(1-) = 1, integral of K dA = 2*h*j = 2*h*j: True
+  (0 s)
+  (F*G)(2t) = 4*tt**3*(96*tt**4 - 336*tt**3 + 420*tt**2 - 210*tt + 35)/105 on [0, 1/2] and -4*(tt - 1)**3*(96*tt**4 - 48*tt**3 - 12*tt**2 - 6*tt + 5)/105 on [1/2, 1]
+[PASS] limits_necessary: (i) C[eps b1] = (-d_t^2 + d_x^2) ln|K1| + O(eps), K1 = -b1_tx, exactly: True; (ii) integral of F(t - x) G(t + x) dx = (F*G)(2t) on both pieces: True; (iii) F*G is not identically zero for the sign-changing compactly supported F = G = u(1 - u)(1 - 2u): True
+  (1 s)
+  [E main run: 601 geodesics, t in [0, 10], 6 s]
+[PASS] E_norm: max |2 e^(2 sigma) p' q' - 1| = 2.38e-11 over 11 stored times and 601 geodesics (<= 1e-8)
+  (6 s)
+[PASS] E_focus: min A = 1.000000000000 over all s and times (>= 1 - 1e-12); max_s A(10, s) = 109.595 (>= 2)
+  (0 s)
+[PASS] E_ext: max |A - 1| = 0.00e+00 for s in +-3..+-6 (<= 1e-12); A' != 0 (> 1e-9) only for s in [-0.60, 0.60] at t = 10
+  (0 s)
+[FAIL] E_hol: L'(t) = 0.00000, 0.98740, 4.49018, 4.50000, 4.50000, 4.50000 at t = 0, 2, .., 10; |L'(10) - 4.5| = 4.79e-06 (<= 1e-5); nondecreasing: True; b in [-4.50000, -0.0e+00] within [-2 h j, 0]: False
+  (0 s)
+[PASS] E_hol_b: L'(10) = 4.500000000002, L'(10) - 2 h j = +2.12e-12; error estimates (spreads over two resolutions, not enclosures) e_q = 2.4e-12 (panels 48 vs 96), e_t = 3.6e-13 (dt 0.001 vs 0.0005), each <= 1e-11; |L'(10) - 4.5| <= 1e-5: True; nondecreasing: True; b at the panel boundaries in [-4.500000000002, 0.0e+00] within [-2 h j - 1e-9, 1e-9]: True (47 s)
+  (47 s)
+[PASS] E_geo: A from the Jacobi ODE vs A = e^sigma sqrt(-2 p_s q_s) from neighboring geodesics (spacing 0.0001) at 5 s values and tau = 2, 3, 5, 8: max relative difference 3.04e-07 (<= 1e-5)
+  (2 s)
+
+checks: 12 passed, 2 failed ['crit_pg_iv', 'E_hol']. 91 s
+
+== Controls: each mutation must make its target check fail ==
+[FIRED] --mutate=crit-factor (expects d_p d_q ln|R_pq| = -e^(2 sigma) C): exit 1, failed ['crit_null', 'crit_pg_iv', 'E_hol']
+[FIRED] --mutate=crit-deform (adds p q^2/10 to sigma of the planted passes): exit 1, failed ['crit_null', 'crit_pg_iv', 'E_hol']
+[FIRED] --mutate=crit-static-g (g^xx = 1 + u^2 in box): exit 1, failed ['crit_pg', 'crit_pg_iv', 'E_hol']
+[FIRED] --mutate=crit-plant-jet (the planted pass jets get c6 + 1/7): exit 1, failed ['crit_pg', 'crit_pg_iv', 'E_hol']
+[FIRED] --mutate=ivb-flat (u1 replaced by the constant 1/3 (K = 0 at every point of the list)): exit 1, failed ['crit_pg_iv', 'crit_pg_ivb', 'E_hol']
+[FIRED] --mutate=hor-orient (s' = 2/(1 + u^2)): exit 1, failed ['crit_pg_iv', 'horizon', 'E_hol']
+[FIRED] --mutate=hor-alpha (alpha = +u u'(xi0)): exit 1, failed ['crit_pg_iv', 'horizon', 'E_hol']
+[FIRED] --mutate=jacobi-sign (K = -A_tt/A): exit 1, failed ['crit_pg_iv', 'jacobi', 'E_hol']
+[FIRED] --mutate=jacobi-theta (b_x = +A_t/A): exit 1, failed ['crit_pg_iv', 'jacobi', 'E_hol']
+[FIRED] --mutate=ext-hol (expects integral of K dA = h j): exit 1, failed ['crit_pg_iv', 'exterior', 'E_hol']
+[FIRED] --mutate=ext-null (Gamma^p_pp = sigma_p): exit 1, failed ['crit_pg_iv', 'exterior', 'E_hol']
+[FIRED] --mutate=ext-geo (p'' = -sigma_p p'^2 in the derivation of A_tt = K A): exit 1, failed ['crit_pg_iv', 'exterior', 'E_hol']
+[FIRED] --mutate=lin-order (K1 = -b1_tt): exit 1, failed ['crit_pg_iv', 'limits_necessary', 'E_hol']
+[FIRED] --mutate=conv-zero (G = 0 in the convolution): exit 1, failed ['crit_pg_iv', 'limits_necessary', 'E_hol']
+[FIRED+EXTRA] --mutate=E-norm (initial velocity (1, 1)): exit 1, failed ['crit_pg_iv', 'E_norm', 'E_hol', 'E_hol_b', 'E_geo']
+[FIRED+EXTRA] --mutate=E-kneg (A'' = -K A): exit 1, failed ['crit_pg_iv', 'E_focus', 'E_hol', 'E_hol_b', 'E_geo']
+[SILENT] --mutate=E-ext (support of J' is [0, 2]): exit 1, failed ['crit_pg_iv']
+[FIRED] --mutate=E-hol (expects L'(10) = h j): exit 1, failed ['crit_pg_iv', 'E_hol', 'E_hol_b']
+[FIRED] --mutate=E-geo (finite-difference spacing 0.5): exit 1, failed ['crit_pg_iv', 'E_hol', 'E_geo']
+controls: SOME DID NOT FIRE ON TARGET
