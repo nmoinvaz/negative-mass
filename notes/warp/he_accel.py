@@ -512,65 +512,76 @@ def main():
           f"R_1rho = B - Tr/2, R_rhorho = q/2 [{ok_cl}], and R(v, u, al) - R(v, v, 0) = DeltaTx (E_00 - E_11) - DeltaTr/2 "
           f"(E_1rho + E_rho1) [{ok_tl}]")
 
-    # 5. Structure of D.
-    print("\n== 5. D: the shifted cubic, the weights and the powers of v, al and u ==")
-    j1, jr, q, h, p, lam = sp.symbols("j1 jr q h p lam")
-    Dc = sp.expand(D_shift(j1, jr, q, h, p))
-    print(f"  D = 18 c2 c1 c0 - 4 c2^3 c0 + c2^2 c1^2 - 4 c1^3 - 27 c0^2, c2 = q - p, c1 = j1^2 + jr^2 - p q - h^2, "
-          f"c0 = 2 j1 jr h - p j1^2 + q jr^2: {len(Dc.args)} terms, degree {sp.degree(Dc, p)} in p")
-    R00, R01, R0r, Rrr, R1r = sp.symbols("R00 R01 R0r Rrr R1r")
-    Rg = sp.Matrix([[R00, R01, R0r, 0], [R01, -R00 - 2 * Rrr, R1r, 0], [R0r, R1r, Rrr, 0], [0, 0, 0, 0]])
-    ok_shift = sp.expand(D_direct(Rg) - Dc.subs(dict(zip((j1, jr, q, h, p), shifted_args(Rg))), simultaneous=True)) == 0
-    wl = sp.Symbol("wl", positive=True)
-    Dw = sp.expand(Dc.subs({j1: wl * j1, jr: wl * jr, q: wl**2 * q, h: wl**2 * h, p: wl**2 * p}, simultaneous=True))
-    wpow = sorted(m[0] for m in sp.Poly(Dw, wl).monoms())
-    ok_w6 = sp.expand(Dw.coeff(wl, 6) + 4 * (j1**2 + jr**2)**3) == 0
-    ok_w12 = sp.expand(Dw.coeff(wl, 12) - (p * q + h**2)**2 * ((p + q)**2 + 4 * h**2)) == 0
-    for k in (8, 10):
-        print(f"  weight {k} part: {sp.factor(Dw.coeff(wl, k))}")
-    alw = 1 if MUT == "weight-break" else 2
-    ok_bw = True
-    for a in range(3):
-        for b in range(a, 3):
-            w_ = 1 if (a == 0 and b > 0) else 2
-            sc = reduce_s(blk[a, b].subs({V_: wl * V_, AL: wl**alw * AL, U: wl * U}, simultaneous=True))
-            ok_bw &= sp.expand(sc - wl**w_ * blk[a, b]) == 0
-    jb, jrb, qb, hb, pb = shifted_args(blk)
-    Db = D_shift(jb, jrb, qb, hb, pb)
-    num, den = sp.fraction(sp.together(Db))
-    Pn = sp.Poly(sp.expand(num), V_, AL, U)
-    mons = Pn.monoms()
-    wts = sorted({i + k + 2 * j for (i, j, k) in mons})
-    print(f"  monomials v^i al^j u^k of 64 r^6 D, as (i, j, k): {sorted(mons)}")
-    print(f"  D of the bubble: 64 r^6 D is a polynomial in (v, al, u) with {len(mons)} monomials, denominator {den}; "
-          f"weights i + k + 2j of v^i al^j u^k: {wts}; highest power of v {max(m[0] for m in mons)}, of al "
-          f"{max(m[1] for m in mons)}, of u {max(m[2] for m in mons)}")
-    ok_pw = (wts == [6, 8, 10, 12] and all(k <= i for (i, j, k) in mons) and max(m[1] for m in mons) == 6)
-    lead = reduce_s(Pn.coeff_monomial(AL**6) / den)
-    D0 = reduce_s(sp.together(Db.subs(V_, 0)))
-    ok_lead = (sp.cancel(sp.together(lead - F1**6 * (1 - C_**2)**2 / 16)) == 0
-               and sp.cancel(sp.together(D0 - AL**6 * F1**6 * (1 - C_**2)**2 / 16)) == 0)
-    print(f"  al^6 coefficient of D = f'^6 s^4/16 [{ok_lead}]; D at v = 0 equals al^6 f'^6 s^4/16 [{ok_lead}]")
-    print(f"  D at (al, u) = (0, v) equals he_type's D, entry by entry, in `const_limit`")
-    check("structure", ok_shift and wpow == [6, 8, 10, 12] and ok_w6 and ok_w12 and ok_bw and ok_pw and ok_lead,
-          f"D of the block = D(j1, jr, q, h, p) of the shifted cubic [{ok_shift}]; the scaling (v, u, al) -> (w v, w u, w^2 al) "
-          f"gives R_0i w, the other entries w^2 [{ok_bw}] and D the weights {wpow} with w^6 part -4|j|^6 [{ok_w6}] and w^12 "
-          f"part (pq + h^2)^2 ((p + q)^2 + 4h^2) [{ok_w12}]; the bubble's D has weights {wts}, u only with v, al^6 at most "
-          f"[{ok_pw}]; al^6 coefficient f'^6 s^4/16 and D(v = 0) = al^6 f'^6 s^4/16 [{ok_lead}]")
+    # 5, 5b. Structure and parity of D. They apply to a block that satisfies (I1) and (I2). A block that does not
+    # (the lapse and g_tt controls) fails both at once: the shifted form of D is not defined for it.
+    i2_ok = all(e == 0 for e in dec)
+    if not i2_ok:
+        print("\n== 5. D: the shifted cubic, the weights and the powers of v, al and u ==")
+        check("structure", False, "(I1) or (I2) fails for this block (see `decouple`), so the shifted form of D "
+              "does not apply; not computed")
+        check("parity", False, "as `structure`; not computed")
+        cf = ClosedFormAccel(blk)
+    else:
+        # 5. Structure of D.
+        print("\n== 5. D: the shifted cubic, the weights and the powers of v, al and u ==")
+        j1, jr, q, h, p, lam = sp.symbols("j1 jr q h p lam")
+        Dc = sp.expand(D_shift(j1, jr, q, h, p))
+        print(f"  D = 18 c2 c1 c0 - 4 c2^3 c0 + c2^2 c1^2 - 4 c1^3 - 27 c0^2, c2 = q - p, c1 = j1^2 + jr^2 - p q - h^2, "
+              f"c0 = 2 j1 jr h - p j1^2 + q jr^2: {len(Dc.args)} terms, degree {sp.degree(Dc, p)} in p")
+        R00, R01, R0r, Rrr, R1r = sp.symbols("R00 R01 R0r Rrr R1r")
+        Rg = sp.Matrix([[R00, R01, R0r, 0], [R01, -R00 - 2 * Rrr, R1r, 0], [R0r, R1r, Rrr, 0], [0, 0, 0, 0]])
+        ok_shift = sp.expand(D_direct(Rg) - Dc.subs(dict(zip((j1, jr, q, h, p), shifted_args(Rg))), simultaneous=True)) == 0
+        wl = sp.Symbol("wl", positive=True)
+        Dw = sp.expand(Dc.subs({j1: wl * j1, jr: wl * jr, q: wl**2 * q, h: wl**2 * h, p: wl**2 * p}, simultaneous=True))
+        wpow = sorted(m[0] for m in sp.Poly(Dw, wl).monoms())
+        ok_w6 = sp.expand(Dw.coeff(wl, 6) + 4 * (j1**2 + jr**2)**3) == 0
+        ok_w12 = sp.expand(Dw.coeff(wl, 12) - (p * q + h**2)**2 * ((p + q)**2 + 4 * h**2)) == 0
+        for k in (8, 10):
+            print(f"  weight {k} part: {sp.factor(Dw.coeff(wl, k))}")
+        alw = 1 if MUT == "weight-break" else 2
+        ok_bw = True
+        for a in range(3):
+            for b in range(a, 3):
+                w_ = 1 if (a == 0 and b > 0) else 2
+                sc = reduce_s(blk[a, b].subs({V_: wl * V_, AL: wl**alw * AL, U: wl * U}, simultaneous=True))
+                ok_bw &= sp.expand(sc - wl**w_ * blk[a, b]) == 0
+        jb, jrb, qb, hb, pb = shifted_args(blk)
+        Db = D_shift(jb, jrb, qb, hb, pb)
+        num, den = sp.fraction(sp.together(Db))
+        Pn = sp.Poly(sp.expand(num), V_, AL, U)
+        mons = Pn.monoms()
+        wts = sorted({i + k + 2 * j for (i, j, k) in mons})
+        print(f"  monomials v^i al^j u^k of 64 r^6 D, as (i, j, k): {sorted(mons)}")
+        print(f"  D of the bubble: 64 r^6 D is a polynomial in (v, al, u) with {len(mons)} monomials, denominator {den}; "
+              f"weights i + k + 2j of v^i al^j u^k: {wts}; highest power of v {max(m[0] for m in mons)}, of al "
+              f"{max(m[1] for m in mons)}, of u {max(m[2] for m in mons)}")
+        ok_pw = (wts == [6, 8, 10, 12] and all(k <= i for (i, j, k) in mons) and max(m[1] for m in mons) == 6)
+        lead = reduce_s(Pn.coeff_monomial(AL**6) / den)
+        D0 = reduce_s(sp.together(Db.subs(V_, 0)))
+        ok_lead = (sp.cancel(sp.together(lead - F1**6 * (1 - C_**2)**2 / 16)) == 0
+                   and sp.cancel(sp.together(D0 - AL**6 * F1**6 * (1 - C_**2)**2 / 16)) == 0)
+        print(f"  al^6 coefficient of D = f'^6 s^4/16 [{ok_lead}]; D at v = 0 equals al^6 f'^6 s^4/16 [{ok_lead}]")
+        print(f"  D at (al, u) = (0, v) equals he_type's D, entry by entry, in `const_limit`")
+        check("structure", ok_shift and wpow == [6, 8, 10, 12] and ok_w6 and ok_w12 and ok_bw and ok_pw and ok_lead,
+              f"D of the block = D(j1, jr, q, h, p) of the shifted cubic [{ok_shift}]; the scaling (v, u, al) -> (w v, w u, w^2 al) "
+              f"gives R_0i w, the other entries w^2 [{ok_bw}] and D the weights {wpow} with w^6 part -4|j|^6 [{ok_w6}] and w^12 "
+              f"part (pq + h^2)^2 ((p + q)^2 + 4h^2) [{ok_w12}]; the bubble's D has weights {wts}, u only with v, al^6 at most "
+              f"[{ok_pw}]; al^6 coefficient f'^6 s^4/16 and D(v = 0) = al^6 f'^6 s^4/16 [{ok_lead}]")
 
-    # 5b. Parity: (al, cos theta) -> (-al, -cos theta) leaves D unchanged, for every v and u.
-    flip = {AL: -AL} if MUT == "parity-break" else {AL: -AL, C_: -C_}
-    ok_par = reduce_s(sp.expand(num) - sp.expand(num.subs(flip, simultaneous=True))) == 0
-    rr_, cc_, _ = pgrid(*le_r)
-    v, al, u, _ = motion("P1", 0.3)
-    cf = ClosedFormAccel(blk)
-    D1, scl1, _ = cf._D(v, al, u, *LE, rr_, cc_, False)
-    D2, _, _ = cf._D(v, -al, u, *LE, rr_, cc_ if MUT == "parity-break" else -cc_, False)
-    par_num = float(np.max(np.abs(D1 - D2) / scl1**6))
-    check("parity", ok_par and par_num < 1e-9, f"64 r^6 D(v, -al, u; -c) - 64 r^6 D(v, al, u; c) reduces to 0 as a polynomial in "
-          f"(v, al, u, f, f', f'', r, c) [{ok_par}], so the type at (theta, al) is the type at (pi - theta, -al) and every "
-          f"wall fraction is even in al; on Le's grid at P1 t = 0.3 the largest |D(-al, -c) - D(al, c)| / scale^6 is "
-          f"{par_num:.1e} (< 1e-9)")
+        # 5b. Parity: (al, cos theta) -> (-al, -cos theta) leaves D unchanged, for every v and u.
+        flip = {AL: -AL} if MUT == "parity-break" else {AL: -AL, C_: -C_}
+        ok_par = reduce_s(sp.expand(num) - sp.expand(num.subs(flip, simultaneous=True))) == 0
+        rr_, cc_, _ = pgrid(*le_r)
+        v, al, u, _ = motion("P1", 0.3)
+        cf = ClosedFormAccel(blk)
+        D1, scl1, _ = cf._D(v, al, u, *LE, rr_, cc_, False)
+        D2, _, _ = cf._D(v, -al, u, *LE, rr_, cc_ if MUT == "parity-break" else -cc_, False)
+        par_num = float(np.max(np.abs(D1 - D2) / scl1**6))
+        check("parity", ok_par and par_num < 1e-9, f"64 r^6 D(v, -al, u; -c) - 64 r^6 D(v, al, u; c) reduces to 0 as a polynomial in "
+              f"(v, al, u, f, f', f'', r, c) [{ok_par}], so the type at (theta, al) is the type at (pi - theta, -al) and every "
+              f"wall fraction is even in al; on Le's grid at P1 t = 0.3 the largest |D(-al, -c) - D(al, c)| / scale^6 is "
+              f"{par_num:.1e} (< 1e-9)")
+
 
     # 6. The constant-speed limit against #64.
     print("\n== 6. Constant-speed limit (al = 0, u = v) against #64: entries, maps and fractions ==")
