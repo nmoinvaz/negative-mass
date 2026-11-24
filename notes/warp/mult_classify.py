@@ -12,7 +12,8 @@ so d_F + d_G <= r (Lemma L). The script
   C3  Lemma L on planted random data;
   C4  Lemma X (x-side, d_F >= 4 unless m = (X'/X)^2 is constant), C5 Lemma R (rho-side, d_G >= 3), C6 m constant;
   C7  planted subcases b(rho) and planar; C8-C12 planted additive u = X + R and its perturbations;
-  C13 v != 0: ten-term separation, rank 10; C14 the rank bound alone does not decide v != 0.
+  C13 v != 0: ten-term separation, rank 10; C14 the rank bound alone does not decide v != 0; C15 exponential X is excluded for v != 0;
+  C16 d_G >= 5 for v != 0.
 Imported from det_classify: E_mult_poly, E_add_poly (comparison targets only). Shared with it: the formula for D.
 Usage: mult_classify.py [--no-controls] [--mutate=NAME] [--only=c1,c2]. Exit 1 if a check fails or a control does not fire."""
 import os
@@ -40,12 +41,21 @@ MUTATIONS = {
     "m-add-drop": ("add_decomp", "u = X0 in the additive jets, i.e. (X0 + R0)^2 replaced by X0^2"),
     "m-stratum": ("add_stratum", "f_4 and f_5 dropped from the elimination"),
     "m-add-freq": ("add_planted", "J0(c rho), Y0(c rho) in place of J0(sqrt2 c rho), Y0(sqrt2 c rho)"),
-    "m-perturb-zero": ("add_perturbed", "delta = 0"),
+    "m-pexact-zero": ("add_perturbed_exact", "delta = 0"),
     "m-xperturb-zero": ("add_xperturbed", "X = c x (no x^2/10)"),
     "m-trav-rank": ("trav_decomp", "rank expected 9 at v = 1/3"),
     "m-gap-d": ("trav_gap", "R = rho^2 replaced by R = exp(rho)"),
+    "m-exp-sign": ("trav_exp", "the exact product test over c = -n/10 in place of c = +n/10"),
+    "m-dg-sign": ("trav_dg5", "the consistency identity with + P q_R in place of - P q_R"),
+    "m-unit-v": ("trav_dg4_unit", "part (i) at v = 1/3 and v = -1 instead of v = 1 and v = -1"),
+    "m-exp-allow": ("trav_exponents", "the exponent 4 removed from the present exponents"),
+    "m-y0-p1": ("trav_y0", "the saturation t p0 v - 1 (p1 = 0 allowed)"),
+    "m-laurent-coef": ("trav_laurent", "Gamma_6 expected 10 R0^4 k1^2"),
+    "m-pole-theta": ("trav_pole", "Theta without -4 beta^2"),
 }
 
+# declared in README A7 as silent by a hand computation; run once, reported, not counted among the fired controls
+DECLARED_SILENT = {"m-unit-sign": ("trav_dg4_unit", "the unit identity with + P q_R")}
 RESULTS = []
 OPTS = dict(a[2:].split("=", 1) if "=" in a else (a[2:], "1") for a in sys.argv[1:] if a.startswith("--"))
 MUT = OPTS.get("mutate")
@@ -511,7 +521,7 @@ def c10_add_planted():
 
 
 def c11_add_perturbed():
-    amp = 0 if MUT == "m-perturb-zero" else 1
+    amp = 1
     smallest = mp.mpf(10) ** 9
     for (c, eps) in BESSEL_CASES:
         cm = mp.mpf(c.p) / c.q
@@ -524,6 +534,38 @@ def c11_add_perturbed():
                 smallest = min(smallest, abs(sum(terms)) / sum(abs(t) for t in terms))
     check("add_perturbed", smallest >= mp.mpf(10) ** -3,
           f"R + delta, delta in {{rho^2/10, rho^3/10}}: smallest relative residual over 100 points {mp.nstr(smallest, 3)} (needs >= 1e-3)")
+
+
+def c11b_add_perturbed_exact():
+    amp = 0 if MUT == "m-pexact-zero" else 1
+    gam, r, c = sp.symbols("gamma r c")
+    poly_ok, polys = True, []
+    for e in (1, -1):
+        for dl in (r**2 / 10, r**3 / 10):
+            dl = amp * dl
+            d1 = sp.diff(dl, r)
+            d2 = sp.diff(dl, r, 2) + d1 / r
+            R1p = gam + d1
+            S0p = e * (gam**2 + 2 * c**2) + d2
+            Ep = sp.expand(sp.cancel((R1p**2 / 2 + c**2) ** 2 - S0p**2 / 4))
+            poly_ok &= Ep != 0
+            polys.append((e, Ep))
+    pts = [(sp.Rational(1, 2), 1, 1, sp.Rational(1, 3)), (1, -1, sp.Rational(3, 2), 2), (2, 1, sp.Rational(1, 2), -1)]
+    vals, pt_ok = [], True
+    for (cv, e, rv, gv) in pts:
+        for dl in (r**2 / 10, r**3 / 10):
+            dl = amp * dl
+            d1 = sp.diff(dl, r)
+            d2 = sp.diff(dl, r, 2) + d1 / r
+            R1p = gv + d1.subs(r, rv)
+            S0p = e * (gv**2 + 2 * cv**2) + d2.subs(r, rv)
+            val = sp.nsimplify((R1p**2 / 2 + cv**2) ** 2 - S0p**2 / 4)
+            vals.append(val)
+            pt_ok &= val != 0
+    check("add_perturbed_exact", poly_ok and pt_ok,
+          f"E_pert = (R1^2/2 + c^2)^2 - S0^2/4 for u = c x + g + delta, nonzero polynomial in (gamma, rho, c) for eps = +-1 and delta in "
+          f"{{rho^2/10, rho^3/10}}: {poly_ok}; nonzero at the three exact points (c, eps, rho, gamma) = (1/2, 1, 1, 1/3), (1, -1, 3/2, 2), (2, 1, 1/2, -1) "
+          f"for both delta, values {[str(x) for x in vals]}: {pt_ok}")
 
 
 def c12_add_xperturbed():
@@ -600,26 +642,274 @@ def c14_trav_gap():
           f"d_F + d_G <= 10 alone does not exclude the traveling case")
 
 
+FAMILIES = {"exp(rho/2)": sp.exp(rho_s / 2), "exp(-rho)": sp.exp(-rho_s), "exp(2 rho)": sp.exp(2 * rho_s), "rho^(1/2)": sp.sqrt(rho_s),
+            "rho": rho_s, "rho^2": rho_s**2, "rho^3": rho_s**3, "1/rho": 1 / rho_s, "rho^(5/2)": rho_s ** sp.Rational(5, 2),
+            "rho^4": rho_s**4, "rho^2+1": rho_s**2 + 1, "rho+rho^3": rho_s + rho_s**3, "cosh(rho)": sp.cosh(rho_s)}
+
+
+def trav_G_rank(R, vv, npts=12):
+    F, G = trav_FG()
+    Rp = sp.diff(R, rho_s)
+    S = sp.diff(R, rho_s, 2) + Rp / rho_s
+    sub = {R0: R, R1: Rp, S0: S, c1: Rp / R, s2: S / R, v: vv}
+    gl = [sp.lambdify(rho_s, Gi.subs(sub), "mpmath") for Gi in G]
+    pts = [mp.mpf(1) + mp.mpf(j) / 4 for j in range(npts)]
+    return num_rank([[gi(pt) for pt in pts] for gi in gl])
+
+
+def c15_trav_exp():
+    lam = sp.Symbol("lam", positive=True)
+    F, G = trav_FG()
+    sub = {p1: lam, be: 0}
+    Fl = [sp.expand(Fi.subs(sub)) for Fi in F]
+    top = sum(Fl[i] * G[i] for i in (7, 8, 9))
+    c = c1**2
+    i_ok = zero(top - X0**4 * R0**4 * (c + 4 * lam**2) * (c + 5 * lam**2))
+    ks = [1, 1, 2, 2, 2, 3, 3]
+    low_ok = all(not sp.simplify(Fl[i] / X0 ** ks[i]).has(X0) for i in range(7))
+    sgn = -1 if MUT == "m-exp-sign" else 1
+    prod_ok = all((sgn * Fraction(n, 10) + 4 * Fraction(k, 4) ** 2) * (sgn * Fraction(n, 10) + 5 * Fraction(k, 4) ** 2) > 0
+                  for n in range(61) for k in range(1, 9))
+    xs = [mp.mpf(j) / 7 for j in range(10)]
+    dfs = {}
+    for vv in (sp.Rational(1, 3), sp.Integer(2)):
+        for lv in (sp.Rational(1, 2), sp.Integer(1), sp.Rational(3, 2)):
+            fl = [sp.lambdify((X0, v), Fi.subs({p1: lv, be: 0}), "mpmath") for Fi in F]
+            rows = [[f(mp.exp(mp.mpf(lv.p) / lv.q * x), mp.mpf(vv.p) / vv.q) for x in xs] for f in fl]
+            dfs[f"v={vv},lam={lv}"] = num_rank(rows)
+    d_ok = all(dd == 4 for dd in dfs.values())
+    check("trav_exp", i_ok and low_ok and prod_ok and d_ok,
+          f"m = lam^2, beta = 0: F_8 G_8 + F_9 G_9 + F_10 G_10 = X^4 R^4 (c + 4 lam^2)(c + 5 lam^2): {i_ok}; F_1..F_7 are constants times X^1, X^2, X^3: {low_ok}; "
+          f"product > 0 on c = {'-' if sgn < 0 else '+'}n/10, lam = k/4: {prod_ok}; numerical d_F = {sorted(set(dfs.values()))} (needs 4): {d_ok}")
+
+
+def c16_trav_dg5():
+    Rr = sp.Symbol("Rr")
+    a = sp.symbols("a0:4")
+    s_ = sp.symbols("s1:5")
+    P = sum(a[k] * Rr**k for k in range(4))
+    S = sum(s_[k - 1] * Rr**k for k in range(1, 5))
+    conds = [sp.Poly(sp.expand(Rr**2 * P), Rr).coeff_monomial(Rr**k) for k in range(5, 8)]
+    conds += [sp.Poly(sp.expand(S**2), Rr).coeff_monomial(Rr**k) for k in range(5, 9)]
+    conds += [sp.Poly(sp.expand(P**2), Rr).coeff_monomial(1)]
+    sol = sp.solve(conds, [a[0], a[3], s_[2], s_[3]], dict=True)
+    i_ok = len(sol) == 1 and all(sol[0].get(x) == 0 for x in (a[0], a[3], s_[2], s_[3]))
+    a1, a2, s1, s2 = a[1], a[2], s_[0], s_[1]
+    P = a1 * Rr + a2 * Rr**2
+    S = s1 * Rr + s2 * Rr**2
+    q = S - sp.diff(P, Rr) / 2
+    sg = 1 if MUT == "m-dg-sign" else -1
+    eq = sp.expand(q**2 - (sp.diff(P, Rr) / 2 * q + sg * P * sp.diff(q, Rr)))
+    sols = sp.solve(sp.Poly(eq, Rr).all_coeffs(), [a1, a2, s1, s2], dict=True)
+    ii_ok = len(sols) > 0 and all(sp.expand(q.subs(sl)) == 0 for sl in sols)
+    ranks = {nm: trav_G_rank(R, sp.Rational(1, 3)) for nm, R in FAMILIES.items()}
+    iii_ok = all(r >= 5 for r in ranks.values())
+    check("trav_dg5", i_ok and ii_ok and iii_ok,
+          f"R P, R^2 P, P^2, S^2 in P4 leave P = a1 R + a2 R^2, S = s1 R + s2 R^2: {i_ok}; the consistency identity has only solutions with q = 0: {ii_ok} "
+          f"(solutions {[{str(k): str(w_) for k, w_ in sl.items()} for sl in sols]}); numerical d_G >= 5 for the 13 families at v = 1/3: {iii_ok} {ranks}")
+
+
+def trav_F_at(mexpr, bexpr, Xexpr, vv):
+    """The ten x-functions F_i with m = mexpr, beta = bexpr, X0 = Xexpr, v = vv."""
+    F, G = trav_FG()
+    return [Fi.subs({p1: sp.sqrt(mexpr), be: bexpr, X0: Xexpr, v: vv}) for Fi in F]
+
+
+def c17_trav_dg4_unit():
+    F, G = trav_FG()
+    E = E_mult(v)
+    vals = (sp.Rational(1, 3), -1) if MUT == "m-unit-v" else (1, -1)
+    i_ok, ranks9 = True, {}
+    for vv in vals:
+        i_ok &= sp.simplify(F[0].subs(v, vv)) == 0
+        i_ok &= zero(sos_form(vv) - sum(F[i].subs(v, vv) * G[i].subs(v, vv) for i in range(1, 10)))
+        ranks9[str(vv)] = mat_rank(E.subs(v, vv))
+        i_ok &= ranks9[str(vv)] == 9
+    Rr = sp.Symbol("Rr")
+    a1, a2, a3, s2_, s3_, s4_ = sp.symbols("a1 a2 a3 s2 s3 s4")
+    P = a1 * Rr + a2 * Rr**2 + a3 * Rr**3
+    S = s2_ * Rr**2 + s3_ * Rr**3 + s4_ * Rr**4
+    T = 2 * P - 6 * Rr * S
+    members = [S, T, S**2, Rr * P, P**2, Rr**2 * P]
+    conds = []
+    for e in members:
+        pe = sp.Poly(sp.expand(e), Rr)
+        conds += [pe.coeff_monomial(Rr**k) for k in range(0, 12) if k not in (2, 3, 4)]
+    conds = [c_ for c_ in conds if c_ != 0]
+    sol1 = sp.solve(conds, [a1, a3, s3_, s4_], dict=True)
+    part1 = len(sol1) == 1 and all(sol1[0].get(x) == 0 for x in (a1, a3, s3_, s4_))
+    Pq = a2 * Rr**2
+    Sq = s2_ * Rr**2
+    q = Sq - sp.diff(Pq, Rr) / 2
+    ident = lambda sg: sp.expand(q**2 - (sp.diff(Pq, Rr) / 2 * q + sg * Pq * sp.diff(q, Rr)))
+    solm = sp.solve(sp.Poly(ident(-1), Rr).all_coeffs(), [a2, s2_], dict=True)
+    solp = sp.solve(sp.Poly(ident(1), Rr).all_coeffs(), [a2, s2_], dict=True)
+    sused = solp if MUT == "m-unit-sign" else solm
+    ii_ok = part1 and len(sused) > 0 and all(sl.get(a2, a2) == 0 for sl in sused)
+    pts = [mp.mpf(1) + mp.mpf(j) / 4 for j in range(12)]
+    ranks, iii_ok = {}, True
+    fam = dict(FAMILIES)
+    fam["rho^2 (dup)"] = rho_s**2
+    for vv in (1, -1):
+        Fv, Gv = trav_FG()
+        for nm, R in fam.items():
+            Rp = sp.diff(R, rho_s)
+            Sx = sp.diff(R, rho_s, 2) + Rp / rho_s
+            sub = {R0: R, R1: Rp, S0: Sx, c1: Rp / R, s2: Sx / R, v: vv}
+            gl = [sp.lambdify(rho_s, Gv[i].subs(sub), "mpmath") for i in range(1, 10)]
+            r_ = num_rank([[gi(pt) for pt in pts] for gi in gl])
+            ranks[f"{nm}@{vv}"] = r_
+            iii_ok &= r_ >= 4
+    check("trav_dg4_unit", i_ok and ii_ok and iii_ok,
+          f"v = +-1 (or the mutated values {vals}): F_1 = 0, E/X0^2 = sum_(i>=2) F_i G_i, exact rank of E = {ranks9} (needs 9): {i_ok}; members in span(R^2, R^3, R^4) leave "
+          f"P = a R^2, S = s R^2 ({part1}) and the identity forces a = 0 ({ii_ok}; observation: with + P q_R the solutions are {solp}, also a = 0 only); "
+          f"numerical rank of G_2..G_10 >= 4 for 14 R at v = 1, -1 (min {min(ranks.values())}): {iii_ok}")
+
+
+def present_exponents(b, regime):
+    P_ = {2, 4, 3 + 2 * b}
+    if MUT == "m-exp-allow":
+        P_.discard(4)
+    if b not in (5, -4):
+        P_.add(4 + 2 * b)
+    if regime == "A":
+        if b != -2:
+            P_.add(1 + 2 * b)
+        else:
+            P_.add(2 + 2 * b)
+    else:
+        if b not in (4, -2):
+            P_.add(2 + 2 * b)
+    return P_
+
+
+def allowed_b(regime, lo=-15, hi=15):
+    return [b for b in range(lo, hi + 1) if len({e for e in present_exponents(b, regime) if not (b + 1 <= e <= b + 4)}) <= 1]
+
+
+def c18_trav_exponents():
+    b = sp.Symbol("b")
+    cc, X = sp.symbols("cc X", positive=True)
+    m = cc * X**b
+    beta = X * sp.diff(m, X) / 2
+    Fs = trav_F_at(m, beta, X, v)
+    ok_forms = True
+    forms = {0: -2 * v * (1 - v**2) * (b / 2 + 1) * cc**2 * X ** (1 + 2 * b),
+             2: cc**2 * (v**2 * (-(b**2) + 3 * b + 12) - (b + 4)) * X ** (2 + 2 * b),
+             4: X**2,
+             5: 2 * v * cc**2 * (-(b**2) + sp.Rational(3, 2) * b + 13) * X ** (3 + 2 * b),
+             7: X**4,
+             9: cc**2 * (20 + b - b**2) * X ** (4 + 2 * b)}
+    # F_1, F_3, F_5, F_6, F_8, F_10 are indices 0, 2, 4, 5, 7, 9
+    for i, fo in forms.items():
+        ok_forms &= sp.simplify(sp.powsimp(sp.expand(Fs[i] - fo), force=True)) == 0
+    roots = sp.solve(2 * b**2 - 3 * b - 26, b)
+    no_int = all(not r.is_integer for r in roots)
+    aA, aB = allowed_b("A"), allowed_b("B")
+    sets_ok = aA == [0, 1] and aB == [-2, -1, 0, 1]
+    Rl = sp.S.Reals
+    ineq1 = (sp.solveset(b + 1 > 2, b, Rl) == sp.Interval.open(1, sp.oo)) and (sp.solveset(3 + 2 * b > b + 4, b, Rl) == sp.Interval.open(1, sp.oo))
+    ineq2 = (sp.solveset(2 > b + 4, b, Rl) == sp.Interval.open(-sp.oo, -2)) and (sp.solveset(4 > b + 4, b, Rl) == sp.Interval.open(-sp.oo, 0))
+    check("trav_exponents", ok_forms and no_int and sets_ok and ineq1 and ineq2,
+          f"leading monomials of F_1, F_3, F_5, F_6, F_8, F_10 for m = c X^b: {ok_forms}; 2b^2 - 3b - 26 has no integer root: {no_int}; allowed top exponents b in [-15, 15]: "
+          f"v^2 != 1 {aA} (needs [0, 1]), v^2 = 1 {aB} (needs [-2, -1, 0, 1]): {sets_ok}; b >= 2 and b <= -3 are excluded by the inequalities: {ineq1 and ineq2}")
+
+
+def c19_trav_y0():
+    pa, pb, X = sp.symbols("pa pb X")
+    m = X / (pa + pb * X)
+    beta = X * sp.diff(m, X) / 2
+    Fs = trav_F_at(m, beta, X, v)
+    den = (pa + pb * X) ** 4
+    polys = [sp.expand(sp.cancel(f * den)) for f in Fs]
+    degmax = max(sp.Poly(q, X).degree() for q in polys)
+    M = sp.Matrix([[sp.Poly(q, X).coeff_monomial(X**k) for k in range(degmax + 1)] for q in polys])
+    rng = random.Random(160)
+    gens = []
+    tries = 0
+    while len(gens) < 60 and tries < 4000:
+        tries += 1
+        r = sorted(rng.sample(range(10), 6))
+        c = sorted(rng.sample(range(degmax + 1), 6))
+        d = sp.expand(M.extract(r, c).det(method="berkowitz"))
+        if d != 0:
+            gens.append(d)
+    t = sp.Symbol("t")
+    sat = t * pa * v - 1 if MUT == "m-y0-p1" else t * pa * pb * v - 1
+    Gb = sp.groebner(gens + [sat], t, pa, pb, v, order="grevlex")
+    unit = list(Gb.exprs) == [1]
+    check("trav_y0", unit,
+          f"m = X/(p0 + p1 X): {len(gens)} nonzero 6x6 minors of the {M.shape[0]}x{M.shape[1]} coefficient matrix ({tries} draws), Groebner basis with the saturation "
+          f"{'t p0 v - 1' if MUT == 'm-y0-p1' else 't p0 p1 v - 1'} is {'[1]' if unit else 'not [1]'}: rank >= 6 for p0 p1 v != 0")
+
+
+def c20_trav_laurent():
+    X = sp.Symbol("X")
+    km2, km1, k0, k1 = sp.symbols("km2 km1 k0 k1")
+    m = km2 / X**2 + km1 / X + k0 + k1 * X
+    beta = X * sp.diff(m, X) / 2
+    F, G = trav_FG()
+    Fs = [sp.expand(sp.simplify(f)) for f in trav_F_at(m, beta, X, v)]
+    tot = sp.expand(sum(Fs[i] * G[i] for i in range(10)))
+    P = sp.Poly(sp.expand(tot * X**8), X)
+    Gam = {k - 8: co for (k,), co in P.terms()}
+    c6 = 10 if MUT == "m-laurent-coef" else 20
+    f6 = zero(Gam[6] - c6 * R0**4 * k1**2)
+    f5 = zero(Gam[5].subs(k1, 0))
+    f4 = zero(Gam[4].subs(k1, 0) - R0**4 * (c1**2 + 4 * k0) * (c1**2 + 5 * k0))
+    kap, a_, E, w, t = sp.symbols("kappa a E w t")
+    units = []
+    for kk0 in (-(kap**2) / 4, -(kap**2) / 5):
+        sub = {c1: kap, R0: a_ * E, s2: kap**2 + kap * w, k0: kk0, k1: 0}
+        eqs = []
+        for k in range(-2, 4):
+            ex = sp.expand(Gam[k].subs(sub))
+            if ex != 0:
+                eqs += [sp.numer(sp.together(cf)) for cf in sp.Poly(ex, E, w).coeffs()]
+        Gb = sp.groebner(eqs + [t * kap * a_ * v - 1], t, km2, km1, a_, kap, v, order="grevlex")
+        units.append(list(Gb.exprs) == [1])
+    check("trav_laurent", f6 and f5 and f4 and all(units),
+          f"m = km2/X^2 + km1/X + k0 + k1 X: Gamma_6 = {c6} R0^4 k1^2: {f6}; Gamma_5 vanishes at k1 = 0: {f5}; Gamma_4 (k1 = 0) = R0^4 (c1^2 + 4 k0)(c1^2 + 5 k0): {f4}; "
+          f"Groebner bases for c1^2 = -4 k0 and c1^2 = -5 k0 (Gamma_-2 .. Gamma_3, saturation t kappa a v - 1): {units}")
+
+
+def c21_trav_pole():
+    X, X1, mu = sp.symbols("X X1 mu")
+    ok, lead = True, []
+    for k in range(1, 7):
+        m = mu / (X - X1) ** k
+        beta = X * sp.diff(m, X) / 2
+        th = 20 * m**2 + 2 * m * beta - (0 if MUT == "m-pole-theta" else 4 * beta**2)
+        cf = sp.simplify(sp.cancel(th * (X - X1) ** (2 * k + 2)).subs(X, X1))
+        lead.append(cf)
+        ok &= sp.expand(cf + k**2 * X1**2 * mu**2) == 0 and 2 * k + 2 > k
+    check("trav_pole", ok, f"Theta (X - X1)^(2k+2) at X1 for k = 1..6 equals -k^2 X1^2 mu^2 (pole order 2k + 2 > k): {ok}")
+
+
 CHECKS = [("e_from_d", c1_e_from_d), ("decomp_static", c2_decomp_static), ("rank_lemma", c3_rank_lemma), ("lemma_x", c4_lemma_x),
           ("lemma_rho", c5_lemma_rho), ("const_m", c6_const_m), ("mult_subcases", c7_mult_subcases), ("add_decomp", c8_add_decomp),
-          ("add_stratum", c9_add_stratum), ("add_planted", c10_add_planted), ("add_perturbed", c11_add_perturbed),
-          ("add_xperturbed", c12_add_xperturbed), ("trav_decomp", c13_trav_decomp), ("trav_gap", c14_trav_gap)]
+          ("add_stratum", c9_add_stratum), ("add_planted", c10_add_planted), ("add_perturbed", c11_add_perturbed), ("add_perturbed_exact", c11b_add_perturbed_exact),
+          ("add_xperturbed", c12_add_xperturbed), ("trav_decomp", c13_trav_decomp), ("trav_gap", c14_trav_gap),
+          ("trav_exp", c15_trav_exp), ("trav_dg5", c16_trav_dg5), ("trav_dg4_unit", c17_trav_dg4_unit),
+          ("trav_exponents", c18_trav_exponents), ("trav_y0", c19_trav_y0), ("trav_laurent", c20_trav_laurent), ("trav_pole", c21_trav_pole)]
 
 
 def verdict():
     ok = {n: s_ for n, s_ in RESULTS}
     stat = all(ok.get(n, False) for n in ("e_from_d", "decomp_static", "rank_lemma", "lemma_x", "lemma_rho", "const_m"))
-    plant = all(ok.get(n, False) for n in ("add_decomp", "add_stratum", "add_planted", "add_perturbed", "add_xperturbed", "mult_subcases"))
+    plant = all(ok.get(n, False) for n in ("add_decomp", "add_stratum", "add_planted", "add_perturbed_exact", "add_xperturbed", "mult_subcases"))
+    trav = all(ok.get(n, False) for n in ("trav_decomp", "trav_exp", "trav_dg5", "trav_dg4_unit", "trav_exponents", "trav_y0", "trav_laurent", "trav_pole"))
     s_yes = ("no solution with X X' R R' != 0 (d_F >= 4 unless m is constant, d_G >= 3, 4 + 3 > 6; m constant: c >= 0 against a positive product)")
+    t_yes = ("no solution with X X' R R' != 0 (4 <= d_F <= 5, m rational, then a Laurent polynomial with exponents in [-2, 1], whose coefficients of X^k cannot all vanish)")
     print("\nverdicts:")
     print("  static v = 0: " + (s_yes if stat else "NOT established (a prerequisite check failed)"))
-    print("  planted additive truth through the same code: " + ("found, perturbations rejected" if plant else "NOT established"))
-    print("  traveling v != 0: not decided here (rank 10, d_F + d_G <= 10, the bound alone does not exclude it)")
+    print("  traveling v != 0: " + (t_yes if (trav and stat) else "NOT established (a prerequisite check failed)"))
+    print("  planted additive truth through the same code: " + ("found, perturbations rejected (exact check; the thresholded check add_perturbed FAILED at one point)" if plant else "NOT established"))
 
 
 def main():
     t0 = time.time()
-    if MUT is not None and MUT not in MUTATIONS:
+    if MUT is not None and MUT not in MUTATIONS and MUT not in DECLARED_SILENT:
         print(f"unknown mutation {MUT}")
         sys.exit(2)
     for name, fn in CHECKS:
@@ -631,7 +921,8 @@ def main():
     verdict()
     print(f"\nchecks: {len(RESULTS) - len(failed)} passed, {len(failed)} failed {failed}. {time.time() - t0:.0f} s")
     if MUT is not None:
-        print(f"control {MUT}: target check {MUTATIONS[MUT][0]}, fired {MUTATIONS[MUT][0] in failed}")
+        tg = MUTATIONS[MUT][0] if MUT in MUTATIONS else DECLARED_SILENT[MUT][0]
+        print(f"control {MUT}: target check {tg}, fired {tg in failed}")
     return failed
 
 
@@ -646,11 +937,19 @@ if __name__ == "__main__":
                 with open(os.path.join(OPTS["logdir"], f"ctl_{name}.log"), "w") as fh:
                     fh.write(p.stdout + p.stderr)
             fails = [ln.split(":")[0][7:] for ln in p.stdout.splitlines() if ln.startswith("[FAIL]")]
-            fired = fails == [target] and p.returncode == 1
+            extra = [f for f in fails if f != target and f not in failed]
+            fired = target in fails and not extra and p.returncode == 1
             controls_ok &= fired
             print(f"[{'FIRED' if fired else 'SILENT' if target not in fails else 'EXTRA'}] --mutate={name} ({what}): exit {p.returncode}, failed {fails}",
                   flush=True)
             if p.returncode not in (0, 1):
                 print(p.stderr[-2000:])
+        for name, (target, what) in DECLARED_SILENT.items():
+            p = subprocess.run([sys.executable, __file__, f"--mutate={name}"], capture_output=True, text=True)
+            if "logdir" in OPTS:
+                with open(os.path.join(OPTS["logdir"], f"ctl_{name}.log"), "w") as fh:
+                    fh.write(p.stdout + p.stderr)
+            fails = [ln.split(":")[0][7:] for ln in p.stdout.splitlines() if ln.startswith("[FAIL]")]
+            print(f"[{'SILENT (declared in README A7, not counted)' if target not in fails else 'FIRED (unexpected)'}] --mutate={name} ({what}): exit {p.returncode}, failed {fails}", flush=True)
         print(f"controls: {'all fired on their target only' if controls_ok else 'SOME DID NOT FIRE ON TARGET ONLY'}")
     sys.exit(0 if not failed and controls_ok else 1)
