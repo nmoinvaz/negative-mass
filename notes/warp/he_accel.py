@@ -421,6 +421,8 @@ def main():
     MUT = opts.get("mutate")
     QUICK = "quick" in opts
     stop = int(opts.get("stop", 99))
+    if MUT == "accel-lapse" and "stop" not in opts:
+        stop = 3  # its targets are decided in section 3; the later symbolic sections do not finish on its rational entries
     if MUT is not None and MUT not in MUTATIONS:
         sys.exit(f"unknown mutation {MUT!r}. Known: {', '.join(MUTATIONS)}")
     if MUT in ("disc-sign", "no-rank"):
@@ -493,6 +495,8 @@ def main():
           f"than (v, al, u, f, f', f'', r, c, s) in the block: {sorted(map(str, stray))}")
     dec = [reduce_s(blk[a, 3]) for a in range(4)] + [reduce_s(blk[0, 0] + blk[1, 1] + 2 * blk[2, 2])]
     check("decouple", all(e == 0 for e in dec), f"(I1) R(e_varphi, .) and (I2) R_00 + R_11 + 2 R_rho,rho reduce to {dec}")
+    if stop < 4:
+        return finish(t0)
 
     # 4. The time lemma: the entries in closed form, and acceleration entering only through two derivatives of b.
     print("\n== 4. The entries in closed form, and the time lemma ==")
