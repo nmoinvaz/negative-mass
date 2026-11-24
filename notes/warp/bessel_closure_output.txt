@@ -1,0 +1,66 @@
+[PASS] frame: R = a a - b b on the ODE for eps = +-1 (own Ricci tensor, exact): True; the minors of (sqrt2 a, nu) in the coframe have squares summing to 2 (g'^2 + 2 c^2) > 0, so a ^ b != 0: True
+  (1 s)
+[PASS] frobenius: the coordinate coefficient of k~ ^ dk~ and m~ ^ dm~ equals beta alpha' - alpha beta' + g' beta^2 - c beta gamma for k~ = alpha th0 + beta th1 + gamma th2, with no ODE: True; on the ODE it equals the closed forms O_k, O_m for eps = +-1: True
+  (1 s)
+[PASS] sum: O_k + O_m = 2 g'(g'^2 + 4 c^2) with no ODE, for eps = +-1: True; the discriminant of G^2 + 4 c^2 in G is -16 c^2 < 0 for c != 0: True; the only real root of 2 G (G^2 + 4 c^2) is G = 0 at c = 1/2, -3, 7: True
+  (0 s)
+[PASS] isolated: g'' = 2 eps c^2 != 0 at g' = 0 for c in (1/2, -3, 7, 1), eps = +-1: True; planted: g = const solves the ODE at c = 0 and at no c in (1/2, -3): True
+  (0 s)
+  observation (not a criterion): real roots of the degree-12 factor at c = 1: [-4.7402, -2.9388, 2.9388, 4.7402]
+[PASS] each: H = (W/G) O is the closed form on W^2 = G^2 + 2 c^2: True; eliminating r through H = 0 gives N = -(G^2 + 2 c^2) P(G, c), P monic of degree 12 (printed), the same for k, m and eps = +-1: True (leading coefficient 1); the reduction p0 + p1 W equals the numerator at (G, c) = (3/2, 1) to 1e-40: True
+  (0 s)
+  (c, g', rho0, eps, O_k, O_m, two_scalars.closure):
+    (2, 1, '5/7', 1, 677/15, -167/15, 'fails')
+    (2, 1, '5/7', -1, -223/15, 733/15, 'fails')
+    (6, 17, '5/7', 1, 1595569/95, -196979/95, 'fails')
+    (6, 17, '5/7', -1, -245531/95, 1644121/95, 'fails')
+    (0, 1/2, '5/7', 1, 1/8, 1/8, 'fails')
+    (0, 1/2, '5/7', -1, 1/8, 1/8, 'fails')
+    (-2, 1, '4/39', 1, 0, 34, 'fails')
+    (-2, 1, '4/39', -1, 60, -26, 'fails')
+    (2, 1, '4/39', 1, 34, 0, 'fails')
+    (2, 1, '4/39', -1, -26, 60, 'fails')
+    (1, 1, '5/7', 1, 5 + 61*sqrt(3)/15, 5 - 61*sqrt(3)/15, 'fails')
+    (1, 1, '5/7', -1, 5 - 89*sqrt(3)/15, 5 + 89*sqrt(3)/15, 'fails')
+    (3, 7/2, '2/3', 1, 38507/88, -8785/88, 'fails')
+    (3, 7/2, '2/3', -1, -12313/88, 42035/88, 'fails')
+    (-6, 7, '3/11', 1, -763, 3465, 'fails')
+    (-6, 7, '3/11', -1, 3857, -1155, 'fails')
+    (1, 0, '5/7', 1, 0, 0, 'pointwise: omega closed')
+    (1, 0, '5/7', -1, 0, 0, 'pointwise: omega closed')
+    (-3, 0, '1/2', 1, 0, 0, 'pointwise: omega closed')
+    (-3, 0, '1/2', -1, 0, 0, 'pointwise: omega closed')
+[PASS] points: at 20 (jet, eps) points the coordinate O_k, O_m equal the closed forms exactly: True; two_scalars.closure fails with 'no chi' exactly where (O_k, O_m) != (0, 0): True
+  (38 s)
+  observation (not a criterion), (c, eps, alpha, beta, sign changes of g', O_k, O_m on 260 grid points of 0.3 < rho < 8.95 where |psi| > 1e-2):
+    ('1/2', 1, '1/3', '-6/5', [2, 2, 5])
+    ('3/2', -1, '3', '-6/5', [9, 21, 9])
+    ('-2', 1, '7/3', '-2/5', [12, 28, 12])
+    ('1', -1, '5/3', '-2/5', [3, 11, 3])
+    ('5/2', 1, '8/3', '-9/5', [16, 16, 36])
+[PASS] bessel: 60 (member, x, rho) points at 80 digits: max |direct k ^ dk - closed form| = 1.77e-74 (threshold 1e-50), max |O_k + O_m - 2 g'(g'^2 + 4 c^2)| = 4.03e-76
+  (59 s)
+[PASS] planted: P1 closed (d rho, dt): O = (0, 0), closure ok, omega = 0: True; P2 boosted by chi = c x + g: O = (0, 0), closure ok, omega = d chi = (0, c, g', 0): True; P3 (dt, x d rho): O = (1, -1), closure fails 'no chi': True; P4 (dt, (1 + t rho) d rho): O = (0, 0) and closure fails at d omega != 0, so the Frobenius test alone does not decide closure: True
+  (0 s)
+[PASS] c0: c = 0 (u = g(rho), #65's b(rho)): O_k = O_m = g'^3 for both signs of g' and of eps: True; nu_+- ^ d nu_+- = g' dt ^ dx ^ d rho = b' dx ^ d rho ^ dt for nu_+- = d rho +- ((1 + eps b) dt + eps dx): True
+  (0 s)
+[PASS] planar: u = c x + d (g' = 0, outside the ODE): R = c^2 (th1 th1 - th0 th0) exactly: True; O_k = O_m = 0, two_scalars.closure fails at d omega != 0 with (d omega)_tx = c^2: True
+  (1 s)
+
+checks: 10 passed, 0 failed []. 101 s
+
+== Controls: each mutation must make its target checks fail, and no others ==
+[FIRED] --mutate=frame-nu (takes nu = th0 - eps th1 in b): exit 1, failed ['frame']
+[FIRED] --mutate=frob-struct (drops the c th1 ^ th0 term of d th1 (the term c beta gamma) in the coframe formula): exit 1, failed ['frobenius']
+[FIRED] --mutate=frob-ode (reduces on the ODE with -eps in place of eps): exit 1, failed ['frobenius']
+[FIRED] --mutate=sum-factor (expects 2 g'(g'^2 + 2 c^2) for O_k + O_m): exit 1, failed ['sum']
+[FIRED] --mutate=isolated-c0 (samples the step g'' = 2 eps c^2 at c = 0): exit 1, failed ['isolated']
+[FIRED] --mutate=each-w2 (reduces the elimination with W^2 = G^2 + c^2): exit 1, failed ['each']
+[FIRED] --mutate=each-friction (drops the term -G r of G' in the Lie derivative): exit 1, failed ['each']
+[FIRED] --mutate=points-closed (replaces (a, b) at every jet by the closed pair (d rho, dt)): exit 1, failed ['points']
+[FIRED] --mutate=bessel-freq (uses J0(c rho), Y0(c rho) in place of J0(sqrt2 c rho), Y0(sqrt2 c rho)): exit 1, failed ['bessel']
+[FIRED] --mutate=plant-pass (multiplies the boosted planted m by the non-integrable (dt - dx + x d rho)): exit 1, failed ['planted']
+[FIRED] --mutate=plant-fail (replaces the planted non-integrable pair (dt, x d rho) by the closed (dt, rho d rho)): exit 1, failed ['planted']
+[FIRED] --mutate=c0-sign (expects -g'^3 in place of g'^3): exit 1, failed ['c0']
+[FIRED] --mutate=planar-closed (replaces the planar pair (c th1, c th0) by the closed (c dx, c dt)): exit 1, failed ['planar']
+controls: all fired on target only
