@@ -1513,7 +1513,11 @@ def run_LE6(L, BN, LE):
         dec = all(gaps[i + 1] < gaps[i] / 1.5 for i in range(len(gs) - 1))
         ok = dec and gaps[-1] / bl <= 3e-3
         T80, T160 = T_of2(vals[80.0], 80.0), T_of2(vals[160.0], 160.0)
-        print(f"      Richardson in 1/gamma_1 from 80, 160 (reported only): T_inf = {2 * T160 - T80:.6f}; 1/beta-hat = {1 / bl:.6f}")
+        ps = [math.log2(gaps[i] / gaps[i + 1]) for i in range(len(gs) - 1)]
+        pm = ps[-1]
+        print(f"      DIAG LE6 (reported only): order p of the gap at each doubling {', '.join(f'{v:.3f}' for v in ps)}; extrapolating T(80), T(160) "
+              f"with p = 1: {2 * T160 - T80:.6f}, with the measured p = {pm:.3f}: {(2 ** pm * T160 - T80) / (2 ** pm - 1):.6f}; "
+              f"1/beta-hat of the limit equation {1 / bl:.6f}")
         report("LE6", ok, f"beta-hat at gamma_1 = 10, 20, 40, 80, 160 against the limit equation's: gaps {', '.join(f'{v:.2e}' for v in gaps)}; each doubling "
                           f"must cut the gap by 1.5 and the last must be <= 0.3 %: {gaps[-1] / bl:.2e}")
     except Exception as exc:  # noqa: BLE001
