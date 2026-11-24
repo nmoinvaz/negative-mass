@@ -148,3 +148,50 @@ Nothing else in `critical_ghost.md` needs to change.
 - [TS13] was not re-read; its 1.397 is checked against this repository's own D = 4 value and against T(0) = 0.846.
 - Uniqueness of the unstable mode (one bound state) is checked numerically at γ₁ = 0, 1/2, 1, 2 (G7: one negative eigenvalue in B,
   one root in A's scan). The proofs are [GGS09a] (γ₁ ≠ 0), `wormhole_largeD/one_mode.md` (γ₁ = 0).
+
+## Coordinator's review
+
+Merged as 9de9a04. Raw negative-mass-raw `I151-mac` at bf3b3e5 (criteria at 75d19a6, before the first run).
+
+| step | result |
+|---|---|
+| scope | the three files the brief names, and raw `I151-rpi5` |
+| rerun on the Mac | exit 0, 25 s, 46 of 46 checks. The output equals rpi5's apart from the timings and B's last digits (LAPACK). β_A is the same to 12 digits. B's spread at γ₁ = 1/2 is 8.7e-12 here, so the error bar of T is 6.6e-12 on the Mac against 5.6e-12 on rpi5 |
+| re-solve | β at γ₁ = 1/2 by two own routes: 1.8751275118668 (printed W, Numerov) and 1.8751275118690 (no W) |
+| independent check `ind151.py` | E8 fails as written; the other nine criteria pass; 10 of 10 mutations fire on target in run 2 |
+
+ind151 shares no code with `ellis_efold.py` and uses no scipy. Route 1 solves the printed W (retyped from the TeX) by
+Numerov with Richardson extrapolation. Route 2 derives the linearized equations in the gauge δΦ = 0 from the
+coordinator's own Ricci tensor and reduces them to a first-order system for C = δc and G = δa − δc:
+C′ = d′C + c′G and (x − γ₁)G′ = PC + QG. It crosses the throat on the real axis by Frobenius series (exponents 0 and 1)
+and needs no complex path.
+
+| id | what | result |
+|---|---|---|
+| E0 | planted Ricci | pass |
+| E1 | background, ghost sign κΦ₁² = −2(1 + γ₁²) | pass |
+| E2 | the [SN26] → [GGS09a] map, M₊ = m, R⋆, α_th, the T identity | pass |
+| E3 | the δΦ = 0 reduction satisfies all five linearized equations; #151's printed ODE gives the same G′ | pass |
+| E4 | typed W = −V + 2(∂Ψ₀/Ψ₀)², ∂²Ψ₀ = VΨ₀ | pass |
+| E5, E6 | planted Pöschl–Teller (route 1) and a planted analog of the throat structure with exact β = 9/2, 3/2 (route 2) | pass |
+| E7 | route 1 against #151's β_A at γ₁ = 0, 1/2, 1 | pass, rel ≤ 3.1e-12 |
+| E8 | route 2 against route 1 | **fail**, see below; β agrees to ≤ 2.9e-12 |
+| E9 | T(0), T(1/2), T(1) round to Table I; T(1/2) = 0.758357150 rounds to [SN26]'s 0.7584 | pass |
+
+**E8.** It fails on one clause: \|Q₀ − 1\| = 2e-23 at γ₁ = 1/2, where the bound was 1e-25. Q₀ = 1 exactly by hand, and
+the derived Q is 1 to 5e-31 at the throat. The 2e-23 is aliasing of the check's own 64-point Cauchy sum,
+(1/2 ÷ √(1 + γ₁²))⁶⁴ ≈ 4e-23, so the bound was tighter than the method allows. The other clauses of E8 pass: route 2's
+β agrees with route 1 to 1.2e-12 at γ₁ = 1/2, there is one sign change at each γ₁, and the throat has no logarithm. The
+no-log residual of the exponent-1 resonance is ≤ 1e-22 at three γ₁ and two β. That last point is an independent
+confirmation of method C's trivial monodromy.
+
+**Findings.**
+- The note's proposed §1.3 sentence said "its measured 0.76 and 0.77 are 0.21 % below and 1.93 % above it". The
+  percentages belong to the unrounded T = 0.7568 and 0.7730; the rounded 0.76 is above 0.7584. `critical_ghost.md` §1.3
+  says this.
+- [SN26]'s `numbers.tex` gives the level-3 τ unrounded as 5.119 m. Then T = 0.7566, 0.23 % below the linear value; the
+  0.2 % [SN26] prints still holds.
+- The three controls that crashed or hung in their first runs (`xmap`, `domain`, `cpath`) are recorded as silent there,
+  with logs kept. The fix reports an exception as the check's failure, which is stricter, and no criterion moved.
+
+`critical_ghost.md` §1.1, §1.2 and §1.3 now carry the proposals, with the §1.3 correction marked as the coordinator's.

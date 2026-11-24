@@ -89,7 +89,7 @@ The places where a real connection could still exist, all untested:
 
 | system | result | ref |
 |---|---|---|
-| Static spherically symmetric wormholes of a massless ghost scalar, the full 2-parameter family (throat radius, product of the asymptotic masses) | **Exactly one** exponentially growing mode: proven for γ₁ ≠ 0, where the operator is factorized with the zero mode 1/Ψ₀ and a nodal argument gives exactly one bound state; for γ₁ = 0 that zero mode is not normalizable, a Rayleigh–Ritz bound gives a bound state and uniqueness is asserted by continuity (the symmetric case is proved in every D in `wormhole_largeD/one_mode.md`). Time scale τ/r_throat = 0.846 (massless symmetric) → 0.590 (large asymmetry γ₁) | [GGS09a] |
+| Static spherically symmetric wormholes of a massless ghost scalar, the full 2-parameter family (throat radius, product of the asymptotic masses) | **Exactly one** exponentially growing mode: proven for γ₁ ≠ 0, where the operator is factorized with the zero mode 1/Ψ₀ and a nodal argument gives exactly one bound state; for γ₁ = 0 that zero mode is not normalizable, a Rayleigh–Ritz bound gives a bound state and uniqueness is asserted by continuity (the symmetric case is proved in every D in `wormhole_largeD/one_mode.md`). Time scale T = τ/r_throat, τ the proper time at the throat, T = e^{2γ₁ arctan γ₁}/(√(1+γ₁²) β) in the units b = 1, γ₀ = 0: 0.846 (γ₁ = 0), 0.758 (1/2), 0.675 (1), 0.618 (2) → 0.590 (large γ₁). The first row of Table I is reproduced at 16 values to its 3 digits (`ellis_efold.md`, #151); the limit 0.590 is quoted from [GGS09a] | [GGS09a] |
 | Same, in n = 4…11, 20, 50, 100 spacetime dimensions | One negative ω² in every n. ω²a² = −1.397, −2.985, −4.687, −8.290, −12.044 (n = 4, 5, 6, 8, 10); −31.6, −91.3, −191.3 (n = 20, 50, 100). Faster in higher n | [TS13] |
 | Charged (Maxwell + ghost) wormholes, 4-parameter family | One growing mode, proven for sub-critical and critical members; numerical evidence for super-critical | [GGS09c] |
 | Ghost scalar with a potential: Ellis–Bronnikov and an AdS wormhole | Ellis–Bronnikov: a unique bound state; the asymmetric case also has a zero-energy mode growing linearly in t (a move along the family). AdS wormhole: exactly one unstable mode | [CPS20] |
@@ -99,7 +99,8 @@ The places where a real connection could still exist, all untested:
 | Neutron star with a wormhole core (ghost with quartic coupling) | Linearly unstable | [DFKK13] |
 
 Two remarks.
-- The n = 4 entries agree: 1/√1.397 = 0.846 (**checked here**).
+- The n = 4 entries agree: 1/√1.397 = 0.846 (**checked here**). #151 recomputes them by three methods: β² = 1.39705243,
+  T = 0.846045 (`ellis_efold.md`).
 - [GGS09a]'s proof uses the device of this repo's `phase2/dg_proof`: a static zero mode 1/Ψ₀ and its nodes count the bound
   states. The Dotti–Gleiser and GGS operators are different, but the one-mode theorem has the same structure.
 
@@ -136,7 +137,9 @@ Two remarks.
     runs. The collapse run scales the phantom stress-energy by 1/2 (Sec. II); the unperturbed run expands. [SN26] says the
     bounce and horizon shedding are artifacts of that halving.
   - [SN26] (3+1 numerical relativity, adaptive mesh; massive Ellis–Bronnikov throat, m/a = 1/2; v2, 24 Oct 2026):
-    - one exponential mode, proper-time e-folding time 0.76–0.77 R⋆ measured against its linear 0.7584;
+    - one exponential mode, proper-time e-folding time T = τ α_th/R⋆ = 0.76–0.77 (α_th the throat lapse, R⋆ the throat
+      radius: the same T as [GGS09a]'s, their γ₁ = m/a = 1/2) measured against its linear 0.7584; recomputed here as
+      0.758357 (#151);
     - ε = ±10⁻², ±10⁻³: the outward perturbation collapses and the inward one inflates; each ±ε pair's radii cross at an
       ε-independent t× ≃ 13.0 (units of the drainhole mass parameter m);
     - horizons form at t = 11 and 25 for ε = +10⁻² and +10⁻³: lifetime ≈ τ ln(1/ε), a decade costing 11–12 M;
@@ -174,8 +177,10 @@ Two more details fit the same picture:
 **Later measurements** (none is a bisection):
 - [SN26], Sec. IV H: the static throat is "consistent with a type-I critical solution"; its two amplitudes "show both
   type-I signatures but do not establish the scaling" (time scaling τ ln(1/ε) and a mass gap). Its horizons form at
-  0.98–1.00 R⋆, a massive throat, so not comparable with 0.30 a or 0.22 a. Its linear e-folding time is not reconciled
-  here with [GGS09a]'s normalization.
+  0.98–1.00 R⋆, a massive throat, so not comparable with 0.30 a or 0.22 a. Its linear e-folding time 0.7584 is [GGS09a]'s
+  T at γ₁ = m/a = 1/2, recomputed as 0.758357, with τ_lin = 5.1308 m in its evolution time (their 5.13; #151,
+  `ellis_efold.md`). *Added by the coordinator:* its measured τ = 5.12 and 5.23 m give T = 0.7568 and 0.7730, 0.21 %
+  below and 1.93 % above the linear value; its source gives the first unrounded as 5.119 m (T = 0.7566, 0.23 % below).
 - [Hay03] restates [SH02]'s critical behaviour with no new data. [ST15] writes that [SH02] suggests "an existence of
   critical solution", and that similar behaviour in their runs is "reported elsewhere".
 - [Kai26], Sec. III D: the static phase lasts longer as the discretization error falls, no number. [Xu25]: collapse is
