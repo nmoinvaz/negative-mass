@@ -615,10 +615,13 @@ def verify_cert(name, gens, tag="", mut=None):
     tot = Rs.zero
     for i in use:
         tot += cof[i] * gens[i][1]
-    ok = tot == 1
-    return ok, (f"sum c_i f_i = 1 over {len(use)} of {len(gens)} generators ({', '.join(l for l, _ in gens)}), {nterms} "
-                f"cofactor terms, parsed and summed in {time.time() - t:.1f} s" if ok else
-                f"sum c_i f_i - 1 has {len(tot - 1)} terms")
+    # liftstd's transformation matrix gives sum c_i f_i = kappa, a nonzero rational: kappa = 2 for the ODE ideal. Any nonzero
+    # constant proves 1 in the ideal (divide the cofactors by kappa), so that is what is checked, exactly.
+    ok = tot != 0 and all(sum(m) == 0 for m in tot.monoms())
+    kappa = tot.coeff(1) if ok else None
+    return ok, (f"sum c_i f_i = kappa = {kappa} (a nonzero constant, so 1 is in the ideal) over {len(use)} of {len(gens)} "
+                f"generators ({', '.join(l for l, _ in gens)}), {nterms} cofactor terms, parsed and summed in "
+                f"{time.time() - t:.1f} s" if ok else f"sum c_i f_i is not a nonzero constant: {len(tot)} terms")
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -755,7 +758,7 @@ def check_numerators(Qfull):
     bad = []
     for i in range(3):
         cv, sv = PYTH[i]
-        r0 = sp.Rational(random.randint(2, 5), random.randint(2, 5))
+        r0 = [sp.Rational(3, 2), sp.Rational(5, 3), sp.Integer(2)][i]
         jets = [rr() for _ in range(7)]
         pt = {RW: r0, CC: cv, SS: sv}
         pt.update({WJ[k]: jets[k] for k in range(7)})
@@ -961,24 +964,21 @@ def parse_opts(argv):
 
 def find_point_R1(Q):
     """An exact rational point of V(R1 + sat) with u1 != 0, so R1 is not the unit ideal. At the equator N_00, N_02, N_22
-    carry the factor Phi' = 4 u0^2 u1^2 - u1^4 + u1^2 + 2 u1 u2 + u2^2 (det h = 0 there) and N_11 is linear in u4: take
-    u1 = 1, (1 + u2, 2 u0) a rational point of the unit circle, u3 in a short list, and solve N_11 for u4."""
+    carry the factor Phi' = 4 u0^2 u1^2 - u1^4 + u1^2 + 2 u1 u2 + u2^2 (det h = 0 there). Take u1 = 1 and (1 + u2, 2 u0) a
+    rational point of the unit circle, so that Phi' = 0, and solve the remaining generators for (u3, u4), which sympy
+    does exactly. Every candidate is verified on all generators with exact arithmetic."""
     gens = rung_gens(Q, "R1")
-    u4s = sp.Symbol("u4")
     syms = sp.symbols("s u0 u1 u2 u3 u4")
     for (X, Y) in PYTH + [(-x, y) for x, y in PYTH]:
-        for u3v in (0, 1, -1, 2):
-            pt = [Y / 2, sp.Integer(1), X - 1, sp.Integer(u3v)]
-            sol = None
-            for _, g in gens:
-                e = sp.sympify(g.as_expr()).subs(dict(zip(syms[1:5], pt)))
-                P = sp.Poly(e, syms[5])
-                if P.degree() == 1:
-                    sol = -P.coeff_monomial(1) / P.coeff_monomial(syms[5])
-                    break
-            if sol is None or not sp.sympify(sol).is_Rational:
+        pt = [Y / 2, sp.Integer(1), X - 1]
+        polys = [sp.expand(sp.sympify(g.as_expr()).subs(dict(zip(syms[1:4], pt)))) for _, g in gens]
+        polys = [e for e in polys if e != 0]
+        for sol in (sp.solve(polys, [syms[4], syms[5]], dict=True) if polys else [{}]):
+            u4v = sp.sympify(sol.get(syms[5], 0))
+            u3v = sp.sympify(sol.get(syms[4], 0)).subs(syms[5], u4v)
+            if not (u3v.is_Rational and u4v.is_Rational):
                 continue
-            jets = pt + [sp.Rational(sol)]
+            jets = pt + [u3v, u4v]
             if all(eval_Rs(g, 1, jets) == 0 for _, g in gens + [("sat", SAT)]):
                 return jets
     return None
@@ -1006,7 +1006,7 @@ def exceptional_set(gens):
             acc[key] = acc.get(key, 0) + co * QQ(1, 2) ** a * (-1) ** c_
         if any(v != 0 for v in acc.values()):
             bad += 1
-    return bad == 0, len(gens) - 1
+    return bad == 0, len([1 for lab, _ in gens if lab != "sat"])
 
 
 def k22_structure(Q):
@@ -1118,6 +1118,7 @@ def ode_step():
 
 
 STOP_AT = {"num-sign": 1, "num-det": 1, "plant-sat": 2, "coef-drop": 3}
+SECTION4_ONLY = {"cert-corrupt", "cert-satoff", "rung-equator", "ode-sign", "flat-sub"}  # targets are all in section 4
 
 
 def main(opts):
@@ -1128,19 +1129,28 @@ def main(opts):
     print(f"three_scalars_ideal.py, issue #157. sympy {sp.__version__}, python {sys.version.split()[0]}, mutation: "
           f"{MUT or 'none'}" + (f" ({MUTATIONS[MUT][1]})" if MUT else "") + f". raw: {RAW}")
     verdicts = load_verdicts()
+    for rel in ("verdicts.json", "certs/ODE.json"):
+        f = os.path.join(RAW, rel)
+        if os.path.exists(f):
+            print(f"  stored {rel}: sha256 {hashlib.sha256(open(f, 'rb').read()).hexdigest()[:16]}")
     print("\n== 1. The numerators det(h)^2 Ric(h) of the wall, at r = 1, and their checks ==")
     Qfull, Dt = wall_numerators()
     Q = strip_axis(Qfull)
     print(f"  N_ab terms {[len(Qfull[k]) for k in sorted(Qfull)]}; after dividing by (1 - c^2)^k (k = 2, 2, 2, 2, 2, 3): "
           f"{[len(Q[k]) for k in sorted(Q)]}; det h terms {len(Dt)} ({time.time() - T0:.0f} s)")
-    check_numerators(Qfull)
+    only4 = MUT in SECTION4_ONLY
+    if not only4:
+        check_numerators(Qfull)
+    else:
+        print("  (the checks of sections 1 and 2 are skipped for this control: its targets are in section 4)")
     print(f"  ({time.time() - T0:.0f} s)")
     if sec_stop < 2:
         return fin()
     print("\n== 2. Planted truth: flat blocks, a family with a spurious det h = 0 component, a planted root ==")
-    planted_blocks()
-    planted_family()
-    planted_root(Q, verdicts)
+    if not only4:
+        planted_blocks()
+        planted_family()
+        planted_root(Q, verdicts)
     print(f"  ({time.time() - T0:.0f} s)")
     if sec_stop < 3:
         return fin()
