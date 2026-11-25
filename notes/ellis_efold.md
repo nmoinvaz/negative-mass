@@ -2,7 +2,8 @@
 
 November 2026. Code `ellis_efold.py`, output `ellis_efold_output.txt`, criteria and logs in negative-mass-raw `I151-rpi5`
 (README written before the first run; the run numbers below are its logs). Run it from this directory with the repository's
-Python (numpy, scipy, mpmath, sympy): `python3 ellis_efold.py > ellis_efold_output.txt`, about 2.5 minutes on one core.
+Python (numpy, scipy, mpmath, sympy): `python3 ellis_efold.py > ellis_efold_output.txt`, about 6 minutes on one core with #163's
+additions (`--section=old` is #151's 2.5 minutes). #163 (second row of Table I and the large-γ₁ limit) is the last part of this note.
 
 Status words as in AGENTS.md: the unit map, the background, the linearization and the printed potential are **checked
 symbolically** (30 digits where numeric); every eigenvalue below is **numerical evidence** (three methods, one spread).
@@ -143,7 +144,7 @@ Nothing else in `critical_ghost.md` needs to change.
 
 ## Not claimed
 
-- Nothing about the second row of [GGS09a] Table I (γ₁ ≥ 2.5, the limit 0.590): the code stops at γ₁ = 2. The value 0.590 is quoted from [GGS09a].
+- (#151, superseded by #163 below) The second row of Table I and the limit were not computed in #151; #163 does.
 - [SN26]'s nonlinear runs and its own linear solver were not re-run or read; only its stated definitions and numbers were checked.
 - [TS13] was not re-read; its 1.397 is checked against this repository's own D = 4 value and against T(0) = 0.846.
 - Uniqueness of the unstable mode (one bound state) is checked numerically at γ₁ = 0, 1/2, 1, 2 (G7: one negative eigenvalue in B,
@@ -195,3 +196,166 @@ confirmation of method C's trivial monodromy.
   with logs kept. The fix reports an exception as the check's failure, which is stricter, and no criterion moved.
 
 `critical_ghost.md` §1.1, §1.2 and §1.3 now carry the proposals, with the §1.3 correction marked as the coordinator's.
+
+
+# #163: the second row of Table I and the large-γ₁ limit
+
+November 2026. Same code and output files; criteria, amendments and logs in negative-mass-raw `I163-rpi5` (README with the criteria at 91e4990, before
+the first run of the new code; amendments 1–8 there). The final run (`ellis_efold_output.txt`) runs 100 checks in 6 min 15 s on one core (rpi5, peak rss
+134 MB, script commit d3d2030, exit 1: **two checks fail, P-C2 and LE5, both as registered and reported below**). Status words as in AGENTS.md: the identities N2, LE0, N3a are
+*checked symbolically* or to 16 digits; every eigenvalue is *numerical evidence* (three methods, one spread); the limit of T(γ₁) is *numerical evidence*.
+
+## Result
+
+**All 16 entries of the second row of [GGS09a] Table I are reproduced** (γ₁ = 2.5 … 10): worst |T − printed| = 0.000489, and every value rounds to the printed
+digits. **The limit equation, solved here from the TeX's Eq. (43), gives 1/β̂ = 0.588351371**, which rounds to the paper's 0.588 and is 0.00165 below
+the table's 0.590; the issue's criterion "within 0.001 of 0.590" fails as registered. The finite-γ₁ time keeps falling after γ₁ = 8, where the table's
+digits stop changing: T(10) = 0.589697, T(160) = 0.588357, with the gap of β̂ to its limit falling like γ₁⁻² (measured order 1.990, 1.997, 1.999, 2.000). So 0.590 is T
+at γ₁ ≈ 8–10 rounded, not the limit.
+
+| quantity | here | source |
+|---|---|---|
+| 16 values γ₁ = 2.5 … 10 | all within 0.00049 of Table I (worst 0.000489 at γ₁ = 4.0 and 6.5) | [GGS09a] Table I, second row |
+| error bar of T (second row) | ≤ 4.5e-12 (spread over discretizations and solvers at γ₁ = 2.5, 5, 10; not an enclosure) | D1b |
+| 1/β̂ of Eq. (43), three solvers | 0.588351371 (shooting and matrix 3e-13 apart; finite volume with Richardson 5e-11 from them) | [GGS09a] Sec. IV: "yields 1/β̂ = 0.588" |
+| 1/β̂ against 0.590 | −0.001649 (criterion ≤ 0.001: **fails**) | [GGS09a] Sec. IV, after Table I: "converges to a value of 0.590" |
+| T(10), T(20), T(40), T(80), T(160) | 0.589697, 0.588689, 0.588436, 0.588373, 0.588357 | this run (LE6) |
+| first row, unchanged | legacy path equals #151's β_A at 16 values with rel 0.0 (R1); the new path equals them to 2.6e-14 (converged, L = 60) and, at γ₁ ≤ 1.8, to 2.3e-13 (as run, L = 30). At γ₁ = 2.0 it differs from #151's as-run value by 6.29e-6 | R1, R2 |
+
+## The far field: what the problem was
+
+**The printed W does not lose its digits.** The issue and #151 assumed that the bracket of Eq. (32) loses its digits where x ~ ρe^{πγ₁} is large. Measured: at
+γ₁ = 2.5 and 10, x = 10 … 1e12, the bracket in double precision agrees with the derived W (60 digits) to 8.7e-16 (DIAG N1, `prefeas_conditioning.log`). The cancellation
+of −3/q against 3(x−γ₁)²/q² is against a term 2(F_x/F)² of the same size.
+
+**What stopped #151's code at γ₁ ≥ 2.5 was the position of the throat.** #151 works in ρ̃ = λρ, λ = e^{2γ₁ arctan γ₁}, with the origin at x = 0 and the domain ρ̃ ∈ [−30, 30]. The mode
+lives around the throat, at ρ̃ = ∫₀^{γ₁} e^{2γ₁(arctan γ₁ − arctan y)} dy = 2.2 (γ₁ = 1), 23.8 (2), **84.8 (2.5)**, 321 (3), 5.2e3 (4), 1.8e6 (6), 7.1e8 (8), 3.0e11 (10).
+The legacy path finds no root at γ₁ = 2.5 and 3.0 (DIAG L0). At γ₁ = 2 the throat is 6 units from the domain's end, which is why #151's γ₁ = 2.0 value is truncated (below).
+
+**Handling.** The new path (`gshoot`, `gmatrix`, `C2_det`) puts the origin of u = (ρ̃ − ρ̃_throat)/sc, sc = max(1, γ₁), at the throat (x = γ₁), domain |u| ≤ 20:
+
+```math
+-\chi_{uu} + sc^2\,a(x)^2\,[\text{bracket of Eq. (32)}]\,\chi = -b^2\chi,\quad \frac{dx}{du} = sc\,a(x),\ x(0) = \gamma_1,\quad
+a(x) = e^{2\gamma_1[\arctan x - \arctan\gamma_1]},\quad T = \frac{sc}{\sqrt{1+\gamma_1^2}\,b}.
+```
+
+Then b = sc β̄ = γ₁β̄ = β̂ for γ₁ ≥ 1, the mode is O(1) wide in u at every γ₁, and x(+L′) = 1350 at γ₁ = 10 (the x(−L), x(+L) of the output), never near 1e12. Beyond x_sw = 2 max(1, γ₁) the code
+evaluates the bracket with its first two terms combined, 3(γ₁² − 1 − 2γ₁x)/q², exact algebra (N2, symbolic) and equal to the printed form to 8e-16 (N1a). It is kept as the far-field
+form so that the large-x part of W is code that a control can break (`largex`); it is **not** needed for accuracy (R3: with and without it, β differs by 4.6e-15). The left start χ′ = +bχ and the
+right start χ′ = −bχ ignore the 2/r² tails; their effect is below the spread of D1b (L′ → L′ + 8: 3.6e-13 at most).
+
+## Second row
+
+| γ₁ | b = β̂ | T | printed | T − printed |
+|---|---|---|---|---|
+| 2.5 | 1.526710344 | 0.608155 | 0.608 | +0.000155 |
+| 3.0 | 1.574655248 | 0.602470 | 0.602 | +0.000470 |
+| 3.5 | 1.605497568 | 0.598895 | 0.599 | -0.000105 |
+| 4.0 | 1.626362434 | 0.596511 | 0.597 | -0.000489 |
+| 4.5 | 1.641074421 | 0.594846 | 0.595 | -0.000154 |
+| 5.0 | 1.651808826 | 0.593641 | 0.594 | -0.000359 |
+| 5.5 | 1.659867460 | 0.592740 | 0.593 | -0.000260 |
+| 6.0 | 1.666064333 | 0.592050 | 0.592 | +0.000050 |
+| 6.5 | 1.670928007 | 0.591511 | 0.592 | -0.000489 |
+| 7.0 | 1.674813055 | 0.591081 | 0.591 | +0.000081 |
+| 7.5 | 1.677964155 | 0.590732 | 0.591 | -0.000268 |
+| 8.0 | 1.680554378 | 0.590447 | 0.590 | +0.000447 |
+| 8.5 | 1.682708832 | 0.590209 | 0.590 | +0.000209 |
+| 9.0 | 1.684519717 | 0.590010 | 0.590 | +0.000010 |
+| 9.5 | 1.686056155 | 0.589841 | 0.590 | -0.000159 |
+| 10.0 | 1.687370771 | 0.589697 | 0.590 | -0.000303 |
+
+Three methods: A (shooting, printed W), B (matrix, W derived with sympy at 40 digits) and C (δΦ = 0, no W). A against B at the 16 values and at γ₁ = 0.5, 1, 2: worst 3.6e-12 (G1b). A against C at γ₁ = 2.5, 4, 6, 8, 10:
+worst 1.5e-12, upper against lower semicircle equal to 12 digits (G2b). One bound state: one root in A's scan and one negative eigenvalue in B at γ₁ = 2.5, 5, 10 (G7b).
+Spread of b over solver choices (D1b; A: rtol and L′, B: N and L′, C: radius and L′): at most 7.5e-12 relative (B at γ₁ = 5), so the error bar of T is at most 4.5e-12; it is measured at three values and assumed for the rest of the row.
+
+## The limit equation
+
+[GGS09a] Sec. IV (TeX label `Eq:DiffEqLargeGamma`, the PDF's Eq. (43)):
+−(e^{2(1−1/z)}∂_z)²χ + e^{4(1−1/z)}[2z⁻² − 10z⁻³ + 3z⁻⁴]χ = −β̂²χ, z > 0, and T → 1/β̂. Checked here: the printed Ŵ(z) of the TeX (retyped) equals γ₁² W̄(γ₁z) of the code to 6e-16 (N3a),
+and tends to the printed limit potential, the gap falling by a factor of 100 per decade of γ₁, 1.7e-3 at γ₁ = 1e2 to 1.7e-11 at 1e6 (N3b); the zero mode (2/π)(z−1)/z² e^{1−1/z}
+solves the printed equation exactly (LE0, symbolic). Solved by shooting and by a sixth-order matrix in u = ρ̂ (sharing z(u) and Ŵ), and by a finite-volume scheme on a uniform grid in ln z (sharing only Ŵ):
+
+| solver | β̂ | 1/β̂ |
+|---|---|---|
+| A, shooting | 1.699664604104 | 0.588351371 |
+| B, matrix | 1.699664604104 | 0.588351371 |
+| finite volume, N = 8000 and 16000 (Richardson in h²) | 1.6996646040 (1.6996646791, 1.6996646228) | 0.588351371 |
+
+Planted truth through the same code (sech²(ρ̂(z)), ℓ = 0.9, 1.6): A and B to 1.5e-12, finite volume to 1.1e-9 (P-LA, P-LB, P-LC). One bound state in all three (LE4).
+The finite-γ₁ problem tends to the limit equation: β̂ = b at γ₁ = 10, 20, 40, 80, 160 is 1.687370771, 1.696569783, 1.698889552, 1.699470757, 1.699616137, against 1.699664604; the gap falls by a factor 4 per doubling (LE6).
+Extrapolating T(80), T(160) with the measured order 2 gives 0.588351, equal to 1/β̂.
+
+**The gap between 0.588 and 0.590, as it is.** [GGS09a] write both: 1/β̂ = 0.588 from Eq. (43) and 0.590 from the table. The limit equation gives 0.588351, so their 0.588 is reproduced and the
+table's 0.590 is the finite-γ₁ value T = 0.5904 … 0.5897 at γ₁ = 8 … 10 rounded to three digits. T(γ₁) is still falling there (0.58970 at 10, 0.58869 at 20).
+Their sentence "the time scale converges to a value of 0.590 r_throat" reads the three digits of the table; their own limit equation does not support 0.590.
+
+## Checks and controls (#163)
+
+New checks: N1a, N1b, N2, N3a, N3b, LE0, U3, P-A2, P-B2, P-C2, P-C2b, P-LA, P-LB, P-LC, R2, R3, G5b, G1b, G2b, G7b, D1b, LE3, LE4, LE5, LE6, plus R1 in #151's section.
+Every one passes in the final run except P-C2 and LE5. Controls (`--mutate=`, 17 mutations; the new ones are `largex`, `centre`, `scale`, `lelimit`, `lefv`), from
+`I163-rpi5/mutations_summary.md`, generated by `summarize_mutations.py` from the logs:
+
+| mutation | target | fired | SILENT | failed outside the target list | exit, wall |
+|---|---|---|---|---|---|
+| `potential` | G0, G2, G3, G4, G5, G6, R1 | G0, G2, G3, G4, G5, G6, R1 | none | P-C2, LE5 | rc 1, 6:04.96 |
+| `printedW` | W1, G1, G2, G3, G4, G5, R1, N1a, N1b, N3a, R2, G5b, G1b, G2b | W1, G1, G2, G3, G4, G5, R1, N1a, N1b, N3a, R2, G5b, G1b, G2b | none | G6, P-C2, LE5, LE6 | rc 1, 5:54.54 |
+| `matrix` | P-B, G1, G0, P-B2, G1b, P-LB, LE3 | P-B, G1, G0, P-B2, G1b, P-LB, LE3 | none | G7, D1, P-C2, G7b, D1b, LE4, LE5 | rc 1, 6:07.36 |
+| `planted` | P-A, P-B, P-A2, P-B2, P-LA, P-LB, P-LC | P-A, P-B, P-A2, P-B2, P-LA, P-LB, P-LC | none | P-C2, LE5 | rc 1, 6:11.15 |
+| `xmap` (run 1) | P-A, G1, G2, G3, G4, G5, R1 | P-A, G1, G2, G3, G4, G5 | R1 | G6, G7, D1, P-C2, LE5 | rc 1, 9:01.97 |
+| `units` | U1 | U1 | none | P-C2, LE5 | rc 1, 6:12.66 |
+| `tfactor` | U2, G3, G4, G5, G6, U3 | U2, G3, G4, G5, G6, U3 | none | P-C2, LE5 | rc 1, 6:07.85 |
+| `count` | G7, G7b, LE4 | G7, G7b, LE4 | none | P-C2, LE5 | rc 1, 13:15.35 |
+| `domain` | D1, G0, G1, D1b, G5b, R2, P-A2, P-B2, G1b, LE3 | D1, G0, G1, D1b, R2, P-A2, P-B2, G1b, LE3 | G5b | P-A, P-B, G2, G5, G7, P-C2, P-LA, P-LB, G2b, LE5 | rc 1, 2:19.89 |
+| `deltaphi` | L1, G2, G2b, P-C2b | L1, G2, G2b, P-C2b | none | D1, P-C2, D1b, LE5 | rc 1, 5:50.13 |
+| `cpath` | P-C, G2, P-C2b, G2b | P-C, G2, P-C2b, G2b | none | P-C2, D1b, LE5 | rc 1, 4:18.68 |
+| `background` | S1 | S1 | none | P-C2, LE5 | rc 1, 6:10.36 |
+| `largex` | N1a, N2, R2, R3, G5b, G1b, G2b | N1a, N2, R2, R3, G5b, G1b, G2b | none | P-C2, LE5, LE6 | rc 1, 4:35.11 |
+| `centre` (run 1) | G5b, G1b, G7b, D1b | none (stopped at the 1 h cap, rc 124, after N1a … P-B2) | **G5b, G1b, G7b, D1b: never ran** | | rc 124, 1:00:00 |
+| `scale` | U3, G5b | U3, G5b | none | P-C2, LE5 | rc 1, 3:52.56 |
+| `lelimit` | LE0, N3b, LE6 | LE0, N3b, LE6 | none | P-C2, LE5 | rc 1, 3:56.06 |
+| `lefv` | LE3, P-LC | LE3, P-LC | none | P-C2, LE5 | rc 1, 3:52.07 |
+| `centre` (run 2) | G5b, G1b, G7b, D1b | G5b, G1b, G7b, D1b | none | P-C2, R3, G2b, P-C2b, LE5, LE6 | rc 1, 9:28.78 |
+| `xmap` (run 2) | P-A, G1, G2, G3, G4, G5, R1 | P-A, G1, G2, G3, G4, G5, R1 | none | G6, G7, D1, P-C2, LE5 | rc 1, 8:51.77 |
+
+Every row fails P-C2 and LE5 as well, which fail without any mutation; those two are not in any target list. **16 of the 17 controls fire on every target; `domain` does not**: it is
+silent on G5b (the second row stays within 0.001 of the printed values at L′ = 2, worst 0.000552, while the truncation is 5.3e-4 in β and R2, D1b, G1b, P-A2, P-B2, LE3 fire on it).
+Two controls were silent in their first run and fire after a code change that touches only mutated paths (README amendment 8): `xmap` was silent on R1 (the legacy table loop raised before R1;
+R1 now reports FAIL when it does) and `centre` hit the 1 h cap because its planted problems at x₀ = 0 integrate extremely slowly (the mutation now leaves planted problems alone). Both first logs are kept
+(`mut_xmap.log`, `mut_centre.log`). The unmutated rerun (`final_run2`, the file `ellis_efold_output.txt`) equals the first final run apart from the timing line. Unpredicted extra failures are in the table's fifth column; none of the checks
+that the README predicted would pass failed on a control, except the ones listed there (for example `matrix` also fails G7, D1, G7b, D1b, LE4, which use the same mutated B).
+
+**The two failed checks.**
+- *LE5(a)*: 1/β̂ = 0.588351 against 0.590, −0.001649, criterion 0.001. Reported as it is above; LE5(b) (rounds to the paper's 0.588) passes.
+- *P-C2* (registered; stays failed): a manufactured solution C* = e^{γ₁ arctan x}e^{−(x−γ₁)²/2} carried on a semicircle of radius 0.5√(1+γ₁²) with b/sc = 1.3. Error 2.3e-11, 9.3e-8, 4.8e6
+  at γ₁ = 2.5, 5, 10. Cause (`diag_pc2_growth.py`): the unwanted homogeneous solution grows along that arc by 1.7e2, 3.4e4, 1.4e9, so the test amplifies its own 1e-12 integration error. It
+  is also not the real path (the real radius is 3.83 at γ₁ = 10, not 5.02). It is not a failure of method C, which agrees with A to 1.5e-12 (G2b).
+- *P-C2b* (added after the coordinator's ruling, criterion written before its first run): a manufactured solution decaying to the right like the real mode, carried through exactly
+  the path, radius and direction of the real roots (right segment, both semicircles, left segment), with the source from the ODE retyped independently. Passes at γ₁ = 2.5, 4, 6, 8, 10 with worst error 1.4e-11
+  (criterion 1e-8). `cpath` (r = 0) and `deltaphi` (coefficient 1 in the integrated ODE) both fire it (computed before they were declared).
+
+## What `critical_ghost.md` should now say
+
+Proposals; the file is the coordinator's. §1.1, row 1, last sentences (line 92 at main 2455a0d):
+
+```diff
+-... 0.618 (2) → 0.590 (large γ₁). The first row of Table I is reproduced at 16 values to its 3 digits (`ellis_efold.md`, #151); the limit 0.590 is quoted from [GGS09a]
++... 0.618 (2), 0.608 (2.5), 0.594 (5), 0.5897 (10) → 0.58835 (γ₁ → ∞). Both rows of Table I are reproduced at 32 values to their 3 digits (`ellis_efold.md`, #151, #163).
++The limit is 1/β̂ = 0.588351 from [GGS09a]'s own limit equation, solved here from the TeX ([GGS09a] print 0.588); the table's 0.590 is T at γ₁ ≈ 8–10 rounded,
++and T falls like γ₁⁻² to 0.58835 (numerical evidence)
+```
+
+## Failed, and what disagrees
+
+- The premise that the printed W loses its digits at large x is false for the bracket (8.7e-16 at x = 1e12). #151's code stopped at γ₁ = 2 because its domain misses the throat.
+- #151's γ₁ = 2.0 value is truncated: β = 60.662389104967 as run (L = 30) against 60.662007295832 converged (L = 45 and 60 agree), rel 6.29e-6; T = 0.6178881 against 0.6178919. No printed digit changes.
+  The criterion "the first row is unchanged at every γ₁ ≤ 2 to rel 1e-9" holds exactly for the legacy path (R1, rel 0.0), for the new path against the three β that #151 printed (γ₁ = 0, 0.5, 1, 12 digits)
+  and against its other values at γ₁ ≤ 1.8. **It fails at γ₁ = 2.0 for the new path against #151's as-run value, by 6.29e-6**, because that value was truncated. The new path equals the converged value to 1.3e-14.
+- 1/β̂ = 0.588351 against the table's 0.590: −0.001649 (above).
+- P-C2 fails at γ₁ = 5 and 10 (above). Run 1 of the new code crashed in its first check, on a sample point that is exactly the throat of γ₁ = 10 (README amendment 1).
+
+## Not claimed
+
+- The convergence T(γ₁) → 1/β̂ is *numerical evidence* (LE6, five values of γ₁, order 2.000); [GGS09a]'s argument is pointwise convergence of the equation, not of its eigenvalue.
+- Uniqueness of the bound state for γ₁ ≥ 2.5 is checked at three values (G7b) and for the limit equation (LE4, with the paper's nodal argument for the zero mode); the proof is [GGS09a].
+- [SN26]'s nonlinear results are not touched; nothing here changes the §1.2–§1.3 statements about T(1/2).
