@@ -22,7 +22,8 @@ with lapse 1, shift β_x = −v f and K_ij = ½(∂_iβ_j + ∂_jβ_i). It is th
    (iii). The surface integrals agree (*numerical evidence*): P is 1.8×10⁻³ at radius 2, 8×10⁻¹⁰ at 4 and 0 at 8
    (σR = 4, v = 1). The same code returns m ψ(R)³ for Schwarzschild and P for Bowen–York data. So these data cannot
    violate any lower bound on M. They test the bounds' hypotheses only.
-3. **The minimal split** (*proved*, by hand, and checked numerically). Over splits T = T₊ − T₋ with μ± ≥ |J±|,
+3. **The minimal split** (**certified** in Lean, `NegativeMass.MinimalSplit.minimal_split`, #174; *proved* by hand
+   first, and checked numerically). Over splits T = T₊ − T₋ with μ± ≥ |J±|,
    the pointwise minimum is μ₋ = max(0, −μ, (|J| − μ)/2). The lower bound follows from μ₊ = μ + μ₋ ≥ 0 and
    |J| ≤ |J₊| + |J₋| ≤ μ + 2μ₋. It is attained with J₋ = −μ₋ Ĵ when |J| ≥ −μ, and with J₋ = −J otherwise. Along it,
    μ₋ + |J₋| = max(0, |J| − μ). It agrees with a Nelder–Mead minimisation at 300 random points to 2×10⁻¹³. The

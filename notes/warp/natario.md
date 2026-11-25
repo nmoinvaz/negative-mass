@@ -66,7 +66,8 @@ e_x − x r̂). Alcubierre's X = v f e_x [Alc94] lacks the term (v f′/2)(r e_x
    ∫J dV = P, and the quadrature gives |∫J_x dV| / ∫|J| dV = 3×10⁻¹⁴. So these data, like Alcubierre's, have M = 0 and
    test the bounds' hypotheses only.
 
-3. **The minimal split** (the formula is #58 item 3, *proved*; rechecked here). μ₋ = max(0, −μ, (|J| − μ)/2) agrees with a
+3. **The minimal split** (the formula is #58 item 3, **certified** in Lean as `NegativeMass.MinimalSplit.minimal_split`,
+   #174; rechecked here). μ₋ = max(0, −μ, (|J| − μ)/2) agrees with a
    restarted Nelder–Mead minimisation to 2×10⁻¹⁶ at 150 random (μ, J) and to 9×10⁻¹⁶ at 150 points of the Natário wall
    (σR = 4, 8, 16, v = 0.01 to 10, 8 of them with −μ > |J|), and the named split is admissible at every point. Since μ ≤ 0
    here, μ₋ = max(|μ|, (|J| + |μ|)/2), so (*proved*, by hand)
