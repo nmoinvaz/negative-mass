@@ -14,6 +14,9 @@ stars* — [`paper/1-thresholds/main.pdf`](paper/1-thresholds/main.pdf)
   [R < r_s] + [κ < κ_c(R)], with κ_c in closed form (Theorem 2).
 - **Thresholds.** A star with |M|/R < 0.439 and κ ≥ 0 has no unstable even-parity mode for any l; any finite radius
   caps the l⁴ growth of the point mass.
+- **Large l.** r_* < r_neg for every l (proved). With c = (l+2)(l−1), c·r_* → 8.486 and c·r_neg → 9.636, both from
+  above and strictly decreasing, and l²·r_neg increases to 9.636 from l = 5 (certified, independently reviewed;
+  `phase2/dg_proof/RESULTS.md` §4).
 - **Verified by:** `phase2/dg_proof/` (exact SymPy checks of every identity, symbolic in l and for l = 2–10),
   `phase2/dg_spectrum/` (independent numerical spectra, 1000-case scan).
 

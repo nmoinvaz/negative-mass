@@ -21,6 +21,8 @@ independent reproduction of the DG08 spectrum (cheap with the Phase 0 code).
 - ✅ Test the heuristic: no unstable l ≥ 2 mode for k ≳ 8(|M|/R)²; find the critical compactness where one appears.
   Settled by the exact thresholds of phase2/dg_proof Theorem 2.
 - ✅ Check convergence of the unstable spectrum to the Gleiser–Dotti modes as R → 0 (phase2/dg_spectrum).
+- ✅ Large-l thresholds (#2): r_* < r_neg for every l (proved), and c·r_* → 8.486, c·r_neg → 9.636 monotonically,
+  c = (l+2)(l−1) (certified; reviewed in #104 and #138). See phase2/dg_proof/RESULTS.md §4.
 - ✅ Question: is the point-singularity problem ill-posed (growth unbounded in l), and does any regular star cure it?
   Answered in phase2/ill_posed (#3): Hadamard ill-posed in every angular Sobolev norm, proved for the DG variable Ψ̂
   (the transfer to metric data is #108), and a truncated star with an l-independent Robin κ ≥ 0 caps the growth at
