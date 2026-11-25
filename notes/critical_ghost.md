@@ -91,18 +91,22 @@ The places where a real connection could still exist, all untested:
 |---|---|---|
 | Static spherically symmetric wormholes of a massless ghost scalar, the full 2-parameter family (throat radius, product of the asymptotic masses) | **Exactly one** exponentially growing mode: proven for γ₁ ≠ 0, where the operator is factorized with the zero mode 1/Ψ₀ and a nodal argument gives exactly one bound state; for γ₁ = 0 that zero mode is not normalizable, a Rayleigh–Ritz bound gives a bound state and uniqueness is asserted by continuity (the symmetric case is proved in every D in `wormhole_largeD/one_mode.md`). Time scale T = τ/r_throat, τ the proper time at the throat, T = e^{2γ₁ arctan γ₁}/(√(1+γ₁²) β) in the units b = 1, γ₀ = 0: 0.846 (γ₁ = 0), 0.758 (1/2), 0.675 (1), 0.618 (2), 0.608 (2.5), 0.594 (5), 0.5897 (10) → 0.58835 (γ₁ → ∞). Both rows of Table I are reproduced at 32 values to their 3 digits (`ellis_efold.md`, #151, #163). The limit is 1/β̂ = 0.588351 from [GGS09a]'s own limit equation, solved from the TeX ([GGS09a] print 0.588); the table's 0.590 is T at γ₁ ≈ 8–10 rounded, and T falls like γ₁⁻² to 0.58835 (numerical evidence) | [GGS09a] |
 | Same, in n = 4…11, 20, 50, 100 spacetime dimensions | One negative ω² in every n. ω²a² = −1.397, −2.985, −4.687, −8.290, −12.044 (n = 4, 5, 6, 8, 10); −31.6, −91.3, −191.3 (n = 20, 50, 100). Faster in higher n | [TS13] |
-| Charged (Maxwell + ghost) wormholes, 4-parameter family | One growing mode, proven for sub-critical and critical members; numerical evidence for super-critical | [GGS09c] |
+| Charged (Maxwell + ghost) wormholes, 4-parameter family | One growing mode, proven for sub-critical and critical members; numerical evidence for super-critical. For supercritical members [BGKKN25] finds two purely imaginary unstable radial modes at small mass, one from a zero mode; they merge at a critical mass and charge and continue as "two modes that possess the same imaginary part but opposite real parts", whose imaginary part tends to zero toward the extremal Reissner–Nordström limit. It calls these wormholes "not yet fully radially stable". For subcritical members the instability "does not seem to completely vanish as long as M/r_T<1" [BGKKN26]. What [GGS09c] says about the supercritical spectrum is not read here (#164) | [GGS09c], [BGKKN25], [BGKKN26] |
 | Ghost scalar with a potential: Ellis–Bronnikov and an AdS wormhole | Ellis–Bronnikov: a unique bound state; the asymmetric case also has a zero-energy mode growing linearly in t (a move along the family). AdS wormhole: exactly one unstable mode | [CPS20] |
 | All static V = 0 scalar-vacuum solutions, both signs | All unstable under spherical perturbations: Fisher (normal; solutions for *every* ω² < 0), anti-Fisher branches A, B and wormhole branch C. Branch A tends to Schwarzschild and its instability fades there | [BFZ11] |
 | Phantom with a specific potential (M-AdS wormholes, "black universes") | Unstable, except black universes whose horizon sits at the area minimum | [BKZ12] |
 | Rotating 5D Ellis wormholes, equal angular momenta J₁ = J₂ | Rotation adds a second unstable mode, the descendant of the static wormhole's non-normalizable zero mode [BGKKKN26]. The two merge at \|J\|/A = 0.10063 for symmetric wormholes and at 0.1381 for a non-symmetric family (\|a₋∞\| = 1) [DFKKR13]. [DFKKR13] found no unstable mode beyond the merger "within the type of modes investigated" and concluded that rotation "may stabilize wormholes" if "no new unstable modes of a different type appear"; its abstract says the static mode "vanishes when the angular momentum exceeds some critical value". [BGKKKN26] (exact background, symmetric family only, cohomogeneity-one gravitational sector) puts the merger at 0.100628 and follows the pair past it as ω± = ±ω_R + iω_I, ω_I > 0: an oscillatory instability, "not stabilization". It says [DFKKR13] "correctly located the merger" but could not follow the modes past it. ω_I A^{1/3} falls to order 10⁻⁶ toward the extremal Myers–Perry limit \|J\|/A = 0.5, consistent with ω_I ∼ (\|J\|/A − 0.5)⁶, and the symmetric wormholes are linearly unstable in that sector. A is the throat area; the printed \|J\|/A need 4πG = 1, which neither paper states (recomputed from the exact solution, #152) | [DFKKR13], [BGKKKN26] |
+| Slowly rotating 4D Ellis–Bronnikov wormholes, radial modes to second order in J | No first-order term. For every C studied (C = 0 to 1.4) the second-order correction weakens the static mode, which reaches zero at J_c, "about 50 % or less" of the limiting value J/A → 1/(8π) of extremal Kerr (A the throat area). A second unstable mode grows out of a static zero mode, and the two cross at J/A ≈ 0.013, "slightly above 30 %" of the limit, for C = 0 to 0.2. The authors do not follow the modes past the crossing, which "is indicating a deficiency of the applied quadratic approximation", and conjecture that they "merge and disappear" [ABKK23, ABKK24]. Later papers by overlapping authors find that the charged analogue continues as a pair (row above), say the rotating fate "can only be confirmed by a non-perturbative study" [BGKKN25], and conjecture that the 4D radial instability "will therefore be relaxed for fast rotation" [BGKKN26] (#164) | [ABKK23], [ABKK24], [BGKKN25], [BGKKN26] |
 | Neutron star with a wormhole core (ghost with quartic coupling) | Linearly unstable | [DFKK13] |
 
-Two remarks.
+Three remarks.
 - The n = 4 entries agree: 1/√1.397 = 0.846 (**checked here**). #151 recomputes them by three methods: β² = 1.39705243,
   T = 0.846045 (`ellis_efold.md`).
 - [GGS09a]'s proof uses the device of this repo's `phase2/dg_proof`: a static zero mode 1/Ψ₀ and its nodes count the bound
   states. The Dotti–Gleiser and GGS operators are different, but the one-mode theorem has the same structure.
+- *Added by the coordinator:* the one-mode statements above concern radial perturbations. For the uncharged
+  Ellis–Bronnikov family [BGKKN26] Sec. 5.1.2 reports that "the fundamental l=2 b_2 branch becomes unstable for
+  M/r_T⪆0.3", a nonradial polar instability (#164).
 
 *Large n (remark, my fit to three points of [TS13]):* |ω²|a² ≈ 2n − 8.6 for n = 20–100, so the growth rate rises like
 √(2n)/a. Derived since in [`wormhole_largeD/`](wormhole_largeD/README.md): |ω²|a² = 2(n − 3) − 4 ln 2 +
@@ -147,8 +151,14 @@ Two remarks.
   - [SN26b] (4D, 3+1 numerical relativity; rotating Ellis–Bronnikov drainholes, C = 1; v2, 6 Nov 2026; angular momentum as
     a percentage of its extremal value A/8π, A the throat area, G = c = 1):
     - rotation slows the collapse: the areal radius's e-fold time rises from 5.4 (static) to 13.3 at 24 %; the fitted rate
-      extrapolates to zero at 32 %, against 33 % from second-order perturbation theory, an extrapolation and not a measured
-      endpoint;
+      extrapolates to zero at 32 %, which [SN26b] sets beside "the zero of their second-order rate for this family (33 % on
+      this axis)"; the 32 % is an extrapolation and not a measured endpoint;
+    - no source prints 33 %. From the tables of [ABKK23], [ABKK24], the C = 1 zero of the main mode is 41.9 % of 1/(8π) with
+      the printed static throat area, and the crossing of the two modes at C = 0.2 is 33.0 % (#164; recomputed in
+      negative-mass-raw `I164-mac`). So [SN26b]'s 33 % matches the C = 0.2 crossing, not the C = 1 zero, unless it uses an
+      area or a convention that the sources do not print;
+    - [SN26b]'s summary of the perturbative papers uses words they do not contain ("nearly symmetric", "beyond the reliable
+      range", "oscillating growth", "only in the extremal limit"); the sources' own words are in §1.1 (#164);
     - the 28.8 % and 33 % models expand instead; the direction depends on the effective perturbation, and the authors say this
       shows growth "without identifying a second eigenmode";
     - at 81 % (D90) no growing departure through t = 150, about 28 static e-folding times, at three resolutions; D75 and D80
@@ -527,9 +537,8 @@ signs ε_i (ε₁ = +1, ε₂ = −1) give:
   - the GMG96 perturbation section (only its abstract and the LRR summary);
   - [MGM26] (quoted from choptuik-large-d);
   - the citers of [SH02] other than those opened (title and abstract only).
-  - the slow-rotation and charged-wormhole papers that [BGKKKN26] and [SN26b] cite for the 4D and charged cases (Azad et
-    al., arXiv:2301.05243 and 2403.08387; Blázquez-Salcedo et al., arXiv:2510.11406 and 2607.18399; ids from [BGKKKN26]'s
-    TeX comments, *(unverified)*): their results appear here only as [BGKKKN26] and [SN26b] state them.
+  - the radial spectrum of supercritical charged wormholes in [GGS09c], against the two unstable modes of [BGKKN25];
+  - the quadrupole-perturbation paper and the rapidly rotating quasinormal-mode study that [SN26b] and [BGKKN26] cite.
 - **Citers of [SH02]:** INSPIRE record 586606 had 222 citing records on 2026-11-24. All titles and 34 abstracts were read,
   and 11 papers were opened (#50; negative-mass-raw `I50-rpi5/quotes.md`, item 5). Only [SN26] calls the wormhole
   threshold a "type-I critical solution".
@@ -568,6 +577,15 @@ signs ε_i (ε₁ = +1, ε₂ = −1) give:
 - [BGKKKN26] J. L. Blázquez-Salcedo, L. M. González-Romero, F. S. Khoo, B. Kleihaus, J. Kunz, P. Navarro Moreno, "Exact
   rotating wormholes in five dimensions and their exceptional-point instability", arXiv:2610.38659 (v1, 28 Oct 2026; no
   journal reference on the arXiv page).
+- [ABKK23] B. Azad, J. L. Blázquez-Salcedo, F. S. Khoo, J. Kunz, "Are slowly rotating Ellis-Bronnikov wormholes stable?",
+  arXiv:2301.05243 (v2, 23 Nov 2023; PLB 848, 138349 (2024), journal reference from INSPIRE).
+- [ABKK24] B. Azad, J. L. Blázquez-Salcedo, F. S. Khoo, J. Kunz, "Radial perturbations of Ellis-Bronnikov wormholes in slow
+  rotation up to second order", arXiv:2403.08387 (v1, 13 Mar 2024; PRD 109, 124051 (2024)).
+- [BGKKN25] J. L. Blázquez-Salcedo, L. M. González-Romero, F. S. Khoo, J. Kunz, P. Navarro Moreno, "Radial perturbations of
+  charged wormholes" (v1 title "Charged wormholes can be long-lived"), arXiv:2510.11406 (v2, 13 Mar 2026; PLB 875, 140335
+  (2026)).
+- [BGKKN26] the same five authors, "Nonradial perturbations of static charged wormholes", arXiv:2607.18399 (v2, 8 Oct 2026;
+  PRD 114, 084019 (2026)).
 - [DFKK13] V. Dzhunushaliev, V. Folomeev, B. Kleihaus, J. Kunz, "Mixed neutron-star-plus-wormhole systems: linear stability
   analysis", PRD 87, 104036 (2013), arXiv:1302.5217.
 - [Kai26] B. Kain, "Dynamical wormholes", arXiv:2602.18231 (2026).
