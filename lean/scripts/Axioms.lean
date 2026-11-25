@@ -5,3 +5,7 @@ import NegativeMass
 #print axioms NegativeMass.TanhWall.sign_at_root
 #print axioms NegativeMass.TanhWall.profile_cosh
 #print axioms NegativeMass.TanhWall.tanh_wall_no_typeI
+#print axioms NegativeMass.MinimalSplit.split_lower
+#print axioms NegativeMass.MinimalSplit.split_attained
+#print axioms NegativeMass.MinimalSplit.minimal_split
+#print axioms NegativeMass.MinimalSplit.minimal_split_R3

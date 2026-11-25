@@ -18,7 +18,9 @@ From this directory, with elan installed:
 | file | theorem | status in the notes |
 |---|---|---|
 | `NegativeMass/TanhWall.lean` | #132's result (#134): for the tanh profile f with σ, R_b > 0, every r > 0 with (r f′)′ = 0 has r f′ < 0 and 1 − f + r f′ < 0 (`tanh_wall_no_typeI`); with `m_pos`, `sign_at_root` and `profile_cosh` | **certified** (Lean kernel, Mathlib v4.34.1), [notes/warp/he_tanh_bound.md](../notes/warp/he_tanh_bound.md) |
+| `NegativeMass/MinimalSplit.lean` | #58's minimal split (#174): for J in a real normed space, the least μ₋ over splits μ = μ₊ − μ₋, J = J₊ − J₋ with ‖J±‖ ≤ μ± is max(0, −μ, (‖J‖ − μ)/2) (`minimal_split`), attained with μ₋ + ‖J₋‖ = max(0, ‖J‖ − μ) (`split_attained`); with `split_lower` and `minimal_split_R3` | **certified** (Lean kernel, Mathlib v4.34.1), [notes/warp/mass_bounds.md](../notes/warp/mass_bounds.md) item 3 |
 
 Each theorem depends only on `propext`, `Classical.choice` and `Quot.sound` (`scripts/Axioms.lean`). `scripts/mutate.py`
-changes one statement at a time and expects the build of the copy to fail: four mutations make a statement false, and
-`m-plus3` makes a true statement whose proof no longer fits.
+changes one statement at a time and expects the build of the copy to fail. Eight of its nine mutations make a
+statement false; `m-plus3` makes a true statement whose proof no longer fits. `python3 scripts/mutate.py split-58`
+runs one mutation by name.

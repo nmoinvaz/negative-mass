@@ -1,1 +1,2 @@
 import NegativeMass.TanhWall
+import NegativeMass.MinimalSplit
