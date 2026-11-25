@@ -359,3 +359,35 @@ Proposals; the file is the coordinator's. §1.1, row 1, last sentences (line 92 
 - The convergence T(γ₁) → 1/β̂ is *numerical evidence* (LE6, five values of γ₁, order 2.000); [GGS09a]'s argument is pointwise convergence of the equation, not of its eigenvalue.
 - Uniqueness of the bound state for γ₁ ≥ 2.5 is checked at three values (G7b) and for the limit equation (LE4, with the paper's nodal argument for the zero mode); the proof is [GGS09a].
 - [SN26]'s nonlinear results are not touched; nothing here changes the §1.2–§1.3 statements about T(1/2).
+
+## Coordinator's review (#163)
+
+Merged as 161837b. Raw negative-mass-raw `I163-mac` at 1bf7124 (criteria at b8e8b11, before the first run).
+
+| step | result |
+|---|---|
+| scope | the three files the brief names, and raw `I163-rpi5` |
+| rerun on the Mac | exit 1 as reported: P-C2 and LE5 fail, 98 of 100 checks pass; other differences are last-digit (platform); P-C2's errors are 8.8e-8 and 3.4e6 here against 9.3e-8 and 4.8e6 on rpi5, as its amplification predicts |
+| re-solve | the limit equation and four second-row values (γ₁ = 2, 2.5, 5, 10), by the coordinator's own Numerov on the paper's DiffEq, centred on the throat, and on the limit equation typed from the TeX |
+| independent check `ind163.py` | run 1 exits 0; 4 of 4 mutations fire on target |
+
+ind163 shares no code with `ellis_efold.py`.
+
+| id | what | result |
+|---|---|---|
+| U0 | the zero mode (2/π)(z − 1)/z² e^{1−1/z} solves the typed limit equation | pass |
+| U1 | planted Pöschl–Teller through the same Numerov | pass, rel ≤ 4.6e-13 |
+| U2 | the limit equation: 1/β̂ = 0.588351370962 | pass: 3.8e-11 from 0.588351371; 0.001649 below the table's 0.590 |
+| U3 | T(2), T(2.5), T(5), T(10) = 0.6178919483, 0.6081551057, 0.5936405352, 0.5896968273 | pass: ≤ 5.5e-10 from #163; β(2) = 60.6620072958, 6.3e-6 from #151's as-run value |
+
+**Corrections to #151's part of this note**, both found by #163 and confirmed here:
+- The statement that the printed W "loses all digits" at large x is wrong. The bracket is accurate to about 1e-15 up to
+  x = 1e12. #151's code stopped at γ₁ = 2 because its domain did not contain the throat for γ₁ ≥ 2.5.
+- #151's γ₁ = 2.0 value was truncated by its domain (L = 30): β = 60.662389 as run against 60.662007 converged,
+  T = 0.6178881 against 0.6178919. No printed digit changes. #151's error bar (5.6e-12) was a spread computed at γ₁ = 0
+  and 1/2 only, and did not cover γ₁ = 2.
+
+**Discrepancies and process.** P-C2 failed as registered and stays failed, by ruling. P-C2b, written before its first
+run on method C's own path, passes. LE5 fails as registered (the 0.590 gap) and is reported. `domain` was silent on G5b.
+`xmap` and `centre` were silent or capped in their first runs and fire after changes to mutated paths only, with both
+first logs kept.
