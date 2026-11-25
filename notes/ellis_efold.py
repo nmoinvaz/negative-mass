@@ -725,6 +725,7 @@ def run_G(gammas, L, full):
             report("R1", e1 <= 1e-9, f"first row of this script's legacy path against #151's beta_A (main 2455a0d) at 16 values: worst rel {e1:.2e}")
         except Exception as exc:  # noqa: BLE001
             report("G5", False, f"table incomplete after {len(row)} values: {type(exc).__name__}: {exc}")
+            report("R1", False, f"first row of the legacy path incomplete after {len(row)} values: {type(exc).__name__}: {exc}")
     # ------- G7: counts
     for g in [v for v in (0.0, 0.5, 1.0, 2.0) if v in gammas]:
         lam = lam_of(g)
@@ -857,9 +858,9 @@ def LN():
 
 
 # a system: dx/du = dxdu(x), potential W(x, u) (scalar) and Wvec(xs, us) in the variable u; x0 = x at u = 0
-def sysd_ggs(g, far=True, count=False):
+def sysd_ggs(g, far=True, count=False, planted=False):
     sc = sc_of(g)
-    x0 = 0.0 if mut("centre") else g
+    x0 = 0.0 if mut("centre") and not planted else g  # `centre` breaks the real rows; a planted problem has its own origin
 
     def W(x, u):
         w = sc * sc * Wbar(x, g, far)
@@ -1262,7 +1263,7 @@ def check_U3():
 
 def check_planted2(gammas, L):
     for g in gammas:
-        base = sysd_ggs(g)
+        base = sysd_ggs(g, planted=True)
         spl = u_spline_ggs(g, base["x0"])
         for ell in (0.9, 1.6):
             exact = ell * (1.01 if mut("planted") else 1.0)
