@@ -65,6 +65,7 @@ PASS  G6: [SN26] measured tau 5.12 -> T = 0.75676 (-0.211 %, they print 0.2 %), 
       Table I: gamma_1 = 1.8  T = 0.623781  printed 0.624  diff -0.000219
       Table I: gamma_1 = 2.0  T = 0.617888  printed 0.618  diff -0.000112
 PASS  G5: 16 values of Table I, worst |T - printed| = 0.000481
+PASS  R1: first row of this script's legacy path against #151's beta_A (main 2455a0d) at 16 values: worst rel 0.00e+00
 PASS  G7: gamma_1 = 0.0: A finds 1 root(s) in the scan, B has 1 negative eigenvalue(s) (lowest -1.397052; the next is >= 0)
 PASS  G7: gamma_1 = 0.5: A finds 1 root(s) in the scan, B has 1 negative eigenvalue(s) (lowest -3.516103; the next is >= 0)
 PASS  G7: gamma_1 = 1.0: A finds 1 root(s) in the scan, B has 1 negative eigenvalue(s) (lowest -25.414984; the next is >= 0)
@@ -73,4 +74,154 @@ PASS  D1: gamma_1 = 0.0: max relative spread of beta: A (rtol 1e-13 -> 1e-11, L 
       gamma_1 = 0.0: beta_A = 1.181969726488, beta_B = 1.181969726491; error bar of T from the spreads: 9.8e-12
 PASS  D1: gamma_1 = 0.5: max relative spread of beta: A (rtol 1e-13 -> 1e-11, L +10) 3.5e-13; B (N 3000 -> 6000, L +10) 7.4e-12; C (r/dist 0.5 -> 0.3, 0.7; L 25 -> 30) 2.1e-13
       gamma_1 = 0.5: beta_A = 1.875127511869, beta_B = 1.875127511870; error bar of T from the spreads: 5.6e-12
-checks: 46 run, failed ids: []  (135 s)
+--- second row, limit equation (#163)
+PASS  N1a: W-bar, far-field form (double) against the derived W (60 digits), gamma_1 in {2.5, 10}, x = 10 ... 1e12: worst rel 8.05e-16 (0 points skipped)
+      DIAG N1: the printed bracket in double at the same points: worst rel 8.67e-16 (the premise that it loses digits at large x is false for this bracket)
+PASS  N2: far-field bracket minus printed bracket, symbolic: 0
+PASS  N3a: [GGS09a] W-hat(z) (TeX, retyped) against gamma_1^2 W-bar(gamma_1 z) of the code, 3 gamma_1 x 4 z, worst rel 6.07e-16
+PASS  N3b: W-hat(z; gamma_1) against the printed limit potential, z in (0.4, 0.8, 1.0, 1.5, 3.0, 8.0): max rel diff at gamma_1 = 1e2 ... 1e6: 1.7e-03, 1.7e-05, 1.7e-07, 1.7e-09, 1.7e-11 (each decade must fall by 5, last <= 1e-3)
+PASS  LE0: the zero mode (2/pi)(z-1)/z^2 e^(1-1/z) of [GGS09a] solves the printed limit equation with beta-hat = 0, symbolic residual 0
+PASS  U3: T of the new path (sc/(sqrt(1+g^2) b)) against T_of(lam b/sc), worst rel 2.03e-16
+PASS  P-A2: gamma_1 = 2.5, ell = 0.9: A beta' = 0.900000000000 (exact 0.9), rel 5.3e-13, 1 bound states (exact 1)
+PASS  P-B2: gamma_1 = 2.5, ell = 0.9: B beta' = 0.900000000003, rel 3.6e-12, 1 negative eigenvalues (exact 1)
+PASS  P-A2: gamma_1 = 2.5, ell = 1.6: A beta' = 1.600000000000 (exact 1.6), rel 5.6e-14, 2 bound states (exact 2)
+PASS  P-B2: gamma_1 = 2.5, ell = 1.6: B beta' = 1.599999999998, rel 9.9e-13, 2 negative eigenvalues (exact 2)
+PASS  P-A2: gamma_1 = 5.0, ell = 0.9: A beta' = 0.899999999998 (exact 0.9), rel 2.3e-12, 1 bound states (exact 1)
+PASS  P-B2: gamma_1 = 5.0, ell = 0.9: B beta' = 0.899999999995, rel 5.4e-12, 1 negative eigenvalues (exact 1)
+PASS  P-A2: gamma_1 = 5.0, ell = 1.6: A beta' = 1.599999999997 (exact 1.6), rel 1.7e-12, 2 bound states (exact 2)
+PASS  P-B2: gamma_1 = 5.0, ell = 1.6: B beta' = 1.599999999998, rel 9.9e-13, 2 negative eigenvalues (exact 2)
+PASS  P-A2: gamma_1 = 10.0, ell = 0.9: A beta' = 0.899999999999 (exact 0.9), rel 1.4e-12, 1 bound states (exact 1)
+PASS  P-B2: gamma_1 = 10.0, ell = 0.9: B beta' = 0.900000000000, rel 2.5e-13, 1 negative eigenvalues (exact 1)
+PASS  P-A2: gamma_1 = 10.0, ell = 1.6: A beta' = 1.599999999998 (exact 1.6), rel 1.1e-12, 2 bound states (exact 2)
+PASS  P-B2: gamma_1 = 10.0, ell = 1.6: B beta' = 1.599999999999, rel 6.3e-13, 2 negative eigenvalues (exact 2)
+PASS  P-C2: gamma_1 = 2.5: manufactured solution of the rescaled ODE carried across the throat on both semicircles, worst rel error 2.29e-11
+FAIL  P-C2: gamma_1 = 5.0: manufactured solution of the rescaled ODE carried across the throat on both semicircles, worst rel error 9.31e-08
+FAIL  P-C2: gamma_1 = 10.0: manufactured solution of the rescaled ODE carried across the throat on both semicircles, worst rel error 4.75e+06
+PASS  P-LA: limit-equation geometry, ell = 0.9: A beta = 0.900000000000 (exact 0.9), rel 1.5e-13, 1 bound states (exact 1)
+PASS  P-LB: limit-equation geometry, ell = 0.9: B beta = 0.900000000001, rel 1.4e-12, 1 negative eigenvalues (exact 1)
+PASS  P-LC: limit-equation geometry, ell = 0.9: finite volume (Richardson) beta = 0.8999999990, rel 1.1e-09, 1 eigenvalues in [-60, 0] (exact 1)
+PASS  P-LA: limit-equation geometry, ell = 1.6: A beta = 1.600000000000 (exact 1.6), rel 1.2e-13, 2 bound states (exact 2)
+PASS  P-LB: limit-equation geometry, ell = 1.6: B beta = 1.599999999998, rel 1.3e-12, 2 negative eigenvalues (exact 2)
+PASS  P-LC: limit-equation geometry, ell = 1.6: finite volume (Richardson) beta = 1.6000000012, rel 7.6e-10, 2 eigenvalues in [-60, 0] (exact 2)
+      DIAG L0: the legacy path at gamma_1 = 2.5 (domain +-30, origin x = 0, throat at rho~ = 84.8): 0 root(s) []
+      DIAG L0: the legacy path at gamma_1 = 3.0 (domain +-30, origin x = 0, throat at rho~ = 321.1): 0 root(s) []
+      gamma_1 =  0.0: b = beta-hat = 1.181969726488  beta(lam units) = 1.18196972649  T = 0.846045358  x(-L), x(+L) = -20, 20  rho~_throat = 0 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  0.1: b = beta-hat = 1.183672661960  beta(lam units) = 1.20750441252  T = 0.840635441  x(-L), x(+L) = -14.95, 26.08  rho~_throat = 0.101 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  0.2: b = beta-hat = 1.187406162224  beta(lam units) = 1.28496239902  T = 0.825817405  x(-L), x(+L) = -10.97, 33.01  rho~_throat = 0.2081 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  0.3: b = beta-hat = 1.189937539937  beta(lam units) = 1.41733010631  T = 0.804938287  x(-L), x(+L) = -7.974, 40.5  rho~_throat = 0.3274 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  0.4: b = beta-hat = 1.187972354166  beta(lam units) = 1.61067452592  T = 0.781564224  x(-L), x(+L) = -5.805, 48.23  rho~_throat = 0.4658 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  0.5: b = beta-hat = 1.179427385815  beta(lam units) = 1.87512751187  T = 0.758357150  x(-L), x(+L) = -4.271, 55.87  rho~_throat = 0.6307 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  0.6: b = beta-hat = 1.163719058054  beta(lam units) = 2.22581771718  T = 0.736855618  x(-L), x(+L) = -3.195, 63.16  rho~_throat = 0.8307 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  0.7: b = beta-hat = 1.141421917862  beta(lam units) = 2.68395413777  T = 0.717729271  x(-L), x(+L) = -2.438, 69.91  rho~_throat = 1.076 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  0.8: b = beta-hat = 1.113755221122  beta(lam units) = 3.27829311516  T = 0.701113489  x(-L), x(+L) = -1.896, 76.04  rho~_throat = 1.379 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  0.9: b = beta-hat = 1.082152854135  beta(lam units) = 4.04717709155  T = 0.686866133  x(-L), x(+L) = -1.497, 81.49  rho~_throat = 1.756 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  1.0: b = beta-hat = 1.047989041795  beta(lam units) = 5.04132758106  T = 0.674727266  x(-L), x(+L) = -1.196, 86.28  rho~_throat = 2.226 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  1.2: b = beta-hat = 1.171736007878  beta(lam units) = 7.99410329022  T = 0.655626587  x(-L), x(+L) = -0.8675, 114.7  rho~_throat = 3.554 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  1.4: b = beta-hat = 1.268023913274  beta(lam units) = 12.9684389497  T = 0.641733537  x(-L), x(+L) = -0.6215, 144.1  rho~_throat = 5.664 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  1.6: b = beta-hat = 1.342871406172  beta(lam units) = 21.4095475382  T = 0.631481391  x(-L), x(+L) = -0.4299, 173.8  rho~_throat = 9.066 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  1.8: b = beta-hat = 1.401384668556  beta(lam units) = 35.8371939971  T = 0.623781104  x(-L), x(+L) = -0.2743, 203.5  rho~_throat = 14.63 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  2.0: b = beta-hat = 1.447546279576  beta(lam units) = 60.6620072958  T = 0.617891948  x(-L), x(+L) = -0.1431, 233.2  rho~_throat = 23.84 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  2.5: b = beta-hat = 1.526710344469  beta(lam units) = 234.692074935  T = 0.608155106  x(-L), x(+L) = 0.1205, 306.7  rho~_throat = 84.8 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  3.0: b = beta-hat = 1.574655248071  beta(lam units) = 943.596561897  T = 0.602470477  x(-L), x(+L) = 0.3321, 379.1  rho~_throat = 321.1 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  3.5: b = beta-hat = 1.605497568086  beta(lam units) = 3897.72148137  T = 0.598894677  x(-L), x(+L) = 0.5162, 450.6  rho~_throat = 1275 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  4.0: b = beta-hat = 1.626362434198  beta(lam units) = 16425.5418766  T = 0.596510642  x(-L), x(+L) = 0.6838, 521.4  rho~_throat = 5235 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  4.5: b = beta-hat = 1.641074421481  beta(lam units) = 70292.4864628  T = 0.594846308  x(-L), x(+L) = 0.8409, 591.6  rho~_throat = 2.201e+04 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  5.0: b = beta-hat = 1.651808826194  beta(lam units) = 304504.365539  T = 0.593640535  x(-L), x(+L) = 0.9908, 661.5  rho~_throat = 9.42e+04 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  5.5: b = beta-hat = 1.659867460337  beta(lam units) = 1332224.63505  T = 0.592740043  x(-L), x(+L) = 1.136, 731.1  rho~_throat = 4.085e+05 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  6.0: b = beta-hat = 1.666064333311  beta(lam units) = 5876526.89805  T = 0.592050321  x(-L), x(+L) = 1.276, 800.4  rho~_throat = 1.79e+06 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  6.5: b = beta-hat = 1.670928007144  beta(lam units) = 26101098.7024  T = 0.591510642  x(-L), x(+L) = 1.415, 869.5  rho~_throat = 7.908e+06 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  7.0: b = beta-hat = 1.674813054912  beta(lam units) = 116614153.741  T = 0.591080593  x(-L), x(+L) = 1.55, 938.5  rho~_throat = 3.519e+07 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  7.5: b = beta-hat = 1.677964155236  beta(lam units) = 523658411.439  T = 0.590732464  x(-L), x(+L) = 1.684, 1007  rho~_throat = 1.575e+08 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  8.0: b = beta-hat = 1.680554377631  beta(lam units) = 2361926649.79  T = 0.590446754  x(-L), x(+L) = 1.817, 1076  rho~_throat = 7.084e+08 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  8.5: b = beta-hat = 1.682708831799  beta(lam units) = 10694844385.4  T = 0.590209420  x(-L), x(+L) = 1.948, 1145  rho~_throat = 3.201e+09 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  9.0: b = beta-hat = 1.684519716947  beta(lam units) = 48593704020.8  T = 0.590010152  x(-L), x(+L) = 2.079, 1213  rho~_throat = 1.451e+10 (legacy domain +-30)  roots in scan 1
+      gamma_1 =  9.5: b = beta-hat = 1.686056155288  beta(lam units) = 221473491144  T = 0.589841240  x(-L), x(+L) = 2.208, 1282  rho~_throat = 6.605e+10 (legacy domain +-30)  roots in scan 1
+      gamma_1 = 10.0: b = beta-hat = 1.687370771245  beta(lam units) = 1.01219256864e+12  T = 0.589696827  x(-L), x(+L) = 2.337, 1350  rho~_throat = 3.015e+11 (legacy domain +-30)  roots in scan 1
+PASS  N1b: printed W-bar (double) against the derived W (40 digits) at 8 points of each of the 32 centred domains, worst rel 2.60e-14 (2 points skipped near a zero crossing)
+      first row via the new path: gamma_1 = 0.0  rel to #151 (L=60) 0.00e+00  rel to #151 as run (L=30) 1.88e-16
+      first row via the new path: gamma_1 = 0.1  rel to #151 (L=60) 1.29e-14  rel to #151 as run (L=30) 1.97e-14
+      first row via the new path: gamma_1 = 0.2  rel to #151 (L=60) 5.70e-15  rel to #151 as run (L=30) 1.38e-15
+      first row via the new path: gamma_1 = 0.3  rel to #151 (L=60) 3.45e-15  rel to #151 as run (L=30) 1.72e-15
+      first row via the new path: gamma_1 = 0.4  rel to #151 (L=60) 8.96e-15  rel to #151 as run (L=30) 1.65e-15
+      first row via the new path: gamma_1 = 0.5  rel to #151 (L=60) 1.43e-14  rel to #151 as run (L=30) 1.34e-14
+      first row via the new path: gamma_1 = 0.6  rel to #151 (L=60) 1.52e-14  rel to #151 as run (L=30) 7.38e-15
+      first row via the new path: gamma_1 = 0.7  rel to #151 (L=60) 2.17e-14  rel to #151 as run (L=30) 2.13e-14
+      first row via the new path: gamma_1 = 0.8  rel to #151 (L=60) 5.15e-15  rel to #151 as run (L=30) 6.37e-15
+      first row via the new path: gamma_1 = 0.9  rel to #151 (L=60) 4.83e-15  rel to #151 as run (L=30) 5.05e-15
+      first row via the new path: gamma_1 = 1.0  rel to #151 (L=60) 1.83e-14  rel to #151 as run (L=30) 1.89e-14
+      first row via the new path: gamma_1 = 1.2  rel to #151 (L=60) 1.00e-15  rel to #151 as run (L=30) 5.56e-16
+      first row via the new path: gamma_1 = 1.4  rel to #151 (L=60) 2.52e-14  rel to #151 as run (L=30) 2.55e-14
+      first row via the new path: gamma_1 = 1.6  rel to #151 (L=60) 1.26e-14  rel to #151 as run (L=30) 1.33e-14
+      first row via the new path: gamma_1 = 1.8  rel to #151 (L=60) 2.62e-14  rel to #151 as run (L=30) 2.28e-13
+      first row via the new path: gamma_1 = 2.0  rel to #151 (L=60) 1.27e-14  rel to #151 as run (L=30) 6.29e-06
+PASS  R2: first row, 16 values, new path against #151's beta: converged (L = 60) reference worst rel 2.62e-14; as-run (L = 30) reference at gamma_1 <= 1.8 worst rel 2.28e-13; at 2.0 the as-run value differs by 6.29e-06 (its domain truncation)
+      Table I, second row: gamma_1 =  2.5  T = 0.608155  printed 0.608  diff +0.000155
+      Table I, second row: gamma_1 =  3.0  T = 0.602470  printed 0.602  diff +0.000470
+      Table I, second row: gamma_1 =  3.5  T = 0.598895  printed 0.599  diff -0.000105
+      Table I, second row: gamma_1 =  4.0  T = 0.596511  printed 0.597  diff -0.000489
+      Table I, second row: gamma_1 =  4.5  T = 0.594846  printed 0.595  diff -0.000154
+      Table I, second row: gamma_1 =  5.0  T = 0.593641  printed 0.594  diff -0.000359
+      Table I, second row: gamma_1 =  5.5  T = 0.592740  printed 0.593  diff -0.000260
+      Table I, second row: gamma_1 =  6.0  T = 0.592050  printed 0.592  diff +0.000050
+      Table I, second row: gamma_1 =  6.5  T = 0.591511  printed 0.592  diff -0.000489
+      Table I, second row: gamma_1 =  7.0  T = 0.591081  printed 0.591  diff +0.000081
+      Table I, second row: gamma_1 =  7.5  T = 0.590732  printed 0.591  diff -0.000268
+      Table I, second row: gamma_1 =  8.0  T = 0.590447  printed 0.590  diff +0.000447
+      Table I, second row: gamma_1 =  8.5  T = 0.590209  printed 0.590  diff +0.000209
+      Table I, second row: gamma_1 =  9.0  T = 0.590010  printed 0.590  diff +0.000010
+      Table I, second row: gamma_1 =  9.5  T = 0.589841  printed 0.590  diff -0.000159
+      Table I, second row: gamma_1 = 10.0  T = 0.589697  printed 0.590  diff -0.000303
+PASS  G5b: 16 values of Table I second row, worst |T - printed| = 0.000489
+PASS  R3: A with the far-field form against A with the printed bracket only, gamma_1 in (0.5, 2, 2.5, 10): worst rel 4.60e-15
+      gamma_1 =  2.5: b_A = 1.526710344469, b_B = 1.526710344466, rel 1.7e-12, negative eigenvalues 1
+      gamma_1 =  3.0: b_A = 1.574655248071, b_B = 1.574655248073, rel 1.5e-12, negative eigenvalues 1
+      gamma_1 =  3.5: b_A = 1.605497568086, b_B = 1.605497568087, rel 7.8e-13, negative eigenvalues 1
+      gamma_1 =  4.0: b_A = 1.626362434198, b_B = 1.626362434202, rel 2.1e-12, negative eigenvalues 1
+      gamma_1 =  4.5: b_A = 1.641074421481, b_B = 1.641074421482, rel 5.7e-13, negative eigenvalues 1
+      gamma_1 =  5.0: b_A = 1.651808826194, b_B = 1.651808826191, rel 1.7e-12, negative eigenvalues 1
+      gamma_1 =  5.5: b_A = 1.659867460337, b_B = 1.659867460334, rel 1.5e-12, negative eigenvalues 1
+      gamma_1 =  6.0: b_A = 1.666064333311, b_B = 1.666064333310, rel 5.5e-13, negative eigenvalues 1
+      gamma_1 =  6.5: b_A = 1.670928007144, b_B = 1.670928007148, rel 2.0e-12, negative eigenvalues 1
+      gamma_1 =  7.0: b_A = 1.674813054912, b_B = 1.674813054908, rel 2.5e-12, negative eigenvalues 1
+      gamma_1 =  7.5: b_A = 1.677964155236, b_B = 1.677964155237, rel 7.5e-13, negative eigenvalues 1
+      gamma_1 =  8.0: b_A = 1.680554377631, b_B = 1.680554377632, rel 6.9e-13, negative eigenvalues 1
+      gamma_1 =  8.5: b_A = 1.682708831799, b_B = 1.682708831800, rel 7.4e-13, negative eigenvalues 1
+      gamma_1 =  9.0: b_A = 1.684519716947, b_B = 1.684519716944, rel 2.0e-12, negative eigenvalues 1
+      gamma_1 =  9.5: b_A = 1.686056155288, b_B = 1.686056155293, rel 3.4e-12, negative eigenvalues 1
+      gamma_1 = 10.0: b_A = 1.687370771245, b_B = 1.687370771249, rel 2.0e-12, negative eigenvalues 1
+      gamma_1 =  0.5: b_A = 1.179427385815, b_B = 1.179427385819, rel 3.6e-12, negative eigenvalues 1
+      gamma_1 =  1.0: b_A = 1.047989041795, b_B = 1.047989041798, rel 2.4e-12, negative eigenvalues 1
+      gamma_1 =  2.0: b_A = 1.447546279576, b_B = 1.447546279574, rel 8.0e-13, negative eigenvalues 1
+PASS  G1b: A against B (derived W) at 19 values (16 of the second row, 0.5, 1, 2), worst rel 3.61e-12
+PASS  G2b: gamma_1 = 2.5: C beta' = 1.526710344468 (upper) 1.526710344468 (lower), roots in [0.2, 2.44]: [1.52671]; rel to A 1.70e-13; max |Im det| 9.9e-13
+PASS  G2b: gamma_1 = 4.0: C beta' = 1.626362434198 (upper) 1.626362434198 (lower), roots in [0.2, 2.60]: [1.626362]; rel to A 1.76e-13; max |Im det| 9.6e-13
+PASS  G2b: gamma_1 = 6.0: C beta' = 1.666064333311 (upper) 1.666064333311 (lower), roots in [0.2, 2.67]: [1.666064]; rel to A 1.86e-13; max |Im det| 7.6e-13
+PASS  G2b: gamma_1 = 8.0: C beta' = 1.680554377631 (upper) 1.680554377631 (lower), roots in [0.2, 2.69]: [1.680554]; rel to A 1.31e-13; max |Im det| 7.4e-13
+PASS  G2b: gamma_1 = 10.0: C beta' = 1.687370771248 (upper) 1.687370771248 (lower), roots in [0.2, 2.70]: [1.687371]; rel to A 1.51e-12; max |Im det| 7.8e-13
+PASS  P-C2b: gamma_1 = 2.5: manufactured C* through method C's path (b = 1.526710344, r = 1.19): right + upper arc 4.5e-12, right + lower arc 4.5e-12, left segment 1.1e-11; worst rel error 1.10e-11
+PASS  P-C2b: gamma_1 = 4.0: manufactured C* through method C's path (b = 1.626362434, r = 1.658): right + upper arc 5.0e-12, right + lower arc 5.0e-12, left segment 1.3e-11; worst rel error 1.26e-11
+PASS  P-C2b: gamma_1 = 6.0: manufactured C* through method C's path (b = 1.666064333, r = 2.362): right + upper arc 3.9e-12, right + lower arc 3.9e-12, left segment 1.3e-11; worst rel error 1.33e-11
+PASS  P-C2b: gamma_1 = 8.0: manufactured C* through method C's path (b = 1.680554378, r = 3.092): right + upper arc 3.2e-12, right + lower arc 3.2e-12, left segment 1.3e-11; worst rel error 1.34e-11
+PASS  P-C2b: gamma_1 = 10.0: manufactured C* through method C's path (b = 1.687370771, r = 3.831): right + upper arc 2.5e-12, right + lower arc 2.5e-12, left segment 1.4e-11; worst rel error 1.36e-11
+PASS  G7b: gamma_1 = 2.5: A finds 1 root(s) in the scan, B has 1 negative eigenvalue(s) (lowest -2.330844; the next is >= 0)
+PASS  G7b: gamma_1 = 5.0: A finds 1 root(s) in the scan, B has 1 negative eigenvalue(s) (lowest -2.728472; the next is >= 0)
+PASS  G7b: gamma_1 = 10.0: A finds 1 root(s) in the scan, B has 1 negative eigenvalue(s) (lowest -2.847220; the next is >= 0)
+PASS  D1b: gamma_1 = 2.5: max relative spread of beta': A (rtol 1e-13 -> 1e-11, L' +8) 3.1e-13; B (N 4000 -> 8000, L' +8) 4.6e-12; C (r/dist 0.5 -> 0.3, 0.7; L' +8) 4.5e-13
+      gamma_1 = 2.5: b_A = 1.526710344469, b_B = 1.526710344466, b_C = 1.526710344468; error bar of T from the spreads: 2.8e-12
+PASS  D1b: gamma_1 = 5.0: max relative spread of beta': A (rtol 1e-13 -> 1e-11, L' +8) 2.3e-13; B (N 4000 -> 8000, L' +8) 7.5e-12; C (r/dist 0.5 -> 0.3, 0.7; L' +8) 4.9e-13
+      gamma_1 = 5.0: b_A = 1.651808826194, b_B = 1.651808826191, b_C = 1.651808826198; error bar of T from the spreads: 4.5e-12
+PASS  D1b: gamma_1 = 10.0: max relative spread of beta': A (rtol 1e-13 -> 1e-11, L' +8) 3.6e-13; B (N 4000 -> 8000, L' +8) 3.0e-12; C (r/dist 0.5 -> 0.3, 0.7; L' +8) 4.0e-13
+      gamma_1 = 10.0: b_A = 1.687370771245, b_B = 1.687370771249, b_C = 1.687370771248; error bar of T from the spreads: 1.8e-12
+PASS  LE3: limit equation: A beta-hat = 1.699664604104, B = 1.699664604104 (rel 3.0e-13), finite volume = 1.6996646040 (N = 8000: 1.6996646791, 16000: 1.6996646228; Richardson rel to A 5.1e-11)
+PASS  LE4: limit equation: A finds 1 root(s) in the scan, B has 1 negative eigenvalue(s) (1 with the extra-well control geometry), the finite volume 1; the zero mode (one node) forces at least one
+      limit equation: 1/beta-hat = 0.588351371 (A), 0.588351371 (B), 0.588351371 (finite volume); paper 0.588 (Sec. IV C), table 0.59
+FAIL  LE5: 1/beta-hat = 0.588351 against the table's large-gamma_1 value 0.59: -0.001649 (<= 0.001)
+PASS  LE5: 1/beta-hat = 0.588351 against the paper's 1/beta-hat = 0.588: +0.000351 (must round to it, < 0.0005)
+      gamma_1 =    10: beta-hat = 1.6873707712  (limit 1.6996646041)  T = 0.58969683  gap -1.229e-02
+      gamma_1 =    20: beta-hat = 1.6965697831  (limit 1.6996646041)  T = 0.58868922  gap -3.095e-03
+      gamma_1 =    40: beta-hat = 1.6988895516  (limit 1.6996646041)  T = 0.58843593  gap -7.751e-04
+      gamma_1 =    80: beta-hat = 1.6994707566  (limit 1.6996646041)  T = 0.58837252  gap -1.938e-04
+      gamma_1 =   160: beta-hat = 1.6996161369  (limit 1.6996646041)  T = 0.58835666  gap -4.847e-05
+      DIAG LE6 (reported only): order p of the gap at each doubling 1.990, 1.997, 1.999, 2.000; extrapolating T(80), T(160) with p = 1: 0.588341, with the measured p = 2.000: 0.588351; 1/beta-hat of the limit equation 0.588351
+PASS  LE6: beta-hat at gamma_1 = 10, 20, 40, 80, 160 against the limit equation's: gaps 1.23e-02, 3.09e-03, 7.75e-04, 1.94e-04, 4.85e-05; each doubling must cut the gap by 1.5 and the last must be <= 0.3 %: 2.85e-05
+checks: 100 run, failed ids: ['P-C2', 'LE5']  (374 s)
