@@ -1,0 +1,47 @@
+three_scalars_ideal.py, issue #157. sympy 1.14.0, python 3.14.10, mutation: none. raw: /home/nathan/Source/negative-mass-raw/I157-rpi5
+  stored verdicts.json: sha256 87ec05b68286756e
+  stored certs/ODE.json: sha256 8372446d66fb3c93
+
+== 1. The numerators det(h)^2 Ric(h) of the wall, at r = 1, and their checks ==
+  N_ab terms [2562, 2238, 2202, 1834, 1648, 1585]; after dividing by (1 - c^2)^k (k = 2, 2, 2, 2, 2, 3): [1669, 1456, 1368, 1140, 964, 746]; det h terms 42 (26 s)
+[PASS] num_cross: det^2 Ric(h)_ab from `ric_num` equals the one from three_scalars.ricci_pt at 6 exact points (r = 1, random jets W0..W6, 6 components each): 0 disagree []
+[PASS] num_indep: the same numerators agree with the independent route (coordinate Ricci tensor of the 4D metric with generic w, own Christoffel code and 3D Ricci routine) at 3 exact points: 0 disagree []
+[PASS] num_weights: N(r0; W) = r0^m N(1; r0^k W_k) with m = {(0, 0): [-10], (0, 1): [-10], (0, 2): [-9], (1, 1): [-10], (1, 2): [-9], (2, 2): [-8]} at 3 points; linear in W4 and of the S-parity stated: True []
+  (259 s)
+
+== 2. Planted truth: flat blocks, a family with a spurious det h = 0 component, a planted root ==
+[PASS] planted_blocks: numerators det^2 Ric of the quotient blocks (slice index 0, K = [1, 0, 3/5, -3]): P1 nonzero components [], P2 [], D1 [(0, 0), (1, 1), (1, 2), (2, 2)]; all three blocks nondegenerate: True
+[PASS] planted_family: h = diag(-1, 1, G^2), G = r (1 + w): N_rr = -G^3 G'', N_thth = -G^5 G'' with G'' = 2 W1 + W2: True; generators after the saturation by det h are +-(2 W1 + W2): True; the flat point u = (2/3, 1, -2) is a root: True; the spurious point u0 = -1 is a root of N with det h = 0 and 2 W1 + W2 != 0: True
+[PASS] planted_root: R1's generators shifted to have the exact root u* = [-1, 3/5, 0, -2, -6/5] (s = 1/u1*): every generator and 1 - s u1 vanish there: True, so the ideal is not the unit ideal; Singular's verdict on the shifted system: timeout (stored)
+  (261 s)
+
+== 3. The coefficient ideal J_all ==
+[PASS] coef_reassemble: the 34 coefficients of c^k and S c^k reassemble N'_ab at 7 exact points (c, S): 0 mismatches []
+
+== 4. The wall: R1 (the equator, as registered), R2 and K22 (exact lifts did not finish), the structure of I22 ==
+[PASS] wall_R1: theta_0 = pi/2, saturated by u1, as registered: not the unit ideal, certified by the exact point u = [2/5, 1, -2/5, -83/75, 0] in V(R1 + 1 - s u1) with s = 1/u1, where det h = 0 (Phi' = 0); Singular's verdict: not run
+  R2 (R1 and c = 3/5, 10 generators), `liftstd` over Q: not run after 0 s (stop condition 1 h)
+  K22 (membership of 2 u0 - u1, (u1 + u2)^2, q0, q1, q2 in I22), `lift` over Q: timeout after 3600 s (stop condition 1 h)
+  mod p = 32003 probes (RAW/singular/dev_*.out): R2 and R3 are the unit ideal; I22 is (2 u0 - u1, (u1+u2)^2, 1 - s u1). Evidence only
+  (262 s)
+[PASS] k22_structure: the 5 coefficients of N'_22: monomials outside (a, b^2) or failed decompositions g_j = alpha_j a + beta_j b^2: 0; on L the lowest-order parts (A_j, B_j) = [(-8*u1**9, -4*u1**6), (-u1**9*(u1 - 2)*(u1 + 2)*(u1**2 + 4), -2*u1**6*(u1**4 + u1**2 - 4)), (-u1**9*(u1 - 2)**2*(u1 + 2)**2/2, -u1**8*(u1**4 + 4*u1**2 - 16)/4), (0, -u1**10*(u1 - 2)*(u1 + 2)/8)] (j = 0..3; j = 4 has (0, 0)); gcd of the 2 x 2 minors m_jk(u1) = u1**15, a power of u1, so rank 2 at every u1 != 0: True; Delta_jk a and Delta_jk b^2 in I22 with cofactors (beta_k, -beta_j), (alpha_j, -alpha_k) for all 10 pairs: True
+[PASS] exceptional_set: all 5 generators vanish identically on L = {2 u0 = u1, u2 = -u1} (u1, u3, u4 free): True; det h = (1 - c^2) q(c^2) vanishes identically on L, for every c (rank <= 2, #65's locus): True; the exact point u = ['1/2', '1', '-1', '0', '0'] with s = 1 lies in V(I22): True. So V(I22) contains L, and I22 is not the unit ideal
+[PASS] k22_modp: std of I22 mod p equals the reduction of the Q-prediction for p in [32003, 65521, 1000003, 2147483629]: [(32003, 'std-done', 4, 43, True), (65521, 'std-done', 4, 79, True), (1000003, 'std-done', 4, 55, True), (2147483629, 'std-done', 4, 83, True)] (p, verdict, basis size, seconds, equal). Evidence, not a proof over Q
+  K22std (`std` over Q of I22, no cofactors): timeout after 3600 s (stop condition 1 h); no check
+[PASS] ode_step: theta u_k = k u_k + u_(k+1) for k = 0..3 from u_k = r^k w^(k): True; theta F1 = u1 - u2; 2 (1 - s u1) + s (F2 + theta F1) = 2: with u1 != 0 on an interval F1 = F2 = 0 gives 2 u1 = 0, a contradiction, so no profile lies on L
+[PASS] cert_verify_ODE: Singular's liftstd certificate that (F1, F2, theta F1, 1 - s u1) is the unit ideal: sum c_i f_i = kappa = 2 (a nonzero constant, so 1 is in the ideal) over 4 of 4 generators (F1, F2, thF1, sat), 3 cofactor terms, parsed and summed in 0.0 s
+  (264 s)
+
+checks: 13 passed, 0 failed []. 264 s
+
+== Controls: each mutation must make its target checks fail ==
+[FIRED] --mutate=num-sign (the Gamma Gamma term of the Ricci numerator gets the opposite sign): exit 1, failed ['num_cross', 'num_indep', 'num_weights']
+[FIRED] --mutate=num-det (the det * (A d2Gamma) term loses the factor det): exit 1, failed ['num_cross', 'num_indep', 'num_weights']
+[FIRED] --mutate=coef-drop (the highest-c-degree coefficients are dropped from J_all): exit 1, failed ['coef_reassemble']
+[FIRED] --mutate=cert-corrupt (1 is added to the constant term of the first nonzero cofactor): exit 1, failed ['cert_verify_ODE']
+[FIRED] --mutate=cert-satoff (the verification drops the generator 1 - s u1): exit 1, failed ['cert_verify_ODE']
+[FIRED] --mutate=ode-sign (theta u_k = k u_k - u_{k+1} in the ODE step): exit 1, failed ['ode_step', 'cert_verify_ODE']
+[FIRED] --mutate=plant-sat (PL2 without the saturation by det h): exit 1, failed ['planted_family']
+[FIRED] --mutate=flat-sub (h replaced by diag(-1, 1, 1)): exit 1, failed ['k22_structure', 'exceptional_set']
+[FIRED] --mutate=rung-equator (the K22 evidence taken from R1's record instead): exit 1, failed ['k22_modp']
+controls: all fired

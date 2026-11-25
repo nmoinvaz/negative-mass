@@ -155,7 +155,35 @@ targets were written in the raw README before the runs (A2, A6 for the changes).
 --raw=PATH` verifies without Singular, from the stored outputs; `--compute --rungs=...` runs Singular and writes the raw
 files.
 
-CONTROLS_TABLE
+| control `--mutate=` | change | declared target | result (final run 3) |
+|---|---|---|---|
+| `num-sign` | the Γ Γ term of the Ricci numerator gets the opposite sign | `num_cross` | fires: `num_cross`, `num_indep`, `num_weights` fail |
+| `num-det` | the det · (A ∂²Γ) term loses the factor det | `num_cross` | fires: the same three fail |
+| `coef-drop` | the highest-c coefficient of every N′ is dropped from J_all | `coef_reassemble` | fires |
+| `cert-corrupt` | 1 is added to the first nonzero cofactor of the ODE certificate | `cert_verify_ODE` | fires |
+| `cert-satoff` | the verification drops the generator 1 − s u1 | `cert_verify_ODE` | fires |
+| `ode-sign` | θ u_k = k u_k − u_(k+1) | `ode_step` | fires: `ode_step` and `cert_verify_ODE` fail |
+| `plant-sat` | the planted family without the saturation by det h | `planted_family` | fires |
+| `flat-sub` | h replaced by diag(−1, 1, 1) | `k22_structure` | fires: also `exceptional_set` |
+| `rung-equator` | the mod-p evidence is read from R1's record instead | `k22_modp` | fires |
+
+13 of 13 checks pass and 9 of 9 controls fire (`three_scalars_ideal_output.txt`, exit 0). **In the first full run (`final_run2`)
+`num-sign` and `num-det` were silent**: they crashed in the exact-division assertion of the axis factor before `num_cross` ran,
+which counts as silent. The assertion is now skipped under those two mutations only, their targets are unchanged, and
+`final_run3` is the run quoted here (README A8). Targets were changed once before any control ran, `rung-equator` and `cert-*` and
+`flat-sub` (README A2, A6); the checks listed in the first README table as `wall_<rung>` and `cert_verify_<rung>` became
+`wall_R1`, `k22_structure`, `exceptional_set`, `k22_modp` and `cert_verify_ODE` after the exact lifts did not finish.
+
+`cert_verify_ODE` is the only check that rests on a Singular certificate; it fails when its cofactors are corrupted. The mod-p
+and structural checks read stored Singular output (`verdicts.json`, sha256 87ec05b6…) and are not rerun without Singular.
+
+On rpi5 (one process, nice 10, 86 MB peak for the script) the default mode with its 9 controls took 24 min; the checks alone
+264 s, of which the independent route `num_indep` takes about 4 min. `--compute` is the Singular part: its jobs are in
+the table above. From the repository root:
+
+    python3 notes/warp/three_scalars_ideal.py --raw=PATH/negative-mass-raw/I157-rpi5
+    python3 notes/warp/three_scalars_ideal.py --mutate=NAME --raw=...
+    python3 notes/warp/three_scalars_ideal.py --compute --rungs=ODE,PL2,K22p --raw=...      (needs Singular 4.4.1)
 
 ## Lemmas stated for Lean (#135)
 
