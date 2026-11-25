@@ -1060,14 +1060,27 @@ def k22_structure(Q):
     return gens
 
 
-def exceptional_point(gens):
-    """K22-b: every generator vanishes identically on L, and the point u = (1/2, 1, -1, 0, 0) is in V(I22) with s = 1."""
+def det_on_L(Dt):
+    """det h (= det R_3 at r = 1, a polynomial in c^2 and W0, W1, W2) with u0 = u1/2 and u2 = -u1 substituted: the sum of
+    the coefficients of every c^e u1^k, all of which must be 0."""
+    acc = {}
+    for mon, co in Dt.terms():
+        key = (mon[0], mon[2] + mon[3] + mon[4])  # c exponent, total u1 power
+        acc[key] = acc.get(key, 0) + co * QQ(1, 2) ** mon[2] * (-1) ** mon[4]
+    return all(v == 0 for v in acc.values())
+
+
+def exceptional_point(gens, Dt):
+    """K22-b: every generator vanishes identically on L, det h = 0 for every c on L (rank <= 2, the D = 0 locus of #65), and
+    the point u = (1/2, 1, -1, 0, 0) is in V(I22) with s = 1."""
     ok_L, ng = exceptional_set(gens)
+    ok_D = det_on_L(Dt)
     pt = [sp.Rational(1, 2), sp.Integer(1), sp.Integer(-1), sp.Integer(0), sp.Integer(0)]
     pt_ok = bool(gens) and all(eval_Rs(g, 1, pt) == 0 for _, g in gens + [("sat", SAT)])
-    check("exceptional_set", ok_L and pt_ok and ng == 5, f"all {ng} generators vanish identically on L = {{2 u0 = u1, u2 = -u1}} "
-          f"(u1, u3, u4 free): {ok_L}; the exact point u = {[str(x) for x in pt]} with s = 1 lies in V(I22): {pt_ok}. So "
-          f"V(I22) contains L and I22 is not the unit ideal")
+    check("exceptional_set", ok_L and ok_D and pt_ok and ng == 5, f"all {ng} generators vanish identically on L = "
+          f"{{2 u0 = u1, u2 = -u1}} (u1, u3, u4 free): {ok_L}; det h = (1 - c^2) q(c^2) vanishes identically on L, for every c "
+          f"(rank <= 2, #65's locus): {ok_D}; the exact point u = {[str(x) for x in pt]} with s = 1 lies in V(I22): {pt_ok}. "
+          f"So V(I22) contains L, and I22 is not the unit ideal")
 
 
 def k22_modp(verdicts):
@@ -1168,7 +1181,7 @@ def main(opts):
           "1 - s u1). Evidence only")
     print(f"  ({time.time() - T0:.0f} s)", flush=True)
     gens22 = k22_structure(Q)
-    exceptional_point(gens22)
+    exceptional_point(gens22, Dt)
     k22_modp(verdicts)
     v_std = verdicts.get("K22std", {})
     print(f"  K22std (`std` over Q of I22, no cofactors): {v_std.get('verdict', 'not run')} after {v_std.get('seconds', 0):.0f} s "
