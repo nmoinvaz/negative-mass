@@ -243,7 +243,8 @@ and a profile with f(r_s) C² on ℝ³. The bubble moves at a constant v ≠ 0, 
 - Three scalars of mixed signs: [`three_scalars.md`](three_scalars.md) (#77). The algebraic stage passes on {D ≠ 0}
   with pattern (+,+,−) where D < 0 and (+,−,−) where D > 0; closure under O(2,1) or O(1,2) is flatness of the
   orbit-space metric h. It fails at every exact point tested (λ = 0) and at 27 of 27 roots λ ≠ 0, for the tanh and bump
-  profiles and random jets, not decided for an arbitrary C⁴ profile. *Added by the coordinator:* at λ = 0 the failure
+  profiles and random jets, not decided for an arbitrary C⁴ profile: *conditionally excluded at λ = 0*, see
+  [`three_scalars_ideal.md`](three_scalars_ideal.md) (#157). *Added by the coordinator:* at λ = 0 the failure
   is *checked symbolically* at the bump and random-jet points and is *numerical evidence* at the tanh points, whose
   jets were rounded to 55 digits; at λ ≠ 0 it is *numerical evidence*. Four or more scalars are not covered.
 - Shifts b(t, x, ρ) other than the bubble and b(ρ): [`det_classify.md`](det_classify.md) (#80). D = 0 on an open set

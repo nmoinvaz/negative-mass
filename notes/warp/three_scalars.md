@@ -158,6 +158,17 @@ finish in 5 min, nor did the one modulo a prime with the flow derivatives in 20 
 not run, since the check it targets does not exist. A smooth profile needs w ∈ C⁴ for the Ricci tensor of h to exist;
 for a C² profile the closure condition is not even defined classically.
 
+**Update from #157.** The ideal step is [`three_scalars_ideal.md`](three_scalars_ideal.md) (#157). The numerators
+det(h)² Ric(h) reduce, by weights, the axis factor and the trigonometric-polynomial argument, to ideals in the jets
+u_k = r^k w^(k). The θθ numerator alone gives the ideal I₂₂ whose variety contains the locus L = {2w = r w′,
+(w′ + r w″)² = 0} of #65 (det R₃ ≡ 0 in θ), on which no profile has w′ ≠ 0 (*certified*). Singular finds I₂₂ equal to
+(2u0 − u1, (u1 + u2)², 1 − s u1) modulo four primes (*numerical evidence*); the exact computation over ℚ did not finish in
+1 h. So for an arbitrary C⁴ profile at λ = 0, no open off-axis box admits closure *conditionally* on that equality; not
+decided otherwise. The λ ≠ 0 branches are not covered. *Added by the coordinator:* #157's probes modulo 32003 also find
+the unit ideal for the numerators at two angles (R2) and for all their θ-coefficients (J_all). A certificate of either
+over ℚ would decide the λ = 0 case without that hypothesis. The coordinator's check (raw `I157-mac`, its own Cartesian
+route) confirms that det h and N_θθ vanish identically on L while N_rr does not, as the unit ideal of J_all requires.
+
 ## The λ ≠ 0 branches
 
 At the 25 off-axis exact points `form3` finds 27 real roots λ ≠ 0 of det(R − λg) with rank 3 and an admissible pattern,

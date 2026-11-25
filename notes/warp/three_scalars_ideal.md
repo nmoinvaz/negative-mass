@@ -217,3 +217,47 @@ profile": "*conditionally excluded at λ = 0*, see `three_scalars_ideal.md`".
 - The λ ≠ 0 branches of #77 (task B there).
 - Boxes that meet the axis, profiles that are not C⁴, and the accelerating bubble.
 - Rank ≤ 2 remainders (#78).
+
+## Coordinator's review
+
+Merged as 1443a7f. Raw negative-mass-raw `I157-mac` at b2727a6 (criteria at 4c0e372, before the first run).
+
+| step | result |
+|---|---|
+| scope | the three files the brief names, and raw `I157-rpi5` |
+| rerun on the Mac | default mode, no Singular: exit 0, 13 of 13 checks, 9 of 9 controls fire; the verdict lines equal rpi5's |
+| hand proofs | the reduction (weights, axis factor, trigonometric polynomial, flatness ⇒ J_all = 0) and the ODE lemma were read and rederived; no gap found |
+| re-solve | R1's certificate point u = (2/5, 1, −2/5, −83/75, 0) at θ = π/2, from the coordinator's own numerators |
+| independent check `ind157.py` | run 4 exits 0, 10 of 10 criteria; 6 of 6 mutations fire on target |
+
+ind157 shares no code with this note's script or with `three_scalars.py`. It writes the wall in Cartesian coordinates
+(t, x, ρ, ϕ), with its own 4D Ricci code and an adjugate-based point numerator, and turns the result into the polar
+components of this note.
+
+| id | what | result |
+|---|---|---|
+| P1–P3 | ∂_ϕ in the kernel of Ric(g); constant w flat; Rindler flat; the stereographic sphere has Ric = 2h | pass |
+| C1, C2 | det h and N_θθ vanish identically in θ on L | pass |
+| C4 | on L, N_rr is the only component not identically 0 | pass |
+| C3 | all six N_ab and det h vanish at R1's point at θ = π/2 | pass |
+| C5 | at 3 specialized (u1, u3, u4), the N′_θθ coefficients have the reduced lex basis of (2u0 − u1, (u1 + u2)²) in ℚ[u0, u2] | pass (evidence for H at those points only) |
+| C6 | `dsolve`: 2w = r w′ gives w = C r², and r w′ + r² w″ = 4C r² forces C = 0 | pass |
+| C7 | the weights m = −10, −10, −9, −10, −9, −8, derived by hand from a homothety, hold exactly | pass |
+
+**Corrections and observations.**
+- The Answer's sentence "The unit ideal after saturating by r w′ alone is not what the computation gives, since
+  V(I₂₂) = L ≠ ∅" concerns I₂₂, and only V(I₂₂) ⊇ L is established; V(I₂₂) = L on u1 ≠ 0 is H. For the full system the
+  first outcome of the issue is still open: R2 and J_all are the unit ideal modulo 32003 (*numerical evidence*). A
+  certificate over ℚ would decide λ = 0 without H (#175). C4 agrees: some component, N_rr, does not vanish on L.
+- det h vanishes identically on L, so h is not a metric there and Lemma C's rank-3 hypothesis fails on L. Given H, that
+  alone ends the chain; the ODE step reaches the same end without using det h.
+- The status of the answer stands: *conditional* on H at λ = 0, not decided otherwise, and the λ ≠ 0 branches are #176.
+
+**Discrepancies and process.**
+- The runner's `pkill` killed K22's first exact `lift`, and two Singular processes ran together for a few minutes. Both
+  are in README A4 and the closing comment.
+- The runner's first full run had two silent controls (`num-sign`, `num-det`, crashing before their target). Their fix
+  kept the targets (README A8).
+- In the coordinator's own check, runs 1 and 2 did not finish C5 (sympy's lex Buchberger) and were stopped. Run 3 failed
+  C5 by a defect of the coordinator's comparison (an expected basis computed over ℤ, not ℚ). Run 4 fixed it without
+  changing a criterion.
