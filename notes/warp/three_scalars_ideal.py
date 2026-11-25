@@ -216,6 +216,8 @@ def strip_axis(Q):
         for e in (0, 1):
             part = Rn.from_dict({(m[0], 0) + tuple(m[2:]): co for m, co in p.terms() if m[1] == e})
             q_, r_ = part.div(den)
+            if r_ != 0 and MUT in ("num-sign", "num-det"):  # mutated numerators need not divide; the control targets num_cross
+                q_, r_ = part, Rn.zero
             assert r_ == 0, (key, e)
             qa += q_ * (S**e)
         out[key] = qa
