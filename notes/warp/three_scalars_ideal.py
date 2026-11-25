@@ -46,12 +46,12 @@ MUTATIONS = {
     "num-sign": (["num_cross"], "the Gamma Gamma term of the Ricci numerator gets the opposite sign"),
     "num-det": (["num_cross"], "the det * (A d2Gamma) term loses the factor det"),
     "coef-drop": (["coef_reassemble"], "the highest-c-degree coefficients are dropped from J_all"),
-    "cert-corrupt": (["cert_verify_K22"], "1 is added to the constant term of the first nonzero cofactor"),
-    "cert-satoff": (["cert_verify_K22"], "the verification drops the generator 1 - s u1"),
+    "cert-corrupt": (["cert_verify_ODE"], "1 is added to the constant term of the first nonzero cofactor"),
+    "cert-satoff": (["cert_verify_ODE"], "the verification drops the generator 1 - s u1"),
     "ode-sign": (["ode_step"], "theta u_k = k u_k - u_{k+1} in the ODE step"),
     "plant-sat": (["planted_family"], "PL2 without the saturation by det h"),
-    "flat-sub": (["wall_K22"], "h replaced by diag(-1, 1, 1)"),
-    "rung-equator": (["wall_K22"], "the wall verdict taken from R1 alone"),
+    "flat-sub": (["k22_structure"], "h replaced by diag(-1, 1, 1)"),
+    "rung-equator": (["k22_modp"], "the K22 evidence taken from R1's record instead"),
 }
 MUT = None
 RUN = ""  # "_run2" for the second run of a case: Singular files are never overwritten
@@ -360,14 +360,17 @@ def gens_text(gens):
 
 
 def unit_program():
-    """liftstd over Q: G = {1} and the cofactors T[i, 1] with sum I[i] T[i, 1] = 1, or `NOTUNIT`."""
+    """std over Q first (cheap when the ideal is not the unit ideal); only if G = {1}, liftstd gives the cofactors T[i, 1]
+    with sum I[i] T[i, 1] = 1. Prints `NOTUNIT ...` or `UNIT` and `COF i <poly>`."""
     return """
 int t0 = rtimer;
-matrix T;
-ideal G = liftstd(I, T);
-print("LIFTSTD_SECONDS " + string(rtimer - t0));
-if (G[1] != 1) { print("NOTUNIT size " + string(size(G)) + " dim " + string(dim(G))); }
+ideal G0 = std(I);
+print("STD_SECONDS " + string(rtimer - t0));
+if (G0[1] != 1) { print("NOTUNIT size " + string(size(G0)) + " dim " + string(dim(G0))); }
 else {
+  matrix T;
+  ideal G = liftstd(I, T);
+  print("LIFTSTD_SECONDS " + string(rtimer - t0));
   print("UNIT");
   int i;
   for (i = 1; i <= ncols(I); i++) { print("COF " + string(i) + " " + string(T[i, 1])); }
@@ -396,11 +399,11 @@ def load_verdicts():
     return json.load(open(path)) if os.path.exists(path) else {}
 
 
-def compute_case(name, gens, tag=""):
+def compute_case(name, gens, tag="", timeout=3600):
     """Run Singular's liftstd over Q on gens (the last one is the saturation generator). Unit ideal: write the certificate
     RAW/certs/<name><tag>.json. Records the verdict in RAW/verdicts.json. Returns the verdict."""
     case = f"{name}{tag}_unit"
-    out, wall = run_singular(case, gens, unit_program(), timeout=3600)
+    out, wall = run_singular(case, gens, unit_program(), timeout=timeout)
     if out is None:
         print(f"{name}: Singular did not finish in 1 h; stopped ({wall:.0f} s)", flush=True)
         store_verdict(name, {"verdict": "timeout", "seconds": wall, "peak_kb": peak_kb(case)})
@@ -426,6 +429,67 @@ def compute_case(name, gens, tag=""):
     store_verdict(name, {"verdict": "unit", "seconds": wall, "peak_kb": peak_kb(case),
                          "cert_bytes": os.path.getsize(path), "cofactor_terms": sum(len(parse_poly(x)) for x in cert["cofactors"])})
     return "unit"
+
+
+def std_program():
+    return """
+int t0 = rtimer;
+ideal G = std(I);
+print("STD_SECONDS " + string(rtimer - t0));
+if (G[1] == 1) { print("STD_UNIT"); } else { print("STD_NOTUNIT size " + string(size(G)) + " dim " + string(dim(G))); }
+int i;
+for (i = 1; i <= size(G); i++) { print("GB " + string(i) + " " + string(G[i])); }
+"""
+
+
+def compute_std(name, gens):
+    """Singular `std` over Q without cofactors: an exact computation, not a certificate. Stores the verdict and the
+    Groebner basis lines."""
+    case = f"{name}_std{RUN}"
+    out, wall = run_singular(case, gens, std_program(), timeout=3600)
+    if out is None:
+        print(f"{name}: std did not finish in 1 h; stopped ({wall:.0f} s)", flush=True)
+        store_verdict(name + "std", {"verdict": "timeout", "seconds": wall})
+        return
+    if not out.strip():
+        print(f"{name}: Singular ended with no output after {wall:.0f} s; no verdict", flush=True)
+        store_verdict(name + "std", {"verdict": "aborted", "seconds": wall})
+        return
+    gb = [ln.split(" ", 2)[2] for ln in out.splitlines() if ln.startswith("GB ")]
+    line = [ln for ln in out.splitlines() if ln.startswith("STD_")][-1]
+    print(f"{name}: {line}, {len(gb)} basis elements ({wall:.0f} s)", flush=True)
+    store_verdict(name + "std", {"verdict": "std-done", "seconds": wall, "peak_kb": peak_kb(case), "result": line,
+                                 "gb": gb if len(gb) <= 8 else gb[:8] + ["..."], "gb_size": len(gb)})
+
+
+MODP = [32003, 65521, 1000003, 2147483629]
+
+
+def compute_std_modp(name, gens):
+    """`std` in characteristic p for several primes (each a separate Singular run). Evidence only, never a verdict."""
+    rec = {}
+    for pr in MODP:
+        case = f"{name}_std_p{pr}"
+        out, wall = run_singular(case, gens, std_program(), timeout=900, char=pr)
+        if out is None or not out.strip():
+            rec[str(pr)] = {"verdict": "timeout" if out is None else "aborted", "seconds": wall}
+            print(f"{name} mod {pr}: no result ({wall:.0f} s)", flush=True)
+            continue
+        gb = [ln.split(" ", 2)[2] for ln in out.splitlines() if ln.startswith("GB ")]
+        rec[str(pr)] = {"verdict": "std-done", "seconds": wall, "peak_kb": peak_kb(case), "gb": gb}
+        print(f"{name} mod {pr}: {len(gb)} basis elements ({wall:.0f} s)", flush=True)
+    store_verdict(name + "p", rec)
+
+
+def monic_modp(p, pr):
+    """The terms of p with coefficients reduced mod pr and scaled so that the largest monomial has coefficient 1."""
+    d = {}
+    for mon, co in p.terms():
+        d[mon] = (int(co.numerator) * pow(int(co.denominator), -1, pr)) % pr
+    d = {m: c for m, c in d.items() if c}
+    top = max(d)
+    inv = pow(d[top], -1, pr)
+    return tuple(sorted((m, (c * inv) % pr) for m, c in d.items()))
 
 
 def compute_rung(rung, Q):
@@ -530,14 +594,13 @@ def verify_members(name, gens, targets, mut=None):
                      f"{nterms} cofactor terms, in {time.time() - t:.1f} s" if not bad else f"fails for targets {bad}")
 
 
-def verify_cert(rung, Q, tag="", mut=None):
-    """Regenerate the generators in sympy, parse the cofactors exactly and check sum c_i f_i = 1 in Q[s, u0..u4].
-    Returns (ok, detail)."""
-    path = os.path.join(RAW, "certs", f"{rung}{tag}.json")
+def verify_cert(name, gens, tag="", mut=None):
+    """Parse the cofactors of RAW/certs/<name><tag>.json exactly and check sum c_i f_i = 1 in Q[s, u0..u4], with the
+    generators regenerated by the caller (their hash must equal the one Singular was given). Returns (ok, detail)."""
+    path = os.path.join(RAW, "certs", f"{name}{tag}.json")
     if not os.path.exists(path):
         return False, f"no certificate at {path}"
     cert = json.load(open(path))
-    gens = rung_gens(Q, rung) + [("sat", SAT)]
     if hashlib.sha256(gens_text(gens).encode()).hexdigest() != cert["gen_sha256"]:
         return False, "the regenerated generators differ from the ones Singular was given"
     t = time.time()
@@ -553,8 +616,9 @@ def verify_cert(rung, Q, tag="", mut=None):
     for i in use:
         tot += cof[i] * gens[i][1]
     ok = tot == 1
-    return ok, (f"sum c_i f_i = 1 over {len(use)} of {len(gens)} generators, {nterms} cofactor terms, parsed and "
-                f"summed in {time.time() - t:.0f} s" if ok else f"sum c_i f_i - 1 has {len(tot - 1)} terms")
+    return ok, (f"sum c_i f_i = 1 over {len(use)} of {len(gens)} generators ({', '.join(l for l, _ in gens)}), {nterms} "
+                f"cofactor terms, parsed and summed in {time.time() - t:.1f} s" if ok else
+                f"sum c_i f_i - 1 has {len(tot - 1)} terms")
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -838,9 +902,9 @@ def planted_root(Q, verdicts):
     jstar, gens = planted_root_gens(Q)
     ok_pt = all(eval_Rs(p, 1 / jstar[1], jstar) == 0 for _, p in gens)
     v = verdicts.get("PL3", {}).get("verdict")
-    check("planted_root", ok_pt and v == "notunit",
+    check("planted_root", ok_pt and v != "unit",
           f"R1's generators shifted to have the exact root u* = {jstar} (s = 1/u1*): every generator and 1 - s u1 vanish "
-          f"there: {ok_pt}; Singular's verdict on the shifted system: {v} (stored)")
+          f"there: {ok_pt}, so the ideal is not the unit ideal; Singular's verdict on the shifted system: {v} (stored)")
 
 
 def check_coefficients(Q):
@@ -864,15 +928,21 @@ def main_compute(opts):
     Q, Dt = load_numerators(with_det=True)
     todo = opts.get("rungs", "R2").split(",")
     for rung in todo:
-        if rung == "K22":  # the N22 coefficients: membership of f1, f2, q_j
+        if rung == "K22p":
+            compute_std_modp("K22", rung_gens(Q, "Rk22") + [("sat", SAT)])
+        elif rung == "K22std":
+            compute_std("K22", rung_gens(Q, "Rk22") + [("sat", SAT)])
+        elif rung == "K22":  # the N22 coefficients: membership of f1, f2, q_j
             compute_members("K22", rung_gens(Q, "Rk22") + [("sat", SAT)], targets_K22(Dt))
         elif rung in ("R1", "R2", "R3") or rung.startswith(("Rc", "Rtop", "Rk")):
             compute_rung(rung, Q)
+        elif rung == "ODE":
+            compute_case("ODE", ode_gens())
         elif rung == "PL2":
             _, _, _, gens = planted_family_gens()
             compute_case("PL2", [(lab, to_Rs(v)) for lab, v in gens] + [("sat", SAT)])
         elif rung == "PL3":
-            compute_case("PL3", planted_root_gens(Q)[1])
+            compute_case("PL3", planted_root_gens(Q)[1], timeout=600)
         else:
             sys.exit(f"unknown rung {rung}")
 
@@ -917,9 +987,9 @@ def find_point_R1(Q):
 def wall_R1(Q, verdicts):
     v = verdicts.get("R1", {})
     pt = find_point_R1(Q)
-    check("wall_R1", pt is not None and v.get("verdict") == "notunit",
-          f"theta_0 = pi/2, saturated by u1, as registered: not the unit ideal (Singular over Q, {v.get('seconds', 0):.0f} s); "
-          f"exact point u = {pt} lies in V(R1 + 1 - s u1) with s = 1/u1, where det h = 0 (Phi' = 0)")
+    check("wall_R1", pt is not None and v.get("verdict") != "unit",
+          f"theta_0 = pi/2, saturated by u1, as registered: not the unit ideal, certified by the exact point u = {pt} in "
+          f"V(R1 + 1 - s u1) with s = 1/u1, where det h = 0 (Phi' = 0); Singular's verdict: {v.get('verdict', 'not run')}")
 
 
 def exceptional_set(gens):
@@ -939,47 +1009,112 @@ def exceptional_set(gens):
     return bad == 0, len(gens) - 1
 
 
-def wall_K22(Q, Dt, verdicts):
-    gens = rung_gens(Q, "Rk22") + [("sat", SAT)]
-    targets = targets_K22(Dt)
-    v = verdicts.get("K22", {})
-    ok, detail = verify_members("K22", gens, targets, mut=MUT)
-    check("cert_verify_K22", ok, detail)
-    vv = verdicts.get("R1", {}) if MUT == "rung-equator" else v
+def k22_structure(Q):
+    """Exact structure of the N22 coefficient ideal in the coordinates a = 2 u0 - u1, b = u1 + u2. Each generator g_j lies in
+    (a, b^2): g_j = alpha_j a + beta_j b^2 exactly. On L = {a = b = 0} the lowest-order parts A_j(u1), B_j(u1) give the 5 x 2
+    matrix whose 2 x 2 minors m_jk(u1) have gcd u1^m, so the matrix has rank 2 at every u1 != 0 (also complex), and I22 equals
+    (a, b^2) in the formal neighborhood of L. For every pair j < k, Delta_jk a and Delta_jk b^2 are in I22 with the cofactors
+    (beta_k, -beta_j) and (alpha_j, -alpha_k), Delta_jk = alpha_j beta_k - alpha_k beta_j, checked as identities."""
+    gens = rung_gens(Q, "Rk22")
+    Rab, a, b, v1, v3, v4 = ring("a,b,u1,u3,u4", QQ)
+
+    def subst(p):
+        out = Rab.zero
+        for mon, co in p.terms():
+            f, e0, e1, e2, e3, e4 = mon
+            out += co * ((a + v1) * QQ(1, 2)) ** e0 * v1 ** e1 * (b - v1) ** e2 * v3 ** e3 * v4 ** e4
+        return out
+    al, be, AB, bad = [], [], [], 0
+    for lab, p in gens:
+        q = subst(p)
+        bad += sum(1 for m in q.monoms() if m[0] == 0 and m[1] < 2)  # monomials outside (a, b^2)
+        alpha = Rab.from_dict({(m[0] - 1,) + tuple(m[1:]): co for m, co in q.terms() if m[0] >= 1})
+        beta = Rab.from_dict({(0, m[1] - 2) + tuple(m[2:]): co for m, co in q.terms() if m[0] == 0 and m[1] >= 2})
+        bad += int(alpha * a + beta * b**2 != q)
+        al.append(alpha)
+        be.append(beta)
+        A0 = Rab.from_dict({m: co for m, co in alpha.terms() if m[0] == 0 and m[1] == 0})
+        B0 = Rab.from_dict({m: co for m, co in beta.terms() if m[0] == 0 and m[1] == 0})
+        bad += int(any(m[3] or m[4] for m in list(A0.monoms()) + list(B0.monoms())))  # A0, B0 free of u3, u4
+        AB.append((A0.as_expr(), B0.as_expr()))
+    x = sp.Symbol("u1")
+    ms = {}
+    for j in range(len(gens)):
+        for k in range(j + 1, len(gens)):
+            ms[(j, k)] = sp.expand(AB[j][0] * AB[k][1] - AB[k][0] * AB[j][1]).subs(sp.Symbol("u1"), x)
+    nz = [m for m in ms.values() if m != 0]
+    gc = sp.gcd_list(nz) if nz else 0
+    unit_rank = bool(nz) and sp.Poly(gc, x).is_monomial
+    dl = 0
+    for j in range(len(gens)):
+        for k in range(j + 1, len(gens)):
+            Dl = al[j] * be[k] - al[k] * be[j]
+            g_j, g_k = al[j] * a + be[j] * b**2, al[k] * a + be[k] * b**2
+            dl += int(be[k] * g_j - be[j] * g_k != Dl * a) + int(al[j] * g_k - al[k] * g_j != Dl * b**2)
+    ok = len(gens) == 5 and bad == 0 and unit_rank and dl == 0
+    check("k22_structure", ok, f"the {len(gens)} coefficients of N'_22: monomials outside (a, b^2) or failed decompositions "
+          f"g_j = alpha_j a + beta_j b^2: {bad}; on L the lowest-order parts (A_j, B_j) = {[(sp.factor(A), sp.factor(B)) for A, B in AB[:4]]} "
+          f"(j = 0..3; j = 4 has (0, 0)); gcd of the 2 x 2 minors m_jk(u1) = {sp.factor(gc)}, a power of u1, so rank 2 at every "
+          f"u1 != 0: {unit_rank}; Delta_jk a and Delta_jk b^2 in I22 with cofactors (beta_k, -beta_j), (alpha_j, -alpha_k) for "
+          f"all 10 pairs: {dl == 0}")
+    return gens
+
+
+def exceptional_point(gens):
+    """K22-b: every generator vanishes identically on L, and the point u = (1/2, 1, -1, 0, 0) is in V(I22) with s = 1."""
     ok_L, ng = exceptional_set(gens)
     pt = [sp.Rational(1, 2), sp.Integer(1), sp.Integer(-1), sp.Integer(0), sp.Integer(0)]
-    pt_ok = all(eval_Rs(g, 1, pt) == 0 for _, g in gens) and all(eval_Rs(q, 1, pt) == 0 for lab, q in targets
-                                                                  if lab.startswith("q"))
-    check("wall_K22", ok and vv.get("verdict") == "members" and ok_L and pt_ok,
-          f"the {ng} coefficients of N'_22 with 1 - s u1: f1 = 2 u0 - u1, f2 = (u1 + u2)^2 and q0, q1, q2 of "
-          f"det h = (1 - c^2) q(c^2) are in the ideal, certified (Singular {v.get('seconds', 0):.0f} s, peak "
-          f"{(v.get('peak_kb') or 0) / 1024:.0f} MB, stored verdict {vv.get('verdict')}): {ok}; all {ng} generators "
-          f"vanish identically on L = {{2 u0 = u1, u2 = -u1}} (u3, u4 free): {ok_L}; so V(I22) with u1 != 0 is exactly L, "
-          f"the jets with det h = 0 for every theta. The exact point u = {[str(x) for x in pt]} lies in it, with all q_j = 0, "
-          f"so I22 is not the unit ideal: {pt_ok}")
+    pt_ok = bool(gens) and all(eval_Rs(g, 1, pt) == 0 for _, g in gens + [("sat", SAT)])
+    check("exceptional_set", ok_L and pt_ok and ng == 5, f"all {ng} generators vanish identically on L = {{2 u0 = u1, u2 = -u1}} "
+          f"(u1, u3, u4 free): {ok_L}; the exact point u = {[str(x) for x in pt]} with s = 1 lies in V(I22): {pt_ok}. So "
+          f"V(I22) contains L and I22 is not the unit ideal")
+
+
+def k22_modp(verdicts):
+    """Evidence: `std` of I22 in characteristic p for four primes gives the reduction of {2 u0 - u1, (u1 + u2)^2, s u1 - 1,
+    s u2^2 + u1 + 2 u2} (up to scalars). Together with the exact inclusion I22 in (a, b^2) this leaves only an unlucky-prime
+    coincidence between the evidence and the claim that I22 equals (a, b^2) over Q."""
+    rec = verdicts.get("R1", {}) if MUT == "rung-equator" else verdicts.get("K22p", {})
+    exp = [2 * u0 - u1, (u1 + u2) ** 2, SAT, s_ * u2**2 + u1 + 2 * u2]
+    rows, ok_all = [], bool(rec)
+    for pr in MODP:
+        r_ = rec.get(str(pr), {})
+        got = sorted(monic_modp(parse_poly(x), pr) for x in r_.get("gb", []))
+        want = sorted(monic_modp(f, pr) for f in exp)
+        ok = r_.get("verdict") == "std-done" and got == want
+        ok_all &= ok
+        rows.append((pr, r_.get("verdict"), len(r_.get("gb", [])), round(r_.get("seconds", 0)), ok))
+    check("k22_modp", ok_all, f"std of I22 mod p equals the reduction of the Q-prediction for p in {MODP}: {rows} "
+          f"(p, verdict, basis size, seconds, equal). Evidence, not a proof over Q")
+
+
+def ode_gens():
+    """The ODE step as an ideal: F1 = 2 u0 - u1, F2 = u1 + u2, theta F1 with theta u_k = k u_k + u_(k+1) (theta = r d/dr on
+    u_k = r^k w^(k)), and 1 - s u1."""
+    sgn = -1 if MUT == "ode-sign" else 1
+    U = [u0, u1, u2, u3, u4]
+    th = [k * U[k] + sgn * U[k + 1] for k in range(4)]
+    return [("F1", 2 * u0 - u1), ("F2", u1 + u2), ("thF1", 2 * th[0] - th[1]), ("sat", SAT)]
 
 
 def ode_step():
-    """K22-c: on L the relations F1 = 2 u0 - u1 and F2 = u1 + u2 hold on no interval with u1 != 0. theta = r d/dr acts as
-    theta u_k = k u_k + u_{k+1} (checked from u_k = r^k w^(k)), theta F1 = u1 - u2, and 2 (1 - s u1) + s (F2 + theta F1) = 2."""
+    """K22-c: on L the relations F1 = 2 u0 - u1 and F2 = u1 + u2 hold on no interval with u1 != 0: theta F1 = u1 - u2 and
+    F2 + theta F1 = 2 u1. Two checks: the identity by hand-written cofactors, and Singular's unit-ideal certificate."""
     r = sp.Symbol("r", positive=True)
     w = sp.Function("w")(r)
     uk = [r**k * sp.diff(w, r, k) for k in range(5)]
     sgn = -1 if MUT == "ode-sign" else 1
     table = [sp.expand(k * uk[k] + sgn * uk[k + 1]) for k in range(4)]
     true = [sp.expand(r * sp.diff(uk[k], r)) for k in range(4)]
-    ok_th = all(sp.simplify(a - b) == 0 for a, b in zip(table, true))
-    # F1, F2 as polynomials in Rs; theta acts on Rs polynomials in u0..u3 by theta u_k = table[k] written in u
-    U = [u0, u1, u2, u3, u4]
-    th = [k * U[k] + sgn * U[k + 1] for k in range(4)]
-    F1, F2 = 2 * u0 - u1, u1 + u2
-    thF1 = 2 * th[0] - th[1]
-    ident = 2 * SAT + s_ * (F2 + thF1)
-    good = ok_th and ident == Rs(2) and thF1 == u1 - u2
-    check("ode_step", good,
-          f"theta u_k = k u_k + u_(k+1) for k = 0..3 from u_k = r^k w^(k): {ok_th}; theta F1 = {thF1}; "
-          f"2 (1 - s u1) + s (F2 + theta F1) = {ident}: with u1 != 0 on an interval, F1 = F2 = 0 gives F2 + theta F1 = 2 u1 = 0, "
-          f"a contradiction (so no profile lies on L)")
+    ok_th = all(sp.simplify(x - y) == 0 for x, y in zip(table, true))
+    g = ode_gens()
+    ident = 2 * SAT + s_ * (g[1][1] + g[2][1])
+    check("ode_step", ok_th and ident == Rs(2) and g[2][1] == u1 - u2,
+          f"theta u_k = k u_k + u_(k+1) for k = 0..3 from u_k = r^k w^(k): {ok_th}; theta F1 = {g[2][1]}; "
+          f"2 (1 - s u1) + s (F2 + theta F1) = {ident}: with u1 != 0 on an interval F1 = F2 = 0 gives 2 u1 = 0, a "
+          f"contradiction, so no profile lies on L")
+    ok, detail = verify_cert("ODE", g, mut=MUT)
+    check("cert_verify_ODE", ok, "Singular's liftstd certificate that (F1, F2, theta F1, 1 - s u1) is the unit ideal: " + detail)
 
 
 STOP_AT = {"num-sign": 1, "num-det": 1, "plant-sat": 2, "coef-drop": 3}
@@ -1013,14 +1148,21 @@ def main(opts):
     check_coefficients(Q)
     if sec_stop < 4:
         return fin()
-    print("\n== 4. The wall: R1 (the equator, as registered), R2 (not decided exactly) and K22 (the N22 coefficients) ==")
+    print("\n== 4. The wall: R1 (the equator, as registered), R2 and K22 (exact lifts did not finish), the structure of I22 ==")
     wall_R1(Q, verdicts)
-    v2 = verdicts.get("R2", {})
-    print(f"  R2 (R1 and c = 3/5, 10 generators): exact `liftstd` over Q: {v2.get('verdict', 'not run')} after "
-          f"{v2.get('seconds', 0):.0f} s (stop condition 1 h). Mod p = 32003 the probe says unit; no verdict, no check "
-          f"(RAW/singular/dev_R2_p32003.out)")
+    for nm, what in (("R2", "R2 (R1 and c = 3/5, 10 generators), `liftstd` over Q"),
+                     ("K22", "K22 (membership of 2 u0 - u1, (u1 + u2)^2, q0, q1, q2 in I22), `lift` over Q")):
+        v2 = verdicts.get(nm, {})
+        print(f"  {what}: {v2.get('verdict', 'not run')} after {v2.get('seconds', 0):.0f} s (stop condition 1 h)")
+    print("  mod p = 32003 probes (RAW/singular/dev_*.out): R2 and R3 are the unit ideal; I22 is (2 u0 - u1, (u1+u2)^2, "
+          "1 - s u1). Evidence only")
     print(f"  ({time.time() - T0:.0f} s)", flush=True)
-    wall_K22(Q, Dt, verdicts)
+    gens22 = k22_structure(Q)
+    exceptional_point(gens22)
+    k22_modp(verdicts)
+    v_std = verdicts.get("K22std", {})
+    print(f"  K22std (`std` over Q of I22, no cofactors): {v_std.get('verdict', 'not run')} after {v_std.get('seconds', 0):.0f} s "
+          f"(stop condition 1 h); no check")
     ode_step()
     print(f"  ({time.time() - T0:.0f} s)", flush=True)
     return fin()
