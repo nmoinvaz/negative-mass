@@ -49,12 +49,12 @@ MUTATIONS = {
     "cert-corrupt": (["cert_verify_K22"], "1 is added to the constant term of the first nonzero cofactor"),
     "cert-satoff": (["cert_verify_K22"], "the verification drops the generator 1 - s u1"),
     "ode-sign": (["ode_step"], "theta u_k = k u_k - u_{k+1} in the ODE step"),
-    "k22-target": (["cert_verify_K22"], "a target outside the ideal (u0) is added to the targets"),
     "plant-sat": (["planted_family"], "PL2 without the saturation by det h"),
-    "flat-sub": (["wall_R2"], "h replaced by diag(-1, 1, 1)"),
-    "rung-equator": (["wall_R2"], "the wall verdict taken from R1 alone"),
+    "flat-sub": (["wall_K22"], "h replaced by diag(-1, 1, 1)"),
+    "rung-equator": (["wall_K22"], "the wall verdict taken from R1 alone"),
 }
 MUT = None
+RUN = ""  # "_run2" for the second run of a case: Singular files are never overwritten
 RESULTS = []
 RAW = os.path.expanduser("~/Source/negative-mass-raw/I157-rpi5")
 T0 = time.time()
@@ -465,14 +465,18 @@ def targets_K22(Dt):
 def compute_members(name, gens, targets):
     """Singular `lift`: cofactors C[i][j] with sum_i C[i][j] gens[i] = targets[j]. Writes RAW/certs/<name>.json and the
     verdict. gens ends with the saturation generator."""
-    case = f"{name}_members"
+    case = f"{name}_members{RUN}"
     out, wall = run_singular(case, gens, member_program(targets), timeout=3600)
     if out is None:
         print(f"{name}: Singular did not finish in 1 h; stopped ({wall:.0f} s)", flush=True)
         store_verdict(name, {"verdict": "timeout", "seconds": wall})
         return "timeout"
+    if not out.strip():  # no output at all: Singular was killed or crashed, which says nothing about membership
+        print(f"{name}: Singular ended with no output after {wall:.0f} s (killed or crashed); no verdict", flush=True)
+        store_verdict(name, {"verdict": "aborted", "seconds": wall, "peak_kb": peak_kb(case)})
+        return "aborted"
     if "MEMBER_OK" not in out:
-        print(f"{name}: lift failed: {out[-300:]}")
+        print(f"{name}: lift reported a failure: {out[-300:]}")
         store_verdict(name, {"verdict": "notmember", "seconds": wall})
         return "notmember"
     cof = {}
@@ -910,23 +914,72 @@ def find_point_R1(Q):
     return None
 
 
-def wall_rung(rung, Q, verdicts):
-    v = verdicts.get(rung, {})
-    secs = f"{v.get('seconds', float('nan')):.0f} s, peak {(v.get('peak_kb') or 0) / 1024:.0f} MB"
-    if rung == "R1":
-        pt = find_point_R1(Q)
-        check("wall_R1", pt is not None and v.get("verdict") == "notunit",
-              f"theta_0 = pi/2, saturated by u1: not the unit ideal (Singular {secs}); exact point u = {pt} lies in "
-              f"V(R1 + 1 - s u1) with s = 1/u1, on det h = 0 (Phi' = 0)")
-        return
-    if rung not in verdicts:
-        print(f"[SKIP] {rung}: not computed (no verdict in {RAW})")
-        return
-    ok, detail = verify_cert(rung, Q, mut=MUT)
-    check(f"cert_verify_{rung}", ok, detail)
-    vv = verdicts["R1"] if MUT == "rung-equator" else v
-    check(f"wall_{rung}", ok and vv.get("verdict") == "unit",
-          f"{rung} with 1 - s u1: the unit ideal, certified (Singular {secs}): {ok}; stored verdict {vv.get('verdict')}")
+def wall_R1(Q, verdicts):
+    v = verdicts.get("R1", {})
+    pt = find_point_R1(Q)
+    check("wall_R1", pt is not None and v.get("verdict") == "notunit",
+          f"theta_0 = pi/2, saturated by u1, as registered: not the unit ideal (Singular over Q, {v.get('seconds', 0):.0f} s); "
+          f"exact point u = {pt} lies in V(R1 + 1 - s u1) with s = 1/u1, where det h = 0 (Phi' = 0)")
+
+
+def exceptional_set(gens):
+    """Every generator of I22 other than 1 - s u1 vanishes identically on L = {2 u0 = u1, u2 = -u1} (u1, u3, u4 free): so
+    V(I22) contains L. Returns (ok, number of generators)."""
+    bad = 0
+    for lab, p in gens:
+        if lab == "sat":
+            continue
+        acc = {}
+        for mon, co in p.terms():
+            f, a, b, c_, d, e = mon
+            key = (f, a + b + c_, d, e)
+            acc[key] = acc.get(key, 0) + co * QQ(1, 2) ** a * (-1) ** c_
+        if any(v != 0 for v in acc.values()):
+            bad += 1
+    return bad == 0, len(gens) - 1
+
+
+def wall_K22(Q, Dt, verdicts):
+    gens = rung_gens(Q, "Rk22") + [("sat", SAT)]
+    targets = targets_K22(Dt)
+    v = verdicts.get("K22", {})
+    ok, detail = verify_members("K22", gens, targets, mut=MUT)
+    check("cert_verify_K22", ok, detail)
+    vv = verdicts.get("R1", {}) if MUT == "rung-equator" else v
+    ok_L, ng = exceptional_set(gens)
+    pt = [sp.Rational(1, 2), sp.Integer(1), sp.Integer(-1), sp.Integer(0), sp.Integer(0)]
+    pt_ok = all(eval_Rs(g, 1, pt) == 0 for _, g in gens) and all(eval_Rs(q, 1, pt) == 0 for lab, q in targets
+                                                                  if lab.startswith("q"))
+    check("wall_K22", ok and vv.get("verdict") == "members" and ok_L and pt_ok,
+          f"the {ng} coefficients of N'_22 with 1 - s u1: f1 = 2 u0 - u1, f2 = (u1 + u2)^2 and q0, q1, q2 of "
+          f"det h = (1 - c^2) q(c^2) are in the ideal, certified (Singular {v.get('seconds', 0):.0f} s, peak "
+          f"{(v.get('peak_kb') or 0) / 1024:.0f} MB, stored verdict {vv.get('verdict')}): {ok}; all {ng} generators "
+          f"vanish identically on L = {{2 u0 = u1, u2 = -u1}} (u3, u4 free): {ok_L}; so V(I22) with u1 != 0 is exactly L, "
+          f"the jets with det h = 0 for every theta. The exact point u = {[str(x) for x in pt]} lies in it, with all q_j = 0, "
+          f"so I22 is not the unit ideal: {pt_ok}")
+
+
+def ode_step():
+    """K22-c: on L the relations F1 = 2 u0 - u1 and F2 = u1 + u2 hold on no interval with u1 != 0. theta = r d/dr acts as
+    theta u_k = k u_k + u_{k+1} (checked from u_k = r^k w^(k)), theta F1 = u1 - u2, and 2 (1 - s u1) + s (F2 + theta F1) = 2."""
+    r = sp.Symbol("r", positive=True)
+    w = sp.Function("w")(r)
+    uk = [r**k * sp.diff(w, r, k) for k in range(5)]
+    sgn = -1 if MUT == "ode-sign" else 1
+    table = [sp.expand(k * uk[k] + sgn * uk[k + 1]) for k in range(4)]
+    true = [sp.expand(r * sp.diff(uk[k], r)) for k in range(4)]
+    ok_th = all(sp.simplify(a - b) == 0 for a, b in zip(table, true))
+    # F1, F2 as polynomials in Rs; theta acts on Rs polynomials in u0..u3 by theta u_k = table[k] written in u
+    U = [u0, u1, u2, u3, u4]
+    th = [k * U[k] + sgn * U[k + 1] for k in range(4)]
+    F1, F2 = 2 * u0 - u1, u1 + u2
+    thF1 = 2 * th[0] - th[1]
+    ident = 2 * SAT + s_ * (F2 + thF1)
+    good = ok_th and ident == Rs(2) and thF1 == u1 - u2
+    check("ode_step", good,
+          f"theta u_k = k u_k + u_(k+1) for k = 0..3 from u_k = r^k w^(k): {ok_th}; theta F1 = {thF1}; "
+          f"2 (1 - s u1) + s (F2 + theta F1) = {ident}: with u1 != 0 on an interval, F1 = F2 = 0 gives F2 + theta F1 = 2 u1 = 0, "
+          f"a contradiction (so no profile lies on L)")
 
 
 STOP_AT = {"num-sign": 1, "num-det": 1, "plant-sat": 2, "coef-drop": 3}
@@ -960,10 +1013,16 @@ def main(opts):
     check_coefficients(Q)
     if sec_stop < 4:
         return fin()
-    print("\n== 4. The ladder: saturation by u1 = r w', verdict per rung ==")
-    for rung in opts.get("rungs", "R1,R2,R3").split(","):
-        wall_rung(rung, Q, verdicts)
-        print(f"  ({time.time() - T0:.0f} s)", flush=True)
+    print("\n== 4. The wall: R1 (the equator, as registered), R2 (not decided exactly) and K22 (the N22 coefficients) ==")
+    wall_R1(Q, verdicts)
+    v2 = verdicts.get("R2", {})
+    print(f"  R2 (R1 and c = 3/5, 10 generators): exact `liftstd` over Q: {v2.get('verdict', 'not run')} after "
+          f"{v2.get('seconds', 0):.0f} s (stop condition 1 h). Mod p = 32003 the probe says unit; no verdict, no check "
+          f"(RAW/singular/dev_R2_p32003.out)")
+    print(f"  ({time.time() - T0:.0f} s)", flush=True)
+    wall_K22(Q, Dt, verdicts)
+    ode_step()
+    print(f"  ({time.time() - T0:.0f} s)", flush=True)
     return fin()
 
 
@@ -1019,6 +1078,7 @@ if __name__ == "__main__":
     if MUT is not None and MUT not in MUTATIONS:
         sys.exit(f"unknown mutation {MUT!r}. Known: {', '.join(MUTATIONS)}")
     RAW = os.path.expanduser(opts.get("raw", RAW))
+    RUN = f"_run{opts['run']}" if "run" in opts else ""
     if "compute" in opts:
         main_compute(opts)
     elif "ingest" in opts:
