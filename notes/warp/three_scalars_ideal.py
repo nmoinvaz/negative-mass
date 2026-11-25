@@ -29,6 +29,7 @@ import math
 import os
 import random
 import re
+import signal
 import subprocess
 import sys
 import time
@@ -45,11 +46,13 @@ MUTATIONS = {
     "num-sign": (["num_cross"], "the Gamma Gamma term of the Ricci numerator gets the opposite sign"),
     "num-det": (["num_cross"], "the det * (A d2Gamma) term loses the factor det"),
     "coef-drop": (["coef_reassemble"], "the highest-c-degree coefficients are dropped from J_all"),
-    "cert-corrupt": (["cert_verify"], "1 is added to the constant term of the first nonzero cofactor"),
-    "cert-satoff": (["cert_verify"], "the verification drops the generator 1 - s u1"),
+    "cert-corrupt": (["cert_verify_K22"], "1 is added to the constant term of the first nonzero cofactor"),
+    "cert-satoff": (["cert_verify_K22"], "the verification drops the generator 1 - s u1"),
+    "ode-sign": (["ode_step"], "theta u_k = k u_k - u_{k+1} in the ODE step"),
+    "k22-target": (["cert_verify_K22"], "a target outside the ideal (u0) is added to the targets"),
     "plant-sat": (["planted_family"], "PL2 without the saturation by det h"),
-    "flat-sub": (["wall_R1"], "h replaced by diag(-1, 1, 1)"),
-    "rung-equator": (["wall_R3"], "the wall verdict taken from R1 alone"),
+    "flat-sub": (["wall_R2"], "h replaced by diag(-1, 1, 1)"),
+    "rung-equator": (["wall_R2"], "the wall verdict taken from R1 alone"),
 }
 MUT = None
 RESULTS = []
@@ -219,18 +222,22 @@ def strip_axis(Q):
     return out
 
 
-def coef_gens(Q, drop=False):
-    """Every coefficient of c^k and S c^k of every N_ab, as (label, element of Rs). With drop the highest-c-degree
-    coefficient of each N_ab is omitted (the control coef-drop)."""
+def coef_gens(Q, drop=False, kmax=None, top=None, comps=None):
+    """Every coefficient of c^k and S c^k of every N_ab (k <= kmax if given), as (label, element of Rs). With drop the
+    highest-c-degree coefficient of each N_ab is omitted (the control coef-drop). With top = m only the m highest
+    coefficient blocks (c^k with k among the m largest degrees present) of each N_ab are kept: the top Fourier modes."""
     out = []
     for key in sorted(Q):
+        if comps is not None and f"{key[0]}{key[1]}" not in comps:
+            continue
         p = Q[key]
         by = {}
         for mon, co in p.terms():
             by.setdefault((mon[0], mon[1]), {})[(0,) + tuple(mon[2:])] = co
-        kmax = max((k for (k, _) in by), default=0)
+        kmax_key = max((k for (k, _) in by), default=0)
+        ks = sorted(set(k for (k, _) in by), reverse=True)
         for (k, e), d in sorted(by.items()):
-            if drop and k == kmax:
+            if (drop and k == kmax_key) or (kmax is not None and k > kmax) or (top is not None and k not in ks[:top]):
                 continue
             out.append((f"N{key[0]}{key[1]}_c{k}_S{e}", Rs.from_dict(d)))
     return out
@@ -246,12 +253,20 @@ def rung_gens(Q, rung):
         raw += [(f"N{k[0]}{k[1]}@35", eval_cS(v, QQ(3, 5), QQ(4, 5))) for k, v in sorted(Q.items())]
     elif rung == "R3":
         raw = coef_gens(Q, drop=(MUT == "coef-drop"))
+    elif rung.startswith("Rc"):  # the coefficients of c^k, k <= m, of every N'_ab: the theta-jet at the equator
+        raw = coef_gens(Q, kmax=int(rung[2:]))
+    elif rung.startswith("Rtop"):  # the m highest-degree coefficient blocks of every N'_ab: the top Fourier modes
+        raw = coef_gens(Q, top=int(rung[4:]))
+    elif rung.startswith("Rk"):  # all coefficients of the listed components only, e.g. Rk22+11
+        raw = coef_gens(Q, comps=rung[2:].split("+"))
     else:
         raise ValueError(rung)
     out, seen = [], set()
     for lab, p in raw:
         if p == 0:
             continue
+        if STRIP_U1:  # N = u1^k N'; with 1 - s u1 in the ideal, N and N' generate the same ideal
+            p = strip_factor(p, u1)[0]
         q = normalize(p)
         key = tuple(sorted(q.terms()))
         if key in seen:
@@ -262,6 +277,7 @@ def rung_gens(Q, rung):
 
 
 SAT = 1 - s_ * u1  # the generator 1 - s u1
+STRIP_U1 = True
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -320,17 +336,20 @@ def run_singular(case, gens, program, timeout=3600, char=0):
     base = os.path.join(d, case)
     open(base + ".sing", "w").write(src)
     t = time.time()
+    cmd = ["nice", "-n", "10", "/usr/bin/time", "-v", "-o", base + ".time", "/usr/bin/Singular", "-q", base + ".sing"]
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, stdin=subprocess.DEVNULL,
+                            start_new_session=True)
     try:
-        p = subprocess.run(["nice", "-n", "10", "/usr/bin/time", "-v", "-o", base + ".time", "/usr/bin/Singular", "-q",
-                            base + ".sing"], capture_output=True, text=True, timeout=timeout,
-                           stdin=subprocess.DEVNULL)
-    except subprocess.TimeoutExpired as e:
-        open(base + ".out", "w").write((e.stdout or b"").decode() if isinstance(e.stdout, bytes) else (e.stdout or ""))
-        open(base + ".err", "w").write("TIMEOUT after %d s\n" % timeout)
+        so, se = proc.communicate(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        os.killpg(proc.pid, signal.SIGKILL)  # the whole group: nice, time and Singular
+        so, se = proc.communicate()
+        open(base + ".out", "w").write(so or "")
+        open(base + ".err", "w").write((se or "") + "TIMEOUT after %d s\n" % timeout)
         return None, time.time() - t
-    open(base + ".out", "w").write(p.stdout)
-    open(base + ".err", "w").write(p.stderr)
-    return p.stdout, time.time() - t
+    open(base + ".out", "w").write(so)
+    open(base + ".err", "w").write(se)
+    return so, time.time() - t
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -411,6 +430,100 @@ def compute_case(name, gens, tag=""):
 
 def compute_rung(rung, Q):
     return compute_case(rung, rung_gens(Q, rung) + [("sat", SAT)])
+
+
+def member_program(targets):
+    """lift(I, F) over Q: the matrix C with I * C = F, for targets F in I. Prints COF j i <poly> for the target j and the
+    generator i (1-based), or fails inside Singular if some target is not in I."""
+    return ("ideal F = " + ",\n  ".join(sing_poly(p) for _, p in targets) + ";\n" + """
+int t0 = rtimer;
+matrix C = lift(I, F);
+print("LIFT_SECONDS " + string(rtimer - t0));
+print("MEMBER_OK");
+int i; int j;
+for (j = 1; j <= ncols(F); j++) { for (i = 1; i <= ncols(I); i++) { print("COF " + string(j) + " " + string(i) + " " + string(C[i, j])); } }
+""")
+
+
+def det_q(Dt):
+    """det h = (1 - c^2) q(c^2): q's coefficients [q0, q1, ...] (c^0, c^2, ...) as elements of Rs, exactly."""
+    qq, rr = Dt.div(1 - c**2)
+    assert rr == 0, "(1 - c^2) does not divide det h"
+    by = {}
+    for mon, co in qq.terms():
+        assert mon[1] == 0 and mon[0] % 2 == 0, mon
+        by.setdefault(mon[0] // 2, {})[(0,) + tuple(mon[2:])] = co
+    return [Rs.from_dict(by[j]) for j in sorted(by)]
+
+
+def targets_K22(Dt):
+    """The membership targets: f1 = 2 u0 - u1, f2 = (u1 + u2)^2 (#65's relations 2w = r w', (w' + r w'')^2 = 0, in
+    u_k = r^k W_k) and the coefficients q_j of det h = (1 - c^2) q(c^2)."""
+    return [("f1", 2 * u0 - u1), ("f2", (u1 + u2) ** 2)] + [(f"q{j}", normalize(qj)) for j, qj in enumerate(det_q(Dt))]
+
+
+def compute_members(name, gens, targets):
+    """Singular `lift`: cofactors C[i][j] with sum_i C[i][j] gens[i] = targets[j]. Writes RAW/certs/<name>.json and the
+    verdict. gens ends with the saturation generator."""
+    case = f"{name}_members"
+    out, wall = run_singular(case, gens, member_program(targets), timeout=3600)
+    if out is None:
+        print(f"{name}: Singular did not finish in 1 h; stopped ({wall:.0f} s)", flush=True)
+        store_verdict(name, {"verdict": "timeout", "seconds": wall})
+        return "timeout"
+    if "MEMBER_OK" not in out:
+        print(f"{name}: lift failed: {out[-300:]}")
+        store_verdict(name, {"verdict": "notmember", "seconds": wall})
+        return "notmember"
+    cof = {}
+    for ln in out.splitlines():
+        m = re.match(r"COF (\d+) (\d+) (.*)$", ln)
+        if m:
+            cof[(int(m.group(1)) - 1, int(m.group(2)) - 1)] = m.group(3)
+    cert = {"name": name, "ring": ["s"] + JV, "labels": [lab for lab, _ in gens],
+            "gen_sha256": hashlib.sha256(gens_text(gens).encode()).hexdigest(),
+            "targets": [lab for lab, _ in targets],
+            "target_sha256": hashlib.sha256(gens_text(targets).encode()).hexdigest(), "singular": "4.4.1",
+            "singular_seconds": wall,
+            "cofactors": [[cof[(j, i)] for i in range(len(gens))] for j in range(len(targets))]}
+    os.makedirs(os.path.join(RAW, "certs"), exist_ok=True)
+    path = os.path.join(RAW, "certs", f"{name}.json")
+    json.dump(cert, open(path, "w"))
+    nt = sum(len(parse_poly(x)) for row in cert["cofactors"] for x in row)
+    print(f"{name}: all {len(targets)} targets in the ideal, certificate {path} ({os.path.getsize(path)} bytes, "
+          f"{nt} cofactor terms, Singular {wall:.0f} s)", flush=True)
+    store_verdict(name, {"verdict": "members", "seconds": wall, "peak_kb": peak_kb(case),
+                         "cert_bytes": os.path.getsize(path), "cofactor_terms": nt})
+    return "members"
+
+
+def verify_members(name, gens, targets, mut=None):
+    """Check sum_i C[i][j] gens[i] = targets[j] for every target j, exactly in Q[s, u0..u4], with the generators and the
+    targets regenerated here. Returns (ok, detail)."""
+    path = os.path.join(RAW, "certs", f"{name}.json")
+    if not os.path.exists(path):
+        return False, f"no certificate at {path}"
+    cert = json.load(open(path))
+    if hashlib.sha256(gens_text(gens).encode()).hexdigest() != cert["gen_sha256"]:
+        return False, "the regenerated generators differ from the ones Singular was given"
+    if hashlib.sha256(gens_text(targets).encode()).hexdigest() != cert["target_sha256"]:
+        return False, "the regenerated targets differ from the ones Singular was given"
+    t = time.time()
+    bad, nterms = [], 0
+    for j, (lab, tp) in enumerate(targets):
+        cof = [parse_poly(x) for x in cert["cofactors"][j]]
+        nterms += sum(len(x) for x in cof)
+        if mut == "cert-corrupt":
+            k = next(i for i, x in enumerate(cof) if x != 0)
+            cof[k] = cof[k] + 1
+        use = range(len(gens) - 1) if mut == "cert-satoff" else range(len(gens))
+        tot = Rs.zero
+        for i in use:
+            tot += cof[i] * gens[i][1]
+        if tot != tp:
+            bad.append(lab)
+    return not bad, (f"sum_i C_ij f_i = target_j exactly for the {len(targets)} targets {[l for l, _ in targets]}, "
+                     f"{nterms} cofactor terms, in {time.time() - t:.1f} s" if not bad else f"fails for targets {bad}")
 
 
 def verify_cert(rung, Q, tag="", mut=None):
@@ -744,10 +857,12 @@ def check_coefficients(Q):
 
 
 def main_compute(opts):
-    Q = load_numerators()
+    Q, Dt = load_numerators(with_det=True)
     todo = opts.get("rungs", "R2").split(",")
     for rung in todo:
-        if rung in ("R1", "R2", "R3"):
+        if rung == "K22":  # the N22 coefficients: membership of f1, f2, q_j
+            compute_members("K22", rung_gens(Q, "Rk22") + [("sat", SAT)], targets_K22(Dt))
+        elif rung in ("R1", "R2", "R3") or rung.startswith(("Rc", "Rtop", "Rk")):
             compute_rung(rung, Q)
         elif rung == "PL2":
             _, _, _, gens = planted_family_gens()
@@ -758,12 +873,12 @@ def main_compute(opts):
             sys.exit(f"unknown rung {rung}")
 
 
-def load_numerators():
+def load_numerators(with_det=False):
     t = time.time()
-    Q, _ = wall_numerators()
+    Q, Dt = wall_numerators()
     Q = strip_axis(Q)
     print(f"numerators N_ab / (1 - c^2)^k: terms {[len(Q[k]) for k in sorted(Q)]} ({time.time() - t:.0f} s)", flush=True)
-    return Q
+    return (Q, Dt) if with_det else Q
 
 
 def parse_opts(argv):
@@ -809,7 +924,7 @@ def wall_rung(rung, Q, verdicts):
         return
     ok, detail = verify_cert(rung, Q, mut=MUT)
     check(f"cert_verify_{rung}", ok, detail)
-    vv = verdicts["R1"] if (MUT == "rung-equator" and rung == "R3") else v
+    vv = verdicts["R1"] if MUT == "rung-equator" else v
     check(f"wall_{rung}", ok and vv.get("verdict") == "unit",
           f"{rung} with 1 - s u1: the unit ideal, certified (Singular {secs}): {ok}; stored verdict {vv.get('verdict')}")
 
