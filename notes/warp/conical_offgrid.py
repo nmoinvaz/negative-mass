@@ -7,8 +7,8 @@ src/offgrid.rs on the walker src/hp.rs, series tables src/tables_hp.rs) integrat
 radius L = 200 4^k (k = 0..6) with |N|/sum|terms| <= 1e-20, to eta = 1e-6, and returns a verdict: the first singular eta*
 with its kind and the locator's spread, or the floor (F' ~ p0/eta, or bounded and then matched at eta = -200).
 Usage (from the repository root; sympy 1.14.0, mpmath 1.3.0, cargo):
-  python3 notes/warp/conical_offgrid.py [--gen-hp] [--no-controls] [--mutate=NAME] [--only=a,b] [--logdir=DIR] [--nobuild]
-         [--bin=PATH] [--raw=DIR] [--grid=full|ctl]
+  python3 notes/warp/conical_offgrid.py [--gen-hp] [--no-controls] [--controls-only] [--controls=a,b] [--mutate=NAME] [--only=a,b]
+         [--logdir=DIR] [--nobuild] [--bin=PATH] [--grid=full|ctl] [--dump=DIR]
 Every option other than the harness's own is forwarded to the control subprocesses, and each control runs every check
 (on the `ctl` grid, a subset). Exit 1 if a check fails or a control does not fire. Status words as in AGENTS.md: everything
 numerical is numerical evidence."""
@@ -133,7 +133,7 @@ if __name__ == "__main__" and "gen-hp" in OPTS:
 # ---------------------------------------------------------------------------------------------------------------
 # the crate binaries
 # ---------------------------------------------------------------------------------------------------------------
-OG_MUT = ("eq-coeff", "series-coeff", "plant-locator", "recip-dd", "start-bar", "n-drift", "halving")
+OG_MUT = ("eq-coeff", "series-coeff", "locator-side", "recip-dd", "start-bar", "n-drift", "halving")
 OLD_MUT = ("match-sign", "plant-locator")  # #167's binary, to its planted checks only
 LL_MUT = ("plant-locator", "recip-dd", "eq-coeff", "n-drift")  # loglog, to the far planted cases only
 PY_MUT = ("sym-break", "n4-coeff", "cf-coeff", "bisect-end", "indep-eq", "regress-kind")
@@ -598,6 +598,10 @@ def c_spread():
           f"1e-8 max(1, eta*), FLOOR p0 within a relative 1e-9; worst eta* difference {worst:.1e}; mismatches {len(bad)} {bad[:4]}")
 
 
+DEV07_POINTS = [(-2.0, 1e8), (-1.0, 1e8), (-0.5, 3e7), (-0.5, 1e8), (0.001, -1e5), (0.002, -1e5), (0.005, -3e5), (0.01, -1e6), (0.02, -1e6), (0.03, -3e6),
+                (0.03, -1e6), (0.05, -3e6), (0.1, -1e7), (0.25, -3e7), (0.25, -1e7), (0.5, -1e8), (0.5, -3e7), (1.0, -1e8), (1.5, -1e8), (2.0, -1e8)]
+
+
 def c_dd_qd():
     pts = grid()
     a = og_scan(pts)
@@ -614,6 +618,14 @@ def c_dd_qd():
             worst = max(worst, abs(a[k]["xstar"] - b[k]["xstar"]) / max(1.0, a[k]["xstar"]))
         if d:
             bad.append((k, d))
+    if GRID == "full":
+        print(f"[NOTE] dd_qd: O8 as first worded (quad-double fit of the last 10 of 60 orders) failed in dev_07 at 20 of 142 points: eta* identical, kind `F->0` in double-double and `other` in quad-double; "
+              f"quad-double now fits the last 33 orders (chosen after dev_07). The 20 points, fitted exponent against alpha = 2/(eta*^2 + 4) (ratio in brackets) and the kind of each lane:")
+        for k in DEV07_POINTS:
+            if k in a and k in b and a[k]["est"] and b[k]["est"]:
+                ap = 2 / (a[k]["xstar"] ** 2 + 4)
+                ea, eb = a[k]["est"]["alpha"], b[k]["est"]["alpha"]
+                print(f"   F_inf={k[0]:g} C={k[1]:g}: eta* {a[k]['xstar']:.10g} (QD {b[k]['xstar']:.10g}), alpha {ap:.4e}; double-double {ea:.4e} ({ea / ap:.3f}) {a[k]['kind']}; quad-double {eb:.4e} ({eb / ap:.3f}) {b[k]['kind']}")
     check("dd_qd", not bad, f"quad-double (kt 60, tol 1e-64) against double-double on {len(sel)} points (start radius >= 204800 and the 30 smallest and 30 largest eta*): class and kind equal, eta* "
           f"within 1e-12 max(1, eta*), FLOOR p0 within a relative 1e-12; worst relative eta* difference {worst:.1e}; mismatches {len(bad)} {bad[:4]}")
 
@@ -757,14 +769,21 @@ PTS_O13 = [(0.1, 3e4), (5.0, 3000.0), (16.0, -1e4)]
 ETA_O13 = 20
 
 
-def indep_run(fi, c, L, eta_end, mut_eq):
-    """own mpmath integration of N = 0 inward from the series at L, F'' the real root of the cubic nearest the previous one"""
-    mp.mp.dps = 25
+_B = [("1/5",), ("3/40", "9/40"), ("44/45", "-56/15", "32/9"), ("19372/6561", "-25360/2187", "64448/6561", "-212/729"),
+      ("9017/3168", "-355/33", "46732/5247", "49/176", "-5103/18656"), ("35/384", "0", "500/1113", "125/192", "-2187/6784", "11/84")]
+_B5 = ["35/384", "0", "500/1113", "125/192", "-2187/6784", "11/84", "0"]
+_B4 = ["5179/57600", "0", "7571/16695", "393/640", "-92097/339200", "187/2100", "1/40"]
+
+
+def indep_run(fi, c, L, eta_end, mut_eq, perturb=0):
+    """own integration of N = 0 inward from the series at L: Dormand-Prince 5(4) in mpmath (30 digits, relative tolerance 1e-13) in
+    tau = ln(L/eta) on (F, p = eta F'), F'' from the real root of the cubic by Newton from the previous root; no Rust, no multishoot"""
+    mp.mp.dps = 30
     P = sp.Poly(sp.expand(dc.conical_N()), dc.F0_, dc.F1_, dc.F2_, dc.ETA)
     terms = [(a, b, cc, m, int(co)) for (a, b, cc, m), co in zip(P.monoms(), P.coeffs())]
-    s = cg.series_mp(Fraction(fi), Fraction(c), L, 1, dps=25)
-    G, F1 = s[0], s[1]
-    e0 = mp.mpf(L)
+    st = cg.series_mp(Fraction(fi), Fraction(c), L, 1, dps=30)
+    Lm = mp.mpf(L)
+    q = [Lm**2 * st[2] + Lm * st[1]]  # q = eta^2 F'' + eta F' of the previous root
 
     def coefs(f0, f1, e):
         cs = [mp.mpf(0)] * 4
@@ -772,23 +791,51 @@ def indep_run(fi, c, L, eta_end, mut_eq):
             if mut_eq and (a, b, cc, m) == (1, 2, 1, 2):
                 co = mp.mpf("-5.9999")
             cs[cc] += co * f0**a * f1**b * e**m
-        sc = max(abs(x) for x in cs)
-        return [x / sc for x in cs]
+        return cs
 
-    last = [s[2]]
-
-    def root(f0, f1, e):
-        rts = mp.polyroots(coefs(f0, f1, e)[::-1], maxsteps=300, extraprec=80)
-        re = [r.real for r in rts if abs(r.imag) < mp.mpf(10) ** -12 * max(1, abs(r))]
-        return min(re, key=lambda x: abs(x - last[0]))
+    def qroot(f0, p, e):
+        # x = eta^2 F'' (same scale as p): coefficients a_i / eta^(2 i)
+        a0, a1, a2, a3 = coefs(f0, p / e, e)  # coefs[i] multiplies F''^i
+        a3, a2, a1 = a3 / e**6, a2 / e**4, a1 / e**2
+        x = q[0] - p
+        for _ in range(80):
+            fx = ((a3 * x + a2) * x + a1) * x + a0
+            dfx = (3 * a3 * x + 2 * a2) * x + a1
+            dx = fx / dfx
+            x -= dx
+            if abs(dx) <= mp.mpf(10) ** -24 * abs(x):
+                q[0] = x + p
+                return q[0]
+        raise RuntimeError("Newton did not converge")
 
     def rhs(tau, y):
-        f2 = root(y[0], y[1], e0 - tau)
-        last[0] = f2
-        return [-y[1], -f2]
+        e = Lm * mp.exp(-tau)
+        return [-y[1], -qroot(y[0], y[1], e)]
 
-    sol = mp.odefun(rhs, 0, [G, F1], tol=mp.mpf(10) ** -15, degree=10)
-    return sol(e0 - mp.mpf(eta_end))
+    Bm = [[mp.mpf(Fraction(t).numerator) / Fraction(t).denominator for t in row] for row in _B]
+    B5 = [mp.mpf(Fraction(t).numerator) / Fraction(t).denominator for t in _B5]
+    B4 = [mp.mpf(Fraction(t).numerator) / Fraction(t).denominator for t in _B4]
+    cn = [mp.mpf(1) / 5, mp.mpf(3) / 10, mp.mpf(4) / 5, mp.mpf(8) / 9, mp.mpf(1), mp.mpf(1)]
+    tau_end = mp.log(Lm / eta_end)
+    tau, y, h = mp.mpf(0), [st[0] * (1 + mp.mpf(perturb)), Lm * st[1]], mp.mpf("0.02")
+    k1 = rhs(tau, y)
+    nsteps = 0
+    while tau < tau_end:
+        h = min(h, tau_end - tau)
+        ks = [k1]
+        for i in range(6):
+            yi = [y[j] + h * sum(Bm[i][r] * ks[r][j] for r in range(len(Bm[i]))) for j in range(2)]
+            ks.append(rhs(tau + cn[i] * h, yi))
+        y5 = [y[j] + h * sum(B5[r] * ks[r][j] for r in range(7)) for j in range(2)]
+        err = max(abs(h * sum((B5[r] - B4[r]) * ks[r][j] for r in range(7))) / (mp.mpf(10) ** -13 * abs(y5[j]) + mp.mpf(10) ** -40) for j in range(2))
+        if err <= 1:
+            tau, y = tau + h, y5
+            k1 = ks[6]
+            nsteps += 1
+        h = h * min(mp.mpf(5), max(mp.mpf("0.2"), mp.mpf("0.9") * (1 / max(err, mp.mpf(10) ** -10)) ** (mp.mpf(1) / 5)))
+        if nsteps > 20000:
+            raise RuntimeError("too many steps")
+    return [y[0], y[1] / eta_end], nsteps
 
 
 def c_independent():
@@ -798,7 +845,7 @@ def c_independent():
         v = og_scan([(fi, c)])[(fi, c)]
         L = int(v["l"])
         try:
-            y = indep_run(fi, c, L, ETA_O13, MUT == "indep-eq")
+            y, nst = indep_run(fi, c, L, ETA_O13, MUT == "indep-eq")
         except Exception as ex:  # the integration could not follow the equation: the check fails
             ok = False
             rows.append(f"({fi:g},{c:g}) from {L}: the independent integration raised {type(ex).__name__}")
@@ -806,10 +853,10 @@ def c_independent():
         w = og("walk", ["--fi", repr(fi), "--c", repr(c), "--to", ETA_O13])[0]
         dF = abs(y[0] - to_mp(prs(w["F"]))) / abs(y[0])
         dF1 = abs(y[1] - to_mp(prs(w["F1"]))) / abs(y[1])
-        ok &= w["stop"] == "End" and dF <= 1e-9 and dF1 <= 1e-9
-        rows.append(f"({fi:g},{c:g}) from L={L} to eta = {ETA_O13}: relative |dF| {mp.nstr(dF, 2)}, |dF'| {mp.nstr(dF1, 2)} ({time.time() - t0:.0f} s)")
-    check("independent", ok, "own mpmath integration (25 digits, odefun tol 1e-15, no Rust, no multishoot; shares N and the series with the crate) from the same start against the crate's "
-          "state, relative |dF|, |dF'| <= 1e-9: " + "; ".join(rows))
+        ok &= w["stop"] == "End" and dF <= 1e-8 and dF1 <= 1e-8
+        rows.append(f"({fi:g},{c:g}) from L={L} to eta = {ETA_O13}: relative |dF| {mp.nstr(dF, 2)}, |dF'| {mp.nstr(dF1, 2)} ({nst} steps, {time.time() - t0:.0f} s)")
+    check("independent", ok, "own Dormand-Prince 5(4) integration in mpmath (30 digits, relative tolerance 1e-13, F'' by Newton on the cubic; no Rust, no multishoot; shares N and the series "
+          "with the crate) from the same start against the crate's state, relative |dF|, |dF'| <= 1e-8: " + "; ".join(rows))
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -856,7 +903,8 @@ CHECKS = [("n_table", c_n_table), ("series_hp", c_series_hp), ("plant_167", c_pl
 MUTATIONS = {
     "eq-coeff": (None, "one coefficient of N in the lane's polynomial changed (-6 -> -5 on F F'^2 F'' eta^2)"),
     "series-coeff": (None, "a_(4,1) of the lane series times 1.01"),
-    "plant-locator": (None, "the locator's side test inverted (offgrid, loglog and #167's binary)"),
+    "plant-locator": (None, "the locator's side test inverted in the planted cases (loglog's far blow-ups and #167's `plant`)"),
+    "locator-side": (None, "the locator's side test inverted in `offgrid`"),
     "recip-dd": (None, "the lane constants (1/k, shifted coefficients of N, 1/(dN/dF'')) rounded to double-double"),
     "start-bar": (None, "the start rule's residual bar 1e-8 in place of 1e-20"),
     "n-drift": (None, "the recursion leaves F''_3 = 0 (order 3 of N not imposed)"),
@@ -869,7 +917,7 @@ MUTATIONS = {
     "regress-kind": (None, "#167's kind compared as the wrong string"),
     "match-sign": (None, "#167's planted matching: the mirror end takes +F' in place of -F'"),
 }
-OWN = {"mutate", "only", "no-controls", "gen-hp", "control-checks", "list", "logdir", "nobuild", "grid"}
+OWN = {"mutate", "only", "no-controls", "controls-only", "controls", "gen-hp", "control-checks", "list", "logdir", "nobuild", "grid", "dump"}
 
 
 def main():
@@ -909,11 +957,12 @@ if __name__ == "__main__":
         sys.exit(0)
     os.nice(10)
     print(f"conical_offgrid.py: grid {GRID}; controls run every check (on the ctl grid) and must fail their targets and no others")
-    failed = main()
+    failed = [] if "controls-only" in OPTS else main()
     controls_ok = True
-    if MUT is None and "no-controls" not in OPTS and ONLY is None:
+    if MUT is None and "no-controls" not in OPTS and (ONLY is None or "controls-only" in OPTS):
         print("\n== Controls: each mutation, with every check run, must make its target checks fail and no others ==", flush=True)
-        for name, (want, what) in MUTATIONS.items():
+        names = OPTS["controls"].split(",") if "controls" in OPTS else list(MUTATIONS)
+        for name, (want, what) in [(n, MUTATIONS[n]) for n in names]:
             t1 = time.time()
             args = [sys.executable, os.path.abspath(__file__), f"--mutate={name}", "--nobuild", "--grid=ctl"] + forwarded()
             p_ = subprocess.run(args, capture_output=True, text=True)

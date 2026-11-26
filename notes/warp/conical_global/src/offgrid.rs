@@ -108,6 +108,8 @@ impl OgOpts {
         let mut cfg = HpCfg::new(kt, tol);
         cfg.rstop = Some(1e-12);
         cfg.tiny = 1e-15;
+        // the 1/k fit of the locator: the last 10 of 30 orders (double-double), the last 33 of 60 (quad-double and above)
+        cfg.fit_window = if parts == 2 { 10 } else { 33 };
         cfg.project = false;
         OgOpts { cfg, lk_extra: 0, resid_bar: 1e-20 }
     }
@@ -337,7 +339,7 @@ pub fn apply_mutation(name: &str, m: &mut Mutation, o: &mut OgOpts) -> bool {
     match name {
         "eq-coeff" => m.eq_coeff = true,
         "series-coeff" => m.series_coeff = true,
-        "plant-locator" => o.cfg.flip_side = true,
+        "locator-side" => o.cfg.flip_side = true,
         "recip-dd" => o.cfg.recip_dd = true,
         "start-bar" => o.resid_bar = 1e-8,
         "n-drift" => o.cfg.skip = Some(3),

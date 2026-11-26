@@ -8,7 +8,7 @@
 //!   offgrid walk --prec P --fi F --c C --to X       the state at X of the walk from the chosen start
 //!   offgrid bisect --prec P --fi F --c CLO,CHI      bisection in C between two verdict labels
 //!   offgrid ntable --prec P --file FILE             N and its scale at rational points
-//! Mutations: eq-coeff, series-coeff, plant-locator, recip-dd, start-bar, n-drift, halving.
+//! Mutations: eq-coeff, series-coeff, locator-side, recip-dd, start-bar, n-drift, halving.
 use conical_global::hp::{hi, lane_rat, sc_of, EvalS, PolyQ};
 use conical_global::model::Mutation;
 use conical_global::offgrid::{apply_mutation, label, resid_of, series_state, verdict_p, walk_to, OgOpts, LS};

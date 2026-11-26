@@ -12,7 +12,7 @@
 //!   step in it.
 use crate::model::Mutation;
 use crate::tables::N_TERMS;
-use crate::walk::{fit_radius, Est};
+use crate::walk::{fit_radius_w, Est};
 use multishoot::lane::BaseLane;
 use multishoot::multidouble::precision::Precision;
 use multishoot::multidouble::simd::Native;
@@ -196,6 +196,8 @@ pub struct HpCfg {
     pub rstop: Option<f64>,
     /// false: the locator's bound is the absolute rstop (as `walk.rs`); true: rstop * max(1, |x|)
     pub rstop_rel: bool,
+    /// the number of last Taylor orders the locator's 1/k fit uses (10 as `walk.rs`)
+    pub fit_window: usize,
     /// the walk stops (`Stop::TinyStep`) when a step is below tiny * max(|x|, 1e-6); #184's value 1e-13, #183 uses 1e-15
     pub tiny: f64,
     /// control `plant-locator`: the locator's side test inverted
@@ -204,7 +206,7 @@ pub struct HpCfg {
 
 impl HpCfg {
     pub fn new(kt: usize, tol: f64) -> Self {
-        HpCfg { kt, tol, project: true, recip_dd: false, hscale: 1.0, hmax: 1e300, max_steps: 200000, skip: None, rstop: None, rstop_rel: true, tiny: 1e-13, flip_side: false }
+        HpCfg { kt, tol, project: true, recip_dd: false, hscale: 1.0, hmax: 1e300, max_steps: 200000, skip: None, rstop: None, rstop_rel: true, fit_window: 10, tiny: 1e-13, flip_side: false }
     }
 }
 
@@ -404,11 +406,11 @@ fn finite<P: Precision<Native>>(f: &F1<P>) -> bool {
 
 /// the best radius estimate of `walk::estimate` over the three fields, from the coefficients in the step variable
 /// s = (x - x0)/l; r is returned in x units (times l)
-fn estimate_hp<P: Precision<Native>>(c: &[Vec<F1<P>>; 3], kt: usize, l: f64) -> Option<Est> {
+fn estimate_hp<P: Precision<Native>>(c: &[Vec<F1<P>>; 3], kt: usize, l: f64, window: usize) -> Option<Est> {
     let mut best: Option<Est> = None;
     for f in 0..3 {
         let cf: Vec<f64> = (0..=kt).map(|k| fhi::<P>(&c[f][k])).collect();
-        if let Some(mut e) = fit_radius(&cf, kt, f) {
+        if let Some(mut e) = fit_radius_w(&cf, kt, f, window) {
             if e.resid < 1e-3 && best.is_none_or(|b| e.resid < b.resid) {
                 e.r *= l;
                 best = Some(e);
@@ -586,7 +588,7 @@ pub fn hp_walk<P: Precision<Native>>(
             break;
         }
         if let Some(rstop) = cfg.rstop {
-            let est = estimate_hp::<P>(&c, kt, l);
+            let est = estimate_hp::<P>(&c, kt, l, cfg.fit_window);
             let ahead = |e: &Est| (e.side as f64 == dir) != cfg.flip_side;
             match est {
                 Some(e) if ahead(&e) => hist.push((x + dir * e.r, e.r)),
