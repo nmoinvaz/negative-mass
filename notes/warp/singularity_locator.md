@@ -49,7 +49,7 @@ degree in 1/k 1 to 9 for the ratio model, 2 to 9 for the three-term model), by l
   two models the smaller difference wins. A bar above 5% of |s| is `Kind::Unresolved`. The bar is a range of the estimator over fit
   choices. It would miss where all neighbors share an error that the windows do not reveal: that is what the planted suite measures.
 - The code is generic over `Real` (f64, `DD`, `QD`, `OD`), uses IEEE operations only (no libm), and gives bitwise the same results on the
-  default build and with `--features portable` (fingerprint 0xa5113e9ccb6776c8 on aarch64; CI in the PR also runs x86).
+  default build and with `--features portable` (fingerprint 0xa5113e9ccb6776c8 on aarch64 NEON and on portable; the PR's CI passes it on x86 SSE2, AVX2 and portable, Windows and macOS).
 
 Compared with `choptuik-large-d/hp/branch_radius.py` (read, not run): that script fits ln |c_k| over the orders above a noise floor
 for Chebyshev coefficients and reads the Bernstein ellipse (a radius, no exponent, no kind, no bar); the locator reads the algebraic
@@ -129,7 +129,7 @@ eta* by 12 and 9 bars of the locator (17 and 7 of #183's). The others at the kap
 
 ## 5. What was not done
 
-- The `+avx2,+fma` build was not run (aarch64 here); the pull request's CI runs x86 SSE2, AVX2, portable, NEON and Windows.
+- The `+avx2,+fma` build was not run on the Pi (aarch64); the pull request's CI jobs (x86 SSE2, AVX2, portable, NEON on Linux and macOS, Windows MSVC) all pass, and the fingerprint test is asserted in each.
 - A window starting near 0.8 K, the cure of D6 in f64.
 - A series with noise and no singularity, and series in which c_(k-1) = 0 for half the orders (an even function: use u^2).
 - A fit that takes the state's own error into account (the O8 comparison is limited by the double-double state).
