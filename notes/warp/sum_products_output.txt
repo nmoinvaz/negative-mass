@@ -1,0 +1,56 @@
+[PASS] e_two: E = 8D has 376 terms; E equals 8D from derivatives of undefined X1, X2, R1, R2: True; 4hD = C^2 - A^2 - B^2 with A = 2hP + Y^2 - Z^2, B = 2hQ - 2YZ, C = Y^2 + Z^2 + 2h^2 (abstract blocks): True; X2 = 0: E = R1'^2 det_classify.E_mult_poly: True; X2 = 1, R1 = 1: E = 4 R2'^2 det_classify.E_add_poly(X + v, ...): True
+  (1.7 s)
+[PASS] ode_form: a'' = alpha a + beta a', s = Gamma r' + delta r (Cramer, wedge formulas): True; E(jets with a'', s eliminated) = D~(N; alpha, beta, Gamma, delta): True; det N = W_x W_rho: True; X1'X2'' - X2'X1'' = -alpha W_x and p X1'' + q X2'' = alpha (p X1 + q X2) + beta (p X1' + q X2'): True
+  (1.8 s)
+[PASS] case_a: u = a + bX + cR + dXR = d (X + c/d)(R + b/d) + (a - bc/d): True; d = 0 is additive: True; X2 = 1 gives alpha = 0 and R2 = 1 gives delta = 0: True; u = X (b + dR) + 1 (a + cR): True
+  (0.0 s)
+[PASS] sep_rank: exact ranks r of E as sum_(i<=r) F_i(x) G_i(rho), x-monomials x rho-monomials, so d_F + d_G <= r (Lemma L): full v=0: 107x72 rank 59; one product (X2 = 0) v=0: 9x7 rank 6; additive (X2 = 1, R1 = 1) v=0: 6x6 rank 5; (b) X2 = 1 v=0: 24x49 rank 21; (c) R2 = 1 v=0: 53x12 rank 12; full v=1/3: 180x106 rank 93; one product (X2 = 0) v=1/3: 16x11 rank 10; additive (X2 = 1, R1 = 1) v=1/3: 6x6 rank 5; (b) X2 = 1 v=1/3: 24x68 rank 21; (c) R2 = 1 v=1/3: 87x12 rank 12; full v=1: 169x100 rank 87; one product (X2 = 0) v=1: 14x10 rank 9; additive (X2 = 1, R1 = 1) v=1: 6x6 rank 5; (b) X2 = 1 v=1: 24x67 rank 21; (c) R2 = 1 v=1: 82x12 rank 12; full v=v: 180x126 rank 102; one product (X2 = 0) v=v: 16x14 rank 11; additive (X2 = 1, R1 = 1) v=v: 6x9 rank 5; (b) X2 = 1 v=v: 24x74 rank 21; (c) R2 = 1 v=v: 87x25 rank 24
+  (2.6 s)
+[PASS] slack: (X1, X2) = (e^x, e^(kappa x)), (R1, R2) = (e^rho, e^(mu rho)), kappa and mu transcendental (exact ranks over Q(kappa), Q(mu)): v=0: d_F = 12, d_G = 22, sum 34 <= r = 59, E nonzero on the pair: True; v=1/3: d_F = 22, d_G = 36, sum 58 <= r = 93, E nonzero on the pair: True; the bound d_F + d_G <= r holds with room although E != 0
+  (2.4 s)
+[PASS] rho_const: simple roots: E is a polynomial of degree 2 in iota = 1/rho with iota^2 coefficient -(A0 mu1 w1 + B0 mu2 w2)^4 = -u_rho^4: True, so the w1^4 iota^2 and w2^4 iota^2 coefficients are -(A0 mu1)^4 and -(B0 mu2)^4: True; double root: the rho^-2 coefficient of E(rho) is -w^4 (mu A0 + B0)^4 and no lower power occurs: True
+  (4.2 s)
+[PASS] x_exp: (i) z1^6 coefficient of E (X2 = 0) = a1^2 (a1^2 + 4 k1^2 a0^2)(a1^2 + 5 k1^2 a0^2): True, z-support of E has i + j <= 6: True, 6q = iq + j (the frequency 6 k1 shared with z1^i z2^j) forces 0 <= q <= 1 for every other monomial, so |q| >= 1, q != 1 never meets it: True; (ii) R1 = c1: E = z2^2 b1^2 E'' with E'' a polynomial: True, E = 0 at b1 = 0 (planar family): True; (iii) the ideal of all 14 coefficients of E'' with t c1 k1 k2 (k1 - k2) b1 - 1 is the unit ideal (generic frequencies): True; resonant ratios q = k1/k2 with |q| >= 1 from the support: ['-1', '4/3', '3/2', '-2', '2', '3', '4'] (as declared: True), merged coefficients with t c1 k2 b1 - 1 give the unit ideal in each: [True, True, True, True, True, True, True]
+  (4.9 s)
+[PASS] add_decomp: E on X2 = 1, R1 = 1, v = 0 (u = X + R) is 4 R2'^2 E_add; E = sum_(k<=r) f_k(x) g_k(rho) from pivot columns: True; exact rank r = 5 (needs 5); f = ['-4*A0**2*A2**2 + 4*A1**4', '-8*A0*A2**2', '4*A1**2', '-4*A2**2', '1']
+  (0.2 s)
+[PASS] add_stratum: x-curves with all f_k(x) constant (d_F = 1): elimination of {f_k - k_k} with A0 free gives conditions [2*k2, -4*k1 + k3**2, 2*k4, -k2, 4*k1*k4 - k2**2 - k3**2*k4, k5 - 1] on k; X'' = A2: A2^2 in the ideal: True; for every constant c the jets (A0 free, A1 = c, A2 = 0) have f independent of A0: True
+  (0.1 s)
+[PASS] add_planted_exact: R = -eps ln psi with psi'' + psi'/rho + 2 c^2 psi = 0 gives E_add(X = c x) = (R'^2/2 + c^2)^2 - S^2/4 = 0 identically, eps = +-1: True
+  (0.2 s)
+[PASS] add_planted: u = c x - eps ln(J0(z) + 0.3 Y0(z)) + d (z = sqrt2 c rho), c in {3/10, 1/2, 1, 3/2, 2}, eps = +-1: f(x) constant in x (d_F = 1): True; largest relative residual of f.g over 50 points 1.01e-130 (needs <= 1e-50); numerical d_G [4, 4, 4, 4, 4, 4, 4, 4, 4, 4] (needs <= 4); d_F + d_G = 5 = r = 5: saturated; c >= 3/10: True
+  (34.7 s)
+[PASS] add_perturbed_exact: E_add(X = c x, R + delta) with the Bessel equation for R, delta in {rho^2/10, rho^3/10}, eps = +-1: nonzero polynomial in (gamma, rho, c): True; nonzero at the exact points (c, eps, rho, gamma) = (1/2, 1, 1, 1/3), (1, -1, 3/2, 2), (2, 1, 1/2, -1), values ['-1717/16875', '-132431/360000', '217841/40000', '159239601/10240000', '-107439/40000', '-27853839/10240000']: True
+  (0.2 s)
+[PASS] add_xperturbed: X = c x + x^2/10 with the same R: exact d_F per case [3, 3, 3, 3, 3, 3, 3, 3, 3, 3] (needs >= 2), numerical d_G [4, 4, 4, 4, 4, 4, 4, 4, 4, 4] (needs 4), so d_F + d_G > r = 5 and Lemma L rejects it: True
+  (23.8 s)
+
+verdicts:
+  reductions (ODE normal form, excluded forms are one product plus a constant or additive): established
+  rho-side with constant ODE coefficients (exponentials, exponential polynomials): no solution under W_x W_rho != 0
+  x-side exponentials X1 = e^(k1 x), X2 = e^(k2 x), k1 != k2 real: no solution under W_rho != 0 (R1 constant by the top frequency, then unit ideals)
+  Lemma L on the two-product E: ranks exact; the bound does not decide (exponential pair has room)
+  planted additive truth through the same E: found, perturbed members rejected exactly
+  the question (no solution under (N), or an explicit solution): NOT DECIDED by this script (strata (b), (c), (d) outside rho-side constant coefficients and real exponential x-side)
+
+checks: 13 passed, 0 failed []. 77 s
+
+== Controls: each mutation must make exactly its target check fail ==
+[FIRED] --mutate=s-d-sign (Y := u_x u_rho - u u_x_rho/2 in the jets-built E): exit 1, failed ['e_two']
+[FIRED] --mutate=s-compact-b (B := 2hQ + 2YZ in the compact form): exit 1, failed ['e_two']
+[FIRED] --mutate=s-ode-alpha (alpha with a'' ^ a' replaced by a' ^ a''): exit 1, failed ['ode_form']
+[FIRED] --mutate=s-casea-const (the constant a - bc/d replaced by a): exit 1, failed ['case_a']
+[FIRED] --mutate=s-rank-qyz (the term 2QYZ removed from D before the ranks): exit 1, failed ['sep_rank']
+[FIRED] --mutate=s-slack-kappa (the second exponent kappa = 2 (resonant: z2 = z1^2) in place of a transcendental kappa): exit 1, failed ['slack']
+[FIRED] --mutate=s-rhoconst-iota (S_i = R_i'' without the R_i'/rho term): exit 1, failed ['rho_const']
+[FIRED] --mutate=s-rhoconst-double (R2' = mu rho e^(mu rho) in place of (1 + mu rho) e^(mu rho)): exit 1, failed ['rho_const']
+[FIRED] --mutate=s-add-freq (J0(c rho), Y0(c rho) in place of J0(sqrt2 c rho), Y0(sqrt2 c rho)): exit 1, failed ['add_planted']
+[FIRED] --mutate=s-add-exact (psi'' = -psi'/rho + 2 c^2 psi in place of the Bessel equation): exit 1, failed ['add_planted_exact']
+[FIRED] --mutate=s-xexp-coef (the second factor of the z1^6 coefficient with 6 k1^2 a0^2 in place of 5 k1^2 a0^2): exit 1, failed ['x_exp']
+[FIRED] --mutate=s-xexp-planar (the coefficients of E (not E'') and no saturation by b1: the planar family u = c1 e^(k1 x) + c2 e^(k2 x) + v is in the variety): exit 1, failed ['x_exp']
+[FIRED] --mutate=s-stratum-drop (two of the five f_k dropped from the elimination): exit 1, failed ['add_stratum']
+[FIRED] --mutate=s-pexact-zero (delta = 0): exit 1, failed ['add_perturbed_exact']
+[FIRED] --mutate=s-xperturb-zero (X = c x (no x^2/10)): exit 1, failed ['add_xperturbed']
+[SILENT (declared in README A1, not counted)] --mutate=s-rank-drop (the term 8 h Z^2 removed from E before the ranks (changes the column counts, not the ranks)): exit 0, failed []
+[SILENT (declared in README A1, not counted)] --mutate=s-xexp-sat (the saturation by b1 dropped from the ideal of E'' (b1^2 is already divided out of E'')): exit 0, failed []
+controls: all fired on their target only
