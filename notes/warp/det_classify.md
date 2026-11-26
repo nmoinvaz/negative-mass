@@ -210,7 +210,10 @@ fails at η⁻¹⁰ because k = 4 is a resonance, and the logarithm absorbs it. 
 balances, there is none, **conditional** on a leading-monomial form of F − F_∞. Localization in x for conical shifts is
 therefore not excluded; whether a global bubble exists is not decided. *Update from #168* ([`conical_attraction.md`](conical_attraction.md)):
 existence near the family and the exclusion of every other approach, including F_∞ = 0 and oscillation, are now
-**proved**, with certified constants.
+**proved**, with certified constants. **Update from #167** ([`conical_global.md`](conical_global.md)): no solution in that
+family was found on all of x/ρ ∈ ℝ on the scanned grid, and the solutions regular at x = 0 found by integrating
+outward have no limit (F ~ ln ln(x/ρ)). So the family of #159 realizes no localized conical shift on the scanned set
+(**numerical evidence**); off it, localization is not excluded.
 
 ## 7. The far field of a localized shift
 

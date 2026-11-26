@@ -174,6 +174,14 @@ stated in §6 of the earlier note; (c) closure (ω) on this family; (d) approach
 proof of §4. *Update from #168:* (d) is decided, with no oscillating approach (Corollary 4 and Theorem C of
 [`conical_attraction.md`](conical_attraction.md)), and (e) is Theorems A and B there.
 
+**Update from #167** ([`conical_global.md`](conical_global.md)): (a) A global solution on η ∈ ℝ with the same F_∞ at
+both ends, in the family of §3: none found on 187 (F_∞, C) with |F_∞| ∈ [0.25, 4], |C| ≤ 3000. Each ends at a singular
+η* > 0 (F → 0 with F′ → ∞ in 166 cases) or at the floor with F′ ∝ 1/η (**numerical evidence**). (b) At η = 0 the
+equation is singular where F′(0) = 0. A solution through η = 0 with F(0) ∉ {0, ±1} has F′(0) ≠ 0 and
+F″(0) = −F′(0)²/F(0), or is constant (**conditional** on a leading-power form). The only nonconstant even regular
+solution has F(0) = ±1, F″(0) = ±4/5, and grows like ln ln η. Solutions that cross η = 0 regularly and reach large η
+follow q = −p² (F ~ ln ln η), which is outside the family and outside assumption H. Follow-ups: #183, #184, #185.
+
 ## 7. A discrepancy with §7 of det_classify.md
 
 §7 takes the ε³ coefficient of D for u = u_∞ + εw, −u_∞Z²[(1 − u_∞²)w_xx + Δ⊥w], and concludes that at leading order

@@ -201,3 +201,37 @@ solves p′ = −p².
 Raw folder `I167-mac` of negative-mass-raw: README with the criteria written before the first run, amendments A1 and A2, the development
 logs `dev_01` to `dev_13` (including the runs that failed or were stopped), the stopped `run_01` and the run of record `run_02`. The
 crate's libraries are used as published; no library change was needed, so there is no pull request.
+
+## Coordinator's review
+
+Reviewed 2026-11-26 at 12f47dd (raw `I167-mac` 0134f16). The review's files are in `negative-mass-raw/I167-mac-review`
+(the runner's folder is `I167-mac`), with its criteria committed before the first run of `ind167.py` (raw 42b5af9).
+
+| item | result |
+|---|---|
+| scope | the crate, the script, its output and the note, and the raw folder |
+| rerun on the Mac | crate built from a clean worktree (18 s); `--fresh` run: exit 0, 17 of 17 checks, every control on its target only, the three `NOT MET (as first worded)` lines as recorded, 710 s; output identical to `conical_global_output.txt` apart from timings |
+| independent check `ind167.py` | run 2: 5 of 5 criteria pass, 5 of 5 mutations on target. Run 1 failed L5 by the coordinator's own start data (README A2) |
+| by hand | the small-F leading balance and α = 2/(η*² + 4); the η = 0 identities; the even solution's order-4 condition 64b³(5b − 2); the exact solution p = 1/(t + t₀) of A₀ = 0: rederived |
+
+`ind167.py` imports nothing from this repository and does not use the crate. It shares sympy, mpmath, the block entries
+of a conical shift, D's formula and the claims under test. It checks:
+- **N and η = 0:** its own determinant equals §1's printed a₃, …, a₀, and the η = 0 identities hold.
+- **The even series:** its own stage equations give −22/125 and 998/10625.
+- **The small-F balance:** every monomial of N other than the balance −η²(η² + 1)F″²[(η² + 2)F′² + 2FF″] is less singular
+  under F ~ cΔ^α for 0 < α < 1, so α(η*² + 4) = 2.
+- **Re-solved:** its own series through ν⁸ (θ-form stages solved from its own N) and its own RK4 walk with root tracking
+  give η* = 1.28193249506 at (F_∞, C) = (1, 0), against 1.28193326312 here, 7.7e-7 apart. Its series coefficients at
+  η⁻⁶ equal #159's table.
+
+Findings:
+- **The answer stands as stated:** no global solution in the family on the scanned grid (*numerical evidence*), with the
+  η = 0 exclusions *conditional* on H₀.
+- **The start data matter.** An absolute error δF at η moves the solution's C by about δF·η⁴, and dη*/dC ≈ −0.08 near
+  C = 0 (`start-C`: η*(10) = 0.449). The coordinator's first re-solve, from a 4-term series at η = 1000, missed η* by
+  3.5e-4. The runner's n ≤ 17 series and adaptive start were needed, and the three "not met as first worded" items
+  were handled as the coordinator ruled during the task.
+- **Process.** The runner asked before every criterion change, and each failure as first worded is printed in the output.
+  No library PR was needed.
+
+Follow-ups: #183 (scan off the grid), #184 (the regime F ~ ln ln η), #185 (η = 0 without H₀); #135 row 35.
