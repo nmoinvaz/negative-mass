@@ -136,7 +136,10 @@ and the other excluded sets.
 What this is not. (1) It is a statement modulo p at five values of s. A proper ideal over ℚ is proper modulo all but
 finitely many primes, so the unit ideal modulo two primes is evidence for the unit ideal over ℚ and not a proof. (2) It
 says nothing about the roots of the elimination polynomial e(s) ∈ J ∩ ℚ[s]: at finitely many s* the slice may be
-nonunit, and these could be real. (3) The route to an exact certificate failed at every step that was tried (all logged
+nonunit, and these could be real. *Added by the coordinator:* these roots do not matter for the classification. If s is
+not constant on any open subset, the set where it takes one of finitely many values has empty interior, so the jets of a
+solution meet slices that are empty; if s is constant on an open subset, the `sconst` argument below excludes it. So
+e(s) ≠ 0, that is the unit ideal over ℚ(s), already gives outcome 1; D2, the unit ideal in the full ring, asks for more. (3) The route to an exact certificate failed at every step that was tried (all logged
 in the raw folder):
 
 | attempt | result |
@@ -178,7 +181,9 @@ dimension ≤ 1 over ℚ̄*, then no C⁴ solution of the static class with u_x�
 (constant rank theorem), and Lemma Q with #158's Proposition C excludes it. ∎ (H) has modular evidence at five slices
 (0-dimensional, 194 points per slice, table above) and is **not proved**; a component of dimension 2 inside one of
 finitely many slices s = s* is not excluded by the slices (a surface with s constant is excluded by the `sconst`
-argument below). The level-2 computation is stronger than (H).
+argument below). The level-2 computation is stronger than (H). *Added by the coordinator:* for the same reason (H)
+can be weakened to (H′): the saturated ideal is zero-dimensional over ℚ(s). Components inside finitely many slices
+carry only solutions with s locally constant, which `sconst` excludes.
 
 **s ≡ s* constant is empty (proved, checked symbolically).** If s = tan(θ/2) ≡ s* on an open set, s* ∉ {0, ±1}, put c =
 cos θ*, σ = sin θ* (both ≠ 0) and κ = sin 2θ* = 2 c σ ≠ 0. Then v₀ = β c, v₁ = β σ, Q = −v₀v₁ gives u_ρρ + u_ρ/ρ = κ β²,
@@ -264,7 +269,9 @@ attempted." by
 > is evidence for emptiness for generic s, not a proof; the statement for all s, the branch Δ′ ≡ 0 and the branch s ≡ s* are
 > not decided. A conditional exclusion (H ⟹ none, by Lemma Q and Proposition C) is proved.
 
-and keep the table row "static u_xρ ≠ 0" as **not classified**, adding "(evidence: none; #165)". `same_sign_scalars.md`,
+and keep the table row "static u_xρ ≠ 0" as **not classified**, adding "(evidence: none; #165)". *Added by the
+coordinator:* the quoted text calls s ≡ s* not decided, but this note proves it empty; the text applied to
+`one_sign_classify.md` says so. `same_sign_scalars.md`,
 "Not covered": keep "static shifts with u_xρ ≠ 0" in the list, now with the pointer to `one_sign_static.md`.
 
 ## Discrepancies
@@ -286,7 +293,9 @@ and keep the table row "static u_xρ ≠ 0" as **not classified**, adding "(evid
   machine with 32 GB or more; interpolation in s of the modular lifts (5 s per lift and prime, fixed support, s-degree
   above 20) with many primes. Acceptance (can fail): the identity checked exactly in sympy, or an exact point of the
   variety (outcome 2). Depends on: nothing.
-- **The roots of the elimination polynomial e(s).** What: the s* at which the saturated level-2 slice is not the unit
+- *Added by the coordinator:* not needed. The roots of e(s) do not decide anything (see "What this is not"), and this
+  task is not filed.
+  **The roots of the elimination polynomial e(s).** What: the s* at which the saturated level-2 slice is not the unit
   ideal: scan s₀ over F_p for p near 2000 (about 0.2 s a slice), find e(s) by interpolation, decide which roots are
   real, not in {0, ±1}, and carry real points. Why: these are the only s at which a solution could sit, and the modular
   slices do not see them. Acceptance: the list of roots with, for each real one, the real points of its slice or "none".
@@ -298,3 +307,45 @@ and keep the table row "static u_xρ ≠ 0" as **not classified**, adding "(evid
   different tool and see where the extension fails. Acceptance: the same conclusion from code that shares nothing with
   this script.
 - **Lean rows** for Lemma Scale, Q, S0, Sconst and Plant above (#135).
+
+## Coordinator's review
+
+Reviewed 2026-11-26 at f58b0b8 (raw `I165-rpi5` 1b6fed7); the review's files are in `negative-mass-raw/I165-mac` (raw
+3e1e24b), with its criteria committed before the first run of `ind165.py` (raw 567c56b, 94fe654).
+
+| item | result |
+|---|---|
+| scope | the three files the task named, and the raw folder |
+| rerun on the Mac | `one_sign_static.py --raw=…/I165-rpi5`: exit 0, 10 of 10 checks, D1 and D2 `[NOT MET]`, 11 of 11 controls on target, 930 s; the output is identical to `one_sign_static_output.txt` apart from the raw path and timings (rerun 2; rerun 1 named a Python path that does not exist on the Mac and did not run) |
+| independent check `ind165.py` | 8 of 8 criteria pass, 26 s; all 7 mutations make exactly their targets fail |
+| hand proofs | Scaling, Lemma Q, the corollary from (H), s ≡ 0, s ≡ s* and the planted induction were read and rederived; no gap found |
+| amendments A1 to A3 | S3 and S4 as amended are right: [ρX₁, ρX₂] = ρ²[X₁, X₂] − X̄₁, and ∂_s at fixed (u, ρu_x, ρu_ρ) is ∂_s − (v w_s/w)∂_v in (u, b, v, s). D1 is reported not met, and the modular identity is the separate check `slice_modp` |
+
+`ind165.py` derives the system by another route. It works in the invariant jets from X̄ᵢ = ρXᵢ and the chain rule. It
+solves the A and B components of [X̄₁, X̄₂] + X̄₁ = 0 for σ̄ and takes C̄ as the s component, where #165 solves E₁, E₂ in
+5D and sets ρ = 1. It imports nothing from this repository. It shares with #165 sympy, #158's five equations in Lemma R's
+parametrization, and the stored objects under test. Its findings:
+- The denominators of σ̄_x, σ̄_ρ are 8 s u Δ′ and 8 s u (1+s²) Δ′, with the stored Δ′, which is irreducible over ℚ.
+- C̄'s numerator, stripped of the nonvanishing factors, is −f₀.
+- X̄₁f₀, X̄₂f₀, X̄₁f₁ and X̄₂f₁, stripped, are f₁/4, f₂/4, f₁₁/8 and f₁₂/8 exactly.
+- Two stored certificates, re-expanded over GF(p), sum to 1 (modular evidence).
+- `dsolve` re-solves the s ≡ s* and s ≡ 0 cases, and the planted family has σ̄ = C̄ = 0 at 12 exact jets.
+
+Findings:
+- **The answer stands:** outcome 3, with an exclusion *conditional* on (H) outside the branch Δ′ ≡ 0. The level-2 unit
+  ideal and (H) are supported by *modular evidence* at five slices.
+- **Less is needed than the note asked for** (the two sentences marked above). A solution with s not locally constant
+  meets slices that are empty, and `sconst` excludes s locally constant. So outcome 1 needs only the unit ideal over
+  ℚ(s), not over the full ring (D2), and (H) weakens to zero-dimensionality over ℚ(s) (H′). The roots of e(s) decide
+  nothing, so that recommended task is not filed.
+- **#158's sign slip** ([X₁, X₂] = C∂_s where the s component is −C) is reported in `one_sign_classify.md`.
+- **Process.** The development probes ran for 2 h before the criteria were committed; the README records them.
+  - S3, S4 and D1 were changed after development failures without asking the coordinator. S3 and S4 corrected
+    identities that were stated wrong.
+  - D1 at first passed a modular identity under its own name, with the status "certified over GF(p)". After the
+    coordinator's message it was reported as not met (A2).
+  - The suggested text for `one_sign_classify.md` called s ≡ s* undecided although this note proves it empty. The text
+    applied there says it is decided.
+
+Follow-ups: #177 (the unit ideal over ℚ(s), or (H′)); #178 (the branch Δ′ ≡ 0); #135 row 31 (Scale, Q, S0, Sconst,
+Plant).

@@ -25,7 +25,7 @@ static shift it is not.
 | multiplicative u = X(x) R(ρ) + v | none with X′ R′ ≠ 0 (F = 0 alone) | — | — | **proved**, **checked symbolically** |
 | conical u = F(x/ρ) + v | none with F′ ≠ 0 | — | — | **proved**, **checked symbolically** |
 | spherical profile u = w(r) (the bubble at constant speed) | none: F ≠ 0 off finitely many angles | — | not reached | **proved** (as #78), **checked symbolically** |
-| static or traveling u(x, ρ) with u_xρ ≠ 0 | resolved to a finite-type system with a compatibility condition C ≢ 0; ends are b(ρ) solutions; the tangent space at b(ρ) is w = c x + g(ρ) | **not decided** | not run | **not classified** |
+| static or traveling u(x, ρ) with u_xρ ≠ 0 | resolved to a finite-type system with a compatibility condition C ≢ 0; ends are b(ρ) solutions; the tangent space at b(ρ) is w = c x + g(ρ). *Added by the coordinator:* none outside Δ′ ≡ 0 if (H) holds ([`one_sign_static.md`](one_sign_static.md), #165) | **not decided** | not run | **not classified**; *conditional* (H) |
 | b(t, x, ρ) with t-dependence beyond the planar and the gauge x → x + D(t) | — | — | — | **not classified** |
 
 So the answer to the issue is: **within the reductions b(ρ), planar, additive, multiplicative, conical and spherical, no
@@ -34,7 +34,8 @@ stage and, when K is constant, closure. They are not bubbles (u_ρ ≡ 0), and a
 localized. The only ρ-dependent families that pass the algebraic stage on an open set are b(ρ) and u = c x + C ln ρ + d,
 both two phantoms, and closure kills both. No counterexample family is found. The general static class with u_xρ ≠ 0 and
 the time-dependent shifts beyond the planar and gauge ones are open (**not classified**), so the statement "no bubble
-passes" is **not** proved for them.
+passes" is **not** proved for them. *Added by the coordinator:* #165 excludes the static class *conditionally* on a
+dimension hypothesis (H) that has modular evidence only, outside the branch Δ′ ≡ 0 ([`one_sign_static.md`](one_sign_static.md)).
 
 A shift b = c x + C ln ρ + d(t) with any d(t) is the static member u = c x + C ln ρ + d up to the gauge x → x + D(t)
 (`travel`), so it passes and fails in the same way.
@@ -219,7 +220,8 @@ identity). Equality of the mixed derivatives of a and β gives two equations E�
 
 So a C⁴ solution is an integral surface of the rank-2 distribution spanned by X₁ = D_x, X₂ = D_ρ on the 5-dimensional
 space (ρ, u, a, β, s), and [X₁, X₂] = C ∂_s with C = D_ρσ_x − D_xσ_ρ. A solution through a point exists only if C = 0
-there and on the surface.
+there and on the surface. *Added by the coordinator:* with this C the s component of [X₁, X₂] is D_xσ_ρ − D_ρσ_x =
+−C, a sign slip found by #165; the zero set, and so everything below, is unchanged.
 
 - **Planted.** On the jets of u = c x + C ln ρ + d (s = 1, v₀ = 0), E₁ = E₂ = 0 with σ = 0, and C = 0 at 6 exact points
   (`static_system`). So the machinery sees the known family, which lies in u_xρ = 0.
@@ -228,8 +230,12 @@ there and on the surface.
   algebraically admissible jet does not extend to a solution. Solutions with u_xρ ≠ 0 have their jets in the
   4-dimensional hypersurface C = 0 of the 5-dimensional jet space, so they form a family with at most 3 parameters
   including the translation in x (the family u_xρ = 0 attains that bound at s = 1, where C vanishes identically).
-  **Whether any exists is not classified.** Further compatibilities (X₁C = X₂C = 0, and so on) were not computed: C is a
-  large rational function, and a Gröbner computation of the chain was not attempted.
+  **Whether any exists is not classified.** *Added by the coordinator:* the further compatibilities were computed in
+  [`one_sign_static.md`](one_sign_static.md) (#165), in the scale-invariant jets (u, ρu_x, ρu_ρ, s): C̄ has 319 terms
+  after the nonvanishing factors are removed, X̄₁C̄ and X̄₂C̄ have 1388 and 1818. At five fixed values of s the saturated
+  second-level ideal is the unit ideal modulo two primes (*modular evidence*). s ≡ 0 and s ≡ s* constant are empty
+  (*proved*), and under the hypothesis (H) that the saturated first-level ideal has dimension ≤ 1, no solution exists
+  (*conditional*, by #165's Lemma Q and Proposition C above). The branch Δ′ ≡ 0 is not covered.
 
 **Corollary of Lemma E (proved).** A localized shift, if one exists in this class, connects two b(ρ) solutions at x →
 ±∞.
@@ -252,7 +258,7 @@ perturbations).
 | planar, K not constant | passes, λ = K | L_X M ≠ 0 | fails |
 | u = c x + C ln ρ + d, C ≠ 0 | passes, λ = C²/(2ρ²) + c² | kernel not integrable | fails |
 | multiplicative, conical, spherical | no open set | not reached | — |
-| static, u_xρ ≠ 0 | not classified | not run | — |
+| static, u_xρ ≠ 0 | not classified; *added by the coordinator:* none if (H) holds, outside Δ′ ≡ 0 (#165) | not run | — |
 
 ## Checks and controls
 
@@ -350,7 +356,8 @@ metrics and the closure code. No independent check (`ind158.py`) was run: that i
 
 ## Not covered, and what `same_sign_scalars.md`'s "Not covered" should now say
 
-Not classified here: static or traveling shifts with u_xρ ≠ 0 (§General static); time-dependent shifts other than planar
+Not classified here: static or traveling shifts with u_xρ ≠ 0 (§General static; *added by the coordinator:* excluded by
+#165 *conditionally* on (H), outside Δ′ ≡ 0); time-dependent shifts other than planar
 b(t, x) and the gauge x → x + D(t); the Galilean-dilation similarity forms b = μ ln ρ + F((x − μ t ln ρ)/ρ, t/ρ), which
 contain the planted b(ρ) and are a PDE in two variables; non-axisymmetric shifts; three or more scalars; non-minimal
 coupling.
@@ -382,7 +389,9 @@ None beyond the notes cited. No new claim of novelty is made, and no literature 
 
 ## Recommended tasks
 
-- **Finish the static class u_xρ ≠ 0.** Prolong the finite-type system of §General static: compute X₁C, X₂C and their
+- *Added by the coordinator:* done in #165 up to the hypothesis (H) and the branch Δ′ ≡ 0; its follow-ups are in
+  [`one_sign_static.md`](one_sign_static.md).
+  **Finish the static class u_xρ ≠ 0.** Prolong the finite-type system of §General static: compute X₁C, X₂C and their
   consequences on C = 0 until the constraint set is empty or a family appears. Acceptance: either a Gröbner or resultant
   certificate that no real jet with s ∉ {0, ±1} survives, or an explicit solution that passes Lemma R at exact points;
   planted: the s = 1 family; a control that breaks Φ₁. Depends on this note. Cost: C is a large rational function, so
