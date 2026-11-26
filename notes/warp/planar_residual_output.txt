@@ -1,0 +1,54 @@
+planar_residual.py (#171), sympy 1.14.0, python 3.14.10. mutation: none
+[PASS] conv_energy: Minkowski, phi = omega t: normal (T_tt, T_xx) = (omega**2/2, omega**2/2), phantom (-omega**2/2, -omega**2/2); two_scalars.md: normal +, phantom - (0 s)
+[PASS] planted_p1: G_ab - 8 pi T_ab, two normal scalars, V = -1/(8 pi), fields X_I / sqrt(8 pi): all 16 components 0 (2 s)
+[PASS] planted_p2: G_ab - 8 pi T_ab, two phantoms, V = 1/(8 pi), fields X_I / sqrt(8 pi): all 16 components 0 (6 s)
+[PASS] planted_flat: Minkowski, phi_1 = phi_2 = t^2 x + sin(y) e^z, signs (1, -1), V = 0: all 16 components 0; T_1 has 16 nonzero components (1 s)
+[PASS] E_solve: unknowns alpha_1^2, alpha_2^2, V at a point; nonzero components ['pp', 'pq', 'qq', 'yy', 'zz']; (i) Groebner basis of the 3x3 minors with t h j E c P - 1 is [1] (rank 3 wherever h j E c != 0), gcd of the minors 4096*E*P**3*h*j; (ii) linsolve gives (1/(32*pi), 1/(32*pi), 0), expected (1/(32 pi), 1/(32 pi), 0), substituted: 0; (iii) c-free True (0 s)
+    component pp: -8*pi*c**2*h**2*(A1 - A2) = 0   (H' -> h, J' -> j, e^(2HJ) -> E, A1 = alpha_1^2, A2 = alpha_2^2, Vh = V at the point; numerator)
+    component pq: -8*pi*E*Vh = 0   (H' -> h, J' -> j, e^(2HJ) -> E, A1 = alpha_1^2, A2 = alpha_2^2, Vh = V at the point; numerator)
+    component qq: -128*pi*j**2*(A1 - A2) = 0   (H' -> h, J' -> j, e^(2HJ) -> E, A1 = alpha_1^2, A2 = alpha_2^2, Vh = V at the point; numerator)
+    component yy: 2*(16*pi*A1*h*j + 16*pi*A2*h*j + 4*pi*E*Vh - h*j) = 0   (H' -> h, J' -> j, e^(2HJ) -> E, A1 = alpha_1^2, A2 = alpha_2^2, Vh = V at the point; numerator)
+    component zz: 2*(16*pi*A1*h*j + 16*pi*A2*h*j + 4*pi*E*Vh - h*j) = 0   (H' -> h, J' -> j, e^(2HJ) -> E, A1 = alpha_1^2, A2 = alpha_2^2, Vh = V at the point; numerator)
+[PASS] E_residual: H(p), J(q) undefined, c a real nonzero symbol, alpha_1 = alpha_2 = 1/(4 sqrt(2 pi)), V = 0, signs (1, -1): all 16 components of G_ab - 8 pi (T_1 - T_2)_ab are 0; G_yy = G_zz = -2*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q) (nonzero components of G: 2), T_1 has 4 nonzero components (0 s)
+    information: components (i <= j, order p, q, y, z) of G: [(2, 2, -2*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q)), (3, 3, -2*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q))]; of 8 pi (T_1 - T_2): [(2, 2, -2*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q)), (3, 3, -2*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q))]; components of d/dc of 8 pi (T_1 - T_2) that are not 0: 0
+[PASS] E_rform: R_ab - lambda g_ab - (a_a a_b - b_a b_b) with a = sqrt(8 pi) d phi_1, b = sqrt(8 pi) d phi_2, lambda = 0: all 16 components 0; a = (c dH - (4/c) dJ)/2, b = (c dH + (4/c) dJ)/2: both 0 (0 s)
+[PASS] E_explicit: residual with explicit functions, alpha_1 = alpha_2 = 1/(4 sqrt(2 pi)), V = 0: H = p**3 - p, J = q**2 + q, c = 3/2: 0; H = sin(p), J = q**3 - q, c = -2/5: 0; H'J' of the second at (0, 1), (0, 0) = (2, -1) (1 s)
+
+8 of 8 checks pass (10 s)
+
+== Controls: the full script with --mutate=NAME, one process each ==
+scale11-normal: phi_1 times 11/10 in E_residual, E_rform, E_explicit
+    target ['E_residual', 'E_rform', 'E_explicit']; outcome fired; failed checks ['E_residual', 'E_rform', 'E_explicit']; exit 1 (12 s)
+    [FAIL] E_residual: H(p), J(q) undefined, c a real nonzero symbol, alpha_1 = alpha_2 = 1/(4 sqrt(2 pi)), V = 0, signs (1, -1): [0,0] = -21*c**2*Derivative(H(p), p)**2/400; [1,1] = -21*Derivative(J(q), q)**2/(25*c**2); [2,2] = 21*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q)/100 ...; G_yy = G_zz = -2*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q) (nonzero components of G: 2), T_1 has 4 nonzero components (0 s)
+scale11-phantom: phi_2 times 11/10 in E_residual, E_rform, E_explicit
+    target ['E_residual', 'E_rform', 'E_explicit']; outcome fired; failed checks ['E_residual', 'E_rform', 'E_explicit']; exit 1 (12 s)
+    [FAIL] E_residual: H(p), J(q) undefined, c a real nonzero symbol, alpha_1 = alpha_2 = 1/(4 sqrt(2 pi)), V = 0, signs (1, -1): [0,0] = 21*c**2*Derivative(H(p), p)**2/400; [1,1] = 21*Derivative(J(q), q)**2/(25*c**2); [2,2] = 21*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q)/100 ...; G_yy = G_zz = -2*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q) (nonzero components of G: 2), T_1 has 4 nonzero components (0 s)
+flip-phantom: the phantom's kinetic sign flipped (T_1 + T_2, and a a + b b in E_rform)
+    target ['E_solve', 'E_residual', 'E_rform', 'E_explicit']; outcome fired; failed checks ['E_solve', 'E_residual', 'E_rform', 'E_explicit']; exit 1 (12 s)
+    [FAIL] E_residual: H(p), J(q) undefined, c a real nonzero symbol, alpha_1 = alpha_2 = 1/(4 sqrt(2 pi)), V = 0, signs (1, 1): [0,0] = -c**2*Derivative(H(p), p)**2/2; [1,1] = -8*Derivative(J(q), q)**2/c**2; [2,2] = -2*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q) ...; G_yy = G_zz = -2*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q) (nonzero components of G: 2), T_1 has 4 nonzero components (0 s)
+swap-roles: normal and phantom exchanged: phi_1 phantom, phi_2 normal
+    target ['E_solve', 'E_residual', 'E_rform', 'E_explicit']; outcome fired; failed checks ['E_solve', 'E_residual', 'E_rform', 'E_explicit']; exit 1 (12 s)
+    [FAIL] E_residual: H(p), J(q) undefined, c a real nonzero symbol, alpha_1 = alpha_2 = 1/(4 sqrt(2 pi)), V = 0, signs (-1, 1): [2,2] = -4*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q); [3,3] = -4*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q); G_yy = G_zz = -2*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q) (nonzero components of G: 2), T_1 has 4 nonzero components (0 s)
+wrong-partner: phi_2 = alpha_2 (c H + (2/c) J)
+    target ['E_solve', 'E_residual', 'E_rform', 'E_explicit']; outcome fired; failed checks ['E_solve', 'E_residual', 'E_rform', 'E_explicit']; exit 1 (12 s)
+    [FAIL] E_residual: H(p), J(q) undefined, c a real nonzero symbol, alpha_1 = alpha_2 = 1/(4 sqrt(2 pi)), V = 0, signs (1, -1): [1,1] = -3*Derivative(J(q), q)**2/c**2; [2,2] = -exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q)/2; [3,3] = -exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q)/2; G_yy = G_zz = -2*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q) (nonzero components of G: 2), T_1 has 4 nonzero components (0 s)
+potential: V = 1/(80 pi) in E_residual
+    target ['E_residual']; outcome fired; failed checks ['E_residual']; exit 1 (11 s)
+    [FAIL] E_residual: H(p), J(q) undefined, c a real nonzero symbol, alpha_1 = alpha_2 = 1/(4 sqrt(2 pi)), V = 1/(80*pi), signs (1, -1): [0,1] = -exp(2*H(p)*J(q))/10; [1,0] = -exp(2*H(p)*J(q))/10; [2,2] = 1/10 ...; G_yy = G_zz = -2*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q) (nonzero components of G: 2), T_1 has 4 nonzero components (0 s)
+ricci-sign: the Ricci tensor with the opposite sign in the Einstein routine
+    target ['planted_p1', 'planted_p2', 'E_solve', 'E_residual', 'E_rform', 'E_explicit']; outcome fired; failed checks ['planted_p1', 'planted_p2', 'E_solve', 'E_residual', 'E_rform', 'E_explicit']; exit 1 (12 s)
+    [FAIL] E_residual: H(p), J(q) undefined, c a real nonzero symbol, alpha_1 = alpha_2 = 1/(4 sqrt(2 pi)), V = 0, signs (1, -1): [2,2] = 4*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q); [3,3] = 4*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q); G_yy = G_zz = 2*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q) (nonzero components of G: 2), T_1 has 4 nonzero components (0 s)
+conv-flip: the sign of T flipped in the stress function
+    target ['conv_energy', 'planted_p1', 'planted_p2', 'E_solve', 'E_residual', 'E_explicit']; outcome fired; failed checks ['conv_energy', 'planted_p1', 'planted_p2', 'E_solve', 'E_residual', 'E_explicit']; exit 1 (12 s)
+    [FAIL] E_residual: H(p), J(q) undefined, c a real nonzero symbol, alpha_1 = alpha_2 = 1/(4 sqrt(2 pi)), V = 0, signs (1, -1): [2,2] = -4*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q); [3,3] = -4*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q); G_yy = G_zz = -2*exp(-2*H(p)*J(q))*Derivative(H(p), p)*Derivative(J(q), q) (nonzero components of G: 2), T_1 has 4 nonzero components (0 s)
+p1-sign: one kinetic sign flipped in P1
+    target ['planted_p1']; outcome fired; failed checks ['planted_p1']; exit 1 (22 s)
+    [FAIL] planted_p1: G_ab - 8 pi T_ab, two normal scalars, V = -1/(8 pi), fields X_I / sqrt(8 pi): [0,0] = (R**2*Z**2*(-sin(T/7 + Th + Z/5)**2 + cos(T/7 + Th + Z/5)**2) + 49)/(49*Z**2); [0,1] = (3*R**2*Z**2*(-sin(T/7 + Th + Z/5)**2 + cos(T/7 + Th + Z/5)**2) + 35)/(105*Z**2); [0,2] = R*sin(2*T/7 + 2*Th + 2*Z/5)/7 ... (13 s)
+p2-scale11: one of P2's fields times 11/10
+    target ['planted_p2']; outcome fired; failed checks ['planted_p2']; exit 1 (26 s)
+    [FAIL] planted_p2: G_ab - 8 pi T_ab, two phantoms, V = 1/(8 pi), fields X_I / sqrt(8 pi): [0,0] = 3*R**2*cos(2*T/7 + 2*Th + 2*Z/5)/1400 + 189/(200*(3*T + Z)**2); [0,1] = 3*R**2*cos(2*T/7 + 2*Th + 2*Z/5)/1000 + 63/(200*(3*T + Z)**2); [0,2] = 3*R*sin(2*T/7 + 2*Th + 2*Z/5)/200 ... (21 s)
+flat-flip: the phantom's sign flipped in planted_flat
+    target ['planted_flat']; outcome fired; failed checks ['planted_flat']; exit 1 (12 s)
+    [FAIL] planted_flat: Minkowski, phi_1 = phi_2 = t^2 x + sin(y) e^z, signs (1, 1), V = 0: [0,0] = -8*pi*(t**4 + 4*t**2*x**2 + exp(2*zz)); [0,1] = -32*pi*t**3*x; [0,2] = -32*pi*t*x*exp(zz)*cos(yy) ...; T_1 has 16 nonzero components (1 s)
+
+11 of 11 controls fire on their targets; 0 with extras; 0 silent; 0 undeclared (total 165 s)
