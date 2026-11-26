@@ -97,9 +97,6 @@ def zero(e):
 def to_jets(expr, F):
     """Replaces every derivative of the undefined function F(t, .), plain or inside a Subs, and F itself, by the symbol
     F_ab (a: order in t, b: order in the second slot). Subs(symbol, ...) collapses under doit()."""
-    def is_F(e):
-        return e.func == F or (isinstance(e, sp.Derivative) and e.expr.func == F)
-
     def jet(e):
         f = e.expr if isinstance(e, sp.Derivative) else e
         a = b = 0
@@ -111,7 +108,8 @@ def to_jets(expr, F):
                     b += n
         return sp.Symbol(f"{F.__name__}_{a}{b}")
 
-    return expr.replace(is_F, jet).doit()
+    expr = expr.replace(lambda e: isinstance(e, sp.Derivative) and e.expr.func == F, jet)  # derivatives first
+    return expr.replace(lambda e: e.func == F, jet).doit()
 
 
 def entries_X_R(Xe, Re, t, x):
@@ -260,6 +258,7 @@ def main():
     Xt = Xc(t, x - D) - sg * D.diff(t)
     PQYh_new = [to_jets(e, Xc) for e in entries_X_R(Xt, Rf, t, x)]
     PQYh_old = [to_jets(e, Xc) for e in entries_X_R(Xc(t, x), Rf, t, x)]
+    assert PQYh_old[0].has(sp.Symbol('X_11')) and PQYh_new[0].has(sp.Symbol('X_11')), 'vacuous gauge comparison'
     ok_ga = all(sp.simplify(a_ - b_) == 0 for a_, b_ in zip(PQYh_new, PQYh_old))
     cf, Cf, df = sp.Function("c")(t), sp.Function("C")(t), sp.Function("d")(t)
     bb = cf * x + Cf * sp.log(rho) + df
