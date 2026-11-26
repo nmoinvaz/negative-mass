@@ -180,7 +180,8 @@ both ends, in the family of §3: none found on 187 (F_∞, C) with |F_∞| ∈ [
 equation is singular where F′(0) = 0. A solution through η = 0 with F(0) ∉ {0, ±1} has F′(0) ≠ 0 and
 F″(0) = −F′(0)²/F(0), or is constant (**conditional** on a leading-power form). The only nonconstant even regular
 solution has F(0) = ±1, F″(0) = ±4/5, and grows like ln ln η. Solutions that cross η = 0 regularly and reach large η
-follow q = −p² (F ~ ln ln η), which is outside the family and outside assumption H. Follow-ups: #183, #184, #185.
+follow q = −p² (F ~ ln ln η), which is outside the family and outside assumption H (no limit:
+[`conical_loglog.md`](conical_loglog.md) Theorem 1, #184). Follow-ups: #183, #185.
 
 ## 7. A discrepancy with §7 of det_classify.md
 

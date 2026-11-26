@@ -356,3 +356,40 @@ multidouble's series module was probed, not used (§5).
 
 The crate additions are `src/hp.rs` and `src/bin/loglog.rs`; `src/main.rs`, `poly.rs`, `walk.rs` and the tables are
 unchanged, and #167's planted checks and `forward` give the same results.
+
+## Coordinator's review
+
+Reviewed 2026-11-26 at ed774f7 (raw `I184-rpi5` b707b72). The review's files are in `negative-mass-raw/I184-mac` (raw
+8396a15), with its criteria committed before the first run of `ind184.py` (raw 34357f5).
+
+| item | result |
+|---|---|
+| scope | the script, its output, the note, additions to the crate, and the raw folder |
+| rerun on the Mac | crate built from a clean worktree. With `--raw167=` given, 20 of 20 checks pass; the output equals the committed one apart from timings. 16 of 17 controls fire on target; `class-sign` is silent here (below) |
+| independent check `ind184.py` | run 2: 3 of 3 criteria pass, 3 of 3 mutations on target. Run 1 failed Q1 (d) by a defect of the coordinator's code (README A1) |
+| hand proofs | Lemma 1's four term bounds and the remainder \|R\| < 0.37p⁶, the unique root and \|w\| ≤ 20σu²p², Theorem 1's forward invariance ((ln r)′ ≤ −2 + 5.5p ≤ −0.625) and items 1–3: rederived; no gap found |
+
+`ind184.py` imports nothing from this repository and does not use the crate. It shares sympy, mpmath, the conical block
+and D's formula, and the claims under test. It checks:
+- **Lemma 1:** its conclusions, proved by its own exact interval arithmetic on the whole of D. In the variables
+  s = 1/u ∈ [0, 1], q = p²(ω − 1), σ = κp²s³/5 with κ ∈ [0, 1], for both signs of G, it shows that N < 0 at
+  w = −p²/2, N > 0 at w = p²/2, ∂N/∂q > 0 between them, and \|R\| ≤ 30σu²p⁶. Each holds on the top-level box, so
+  the margins are wide.
+- **The root series:** e₁ = −p²(G − 1)²/2 from its own N.
+- **Re-solved:** an own RK4 from (G, p) = (3, 1/10) at η = 10⁴ to 10¹² stays in D, with q/p² ∈ [−5/4, −3/4] and G above
+  Theorem 1's lower bound at every step.
+
+Findings:
+- **The answer stands.** Theorem 1 is *proved*, and the review independently confirms its Lemma 1. The entry of the 15
+  members into D is *numerical evidence*. The sampled check `trap_bounds` is a sanity check beside a complete hand
+  proof, not a gap in it.
+- **A portability defect in the control harness.** The launcher (`conical_loglog.py` line 1115) does not forward
+  `--raw167` to the control subprocesses. Outside the standard layout, `class-sign` therefore crashes and is reported
+  silent. With the path given it fires its targets.
+- **The harness is weaker than its README says.** Each control runs only its target checks, so "and no others" is not
+  tested. Run against all checks, `class-sign` also fails `plant_loglog`. The same holds for #167's harness, as its
+  note says.
+- **Process.** W0, W1 and W9 were handled as the coordinator ruled. Each first wording is printed as NOT MET, and the
+  replacements are declared as added after the development runs.
+
+Follow-ups: the two harness defects, folded into #183, which extends this crate and script; #135 row 36.

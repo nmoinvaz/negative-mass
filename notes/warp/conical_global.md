@@ -116,7 +116,7 @@ ends at F → 0 (at η* from 4e-3 to 19; the mirror cases for F(0) = −0.5); F(
 that cross η = 0 regularly and reach η = 200 are in the regime p = ηF′ ≈ 1/ln η, q = η²F″ + ηF′ ≈ −p² (q/p² within 0.05 of −1; sign-flipped for F < 0), where
 F ≈ ln ln η + const. This is the ν⁰ part A₀ = p²(p² − q)(p² + q) = 0 with q = dp/dt, t = ln η: p′ = −p², p = 1/(t + t₀). It is
 unbounded, so it is not a limit solution, and #159's assumption H (F − F_∞ → 0) did not include it. The exact even solution through
-F(0) = 1 is in this regime (F = 3.0222 and p = 0.1657 at η = 200, started from η₀ = 1/20 and 1/10 with the same F and p to 1e-12).
+F(0) = 1 is in this regime (F = 3.0222 and p = 0.1657 at η = 200, started from η₀ = 1/20 and 1/10 with the same F and p to 1e-12). *Update from #184:* the regime is expanded in [`conical_loglog.md`](conical_loglog.md): q = −p² + Σσᵏeₖ(G, p) with e₁ = −p²(G − 1)²/2 (**checked symbolically** to k = 6), and F = ln(ln η + T_∞) + g_∞ + …. All 15 plus-side LOGLOG solutions enter the region D = {0 < p ≤ 1/4, σ(1 + |G|)³ ≤ p²/5} by η = 1.3·10⁴ (**numerical evidence**, walked to 10¹² in double- and quad-double). Its Theorem 1 (**proved** by hand, its Lemma 1 also rederived by exact interval arithmetic in the review) shows that a solution in D has p′ ∈ p²[−5/4, −3/4] and F → +∞ at least like (4/5) ln ln η: it has no limit and cannot cross over to #159's family at any η.
 
 ## 5. Not decided and not covered
 
@@ -125,8 +125,9 @@ F(0) = 1 is in this regime (F = 3.0222 and p = 0.1657 at η = 200, started from 
   there is none in the range.
 - Solutions that are only C¹ or C² at the log points of the curve κ = 0 (F″ ~ ln|Δ|), and those that cross it on the finite branches.
 - Solutions whose approach to η = 0 is not a leading power (H₀), and oscillating approaches at ±∞ (H of #159).
-- The forward grid is 100 points; the log-log regime is described, not proved, and whether a solution of it can be continued to a
-  limit at huge η (the family needs |p| ≈ 4F_∞/η²) was not followed beyond η = 10⁴.
+- The forward grid is 100 points. *Update from #184:* the log-log regime is expanded and, for solutions in D, shown to
+  have no limit ([`conical_loglog.md`](conical_loglog.md) §3, **proved**); the 15 forward-grid members enter D by
+  η = 1.3·10⁴. Not covered: solutions that are not in the forward grid and never enter D.
 - Everything is numerical evidence; the exclusions at η = 0 are conditional on H₀.
 
 ## 6. Planted truth, checks and controls
