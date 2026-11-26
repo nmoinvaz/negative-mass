@@ -120,3 +120,31 @@ on this Mac, against hours in scipy.
 4. **Quad-double at large γ.** What: one evaluation at (6, 12000) in quad-double (about 3 h estimated). Why: closes the lane
    question where D is smallest. Accept: agreement with double-double to 1e-20. Depends: none; low priority, since double-double
    agrees with quad-double to 1e-26 where both ran.
+
+## Coordinator's review
+
+Reviewed 2026-11-26 at f4edcb1 (raw `I186-mac` 2a4fbb7). The review's files are in `negative-mass-raw/I186-mac-review`
+(raw 77ae052), with its criteria committed before the first run of `ind186.py` (raw f143b75).
+
+| item | result |
+|---|---|
+| scope | the crate, the script, its output and this note, and the raw folder |
+| rerun on the Mac | the default mode: 22 checks reported passed, 873 s. Every value equals the committed output to its printed digits; only per-γ timings differ |
+| independent check `ind186.py` | out of sample, at (l, γ) = (2, 50), (3, 10) and (4, 300), which the runner did not use. The crate's dd agrees with a fresh scipy D to 1.3e-10, 1.2e-12 and 2.1e-10, and f64 agrees with dd to 3.9e-11 at worst. 2 of 2 criteria pass; `f64-claim` fires on target, and `wrong-l` fires R1 only, off target against its declared R1, R2, as its README anticipated |
+
+Findings:
+- **The result stands** as numerical evidence. The crate reproduces the scipy path's D at the stored rows and at points
+  it was not tuned on. The 2.1e-4 spread of the stored rows is the shift of r_m between variants (V4), not integration
+  error.
+- **The speedup grows with γ.** Each call has a fixed setup of about 3 s (the star's shooting and J's tables). At small
+  γ the scipy path is as fast or faster: (3, 10) takes 1.4 s in scipy against 3.1 s in the crate. At (4, 300) it is
+  37.9 s against 5.1 s, and at l = 6, γ = 12000 about 6.5 min against 89 h. The note's 9–21× is per evaluation, after
+  setup.
+- **A reporting defect.** The default mode prints check TS as SKIPPED when no `--scipy-file` is given, and still counts
+  it among the passed checks. A skipped check should be counted apart.
+- **Found and fixed by the runner:** the J table's steps ran past J's 1/r² radius of convergence. T3 and `wide_table`
+  now catch it.
+
+Follow-ups: #187 (`convergence.py`'s rows and #114's capped rows from the crate), #188 (complex s for the box counts).
+The note's recommended tasks 2 (the star by multishoot's `Shooting`) and 4 (quad-double at (6, 12000)) are not filed:
+they are low priority beside #187.
