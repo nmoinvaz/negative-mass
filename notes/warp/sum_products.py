@@ -43,12 +43,15 @@ MUTATIONS = {
     "s-rhoconst-double": ("rho_const", "R2' = mu rho e^(mu rho) in place of (1 + mu rho) e^(mu rho)"),
     "s-add-freq": ("add_planted", "J0(c rho), Y0(c rho) in place of J0(sqrt2 c rho), Y0(sqrt2 c rho)"),
     "s-add-exact": ("add_planted_exact", "psi'' = -psi'/rho + 2 c^2 psi in place of the Bessel equation"),
+    "s-xexp-coef": ("x_exp", "the second factor of the z1^6 coefficient with 6 k1^2 a0^2 in place of 5 k1^2 a0^2"),
+    "s-xexp-planar": ("x_exp", "the coefficients of E (not E'') and no saturation by b1: the planar family u = c1 e^(k1 x) + c2 e^(k2 x) + v is in the variety"),
     "s-stratum-drop": ("add_stratum", "two of the five f_k dropped from the elimination"),
     "s-pexact-zero": ("add_perturbed_exact", "delta = 0"),
     "s-xperturb-zero": ("add_xperturbed", "X = c x (no x^2/10)"),
 }
 # declared silent in README A1 after dev run 3: run once, reported, not counted among the fired controls
-DECLARED_SILENT = {"s-rank-drop": ("sep_rank", "the term 8 h Z^2 removed from E before the ranks (changes the column counts, not the ranks)")}
+DECLARED_SILENT = {"s-rank-drop": ("sep_rank", "the term 8 h Z^2 removed from E before the ranks (changes the column counts, not the ranks)"),
+                   "s-xexp-sat": ("x_exp", "the saturation by b1 dropped from the ideal of E'' (b1^2 is already divided out of E'')")}
 RESULTS = []
 OPTS = dict(a[2:].split("=", 1) if "=" in a else (a[2:], "1") for a in sys.argv[1:] if a.startswith("--"))
 MUT = OPTS.get("mutate")
@@ -501,6 +504,57 @@ def c_add_xperturbed():
           f"X = c x + x^2/10 with the same R: exact d_F per case {dFs} (needs >= 2), numerical d_G {dGs} (needs {r - 1}), so d_F + d_G > r = {r} and Lemma L rejects it: {ok}")
 
 
+# ---------------------------------------------------------------------------------------------------------------
+# x_exp: X1 = e^(k1 x), X2 = e^(k2 x), k1 != k2 real (README A2, added after step 2)
+# ---------------------------------------------------------------------------------------------------------------
+XEXP_Q = [sp.Integer(-2), sp.Integer(-1), sp.Rational(4, 3), sp.Rational(3, 2), sp.Integer(2), sp.Integer(3), sp.Integer(4)]  # declared after dev run 4
+
+
+def c_x_exp():
+    k1, k2, z1, z2, c1, t = sp.symbols("k1 k2 z1 z2 c1 t")
+    # (i) the z1^6 coefficient (X2 = 0), and the support of E in (z1, z2)
+    P1 = sp.Poly(sp.expand(E_SYM.subs({A0: z1, A1: k1 * z1, A2: k1**2 * z1, B0: 0, B1: 0, B2: 0})), z1)
+    fac = a1**2 + (6 if MUT == "s-xexp-coef" else 5) * k1**2 * a0**2
+    i_ok = P1.degree() == 6 and zero(P1.coeff_monomial(z1**6) - a1**2 * (a1**2 + 4 * k1**2 * a0**2) * fac)
+    Pg = sp.Poly(sp.expand(E_SYM.subs({A0: z1, A1: k1 * z1, A2: k1**2 * z1, B0: z2, B1: k2 * z2, B2: k2**2 * z2})), z1, z2)
+    supp_g = Pg.monoms()
+    top_ok = all(i + j <= 6 for (i, j) in supp_g)
+    # (ii) R1 = c1: E = z2^2 b1^2 E'', and E = 0 at b1 = 0 (planar family, planted)
+    sub2 = {A0: z1, A1: k1 * z1, A2: k1**2 * z1, B0: z2, B1: k2 * z2, B2: k2**2 * z2, a0: c1, a1: 0, a2: 0}
+    E2 = sp.expand(E_SYM.subs(sub2))
+    quo = sp.cancel(E2 / (z2**2 * b1**2))
+    Epp = sp.expand(quo)
+    div_ok = sp.fraction(sp.together(quo))[1] == 1
+    planar_ok = sp.expand(E2.subs(b1, 0)) == 0
+    P = sp.Poly(Epp, z1, z2)
+    coefs = dict(sp.Poly(E2, z1, z2).terms()) if MUT == "s-xexp-planar" else dict(P.terms())
+    # (iii) unit ideals: generic frequencies, and the merged classes at each resonant ratio q = k1/k2
+    nob1 = MUT in ("s-xexp-sat", "s-xexp-planar")
+    sat = t * c1 * k1 * k2 * (k1 - k2) - 1 if nob1 else t * c1 * k1 * k2 * (k1 - k2) * b1 - 1
+    Gg = sp.groebner(list(coefs.values()) + [sat], t, b0, b1, b2, c1, k1, k2, v, order="grevlex")
+    gen_ok = Gg.exprs == [1]
+    mons = list(coefs)
+    qs = sorted({sp.Rational(j2 - j, i - i2) for (i, j) in mons for (i2, j2) in mons if i != i2} - {sp.Integer(1)}, key=lambda q: (abs(q), q))
+    qs = [q for q in qs if abs(q) >= 1]
+    q_ok = qs == sorted(XEXP_Q, key=lambda q: (abs(q), q))
+    res_ok, res_units = True, []
+    for q in qs:
+        classes = {}
+        for (i, j), c in coefs.items():
+            classes[i * q + j] = classes.get(i * q + j, 0) + c.subs(k1, q * k2)
+        satq = t * c1 * k2 - 1 if nob1 else t * c1 * k2 * b1 - 1
+        G = sp.groebner([sp.expand(c) for c in classes.values()] + [satq], t, b0, b1, b2, c1, k2, v, order="grevlex")
+        res_units.append(G.exprs == [1])
+        res_ok &= G.exprs == [1]
+    # top frequency: 6 q = i q + j has no solution with (i, j) in the support, |q| >= 1, q != 1, (i, j) != (6, 0), for q in the list
+    freq_ok = all(i < 6 and sp.Rational(j, 6 - i) <= 1 for (i, j) in supp_g if (i, j) != (6, 0))
+    check("x_exp", i_ok and top_ok and freq_ok and div_ok and planar_ok and gen_ok and q_ok and res_ok,
+          f"(i) z1^6 coefficient of E (X2 = 0) = a1^2 (a1^2 + 4 k1^2 a0^2)(a1^2 + 5 k1^2 a0^2): {i_ok}, z-support of E has i + j <= 6: {top_ok}, "
+          f"6q = iq + j (the frequency 6 k1 shared with z1^i z2^j) forces 0 <= q <= 1 for every other monomial, so |q| >= 1, q != 1 never meets it: {freq_ok}; (ii) R1 = c1: E = z2^2 b1^2 E'' with E'' a polynomial: {div_ok}, E = 0 at b1 = 0 (planar family): "
+          f"{planar_ok}; (iii) the ideal of all {len(coefs)} coefficients of E'' with t c1 k1 k2 (k1 - k2) b1 - 1 is the unit ideal (generic frequencies): {gen_ok}; resonant ratios "
+          f"q = k1/k2 with |q| >= 1 from the support: {[str(q) for q in qs]} (as declared: {q_ok}), merged coefficients with t c1 k2 b1 - 1 give the unit ideal in each: {res_units}")
+
+
 def c_irreducible():
     fl = sp.factor_list(E_SYM)
     check("irreducible", len(fl[1]) == 1 and fl[1][0][1] == 1,
@@ -508,7 +562,7 @@ def c_irreducible():
 
 
 CHECKS = [("e_two", c_e_two), ("ode_form", c_ode_form), ("case_a", c_case_a), ("sep_rank", c_sep_rank), ("slack", c_slack),
-          ("rho_const", c_rho_const), ("add_decomp", c_add_decomp), ("add_stratum", c_add_stratum),
+          ("rho_const", c_rho_const), ("x_exp", c_x_exp), ("add_decomp", c_add_decomp), ("add_stratum", c_add_stratum),
           ("add_planted_exact", c_add_planted_exact), ("add_planted", c_add_planted), ("add_perturbed_exact", c_add_perturbed_exact),
           ("add_xperturbed", c_add_xperturbed)]
 if "irreducible" in OPTS:
@@ -529,9 +583,11 @@ def verdict():
           + ("established" if red else "NOT established (a check failed)"))
     print("  rho-side with constant ODE coefficients (exponentials, exponential polynomials): " + ("no solution under W_x W_rho != 0"
           if ok.get("rho_const", False) else "NOT established"))
+    print("  x-side exponentials X1 = e^(k1 x), X2 = e^(k2 x), k1 != k2 real: " + ("no solution under W_rho != 0 (R1 constant by the top frequency, then unit ideals)"
+          if ok.get("x_exp", False) else "NOT established"))
     print("  Lemma L on the two-product E: " + ("ranks exact; the bound does not decide (exponential pair has room)" if rk else "NOT established"))
     print("  planted additive truth through the same E: " + ("found, perturbed members rejected exactly" if plant else "NOT established"))
-    print("  the question (no solution under (N), or an explicit solution): NOT DECIDED by this script (strata (b), (c), (d) outside rho-side constant coefficients)")
+    print("  the question (no solution under (N), or an explicit solution): NOT DECIDED by this script (strata (b), (c), (d) outside rho-side constant coefficients and real exponential x-side)")
 
 
 def main():
