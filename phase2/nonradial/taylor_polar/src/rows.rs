@@ -58,7 +58,7 @@ pub fn variant(name: &str) -> Var {
     match name {
         "base" => base,
         // the analogue of the rtol variant: a looser step control of the same integrator (the crate has no scipy rtol)
-        "tol" => Var { name: "tol", tol: Some(if crate::mutate::on("tol_loose") { 1e-3 } else { 1e-12 }), ..base },
+        "tol" => Var { name: "tol", tol: Some(if crate::mutate::on("tol_loose") { 1e-1 } else { 1e-12 }), ..base },
         "phi" => Var { name: "phi", cut: if crate::mutate::on("rm_cut") { 1e-11 } else { 1e-12 }, ..base },
         "r90" => Var { name: "r90", rbig: 90.0, ..base },
         "r0" => Var { name: "r0", r0: 3e-3, g0: if crate::mutate::on("r0_grid") { 1e-3 } else { 3e-3 }, ..base },

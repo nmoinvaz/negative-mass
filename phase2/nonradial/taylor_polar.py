@@ -1214,9 +1214,10 @@ ROW_CONTROLS = {
     "rm_off1": ["RP", "RM", "RA2"],  # the r_m grid index one too low
     "rm_cut": ["RM", "RA2"],         # the phi_cut variant's cut at 1e-11
     "r0_grid": ["RM", "RA2"],        # the r0 variant's r_m grid starting at 1e-3
-    "tol_loose": ["CAP5b"],           # the rtol-analogue variant at tol 1e-3 (its entries of CAP5c and CAP5s are read in the log: those two fail on real data already)
-    "qstart": ["RA2"],               # #186's: the Riccati started at r_m + 1
-    "moncrief": ["RA2", "QP"],       # #186's: a sign in the Moncrief map
+    "tol_loose": ["CAP5b"],           # the rtol-analogue variant at tol 1e-1 (1e-3 moved D by 3.9e-6 only: dev_33; its entries of CAP5c and CAP5s are read in the log: those two fail on real data already)
+    "qstart": ["RA2"],               # #186's: the Riccati started at r_m + 1 (RX at gamma = 300 does not see it: dev_31)
+    "moncrief": ["RA2", "RX", "QP"],  # #186's: a sign in the Moncrief map
+    "jsign": ["CAP5a"],              # #186's: J[3][2] negated, which flips the sign of D
 }
 
 
@@ -1296,6 +1297,8 @@ def main():
     else:
         default = list(checks)
     names = only or (controls[MUTATE] if MUTATE else default)
+    # a control's targets are report names (CAP5b is a clause of the check CAP5): run each check once
+    names = list(dict.fromkeys(n if n in checks else re.sub(r"[a-z]$", "", n) for n in names))
     if JDIR:
         os.makedirs(JDIR, exist_ok=True)
     t0 = time.time()
