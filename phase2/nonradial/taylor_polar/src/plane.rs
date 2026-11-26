@@ -4,7 +4,7 @@
 //!   y_(k+1) = (1/(k+1)) sum_(m<=k) J_m y_(k-m),
 //! the step h is the largest whose last two terms stay below `tol` (multishoot's planner rule,
 //! `taylor::plan_path`: e_(kt-1) h^(kt-1) <= tol and e_kt h^kt <= tol), and the state is the Horner sum.
-//! Columns are orthonormalized by classical Gram-Schmidt with one reorthogonalization after every step, so the
+//! Columns are orthonormalized by modified Gram-Schmidt, applied twice, after every step, so the
 //! diagonal of R is positive and the determinant needs no phase.
 use crate::num::Num;
 use crate::ser::KMAX;

@@ -129,3 +129,42 @@ Timing, dd, base variant, one thread, each side under its own load: l = 6, γ = 
 From a clone of multishoot at `feat/plane-stepper`: `cargo test --release --features mutate --test plane -- --nocapture` (the planted checks and the controls; the lines
 `P1 dd: …` carry the numbers and the digest) and `cargo test --release --features portable,mutate --test plane -- --nocapture`. The crate's comparison:
 `python3 compare_switch.py OFF.log ON.log` from the raw folder, with the logs of two `python taylor_polar.py --rows …` runs.
+
+## Coordinator's review
+
+Under review: multishoot pull request #70 (`feat/plane-stepper` at a880903, **not merged**: its review and release are
+the user's), `wip/i189-plane-lib` at 6c40e02, raw `I189-mac` at bb964b6. Review folder
+`negative-mass-raw/I189-mac-review`, whose README holds the criteria, committed before the first run of `ind189.py`.
+The changed files are those the brief names.
+
+- **ind189, a planted case the runner did not use.**
+  - The system is a rotated Airy pair: u″ = x u and v″ = 4x v, coupled by a product of Givens rotations with rational
+    cosines. Its growth is super-exponential, (2/3)x^{3/2} and (4/3)x^{3/2}, against the constant and rotating rates of
+    P1–P3.
+  - The exact plane and volume come from mpmath's Ai and Bi. The pull request's `Plane::advance` is called from a small
+    harness (`airy_plane/`).
+  - Run 3 meets Q1 (k = 1), Q2 (k = 2) and Q3 (k = 4, Liouville) in f64, dd and qd at X = 4 and 10, each at least 1e3
+    below its bar (1e4 ε). At X = 10 the plane errors are 1.5e-16, 1.3e-32 and 3.9e-65.
+  - The mutations fail exactly their targets: `wrong-scale` fails Q1 and Q2; `scaleonly` (multishoot's `ScaleOnly`)
+    fails Q2 and Q3 and leaves Q1, which has nothing to orthogonalize.
+  - Run 1 crashed on a formatting bug in ind189. Run 2 failed Q3 at X = 10 in dd and qd: the coordinator's reference
+    carried 90 digits against a cancellation of about 73 in det(YᵀY). Amendment A1 raised it to 200 digits, with no bar
+    changed. Both runs are kept.
+- **Rerun of the switch.** The crate was built with `--features lib_plane` in a review worktree, and the rows for l = 2,
+  4 and 6 and the default mode were run. Against the coordinator's feature-off reruns of #187, every row and header line
+  is identical, with the same exit codes and verdicts. The CHECK lines differ only where the runner said they would: E2
+  and E3 (CAP6b's E3 9.60e-9 on against 6.90e-9 off), the f64 lane's last digits in L1, planted errors at roundoff, and
+  timings.
+  - *Added by the coordinator:* the first l = 2 rerun skipped RX. The review worktree sits one level deeper, so
+    `taylor_polar.py`'s default `--raw` (`../../../negative-mass-raw` from its folder) did not exist. It was rerun with
+    `--raw` given. That makes two harnesses (#184's and this one) caught by a path default. A skipped check now reports
+    as skipped (#187's fix), which is how it was seen.
+- **X3 as worded is not met** (14 tokens of the CAP5b and CAP6b lines). The issue's "skip one orthonormalization fails"
+  is met on one cell only, for a reason other than its intent; the coordinator wrote that line, and ruled `ScaleOnly` in
+  its place. Both stand as the runner reports them.
+- *Added by the coordinator:* the "classical Gram–Schmidt" comment in `taylor_polar/src/plane.rs` is corrected on main.
+  The loop recomputes each projection from the updated column, so it is modified Gram–Schmidt applied twice.
+- Follow-ups:
+  - #199: `taylor_polar.py --build --features`, and the feature printed in each run;
+  - #188: the complex plane stepper, added to its acceptance;
+  - after multishoot#70 is reviewed and released by the user, a task to drop the crate's multishoot git pin.

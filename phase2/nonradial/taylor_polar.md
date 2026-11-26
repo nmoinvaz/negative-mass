@@ -304,3 +304,7 @@ Under review: `wip/i187-taylor-rows` at 2a84083, raw `I187-mac` at 89bc112. Revi
 
 Follow-ups: #196 (scipy's drift with γ), #197 (quad-double at (5, 6000)), #198 (#114's l = 6 value), and #188 (complex s,
 already filed).
+
+**Update from #189.** The crate can step its planes with multishoot's plane stepper (pull request #70, unmerged) behind the
+cargo feature `lib_plane`. With it, every D and q token of #187's rows is the same; see [taylor_plane_lib.md](taylor_plane_lib.md) and its
+review.
