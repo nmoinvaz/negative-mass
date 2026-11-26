@@ -274,3 +274,33 @@ entry of CAP5c and of CAP5s 1.4e-3, run_15 and run_17), `jsign` (CAP5a: D > 0 in
 3. **Complex s** (#188), the engine for the argument-principle counts. Accept as in #186's recommended task 3, with the rows' q_int as a second output. Depends: this issue.
 4. **Quad-double at (5, 6000)** (about 1.5 h): closes the lane question for the capped rows. Accept: agreement with dd to 1e-20. Depends: none; low priority.
 
+
+### Coordinator's review (#187)
+
+Under review: `wip/i187-taylor-rows` at 2a84083, raw `I187-mac` at 89bc112. Review folder `negative-mass-raw/I187-mac-review`
+(README with the criteria, committed before the first run of `ind187.py`). The changed files are those the issue names.
+
+- **Rerun.** run_02 to run_06 and run_18 from a worktree at 2a84083, with a fresh `--jsonl-dir`, so nothing was read
+  back from the runner's cache. Each log is identical to the runner's line for line once timings and load are removed, with
+  the same exit code (`compare_rerun_1.txt`; run_05 exits 1 on CAP5c and CAP5s).
+- **ind187, an independent test of the rows.** It does not format the crate's values as strings. It parses each stored
+  token and tests whether the crate's dd value lies within half a unit of its last digit. It computes the spread and the
+  signs itself.
+  - **K1**: 41 rows, 266 tokens, all met. The closest is `D(r_m~34)` at l = 4, γ = 1, at 0.994 of half a unit. That is
+    3e-8 absolute from the rounding boundary, against crate–scipy agreement near 1e-14 at γ ≤ 10, so the equality is
+    not luck.
+  - **K2**: l = 3, which had no stored file and had not been compared with scipy. At γ = 0.3 and 40, D, the φ_cut D,
+    q_int and q_ext agree with scipy to 1.6e-13 … 2.5e-11.
+  - **K3**: CAP5c's five numbers, recomputed from #114's file: 5.44e-9, 3.11e-9, 4.70e-8, 7.98e-10, 4.16e-9.
+  - Each of the mutations `k1-ulp`, `k2-l` and `k3-pair` fails exactly its target.
+- **CAP5c stays not met**, as reported. Its cause is #196. The quad-double lane at (5, 6000) is #197. The comparison with
+  #114's l = 6 value, once that run ends, is #198, with its bar set there before the value is read.
+- *Added by the coordinator:* the note's "closest rounding boundary" is relative to the value. Measured in half units of
+  the printed digit, the closest token is the one K1 names above, not q_ext at l = 2.
+- *Added by the coordinator:* #189's runner found that `plane.rs`'s doc comment says "classical Gram–Schmidt with one
+  reorthogonalization", but the loop is modified Gram–Schmidt applied twice. The comment will be corrected when #189
+  merges, so that #189's branch is not changed under it.
+- The rerun's timings are within 4% of the runner's, at load 2.7 to 5.1.
+
+Follow-ups: #196 (scipy's drift with γ), #197 (quad-double at (5, 6000)), #198 (#114's l = 6 value), and #188 (complex s,
+already filed).

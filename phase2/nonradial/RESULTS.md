@@ -160,6 +160,12 @@ r_m = 34.21, background R = 90, r0 = 3×10⁻³) and the q task at γ ∈ {1e-3,
   the q task, all with D < 0; the integrator-tolerance variant is missing there. It was tested at the ten lower γ at every
   l, and at γ = 3000 for l = 4, where D = −4.59536726×10⁻¹² against the base −4.59536727×10⁻¹². The capped rows are
   marked in the output files and were added with `cap_row.py` from the raw folder, not a repository script.
+- **Update from #187** (`taylor_polar.md`, #187's section). #186's Taylor crate gives both capped rows in all five
+  variants, with the crate's Taylor tol 1e-12 standing in for scipy's rtol 1e-12. It gives D = −8.93608292806×10⁻¹³ at
+  (5, 6000) and −1.59579128004×10⁻¹³ at (6, 12000), with D < 0 in every variant. #114's scipy rtol 1e-12 evaluation at
+  l = 5 has since finished at −8.936082956×10⁻¹³ (`negative-mass-raw/I114-win`). The crate's φ_cut D there differs from
+  scipy's by 4.7×10⁻⁸, against an a-priori bar of 10⁻⁸; the cause is open (#196). The l = 6 evaluation is still running
+  (#114, then #198).
 - The scan's D at γ_max and the convergence base differ by a relative 6×10⁻⁹ (l = 4), 1.8×10⁻⁸ (l = 5) and
   1.2×10⁻⁷ (l = 6), with γ differing by about 10⁻¹⁵ relative. That is evaluation noise, far below the 2×10⁻⁴ spread.
 - The mode condition q_int = q_ext stays far from satisfied, q_int ≈ +γ and q_ext ≈ −γ at every γ, as at l = 2, 3.
