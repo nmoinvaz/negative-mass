@@ -8,8 +8,12 @@ conical_limit.md section 3; the middle is integrated by the Rust crate conical_g
   C1 step_halving, C2 n_along_path, C3 independent   the integration
   D1 scan, D2 symmetry                               the grid of (F_inf, C)
   E1 bisect, E2 connect                              the family
-Usage: conical_global.py [--gen] [--no-controls] [--mutate=NAME] [--only=a,b] [--logdir=DIR] [--bin=PATH]
-Exit 1 if a check fails or a control does not fire."""
+Usage: conical_global.py [--gen] [--no-controls] [--mutate=NAME] [--only=a,b] [--logdir=DIR] [--bin=PATH] [--control-checks=targets|all]
+Exit 1 if a check fails or a control does not fire.
+Controls: every option except the harness's own (mutate, only, no-controls, gen, control-checks, logdir, nobuild, fresh, dry-controls)
+is forwarded to each control's subprocess (#183: --bin was not). By default (--control-checks=targets) a control runs ONLY the checks it
+names (--only=), so "fails its targets and no others" is not tested; --control-checks=all runs every check under each control and reports
+a failure outside the targets as EXTRA (#183; hours on the Mac, not run for the record). --dry-controls prints the control command lines."""
 import json
 import os
 import subprocess
@@ -864,12 +868,19 @@ if __name__ == "__main__":
         main_gen()
         sys.exit(0)
     os.nice(10)
-    failed = main()
+    failed = [] if "dry-controls" in OPTS else main()
     controls_ok = True
     if MUT is None and "no-controls" not in OPTS and ONLY is None:
         print("\n== Controls: each mutation must make its target checks fail, and no others ==", flush=True)
+        own = {"mutate", "only", "no-controls", "gen", "control-checks", "logdir", "nobuild", "fresh", "dry-controls"}
+        fwd = [a for a in sys.argv[1:] if a.startswith("--") and a[2:].split("=")[0] not in own]
+        all_checks = OPTS.get("control-checks") == "all"
+        print(f"controls run: {'every check under each control' if all_checks else 'the target checks only (--only=), not every check'}; forwarded options: {fwd}")
         for name, (want, what) in MUTATIONS.items():
-            args = [sys.executable, os.path.abspath(__file__), f"--mutate={name}", "--nobuild", "--only=" + ",".join(want)]
+            args = [sys.executable, os.path.abspath(__file__), f"--mutate={name}", "--nobuild"] + fwd + ([] if all_checks else ["--only=" + ",".join(want)])
+            if "dry-controls" in OPTS:
+                print(" ".join(args))
+                continue
             p_ = subprocess.run(args, capture_output=True, text=True)
             if "logdir" in OPTS:
                 with open(os.path.join(OPTS["logdir"], f"ctl_{name}.log"), "w") as fh:
