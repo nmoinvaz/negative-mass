@@ -41,7 +41,19 @@ MUTATIONS = {
 }
 
 # name: checks that must fail (declared in the raw README after the development run of step 3)
-TARGETS = {}
+TARGETS = {
+    "scale11-normal": ["E_residual", "E_rform", "E_explicit"],
+    "scale11-phantom": ["E_residual", "E_rform", "E_explicit"],
+    "flip-phantom": ["E_solve", "E_residual", "E_rform", "E_explicit"],
+    "swap-roles": ["E_solve", "E_residual", "E_rform", "E_explicit"],
+    "wrong-partner": ["E_solve", "E_residual", "E_rform", "E_explicit"],
+    "potential": ["E_residual"],
+    "ricci-sign": ["planted_p1", "planted_p2", "E_solve", "E_residual", "E_rform", "E_explicit"],
+    "conv-flip": ["conv_energy", "planted_p1", "planted_p2", "E_solve", "E_residual", "E_explicit"],
+    "p1-sign": ["planted_p1"],
+    "p2-scale11": ["planted_p2"],
+    "flat-flip": ["planted_flat"],
+}
 
 RESULTS = []
 MUT = None
@@ -324,6 +336,10 @@ def run_controls(t_start):
         rows.append((name, want, outcome, failed, what))
         print(f"{name}: {what}\n    target {want}; outcome {outcome}; failed checks {failed}; exit {r.returncode} "
               f"({time.time() - t0:.0f} s)", flush=True)
+        show = "E_residual" if want and "E_residual" in want else (want[0] if want else None)
+        for line in r.stdout.splitlines():
+            if show and line.startswith(f"[FAIL] {show}:"):
+                print("    " + line[:700], flush=True)
     return rows, bad
 
 
