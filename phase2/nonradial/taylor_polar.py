@@ -234,8 +234,9 @@ RESULTS = []
 
 
 def report(name, ok, text):
+    """ok is True (passed), False (failed) or None (skipped: it did not run, and counts as neither)"""
     RESULTS.append((name, ok))
-    print(f"CHECK {name}: {'PASS' if ok else 'FAIL'}  {text}", flush=True)
+    print(f"CHECK {name}: {'SKIPPED' if ok is None else 'PASS' if ok else 'FAIL'}  {text}", flush=True)
 
 
 def fmt(x):
@@ -842,7 +843,7 @@ def check_TS():
     (gated at the file's spread), and the wall time of each"""
     path = SCIPY_FILE
     if not path or not os.path.exists(path):
-        print("CHECK TS: SKIPPED  no scipy timing file (--scipy-file=PATH)")
+        report("TS", None, "no scipy timing file (--scipy-file=PATH)")
         return
     recs = [json.loads(x) for x in open(path)]
     lines, ok = [], True
@@ -925,14 +926,15 @@ def main():
             CHECKS[n]()
         except Exception as e:  # a crash under a mutation is a failure of the check, and is reported as one
             report(n, False, f"raised {type(e).__name__}: {str(e)[:300]}")
-    bad = [n for n, ok in RESULTS if not ok]
-    print(f"SUMMARY: {len(RESULTS) - len(bad)} of {len(RESULTS)} checks passed" + (f"; failed: {', '.join(bad)}" if bad else "")
-          + f"; mutate = {MUTATE}; {time.time() - t0:.0f} s")
+    passed = [n for n, s in RESULTS if s is True]
+    failed = [n for n, s in RESULTS if s is False]
+    skipped = [n for n, s in RESULTS if s is None]
+    print(f"SUMMARY: {len(passed)} passed, {len(failed)} failed, {len(skipped)} skipped" + (f" ({', '.join(skipped)}: not run)" if skipped else "")
+          + f" of {len(RESULTS)} checks" + (f"; failed: {', '.join(failed)}" if failed else "") + f"; mutate = {MUTATE}; {time.time() - t0:.0f} s")
     if MUTATE:
-        target_ok = [n for n in CONTROLS[MUTATE] if not any(r.startswith(n) and not ok for r, ok in RESULTS if r.startswith(n))]
-        print(f"CONTROL {MUTATE}: " + ("every targeted check failed, as it must" if not target_ok else f"NOT FIRED on {', '.join(target_ok)}"))
-    sys.exit(1 if bad else 0)
-
+        not_fired = [n for n in CONTROLS[MUTATE] if not any(r.startswith(n) and s is False for r, s in RESULTS)]
+        print(f"CONTROL {MUTATE}: " + ("every targeted check failed, as it must" if not not_fired else f"NOT FIRED on {', '.join(not_fired)}"))
+    sys.exit(1 if failed else 0)
 
 if __name__ == "__main__":
     main()
