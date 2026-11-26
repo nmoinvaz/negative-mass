@@ -347,6 +347,10 @@ pub fn apply_mutation(name: &str, m: &mut Mutation, o: &mut OgOpts) -> bool {
             o.cfg.kt = 14;
             o.cfg.tol = 1e-12;
         }
+        "halving-coarse" => {
+            o.cfg.kt = 8;
+            o.cfg.tol = 1e-6;
+        }
         _ => return false,
     }
     true

@@ -133,7 +133,7 @@ if __name__ == "__main__" and "gen-hp" in OPTS:
 # ---------------------------------------------------------------------------------------------------------------
 # the crate binaries
 # ---------------------------------------------------------------------------------------------------------------
-OG_MUT = ("eq-coeff", "series-coeff", "locator-side", "recip-dd", "start-bar", "n-drift", "halving")
+OG_MUT = ("eq-coeff", "series-coeff", "locator-side", "recip-dd", "start-bar", "n-drift", "halving", "halving-coarse")
 OLD_MUT = ("match-sign", "plant-locator")  # #167's binary, to its planted checks only
 LL_MUT = ("plant-locator", "recip-dd", "eq-coeff", "n-drift")  # loglog, to the far planted cases only
 PY_MUT = ("sym-break", "n4-coeff", "cf-coeff", "bisect-end", "indep-eq", "regress-kind")
@@ -367,7 +367,7 @@ def c_series_hp():
         ok &= worst <= bar
         rows.append(f"{prec}: worst relative difference of F, F', F'' {mp.nstr(worst, 2)} (bar {mp.nstr(bar, 1)}, mpmath at {dps} digits)")
     vs = og_scan([(fi, c) for fi, c, _ in pairs])
-    rs = [vs[(fi, c)]["resid"] for fi, c, _ in pairs]
+    rs = [vs[(fi, c)]["resid"] if vs[(fi, c)]["resid"] is not None else float("inf") for fi, c, _ in pairs]
     ok &= all(v["class"] != "NOSTART" for v in vs.values()) and all(r <= 1e-20 for r in rs)
     check("series_hp", ok, f"tables_hp.rs equals the regenerated table: {same}; the lane series of {len(pairs)} pairs {pairs} at the radius shown: " + "; ".join(rows)
           + f"; the chosen start residuals of the pairs {['%.1e' % r for r in rs]} (bar 1e-20)")
@@ -536,7 +536,7 @@ def c_scan():
     lh = {}
     for k in pts:
         lh[res[k]["l"]] = lh.get(res[k]["l"], 0) + 1
-    print(f"  chosen start radius L: {dict(sorted(lh.items()))}; worst start residual {max(res[k]['resid'] for k in pts if res[k]['class'] != 'NOSTART'):.1e}")
+    print(f"  chosen start radius L: {dict(sorted(lh.items()))}; worst start residual {max([res[k]['resid'] for k in pts if res[k]['class'] != 'NOSTART'] or [float('nan')]):.1e}")
     print("  scan of record (class of each point; singular eta* to 10 digits, F_inf then C: label@eta*):")
     for fi in sorted({k[0] for k in pts}, key=lambda f: (region(f), abs(f), f)):
         cells = []
@@ -851,6 +851,10 @@ def c_independent():
             rows.append(f"({fi:g},{c:g}) from {L}: the independent integration raised {type(ex).__name__}")
             continue
         w = og("walk", ["--fi", repr(fi), "--c", repr(c), "--to", ETA_O13])[0]
+        if "stop" not in w:
+            ok = False
+            rows.append(f"({fi:g},{c:g}) from L={L}: the crate's walk has no start ({w.get('class')})")
+            continue
         dF = abs(y[0] - to_mp(prs(w["F"]))) / abs(y[0])
         dF1 = abs(y[1] - to_mp(prs(w["F1"]))) / abs(y[1])
         ok &= w["stop"] == "End" and dF <= 1e-8 and dF1 <= 1e-8
@@ -865,6 +869,8 @@ def c_independent():
 def c_recip_check():
     def final(hs):
         w = og("walk", ["--fi", "0.1", "--c", "30000", "--to", "20", "--hscale", hs], "qd", "conserve")[0]
+        if "stop" not in w:
+            raise RuntimeError(f"the quad-double walk has no start ({w.get('class')})")
         return w["steps"], [to_mp(prs(w[k])) for k in ("F", "F1")]
 
     with mp.workdps(100):
@@ -899,23 +905,25 @@ def c_step_halving():
 CHECKS = [("n_table", c_n_table), ("series_hp", c_series_hp), ("plant_167", c_plant_167), ("plant_far", c_plant_far), ("regress167", c_regress167),
           ("scan", c_scan), ("spread", c_spread), ("dd_qd", c_dd_qd), ("modes", c_modes), ("symmetry", c_symmetry), ("n4_factor", c_n4_factor), ("closed_form", c_closed_form),
           ("bisect", c_bisect), ("independent", c_independent), ("recip_check", c_recip_check), ("step_halving", c_step_halving)]
-# name: (the checks that must fail and no others, what it changes); None: not yet computed (development)
+# name: (the checks that must fail and no others, what it changes); the targets are the checks that fail under the control in the development
+# runs dev_11 to dev_13 (raw I183-rpi5, amendment A2), computed before they were declared
 MUTATIONS = {
-    "eq-coeff": (None, "one coefficient of N in the lane's polynomial changed (-6 -> -5 on F F'^2 F'' eta^2)"),
-    "series-coeff": (None, "a_(4,1) of the lane series times 1.01"),
-    "plant-locator": (None, "the locator's side test inverted in the planted cases (loglog's far blow-ups and #167's `plant`)"),
-    "locator-side": (None, "the locator's side test inverted in `offgrid`"),
-    "recip-dd": (None, "the lane constants (1/k, shifted coefficients of N, 1/(dN/dF'')) rounded to double-double"),
-    "start-bar": (None, "the start rule's residual bar 1e-8 in place of 1e-20"),
-    "n-drift": (None, "the recursion leaves F''_3 = 0 (order 3 of N not imposed)"),
-    "halving": (None, "the standard plan is order 14, tolerance 1e-12"),
-    "sym-break": (None, "the mirror point is (-F_inf, +C)"),
-    "n4-coeff": (None, "the symbolic degree-4 part is compared with (eta^2+3) in place of (eta^2+2)"),
-    "cf-coeff": (None, "the closed form with 7/8 -> 3/4 in h"),
-    "bisect-end": (None, "the bisection's upper end is compared with the wrong label"),
-    "indep-eq": (None, "the independent integration has -6 -> -5.9999 on F F'^2 F'' eta^2"),
-    "regress-kind": (None, "#167's kind compared as the wrong string"),
-    "match-sign": (None, "#167's planted matching: the mirror end takes +F' in place of -F'"),
+    "eq-coeff": (['n_table', 'series_hp', 'regress167', 'scan', 'spread', 'closed_form', 'bisect', 'independent', 'recip_check'], "one coefficient of N in the lane's polynomial changed (-6 -> -5 on F F'^2 F'' eta^2)"),
+    "series-coeff": (['series_hp', 'regress167', 'scan', 'spread', 'closed_form', 'bisect', 'independent', 'recip_check'], "a_(4,1) of the lane series times 1.01"),
+    "plant-locator": (['plant_167', 'plant_far'], "the locator's side test inverted in the planted cases (loglog's far blow-ups and #167's `plant`)"),
+    "locator-side": (['regress167', 'scan', 'closed_form', 'bisect'], "the locator's side test inverted in `offgrid`"),
+    "recip-dd": (['plant_far', 'recip_check'], "the lane constants (1/k, shifted coefficients of N, 1/(dN/dF'')) rounded to double-double"),
+    "start-bar": (['series_hp', 'regress167', 'scan', 'modes'], "the start rule's residual bar 1e-8 in place of 1e-20"),
+    "n-drift": (['plant_far', 'regress167', 'scan', 'spread', 'dd_qd', 'modes', 'closed_form', 'bisect', 'independent', 'recip_check', 'step_halving'], "the recursion leaves F''_3 = 0 (order 3 of N not imposed)"),
+    "halving": (['regress167', 'scan', 'dd_qd', 'modes', 'bisect', 'recip_check'], "the standard plan is order 14, tolerance 1e-12 (silent on `step_halving`: that check's bar 1e-10 is above this plan's eta* error, dev_11)"),
+    "halving-coarse": (['regress167', 'spread', 'dd_qd', 'modes', 'closed_form', 'bisect', 'independent', 'recip_check', 'step_halving'], "the standard plan is order 8, tolerance 1e-6"),
+    "sym-break": (['symmetry'], "the mirror point is (-F_inf, +C)"),
+    "n4-coeff": (['n4_factor'], "the symbolic degree-4 part is compared with (eta^2+3) in place of (eta^2+2)"),
+    "cf-coeff": (['closed_form'], "the closed form with 7/8 -> 3/4 in h"),
+    "bisect-end": (['bisect'], "the bisection's upper end is compared with the wrong label"),
+    "indep-eq": (['independent'], "the independent integration has -6 -> -5.9999 on F F'^2 F'' eta^2"),
+    "regress-kind": (['regress167'], "#167's kind compared as the wrong string"),
+    "match-sign": (['plant_167'], "#167's planted matching: the mirror end takes +F' in place of -F'"),
 }
 OWN = {"mutate", "only", "no-controls", "controls-only", "controls", "gen-hp", "control-checks", "list", "logdir", "nobuild", "grid", "dump"}
 
