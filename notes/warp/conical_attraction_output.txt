@@ -1,0 +1,74 @@
+[PASS] planted_hyp: Jordan field (0,-2,-2): attracting, Jordan block True, e^(At) closed form True, |x_2,3| <= (1+t) e^(-2t) |x_0| on a grid True; diag(0,-2,2): not attracting; diag(0,0,-2): kernel larger than the line
+  (0 s)
+[PASS] planted_gronwall: zeta' = -2 zeta + ubar e^(-2t), exact (zeta_0 + ubar t) e^(-2t), c_f = 1: stage-1 bound B e^(-7t/4) and the rate bound e^H (|zeta_0| + c_f ubar t) e^(-2t) are >= the exact solution on t in [0, 50], and for zeta_0 >= 0 the ratio of the rate bound to the exact solution at t = 50 equals e^H to 1e-6: (z0 0.25, ubar 0.001) True/True ratio at t = 50 1.0753; (z0 -0.25, ubar 0.01) True/True ratio at t = 50 3.2592; (z0 0.0, ubar 0.01) True/True ratio at t = 50 1.0115; (z0 0.1, ubar 0.01) True/True ratio at t = 50 1.0408; c_f used 1, kappa override None
+  (0 s)
+[PASS] planted_shape: planted -2a (w - h)(w^2 - 1), a = 1/100, h = -50: huge roots [mpf('-50.0')], other roots [mpf('-1.0'), mpf('1.0')], classified as 1 huge + 2 at +-1: True; hypotheses {'M>0': True, '4M-3kappa>0': True, 'P(-1/(4a))<0': True, 'P(2)<0': True, 'P(-2)<0': True}; with the huge root at +1/(2a) (M < 0) the hypotheses fail: True (['M>0', '4M-3kappa>0', 'P(-1/(4a))<0', 'P(2)<0', 'P(-2)<0'])
+  (0 s)
+[PASS] planted_local: N_osc = nu^2 (q - p) + G (F'' + F = 0): divisibility False, N(G, 0, q, nu) = c3 q^3 False: applies False (it must not); F = cos eta has p = 0 with q = pi^2 != 0 at eta = pi and N_osc = 0: True
+  (0 s)
+[PASS] planted_series: q + p = 0: g = {(1, 0): Fraction(5, 3)} (c nu only, null direction a_(1,0)): True; q + 4p = 8 nu^4: no-log ansatz stops with an obstruction at k = 4: True; with logs a_(4,1) = -2 (= -2) and nothing else: True
+  (0 s)
+[PASS] n_identity: (a) N from D (retyped) = A0 + nu^2 A1 + nu^4 A2: True; (b) N = c3 q^3 + c2 q^2 + c1 q + c0: True; (c) N = p^6 P(q/p^2), omega = 2 G sigma/p: True; (d) N(-G,-p,-q) = N: True; (e) R = N/sigma^4 = sigma^2 r^6 P(s/(sigma r^2)): True
+  (1 s)
+[PASS] reduction: (a) y' = y(4-y)/2 - sigma y^2 + e/2, (ln G)' = sigma y: True; (b) d rho/d e = -y^4/4, e = -8*(g2 + 3) sigma + ... at y = 4: True; (c) f_sigma = -4*(g2 + 7), f_zeta(0,0) = 0, rho_y(e=0,sigma=0) = 0: True; (d) eigenvalues {-2: 2, 0: 1} (S_r = -4, S_G = 8, S_sigma = 4*G*(-G**2 - 3)), minor of J + 2I = -8*G*(G**2 + 7) (never 0 for real G != 0, so a Jordan block): True
+  (0 s)
+[PASS] hyp_line_real: hyp_line (analytic, tangent (1,4,0) in ker J, 0 simple, other eigenvalues Re < 0) at G = -3, -1/2, 1, 2, 7: G=-3: attracting, Jordan True; G=-1/2: attracting, Jordan True; G=1: attracting, Jordan True; G=2: attracting, Jordan True; G=7: attracting, Jordan True
+  (0 s)
+[PASS] shape: sigma, b <= 1/500, a <= 1/1000, |omega| <= 100: (i) kappa >= 0.99, mu >= 0.99, c in [1, 1.01], M >= 0.79: True (kappa [0.998, 1.002], M [0.797976, 1.20601]); (ii) 4M - 3 kappa > 0: True [0.185904, 1.83003]; (iii) 32 a^2 P(-1/(4a)) < 0: True [-1.73402, -0.593952]; (iv) P(+-2) < 0 and P'(2) < 0: True; (v) omega^2 <= [1, 1.03208] <= 1.05^2: True; (vi) |omega| <= 1/2: P(0), P(1/2), P(-1/2) > 0: True; symbolic P' (discriminant 4M^2 + 96 a^2 kappa c, P'(0) = 4ac, P'(-1/(4a))): True
+  (0 s)
+[PASS] ehat: exact identity kappa x^2 (1 - 2ax) - ((kappa - M) x^2 - 4acx - (omega^2 - c^2)) = -P(-x) and kappa - mu = -(2 sigma + 2 sigma^2 - 6 b sigma): True; with 1/x <= 4a and y >= 1/50: T2 = [2 sigma + 2 sigma^2 + 6 b sigma + 4 u^2 (c + c^2)]/(kappa u) <= 2.03617 <= alpha = 51/25: True; T1 = 2 |b - sigma|/(kappa u) <= 2.00401 <= 201/100: True; T0 = 64 a^2/(kappa u) <= 0.03206 <= 321/10000: True; 321/10000 <= (beta - 201/100)/50 = 0.03220: True; so |e-hat| <= u (alpha y^2 + beta y), beta = 181/50
+  (0 s)
+[PASS] theorem_a: c_e = alpha (9/2)^2 + beta (9/2) = 57.6000 <= 58: True; c_f = 50 >= 58/2 + (9/2)^2 = 49.25: True; ubar = e^(9 u0/2) u0 = 0.00100451 <= 1.0046e-3 and <= 1/500: True; kappa = 7/4, B = 1/4 + 4 c_f ubar = 0.45090 <= 0.451 < 1/2: True; H = B/(2 kappa) = 0.12883 <= 0.129, e^H <= 1.13750 <= 1.14: True; y in [7/2, 9/2] within [1/50, inf): True
+  (0 s)
+[PASS] numeric_a: 15 cases (G_0 in {1e-2, 0.3, 1, 3, 30}, zeta_0 in {-1/4, 0, 1/4}, u_0 = 1/1000), t to 20 (h = 1/400): every step satisfies |zeta| <= 0.451 e^(-7t/4), |zeta| <= 1.14 (|zeta_0| + 50 ubar t) e^(-2t), |e-hat| <= u (alpha y^2 + beta y), |ln (G/G_inf)| <= (9/4) sigma (slack 1e-12): True; smallest bound/actual ratios (actual > 1e-9): stage1 1.81, rate 1.14, e-hat 1.89, G 1.09; direct N = 0 vs reduced system at t = 6 (h = 1/800), max difference in G and y 8.98e-12 <= 1e-9, and h = 1/800 vs 1/1600 for both integrators differ by at most 6.37e-12 <= 1e-10: True
+  (5 s)
+[PASS] series: exact Fraction solver, F_inf in {1, -3/2, 2/7, 5} x C in {0, 3, -5/2} (12 cases), stages k = 3..9: all solvable with no lower-order residual, full column rank except k = 4 (null space spanned by a_(4,0)), table of conical_limit.md (a_(2,0), a_(4,0), a_(4,1), a_(6,0..2), a_(8,3)), odd coefficients zero, first nonzero coefficient of N at nu^16: True
+  (4 s)
+[PASS] stage_symbol: dN/dq = -128*F**3 nu^6 + ..., dN/dp = -512*F**3 nu^6 + ..., dN/dG of order nu^8: I(k) = -128*F**3*k*(k - 4), roots [0, 4]; so stage k >= 3, k != 4 has a nonzero indicial coefficient for every k: True
+  (0 s)
+[PASS] expansion_link: zeta~ = eta^3 F~'/F~ - 4 from the series (exact): nu^0 coefficient 0, sigma t coefficient -4 (F^2 + 7) = f_sigma, sigma coefficient F^2 + 15 - 4C/F (affine in C, slope -4/F), ln(F~/F) = -2 sigma + ...: F=1 C=0: (16, -32); F=1 C=3: (4, -32); F=1 C=-5/2: (26, -32) ... True
+  (2 s)
+[PASS] numeric_b: mpmath (30 digits) from G_0 = 1, zeta_0 = 1/5, eta_0 = 45 to 1e7: F_inf = 1.0010119468011741555, C = -123.013983339 (residual of the fit at eta = 1000 4.86e-33); e_m = |F - F^(2m)|/(nu^(2m+2) (1 + ln eta)^m) <= 1e5 for m = 1..4: eta 100: 15.5, 163, 1.94e+03, 2.47e+04; eta 200: 12.8, 112, 1.12e+03, 1.19e+04; eta 400: 10.7, 79.2, 662, 5.91e+03; eta 800: 9.04, 56.3, 398, 2.3e+03
+  (55 s)
+[PASS] local_lemma: N: c2 divisible by p, c1 and c0 by p^4: True; N(G, 0, q, nu) = -2 G nu^2 kappa q^3, c3 != 0 iff G != 0 and kappa != 0: True; c2/c3 = p [(G^2-1) sigma/kappa + p mu/(2 G sigma kappa)], c1/c3 = -2 c p^4/kappa: True; |q| <= 3 max(|c2/c3|, |c1/c3|^(1/2), |c0/c3|^(1/3)) on 30000 random roots (1e4 parameter points): 0 violations
+  (1 s)
+[PASS] regime_b: |y| <= 1/50, a <= 1/1000, u <= 1/500: Theta_1/|p| <= (U + |y| mu/2)/kappa <= 0.01208; sqrt(2c/kappa) <= 3/2: True, Theta_2/|p| <= 3.00e-05; Theta_3/|p| <= (2 a^2 |y|/kappa)^(1/3) <= 0.0035 (cube 4.287e-08 >= 4.008e-08: True); 3 max <= 0.0363 <= 0.037 <= 1/10: True; so |s| <= |r|/10 and |r|' >= 1.9 |r|
+  (0 s)
+[PASS] small_branch: (ln|omega|)' = p/G - 2 - p w: True; for |omega| >= 1/2, |w| <= 2, sigma + b <= 1/500: (ln|omega|)' <= -2 + 4 sigma + 8 a <= -2 + 0.0160 <= -1.0: True; p' = w p^2 with constant w: p = 1/(1/p0 - w t) (blow-up at t = 1/(p0 w) for w > 0): True; for w < 0, int p dt = ln(1 + |w| p0 t)/|w| -> infinity: True
+  (0 s)
+[PASS] huge_branch: y' = 2y + a y^2 w - sigma y^2 = y(4-y)/2 - sigma y^2 + e-hat/2 with e-hat = y^2 (1 + 2aw): True; with |e-hat| <= u (alpha y^2 + beta y), u, sigma <= 1/500: y' >= 1.4923 y >= 1.49 y on [1/50, 1]: True; y' >= 0.1062 y >= 1/10 on [1, 15/4]: True; y' <= -0.1042 y <= -0.104 y on [17/4, inf) (bracket increasing: True): True; w <= -1/(4a) gives r' <= 2r - r^2/(4G) (s = sigma r^2 w)
+  (0 s)
+[PASS] classify_numeric: eta_0 = 100, RK4 h = 1/200, root tracked by continuity: huge root with p > 0 converges to y = 4 (|y - 4| <= 1e-6 at t = 15), huge root with p < 0 blows up before t = 15, small roots keep w in (-2, -1/2) or (1/2, 2) on [3, 15]: H+ G0=0.5 y0=0.5: global, |y-4| = 2.6e-12; H+ G0=0.5 y0=8.0: global, |y-4| = 1.9e-13; H+ G0=0.5 y0=30.0: global, |y-4| = 3.2e-13; H+ G0=2.0 y0=0.5: global, |y-4| = 2.6e-12; H+ G0=2.0 y0=8.0: global, |y-4| = 1.8e-13; H+ G0=2.0 y0=30.0: global, |y-4| = 3.2e-13; H- G0=0.5 y0=-0.5: blowup at t = 1.10; H- G0=0.5 y0=-4.0: blowup at t = 0.35; H- G0=2.0 y0=-0.5: blowup at t = 1.10; H- G0=2.0 y0=-4.0: blowup at t = 0.35; S y0=3.0 minus: w in (-2.0, -0.5) on [3, 15]: True; S y0=3.0 plus: w in (0.5, 2.0) on [3, 15]: True; S y0=6.0 minus: w in (-2.0, -0.5) on [3, 15]: True; S y0=6.0 plus: w in (0.5, 2.0) on [3, 15]: True; S y0=-3.0 minus: w in (-2.0, -0.5) on [3, 15]: True; S y0=-3.0 plus: w in (0.5, 2.0) on [3, 15]: True; S y0=-6.0 minus: w in (-2.0, -0.5) on [3, 15]: True; S y0=-6.0 plus: w in (0.5, 2.0) on [3, 15]: True
+  (1 s)
+
+checks: 21 passed, 0 failed []. 70 s
+
+== Controls: each mutation must make its target checks fail, and no others ==
+[FIRED] --mutate=d-sign (Y built as u u_xrho/2 - u_x u_rho): exit 1, failed ['n_identity']
+[FIRED] --mutate=P-drop (P without the (b - sigma) omega term of M): exit 1, failed ['n_identity']
+[FIRED] --mutate=ehat-sign (y' with +sigma y^2): exit 1, failed ['reduction']
+[FIRED] --mutate=f-sigma (expects f_sigma = -4 (g2 + 6)): exit 1, failed ['reduction']
+[FIRED] --mutate=eig-plus (expects the eigenvalue +2 in place of -2): exit 1, failed ['reduction', 'hyp_line_real']
+[FIRED] --mutate=shape-3 (tests P(-1/(2a)) < 0 in place of P(-1/(4a)) < 0): exit 1, failed ['shape']
+[FIRED] --mutate=shape-om (omega range [-300, 300] in place of [-100, 100]): exit 1, failed ['shape']
+[FIRED] --mutate=ehat-alpha (alpha = 2 in place of 51/25): exit 1, failed ['ehat']
+[FIRED] --mutate=A-u0 (u_0 = 1/100 in place of 1/1000): exit 1, failed ['theorem_a']
+[FIRED] --mutate=A-cf (c_f = 40 in place of 50): exit 1, failed ['theorem_a']
+[FIRED] --mutate=A-kappa (stage-1 rate kappa = 2 in place of 2 - a/2): exit 1, failed ['planted_gronwall']
+[FIRED] --mutate=num-rate (rate bound with exp(-3t) in place of exp(-2t)): exit 1, failed ['numeric_a']
+[FIRED] --mutate=series-a2 (a_2 = -(11/5) F in place of -2 F): exit 1, failed ['series']
+[FIRED] --mutate=series-8 (expects a_{4,1} = F (F^2 + 8)): exit 1, failed ['series']
+[FIRED] --mutate=stage-I (expects I(k) = k (k - 5)): exit 1, failed ['stage_symbol']
+[FIRED] --mutate=link-slope (expects the sigma t coefficient -4 (F^2 + 6)): exit 1, failed ['expansion_link']
+[FIRED] --mutate=numB-coef (series with a_{6,0} times 1.01): exit 1, failed ['numeric_b']
+[FIRED] --mutate=local-c2 (adds q^2 to N (c2 no longer divisible by p)): exit 1, failed ['local_lemma']
+[FIRED] --mutate=regimeb-y (|y| <= 1/5 in place of 1/50): exit 1, failed ['regime_b']
+[FIRED] --mutate=small-sigma (claims (ln|omega|)' <= -199/100): exit 1, failed ['small_branch']
+[FIRED] --mutate=huge-thr (claims y' >= (3/2) y on [1/50, 1]): exit 1, failed ['huge_branch']
+[FIRED] --mutate=class-sign (predicts convergence for the huge root with p < 0): exit 1, failed ['classify_numeric']
+[FIRED] --mutate=plant-hyp (planted attracting case uses the eigenvalue +2): exit 1, failed ['planted_hyp']
+[FIRED] --mutate=plant-gron (c_f halved in the chain): exit 1, failed ['planted_gronwall']
+[FIRED] --mutate=plant-shape (planted cubic with the huge root at -1/(8a)): exit 1, failed ['planted_shape']
+[FIRED] --mutate=plant-local (N_osc replaced by q^3 nu^2 (-2G) (the lemma applies)): exit 1, failed ['planted_local']
+[FIRED] --mutate=plant-series (forcing 0 in place of 8 nu^4): exit 1, failed ['planted_series']
+controls: all fired on target only
