@@ -38,6 +38,8 @@
     109 of 800 walks reach 200
   basin boundary (smallest F'(0) > 0 that reaches 200, bisection between 0.01 and 100, each end checked): F(0) = 1.05: F'(0)* = 0.19711702; F(0) = 1.25: F'(0)* = 0.25130392; F(0) = 1.5: F'(0)* = 0.23717945; F(0) = 2: F'(0)* = 0.19953695; F(0) = 3: F'(0)* = 0.14921864; F(0) = 5: F'(0)* = 0.10036288; F(0) = 10: F'(0)* = 0.056068824; F(0) = 30: not bracketed
   (171 s)
+  precision a conserve walk needs to see a crossover (printed, not gating): eta_c 1e+03: u <= 2.6e-25 (needed u/100 below it): DD yes, QD yes, OD yes; eta_c 1e+05: u <= 2.6e-49 (needed u/100 below it): DD no, QD yes, OD yes; eta_c 1e+06: u <= 2.6e-61 (needed u/100 below it): DD no, QD yes, OD yes; eta_c 1e+09: u <= 2.6e-97 (needed u/100 below it): DD no, QD no, OD yes; eta_c 1e+12: u <= 2.6e-133 (needed u/100 below it): DD no, QD no, OD no. With a margin of 100 in u: DD up to eta_c = 2.8e+3, QD up to eta_c = 1.3e+6, OD up to eta_c = 2.3e+11
+  (0 s)
 [PASS] approach: 15 members, DD project walks (15 reach 1e12): worst over the members of rho_4 = |q - Q_4(G, p, eta^-2)|/p^2 (mirrored to p > 0) at eta = 1e3: 1.0e-14, 1e6: 5.8e-30, 1e12: 2.1e-29 (bar 1e-10 at each)
     (-2, -100): 2e+02: rho0 1.7e-02 rho1 1.9e-04 rho2 1.3e-06 rho4 1.7e-09 rho6 1.1e-12 | 1e+03: rho0 6.8e-04 rho1 1.6e-07 rho2 1.5e-10 rho4 3.9e-16 rho6 7.2e-23 | 1e+04: rho0 6.9e-06 rho1 7.4e-12 rho2 5.2e-16 rho4 5.4e-26 rho6 5.7e-31 | 1e+06: rho0 7.1e-10 rho1 6.6e-19 rho2 1.4e-27 rho4 7.2e-31 rho6 7.2e-31 | 1e+09: rho0 7.2e-16 rho1 5.0e-30 rho2 3.2e-30 rho4 3.2e-30 rho6 3.2e-30 | 1e+12: rho0 7.3e-22 rho1 5.4e-30 rho2 5.4e-30 rho4 5.4e-30 rho6 5.4e-30
     (-2, -10): 2e+02: rho0 1.8e-03 rho1 5.4e-06 rho2 3.3e-08 rho4 3.8e-14 rho6 7.6e-18 | 1e+03: rho0 7.5e-05 rho1 1.9e-08 rho2 4.0e-12 rho4 3.8e-20 rho6 3.2e-27 | 1e+04: rho0 7.9e-07 rho1 3.8e-12 rho2 7.4e-18 rho4 1.8e-29 rho6 9.8e-31 | 1e+06: rho0 8.5e-11 rho1 9.2e-20 rho2 1.4e-29 rho4 3.3e-30 rho6 3.3e-30 | 1e+09: rho0 9.1e-17 rho1 4.5e-30 rho2 4.7e-30 rho4 4.7e-30 rho6 4.7e-30 | 1e+12: rho0 9.5e-23 rho1 7.0e-30 rho2 7.0e-30 rho4 7.0e-30 rho6 7.0e-30
@@ -58,7 +60,7 @@
 [PASS] no_limit: verdicts at 1e12 of the 15 (LIMIT if |dG| <= 1e-3 and |p| <= 1e-6): (-2,-100) LOGLOG dG 0.6751, (-2,-10) LOGLOG dG 0.7197, (-2,-1) LOGLOG dG 0.7013, (1.5,1) LOGLOG dG 0.6951, (1.5,10) LOGLOG dG 0.7199, (1.5,100) LOGLOG dG 0.6862 ...; G(1e12) - G(1e6) against ln((t2 + T1)/(t1 + T1)) with T1 = 1/p - t at 1e6: worst difference 2.4e-11 (bar 1e-8)
   (0 s)
 [PASS] trap_bounds: the hand bounds for 0 < p <= 1/4, |w| <= p^2/2, u = 1 + |G| (|A1| <= 26 u^2 p^6, |dA1/dq| <= 30 u^2 p^4, |A2| <= 15 u^3 p^4, |dA2/dq| <= 35 u^3 p^3), worst ratio of |.| to the bound over 4000 random states: 0.12, 0.30, 0.09, 0.25 (bar 1); in D(1/5) at 300 random states: N changes sign across |w| <= p^2/2 and is increasing there: True; the root has |w|/p^2 <= 20 sigma u^2 (worst ratio 0.03, bar 1); p' = q in p^2 [-1.001, -1.0] (claim [-5/4, -3/4]); (ln r)' <= -1.003 (claim < -3/5), r = sigma u^3/p^2
-  (5 s)
+  (4 s)
 [PASS] trap_entry: the 15 DD project walks (every step) enter D(eps), eps = 0.2 (0 < |p| <= 1/4, sigma (1 + |G|)^3 <= eps p^2, |q/p^2 + sgn p| <= 1/2) at eta_in <= 1e6 and stay in it with r = sigma (1 + |G|)^3/p^2 non-increasing: (-2,-100): eta_in 4.95e+03; (-2,-10): eta_in 725; (-2,-1): eta_in 199; (1.5,1): eta_in 161; (1.5,10): eta_in 559; (1.5,100): eta_in 3.78e+03; (2,1): eta_in 199; (2,10): eta_in 725; (2,100): eta_in 4.95e+03; (3,1): eta_in 276; (3,10): eta_in 1e+03; (3,100): eta_in 7.4e+03; (5,1): eta_in 429; (5,10): eta_in 1.59e+03; (5,100): eta_in 1.27e+04
   (3 s)
 [PASS] invariants_conv: 15 members, QD project: |T(eta) - T(1e12)| and |g(eta) - g(1e12)| at eta = 1e6, 1e9: worst 8.8e-10 and 5.4e-11 (bar 1e-8). T_inf, g_inf printed below (T = 1/p - t, g = G + ln p, mirrored to p > 0)
@@ -77,20 +79,20 @@
     (5, 1): T_inf = -0.602622511337024, g_inf = 7.9786897245194
     (5, 10): T_inf = -0.468576892763, g_inf = 18.9988008875739
     (5, 100): T_inf = 2.04163533916803, g_inf = 57.5465792203548
-  (101 s)
+  (100 s)
 [PASS] n_floor: max |N|/sum|terms| at the step ends over the 15 walks: DD project 2.5e-32 (bar 1e-26), QD project 3.3e-64 (bar 1e-54); printed: DD conserve 3.1e-17
   (2 s)
 [PASS] dd_qd: DD against QD (project) at 200, 1e3, 1e4, 1e6, 1e9, 1e12 for the 15: worst relative difference of G, p, q 2.0e-29 (bar 1e-26)
   (0 s)
-[PASS] independent: own mpmath integration (30 digits, odefun) of G' = p, p' = Q_6(G, p, e^(-2t)) from eta = 1e3 (QD state) against the QD walk: worst relative difference of G, p 4.0e-22 (bar 1e-12): (2,1) at 1e+06: 1.4e-28, (2,1) at 1e+09: 1.2e-28, (2,1) at 1e+12: 1.0e-28, [92 s], (5,100) at 1e+06: 4.0e-22, (5,100) at 1e+09: 2.8e-22, (5,100) at 1e+12: 2.1e-22, [91 s], (-2,-10) at 1e+06: 1.5e-28, (-2,-10) at 1e+09: 1.3e-28, (-2,-10) at 1e+12: 1.1e-28, [92 s]
-  (295 s)
+[PASS] independent: own mpmath integration (30 digits, odefun) of G' = p, p' = Q_6(G, p, e^(-2t)) from eta = 1e3 (QD state) against the QD walk: worst relative difference of G, p 4.0e-22 (bar 1e-12): (2,1) at 1e+06: 1.4e-28, (2,1) at 1e+09: 1.2e-28, (2,1) at 1e+12: 1.0e-28, [91 s], (5,100) at 1e+06: 4.0e-22, (5,100) at 1e+09: 2.8e-22, (5,100) at 1e+12: 2.1e-22, [91 s], (-2,-10) at 1e+06: 1.5e-28, (-2,-10) at 1e+09: 1.3e-28, (-2,-10) at 1e+12: 1.1e-28, [91 s]
+  (294 s)
 [PASS] parity: W9': singular sides, the minus side of (f, f1) against the plus side of (f, -f1) in #167's crate rerun here: class, kind and eta* within 1e-8 at 100 of 100 (85 with an eta*, worst 0.0e+00; []); regular sides: the walk of (f, -f1) to -200 against that of (f, f1) to +200 for the 15 members, F, F' (sign) and F'' worst relative difference 0.0e+00 (bar 1e-24)
   NOT MET (as first worded): W9 asks for the walk of (f, f1) to -200 against the walk of (f, -f1) to +200 for three members whose minus sides end singular (eta* 0.5276, 0.1173, 0.0226), so neither walk reaches 200; W9' above replaces it (README A1, item 3)
   (1 s)
 [PASS] plant_167: #167's planted cases through the rebuilt crate: linear (|C- - a|, |e|, |C+ - b|, nodes) linear: 6.5e-28, 5.8e-34, 3.5e-29, 2.8e-29, cubic: 7.7e-28, 5.9e-34, 4.0e-29, 2.1e-29 (thresholds 1e-20, 1e-22); blowup: 8 walks, worst error 7.5e-12, worst bar 1.2e-12 (1e-8)
   (1 s)
-[PASS] plant_loglog: q + p^2 = 0 from eta = 2 (T = 13/10, g = 7/10) to 1e12, error of F, F', F'' at 200, 1e3, 1e6, 1e9, 1e12: dd project: worst 8.4e-32 (bar 1e-26), 407 steps; dd conserve: worst 2.8e-30 (bar 1e-26), 407 steps; qd project: worst 1.1e-64 (bar 1e-55), 372 steps; qd conserve: worst 2.5e-62 (bar 1e-55), 372 steps; verdict LOGLOG
-  (1 s)
+[PASS] plant_loglog: q + p^2 = 0 from eta = 2 (T = 13/10, g = 7/10) to 1e12, error of F, F', F'' at 200, 1e3, 1e6, 1e9, 1e12: dd project: worst 8.4e-32 (bar 1e-26), 407 steps; dd conserve: worst 2.8e-30 (bar 1e-26), 407 steps; qd project: worst 1.1e-64 (bar 1e-55), 372 steps; qd conserve: worst 2.5e-62 (bar 1e-55), 372 steps; od project: worst 1.2e-126 (bar 1e-115), 327 steps; od conserve: worst 7.8e-123 (bar 1e-115), 327 steps; verdict LOGLOG
+  (22 s)
 [PASS] plant_shift: N = p^2 w'(2p^2 - w'), w' = q + p^2 + 2c sigma (1 - p) + c^2 sigma^2, c = 1/3, exact p = 1/(t + T) + c sigma: DD project to 1e12, worst error of F', F'' 9.0e-31 (bar 1e-25) at 200, 1e3, 1e6, 1e9, 1e12; (p - 1/(t + T))/(c sigma) at 1e6 = 1.0 (1 +- 1e-3)
   (0 s)
 [PASS] plant_limit: the planted linear equation (1 + eta^2)F'' + 4 eta F' + 2(F - alpha), alpha = 7/10, F = alpha + (a + b eta)/(1 + eta^2) to 1e12: DD project worst error of F 1.7e-32 (bar 1e-24), verdict LIMIT; printed: F', F'' errors 1.1e-20 (project) against 1.2e-31 (conserve): project slaves F'' to the cancellation in F - alpha
@@ -100,10 +102,10 @@
 [PASS] recip_check: QD walk of (F(0), F'(0)) = (2, 1) to 1e6: halving every step (223 to 438 steps) changes G and p by 7.6e-65 (bar 1e-55); the control (--mutate=recip-dd, constants rounded to double-double) is run in the controls and must exceed 1e-45
   (10 s)
 
-checks: 20 passed, 0 failed []. 660 s
+checks: 20 passed, 0 failed []. 681 s
 
 == Controls: each mutation must make its target checks fail, and no others ==
-[FIRED] --mutate=theta-coeff (one coefficient of A1 typed wrong): exit 1, failed ['theta_form', 'root_series'], 39 s
+[FIRED] --mutate=theta-coeff (one coefficient of A1 typed wrong): exit 1, failed ['theta_form', 'root_series'], 37 s
 [FIRED] --mutate=root-coef (one coefficient of e2 perturbed in the residual): exit 1, failed ['root_series'], 28 s
 [FIRED] --mutate=shift-series (the planted generator expected e2 = -c^2/2): exit 1, failed ['shift_series'], 1 s
 [FIRED] --mutate=inv-sign (T' expected +w/p^2): exit 1, failed ['invariants'], 1 s
@@ -112,12 +114,12 @@ checks: 20 passed, 0 failed []. 660 s
 [FIRED] --mutate=trap-bound (the bound on |A1| is 2.6 u^2 p^6 in place of 26): exit 1, failed ['trap_bounds'], 5 s
 [FIRED] --mutate=trap-eps (the region D(eps) has eps = 1e-12): exit 1, failed ['trap_entry'], 25 s
 [FIRED] --mutate=parity-sign (F' summed with the wrong sign in the regular-side comparison): exit 1, failed ['parity'], 24 s
-[FIRED] --mutate=series-k (the approach uses K = 1): exit 1, failed ['approach'], 53 s
+[FIRED] --mutate=series-k (the approach uses K = 1): exit 1, failed ['approach'], 52 s
 [FIRED] --mutate=walk-eq (one coefficient of N in the hp walker changed): exit 1, failed ['approach', 'independent'], 252 s
-[FIRED] --mutate=indep-q (the independent integration uses Q_0 = -p^2 only): exit 1, failed ['independent'], 118 s
-[FIRED] --mutate=plant-exact (the exact solution the log-log walk is compared with has g + 0.001 (the start state does not)): exit 1, failed ['plant_loglog'], 2 s
+[FIRED] --mutate=indep-q (the independent integration uses Q_0 = -p^2 only): exit 1, failed ['independent'], 117 s
+[FIRED] --mutate=plant-exact (the exact solution the log-log walk is compared with has g + 0.001 (the start state does not)): exit 1, failed ['plant_loglog'], 23 s
 [FIRED] --mutate=plant-c (the planted equation has c = 1003/3000 in place of 1/3): exit 1, failed ['plant_shift'], 1 s
 [FIRED] --mutate=limit-class (the LIMIT test reads |p| >= 1e-6): exit 1, failed ['plant_limit'], 1 s
 [FIRED] --mutate=no-project (project runs as conserve): exit 1, failed ['n_floor', 'dd_qd', 'plant_scale'], 128 s
-[FIRED] --mutate=recip-dd (the QD lanes use double-double constants): exit 1, failed ['recip_check'], 11 s
+[FIRED] --mutate=recip-dd (the QD lanes use double-double constants): exit 1, failed ['recip_check'], 10 s
 controls: all fired on target only
