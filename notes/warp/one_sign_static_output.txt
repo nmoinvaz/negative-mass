@@ -1,0 +1,41 @@
+one_sign_static.py  (raw: /home/nathan/Source/negative-mass-raw/I165-rpi5)
+
+== 1. The system: blocks, Lemma R's A and B, the fields, C-bar ==
+[PASS] blocks: the block built from u_xx = Phi1, u_x rho = Psi, u_rho rho = Phi3 equals Lemma R's block -v v^T + lam eta (v0 = beta cos th, v1 = beta sin th, v2 = a/(u cos th - sin th), s = tan(th/2)), identically
+[PASS] AB: A = Q (Z^2 + Y^2) + 2 h Z Y in the radical: True; B = P Q Y - Z (Q^2 + Y^2) in the radical: True (Lemma R's ideal saturated by Z Y Q, Rabinowitsch)
+[info] fields built (2 s)
+[info] chain built (73 s)
+[PASS] fields: [X1, X2] + X1 = C-bar (d_s - (v w_s/w) d_v) as rational functions of (u, b, v, s): the u and b components vanish (True), the v component is -C-bar v w_s/w (True), the s component is C-bar (True)
+[PASS] Cpoints: at 3 exact points (u, b, v, s) with s not in {0, +-1}: C-bar from the 4D chain equals -rho^2 C of the 5D formula (C = D_rho sigma_x - D_x sigma_rho from partial derivatives at rho = rho0) and C-bar != 0; (s, agree): [('1/2', True), ('2', True), ('3', True)]
+[PASS] denoms: denominator of sigma_x = 8 s u Delta' (True), of sigma_rho = 8 s u (1+s^2) Delta' (True), Delta' has 26 terms and degree 8 in s; numer(C-bar) = c v b (s^2-1) D f0 with c = -1 (True)
+
+== 2. Planted cases ==
+[PASS] planted_s1: s = 1: (a) sigma_x, sigma_rho numerators vanish at s = +-1 and u, 1+s^2, D, Delta', s are nonzero there: True; (b) the unstripped F0, F1, F2 vanish at s = +-1: True; (c) 5 exact jets of u = c x + C ln rho + d have Lemma R's block and F0 = F1 = F2 = 0: True; (d) f0, f1, f2 do not vanish at s = 1: True
+[PASS] sconst: for s = s* not in {0, +-1} (kap = 2 c sg != 0): u = -ln(W)/kap + d(x), W = k(x) - kap ln(rho) solves u_rho rho + u_rho/rho = kap u_rho^2 (True); (Z)(Y) residual times rho W^2 = -(k'(c u - sg) + 2 c k'/kap - 2 c W d') (True); the coefficients of ln W and W are c k'/kap and 2 c d' (True), so k' = d' = 0 and u_x = 0
+[PASS] toy: inconsistent toy X2 = d_q + p (q^2 + 1) d_r: stored generators equal the recomputed chain ['q**2 + 1', '0', 'q']: True; sum c_i f_i = 1 (nonzero constant: True); flat toy X2 = d_q has an empty chain: True
+
+== 3. The chain and its stored certificates ==
+[PASS] chain: term counts [319, 1388, 1818, 3837, 4892] (want [319, 1388, 1818, 3837, 4892]), degrees (u,b,v,s) True, v even in all: True, SHA-256 equal to chain/chain.json: True
+[PASS] slice_modp: modular evidence: for each stored modular certificate (g = f0, f1, f2, f11 at s = s0 reduced mod p, and 1 - t u v b D Delta' at s0), sum c_i g_i is a nonzero constant in GF(p)[t, u, b, v]: p = 2147483587, s0 = 11: sum = const 1 (ok); p = 2147483587, s0 = 2: sum = const 1 (ok); p = 2147483587, s0 = 3: sum = const 1 (ok); p = 2147483587, s0 = 5: sum = const 1 (ok); p = 2147483587, s0 = 7: sum = const 1 (ok); p = 2147483629, s0 = 11: sum = const 1 (ok); p = 2147483629, s0 = 2: sum = const 1 (ok); p = 2147483629, s0 = 3: sum = const 1 (ok); p = 2147483629, s0 = 5: sum = const 1 (ok); p = 2147483629, s0 = 7: sum = const 1 (ok)
+[info] dims (mod 2147483629, s = 2, exit 0): f0 plain dim 3 mult 10 unit 0; f0 sat dim 2 mult 65 unit 0; f0 f1 f2 plain dim 2 mult 22 unit 0; f0 f1 f2 sat dim 0 mult 194 unit 0; f0 f1 f2 f11 sat dim -1 mult 0 unit 1; f0 f1 f2 f12 sat dim -1 mult 0 unit 1; f0 f1 f2 f11 sat by u only dim 1 mult 26 unit 0; f0 f1 f2 f11 sat by u v b D dim 1 mult 32 unit 0
+[info] dims (mod 2147483629, s = 3, exit 0): f0 plain dim 3 mult 10 unit 0; f0 sat dim 2 mult 65 unit 0; f0 f1 f2 plain dim 2 mult 22 unit 0; f0 f1 f2 sat dim 0 mult 194 unit 0; f0 f1 f2 f11 sat dim -1 mult 0 unit 1; f0 f1 f2 f12 sat dim -1 mult 0 unit 1; f0 f1 f2 f11 sat by u only dim 1 mult 26 unit 0; f0 f1 f2 f11 sat by u v b D dim 1 mult 32 unit 0
+[info] dims (mod 2147483629, s = 5, exit 0): f0 plain dim 3 mult 10 unit 0; f0 sat dim 2 mult 65 unit 0; f0 f1 f2 plain dim 2 mult 22 unit 0; f0 f1 f2 sat dim 0 mult 194 unit 0; f0 f1 f2 f11 sat dim -1 mult 0 unit 1; f0 f1 f2 f12 sat dim -1 mult 0 unit 1; f0 f1 f2 f11 sat by u only dim 1 mult 26 unit 0; f0 f1 f2 f11 sat by u v b D dim 1 mult 32 unit 0
+[info] dims (mod 2147483629, s = 7, exit 0): f0 plain dim 3 mult 10 unit 0; f0 sat dim 2 mult 65 unit 0; f0 f1 f2 plain dim 2 mult 22 unit 0; f0 f1 f2 sat dim 0 mult 194 unit 0; f0 f1 f2 f11 sat dim -1 mult 0 unit 1; f0 f1 f2 f12 sat dim -1 mult 0 unit 1; f0 f1 f2 f11 sat by u only dim 1 mult 26 unit 0; f0 f1 f2 f11 sat by u v b D dim 1 mult 32 unit 0
+[info] dims (mod 2147483629, s = 11, exit 0): f0 plain dim 3 mult 10 unit 0; f0 sat dim 2 mult 65 unit 0; f0 f1 f2 plain dim 2 mult 22 unit 0; f0 f1 f2 sat dim 0 mult 194 unit 0; f0 f1 f2 f11 sat dim -1 mult 0 unit 1; f0 f1 f2 f12 sat dim -1 mult 0 unit 1; f0 f1 f2 f11 sat by u only dim 1 mult 26 unit 0; f0 f1 f2 f11 sat by u v b D dim 1 mult 32 unit 0
+[info] full-ring run of record (certs/fullring.json): {'p': 2147483629, 'order': '(dp(4),dp(1))', 'exit': 124, 'seconds': 3600.3, 'finished': False, 'output_head': ''}
+
+10 checks, 10 pass (155 s)
+[NOT MET] D1 slice_cert: exact certificate over Q for the saturated level-2 ideal at fixed s (none obtained; see the raw README, probes 11 and 13)
+[NOT MET] D2 full_cert: exact certificate over Q for all s (none obtained; the 60 min full-ring run is recorded in certs/fullring.json)
+  Phi1-sign: exit 1; control Phi1-sign: target ['blocks', 'chain', 'denoms', 'planted_s1', 'slice_modp'], failed ['blocks', 'chain', 'denoms', 'planted_s1', 'slice_modp']: ON TARGET
+  Psi-sign: exit 1; control Psi-sign: target ['blocks', 'chain', 'slice_modp'], failed ['blocks', 'chain', 'slice_modp']: ON TARGET
+  AB-sign: exit 1; control AB-sign: target ['AB'], failed ['AB']: ON TARGET
+  denoms-claim: exit 1; control denoms-claim: target ['denoms'], failed ['denoms']: ON TARGET
+  Cpoints-s1: exit 1; control Cpoints-s1: target ['Cpoints'], failed ['Cpoints']: ON TARGET
+  plant-s2: exit 1; control plant-s2: target ['planted_s1'], failed ['planted_s1']: ON TARGET
+  toy-flat: exit 1; control toy-flat: target ['toy'], failed ['toy']: ON TARGET
+  sconst-kappa: exit 1; control sconst-kappa: target ['sconst'], failed ['sconst']: ON TARGET
+  fields-sx: exit 1; control fields-sx: target ['fields'], failed ['fields']: ON TARGET
+  cert-corrupt: exit 1; control cert-corrupt: target ['slice_modp'], failed ['slice_modp']: ON TARGET
+  cert-satdrop: exit 1; control cert-satdrop: target ['slice_modp'], failed ['slice_modp']: ON TARGET
+controls: all fired on target
