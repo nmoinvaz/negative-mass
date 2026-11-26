@@ -8,7 +8,7 @@ once. All 15 jobs exited 0 in 16 min. Status of every result below: **numerical 
 - **Table and checks.** `wormhole_next/step3_table.py`, output in `step3_output.txt` (15 checks PASS, exit 0; the
   self-test makes each of its 8 mutations fail exactly its target). Run it as `cd notes/wormhole_next && python3
   step3_table.py` with the raw clone beside the checkout (`--raw=DIR` otherwise).
-- **Raw.** [`negative-mass-raw/I30-mac`](https://github.com/nmoinvaz/negative-mass-raw/tree/main/I30-mac) at 829c150: its
+- **Raw.** [`negative-mass-raw/I30-mac`](https://github.com/nmoinvaz/negative-mass-raw/tree/main/I30-mac) at b338967: its
   README holds the criteria, edges and planted pairs, written before the first run, and the run log. Counts, caches and
   logs are there.
 - **Environment.** CLD at `5fcadda2`, `hp/` clean, kernel `modecount_cx.cpython-313-darwin.so` of 2026-11-08. That is not
