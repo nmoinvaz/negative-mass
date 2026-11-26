@@ -1,0 +1,68 @@
+one_sign_time.py, issue #166. sympy 1.14.0, python 3.14.10. mutation: none
+
+== 1. The block R_3 of b = X(t, x) + R(t, rho) from the coordinate Ricci tensor ==
+[PASS] block: coordinate Ricci of b = X(t, x) + R(t, rho) on (n, d_x, d_rho, d_phi/rho) minus [[P-h, Q, 0], [Q, -P-h, Y], [0, Y, h]] + 0 with P = X_tx - (X + R) X_xx - X_x^2, Q = -(R_rr + R_r/rho)/2, Y = -R_tr/2 + X_x R_r, h = R_r^2/2 is zero: True; (I2): True; #158's `blocks` on the jets gives (P, Q, 0, Y, h): True; R = r(t) gives diag(P, -P, 0): True (2 s)
+
+== 2. The gauge x -> x + D(t) ==
+[PASS] gauge: (a) (P, Q, Y, h) of X~ = X(t, x - D) - D', R~ = R at (t, x, rho) equal those of b at (t, x - D, rho) (undefined X, R, D, derivatives of X replaced by jet symbols): True; (b) c x + C ln rho + d gives b~ = c x + C ln rho + (d - c D - D'): True, and D = e^(-int c) int d e^(int c) satisfies D' + c D - d = 0: True
+
+== 3. Lemma Z: the two branches of Lemma R at Z = 0 ==
+[PASS] lemmaZ: (a) elimination ideal of Lemma R at v0 = 0 equals <Q, 2hP + Y^2> (basis ['2*P*h + Y**2', 'Q'], claim ['Q', '2*P*h + Y**2']): True; (b) at v2 = 0 equals <Y, Q^2 + P(2h + P)> (basis ['P**2 + 2*P*h + Q**2', 'Y']): True; (c) `rank1_lams` on 12 A-blocks gives [(h + v2^2, MM)], on 12 B-blocks [(h, MM)], on 12 generic Z = 0 blocks []: wrong in 0 []
+
+== 4. Branch A: Q = 0 gives R = C ln rho + d ==
+[PASS] rho_ode: dsolve(R'' + R'/rho = 0) = C1 + C2*log(rho); equals C1 + C2 ln rho: True; satisfies R'' + R'/rho = 0: True
+
+== 5. Branch A: X_xx = 0 and the ODE for c(t) ==
+[PASS] branchA: R = C ln rho + d: (i) Q = 0 and rho^2 (2hP + Y^2) = C^2 P + (X_x C - C'/2)^2: True; (ii) as a polynomial in l = ln rho the l-coefficient is -C^3 X_xx and the l^0 part is as stated: True; (iii) for X = c x + e it equals C^2 c' - c C C' + C'^2/4 = C^2 (c' - 2 g c + g^2): True; (iv) v2 = -Y/v1 = g - c and, on the ODE, h - P = h + v2^2 = C^2/(2 rho^2) + (g - c)^2: True
+
+== 6. c' = 2 g c - g^2: c = |C| (k0 - K), K' = g^2/|C| ==
+[PASS] c_ode: with A' = 2 g A, K' = 1 g^2/A, c = A (k0 - K): c' - 2 g c + g^2 = 0: True; for g = 0 c' = 0: True; T2: A = e^(2t), g = 1, K = -e^(-2t)/2 gives c = 1/2 + e^(2t)/3: True
+
+== 7. Branch B: Y = 0 gives R_rho = m(t) f(rho), m' = 2 kappa m ==
+[PASS] t_ode: dsolve(G' = 2 kappa G) = C1*exp(2*Integral(kappa(t), t)); equals C1*exp(2*Integral(kappa(t), t)): True; satisfies the ODE: True
+
+== 8. Branch B: the equation Q^2 + P(2h + P) = 0 has no solution with P < 0 ==
+[PASS] branchB: (i) with X = kappa x + e, R_rho = m f: P = kappa' - kappa^2, Q = -m (f' + f/rho)/2, h = m^2 f^2/2 and Q^2 + P (2h + P) = m^2 g - p m^2 f^2 + p^2 (p = kappa^2 - kappa', g = (f' + f/rho)^2/4): True; (ii) the four equations at two times and two radii with 1 - s p1 p2 m1 m2 (Fa - Fb): p1 - p2 reduces to 0 and m1**2 - m2**2 reduces to 0: True; (iii) f = f0 constant, with 1 - s p m f0 (ra - rb)(ia + ib): Groebner basis ['1'] is [1]: True. By hand: (ii) for every pair of times gives p, m constant, so kappa = 0 and p = kappa^2 - kappa' = 0, contradicting p > 0; (iii) f^2 constant; so v0 = 0 and branch B is inside branch A
+
+== 9. Planted and new members through `run_family` ==
+[PASS] planted: P1..P4 (static 3x/2 + 2 ln rho + 1/5, x + 3 ln rho, d(t) = tanh t, and the gauge copy b(t, x - tanh t) - (1 - tanh^2 t)) through run_family: lam = C^2/(2 rho^2) + (g - c)^2 is a root with inertia (0, 2) and pattern MM at 3 exact points each and Q = 2hP + Y^2 = 0 identically: True [('P1', True, '0'), ('P2', True, '0'), ('P3', True, '0'), ('P4', True, '0')]; planted failure F1 = P1 + x^2/10: no root with a pattern at 3 of 3 points (True), 2hP + Y^2 = 2*(-20*Lg - x**2 - 15*x - 2)/( != 0 (8 s)
+[PASS] family: T1..T4 through run_family: lam is a root with inertia (0, 2), MM at 3 exact points each and Q = 2hP + Y^2 = 0 identically: True [('T1', True), ('T2', True), ('T3', True), ('T4', True)]; c' = 2 g c - g^2 from the chain rule and C' != 0 (not gauge-equivalent to a static member): True (C = ['En', 'En', 'En*(1 - Th**2)', 'Ti**2'], g = ['1', '1', '1 - Th', '-Ti']); T4: g = c and lam = h: True; F2 (c ODE violated): no root with a pattern at 3 of 3 points (True), 2hP + Y^2 != 0 (True) (11 s)
+
+== 10. R_ab = lam (g_ab - rho^2 dphi_a dphi_b) - alpha_a alpha_b for b = c(t) x + C(t) ln rho + d(t) ==
+[PASS] identity: Ricci of the shift metric minus [lam (g - rho^2 dphi^2) - alpha alpha] is the zero matrix after c' -> c(t)*Derivative(C(t), t)/C(t) - Derivative(C(t), t)**2/(4*C(t)**2): True; with M = -alpha alpha - lam rho^2 dphi dphi: M n = 0 and M K2 = 0 (n = d_t - b d_x, K2 = (g - c) d_x - (C/rho) d_rho): True. So R = lam g - alpha^2 - (sqrt(lam) rho dphi)^2: two phantoms for the whole family (15 s)
+
+== 11. Closure of the general member: [n, K2] and alpha ^ d alpha ^ dphi ==
+[PASS] closure_general: (a) [n, K2] - (C'/C) K2 has components (0, r, 0, 0) with r = w' + w c - 2 g w - C^2/rho^2 (w = g - c) and d_rho r = 2 C^2/rho^3: True; (b) the dt dx drho dphi coefficient of alpha ^ d alpha ^ dphi equals C^3/rho^3 + (C/rho)(-w' + (2g - c) w) and d_rho(rho F/C) = -2 C^2/rho^3: True. Both are nonzero for C != 0: the kernel plane is not integrable on any open set, so closure fails for every member (15 s)
+
+== 12. Closure (Lemma K) at the planted and the new members ==
+[PASS] closure_points: closure2 of M = R - lam g (name, kernel dim, integrable, nonzero bracket component): [('P1', 2, False, ['(-18*rho**2 - 32)/(9*rho**3)']), ('P3', 2, False, ['(-18*rho**2 - 32)/(9*rho**3)']), ('P4', 2, False, ['(-18*rho**2 - 32)/(9*rho**3)']), ('T1', 2, False, ['(-4*En**3 - 3*En*rho**2)/rho**3']), ('T2', 2, False, ['(-4*En**3*rho**2 - 36*En**3 - 27*En*rho**2)/(4*En**2*rho**3 - 12*En*rho**3 + 9*rho**3)']), ('T3', 2, False, ['(En**3*Th**6 - 3*En**3*Th**4 + 3*En**3*Th**2 - En**3 - En*Th**3*rho**2 + 2*En*Th**2*rho**2 + En*Th*rho**2 - 2*En*rho**2)/rho**3']), ('T4', 2, False, ['Ti**2/rho'])]: all have dimension 2 and are not integrable: True; positive control A0 (b = x, C = 0): dim 2, integrable True, L_X M = 0 True, quotient flat True: True (19 s)
+
+== 13. Nothing is localized in x ==
+[PASS] localized: b_xx = 0 and b_x = c(t) for b = c x + C ln rho + d: True; c = 0 in c' = -gs**2 + 2*gs*c(t) gives g = [0]: True; the gauge of (b) with c = 0 gives d~ = d - D' (zero iff D' = d): True (so c = 0 on an interval forces C' = 0, b = C ln rho + d(t), and D' = d removes d: static b(rho), x-independent; every other member is affine in x with slope c(t))
+[info] Answer: on a box with Z = 0 and R_rho != 0 the stage holds iff (branch A) b = c(t) x + C(t) ln rho + d(t) with C != 0 and c' = 2 g c - g^2, g = C'/(2C); branch B (v2 = 0, v0 != 0) is empty; d(t) is gauge; closure fails for every member; none is localized in x
+
+14 checks, 14 pass (19 s)
+
+== Controls: each mutation must make its target checks fail ==
+[FIRED] --mutate=block-P (builds P without the -X_x^2 term): exit 1, failed ['block']
+[FIRED] --mutate=gauge-drop (the gauge-transformed X without - D'(t)): exit 1, failed ['gauge']
+[FIRED] --mutate=gauge-ode (solves D' - c D = d in place of D' + c D = d): exit 1, failed ['gauge']
+[FIRED] --mutate=lemmaZ-A (claims the elimination ideal <Q, 2hP - Y^2>): exit 1, failed ['lemmaZ']
+[FIRED] --mutate=lemmaZ-B (claims the elimination ideal <Y, Q^2 - P(2h + P)>): exit 1, failed ['lemmaZ']
+[FIRED] --mutate=lemmaZ-blocks (builds the branch-B blocks with P = +v0^2): exit 1, failed ['lemmaZ']
+[FIRED] --mutate=rho-dsolve (solves R'' + 2R'/rho = 0 and compares with C1 + C2 ln rho): exit 1, failed ['rho_ode']
+[FIRED] --mutate=A-P (builds P with X in place of X + R): exit 1, failed ['branchA']
+[FIRED] --mutate=A-ode (claims C^2 c' - c C C' - C'^2/4): exit 1, failed ['branchA']
+[FIRED] --mutate=c-ode (takes K' = -g^2/A): exit 1, failed ['c_ode']
+[FIRED] --mutate=t-dsolve (claims G = C1 exp(int kappa) in place of C1 exp(2 int kappa)): exit 1, failed ['t_ode']
+[FIRED] --mutate=B-claim (claims m1 - m2 in the ideal in place of m1^2 - m2^2): exit 1, failed ['branchB']
+[FIRED] --mutate=B-const (takes g = f0^2/4 (the 1/rho^2 dropped) in the f-constant case): exit 1, failed ['branchB']
+[FIRED] --mutate=plant-pert (puts F1 = P1 + x^2/10 in the list of members that must be found): exit 1, failed ['planted']
+[FIRED] --mutate=fam-ode (puts F2 in place of T2 in the list of members that must be found): exit 1, failed ['family']
+[FIRED] --mutate=ident-ode (substitutes c' = 2 g c + g^2): exit 1, failed ['identity']
+[FIRED] --mutate=ident-alpha (takes alpha with (c - g) d rho): exit 1, failed ['identity']
+[FIRED] --mutate=closure-bracket (computes [n, K2] without the term K2(n^mu)): exit 1, failed ['closure_general']
+[FIRED] --mutate=closure-form (takes alpha without the b dt term): exit 1, failed ['closure_general']
+[FIRED] --mutate=closure-C0 (replaces two of the seven members by the integrable b = x): exit 1, failed ['closure_points']
+[FIRED] --mutate=loc-claim (claims the ODE as c' = 2 g c - g^2 c): exit 1, failed ['localized']
+controls: all fired
