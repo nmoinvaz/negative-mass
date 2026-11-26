@@ -94,8 +94,8 @@ Run of record: `run_final.run2` in the raw folder `I171-rpi5` of negative-mass-r
 `planar_residual_output.txt`), exit 0: 8 of 8 checks pass in 11 s, then the 11 controls, 165 s in all, one process at
 nice 10 on a Raspberry Pi 5, peak resident 64 MB (`/usr/bin/time -v` on the checks of the first version of the script,
 raw `dev_checks.run2.time`). Run 1 (same script before the printing of the equations; same outcomes) is kept. From the
-repository root: `python3 notes/warp/planar_residual.py`; `--no-controls` for the checks alone, `--mutate=NAME` for
-one control.
+repository root, in the environment of [`setup.md`](../../setup.md): `python3 notes/warp/planar_residual.py`;
+`--no-controls` for the checks alone, `--mutate=NAME` for one control.
 
 | check | what it tests | result |
 |---|---|---|
