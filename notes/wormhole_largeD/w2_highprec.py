@@ -582,7 +582,8 @@ def main():
     only = set(filter(None, a.only.split(",")))
     want = lambda *names: not only or any(n in only for n in names)       # noqa: E731
     t0 = time.time()
-    print(f"w2_highprec.py  mutate={MUTATE}  crate={BIN}\n")
+    rev = subprocess.run(["git", "-C", HERE, "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.strip()
+    print(f"w2_highprec.py  code {rev}  mutate={MUTATE}  crate={os.path.relpath(BIN, HERE)}\n")
     if want("E0"):
         check_E0()
     if want("S1", "S2", "S3", "S4", "S4w", "S5", "S5s"):
