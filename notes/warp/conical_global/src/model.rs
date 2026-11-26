@@ -50,6 +50,12 @@ pub fn conical_poly(m: &Mutation) -> PolyN {
 /// G = F, p = eta F', q = eta^2 F'' + eta F' of the series at |eta| = 200 from (F_inf, C). The series is
 /// F_inf + sum a_(n,j) nu^n T^j, T = ln eta, nu = 1/eta, theta = eta d/d eta.
 pub fn series_gpq<T: Lane>(fi: Fl<T, 1>, c: Fl<T, 1>, m: &Mutation) -> [Fl<T, 1>; 3] {
+    series_gpq_at(fi, c, LEND, m)
+}
+
+/// `series_gpq` at |eta| = l
+pub fn series_gpq_at<T: Lane>(fi: Fl<T, 1>, c: Fl<T, 1>, l: f64, m: &Mutation) -> [Fl<T, 1>; 3] {
+    let ln_l = if l == LEND { LN_LEND } else { DD::from_f64(l).ln() };
     let mx = SERIES.iter().flat_map(|t| t.mons.iter().map(|x| x.0 as usize)).max().unwrap();
     let ml = SERIES.iter().flat_map(|t| t.mons.iter().map(|x| x.1 as usize)).max().unwrap();
     let ms = SERIES.iter().map(|t| t.s as usize).max().unwrap();
@@ -63,8 +69,8 @@ pub fn series_gpq<T: Lane>(fi: Fl<T, 1>, c: Fl<T, 1>, m: &Mutation) -> [Fl<T, 1>
         v
     };
     let (fp, cp, ip) = (pw(fi, mx), pw(c, ml), pw(inv, ms));
-    let nu = DD::ONE / DD::from_f64(LEND);
-    let tj = |e: i32| if e < 0 { DD::ZERO } else { LN_LEND.powi(e) };
+    let nu = DD::ONE / DD::from_f64(l);
+    let tj = |e: i32| if e < 0 { DD::ZERO } else { ln_l.powi(e) };
     let (mut g, mut p, mut q) = (fi, Fl::zero(), Fl::zero());
     for t in SERIES.iter() {
         let mut a = Fl::<T, 1>::zero();
@@ -92,8 +98,13 @@ pub fn series_gpq<T: Lane>(fi: Fl<T, 1>, c: Fl<T, 1>, m: &Mutation) -> [Fl<T, 1>
 
 /// the state (F, F', F'') at eta = +-200 from the series; sign = +1 at +200, -1 at -200 (F' flips)
 pub fn end_state<T: Lane>(fi: Fl<T, 1>, c: Fl<T, 1>, sign: f64, m: &Mutation) -> State<T, 1> {
-    let [g, p, q] = series_gpq(fi, c, m);
-    let nu = DD::ONE / DD::from_f64(LEND);
+    end_state_at(fi, c, sign, LEND, m)
+}
+
+/// `end_state` at |eta| = l
+pub fn end_state_at<T: Lane>(fi: Fl<T, 1>, c: Fl<T, 1>, sign: f64, l: f64, m: &Mutation) -> State<T, 1> {
+    let [g, p, q] = series_gpq_at(fi, c, l, m);
+    let nu = DD::ONE / DD::from_f64(l);
     let f1 = p.muls(nu);
     let f2 = (q - p).muls(nu * nu);
     let f1 = if sign < 0.0 && !m.match_sign { -f1 } else { f1 };

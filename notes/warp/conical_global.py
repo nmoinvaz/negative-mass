@@ -130,6 +130,730 @@ def main_gen():
     print(f"wrote {tables_path()}: {len(g.d)} series terms, {len(n_monomials())} monomials of N")
 
 
-if __name__ == "__main__" and "gen" in OPTS:
-    main_gen()
-    sys.exit(0)
+
+# ---------------------------------------------------------------------------------------------------------------
+# the crate
+# ---------------------------------------------------------------------------------------------------------------
+BIN = OPTS.get("bin", os.path.join(CRATE, "target", "release", "conical_global"))
+CRATE_MUT = ("eq-coeff", "series-coeff", "match-sign", "plant-locator", "n-drift")
+PY_MUT = ("a16-coeff", "halving", "indep-eq", "sym-break", "bisect-end", "eta0-sign", "fwd-class", "even-series")
+MUTATIONS = {
+    # name: (checks that must fail, what it changes)
+    "eq-coeff": (["n_table", "series_residual"], "one coefficient of N in the crate changed (-6 -> -5 on F F'^2 F'' eta^2)"),
+    "series-coeff": (["series_residual"], "the crate's a_(4,1) times 1.01"),
+    "a16-coeff": (["series_order"], "a_(16,0) times (1 + 1/1000) in the exact-rational order check"),
+    "match-sign": (["plant_linear", "plant_cubic"], "the mirror end takes +F' in place of -F'"),
+    "plant-locator": (["plant_blowup"], "the locator's side test inverted"),
+    "halving": (["step_halving"], "the first plan is order 14, tolerance 1e-12"),
+    "n-drift": (["n_along_path"], "the recursion leaves F''_3 = 0 (order 3 of N not imposed)"),
+    "indep-eq": (["independent"], "the independent integration has -6 -> -5.9999 on F F'^2 F'' eta^2"),
+    "sym-break": (["symmetry"], "the symmetric comparison uses (-F_inf, +C)"),
+    "bisect-end": (["bisect"], "the bisection's upper end is compared with the wrong class"),
+    "eta0-sign": (["eta0_local"], "the symbolic analysis of N at eta = 0 with the term 2 F'^2 (F^2 - 1) F'^2 -> 3"),
+    "fwd-class": (["forward"], "the log-log class tested at q/p^2 = sgn(p) in place of -sgn(p)"),
+    "even-series": (["even_pm1"], "the exact series coefficient b_3 of the even solution changed by 1/1000"),
+}
+TARGET_NOTE = {}
+RAW_SCAN = {}
+
+
+def crate(args, mut=None, timeout=3600):
+    cmd = [BIN] + [str(a) for a in args]
+    if mut and mut in CRATE_MUT:
+        cmd.append(f"--mutate={mut}")
+    env = dict(os.environ, RAYON_NUM_THREADS="2")
+    p = subprocess.run(cmd, capture_output=True, text=True, env=env, timeout=timeout)
+    if p.returncode != 0:
+        raise RuntimeError(f"{' '.join(cmd)} exit {p.returncode}: {p.stderr[-500:]}")
+    return [json.loads(l) for l in p.stdout.splitlines() if l.startswith(("{", "["))]
+
+
+def build():
+    if "nobuild" in OPTS:
+        return
+    env = dict(os.environ, RAYON_NUM_THREADS="2")
+    p = subprocess.run(["cargo", "build", "--release", "-j", "2"], cwd=CRATE, capture_output=True, text=True, env=env)
+    if p.returncode != 0:
+        print(p.stderr[-3000:])
+        sys.exit(2)
+
+
+def fr(x):
+    """a [hi, lo] pair as an exact Fraction"""
+    return Fraction(x[0]) + Fraction(x[1])
+
+
+def cmut():
+    return MUT if MUT in CRATE_MUT else None
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# series (cached: it is the slow part)
+# ---------------------------------------------------------------------------------------------------------------
+SER = {}
+
+
+def get_series():
+    if "g" in SER:
+        return SER["g"], SER["log"]
+    import pickle
+    cache = os.path.join(CRATE, "target", f"series_k{KORD}.pkl")
+    if os.path.exists(cache) and "fresh" not in OPTS:
+        with open(cache, "rb") as fh:
+            SER["g"], SER["log"] = pickle.load(fh)
+    else:
+        t0 = time.time()
+        g, log = series_terms()
+        os.makedirs(os.path.dirname(cache), exist_ok=True)
+        with open(cache, "wb") as fh:
+            pickle.dump((g, log), fh)
+        SER["g"], SER["log"] = g, log
+        print(f"  (series through eta^-{KORD} solved in {time.time() - t0:.0f} s)")
+    return SER["g"], SER["log"]
+
+
+def series_mp(fi, c, L, sign, dps=50):
+    """(F, F', F'') of the series at eta = sign L, mpmath, from the sympy coefficients"""
+    mp.mp.dps = dps
+    g, _ = get_series()
+    Fi, a4 = cl.Fi, sp.Symbol("a4_0", real=True)
+    nu, t = mp.mpf(1) / L, mp.log(L)
+    G = mp.mpf(fi.numerator) / fi.denominator
+    p = q = mp.mpf(0)
+    for (n, j), v in g.d.items():
+        val = sp.Rational(v.subs({Fi: sp.Rational(fi.numerator, fi.denominator), a4: sp.Rational(c.numerator, c.denominator)}))
+        val = mp.mpf(val.p) / val.q
+        G += val * nu**n * t**j
+        p += val * nu**n * (-n * t**j + (j * t ** (j - 1) if j else 0))
+        q += val * nu**n * (n * n * t**j - 2 * n * j * (t ** (j - 1) if j else 0) + (j * (j - 1) * t ** (j - 2) if j > 1 else 0))
+    return [G, sign * p * nu, (q - p) * nu**2]
+
+
+def to_mp(x):
+    return mp.mpf(x.numerator) / x.denominator
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# A1 the crate's N against sympy
+# ---------------------------------------------------------------------------------------------------------------
+def n_exact(poly_terms, pt):
+    f0, f1, f2, e = pt
+    v = s = Fraction(0)
+    for a, b, c, m, co in poly_terms:
+        t = co * f0**a * f1**b * f2**c * e**m
+        v += t
+        s += abs(t)
+    return v, s
+
+
+def c_n_table():
+    pts = []
+    for i in range(40):
+        pts.append((Fraction((7 * i + 3) % 23 - 11, 7), Fraction((11 * i + 5) % 29 - 14, 9), Fraction((13 * i + 7) % 31 - 15, 11),
+                    Fraction((17 * i + 2) % 37 - 18, 13)))
+    path = os.path.join(CRATE, "target", "ntable_points.txt")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as fh:
+        for p_ in pts:
+            fh.write(" ".join(f"{x.numerator}/{x.denominator}" for x in p_) + "\n")
+    out = crate(["ntable", path], mut=cmut())
+    typed = n_monomials()
+    Nb = cl.N_canonical()
+    Pb = sp.Poly(Nb, dc.F0_, dc.F1_, dc.F2_, dc.ETA)
+    built = [(a, b, c, m, Fraction(int(co.p), int(co.q))) for (a, b, c, m), co in zip(Pb.monoms(), Pb.coeffs())]
+    worst_t = worst_b = Fraction(0)
+    for pt, o in zip(pts, out):
+        vt, st = n_exact(typed, pt)
+        vb, sb = n_exact(built, pt)
+        got = fr(o["n"])
+        worst_t = max(worst_t, abs(got - vt) / st if st else abs(got - vt))
+        worst_b = max(worst_b, abs(got - vb) / sb if sb else abs(got - vb))
+    ok = worst_t <= Fraction(1, 10**26) and worst_b <= Fraction(1, 10**26)
+    check("n_table", ok, f"crate N at 40 rational points against det_classify.conical_N() (typed): worst |dN|/sum|terms| "
+          f"{float(worst_t):.2e}; against conical_limit.build_N() (rebuilt from D): {float(worst_b):.2e}; threshold 1e-26")
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# A2, A3, A3b the series
+# ---------------------------------------------------------------------------------------------------------------
+PAIRS_A2 = [("1", "0"), ("-1", "2"), ("1/3", "-1"), ("2", "1/2"), ("4", "3000"), ("0.25", "-3000")]
+
+
+def frac(s):
+    return Fraction(s)
+
+
+def c_series_residual():
+    rows, lit_fail, ok_ad, ok_mp = [], 0, True, True
+    for fi_s, c_s in PAIRS_A2:
+        fi, c = frac(fi_s), frac(c_s)
+        chosen = None
+        res200 = None
+        for L in (200, 800, 3200, 12800, 51200):
+            out = crate(["series", fi_s, c_s, L], mut=cmut())[0]
+            nrel = max(o["n_rel"] for o in out)
+            if L == 200:
+                res200 = nrel
+            if nrel <= 1e-20 and chosen is None:
+                chosen = (L, nrel, out)
+        if res200 > 1e-20:
+            lit_fail += 1
+        if chosen is None:
+            ok_ad = False
+            rows.append(f"({fi_s},{c_s}): no L with residual <= 1e-20")
+            continue
+        L, nrel, out = chosen
+        # the crate's state against mpmath (50 digits)
+        worst = mp.mpf(0)
+        for o in out:
+            sign = o["sign"]
+            ref = series_mp(fi, c, L, sign)
+            for k in range(3):
+                got = to_mp(fr(o["state"][k]))
+                worst = max(worst, abs(got - ref[k]) / abs(ref[k]))
+        ok_mp &= worst <= mp.mpf(10) ** -26
+        rows.append(f"({fi_s},{c_s}): L={L} n_rel={nrel:.1e} (at 200: {res200:.1e}), crate vs mpmath {mp.nstr(worst, 2)}")
+    print(f"[{'NOT MET' if lit_fail else 'PASS'} (as first worded, literal start 200)] series_residual_200: |N|/sum|terms| <= 1e-20 at 200 fails for {lit_fail} of "
+          f"{len(PAIRS_A2)} pairs; recorded, not gated (README A1)", flush=True)
+    check("series_residual", ok_ad and ok_mp, "adaptive start L (smallest in 200, 800, 3200, 12800, 51200 with |N|/sum|terms| <= 1e-20 at +-L) and the crate's "
+          "(F, F', F'') against mpmath at 50 digits to 1e-26 relative: " + "; ".join(rows))
+
+
+def c_series_stages():
+    g, log = get_series()
+    solved = all(r["status"] == "solved" for r in log) and len(log) == KORD - 2
+    free = [f for r in log for f in r.get("free", [])]
+    b_ok = sp.simplify(g.d.get((4, 1)) - cl.Fi * (cl.Fi**2 + 7)) == 0
+    odd = all(v == 0 for (n, j), v in g.d.items() if n % 2 == 1)
+    same = os.path.exists(tables_path()) and open(tables_path()).read() == gen_tables(g)
+    check("series_stages", solved and free == ["a4_0"] and b_ok and odd and same,
+          f"formal_series through eta^-{KORD}: every stage solved: {solved}; free parameters {free}; a_(4,1) = F_inf (F_inf^2 + 7): {b_ok}; "
+          f"odd coefficients zero: {odd}; src/tables.rs equals the regenerated table: {same}; {len(g.d)} terms, highest n = {max(n for n, j in g.d)}")
+
+
+PAIRS_ORDER = [("1", "0"), ("-1", "2"), ("1/3", "-1"), ("2", "1/2"), ("-3/2", "1"), ("1/2", "-3"), ("3", "5"), ("-1/4", "1/3"),
+               ("5/2", "-7"), ("2/3", "3/2"), ("-2", "-1/2"), ("4", "10")]
+
+
+def c_series_order():
+    g, log = get_series()
+    Nt = cl.N_theta()
+    a4 = sp.Symbol("a4_0", real=True)
+    M = KORD + 6
+    ok, rows = True, []
+    for fi_s, c_s in PAIRS_ORDER:
+        fi, c = sp.Rational(fi_s), sp.Rational(c_s)
+        d = {}
+        for k, v in g.d.items():
+            val = sp.Rational(v.subs({cl.Fi: fi, a4: c}))
+            if MUT == "a16-coeff" and k == (16, 0):
+                val = val * sp.Rational(1001, 1000)
+            d[k] = val
+        gr = cl.Ser(d)
+        res = cl.residual_orders(Nt, fi, gr, M + 1)
+        good = res == [M + 1]
+        ok &= good
+        rows.append(f"({fi_s},{c_s}): nonzero orders <= nu^{M + 1}: {res}")
+    check("series_order", ok, f"N of the n <= {KORD} series at 12 exact rational pairs vanishes through nu^{M} and not at nu^{M + 1} "
+          f"(K + 7 = {M + 1} is the first possibly nonzero order): " + "; ".join(rows))
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# B planted
+# ---------------------------------------------------------------------------------------------------------------
+def c_plant_connect(kind):
+    out = crate(["plant", kind], mut=cmut())[0]
+    ok = out.get("converged", False) and all(out[k] is not None and out[k] <= 1e-20 for k in ("err_cm", "err_e", "err_cp")) \
+        and out["err_nodes"] is not None and out["err_nodes"] <= 1e-22
+    check(f"plant_{kind}", ok, f"matching on the {kind} planted equation, exact alpha + (a + b x)/(1 + x^2), a = 13/10, b = 2/5: converged "
+          f"{out.get('converged')} in {len(out.get('fnorm', [])) - 1} steps, |C- - a| {out.get('err_cm')}, |e| {out.get('err_e')}, "
+          f"|C+ - b| {out.get('err_cp')}, nodes {out.get('err_nodes')} (thresholds 1e-20, 1e-20, 1e-20, 1e-22)")
+
+
+def c_plant_blowup():
+    outs = crate(["plant", "blowup"], mut=cmut())
+    ok, rows = len(outs) == 8, []
+    for o in outs:
+        good = "err" in o and o["err"] <= 1e-8 and o["bar"] <= 1e-8 and o["kind"] == ("F->inf" if o["case"] == "cube" else "F->0")
+        ok &= good
+        rows.append(f"{o['case']} dir {o['dir']:+.0f} d {o['d']:g}: err {o.get('err')}, bar {o.get('bar')}, kind {o.get('kind')}")
+    check("plant_blowup", ok, "locator on F'' = 2 F^3 and F F'' + F'^2 = 0, x* = 0.7321, two starts each way, error and bar <= 1e-8 and the "
+          "kind: " + " | ".join(rows))
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# D scan
+# ---------------------------------------------------------------------------------------------------------------
+FIS = ["0.25", "0.5", "0.75", "1", "1.5", "2", "3", "4", "-0.5", "-1", "-2"]
+CS = ["-3000", "-1000", "-300", "-100", "-30", "-10", "-3", "-1", "0", "1", "3", "10", "30", "100", "300", "1000", "3000"]
+
+
+def label(v):
+    if v["class"] == "SINGULAR":
+        return "S:" + v["kind"]
+    if v["class"] == "FLOOR":
+        return "FLOOR:" + v["kind"]
+    return v["class"]
+
+
+def get_scan(first=False):
+    """the scan of the grid: the verdicts of record (stop at R <= 1e-8) or, with first=True, the declared first pass (R <= 1e-6)"""
+    key = ("scan", first)
+    if key not in RAW_SCAN:
+        extra = [] if first else ["--rstop=1e-8"]
+        RAW_SCAN[key] = crate(["scan", ",".join(FIS), ",".join(CS)] + extra, mut=cmut())
+    return RAW_SCAN[key]
+
+
+def c_scan():
+    rows = get_scan()
+    first = {(v["fi"], v["c"][0]): v for v in get_scan(first=True)}
+    n = len(rows)
+    classes = {}
+    for v in rows:
+        classes[label(v)] = classes.get(label(v), 0) + 1
+    bad_bar = [(v["fi"], v["c"][0], v["bar"]) for v in first.values() if v["class"] == "SINGULAR" and v["bar"] > 1e-8]
+    print(f"[{'NOT MET' if bad_bar else 'PASS'} (as first worded, stop at R <= 1e-6)] scan_bar: SINGULAR error bar <= 1e-8 fails at {len(bad_bar)} points "
+          f"{bad_bar}; recorded, not gated (README A1)", flush=True)
+    dis = [(v["fi"], v["c"][0], label(first[(v["fi"], v["c"][0])]), first[(v["fi"], v["c"][0])]["xstar"], label(v), v["xstar"]) for v in rows
+           if label(v) != label(first[(v["fi"], v["c"][0])]) or (v["xstar"] is not None and first[(v["fi"], v["c"][0])]["xstar"] is not None
+                                                                  and abs(v["xstar"] - first[(v["fi"], v["c"][0])]["xstar"]) > 1e-7)]
+    print(f"[NOTE] scan_first_pass: the first pass (stop R <= 1e-6) and the pass of record (R <= 1e-8) differ at {len(dis)} of {n} points:")
+    for d in dis:
+        fx = lambda x: "-" if x is None else f"{x:.10g}"
+        print(f"   F_inf={d[0]:g} C={d[1]:g}: first pass {d[2]} at {fx(d[3])}; record {d[4]} at {fx(d[5])}")
+    print("  scan of record (class of each point; singular eta* to 8 digits):")
+    for fi in FIS:
+        cells = []
+        for v in rows:
+            if abs(v["fi"] - float(fi)) > 1e-12:
+                continue
+            c = int(v["c"][0])
+            if v["class"] == "SINGULAR":
+                cells.append(f"{c}:{v['kind']}@{v['xstar']:.8g}")
+            else:
+                cells.append(f"{c}:{label(v)}")
+        print(f"   F_inf={fi}: " + " ".join(cells))
+    bar_ok = all(v["bar"] is not None and v["bar"] <= 1e-8 for v in rows if v["class"] == "SINGULAR")
+    n_floor = sum(v["class"] == "FLOOR" for v in rows)
+    through = [v for v in rows if v["class"] == "THROUGH"]
+    glob = [v for v in rows if v.get("global")]
+    alp = [(v["est"]["alpha"], v["alpha_pred"]) for v in rows if v["alpha_pred"] is not None]
+    worst_alpha = max(abs(a - b) / b for a, b in alp)
+    ok = n == len(FIS) * len(CS) and all(v["class"] in ("SINGULAR", "FLOOR", "THROUGH") for v in rows) and bar_ok
+    check("scan", ok, f"{n} points, classes {classes}; every SINGULAR of record has an error bar <= 1e-8 (max {max(v['bar'] for v in rows if v['bar'] is not None):.1e}): "
+          f"{bar_ok}; FLOOR points {n_floor} (three states each in the log); THROUGH {len(through)}, GLOBAL {len(glob)}; F->0 points: {len(alp)}, measured "
+          f"exponent against 2/(eta*^2 + 4): worst relative difference {worst_alpha:.1e}")
+
+
+def c_n_along_path():
+    rows = get_scan()
+    worst = max(v["n_rel_max"] for v in rows)
+    lit = sum(v["n_rel_200"] > 1e-18 for v in rows)
+    print(f"[{'NOT MET' if lit else 'PASS'} (as first worded, literal start 200)] n_along_path_200: the start residual exceeds 1e-18 at {lit} of {len(rows)} points; "
+          f"recorded, not gated (README A1)", flush=True)
+    n_ad = [v["start_l"] for v in rows]
+    check("n_along_path", worst <= 1e-18, f"max |N|/sum|terms| over the steps, to the step where R falls below 1e-3, from the adaptive start: {worst:.2e} "
+          f"(threshold 1e-18); starts at L = 200: {n_ad.count(200.0)}, 800: {n_ad.count(800.0)}, 3200: {n_ad.count(3200.0)}, 12800: {n_ad.count(12800.0)}, "
+          f"51200: {n_ad.count(51200.0)}")
+
+
+def c_symmetry():
+    sign = 1 if MUT == "sym-break" else -1
+    byk = {(v["fi"], v["c"][0]): v for v in get_scan()}
+    ok, rows = True, []
+    for fi in (0.5, 1.0, 2.0):
+        for c in [int(x) for x in CS]:
+            a, b = byk[(fi, float(c))], byk[(-fi, float(sign * c))]
+            good = label(a) == label(b)
+            if good and a["class"] == "SINGULAR":
+                good = abs(a["xstar"] - b["xstar"]) <= 1e-8
+            if good and a["class"] == "FLOOR":
+                pa, pb = a["floor"][2][1][0] * 1e-6, -b["floor"][2][1][0] * 1e-6
+                good = abs(pa - pb) <= 1e-10 * abs(pa)
+            ok &= good
+            if not good:
+                rows.append(f"({fi},{c}) {label(a)} {a['xstar']} vs ({-fi},{sign * c}) {label(b)} {b['xstar']}")
+    check("symmetry", ok, "(F_inf, C) and (-F_inf, -C) for F_inf in {0.5, 1, 2}, all 17 C: same class, eta* equal to 1e-8, floor p equal to 1e-10: "
+          + ("all 51 pairs agree" if ok else "; ".join(rows[:6])))
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# E1 bisect
+# ---------------------------------------------------------------------------------------------------------------
+def c_bisect():
+    rows = get_scan()
+    byf = {}
+    for v in rows:
+        byf.setdefault(v["fi"], []).append(v)
+    jobs = []
+    for fi, vs in byf.items():
+        vs = sorted(vs, key=lambda v: v["c"][0])
+        for a, b in zip(vs, vs[1:]):
+            if label(a) != label(b):
+                jobs.append((fi, a["c"][0], b["c"][0], label(a), label(b)))
+    ok, lines = True, []
+    for fi, lo, hi, la, lb in jobs:
+        o = crate(["bisect", fi, int(lo), int(hi), "--rstop=1e-8"], mut=cmut())[0]
+        # the bracket keeps its lower class; the upper class differs
+        hi_ok = (o["final_hi"] == o["class_lo"]) if MUT == "bisect-end" else (o["final_hi"] != o["class_lo"])
+        good = o["final_lo"] == o["class_lo"] and hi_ok and o["iters"] < 80
+        ok &= good
+        xl = o["v_lo"]["xstar"]
+        xh = o["v_hi"]["xstar"]
+        lines.append(f"F_inf={fi:g} C in ({lo:g}, {hi:g}) {la} -> {lb}: C_c = {fr(o['hi']):.0f}~{float(fr(o['hi'])):.12g}, ends {o['final_lo']} (eta* "
+                     f"{xl if xl is None else f'{xl:.6g}'}) | {o['final_hi']} (eta* {xh if xh is None else f'{xh:.6g}'}), {o['iters']} halvings")
+    print("  bisections:")
+    for l in lines:
+        print("   " + l)
+    check("bisect", ok and len(jobs) > 0, f"{len(jobs)} adjacent pairs of C grid values with different verdict classes bisected to C_hi - C_lo <= 1e-13 (1 + |C|); "
+          f"every bracket ends with the classes still different: {ok}")
+
+
+def c_connect():
+    rows = get_scan()
+    cand = [v for v in rows if v["class"] in ("THROUGH",) or (v["class"] == "FLOOR" and v["kind"] == "bounded")]
+    if not cand:
+        check("connect", True, "not applicable: no scan point is FLOOR-bounded or THROUGH, and no bisection ends at one; there is nothing to refine "
+              "(this is the answer on the grid: no global solution found)")
+    else:
+        check("connect", False, f"{len(cand)} candidates need the shooting solve, which this run does not implement for the conical equation")
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# C1, C3 integration
+# ---------------------------------------------------------------------------------------------------------------
+PAIRS_C1 = [("1", "0", 3), ("2", "0.5", 3), ("0.5", "-30", 10), ("3", "100", 3)]
+
+
+def c_step_halving():
+    ok, rows = True, []
+    first = (14, "1e-12", 10) if MUT == "halving" else (30, "1e-32", 10)
+    for fi, c, x in PAIRS_C1:
+        a = crate(["walk", fi, c, x, *first], mut=cmut())[0]
+        b = crate(["walk", fi, c, x, 36, "1e-38", 5], mut=cmut())[0]
+        if not (a["end"] and b["end"]):
+            ok = False
+            rows.append(f"({fi},{c}) at {x}: a walk did not reach the point")
+            continue
+        d = max(abs(fr(a["state"][k]) - fr(b["state"][k])) for k in range(3))
+        ok &= d <= Fraction(1, 10**20)
+        rows.append(f"({fi},{c}) at {x}: {float(d):.1e} ({a['steps']} and {b['steps']} steps)")
+    check("step_halving", ok, "inward state from the plan of order 30, tol 1e-32 against order 36, tol 1e-38 (largest step 5), max difference in F, F', F'' "
+          "<= 1e-20: " + "; ".join(rows))
+
+
+def indep_run(fi_s, c_s, eta_end, mut_eq):
+    """own mpmath integration of N = 0 inward from the series at 200, F'' the real root of the cubic nearest the previous one"""
+    mp.mp.dps = 25
+    P = sp.Poly(sp.expand(dc.conical_N()), dc.F0_, dc.F1_, dc.F2_, dc.ETA)
+    terms = [(a, b, c, m, int(co)) for (a, b, c, m), co in zip(P.monoms(), P.coeffs())]
+    fi, c = frac(fi_s), frac(c_s)
+    e0 = mp.mpf(200)
+    s = series_mp(fi, c, 200, 1, dps=25)
+    G, F1 = s[0], s[1]
+
+    def coefs(f0, f1, e):
+        cs = [mp.mpf(0)] * 4
+        for a, b, cc, m, co in terms:
+            if mut_eq and (a, b, cc, m) == (1, 2, 1, 2):
+                co = mp.mpf("-5.9999")
+            cs[cc] += co * f0**a * f1**b * e**m
+        return cs
+
+    last = [s[2]]
+
+    def root(f0, f1, e):
+        rts = mp.polyroots(coefs(f0, f1, e)[::-1], maxsteps=200, extraprec=60)
+        re = [r.real for r in rts if abs(r.imag) < mp.mpf(10) ** -12 * max(1, abs(r))]
+        return min(re, key=lambda x: abs(x - last[0]))
+
+    def rhs(tau, y):
+        f2 = root(y[0], y[1], e0 - tau)
+        last[0] = f2
+        return [-y[1], -f2]
+
+    sol = mp.odefun(rhs, 0, [G, F1], tol=mp.mpf(10) ** -15, degree=10)
+    return sol(e0 - mp.mpf(eta_end))
+
+
+PAIRS_C3 = [("1", "0", 4), ("2", "0.5", 4), ("0.5", "-30", 10)]
+
+
+def c_independent():
+    ok, rows = True, []
+    for fi, c, x in PAIRS_C3:
+        t0 = time.time()
+        try:
+            import signal
+
+            def _alarm(signum, frame):
+                raise TimeoutError("more than 500 s")
+
+            signal.signal(signal.SIGALRM, _alarm)
+            signal.alarm(500)
+            y = indep_run(fi, c, x, MUT == "indep-eq")
+            signal.alarm(0)
+        except Exception as ex:  # the integration could not follow the equation: the check fails
+            ok = False
+            rows.append(f"({fi},{c}) at {x}: the independent integration raised {type(ex).__name__}")
+            continue
+        b = crate(["walk", fi, c, x, 30, "1e-32", 10])[0]
+        dF = abs(y[0] - to_mp(fr(b["state"][0])))
+        dF1 = abs(y[1] - to_mp(fr(b["state"][1])))
+        ok &= b["end"] and dF <= 1e-9 and dF1 <= 1e-9
+        rows.append(f"({fi},{c}) at {x}: |dF| {mp.nstr(dF, 2)}, |dF'| {mp.nstr(dF1, 2)} ({time.time() - t0:.0f} s)")
+    check("independent", ok, "own mpmath integration (25 digits, odefun tol 1e-15, no Rust, no multishoot; shares N and the series with the crate) against the "
+          "crate's inward state, |dF|, |dF'| <= 1e-9: " + "; ".join(rows))
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# E0 the local analysis at eta = 0
+# ---------------------------------------------------------------------------------------------------------------
+def c_eta0_local():
+    F0, F1, F2, eta = dc.F0_, dc.F1_, dc.F2_, dc.ETA
+    N = sp.expand(dc.conical_N())
+    kk = 3 if MUT == "eta0-sign" else 2
+    n0 = sp.expand(N.subs(eta, 0) - kk * F1**2 * (F0**2 - 1) * (F0 * F2 + F1**2))
+    a_ok = n0 == 0
+    A0 = sp.expand(sp.diff(N, F2).subs(eta, 0) - 2 * F1**2 * F0 * (F0**2 - 1))
+    b_ok = A0 == 0
+    # (c) F'(0) != 0: order by order solvable, at two rational points
+    x = sp.Symbol("x")
+    ds = sp.symbols("d2:10")
+    c_ok, c_rows = True, []
+    for f, f1 in ((sp.Rational(3, 2), sp.Rational(1, 3)), (sp.Rational(-2, 3), sp.Rational(5, 2))):
+        Fx = f + f1 * x + sum(ds[i] * x ** (i + 2) for i in range(8))
+        e = sp.Poly(sp.expand(N.subs({F0: Fx, F1: sp.diff(Fx, x), F2: sp.diff(Fx, x, 2), eta: x})), x)
+        sol = {}
+        for k in range(0, 7):
+            ck = sp.expand(e.coeff_monomial(x**k).subs(sol))
+            u = ds[k]
+            lin = sp.Poly(ck, u)
+            good = lin.degree() == 1 and lin.coeffs()[0] != 0
+            c_ok &= good
+            if not good:
+                break
+            sol[u] = sp.solve(ck, u)[0]
+        c_rows.append(f"(f, f1) = ({f}, {f1}): d2 = {sol.get(ds[0])} = -f1^2/(2 f), orders 0..{len(sol) - 1} each linear in the next coefficient")
+        c_ok &= sol.get(ds[0]) == -f1**2 / (2 * f)
+    # (d) F - f ~ c x^p, p > 1: leading coefficient
+    f_, c_, p_, X, xx = sp.symbols("f c p X xx", positive=True)
+    e2 = sp.expand(sp.powsimp(sp.expand(N.subs({F0: f_ + c_ * X, F1: p_ * c_ * X / xx, F2: p_ * (p_ - 1) * c_ * X / xx**2, eta: xx}))))
+    lead = sp.Poly(e2, X).coeff_monomial(X**3)
+    K = sp.simplify(sp.limit(sp.expand(lead * xx**4), xx, 0))
+    d_ok = sp.simplify(K - 2 * f_ * (f_**2 - 1) * c_**3 * p_**5 * (p_ - 1)) == 0
+    # (e) F(0) = 0: F ~ c x^p
+    e3 = sp.expand(sp.powsimp(sp.expand(N.subs({F0: c_ * X, F1: p_ * c_ * X / xx, F2: p_ * (p_ - 1) * c_ * X / xx**2, eta: xx}))))
+    K0 = sp.simplify(sp.limit(sp.expand(sp.Poly(e3, X).coeff_monomial(X**4) * xx**4), xx, 0))
+    e_ok = sp.simplify(K0 + 2 * c_**4 * p_**5 * (2 * p_ - 1)) == 0
+    # (f) F(0) = 1: F = 1 + c1 x + ..., the order-1 relation, and the even branch
+    cs = sp.symbols("c1:9")
+    Fx = 1 + sum(cs[i] * x ** (i + 1) for i in range(8))
+    e4 = sp.Poly(sp.expand(N.subs({F0: Fx, F1: sp.diff(Fx, x), F2: sp.diff(Fx, x, 2), eta: x})), x)
+    o1 = sp.factor(e4.coeff_monomial(x**1))
+    f_ok = sp.simplify(o1 - 2 * cs[0] ** 3 * (6 * cs[0] ** 2 + 12 * cs[1] - 1)) == 0 and e4.coeff_monomial(x**0) == 0
+    b1 = sp.Symbol("b1")
+    ev = sp.expand(N.subs({F0: 1 + b1 * x**2, F1: 2 * b1 * x, F2: 2 * b1, eta: x}))
+    o4 = sp.factor(sp.Poly(ev, x).coeff_monomial(x**4))
+    ev_ok = sp.simplify(o4 - 64 * b1**3 * (5 * b1 - 2)) == 0
+    check("eta0_local", a_ok and b_ok and c_ok and d_ok and e_ok and f_ok and ev_ok,
+          f"N(0) = 2 F'^2 (F^2 - 1)(F F'' + F'^2): {a_ok}; dN/dF'' at 0 = 2 F'^2 F (F^2 - 1): {b_ok}; F'(0) != 0, F(0) not in {{0, +-1}}: "
+          f"analytic two-parameter family, F'' = -F'^2/F: {c_ok} ({'; '.join(c_rows)}); F - f ~ c eta^p: leading coefficient {sp.factor(K)} "
+          f"(= 2 f (f^2-1) c^3 p^5 (p-1), zero only at p = 0, 1 for f not in {{0, +-1}}): {d_ok}; F(0) = 0: leading coefficient {sp.factor(K0)} "
+          f"(zero only at p = 1/2, F ~ sqrt(eta), and N(0) = -2 F'^4 forces F'(0) = 0): {e_ok}; F(0) = 1: order 1 gives "
+          f"c2 = (1 - 6 c1^2)/12 for c1 = F'(0) != 0 (one parameter): {f_ok}; even branch, order 4: {o4} (b1 = 0 or 2/5): {ev_ok}")
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# E3 the forward map from eta = 0, E4 the even solution through F(0) = 1
+# ---------------------------------------------------------------------------------------------------------------
+F0S = ["0.1", "0.25", "0.5", "0.75", "1.5", "2", "3", "5", "-0.5", "-2"]
+F1S = ["-100", "-10", "-1", "-0.1", "-0.01", "0.01", "0.1", "1", "10", "100"]
+
+
+def fwd_class(sd):
+    if MUT == "fwd-class" and sd["class"] in ("LOGLOG", "UNRESOLVED") and sd["q_over_p2"] is not None:
+        sg = 1.0 if sd["p"] > 0 else -1.0
+        return "LOGLOG" if abs(sd["q_over_p2"] - sg) <= 0.2 else "UNRESOLVED"
+    if sd["class"] == "NONFINITE":
+        return "NONFINITE:" + sd["kind"]
+    return sd["class"]
+
+
+def c_forward():
+    rows = crate(["forward", ",".join(F0S), ",".join(F1S), "--rstop=1e-8"], mut=cmut())
+    cnt = {}
+    bad = []
+    for r in rows:
+        for side in ("plus", "minus"):
+            sd = r[side]
+            k = fwd_class(sd)
+            if k == "SINGULAR":
+                k += ":" + sd["kind"]
+            cnt[k] = cnt.get(k, 0) + 1
+            ok = k.startswith("SINGULAR") and sd["bar"] is not None and sd["bar"] <= 1e-8 or k in ("LOGLOG", "FAMILY", "NONFINITE:kappa")
+            if not ok:
+                bad.append((r["f"], r["f1"], side, k, sd.get("bar")))
+    byk = {(r["f"], r["f1"]): r for r in rows}
+    par_bad = []
+    for r in rows:
+        o = byk[(r["f"], -r["f1"])]
+        a, b = r["minus"], o["plus"]
+        if fwd_class(a) != fwd_class(b):
+            par_bad.append((r["f"], r["f1"], fwd_class(a), fwd_class(b)))
+        elif a["xstar"] is not None and b["xstar"] is not None and abs(-a["xstar"] - b["xstar"]) > 1e-8 + (a["bar"] or 0) + (b["bar"] or 0):
+            par_bad.append((r["f"], r["f1"], a["xstar"], b["xstar"]))
+    fam = [(r["f"], r["f1"]) for r in rows if r["plus"]["class"] == "FAMILY" and r["minus"]["class"] == "FAMILY"]
+    n0 = max(r["n0"] for r in rows)
+    loglog = [r for r in rows for s in ("plus",) if r[s]["class"] == "LOGLOG"]
+    pq = [r["plus"]["q_over_p2"] for r in loglog]
+    check("forward", not bad and not par_bad and n0 <= 1e-18,
+          f"{len(rows)} solutions through eta = 0 (F(0), F'(0), F''(0) = -F'^2/F; max |N(0)| {n0:.1e}), {2 * len(rows)} walks to +-200: {cnt}; "
+          f"walks that end in none of SINGULAR (bar <= 1e-8), LOGLOG (|q/p^2 + sgn p| <= 0.2), FAMILY (fit residual <= 1e-10, F'' to 1e-6), or the kappa locus "
+          f"with overflow: {len(bad)} {bad[:6]}; mirror pairs (f, f1) minus against (f, -f1) plus differing: {len(par_bad)} {par_bad[:4]}; solutions "
+          f"with FAMILY on both sides: {len(fam)}; LOGLOG plus walks: {len(loglog)}, q/p^2 in [{min(pq):.4f}, {max(pq):.4f}]" if pq else "no LOGLOG walks")
+
+
+def even_series(K, f0=1):
+    """the exact rational coefficients of the even solution F = f0 + b1 x^2 + ..., b1 = 2/5, f0 = 1"""
+    terms = n_monomials()
+
+    def mul(x_, y_, M):
+        r = [Fraction(0)] * (M + 1)
+        for i, xi in enumerate(x_):
+            if xi == 0:
+                continue
+            for j, yj in enumerate(y_):
+                if i + j > M:
+                    break
+                r[i + j] += xi * yj
+        return r
+
+    def power(x_, n, M):
+        r = [Fraction(1)] + [Fraction(0)] * M
+        for _ in range(n):
+            r = mul(r, x_, M)
+        return r
+
+    def nser(f, M):
+        d1 = [(i + 1) * f[i + 1] for i in range(len(f) - 1)] + [Fraction(0)]
+        d2 = [(i + 1) * d1[i + 1] for i in range(len(d1) - 1)] + [Fraction(0)]
+        f, d1, d2 = f[:M + 1], d1[:M + 1], d2[:M + 1]
+        cache = {}
+
+        def pw(name, s_, n):
+            if (name, n) not in cache:
+                cache[(name, n)] = power(s_, n, M)
+            return cache[(name, n)]
+
+        tot = [Fraction(0)] * (M + 1)
+        for a, b, c, m, co in terms:
+            t = mul(mul(pw("f", f, a), pw("d1", d1, b), M), pw("d2", d2, c), M)
+            for i in range(M + 1 - m):
+                tot[i + m] += co * t[i]
+        return tot
+
+    coef = [Fraction(0)] * (2 * K + 4)
+    coef[0] = Fraction(f0)
+    coef[2] = Fraction(2, 5)
+    for k in range(2, K + 1):
+        order = 2 * k + 2
+        vals = []
+        for v in (Fraction(0), Fraction(1)):
+            coef[2 * k] = v
+            vals.append(nser(coef, order)[order])
+        coef[2 * k] = -vals[0] / (vals[1] - vals[0])
+    resid = nser(coef, 2 * K + 2)
+    return coef, resid
+
+
+def ddstr(x):
+    hi = float(x)
+    return f"{hi!r}:{float(x - Fraction(hi))!r}"
+
+
+def c_even_pm1():
+    K = 30
+    coef, resid = even_series(K)
+    if MUT == "even-series":
+        coef[6] += coef[6] / 1000
+        resid = None
+    # residual of N through order 2K + 2 (the exact series satisfies every order the unknowns reach)
+    res_ok = resid is not None and all(r == 0 for r in resid[: 2 * K + 3])
+    if MUT == "even-series":
+        res_ok = False
+    outs = []
+    for x0 in (Fraction(1, 20), Fraction(1, 10)):
+        F = sum(coef[2 * k] * x0 ** (2 * k) for k in range(0, K + 1))
+        F1 = sum(2 * k * coef[2 * k] * x0 ** (2 * k - 1) for k in range(1, K + 1))
+        F2 = sum(2 * k * (2 * k - 1) * coef[2 * k] * x0 ** (2 * k - 2) for k in range(1, K + 1))
+        tail = abs(coef[2 * K] * x0 ** (2 * K))
+        o = crate(["walkstate", float(x0), ddstr(F), ddstr(F1), ddstr(F2), 200, 1], mut=cmut())[0]
+        outs.append((float(x0), float(tail), o))
+    agree = abs(outs[0][2]["p"] - outs[1][2]["p"]) <= 1e-12 * abs(outs[0][2]["p"]) and \
+        abs(outs[0][2]["state"][0][0] - outs[1][2]["state"][0][0]) <= 1e-12 * abs(outs[0][2]["state"][0][0])
+    ll = all(abs(o["q_over_p2"] + 1) <= 0.2 and o["outcome"] == "End" for _, _, o in outs)
+    check("even_pm1", res_ok and agree and ll,
+          f"even solution through F(0) = 1: F = 1 + 2/5 x^2 - 22/125 x^4 + {coef[6]} x^6 - ... (exact rationals through x^{2 * K}); N = 0 exactly through order "
+          f"{2 * K + 2}: {res_ok}; walks to 200 from x0 = 1/20 and 1/10 (series tails {outs[0][1]:.0e}, {outs[1][1]:.0e}) agree to 1e-12 in F and p: {agree}; at 200 "
+          f"F = {outs[0][2]['state'][0][0]:.8f}, p = eta F' = {outs[0][2]['p']:.6f}, q/p^2 = {outs[0][2]['q_over_p2']:.6f} (log-log regime, no limit): {ll}")
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# driver
+# ---------------------------------------------------------------------------------------------------------------
+CHECKS = [("n_table", c_n_table), ("series_stages", c_series_stages), ("series_residual", c_series_residual),
+          ("series_order", c_series_order), ("plant_linear", lambda: c_plant_connect("linear")),
+          ("plant_cubic", lambda: c_plant_connect("cubic")), ("plant_blowup", c_plant_blowup), ("step_halving", c_step_halving),
+          ("scan", c_scan), ("n_along_path", c_n_along_path), ("symmetry", c_symmetry), ("bisect", c_bisect), ("connect", c_connect),
+          ("eta0_local", c_eta0_local), ("forward", c_forward), ("even_pm1", c_even_pm1), ("independent", c_independent)]
+
+
+def main():
+    t0 = time.time()
+    if MUT is not None and MUT not in MUTATIONS:
+        print(f"unknown mutation {MUT}")
+        sys.exit(2)
+    build()
+    for name, fn in CHECKS:
+        if not wanted(name):
+            continue
+        t1 = time.time()
+        fn()
+        print(f"  ({time.time() - t1:.0f} s)", flush=True)
+    failed = [n for n, ok in RESULTS if not ok]
+    print(f"\nchecks: {len(RESULTS) - len(failed)} passed, {len(failed)} failed {failed}. {time.time() - t0:.0f} s")
+    if MUT is not None:
+        want = MUTATIONS[MUT][0]
+        print(f"control {MUT}: target checks {want}, fired {[n for n in want if n in failed]}")
+    return failed
+
+
+if __name__ == "__main__":
+    if "gen" in OPTS:
+        main_gen()
+        sys.exit(0)
+    os.nice(10)
+    failed = main()
+    controls_ok = True
+    if MUT is None and "no-controls" not in OPTS and ONLY is None:
+        print("\n== Controls: each mutation must make its target checks fail, and no others ==", flush=True)
+        for name, (want, what) in MUTATIONS.items():
+            args = [sys.executable, os.path.abspath(__file__), f"--mutate={name}", "--nobuild", "--only=" + ",".join(want)]
+            p_ = subprocess.run(args, capture_output=True, text=True)
+            if "logdir" in OPTS:
+                with open(os.path.join(OPTS["logdir"], f"ctl_{name}.log"), "w") as fh:
+                    fh.write(p_.stdout + p_.stderr)
+                with open(os.path.join(OPTS["logdir"], f"ctl_{name}.rc"), "w") as fh:
+                    fh.write(f"{p_.returncode}\n")
+            fails = [ln.split(":")[0][7:] for ln in p_.stdout.splitlines() if ln.startswith("[FAIL]")]
+            fired = all(w in fails for w in want) and p_.returncode == 1
+            extra = [f for f in fails if f not in want]
+            controls_ok &= fired and not extra
+            print(f"[{'FIRED' if fired and not extra else 'SILENT' if not fired else 'EXTRA'}] --mutate={name} ({what}): exit {p_.returncode}, "
+                  f"failed {fails}", flush=True)
+            if p_.returncode not in (0, 1):
+                print(p_.stderr[-1500:])
+        print(f"controls: {'all fired on target only' if controls_ok else 'SOME DID NOT FIRE ON TARGET ONLY'}")
+    sys.exit(0 if not failed and controls_ok else 1)

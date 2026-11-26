@@ -1,5 +1,5 @@
 //! The verdict of one (F_inf, C): the inward walk from eta = +200, and the bisection in C between verdict classes.
-use crate::model::{conical, end_state, Mutation};
+use crate::model::{conical, end_state, end_state_at, Mutation};
 use crate::poly::{abs_dd, PolyN};
 use crate::walk::{walk, Est, Outcome, Walk, WalkOpts, S3};
 use multishoot::lane::DV;
@@ -40,6 +40,9 @@ pub struct Verdict {
     pub n_rel_max: f64,
     /// theoretical exponent 2/(x*^2 + 4) for kind F->0
     pub alpha_pred: Option<f64>,
+    pub start_l: f64,
+    pub n_rel_start: f64,
+    pub n_rel_200: f64,
 }
 
 pub fn lane0(f: &Fl<DV, 1>) -> DD {
@@ -47,20 +50,60 @@ pub fn lane0(f: &Fl<DV, 1>) -> DD {
 }
 
 pub fn start_state(fi: f64, c: DD, m: &Mutation) -> S3 {
-    let s = end_state::<DV>(Fl::splat(DD::from_f64(fi)), Fl::splat(c), 1.0, m);
+    start_state_at(fi, c, LEND, m)
+}
+
+pub fn start_state_at(fi: f64, c: DD, l: f64, m: &Mutation) -> S3 {
+    let s = end_state_at::<DV>(Fl::splat(DD::from_f64(fi)), Fl::splat(c), 1.0, l, m);
     [lane0(&s[0]), lane0(&s[1]), lane0(&s[2])]
 }
 
+/// the start radii of the adaptive start: the smallest has series residual |N|/sum|terms| <= 1e-20
+pub const START_L: [f64; 5] = [200.0, 800.0, 3200.0, 12800.0, 51200.0];
+
+pub fn n_rel_state(p: &PolyN, s: &S3, x: f64) -> f64 {
+    let (v, sc) = p.eval(s[0], s[1], s[2], DD::from_f64(x));
+    if sc.hi == 0.0 {
+        0.0
+    } else {
+        (abs_dd(v) / sc).hi
+    }
+}
+
+/// (L, residual at L, residual at 200)
+pub fn adaptive_start(p: &PolyN, fi: f64, c: DD, m: &Mutation) -> (f64, f64, f64) {
+    let r200 = n_rel_state(p, &start_state_at(fi, c, 200.0, m), 200.0);
+    for &l in START_L.iter() {
+        let r = n_rel_state(p, &start_state_at(fi, c, l, m), l);
+        if r <= 1e-20 {
+            return (l, r, r200);
+        }
+    }
+    let l = *START_L.last().unwrap();
+    (l, n_rel_state(p, &start_state_at(fi, c, l, m), l), r200)
+}
+
 /// The kind label of a singular verdict, from the last state (x_last) and the locator's estimate (labels, not criteria):
-/// `F->0` if F vanishes at x* like Delta^alpha (alpha from the fit, 0 < alpha, and R F'/F = alpha to 10%); `F->inf` if
-/// |F| >= 1e3 max(1, |F_inf|); `a3->0` if the F''^3 coefficient's factor F^2 - x^2 - 1 is below 1e-3 of F^2 + x^2 + 1;
+/// `F->0` if F vanishes at x* like Delta^alpha (alpha from the fit, 0 < alpha, and |R F'/F| = alpha to 10%); `F->inf` if F
+/// diverges like Delta^alpha (alpha < 0, |R F'/F| = |alpha| to 10%) or |F| >= 1e3 max(1, |F_inf|); `fold` if the fitted alpha is
+/// 5/2 to 0.1 (F'' has a square-root branch point); `a3->0` if the F''^3 coefficient's factor F^2 - x^2 - 1 is below 1e-3 of F^2 + x^2 + 1;
 /// `fold` if dN/dF'' is below 1e-6 of the sum of its terms; otherwise `other`.
 pub fn conical_kind(p: &PolyN, s: &S3, x: f64, fi: f64, est: Option<&Est>) -> String {
     let (f, f1, f2) = (s[0].hi, s[1].hi, s[2].hi);
     if let Some(e) = est {
         let a = e.alpha();
-        if a > 0.0 && f != 0.0 && (e.r * f1 / f - a).abs() <= 0.1 * a {
-            return "F->0".into();
+        if f != 0.0 {
+            let t = (e.r * f1 / f).abs();
+            if a > 0.0 && (t - a).abs() <= 0.1 * a {
+                return "F->0".into();
+            }
+            if a < 0.0 && (t - a.abs()).abs() <= 0.1 * a.abs() {
+                return "F->inf".into();
+            }
+        }
+        // F'' ~ F''* + c Delta^(1/2) (a square-root branch point, dN/dF'' -> 0 on the branch): F ~ Delta^(5/2)
+        if (a - 2.5).abs() <= 0.1 {
+            return "fold".into();
         }
     }
     if f.abs() >= 1e3 * fi.abs().max(1.0) {
@@ -159,7 +202,8 @@ pub fn verdict(fi: f64, c: DD, m: &Mutation, opts: &WalkOpts) -> Verdict {
     let eq = conical(*m);
     let p = eq.n.clone();
     let g = DD::from_f64(fi);
-    let s0 = start_state(fi, c, m);
+    let (l0, r_start, r_200) = adaptive_start(&p, fi, c, m);
+    let s0 = start_state_at(fi, c, l0, m);
     let mut v = Verdict {
         fi,
         c,
@@ -176,9 +220,17 @@ pub fn verdict(fi: f64, c: DD, m: &Mutation, opts: &WalkOpts) -> Verdict {
         steps: 0,
         n_rel_max: 0.0,
         alpha_pred: None,
+        start_l: l0,
+        n_rel_start: r_start,
+        n_rel_200: r_200,
     };
-    let targets = [1e-2, 1e-4, ETA_MIN];
-    let (mut x, mut s) = (LEND, s0);
+    v.x_last = l0;
+    let mut targets: Vec<f64> = Vec::new();
+    if l0 > LEND {
+        targets.push(LEND);
+    }
+    targets.extend([1e-2, 1e-4, ETA_MIN]);
+    let (mut x, mut s) = (l0, s0);
     let mut nrel = 0.0f64;
     for &t in &targets {
         let w = walk(&eq, &p, s, x, t, g, opts);
@@ -188,7 +240,9 @@ pub fn verdict(fi: f64, c: DD, m: &Mutation, opts: &WalkOpts) -> Verdict {
             Outcome::End => {
                 x = t;
                 s = w.last().s;
-                v.floor.push(s);
+                if t < LEND {
+                    v.floor.push(s);
+                }
             }
             Outcome::Singular { xstar, bar, est, x_last } => {
                 v.class = "SINGULAR".into();
@@ -281,6 +335,10 @@ pub struct Side {
     pub fit: Option<(f64, f64)>,
     pub mismatch: f64,
     pub steps: usize,
+    /// p = |eta| F'(mirrored), q/p^2 with q = eta^2 F'' + p, and the relative F'' mismatch of the fitted series
+    pub p: f64,
+    pub q_over_p2: f64,
+    pub f2_rel: f64,
 }
 
 /// The solution through eta = 0 with F(0) = f, F'(0) = f1 and F''(0) = -f1^2/f (the root of N(0) = 0 for f^2 != 1),
@@ -295,15 +353,28 @@ pub fn forward(f: f64, f1: f64, m: &Mutation, opts: &WalkOpts) -> (Side, Side, f
     let side = |to: f64| -> Side {
         let sign = if to > 0.0 { 1.0 } else { -1.0 };
         let w = walk(&eq, &p, s0, 0.0, to, fd, opts);
-        let mut sd = Side { class: String::new(), kind: String::new(), xstar: None, bar: None, fit: None, mismatch: f64::NAN, steps: w.steps.len() };
+        let mut sd = Side { class: String::new(), kind: String::new(), xstar: None, bar: None, fit: None, mismatch: f64::NAN, steps: w.steps.len(), p: f64::NAN, q_over_p2: f64::NAN, f2_rel: f64::NAN };
         match &w.outcome {
             Outcome::End => {
                 let se = w.last().s;
-                sd.class = "LIMIT".into();
-                if let Some((fi, c)) = fit_end(&se, f, DD::ZERO, sign, m) {
+                let l = LEND;
+                let (f1m, f2m) = (se[1].hi * sign, se[2].hi);
+                let pp = l * f1m;
+                let qq = l * l * f2m + pp;
+                sd.p = pp;
+                sd.q_over_p2 = qq / (pp * pp);
+                sd.class = "UNRESOLVED".into();
+                if (qq + pp.signum() * pp * pp).abs() <= 0.2 * pp * pp && pp != 0.0 {
+                    sd.class = "LOGLOG".into();
+                } else if let Some((fi, c)) = fit_end(&se, f, DD::ZERO, sign, m) {
                     sd.fit = Some((fi.hi, c.hi));
                     let (_, mism) = fit_c_fixed_sign(&se, fi.hi, c, sign, m);
                     sd.mismatch = mism;
+                    let st = end_state::<DV>(Fl::splat(fi), Fl::splat(c), sign, m);
+                    sd.f2_rel = ((lane0(&st[2]) - se[2]) / se[2]).hi.abs();
+                    if mism <= 1e-10 && sd.f2_rel <= 1e-6 {
+                        sd.class = "FAMILY".into();
+                    }
                 }
             }
             Outcome::Singular { xstar, bar, est, x_last } => {
@@ -313,7 +384,13 @@ pub fn forward(f: f64, f1: f64, m: &Mutation, opts: &WalkOpts) -> (Side, Side, f
                 sd.kind = conical_kind(&p, &w.last().s, *x_last, f, Some(est));
             }
             Outcome::StepLimit => sd.class = "STEPLIMIT".into(),
-            Outcome::NonFinite { .. } => sd.class = "NONFINITE".into(),
+            Outcome::NonFinite { x } => {
+                let sl = w.last().s;
+                let r3 = (sl[0].hi * sl[0].hi - x * x - 1.0).abs() / (sl[0].hi * sl[0].hi + x * x + 1.0);
+                sd.class = "NONFINITE".into();
+                sd.kind = if r3 <= 1e-6 { "kappa".into() } else { "other".into() };
+                sd.xstar = Some(*x);
+            }
         }
         sd
     };

@@ -27,9 +27,13 @@ fn parse_dd(s: &str) -> DD {
 fn main() {
     let mut args: Vec<String> = std::env::args().skip(1).collect();
     let mut m = Mutation::default();
+    let mut rstop: Option<f64> = None;
     args.retain(|a| {
         if let Some(n) = a.strip_prefix("--mutate=") {
             m = Mutation::from_name(n).unwrap_or_else(|| panic!("unknown mutation {n}"));
+            false
+        } else if let Some(r) = a.strip_prefix("--rstop=") {
+            rstop = Some(r.parse().unwrap());
             false
         } else {
             true
@@ -38,6 +42,9 @@ fn main() {
     let cmd = args.first().cloned().unwrap_or_default();
     let mut opts = WalkOpts::standard();
     opts.flip_side = m.plant_locator;
+    if let Some(r) = rstop {
+        opts.rstop = r;
+    }
     match cmd.as_str() {
         "walk" => {
             let fi: f64 = args[1].parse().unwrap();
@@ -65,12 +72,13 @@ fn main() {
         "series" => {
             let fi = parse_dd(&args[1]);
             let c = parse_dd(&args[2]);
+            let l: f64 = args.get(3).map(|s| s.parse().unwrap()).unwrap_or(200.0);
             let p = conical_poly(&m);
             let mut out = Vec::new();
             for sign in [1.0, -1.0] {
-                let s = end_state::<DV>(Fl::splat(fi), Fl::splat(c), sign, &m);
+                let s = conical_global::model::end_state_at::<DV>(Fl::splat(fi), Fl::splat(c), sign, l, &m);
                 let st = [lane0(&s[0]), lane0(&s[1]), lane0(&s[2])];
-                let (v, sc) = p.eval(st[0], st[1], st[2], DD::from_f64(200.0 * sign));
+                let (v, sc) = p.eval(st[0], st[1], st[2], DD::from_f64(l * sign));
                 out.push(format!(
                     "{{\"sign\": {}, \"state\": {}, \"n\": {}, \"scale\": {}, \"n_rel\": {}}}",
                     sign,
@@ -94,9 +102,20 @@ fn main() {
         "scan" => {
             let fis: Vec<f64> = args[1].split(',').map(|s| s.parse().unwrap()).collect();
             let cs: Vec<DD> = args[2].split(',').map(parse_dd).collect();
+            let mut ref_opts = WalkOpts::standard();
+            ref_opts.flip_side = m.plant_locator;
+            ref_opts.rstop = 1e-8;
             for &fi in &fis {
                 for &c in &cs {
-                    println!("{}", json::verdict(&verdict(fi, c, &m, &opts)));
+                    let v = verdict(fi, c, &m, &opts);
+                    let refj = if v.class == "SINGULAR" && rstop.is_none() {
+                        let r = verdict(fi, c, &m, &ref_opts);
+                        format!("{{\"class\": \"{}\", \"kind\": \"{}\", \"xstar\": {}, \"bar\": {}, \"steps\": {}}}", r.class, r.kind, json::opt(r.xstar), json::opt(r.bar), r.steps)
+                    } else {
+                        "null".to_string()
+                    };
+                    let s = json::verdict(&v);
+                    println!("{}, \"ref\": {}}}", &s[..s.len() - 1], refj);
                 }
             }
         }
@@ -109,7 +128,7 @@ fn main() {
                     let (a, b, n0) = conical_global::scan::forward(f, f1, &m, &opts);
                     let sd = |s: &conical_global::scan::Side| {
                         let fit = s.fit.map(|(x, c)| format!("[{}, {}]", json::num(x), json::num(c))).unwrap_or("null".into());
-                        format!("{{\"class\": \"{}\", \"kind\": \"{}\", \"xstar\": {}, \"bar\": {}, \"fit\": {}, \"mismatch\": {}, \"steps\": {}}}", s.class, s.kind, json::opt(s.xstar), json::opt(s.bar), fit, json::num(s.mismatch), s.steps)
+                        format!("{{\"class\": \"{}\", \"kind\": \"{}\", \"xstar\": {}, \"bar\": {}, \"fit\": {}, \"mismatch\": {}, \"steps\": {}, \"p\": {}, \"q_over_p2\": {}, \"f2_rel\": {}}}", s.class, s.kind, json::opt(s.xstar), json::opt(s.bar), fit, json::num(s.mismatch), s.steps, json::num(s.p), json::num(s.q_over_p2), json::num(s.f2_rel))
                     };
                     println!("{{\"f\": {}, \"f1\": {}, \"n0\": {}, \"plus\": {}, \"minus\": {}}}", json::num(f), json::num(f1), json::num(n0), sd(&a), sd(&b));
                 }
@@ -123,6 +142,50 @@ fn main() {
             let s0 = [fd, f1d, -(f1d * f1d) / fd];
             let w = walk(&eq, &eq.n, s0, 0.0, x, fd, &opts);
             println!("{{\"outcome\": \"{:?}\", \"x\": {}, \"state\": {}, \"n_rel\": {}, \"steps\": {}}}", w.outcome, json::num(w.last().x), json::s3(&w.last().s), json::num(w.last().n_rel), w.steps.len());
+        }
+        "walkstate" => {
+            // walkstate X0 F F1 F2 X1 [FI]: states as hi:lo; a walk of the conical equation from x0 to x1
+            let pd = |s: &str| -> DD {
+                let (a, b) = s.split_once(':').unwrap();
+                DD { hi: a.parse().unwrap(), lo: b.parse().unwrap() }
+            };
+            let x0: f64 = args[1].parse().unwrap();
+            let s0 = [pd(&args[2]), pd(&args[3]), pd(&args[4])];
+            let x1: f64 = args[5].parse().unwrap();
+            let fi: f64 = args.get(6).map(|s| s.parse().unwrap()).unwrap_or(1.0);
+            let eq = conical(m);
+            let w = walk(&eq, &eq.n, s0, x0, x1, DD::from_f64(fi), &opts);
+            let last = w.last();
+            let (p, q) = (last.x * last.s[1].hi, last.x * last.x * last.s[2].hi + last.x * last.s[1].hi);
+            let sing = match &w.outcome {
+                Outcome::Singular { xstar, bar, est, x_last } => format!("{{\"xstar\": {}, \"bar\": {}, \"kind\": \"{}\"}}", json::num(*xstar), json::num(*bar), conical_kind(&eq.n, &last.s, *x_last, fi, Some(est))),
+                _ => "null".into(),
+            };
+            println!("{{\"outcome\": \"{}\", \"sing\": {}, \"x\": {}, \"state\": {}, \"p\": {}, \"q_over_p2\": {}, \"n_rel\": {}, \"steps\": {}}}", format!("{:?}", w.outcome).split(' ').next().unwrap(), sing, json::num(last.x), json::s3(&last.s), json::num(p), json::num(q / (p * p)), json::num(last.n_rel), w.steps.len());
+        }
+        "fwddiag" => {
+            let (f, f1, x1): (f64, f64, f64) = (args[1].parse().unwrap(), args[2].parse().unwrap(), args[3].parse().unwrap());
+            let eq = conical(m);
+            let (fd, f1d) = (DD::from_f64(f), DD::from_f64(f1));
+            let s0 = [fd, f1d, -(f1d * f1d) / fd];
+            let w = walk(&eq, &eq.n, s0, 0.0, x1, fd, &opts);
+            let n = w.steps.len();
+            {
+                use multishoot::{Equations, Work};
+                let last = w.last();
+                let mut wk = Work::<DV, 1>::new(3, 0, 30);
+                for f in 0..3 {
+                    wk.c[f][0] = Fl::splat(last.s[f]);
+                }
+                eq.taylor_coeffs(last.x, &[DV::splat(fd)], &mut wk);
+                for f in 0..3 {
+                    let r: Vec<String> = (20..=30).map(|k| format!("{:.4e}", wk.c[f][k].get(0).hi / wk.c[f][k - 1].get(0).hi)).collect();
+                    println!("field {} ratios c_k/c_(k-1), k = 20..30: {}", f, r.join(" "));
+                }
+            }
+            for st in &w.steps[n.saturating_sub(3)..] {
+                println!("{} {:e} F2={:e} est={}", json::num(st.x), st.s[0].hi, st.s[2].hi, json::est(&st.est));
+            }
         }
         "bisect" => {
             let fi: f64 = args[1].parse().unwrap();
@@ -203,7 +266,7 @@ fn plant_blowup(m: &Mutation) {
                         json::num(*xs),
                         json::num((DD::from_f64(*xs) - xstar).hi.abs()),
                         json::num(*bar),
-                        conical_kind(&poly, &w.last().s, *x_last, 1.0, Some(est)).replace("other", kind),
+                        conical_kind(&poly, &w.last().s, *x_last, 1.0, Some(est)),
                         json::est(&Some(*est))
                     ),
                     o => println!("{{\"case\": \"{}\", \"dir\": {}, \"d\": {}, \"outcome\": \"{:?}\"}}", name, dir, json::num(d.hi), o),

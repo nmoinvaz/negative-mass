@@ -53,7 +53,7 @@ pub fn verdict(v: &Verdict) -> String {
     let floor: Vec<String> = v.floor.iter().map(s3).collect();
     format!(
         "{{\"fi\": {}, \"c\": {}, \"class\": \"{}\", \"kind\": \"{}\", \"xstar\": {}, \"bar\": {}, \"est\": {}, \"x_last\": {}, \
-         \"s_last\": {}, \"floor\": [{}], \"through\": {}, \"global\": {}, \"steps\": {}, \"n_rel_max\": {}, \"alpha_pred\": {}}}",
+         \"s_last\": {}, \"floor\": [{}], \"through\": {}, \"global\": {}, \"steps\": {}, \"n_rel_max\": {}, \"alpha_pred\": {}, \"start_l\": {}, \"n_rel_start\": {}, \"n_rel_200\": {}}}",
         num(v.fi),
         dd(v.c),
         v.class,
@@ -68,6 +68,9 @@ pub fn verdict(v: &Verdict) -> String {
         v.global,
         v.steps,
         num(v.n_rel_max),
-        opt(v.alpha_pred)
+        opt(v.alpha_pred),
+        num(v.start_l),
+        num(v.n_rel_start),
+        num(v.n_rel_200)
     )
 }
