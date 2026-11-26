@@ -63,6 +63,7 @@ CASE_TARGETS = {("short_contraction", "S5s"): ("dd D=50", "dd D=1000", "dd D=100
 
 CRATE_MUTATIONS = ("wrong_eps", "wrong_B", "wrong_A_sign", "recip_f64", "short_series", "short_contraction", "step_loose",
                    "wrong_planted")
+LAST_CELLS = []
 RESULTS = []          # (name, status, detail) with status in PASS / FAIL / SKIPPED
 POOL = []             # RESULT dicts parsed from crate logs
 MUTATE = None
@@ -220,7 +221,7 @@ def fit_cells(data, delta, model="M1", wrong_eps=False, ks=None):
             else:
                 pts_f = pts
             x, res = fit_one(pts_f, K - 4 if MUTATE == "fit_drop_term" else K, model)
-            cells.append({"model": model, "Dlo": dlo, "K": K, "n": len(pts), "Om1": x[0], "Om2": x[1], "res": res,
+            cells.append({"model": model, "Dlo": dlo, "K": K, "n": len(pts), "Om1": x[0], "Om2": x[1], "Om3": x[2], "Om4": x[3], "res": res,
                           "admitted": res <= gate})
     return cells, gate
 
@@ -482,6 +483,8 @@ def _fit_summary(label, data, delta, ks, verbose):
         cells, gate = fit_cells(data, delta, "M2")
         model = "M2"
         h1, h2 = headline(cells, "Om1"), headline(cells, "Om2")
+    global LAST_CELLS
+    LAST_CELLS = cells
     if verbose:
         print(f"  fit cells of {label}, model {model} (gate: relative residual <= {mp.nstr(gate, 3)}; delta_data = {mp.nstr(delta, 3)})")
         print("  model  Dlo    K   n    Omega1                      Omega2                       rel. residual   admitted")
@@ -518,7 +521,28 @@ def check_fit_of_record(delta):
     hk = _fit_summary("F3k", data, delta, KS_K, True)
     if hk is not None:
         print("  headline from F3k (an estimator range over admitted cells, not a bound); status: numerical evidence\n")
+        print_tail(hk, LAST_CELLS)
     return hk
+
+
+def print_tail(hk, cells):
+    """Omega3, Omega4 from the same cells, and the four-term series' remainder times s^3 at the growth.csv D (#26's third test)"""
+    for k in ("Om3", "Om4"):
+        h = headline(cells, k)
+        print(f"  {k.replace('Om', 'Omega')} = {mp.nstr(h['median'], 14)}  range over the {h['n']} admitted cells {mp.nstr(h['range'], 2)}")
+    csv = read_csv()
+    ds = [200, 500, 1000, 2000]
+    ours = w2_values("qd", ds, allow_run=False)
+    if len(ours) < len(ds):
+        return
+    om1, om2 = hk[0]["median"], hk[1]["median"]
+    print("\n  the four-term series 2(D-3) - 4 ln 2 + Omega1/s + Omega2/s^2 (s = 2(D-3)) against W^2: remainder x s^3 (tends to Omega3)")
+    print("  D       crate (qd)         growth.csv (modes_r.py)")
+    for d in ds:
+        s_ = 2 * (d - 3)
+        ser = s_ - 4 * LN2 + om1 / s_ + om2 / s_**2
+        print(f"  {d:<6d}  {mp.nstr((mp.mpf(ours[d]['W2']) - ser) * s_**3, 10):<18s} {mp.nstr((mp.mpf(csv[d][0]) - ser) * s_**3, 10)}")
+    print()
 
 
 def check_pslq(h):
