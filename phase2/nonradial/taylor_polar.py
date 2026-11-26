@@ -65,6 +65,7 @@ CRIT = dict(
     V2_POINTS=[(2, 0.001), (2, 1.0), (2, 137.0), (6, 1.0), (6, 137.0), (6, 1000.0), (6, 12000.0)], V2_DIGITS_ALLOWANCE=0.5e-3,
     V3_POINTS=[(2, 10.0), (6, 1000.0)], V3_ORDER=24, V3_TOL=1e-22, V3_BAR=1e-15,
     # the scipy path on this Mac, base variant (taylor_polar.py --scipy-timing): points and the gate on its D
+    V4_POINTS=[(2, 1.0), (2, 10.0), (6, 10.0), (2, 137.0)], V4_TOL=1e-7,
     TS_POINTS=[(2, 1.0), (2, 10.0), (2, 40.0), (2, 137.0), (2, 300.0), (6, 0.001), (6, 1.0), (6, 40.0), (6, 137.0), (6, 300.0), (6, 1000.0)],
 )
 
@@ -775,6 +776,31 @@ def check_V3():
     report("V3", ok, f"order {CRIT['V3_ORDER']}, tol {CRIT['V3_TOL']:g} against order 30, tol 1.2e-30, dd: {'; '.join(lines)} (bar {CRIT['V3_BAR']:.0e})")
 
 
+def check_V4():
+    """convergence.py's variants through scipy here and through the crate at the same r0 and r_m (r_m is read from each scipy
+    problem): R = 90 (r_m = 24.1084), r0 = 3e-3 (r_m = 24.1110) and rtol 1e-12 (r_m = 24.1098). The crate agrees with each, and
+    the 2.1e-4 spread of the stored rows is the shift of r_m between them (D is normalized, so it depends on r_m), not
+    integration error: rtol 1e-12 moves D by about 1e-12."""
+    import background as B
+    from polar_solver import PolarProblem
+    st60 = scipy_star()
+    st90 = B.solve_star(OMEGA, EPS, guess=st60, R=90.0)
+    variants = {"R=90": (st90, {}), "r0=3e-3": (st60, dict(r0=3e-3)), "rtol 1e-12": (st60, dict(rtol=1e-12))}
+    lines, ok, worst = [], True, 0.0
+    base = {}
+    for (l, g) in CRIT["V4_POINTS"]:
+        base[(l, g)] = PolarProblem(st60, l).D(g)
+        for name, (st, kw) in variants.items():
+            p = PolarProblem(st, l, **kw)
+            d_sc = p.D(g)
+            d_cr = d_values(l, [g], "dd", rm=float(p.rm), r0=float(p.r0))[1][g]["d_f64"]
+            e = abs(d_cr / d_sc - 1)
+            worst = max(worst, e)
+            ok &= e <= CRIT["V4_TOL"]
+            lines.append(f"(l={l}, g={g:g}) {name}: r_m {float(p.rm):.4f}, scipy vs base {d_sc / base[(l, g)] - 1:+.2e}, crate vs scipy {fmt(e)}")
+    report("V4", ok, f"variants through scipy and the crate at the same (r0, r_m): worst crate vs scipy {fmt(worst)} (bar {fmt(CRIT['V4_TOL'])}); " + "; ".join(lines))
+
+
 def scipy_timing(out_path):
     """the scipy path of convergence.py, base variant only (rtol 1e-10, phi_cut 1e-9, R = 60, r0 = 1e-3): one evaluation
     per (l, gamma), wall and cpu seconds, appended to out_path as it finishes. Stops an evaluation at 1 h of wall time."""
@@ -844,7 +870,7 @@ CHECKS = {
     "A6": lambda: check_A(6, CRIT["L6_GAMMAS"], "A6[l=6]"),
     "A4": lambda: check_A(4, CRIT["L4_GAMMAS"], "A4[l=4]"),
     "A5": lambda: check_A(5, CRIT["L5_GAMMAS"], "A5[l=5]"),
-    "L1": check_L1, "V1": check_V1, "V2": check_V2, "V3": check_V3, "TS": check_TS,
+    "L1": check_L1, "V1": check_V1, "V2": check_V2, "V3": check_V3, "V4": check_V4, "TS": check_TS,
 }
 
 
@@ -860,7 +886,7 @@ CONTROLS = {
     "start_term": ["S1", "S3"],           # the shooting's start u = r c / 2 instead of r c / 3
     "shift_off": ["T3", "A2"],            # the table's jets not shifted to the step start
     "wide_table": ["T3", "A2"],           # table steps as wide as the star's, not cut by J's convergence
-    "moncrief": ["A2"],                   # a sign in the Moncrief map
+    "moncrief": ["A2", "V4"],             # a sign in the Moncrief map
     "swapcols": ["A2"],                   # the scalar plane's two start columns swapped (orientation)
     "mext0": ["A2"],                      # the exterior mass set to zero
     "qstart": ["A2"],                     # the Riccati started at r_m + 1 instead of r_m + 40/s + 20 l/s + 50
