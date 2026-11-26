@@ -1,6 +1,8 @@
 //! taylor_radial: the radial boson-star modes and the phantom family by Taylor integration (negative-mass #194).
 //! Usage: taylor_radial <cmd> key=value ...   (see ../../taylor_radial.py for the calls it makes)
 mod bvp;
+mod cont;
+mod family;
 mod linalg;
 mod model;
 mod mutate;
@@ -149,85 +151,195 @@ fn cmd_star(a: &Args) {
     );
 }
 
-/// A star at omega, its table, and D(s2) on a grid of s2; roots of D by sign changes
-fn cmd_modes(a: &Args) {
+/// One row: the star at omega, M, N, and the roots of D on the declared grid
+fn cmd_row(a: &Args) {
     use multidouble::dd::DD as D;
     let eps = a.f("eps", 1.0);
     let omega = D::from_f64(a.f("omega", 0.94));
     let mut cfg = bvp::StarCfg::new(eps);
     cfg.dmax = a.f("dmax", 8.0);
-    let t0 = std::time::Instant::now();
-    let sol = bvp::solve(&cfg, omega, false).unwrap();
-    let rep = sol.report.as_ref().unwrap();
-    assert!(rep.converged, "star not converged: {:?}", rep.fnorm);
-    let t_star = t0.elapsed().as_secs_f64();
-    let steps = table::steps_dd(&sol);
-    let kk = sol.k().to_f64();
-    let r_t = sol.sh.nodes[sol.sh.k() - 1];
-    // the exterior chain starts where P falls below the tail value: the last BVP step whose P(start) is below p_tail
-    let r_cut = r_t - 40.0 / kk;
-    let s2_hi = a.f("shi", 0.99 * (1.0 - omega.to_f64()).powi(2));
-    let om = omega.to_f64();
-    let kmin = (1.0 - (om + s2_hi.max(0.0).sqrt()).powi(2)).max(1e-6).sqrt().min(kk);
-    let r_far = a.f("rfar", r_t.max(r_cut + 40.0 / kmin).max(r_cut + 40.0 / kk));
-    let mass = sol.mass();
-    let ext = radial::ext_steps::<D>(mass, sol.omega(), r_cut, r_far, 1e-32);
-    let mut all: Vec<table::StarStep<D>> = steps.into_iter().filter(|s| s.hi <= r_cut + 1e-9).collect();
-    // the BVP step containing r_cut is cut: keep steps wholly below, add one clipped
-    let last_hi = all.last().map(|s| s.hi).unwrap_or(0.0);
-    all.extend(ext.into_iter());
-    let _ = last_hi;
-    let model = table::Model { omega: sol.omega(), epsilon: eps };
-    let tab = table::build_table(&all, &model, cfg.rs, r_far);
-    let t_tab = t0.elapsed().as_secs_f64() - t_star;
+    let thr = (1.0 - omega.to_f64()).powi(2);
+    let s2_hi = a.f("shi", 0.995 * thr);
+    let prep = family::prepare_k(&cfg, omega, s2_hi).unwrap();
     println!(
-        "{{\"cmd\":\"modes_setup\",\"omega\":{},\"eps\":{},\"r_cut\":{:.3},\"r_far\":{:.3},\"table_steps\":{},\"linear_defect\":{:e},\"t_star\":{:.2},\"t_table\":{:.2}}}",
-        om,
+        "{{\"cmd\":\"star\",\"eps\":{},\"omega\":\"{}\",\"k\":\"{}\",\"pc\":\"{}\",\"zc\":\"{}\",\"alpha_c\":\"{}\",\"M\":\"{}\",\"N\":\"{}\",\"r_cut\":{:.3},\"r_far\":{:.1},\"table_steps\":{},\"linear_defect\":{:e},\"nodes\":{},\"fnorm\":{:e},\"t_star\":{:.2},\"t_table\":{:.2}}}",
         eps,
-        r_cut,
-        r_far,
-        tab.x0.len(),
-        tab.linear_defect,
-        t_star,
-        t_tab
+        prep.omega.sci(32),
+        prep.info.k.sci(32),
+        prep.info.pc.sci(32),
+        prep.info.zc.sci(32),
+        prep.info.alpha_c.sci(32),
+        prep.mass.sci(32),
+        prep.noether.sci(32),
+        prep.r_cut,
+        prep.r_far,
+        prep.tab.x0.len(),
+        prep.tab.linear_defect,
+        prep.info.nodes,
+        prep.info.fnorm.last().unwrap(),
+        prep.t_star,
+        prep.t_table
     );
     let lane = a.s("lane", "dd");
-    let order = a.u("order", 30);
-    let (lo, hi, n) = (a.f("slo", -0.02), a.f("shi", s2_hi), a.u("n", 20));
+    let order = a.u("order", default_order::<f64>());
+    let neg_lo = a.f("neg_lo", 4.0);
+    let g = if a.get("s2list").is_some() { a.list("s2list") } else { family::grid(neg_lo, thr, a.u("nneg", 60), a.u("npos", 60)) };
     match lane {
-        "dd" => scan::<D>(a, &tab, &all[0], &sol, order, lo, hi, n, r_far),
-        "f64" => scan::<f64>(a, &tab, &all[0], &sol, order, lo, hi, n, r_far),
+        "dd" => report_scan::<D>(a, &prep, &g, order),
+        "f64" => report_scan::<f64>(a, &prep, &g, order),
         _ => panic!("lane"),
     }
 }
 
-fn scan<T: Num>(a: &Args, tab: &table::JTable<DD>, first: &table::StarStep<DD>, sol: &bvp::StarSol, order: usize, lo: f64, hi: f64, n: usize, r_far: f64) {
-    let ctl = plane::Ctl { order, tol: a.f("tol", T::EPS * 100.0), hmax: a.f("hmax", 4.0), kj: order };
-    let rp = radial::Radial::<T>::new(tab.to_lane::<T>(), first, 1e-8, T::from_dd(sol.omega()), sol.pc().to_f64(), ctl);
-    let far_f = far_factor::<T>();
+fn report_scan<T: Num>(a: &Args, prep: &family::Prepared, g: &[f64], order: usize) {
     let t0 = std::time::Instant::now();
-    let grid: Vec<T> = (0..n).map(|i| T::from_f64(lo + (hi - lo) * i as f64 / (n - 1) as f64)).collect();
-    let om = rp.omega.to_f64();
-    let rfar_of = |s2: f64| {
-        let kap = (1.0 - (om + s2.max(0.0).sqrt()).powi(2)).max(1e-6).sqrt().min((1.0 - om * om).sqrt());
-        let kap2 = (1.0 - (om - s2.max(0.0).sqrt()).powi(2)).max(1e-6).sqrt();
-        let km = kap.min(kap2);
-        let _ = far_f;
-        r_far.min(rp.r_m + far_f / km).max(rp.r_m + 5.0)
-    };
-    println!("{{\"cmd\":\"modes_rm\",\"r_m\":{},\"r_max\":{}}}", rp.r_m, rp.r_max);
-    let mut f = |s: T| rp.d(s, rfar_of(s.to_f64()));
-    let vals: Vec<T> = grid.iter().map(|&s| f(s)).collect();
-    for (g, v) in grid.iter().zip(&vals) {
-        println!("{{\"cmd\":\"D\",\"s2\":{:e},\"D\":{:e},\"rfar\":{:.1}}}", g.to_f64(), v.to_f64(), rfar_of(g.to_f64()));
-    }
-    for i in 0..n - 1 {
-        if (vals[i].to_f64() < 0.0) != (vals[i + 1].to_f64() < 0.0) {
-            let r = roots::find::<T>(&mut f, grid[i], grid[i + 1], vals[i], vals[i + 1]);
-            println!("{{\"cmd\":\"root\",\"s2\":\"{}\",\"evals\":{},\"d\":{:e}}}", r.x.sci(30), r.evals, r.fx.to_f64());
+    let rp = prep.radial::<T>(order, a.f("tol", T::EPS * 100.0));
+    let found = family::scan(&rp, g, far_factor::<T>() * a.f("rfar_scale", 1.0));
+    if a.u("dump", 0) > 0 {
+        for (s, v) in &found.vals {
+            println!("{{\"cmd\":\"D\",\"s2\":{:e},\"D\":{:e}}}", s, v);
         }
     }
-    println!("{{\"cmd\":\"scan_done\",\"lane\":\"{}\",\"wall\":{:.2}}}", T::NAME, t0.elapsed().as_secs_f64());
+    let signs: Vec<i32> = found.vals.iter().map(|v| if v.1 < 0.0 { -1 } else { 1 }).collect();
+    let changes = signs.windows(2).filter(|w| w[0] != w[1]).count();
+    for (x, ev, d) in &found.roots {
+        println!("{{\"cmd\":\"root\",\"lane\":\"{}\",\"s2\":\"{}\",\"evals\":{},\"d\":{:e}}}", T::NAME, x.sci(30), ev, d);
+    }
+    println!(
+        "{{\"cmd\":\"scan_done\",\"lane\":\"{}\",\"r_m\":{},\"order\":{},\"grid\":{},\"sign_changes\":{},\"roots\":{},\"d_evals\":{},\"wall\":{:.2}}}",
+        T::NAME,
+        rp.r_m,
+        order,
+        g.len(),
+        changes,
+        found.roots.len(),
+        found.evals,
+        t0.elapsed().as_secs_f64()
+    );
+}
+
+/// Plain continuation of the star in alpha_c from a start at omega: Newton on the alpha_c-pinned layout at each step
+fn cmd_follow(a: &Args) {
+    use multidouble::dd::DD as D;
+    let eps = a.f("eps", -1.0);
+    let omega0 = D::from_f64(a.f("omega", 0.7603));
+    let mut cfg = bvp::StarCfg::new(eps);
+    cfg.dmax = a.f("dmax", 8.0);
+    let targets = a.list("alphas");
+    let h = a.f("h", 0.05);
+    let t0 = std::time::Instant::now();
+    let sol = bvp::solve(&cfg, omega0, false).unwrap();
+    let mut info = sol.info();
+    // continuation in omega (steps dw) to omega_to, then in alpha_c
+    let omega_to = a.f("omega_to", omega0.to_f64());
+    let dw = a.f("dw", 0.01);
+    let mut wcur = omega0.to_f64();
+    while (wcur - omega_to).abs() > 1e-12 {
+        let wn = if (wcur - omega_to).abs() <= dw { omega_to } else { wcur - dw * (wcur - omega_to).signum() };
+        let kt = (D::ONE - D::from_f64(wn) * D::from_f64(wn)).sqrt();
+        let s = bvp::solve_k_from_profile(&cfg, &info.profile(), kt, a.u("verbose", 0) > 0).unwrap();
+        info = s.info();
+        assert!(info.converged, "omega continuation failed at {wn}: {:?}", info.fnorm);
+        wcur = wn;
+    }
+    let mut ac = info.alpha_c;
+    println!("{{\"cmd\":\"start\",\"alpha_c\":\"{}\",\"omega\":\"{}\",\"t\":{:.1}}}", ac.sci(20), info.omega.sci(20), t0.elapsed().as_secs_f64());
+    let mut hcur = h;
+    for &tg in &targets {
+        while (tg - ac.to_f64()).abs() > 1e-13 {
+            let step = (tg - ac.to_f64()).clamp(-hcur, hcur);
+            let next = if (tg - ac.to_f64()).abs() <= hcur { D::from_f64(tg) } else { ac + D::from_f64(step) };
+            let t1 = std::time::Instant::now();
+            let prof = info.profile();
+            let ni = match bvp::solve_z(&cfg, &prof, next, None, a.u("verbose", 0) > 0) {
+                Ok(s) => {
+                    let ni = s.info();
+                    if ni.converged { Some(ni) } else { None }
+                }
+                Err(_) => None,
+            };
+            let ni = match ni {
+                Some(n) => n,
+                None => {
+                    hcur /= 2.0;
+                    if hcur < 1e-7 {
+                        println!("{{\"cmd\":\"fail\",\"alpha_c\":{}}}", next.to_f64());
+                        return;
+                    }
+                    continue;
+                }
+            };
+            info = ni;
+            ac = next;
+            hcur = (hcur * 1.3).min(h);
+            let n = family::noether(&info.steps, info.omega, cfg.rs, info.pc, info.zc);
+            println!(
+                "{{\"cmd\":\"row\",\"alpha_c\":{},\"omega\":\"{}\",\"N\":\"{}\",\"M\":\"{}\",\"k\":{:e},\"nodes\":{},\"newton\":{},\"fnorm\":{:e},\"h\":{:e},\"t\":{:.1}}}",
+                ac.to_f64(),
+                info.omega.sci(30),
+                n.sci(30),
+                info.mass.sci(30),
+                info.k.to_f64(),
+                info.nodes,
+                info.fnorm.len(),
+                info.fnorm.last().unwrap(),
+                hcur,
+                t1.elapsed().as_secs_f64()
+            );
+        }
+    }
+}
+
+/// Arclength continuation in alpha_c from the star at omega through the omega fold, in chunks, rows at the targets
+fn cmd_arc(a: &Args) {
+    use multidouble::dd::DD as D;
+    let eps = a.f("eps", -1.0);
+    let omega0 = D::from_f64(a.f("omega", 0.7603));
+    let mut cfg = bvp::StarCfg::new(eps);
+    cfg.dmax = a.f("dmax", 8.0);
+    let t0 = std::time::Instant::now();
+    let sol = bvp::solve(&cfg, omega0, false).unwrap();
+    let mut info = sol.info();
+    let omega_to = a.f("omega_to", 0.45);
+    let dw = a.f("dw", 0.003);
+    let mut wcur = omega0.to_f64();
+    while (wcur - omega_to).abs() > 1e-12 {
+        let wn = if (wcur - omega_to).abs() <= dw { omega_to } else { wcur - dw * (wcur - omega_to).signum() };
+        let kt = (D::ONE - D::from_f64(wn) * D::from_f64(wn)).sqrt();
+        let s = bvp::solve_k_from_profile(&cfg, &info.profile(), kt, false).unwrap();
+        info = s.info();
+        wcur = wn;
+    }
+    println!("{{\"cmd\":\"arc_start\",\"alpha_c\":{},\"omega\":{},\"t\":{:.1}}}", info.alpha_c.to_f64(), info.omega.to_f64(), t0.elapsed().as_secs_f64());
+    let targets = a.list("alphas");
+    let alpha_stop = a.f("alpha_stop", *targets.last().unwrap_or(&1.3));
+    let mut track = vec![];
+    let mut logs = vec![];
+    let res = cont::follow_family(&cfg, &info, &targets, alpha_stop, a.u("chunk", 6), a.f("ds", 0.05), a.f("ds_max", 2.0), a.u("verbose", 0) > 0, &mut track, &mut logs);
+    for l in &logs {
+        println!("{{\"cmd\":\"arc_chunk\",\"chunk\":{},\"points\":{},\"refused\":{},\"stalled\":{},\"alpha_end\":{},\"omega_end\":{:.10},\"folds\":{:?},\"t\":{:.1}}}", l.chunk, l.points, l.refused, l.stalled, l.alpha_end, l.omega_end, l.folds, l.t);
+    }
+    // the omega minimum along the path
+    let wmin = track.iter().cloned().fold((0.0, 9.0), |m, p| if p.1 < m.1 { p } else { m });
+    println!("{{\"cmd\":\"arc_track\",\"points\":{},\"omega_min_point\":[{},{}]}}", track.len(), wmin.0, wmin.1);
+    match res {
+        Ok(rows) => {
+            for r in rows {
+                println!(
+                    "{{\"cmd\":\"row\",\"alpha_c\":{},\"omega\":\"{}\",\"N\":\"{}\",\"M\":\"{}\",\"k\":{:e},\"nodes\":{},\"fnorm\":{:e}}}",
+                    r.alpha_c,
+                    r.info.omega.sci(30),
+                    r.n.sci(30),
+                    r.info.mass.sci(30),
+                    r.info.k.to_f64(),
+                    r.info.nodes,
+                    r.info.fnorm.last().unwrap()
+                );
+            }
+        }
+        Err(e) => println!("{{\"cmd\":\"arc_error\",\"err\":\"{}\"}}", e),
+    }
+    println!("{{\"cmd\":\"arc_wall\",\"t\":{:.1}}}", t0.elapsed().as_secs_f64());
 }
 
 fn main() {
@@ -247,8 +359,16 @@ fn main() {
         cmd_star(&a);
         return;
     }
-    if cmd == "modes" {
-        cmd_modes(&a);
+    if cmd == "arc" {
+        cmd_arc(&a);
+        return;
+    }
+    if cmd == "follow" {
+        cmd_follow(&a);
+        return;
+    }
+    if cmd == "row" {
+        cmd_row(&a);
         return;
     }
     lane_dispatch(&a, &cmd);

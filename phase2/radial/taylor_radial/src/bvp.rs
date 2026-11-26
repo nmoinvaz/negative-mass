@@ -354,6 +354,31 @@ pub fn set_row_scale(sh: &mut Shooting<StarK, 1>, z: &[Vec<f64>]) {
     sh.row_scale = rs;
 }
 
+
+/// Newton, and when it stops short of the tolerance a second pass with the P rows scaled by the iterate rather than by the guess
+fn newton_twice<E: Equations<1>>(sh: &mut Shooting<E, 1>, z: &mut Vec<Vec<f64>>, opts: &NewtonOpts) -> Result<NewtonReport, String> {
+    let mut rep = sh.newton::<Double>(z, opts)?;
+    if !rep.converged {
+        let mut rs2 = vec![1.0; sh.rows()];
+        for b in 0..=sh.k() {
+            let pval = z[0][sh.block_target(b)].abs();
+            if pval > 0.0 {
+                let f = 2f64.powi(-(pval.log2().round() as i32));
+                for j in 0..8 {
+                    rs2[sh.row_block(b) + j] = f;
+                }
+            }
+        }
+        sh.row_scale = rs2;
+        let r2 = sh.newton::<Double>(z, opts)?;
+        let mut all = rep.fnorm.clone();
+        all.extend(r2.fnorm.iter().cloned());
+        rep = r2;
+        rep.fnorm = all;
+    }
+    Ok(rep)
+}
+
 /// Solves the BVP at omega from the crate's shot; Newton in double-double.
 pub fn solve(cfg: &StarCfg, omega: DD, verbose: bool) -> Result<StarSol, String> {
     let (_nodes, mut z, x_node, mut sh) = guess(cfg, omega);
@@ -365,7 +390,7 @@ pub fn solve(cfg: &StarCfg, omega: DD, verbose: bool) -> Result<StarSol, String>
     if std::env::var("TR_VERBOSE").is_ok() {
         eprintln!("solve: K {} nodes, len {}, planned segments steps {:?}", sh.k(), sh.len(), sh.segs.iter().map(|s| s.len() - 1).collect::<Vec<_>>());
     }
-    let rep = sh.newton::<Double>(&mut z, &opts)?;
+    let rep = newton_twice(&mut sh, &mut z, &opts)?;
     if verbose {
         eprintln!("newton: converged {} fnorm {:?}", rep.converged, rep.fnorm.iter().map(|v| format!("{v:.1e}")).collect::<Vec<_>>());
     }
@@ -399,6 +424,343 @@ pub fn worst_rows(sol: &StarSol, n: usize) -> Vec<(usize, usize, usize, f64)> {
     for b in 0..=sol.sh.k() {
         for fl in 0..NF {
             for j in 0..8 {
+                let i = sol.sh.row_block(b) + fl * 8 + j;
+                v.push((b, fl, j, f[i].to_f64().abs()));
+            }
+        }
+    }
+    v.sort_by(|a, b| b.3.partial_cmp(&a.3).unwrap());
+    v.truncate(n);
+    v
+}
+
+// ------------------------------------------------------------------------------------------------------------
+// the alpha_c-pinned form: fields (P, u, m, Z, k) with k' = 0, the global alpha_c
+// ------------------------------------------------------------------------------------------------------------
+
+/// Fields (P, u, m, Z, k): k = sqrt(1 - w^2) is carried as a constant field, the central lapse alpha_c is the global
+/// (Z_c = alpha_c^-2). Left data (P_c, k_c), right data (P_R, m_R, k_R); NL + NR = NF, and the one global has one extra row
+/// (alpha_c = target), so the layout is square and `Shooting::in_global` takes alpha_c as the family's parameter.
+pub struct StarZ {
+    pub eps: f64,
+}
+
+impl Equations<1> for StarZ {
+    const NF: usize = 5;
+    const NL: usize = 2;
+    const NR: usize = 3;
+    const NG: usize = 1;
+    const POINTWISE: bool = true;
+    type Prep = ();
+
+    fn taylor_coeffs<T: Lane>(&self, x0: f64, _g: &[T], w: &mut Work<T, 1>) {
+        let k = w.c[4][0];
+        let w2 = c::<T>(1.0) - k * k;
+        recursion(self.eps, x0, w2, w);
+        for j in 1..w.c[4].len() {
+            w.c[4][j] = Fl::zero();
+        }
+    }
+
+    fn left_state<T: Lane>(&self, x: f64, data: &[Fl<T, 1>], g: &[T], _prep: &()) -> State<T, 1> {
+        let (pc, kc) = (data[0], data[1]);
+        let one = c::<T>(1.0);
+        let alpha = Fl([g[0]]);
+        let zc = one / (alpha * alpha);
+        let w2 = one - kc * kc;
+        let lam = c::<T>(crate::model::LAM);
+        let mu = Fl::<T, 1>::splat(crate::model::mu_dd());
+        let pi = Fl::<T, 1>::splat(crate::model::pi_dd());
+        let pc2 = pc * pc;
+        let cc = (one - lam * pc + mu * pc2) - w2 * zc;
+        let v = c::<T>(0.5) * pc - c::<T>(crate::model::LAM / 4.0) * pc2 + (mu / c::<T>(6.0)) * pc2 * pc;
+        let rho_c = c::<T>(0.5) * w2 * pc * zc + v;
+        let r = c::<T>(x);
+        let three = c::<T>(3.0);
+        let m = pi.mulf(4.0 * self.eps) * rho_c * r * r * r / three;
+        vec![pc, r * cc / three, m, zc, kc]
+    }
+
+    fn right_state<T: Lane>(&self, x: f64, data: &[Fl<T, 1>], _g: &[T], _prep: &()) -> State<T, 1> {
+        let (pr, mr, kr) = (data[0], data[1], data[2]);
+        let one = c::<T>(1.0);
+        let inv_r = one / c::<T>(x);
+        let u = if mutate::on("tailk") { -kr + inv_r } else { -kr - inv_r };
+        let zr = one / (one - c::<T>(2.0) * mr * inv_r);
+        vec![pr, u, mr, zr, kr]
+    }
+}
+
+pub fn layout_z(eps: f64, nodes: Vec<f64>, kt: usize, alpha_target: DD) -> Shooting<StarZ, 1> {
+    let mut sh = Shooting::new(StarZ { eps }, nodes, kt);
+    let og = sh.off_global();
+    sh.extra.push(ExtraRow { terms: vec![(og, DD::ONE)], rhs: alpha_target });
+    sh
+}
+
+pub fn zi5(sh: &Shooting<StarZ, 1>, i: usize, f: usize, j: usize) -> usize {
+    sh.off_node(i) + f * 8 + j
+}
+
+/// A star's profile on [r_s, r_t] by its Taylor steps, with a Yukawa tail beyond r_t: the guess's source for a new layout
+pub struct Profile {
+    pub steps: Vec<crate::table::StarStep<DD>>,
+    pub rs: f64,
+    pub r_t: f64,
+    pub k: DD,
+    pub eps: f64,
+}
+
+impl Profile {
+    pub fn state(&self, r: f64) -> [DD; 4] {
+        if r > self.r_t {
+            let last = self.state(self.r_t);
+            let p = last[0] * (-(DD::from_f64(2.0) * self.k * DD::from_f64(r - self.r_t))).exp() * DD::from_f64(self.r_t * self.r_t / (r * r));
+            let zz = (DD::ONE - DD::from_f64(2.0) * last[2] / DD::from_f64(r)).recip();
+            return [p, -self.k - DD::ONE / DD::from_f64(r), last[2], zz];
+        }
+        let idx = match self.steps.binary_search_by(|s| s.lo.partial_cmp(&r).unwrap()) {
+            Ok(i) => i,
+            Err(i) => i.saturating_sub(1),
+        };
+        let s = &self.steps[idx];
+        let h = DD::from_f64(r) - DD::from_f64(s.x0);
+        let mut out = [DD::ZERO; 4];
+        for f in 0..4 {
+            let mut v = s.coef[f][crate::table::NS];
+            for k in (0..crate::table::NS).rev() {
+                v = v * h + s.coef[f][k];
+            }
+            out[f] = v;
+        }
+        out
+    }
+}
+
+pub struct StarSolZ {
+    pub cfg: StarCfg,
+    pub sh: Shooting<StarZ, 1>,
+    pub z: Vec<Vec<f64>>,
+    pub x_node: usize,
+    pub report: Option<NewtonReport>,
+}
+
+/// The layout of a star near `prof`'s: nodes from the profile's own P (as `guess` does from the shot)
+pub fn nodes_from_profile(cfg: &StarCfg, prof: &Profile) -> (Vec<f64>, usize) {
+    let pc = prof.state(cfg.rs)[0].to_f64();
+    let mut r_x = 1.0;
+    let mut px = pc;
+    let mut r = 1.0;
+    while r < prof.r_t {
+        let p = prof.state(r)[0].to_f64();
+        if p < cfg.x_ratio * pc {
+            r_x = r;
+            px = p;
+            break;
+        }
+        r += 1.0;
+    }
+    if px == pc {
+        r_x = prof.r_t.min(60.0);
+        px = prof.state(r_x)[0].to_f64();
+    }
+    let r_x = (r_x * 8.0).ceil() / 8.0;
+    let kf = prof.k.to_f64();
+    let r_cut = r_x + (px / cfg.p_tail).ln().max(0.0) / (2.0 * kf);
+    let r_t = r_cut + 40.0 / kf;
+    let nodes = make_nodes(cfg.rs, r_x, r_t, kf, cfg.dmax);
+    let x_node = nodes.iter().position(|&x| (x - r_x).abs() < 1e-9).unwrap_or(nodes.len() - 1);
+    (nodes, x_node)
+}
+
+/// Solves the alpha_c-pinned star at alpha_target from a profile (nodes from `nodes`, or from the profile's size)
+pub fn solve_z(cfg: &StarCfg, prof: &Profile, alpha_target: DD, nodes_in: Option<(Vec<f64>, usize)>, verbose: bool) -> Result<StarSolZ, String> {
+    let (nodes, x_node) = nodes_in.unwrap_or_else(|| nodes_from_profile(cfg, prof));
+    let mut sh = layout_z(cfg.eps, nodes.clone(), cfg.kt, alpha_target);
+    sh.match_node = x_node;
+    let mut z = vec![vec![0.0; sh.len()]; 2];
+    let big_k = nodes.len();
+    let s0 = prof.state(cfg.rs);
+    let sr = prof.state(*nodes.last().unwrap());
+    for j in 0..8 {
+        zset(&mut z, j, s0[0]);
+        zset(&mut z, 8 + j, prof.k);
+        for i in 0..big_k {
+            let s = if i == 0 { s0 } else { prof.state(nodes[i]) };
+            for f in 0..4 {
+                zset(&mut z, zi5(&sh, i, f, j), s[f]);
+            }
+            zset(&mut z, zi5(&sh, i, 4, j), prof.k);
+        }
+        let o = sh.off_right();
+        zset(&mut z, o + j, sr[0]);
+        zset(&mut z, o + 8 + j, sr[2]);
+        zset(&mut z, o + 16 + j, prof.k);
+    }
+    zset(&mut z, sh.off_global(), alpha_target);
+    let plan = Plan { kt: cfg.kt, tol: cfg.plan_tol, hmax: 4.0 };
+    sh.plan_segments(&z[0], &z[1], &plan);
+    // row scale: P rows to O(1)
+    let rows = sh.rows();
+    let mut rs = vec![1.0; rows];
+    for b in 0..=sh.k() {
+        let target = sh.block_target(b);
+        let pval = z[0][target].abs();
+        if pval > 0.0 {
+            let f = 2f64.powi(-(pval.log2().round() as i32));
+            for j in 0..8 {
+                rs[sh.row_block(b) + j] = f;
+            }
+        }
+    }
+    sh.row_scale = rs;
+    let opts = NewtonOpts { tol: 1e-27, max_iter: 25, ..Default::default() };
+    let rep = newton_twice(&mut sh, &mut z, &opts)?;
+    if verbose {
+        eprintln!("newton_z: converged {} fnorm {:?}", rep.converged, rep.fnorm.iter().map(|v| format!("{v:.1e}")).collect::<Vec<_>>());
+    }
+    Ok(StarSolZ { cfg: cfg.clone(), sh, z, x_node, report: Some(rep) })
+}
+
+impl StarSolZ {
+    pub fn alpha_c(&self) -> DD {
+        zget(&self.z, self.sh.off_global())
+    }
+    pub fn k(&self) -> DD {
+        zget(&self.z, 8)
+    }
+    pub fn omega(&self) -> DD {
+        let k = self.k();
+        (DD::ONE - k * k).sqrt()
+    }
+    pub fn pc(&self) -> DD {
+        zget(&self.z, 0)
+    }
+    pub fn zc(&self) -> DD {
+        let a = self.alpha_c();
+        (a * a).recip()
+    }
+    pub fn mass(&self) -> DD {
+        zget(&self.z, self.sh.off_right() + 8)
+    }
+}
+
+/// what the radial problem needs of a solved star
+pub struct StarInfo {
+    pub eps: f64,
+    pub cfg: StarCfg,
+    pub steps: Vec<crate::table::StarStep<DD>>,
+    pub k: DD,
+    pub omega: DD,
+    pub pc: DD,
+    pub zc: DD,
+    pub alpha_c: DD,
+    pub mass: DD,
+    pub r_t: f64,
+    pub nodes: usize,
+    pub fnorm: Vec<f64>,
+    pub converged: bool,
+}
+
+impl StarSol {
+    pub fn info(&self) -> StarInfo {
+        let g = [multishoot::lane::DV::splat(self.k())];
+        let rep = self.report.as_ref().unwrap();
+        StarInfo {
+            eps: self.cfg.eps,
+            cfg: self.cfg.clone(),
+            steps: crate::table::steps_layout(&self.sh, &self.z, &g),
+            k: self.k(),
+            omega: self.omega(),
+            pc: self.pc(),
+            zc: self.zc(),
+            alpha_c: self.zc().recip().sqrt(),
+            mass: self.mass(),
+            r_t: *self.sh.nodes.last().unwrap(),
+            nodes: self.sh.k(),
+            fnorm: rep.fnorm.clone(),
+            converged: rep.converged,
+        }
+    }
+}
+
+impl StarSolZ {
+    pub fn info(&self) -> StarInfo {
+        self.info_at(&self.z)
+    }
+
+    /// the info of another state z of the same layout (a point of an arclength path); the Newton report is this solve's
+    pub fn info_at(&self, z: &[Vec<f64>]) -> StarInfo {
+        let alpha = zget(z, self.sh.off_global());
+        let g = [multishoot::lane::DV::splat(alpha)];
+        let rep = self.report.as_ref().unwrap();
+        let k = zget(z, 8);
+        StarInfo {
+            eps: self.cfg.eps,
+            cfg: self.cfg.clone(),
+            steps: crate::table::steps_layout(&self.sh, z, &g),
+            k,
+            omega: (DD::ONE - k * k).sqrt(),
+            pc: zget(z, 0),
+            zc: (alpha * alpha).recip(),
+            alpha_c: alpha,
+            mass: zget(z, self.sh.off_right() + 8),
+            r_t: *self.sh.nodes.last().unwrap(),
+            nodes: self.sh.k(),
+            fnorm: rep.fnorm.clone(),
+            converged: rep.converged,
+        }
+    }
+}
+
+impl StarInfo {
+    pub fn profile(&self) -> Profile {
+        Profile { steps: self.steps.clone(), rs: self.cfg.rs, r_t: self.r_t, k: self.k, eps: self.eps }
+    }
+}
+
+/// Solves the k-pinned star (omega target) from a profile of a neighboring star (continuation in omega)
+pub fn solve_k_from_profile(cfg: &StarCfg, prof: &Profile, k_target: DD, verbose: bool) -> Result<StarSol, String> {
+    let (nodes, x_node) = nodes_from_profile(cfg, prof);
+    let mut sh = layout(cfg.eps, nodes.clone(), cfg.kt, k_target);
+    sh.match_node = x_node;
+    let mut z = vec![vec![0.0; sh.len()]; 2];
+    let big_k = nodes.len();
+    let s0 = prof.state(cfg.rs);
+    let sr = prof.state(*nodes.last().unwrap());
+    for j in 0..8 {
+        zset(&mut z, j, s0[0]);
+        zset(&mut z, 8 + j, s0[3]);
+        for i in 0..big_k {
+            let s = if i == 0 { s0 } else { prof.state(nodes[i]) };
+            for f in 0..4 {
+                zset(&mut z, zi(&sh, i, f, j), s[f]);
+            }
+        }
+        let o = sh.off_right();
+        zset(&mut z, o + j, sr[0]);
+        zset(&mut z, o + 8 + j, sr[2]);
+    }
+    zset(&mut z, sh.off_global(), k_target);
+    let plan = Plan { kt: cfg.kt, tol: cfg.plan_tol, hmax: 4.0 };
+    sh.plan_segments(&z[0], &z[1], &plan);
+    set_row_scale(&mut sh, &z);
+    let opts = NewtonOpts { tol: 1e-27, max_iter: 25, ..Default::default() };
+    let rep = newton_twice(&mut sh, &mut z, &opts)?;
+    if verbose {
+        eprintln!("newton_k: converged {} fnorm {:?}", rep.converged, rep.fnorm.iter().map(|v| format!("{v:.1e}")).collect::<Vec<_>>());
+    }
+    Ok(StarSol { cfg: cfg.clone(), sh, z, x_node, report: Some(rep) })
+}
+
+/// the rows of the largest scaled residual of a StarZ solution: (block, field, lane, value)
+pub fn worst_rows_z(sol: &StarSolZ, n: usize) -> Vec<(usize, usize, usize, f64)> {
+    use multishoot::multisolver::prec::parts;
+    let f = sol.sh.residual::<Double>(&parts(&sol.z), false).unwrap();
+    let mut v: Vec<(usize, usize, usize, f64)> = vec![];
+    for b in 0..=sol.sh.k() {
+        for fl in 0..5 {
+            for j in 0..1 {
                 let i = sol.sh.row_block(b) + fl * 8 + j;
                 v.push((b, fl, j, f[i].to_f64().abs()));
             }

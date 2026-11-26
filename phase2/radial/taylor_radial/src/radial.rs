@@ -122,16 +122,48 @@ impl<T: Num> Radial<T> {
         y
     }
 
+    /// The decaying plane's start at r_far: the columns P e_A and P e_Gt of the projector P onto the contracting
+    /// eigenspace of the frozen matrix in (A, A', Gt, q = chi / r^2), the variables in which the far-field matrix tends to a
+    /// constant (`radial_modes.py`'s start). P is smooth in s2, so the orientation of the plane is too. Returns the plane in
+    /// (A, A', Gt, chi).
+    pub fn decaying_start(&self, s2: T, r_far: f64) -> [[T; 4]; 2] {
+        let j = self.j_matrix(r_far, s2);
+        let r2 = T::from_f64(r_far) * T::from_f64(r_far);
+        let t = [T::one(), T::one(), T::one(), r2];
+        let mut jq = [[T::zero(); 4]; 4];
+        for i in 0..4 {
+            for k in 0..4 {
+                jq[i][k] = j[i][k] * t[k] / t[i];
+            }
+        }
+        jq[3][3] = jq[3][3] - (T::one() + T::one()) / T::from_f64(r_far);
+        let (sg, _) = crate::linalg::matsign(&jq);
+        let half = T::from_f64(0.5);
+        let mut z = [[T::zero(); 4]; 2];
+        for (c, col) in [0usize, 2usize].into_iter().enumerate() {
+            for i in 0..4 {
+                let pij = (if i == col { T::one() } else { T::zero() } - sg[i][col]) * half;
+                z[c][i] = pij * t[i];
+            }
+        }
+        z
+    }
+
     pub fn d(&self, s2: T, r_far: f64) -> T {
         let r_far = r_far.min(self.r_max);
         let mut y = self.regular_start(s2);
-        let mut z = [[T::zero(); 4]; 2];
-        let z0 = [[1.0, 0.3, 0.0, 0.2], [0.0, 0.5, 1.0, 0.1]];
-        for c in 0..2 {
-            for i in 0..4 {
-                z[c][i] = T::from_f64(z0[c][i]);
+        let mut z = if crate::mutate::on("arbstart") {
+            let z0 = [[1.0, 0.3, 0.0, 0.2], [0.0, 0.5, 1.0, 0.1]];
+            let mut z = [[T::zero(); 4]; 2];
+            for c in 0..2 {
+                for i in 0..4 {
+                    z[c][i] = T::from_f64(z0[c][i]);
+                }
             }
-        }
+            z
+        } else {
+            self.decaying_start(s2, r_far)
+        };
         integrate::<T, 4, 2>(&self.table, &mut y, self.rs, self.r_m, s2, &self.ctl);
         integrate::<T, 4, 2>(&self.table, &mut z, r_far, self.r_m, s2, &self.ctl);
         let mut m = [[T::zero(); 4]; 4];

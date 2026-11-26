@@ -238,38 +238,36 @@ use multishoot::lane::DV;
 use multishoot::{Fl, Work};
 
 /// The Taylor steps of every segment of the layout at z, as series of (P, u, m, Z) in double-double, ordered by position.
-pub fn steps_dd(sol: &crate::bvp::StarSol) -> Vec<StarStep<DD>> {
-    use multishoot::Equations;
-    let sh = &sol.sh;
+pub fn steps_layout<E: multishoot::Equations<1>>(sh: &multishoot::Shooting<E, 1>, z: &[Vec<f64>], g: &[DV]) -> Vec<StarStep<DD>> {
     let kt = sh.kt.min(NS);
     assert_eq!(sh.kt, NS, "the table takes the layout's order {NS}");
-    let g = [DV::splat(sol.k())];
     let mut out: Vec<StarStep<DD>> = vec![];
     for b in 1..sh.k() {
         let pts = &sh.segs[b - 1];
         let src = sh.seg_source(b);
-        let mut st: [DD; 4] = [DD::ZERO; 4];
-        for f in 0..4 {
-            st[f] = crate::bvp::zget(&sol.z, crate::bvp::zi(sh, src, f, 0));
-        }
+        let mut st: Vec<DD> = (0..E::NF).map(|f| crate::bvp::zget(z, sh.off_node(src) + f * 8)).collect();
         for w2 in pts.windows(2) {
             let (x0, x1) = (w2[0], w2[1]);
-            let mut w = Work::<DV, 1>::new(4, 0, kt);
-            for f in 0..4 {
+            let mut w = Work::<DV, 1>::new(E::NF, E::NAUX, kt);
+            for f in 0..E::NF {
                 w.c[f][0] = Fl::splat(st[f]);
             }
-            sh.eq.taylor_coeffs::<DV>(x0, &g, &mut w);
+            sh.eq.taylor_coeffs::<DV>(x0, g, &mut w);
             let mut coef = [[DD::ZERO; KMAX + 1]; 4];
-            for f in 0..4 {
+            let mut full = vec![[DD::ZERO; KMAX + 1]; E::NF];
+            for f in 0..E::NF {
                 for k in 0..=kt {
-                    coef[f][k] = w.c[f][k].get(0);
+                    full[f][k] = w.c[f][k].get(0);
                 }
             }
-            let hh = DD::from_f64(x1) - DD::from_f64(x0);
             for f in 0..4 {
-                let mut s = coef[f][kt];
+                coef[f] = full[f];
+            }
+            let hh = DD::from_f64(x1) - DD::from_f64(x0);
+            for f in 0..E::NF {
+                let mut s = full[f][kt];
                 for k in (0..kt).rev() {
-                    s = s * hh + coef[f][k];
+                    s = s * hh + full[f][k];
                 }
                 st[f] = s;
             }
