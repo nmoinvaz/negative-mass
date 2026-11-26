@@ -1,0 +1,128 @@
+[PASS] n_table: crate N at 40 rational points against det_classify.conical_N() (typed): worst |dN|/sum|terms| 2.08e-32; against conical_limit.build_N() (rebuilt from D): 2.08e-32; threshold 1e-26
+  (0 s)
+  (series through eta^-17 solved in 185 s)
+[PASS] series_stages: formal_series through eta^-17: every stage solved: True; free parameters ['a4_0']; a_(4,1) = F_inf (F_inf^2 + 7): True; odd coefficients zero: True; src/tables.rs equals the regenerated table: True; 36 terms, highest n = 16
+  (185 s)
+[NOT MET (as first worded, literal start 200)] series_residual_200: |N|/sum|terms| <= 1e-20 at 200 fails for 2 of 6 pairs; recorded, not gated (README A1)
+[PASS] series_residual: adaptive start L (smallest in 200, 800, 3200, 12800, 51200 with |N|/sum|terms| <= 1e-20 at +-L) and the crate's (F, F', F'') against mpmath at 50 digits to 1e-26 relative: (1,0): L=200 n_rel=4.3e-25 (at 200: 4.3e-25), crate vs mpmath 1.7e-32; (-1,2): L=200 n_rel=2.8e-25 (at 200: 2.8e-25), crate vs mpmath 1.1e-32; (1/3,-1): L=200 n_rel=6.9e-26 (at 200: 6.9e-26), crate vs mpmath 2.3e-32; (2,1/2): L=200 n_rel=7.5e-24 (at 200: 7.5e-24), crate vs mpmath 1.7e-32; (4,3000): L=800 n_rel=9.1e-24 (at 200: 2.9e-14), crate vs mpmath 1.7e-32; (0.25,-3000): L=3200 n_rel=2.0e-24 (at 200: 3.8e-05), crate vs mpmath 2.3e-32
+  (1 s)
+[PASS] series_order: N of the n <= 17 series at 12 exact rational pairs vanishes through nu^23 and not at nu^24 (K + 7 = 24 is the first possibly nonzero order): (1,0): nonzero orders <= nu^24: [24]; (-1,2): nonzero orders <= nu^24: [24]; (1/3,-1): nonzero orders <= nu^24: [24]; (2,1/2): nonzero orders <= nu^24: [24]; (-3/2,1): nonzero orders <= nu^24: [24]; (1/2,-3): nonzero orders <= nu^24: [24]; (3,5): nonzero orders <= nu^24: [24]; (-1/4,1/3): nonzero orders <= nu^24: [24]; (5/2,-7): nonzero orders <= nu^24: [24]; (2/3,3/2): nonzero orders <= nu^24: [24]; (-2,-1/2): nonzero orders <= nu^24: [24]; (4,10): nonzero orders <= nu^24: [24]
+  (2 s)
+[PASS] plant_linear: matching on the linear planted equation, exact alpha + (a + b x)/(1 + x^2), a = 13/10, b = 2/5: converged True in 1 steps, |C- - a| 6.4739595820192505e-28, |e| 5.7777898331617076e-34, |C+ - b| 3.499645820544934e-29, nodes 2.814014760343078e-29 (thresholds 1e-20, 1e-20, 1e-20, 1e-22)
+  (0 s)
+[PASS] plant_cubic: matching on the cubic planted equation, exact alpha + (a + b x)/(1 + x^2), a = 13/10, b = 2/5: converged True in 8 steps, |C- - a| 7.742669784744231e-28, |e| 5.946623723634178e-34, |C+ - b| 4.045377329586501e-29, nodes 2.0587420733521796e-29 (thresholds 1e-20, 1e-20, 1e-20, 1e-22)
+  (1 s)
+[PASS] plant_blowup: locator on F'' = 2 F^3 and F F'' + F'^2 = 0, x* = 0.7321, two starts each way, error and bar <= 1e-8 and the kind: cube dir -1 d 0.9: err 8.402167850363185e-17, bar 0.0, kind F->inf | cube dir -1 d 0.35: err 8.402167850363185e-17, bar 0.0, kind F->inf | cube dir +1 d 0.9: err 2.7000623958883807e-17, bar 0.0, kind F->inf | cube dir +1 d 0.35: err 2.7000623958883807e-17, bar 0.0, kind F->inf | sqrt dir -1 d 0.9: err 7.46666692919007e-12, bar 1.2443379659998755e-12, kind F->0 | sqrt dir -1 d 0.35: err 7.424922543464163e-12, bar 1.237121516339812e-12, kind F->0 | sqrt dir +1 d 0.9: err 7.466498885833061e-12, bar 1.244448988302338e-12, kind F->0 | sqrt dir +1 d 0.35: err 7.424865522409618e-12, bar 1.237121516339812e-12, kind F->0
+  (0 s)
+[PASS] step_halving: inward state from the plan of order 30, tol 1e-32 against order 36, tol 1e-38 (largest step 5), max difference in F, F', F'' <= 1e-20: (1,0) at 3: 4.9e-27 (55 and 67 steps); (2,0.5) at 3: 4.2e-27 (58 and 69 steps); (0.5,-30) at 10: 1.6e-28 (45 and 58 steps); (3,100) at 3: 6.6e-28 (65 and 77 steps)
+  (0 s)
+[NOT MET (as first worded, stop at R <= 1e-6)] scan_bar: SINGULAR error bar <= 1e-8 fails at 2 points [(1.0, 3000.0, 2.433946368825199e-08), (-1.0, -3000.0, 2.433946368825199e-08)]; recorded, not gated (README A1)
+[NOTE] scan_first_pass: the first pass (stop R <= 1e-6) and the pass of record (R <= 1e-8) differ at 7 of 187 points:
+   F_inf=1 C=1000: first pass S:other at 6.570597535e-05; record S:F->0 at 4.578491656e-05
+   F_inf=1.5 C=1000: first pass S:a3->0 at 1.070170749; record S:F->0 at 0.5442949715
+   F_inf=2 C=1000: first pass S:a3->0 at 1.671812516; record S:F->0 at 1.162043429
+   F_inf=3 C=3000: first pass S:a3->0 at 2.789535762; record S:F->0 at 2.381267496
+   F_inf=4 C=3000: first pass S:a3->0 at 3.817202632; record S:F->0 at 3.490621782
+   F_inf=-1 C=-1000: first pass S:other at 6.570597535e-05; record S:F->0 at 4.578491656e-05
+   F_inf=-2 C=-1000: first pass S:a3->0 at 1.671812516; record S:F->0 at 1.162043429
+  scan of record (class of each point; singular eta* to 8 digits):
+   F_inf=0.25: -3000:F->0@109.41241 -1000:F->0@63.047346 -300:F->0@34.340323 -100:F->0@19.576111 -30:F->0@10.377655 -10:F->0@5.6525851 -3:F->0@2.9150761 -1:F->0@1.8562477 0:F->0@1.2866906 1:F->0@0.73305158 3:F->0@0.097736655 10:F->0@0.0007153455 30:FLOOR:log 100:FLOOR:log 300:FLOOR:log 1000:FLOOR:log 3000:FLOOR:log
+   F_inf=0.5: -3000:F->0@77.283039 -1000:F->0@44.459824 -300:F->0@24.106264 -100:F->0@13.610679 -30:F->0@7.0694958 -10:F->0@3.7964565 -3:F->0@2.1115096 -1:F->0@1.5596895 0:F->0@1.2822929 1:F->0@1.0121664 3:F->0@0.53414607 10:F->0@0.056503062 30:F->0@0.0011245859 100:FLOOR:log 300:FLOOR:log 1000:FLOOR:log 3000:FLOOR:log
+   F_inf=0.75: -3000:F->0@63.029937 -1000:F->0@36.198064 -300:F->0@19.535312 -100:F->0@10.924715 -30:F->0@5.5743575 -10:F->0@2.999483 -3:F->0@1.8100052 -1:F->0@1.4537162 0:F->0@1.2789518 1:F->0@1.1095156 3:F->0@0.79862244 10:F->0@0.22856534 30:F->0@0.025631588 100:F->0@0.00040812351 300:other@1.1573781e-06 1000:FLOOR:log 3000:FLOOR:log
+   F_inf=1: -3000:F->0@54.51616 -1000:F->0@31.248412 -300:F->0@16.776084 -100:F->0@9.2824579 -30:F->0@4.6536681 -10:F->0@2.5354082 -3:F->0@1.6513691 -1:F->0@1.4022832 0:F->0@1.2819333 1:F->0@1.1657455 3:F->0@0.95031997 10:F->0@0.44912149 30:F->0@0.11019401 100:F->0@0.011819595 300:F->0@0.00095480662 1000:F->0@4.5784917e-05 3000:other@3.6494475e-06
+   F_inf=1.5: -3000:F->0@44.368987 -1000:F->0@25.307468 -300:F->0@13.404605 -100:F->0@7.2173298 -30:F->0@3.4928093 -10:F->0@2.0245221 -3:F->0@1.5228536 -1:F->0@1.392387 0:F->0@1.3302328 1:F->0@1.2703481 3:F->0@1.1579052 10:F->0@0.84623361 30:F->0@0.44509128 100:F->0@0.25907211 300:F->0@0.45592921 1000:F->0@0.54429497 3000:a3->0@1.1000625
+   F_inf=2: -3000:F->0@38.251377 -1000:F->0@21.666298 -300:F->0@11.254572 -100:F->0@5.8324027 -30:F->0@2.782799 -10:F->0@1.8401093 -3:F->0@1.5679471 -1:F->0@1.4989602 0:F->0@1.4660203 1:F->0@1.4341246 3:F->0@1.3734658 10:F->0@1.1929986 30:F->0@0.89085066 100:F->0@0.78768652 300:F->0@1.0510625 1000:F->0@1.1620434 3000:a3->0@1.7085396
+   F_inf=3: -3000:F->0@30.776697 -1000:F->0@17.031763 -300:F->0@8.2848515 -100:F->0@3.9522659 -30:F->0@2.4172236 -10:F->0@2.1584337 -3:F->0@2.091112 -1:F->0@2.0739299 0:F->0@2.0656687 1:F->0@2.057624 3:F->0@2.0421736 10:F->0@1.9945243 30:F->0@1.9063973 100:F->0@1.9220993 300:F->0@2.1766384 1000:F->0@2.3217488 3000:F->0@2.3812675
+   F_inf=4: -3000:F->0@25.989814 -1000:F->0@13.799162 -300:F->0@6.070144 -100:F->0@3.4405454 -30:F->0@3.0849464 -10:F->0@3.0467668 -3:F->0@3.0383782 -1:F->0@3.0364037 0:F->0@3.0354839 1:F->0@3.0346084 3:F->0@3.0329876 10:F->0@3.0286239 30:F->0@3.0259473 100:F->0@3.0835422 300:F->0@3.2668871 1000:F->0@3.4170908 3000:F->0@3.4906218
+   F_inf=-0.5: -3000:FLOOR:log -1000:FLOOR:log -300:FLOOR:log -100:FLOOR:log -30:F->0@0.0011245859 -10:F->0@0.056503062 -3:F->0@0.53414607 -1:F->0@1.0121664 0:F->0@1.2822929 1:F->0@1.5596895 3:F->0@2.1115096 10:F->0@3.7964565 30:F->0@7.0694958 100:F->0@13.610679 300:F->0@24.106264 1000:F->0@44.459824 3000:F->0@77.283039
+   F_inf=-1: -3000:other@3.6494475e-06 -1000:F->0@4.5784917e-05 -300:F->0@0.00095480662 -100:F->0@0.011819595 -30:F->0@0.11019401 -10:F->0@0.44912149 -3:F->0@0.95031997 -1:F->0@1.1657455 0:F->0@1.2819333 1:F->0@1.4022832 3:F->0@1.6513691 10:F->0@2.5354082 30:F->0@4.6536681 100:F->0@9.2824579 300:F->0@16.776084 1000:F->0@31.248412 3000:F->0@54.51616
+   F_inf=-2: -3000:a3->0@1.7085396 -1000:F->0@1.1620434 -300:F->0@1.0510625 -100:F->0@0.78768652 -30:F->0@0.89085066 -10:F->0@1.1929986 -3:F->0@1.3734658 -1:F->0@1.4341246 0:F->0@1.4660203 1:F->0@1.4989602 3:F->0@1.5679471 10:F->0@1.8401093 30:F->0@2.782799 100:F->0@5.8324027 300:F->0@11.254572 1000:F->0@21.666298 3000:F->0@38.251377
+  FLOOR points (the walk reached eta = 1e-6): F and p = eta F' at eta = 1e-2, 1e-4, 1e-6; F' = p/eta there
+   F_inf=0.25 C=30 (log): F = 0.19235, 0.13975, 0.06994; p = 9.8521e-03, 1.3149e-02, 1.7259e-02
+   F_inf=0.25 C=100 (log): F = 0.23085, 0.21667, 0.19973; p = 2.8219e-03, 3.3558e-03, 4.0266e-03
+   F_inf=0.25 C=300 (log): F = 0.24313, 0.23875, 0.23390; p = 9.0471e-04, 1.0005e-03, 1.1111e-03
+   F_inf=0.25 C=1000 (log): F = 0.24779, 0.24655, 0.24523; p = 2.6309e-04, 2.7787e-04, 2.9388e-04
+   F_inf=0.25 C=3000 (log): F = 0.24922, 0.24882, 0.24840; p = 8.6059e-05, 8.8792e-05, 9.1656e-05
+   F_inf=0.5 C=100 (log): F = 0.41491, 0.30831, 0.10357; p = 1.6852e-02, 3.1245e-02, 6.0726e-02
+   F_inf=0.5 C=300 (log): F = 0.47115, 0.44540, 0.40754; p = 4.6678e-03, 6.6791e-03, 1.0074e-02
+   F_inf=0.5 C=1000 (log): F = 0.49106, 0.48488, 0.47737; p = 1.2211e-03, 1.4725e-03, 1.8052e-03
+   F_inf=0.5 C=3000 (log): F = 0.49690, 0.49507, 0.49304; p = 3.7663e-04, 4.1793e-04, 4.6622e-04
+   F_inf=0.75 C=1000 (log): F = 0.72796, 0.70558, 0.66540; p = 3.7374e-03, 6.2879e-03, 1.1985e-02
+   F_inf=0.75 C=3000 (log): F = 0.74271, 0.73733, 0.73008; p = 1.0188e-03, 1.3430e-03, 1.8391e-03
+   F_inf=-0.5 C=-3000 (log): F = -0.49690, -0.49507, -0.49304; p = -3.7663e-04, -4.1793e-04, -4.6622e-04
+   F_inf=-0.5 C=-1000 (log): F = -0.49106, -0.48488, -0.47737; p = -1.2211e-03, -1.4725e-03, -1.8052e-03
+   F_inf=-0.5 C=-300 (log): F = -0.47115, -0.44540, -0.40754; p = -4.6678e-03, -6.6791e-03, -1.0074e-02
+   F_inf=-0.5 C=-100 (log): F = -0.41491, -0.30831, -0.10357; p = -1.6852e-02, -3.1245e-02, -6.0726e-02
+  points that end at the curve F^2 = eta^2 + 1 (a3->0) or with another label: fitted exponent field, gamma, alpha; F, F', F'' at the last step
+   F_inf=0.75 C=300 other at eta* = 1.157378097e-06: field 2, gamma -0.0001, alpha 0.9999, F = 0.12647, F' = 1.3771e+05, F'' = -1.5182e+11, |F^2 - eta^2 - 1| = 9.8e-01
+   F_inf=1 C=3000 other at eta* = 3.649447461e-06: field 2, gamma -0.0001, alpha 0.9999, F = 0.24812, F' = 1.1159e+05, F'' = -5.0488e+10, |F^2 - eta^2 - 1| = 9.4e-01
+   F_inf=1.5 C=3000 a3->0 at eta* = 1.100062531: field 2, gamma 0.9877, alpha 1.9877, F = 1.4867, F' = 0.36997, F'' = -5607.2, |F^2 - eta^2 - 1| = 6.6e-09
+   F_inf=2 C=3000 a3->0 at eta* = 1.708539646: field 2, gamma 0.9614, alpha 1.9614, F = 1.9797, F' = 0.43157, F'' = -4547.9, |F^2 - eta^2 - 1| = 9.3e-10
+   F_inf=-1 C=-3000 other at eta* = 3.649447461e-06: field 2, gamma -0.0001, alpha 0.9999, F = -0.24812, F' = -1.1159e+05, F'' = 5.0488e+10, |F^2 - eta^2 - 1| = 9.4e-01
+   F_inf=-2 C=-3000 a3->0 at eta* = 1.708539646: field 2, gamma 0.9614, alpha 1.9614, F = -1.9797, F' = -0.43157, F'' = 4547.9, |F^2 - eta^2 - 1| = 9.3e-10
+  F->0 points: 166, eta* from 4.578e-05 to 109.4; examples (F_inf, C): measured alpha / 2/(eta*^2 + 4):
+   (1, 0): eta* = 1.28193326312 (bar 3.3e-15), alpha 0.35417 / 0.35440
+   (0.25, 0): eta* = 1.28669063292 (bar 3.6e-15), alpha 0.35341 / 0.35363
+   (2, 0): eta* = 1.46602025873 (bar 2.4e-15), alpha 0.32507 / 0.32524
+   (4, 0): eta* = 3.03548392532 (bar 0.0e+00), alpha 0.15134 / 0.15135
+   (1, 100): eta* = 0.0118195947859 (bar 9.4e-15), alpha 0.50056 / 0.49998
+   (0.5, 30): eta* = 0.00112458593426 (bar 9.4e-15), alpha 0.50057 / 0.50000
+[PASS] scan: 187 points, classes {'S:F->0': 166, 'FLOOR:log': 15, 'S:other': 3, 'S:a3->0': 3}; every SINGULAR of record has an error bar <= 1e-8 (max 1.9e-12): True; FLOOR points 15 (three states each in the log); THROUGH 0, GLOBAL 0; F->0 points: 166, measured exponent against 2/(eta*^2 + 4): worst relative difference 1.2e-03
+  (45 s)
+[NOT MET (as first worded, literal start 200)] n_along_path_200: the start residual exceeds 1e-18 at 58 of 187 points; recorded, not gated (README A1)
+[PASS] n_along_path: max |N|/sum|terms| over the steps, to the step where R falls below 1e-3, from the adaptive start: 7.70e-21 (threshold 1e-18); starts at L = 200: 115, 800: 58, 3200: 14, 12800: 0, 51200: 0
+  (0 s)
+[PASS] symmetry: (F_inf, C) and (-F_inf, -C) for F_inf in {0.5, 1, 2}, all 17 C: same class, eta* equal to 1e-8, floor p equal to 1e-10: all 51 pairs agree
+  (0 s)
+  bisections:
+   F_inf=0.25 C in (10, 30) S:F->0 -> FLOOR:log: C_c = 15.9106638123, ends S:F->0 (eta* 2.56659e-05) | S:other (eta* 4.88605e-05), 44 halvings
+   F_inf=0.5 C in (30, 100) S:F->0 -> FLOOR:log: C_c = 57.7151412366, ends S:F->0 (eta* 2.42772e-05) | S:other (eta* 4.30474e-05), 44 halvings
+   F_inf=0.75 C in (100, 300) S:F->0 -> S:other: C_c = 171.783975772, ends S:F->0 (eta* 2.63264e-05) | S:other (eta* 4.26243e-05), 44 halvings
+   F_inf=0.75 C in (300, 1000) S:other -> FLOOR:log: C_c = 306.41595402, ends S:other (eta* 9.90589e-07) | FLOOR:log (eta* None), 45 halvings
+   F_inf=1 C in (1000, 3000) S:F->0 -> S:other: C_c = 1141.42920124, ends S:F->0 (eta* 3.24665e-05) | S:other (eta* 4.65814e-05), 44 halvings
+   F_inf=1.5 C in (1000, 3000) S:F->0 -> S:a3->0: C_c = 1373.53708872, ends S:F->0 (eta* 0.555628) | S:a3->0 (eta* 1.08195), 44 halvings
+   F_inf=2 C in (1000, 3000) S:F->0 -> S:a3->0: C_c = 1724.10824429, ends S:F->0 (eta* 1.18598) | S:a3->0 (eta* 1.69415), 44 halvings
+   F_inf=-0.5 C in (-100, -30) FLOOR:log -> S:F->0: C_c = -92.7704308133, ends FLOOR:log (eta* None) | S:other (eta* 9.90597e-07), 43 halvings
+   F_inf=-1 C in (-3000, -1000) S:other -> S:F->0: C_c = -1141.42920124, ends S:other (eta* 4.65814e-05) | S:F->0 (eta* 3.24665e-05), 44 halvings
+   F_inf=-2 C in (-3000, -1000) S:a3->0 -> S:F->0: C_c = -1724.10824429, ends S:a3->0 (eta* 1.69415) | S:F->0 (eta* 1.18598), 44 halvings
+[PASS] bisect: 10 adjacent pairs of C grid values with different verdict classes bisected to C_hi - C_lo <= 1e-13 (1 + |C|); every bracket ends with the classes still different: True
+  (41 s)
+[PASS] connect: not applicable: no scan point is FLOOR-bounded or THROUGH, and no bisection ends at one; there is nothing to refine (this is the answer on the grid: no global solution found)
+  (0 s)
+[PASS] eta0_local: N(0) = 2 F'^2 (F^2 - 1)(F F'' + F'^2): True; dN/dF'' at 0 = 2 F'^2 F (F^2 - 1): True; F'(0) != 0, F(0) not in {0, +-1}: analytic two-parameter family, F'' = -F'^2/F: True ((f, f1) = (3/2, 1/3): d2 = -1/27 = -f1^2/(2 f), orders 0..6 each linear in the next coefficient; (f, f1) = (-2/3, 5/2): d2 = 75/16 = -f1^2/(2 f), orders 0..6 each linear in the next coefficient); F - f ~ c eta^p: leading coefficient 2*c**3*f*p**5*(f - 1)*(f + 1)*(p - 1) (= 2 f (f^2-1) c^3 p^5 (p-1), zero only at p = 0, 1 for f not in {0, +-1}): True; F(0) = 0: leading coefficient -2*c**4*p**5*(2*p - 1) (zero only at p = 1/2, F ~ sqrt(eta), and N(0) = -2 F'^4 forces F'(0) = 0): True; F(0) = 1: order 1 gives c2 = (1 - 6 c1^2)/12 for c1 = F'(0) != 0 (one parameter): True; even branch, order 4: 64*b1**3*(5*b1 - 2) (b1 = 0 or 2/5): True
+  (137 s)
+  forward walks: for each F(0) = f, the plus side (eta > 0) for F'(0) = f1; the minus side of (f, f1) is the plus side of (f, -f1) (checked below)
+   f = 0.1: -100:F->0@0.0005 -10:F->0@0.00500001 -1:F->0@0.0500104 -0.1:F->0@0.509578 -0.01:F->0@4.85625 0.01:fold@1.56238 0.1:fold@0.743897 1:fold@0.275646 10:fold@0.0533174 100:fold@0.00612583
+   f = 0.25: -100:F->0@0.00125 -10:F->0@0.0125002 -1:F->0@0.125165 -0.1:F->0@1.349 -0.01:F->0@8.99838 0.01:fold@1.61779 0.1:fold@0.708714 1:fold@0.202102 10:fold@0.0297686 100:fold@0.00316865
+   f = 0.5: -100:F->0@0.0025 -10:F->0@0.0250014 -1:F->0@0.251394 -0.1:F->0@2.78635 -0.01:F->0@13.998 0.01:fold@1.35333 0.1:fold@0.556821 1:fold@0.133395 10:fold@0.0171987 100:fold@0.00178141
+   f = 0.75: -100:F->0@0.00375001 -10:F->0@0.0375055 -1:F->0@0.380291 -0.1:F->0@4.21154 -0.01:F->0@19.4081 0.01:fold@0.884897 0.1:fold@0.337617 1:fold@0.0697579 10:fold@0.00830281 100:fold@0.00084863
+   f = 1.5: -100:a3->0@0.00329307 -10:a3->0@0.032864 -1:a3->0@0.293769 -0.1:a3->0@0.91243 -0.01:a3->0@1.09476 0.01:kappa@1.14147 0.1:kappa@1.34202 1:LOGLOG 10:LOGLOG 100:LOGLOG
+   f = 2: -100:other@0.00623444 -10:a3->0@0.0621343 -1:a3->0@0.527635 -0.1:a3->0@1.45137 -0.01:a3->0@1.70091 0.01:kappa@1.76325 0.1:kappa@2.02284 1:LOGLOG 10:LOGLOG 100:LOGLOG
+   f = 3: -100:other@0.0117913 -10:a3->0@0.117272 -1:a3->0@0.939391 -0.1:a3->0@2.39486 -0.01:a3->0@2.78143 0.01:kappa@2.87496 0.1:kappa@3.23764 1:LOGLOG 10:LOGLOG 100:LOGLOG
+   f = 5: -100:fold@0.0225973 -10:fold@0.214592 -1:a3->0@1.6654 -0.1:a3->0@4.11542 -0.01:a3->0@4.81925 0.01:kappa@4.97511 0.1:fold@4.33035 1:LOGLOG 10:LOGLOG 100:LOGLOG
+   f = -0.5: -100:fold@0.00178141 -10:fold@0.0171987 -1:fold@0.133395 -0.1:fold@0.556821 -0.01:fold@1.35333 0.01:F->0@13.998 0.1:F->0@2.78635 1:F->0@0.251394 10:F->0@0.0250014 100:F->0@0.0025
+   f = -2: -100:LOGLOG -10:LOGLOG -1:LOGLOG -0.1:kappa@2.02284 -0.01:kappa@1.76325 0.01:a3->0@1.70091 0.1:a3->0@1.45137 1:a3->0@0.527635 10:a3->0@0.0621343 100:other@0.00623444
+[PASS] forward: 100 solutions through eta = 0 (F(0), F'(0), F''(0) = -F'^2/F; max |N(0)| 4.0e-24), 200 walks to +-200: {'SINGULAR:F->0': 50, 'SINGULAR:fold': 56, 'SINGULAR:a3->0': 40, 'LOGLOG': 30, 'NONFINITE:kappa': 18, 'SINGULAR:other': 6}; walks that end in none of SINGULAR (bar <= 1e-8), LOGLOG (|q/p^2 + sgn p| <= 0.2), FAMILY (fit residual <= 1e-10, F'' to 1e-6), or the kappa locus with overflow: 0 []; mirror pairs (f, f1) minus against (f, -f1) plus differing: 0 []; solutions with FAMILY on both sides: 0; LOGLOG plus walks: 15, q/p^2 in [-1.0445, 1.0170]
+  (15 s)
+[PASS] even_pm1: even solution through F(0) = 1: F = 1 + 2/5 x^2 - 22/125 x^4 + 998/10625 x^6 - ... (exact rationals through x^60); N = 0 exactly through order 62: True; walks to 200 from x0 = 1/20 and 1/10 (series tails 8e-81, 9e-63) agree to 1e-12 in F and p: True; at 200 F = 3.02219997, p = eta F' = 0.165663, q/p^2 = -1.000051 (log-log regime, no limit): True
+  (4 s)
+[PASS] independent: own mpmath integration (25 digits, odefun tol 1e-15, no Rust, no multishoot; shares N and the series with the crate) against the crate's inward state, |dF|, |dF'| <= 1e-9: (1,0) at 4: |dF| 9.3e-18, |dF'| 7.6e-18 (126 s); (2,0.5) at 4: |dF| 9.4e-18, |dF'| 7.3e-18 (108 s); (0.5,-30) at 10: |dF| 1.1e-18, |dF'| 6.9e-19 (109 s)
+  (343 s)
+
+checks: 17 passed, 0 failed []. 774 s
+
+== Controls: each mutation must make its target checks fail, and no others ==
+[FIRED] --mutate=eq-coeff (one coefficient of N in the crate changed (-6 -> -5 on F F'^2 F'' eta^2)): exit 1, failed ['n_table', 'series_residual']
+[FIRED] --mutate=series-coeff (the crate's a_(4,1) times 1.01): exit 1, failed ['series_residual']
+[FIRED] --mutate=a16-coeff (a_(16,0) times (1 + 1/1000) in the exact-rational order check): exit 1, failed ['series_order']
+[FIRED] --mutate=match-sign (the mirror end takes +F' in place of -F'): exit 1, failed ['plant_linear', 'plant_cubic']
+[FIRED] --mutate=plant-locator (the locator's side test inverted): exit 1, failed ['plant_blowup']
+[FIRED] --mutate=halving (the first plan is order 14, tolerance 1e-12): exit 1, failed ['step_halving']
+[FIRED] --mutate=n-drift (the recursion leaves F''_3 = 0 (order 3 of N not imposed)): exit 1, failed ['n_along_path']
+[FIRED] --mutate=indep-eq (the independent integration has -6 -> -5.9999 on F F'^2 F'' eta^2): exit 1, failed ['independent']
+[FIRED] --mutate=sym-break (the symmetric comparison uses (-F_inf, +C)): exit 1, failed ['symmetry']
+[FIRED] --mutate=bisect-end (the bisection's upper end is compared with the wrong class): exit 1, failed ['bisect']
+[FIRED] --mutate=eta0-sign (the symbolic analysis of N at eta = 0 with the term 2 F'^2 (F^2 - 1) F'^2 -> 3): exit 1, failed ['eta0_local']
+[FIRED] --mutate=fwd-class (the log-log class tested at q/p^2 = sgn(p) in place of -sgn(p)): exit 1, failed ['forward']
+[FIRED] --mutate=even-series (the exact series coefficient b_3 of the even solution changed by 1/1000): exit 1, failed ['even_pm1']
+controls: all fired on target only

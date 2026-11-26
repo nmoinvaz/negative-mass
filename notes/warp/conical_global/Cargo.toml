@@ -1,0 +1,14 @@
+[package]
+name = "conical_global"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.89"
+publish = false
+
+[dependencies]
+multishoot = "=4.2.0"
+multisolver = "=0.2.2"
+multidouble = "=5.1.0"
+
+[profile.release]
+opt-level = 3
