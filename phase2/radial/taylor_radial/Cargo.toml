@@ -1,0 +1,17 @@
+[package]
+name = "taylor_radial"
+version = "0.1.0"
+edition = "2021"
+description = "Radial boson-star modes D(sigma^2) and the phantom family by Taylor integration, multishoot and multisolver (#194)"
+publish = false
+
+[dependencies]
+multishoot = "=4.2.0"
+multisolver = "=0.2.2"
+multidouble = "=5.1.0"
+
+[profile.release]
+opt-level = 3
+debug = false
+lto = "thin"
+codegen-units = 4
