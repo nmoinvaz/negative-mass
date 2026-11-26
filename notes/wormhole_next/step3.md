@@ -121,3 +121,19 @@ The claim that the departure falls faster than 1/n² at large D is unchanged and
 every D scanned from 5 to 67 (C3 holds at D = 10 and 12). Under "Remaining", "Values of D between the counted ones" stays,
 with the states in §3 above. Add: the real-axis zeros at D = 10, 12 and 20.04 and the on-line zeros at D = 16.76 and 20.04
 were re-found on a newer kernel build (2026-11-08 against 2026-10-25) and agree with the stored ones to 2×10⁻¹² or better.
+
+## Coordinator's review
+
+Reviewed 2026-11-26 at ad00567 (raw `I30-mac` b338967); the review's files are in `negative-mass-raw/I30-mac-review`
+(raw 4a0dca0).
+
+| item | result |
+|---|---|
+| scope | the four files the task named, and the raw folder; nothing written in choptuik-large-d |
+| rerun | `step3_table.py` on the raw records: exit 0, every line equal to `step3_output.txt` |
+| re-solve | CLD's `modecount_test_axis.py` at D = 10 with the cell h = 0.0025 (the record used 0.005): the zero −1.0016613614 + 2.4922604598i with Im/ω = 1.000000, the record's value to every printed digit |
+| independent recount `ind30.py` | **fails as written, by the coordinator's design.** The records store arg det M, whose phase moves by up to 3.1 rad between samples. The count winds g = det M · exp(lnqk − p_c), so a winding of det M cannot be recovered from these samples, and an independent recount would need CLD's own normalization. The planted pairs (C2, +2 in every B0) remain the counts' control |
+
+Findings: the answer stands as numerical evidence. The text for `wormhole_next.md` §6.1, §6.2 and §6.5, and the count in
+PLAN.md, are applied. §6.2's old sentence ("the departure falling faster than 1/n²" from D = 10 on) was wrong about
+D = 10–17, as this note shows; the large-D claim is untested.

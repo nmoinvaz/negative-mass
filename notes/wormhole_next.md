@@ -14,8 +14,8 @@ that fails), **argued** (a derivation, not a proof), **conjecture**, *(unverifie
 - **Step 1.** BW, CG and PLAN now cite CLD's counts and this note (commits ce5bbe1 and later). The D = 5 discrepancy
   is kept open.
 - **Step 2 (§6).**
-  - Winding counts now run from just right of the real-axis zero to Re μ ≈ 6.2–6.7, |Im μ| < 1.5ω. At eleven values of
-    D from 4 to 67 they find nothing but the boost (numerical evidence, each with a planted control).
+  - Winding counts now run from just right of the real-axis zero to Re μ ≈ 6.2–6.7, |Im μ| < 1.5ω. At fourteen values of
+    D from 4 to 67 (three added by #30) they find nothing but the boost (numerical evidence, each with a planted control).
   - The other parity sector's slowest mode is more damped at every D scanned, and tends to −1.
   - μ(D) is known from D = 4 to 70.5. At D ≥ 74 the double-double determinant cannot resolve its exact zero.
   - μ∞ is not quoted: the planted-truth test of the extrapolation fails at ±0.02. μ∞ = −1 stays a conjecture.
@@ -393,14 +393,17 @@ show winding 0 in every box (C1).
 | 6 | T79 down_D6 (48) | −0.425 < Re μ < 6.70 | | 0 | −0.35 ± 0.6i: +2 | 69 |
 | 7 | T79 down_D7 (48) | −0.477 < Re μ < 6.70 | | 0 | −0.40 ± 0.6i: +2 | 68 |
 | 8.25 | modecount_state (32) | −0.532 < Re μ < 0.248 | to 6.70 | 0 | −0.45 ± 0.6i: +2 | 42 |
+| 10 | up_D10 (48) | −0.596 < Re μ < 6.70 | | 0 | −0.45 ± 0.6i: +2 | 84 |
+| 12 | up_D12 (48) | −0.715 < Re μ < 6.70 | | 0 | −0.55 ± 0.7i: +2 | 92 |
 | 16.76 | up2 (32) | −0.751 < Re μ < 0.300 | to 6.26 | 0 | −0.60 ± 0.8i: +2 | 57 |
+| 20.04 | up2_D20.0437 (32) | −0.794 < Re μ < 6.31 | | 0 | −0.65 ± 0.8i: +2 | 92 |
 | 30.07 | up6 (32) | −0.922 < Re μ < 0.300 | to 6.18 | 0 | −0.70 ± 0.8i: +2 | 68 |
 | 45.05 | up7 (32) | −0.896 < Re μ < 0.300 | to 6.28 | 0 | −0.70 ± 0.8i: +2 | 64 |
 | 52.04 | up9 (32) | −0.962 < Re μ < 6.00 | | 0 | −0.70 ± 0.8i: +2 | 98 |
 | 60.00 | up13 (32) | −0.967 < Re μ < 6.11 | | 0 | −0.70 ± 0.8i: +2 | 101 |
 | 67.01 | up70 (32) | −0.910 < Re μ < 6.66 | | 0 | −0.70 ± 0.8i: +2 | 97 |
 
-At these 11 values of D from 4 to 67 the ghost sector has no growing mode, and the least-damped mode is the real-axis
+At these 14 values of D from 4 to 67 (D = 10, 12 and 20.04 added by #30, [`step3.md`](wormhole_next/step3.md)) the ghost sector has no growing mode, and the least-damped mode is the real-axis
 zero of §1.3 and §6.3 (numerical evidence). Values of D between them are not counted. A mode would have to cross
 Re μ = 0 and come back between counted D, against the smooth μ(D) below.
 
@@ -415,7 +418,8 @@ A zero there appears as a phase jump between grid points.
 | 6 | (−1.00, −0.95) | −0.975829 |
 | 7 | (−1.00, −0.95) | −0.988805 |
 | 8.25 | (−1.00, −0.96) | −0.996904 |
-| 10, 12 | (−1.05, −1.00) | (the refinement left the line) |
+| 10 | (−1.05, −1.00) | −1.001661 (#30) |
+| 12 | (−1.05, −1.00) | −1.003390 (#30) |
 | 16.76 | (−1.04, −1.00) | −1.003319 |
 | 20.04 | (−1.04, −1.00) | −1.002664 |
 | 30.07 | (−1.04, −1.00) | −1.001217 |
@@ -424,8 +428,12 @@ A zero there appears as a phase jump between grid points.
 | 60.00 | (−1.04, −1.00) | −1.000135 |
 | 67.01 | (−1.04, −1.00) | −1.000077 |
 
-There is one zero per scan, always more damped than the real one (C3). From D = 10 on it lies just below −1 and
-approaches it, the departure falling faster than 1/n² at large D. D = 4 has none in (−0.7, −0.02) (CLD).
+There is one zero per scan, always more damped than the real one (C3). *Update from #30:* it crosses −1 between D =
+8.25 (−0.996904) and D = 10 (−1.001661). The departure below −1 is 0.00166 at D = 10, 0.00339 at D = 12, 0.00332 at
+D = 16.76 and 0.00266 at D = 20.04, then falls: its maximum lies between D = 10 and 17 and is not located. The
+refinements at D = 10 and 12 use a 0.005 grid, because the secant from the 0.05 grid left the line
+([`step3.md`](wormhole_next/step3.md) §2). The claim that the departure falls faster than 1/n² at large D is not
+tested there. D = 4 has none in (−0.7, −0.02) (CLD).
 
 ### 6.3 μ(D) beyond D = 67, and a conditioning wall at D ≥ 74
 
@@ -487,7 +495,7 @@ way. A test that could fail needs one of two things:
 ### 6.5 What step 2 settles, and what remains
 
 **Settled (numerical evidence).**
-- At the 11 values of D counted from 4 to 67, the ghost sector of Choptuik's solution has no growing mode.
+- At the 14 values of D counted from 4 to 67 (three added by #30), the ghost sector of Choptuik's solution has no growing mode.
 - Its least-damped mode is the real-axis zero μ(D), negative and decreasing from −0.365 (D = 4) to −0.991 (D = 70.5).
 - The other parity sector's slowest mode is more damped at every D scanned.
 - BW's fade-out exponent 2|μ|γ rises from 0.27 (D = 4) to 0.97 (D = 60).
