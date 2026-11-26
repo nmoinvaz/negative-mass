@@ -377,13 +377,13 @@ R_ = mp.mpf
 T_PL, G_PL = R_(13) / 10, R_(7) / 10
 
 
-def ex_pl2(eta):
+def ex_pl2(eta, shifted=False):
     eta = R_(eta)
     t = mp.log(eta)
     tau = t + T_PL
     pp = 1 / tau
     qq = -pp * pp
-    g = G_PL + (R_(1) / 1000 if MUT == "plant-exact" else 0)
+    g = G_PL + (R_(1) / 1000 if shifted else 0)
     return g + mp.log(tau), pp / eta, (qq - pp) / eta**2
 
 
@@ -410,14 +410,14 @@ def ex_pl5(eta):
     return R_(7) / 10 - 1 / (3 * e**3), 1 / e**4, -4 / e**5
 
 
-def plant_run(name, exf, x0, to, cps, prec, mode):
+def plant_run(name, exf, x0, to, cps, prec, mode, exf_cmp=None):
     args = ["--poly", name, "--prec", prec, "--mode", mode, "--x0", x0, "--s0", state_args(exf, x0, prec), "--to", repr(float(to)),
             "--cp", ",".join(repr(float(c)) for c in cps)]
     recs = ll(args, mutate=cmut())
     errs = []
     for r in records_at(recs):
         x = mp.mpf(r.get("cp", r.get("x")))
-        ex = exf(x)
+        ex = (exf_cmp or exf)(x)
         errs.append((float(x), [float(abs((val(r[k]) - ex[i]) / ex[i])) for i, k in enumerate(("F", "F1", "F2"))]))
     return recs, errs
 
@@ -447,7 +447,8 @@ def c_plant_167():
 def c_plant_loglog():
     res, ok = [], True
     for prec, mode, bar in (("dd", "project", 1e-26), ("dd", "conserve", 1e-26), ("qd", "project", 1e-55), ("qd", "conserve", 1e-55)):
-        recs, errs = plant_run("pl2", ex_pl2, "2", 1e12, CPS_BIG, prec, mode)
+        cmp_ = (lambda e: ex_pl2(e, shifted=True)) if MUT == "plant-exact" else None
+        recs, errs = plant_run("pl2", ex_pl2, "2", 1e12, CPS_BIG, prec, mode, exf_cmp=cmp_)
         worst = max(max(e) for _, e in errs)
         reached = recs[-1]["stop"] == "End"
         ok &= reached and worst <= bar
@@ -746,8 +747,11 @@ def c_approach():
     K = 1 if MUT == "series-k" else 4
     worst = {1e3: 0.0, 1e6: 0.0, 1e12: 0.0}
     lines = []
+    ended = 0
     for f, f1 in mem:
-        recs = records_at(walk_member(f, f1, "dd", "project"))
+        full = walk_member(f, f1, "dd", "project")
+        ended += full[-1]["stop"] == "End"
+        recs = records_at(full)
         row = []
         for r in recs:
             x, Gv, pv, qv = gpq(r)
@@ -756,8 +760,8 @@ def c_approach():
             row.append(f"{float(x):.0e}: rho0 {float(rho(0, x, Gv, pv, qv)):.1e} rho1 {float(rho(1, x, Gv, pv, qv)):.1e} rho2 {float(rho(2, x, Gv, pv, qv)):.1e} "
                        f"rho4 {float(rho(4, x, Gv, pv, qv)):.1e} rho6 {float(rho(6, x, Gv, pv, qv)):.1e}")
         lines.append(f"    ({f:g}, {f1:g}): " + " | ".join(row))
-    ok = all(w <= 1e-10 for w in worst.values())
-    check("approach", ok, f"15 members, DD project walks: worst over the members of rho_{K} = |q - Q_{K}(G, p, eta^-2)|/p^2 (mirrored to p > 0) at eta = 1e3: {worst[1e3]:.1e}, 1e6: {worst[1e6]:.1e}, "
+    ok = all(w <= 1e-10 for w in worst.values()) and ended == len(mem)
+    check("approach", ok, f"15 members, DD project walks ({ended} reach 1e12): worst over the members of rho_{K} = |q - Q_{K}(G, p, eta^-2)|/p^2 (mirrored to p > 0) at eta = 1e3: {worst[1e3]:.1e}, 1e6: {worst[1e6]:.1e}, "
           f"1e12: {worst[1e12]:.1e} (bar 1e-10 at each)")
     for ln in lines:
         print(ln)
@@ -849,6 +853,10 @@ def c_independent():
     for f, f1 in picks:
         recs = records_at(walk_member(f, f1, "qd", "project", cps=[1e3, 1e6, 1e9]))
         byx = {float(gpq(r)[0]): gpq(r) for r in recs}
+        if not all(e in byx for e in (1e3, 1e6, 1e9, 1e12)):
+            worst = mp.mpf("inf")
+            detail.append(f"({f:g},{f1:g}): the walk ended at {max(byx):.3g}, before 1e12")
+            continue
         sg, G0, p0, _ = mirrored(*byx[1e3][1:])
         t0 = time.time()
         with mp.workdps(30):
@@ -900,6 +908,107 @@ def c_parity():
 
 
 
+
+# ---------------------------------------------------------------------------------------------------------------
+# T1 the trapping region D(eps): 0 < p <= 1/4, sigma (1 + |G|)^3 <= eps p^2, eps = 1/5, by hand with explicit constants
+# ---------------------------------------------------------------------------------------------------------------
+EPS_TRAP = mp.mpf(1) / 5
+PBAR = mp.mpf(1) / 4
+
+
+def trap_funcs():
+    A0, A1, A2 = theta_parts()
+    f = {}
+    for name, e in (("A0", A0), ("A1", A1), ("A2", A2), ("dA1", sp.diff(A1, q)), ("dA2", sp.diff(A2, q))):
+        f[name] = sp.lambdify((G, p, q), e, "mpmath")
+    return f
+
+
+def N_theta_mp(f, Gv, pv, qv, sig):
+    return f["A0"](Gv, pv, qv) + sig * f["A1"](Gv, pv, qv) + sig**2 * f["A2"](Gv, pv, qv)
+
+
+def c_trap_bounds():
+    import random
+    rnd = random.Random(184)
+    f = trap_funcs()
+    c1 = 2.6 if MUT == "trap-bound" else 26.0
+    worst = [0.0] * 4
+    nb = 4000
+    for _ in range(nb):
+        Gv = mp.mpf(rnd.uniform(-1, 1) * 10 ** rnd.uniform(-2, 2.3))
+        pv = mp.mpf(10 ** rnd.uniform(-6, -0.60206))
+        wv = mp.mpf(rnd.choice([-1, 1, rnd.uniform(-1, 1)])) * pv**2 / 2
+        qv = -pv**2 + wv
+        u = 1 + abs(Gv)
+        a1 = abs(f["A1"](Gv, pv, qv)) / (c1 * u**2 * pv**6)
+        d1 = abs(f["dA1"](Gv, pv, qv)) / (30 * u**2 * pv**4)
+        a2 = abs(f["A2"](Gv, pv, qv)) / (15 * u**3 * pv**4)
+        d2 = abs(f["dA2"](Gv, pv, qv)) / (35 * u**3 * pv**3)
+        worst = [max(w, float(v)) for w, v in zip(worst, (a1, d1, a2, d2))]
+    # the root in |w| <= p^2/2 for states of D(eps), its size and the invariance of D(eps)
+    ok_roots, wmax, pdmin, pdmax, lrmax = True, 0.0, mp.mpf(10), mp.mpf(-10), mp.mpf(-10)
+    nr = 300
+    for _ in range(nr):
+        Gv = mp.mpf(rnd.uniform(-1, 1) * 10 ** rnd.uniform(-2, 2.3))
+        pv = mp.mpf(10 ** rnd.uniform(-6, -0.60206))
+        u = 1 + abs(Gv)
+        rr = mp.mpf(rnd.choice([1.0, rnd.uniform(0, 1), 10 ** rnd.uniform(-8, 0)])) * EPS_TRAP
+        sig = rr * pv**2 / u**3
+        Nlo = N_theta_mp(f, Gv, pv, -pv**2 - pv**2 / 2, sig)
+        Nhi = N_theta_mp(f, Gv, pv, -pv**2 + pv**2 / 2, sig)
+        mono = all(mp.diff(lambda w_: N_theta_mp(f, Gv, pv, -pv**2 + w_, sig), pv**2 * k / 8) > 0 for k in range(-4, 5))
+        if not (Nlo < 0 < Nhi and mono):
+            ok_roots = False
+            continue
+        lo, hi = -pv**2 / 2, pv**2 / 2
+        for _ in range(120):
+            mid = (lo + hi) / 2
+            if N_theta_mp(f, Gv, pv, -pv**2 + mid, sig) > 0:
+                hi = mid
+            else:
+                lo = mid
+        wv = (lo + hi) / 2
+        wmax = max(wmax, float(abs(wv) / (pv**2 * 20 * sig * u**2)))
+        qv = -pv**2 + wv
+        pd = qv / pv**2
+        pdmin, pdmax = min(pdmin, pd), max(pdmax, pd)
+        sg = 1 if Gv > 0 else -1
+        lrmax = max(lrmax, -2 + 3 * sg * pv / u - 2 * qv / pv)
+    ok = max(worst) <= 1 and ok_roots and wmax <= 1 and pdmin >= -mp.mpf(5) / 4 and pdmax <= -mp.mpf(3) / 4 and lrmax < -mp.mpf(3) / 5
+    check("trap_bounds", ok, f"the hand bounds for 0 < p <= 1/4, |w| <= p^2/2, u = 1 + |G| (|A1| <= {c1:g} u^2 p^6, |dA1/dq| <= 30 u^2 p^4, |A2| <= 15 u^3 p^4, |dA2/dq| <= 35 u^3 p^3), worst ratio of "
+          f"|.| to the bound over {nb} random states: {worst[0]:.2f}, {worst[1]:.2f}, {worst[2]:.2f}, {worst[3]:.2f} (bar 1); in D(1/5) at {nr} random states: N changes sign across |w| <= p^2/2 and is increasing "
+          f"there: {ok_roots}; the root has |w|/p^2 <= 20 sigma u^2 (worst ratio {wmax:.2f}, bar 1); p' = q in p^2 [{mp.nstr(pdmin, 4)}, {mp.nstr(pdmax, 4)}] (claim [-5/4, -3/4]); "
+          f"(ln r)' <= {mp.nstr(lrmax, 4)} (claim < -3/5), r = sigma u^3/p^2")
+
+
+def c_trap_entry():
+    mem = members()
+    eps = EPS_TRAP if MUT != "trap-eps" else mp.mpf(10) ** -12
+    rows, ok = [], True
+    for f1_, f2_ in mem:
+        recs = walk_member(f1_, f2_, "dd", "project", cps=[1e3], extra=["--trace"])
+        tr = [r["tr"] for r in recs if "tr" in r]
+        entered, rprev, good = None, None, True
+        for x, F, F1, F2, wrel, nrel, h in tr[1:]:
+            pp = x * F1
+            qq = x * x * F2 + pp
+            sg = 1 if pp > 0 else -1
+            r = (1 + abs(F)) ** 3 / (x**2 * pp**2)
+            inD = r <= float(eps) and abs(pp) <= 0.25 and abs(qq / pp**2 + sg) <= 0.5
+            if entered is None:
+                if inD:
+                    entered, rprev = x, r
+            else:
+                good &= inD and r <= rprev * (1 + 1e-9)
+                rprev = r
+        member_ok = entered is not None and entered <= 1e6 and good
+        ok &= member_ok
+        rows.append(f"({f1_:g},{f2_:g}): eta_in {entered:.3g}" if entered else f"({f1_:g},{f2_:g}): never")
+    check("trap_entry", ok, f"the 15 DD project walks (every step) enter D(eps), eps = {float(eps):g} (0 < |p| <= 1/4, sigma (1 + |G|)^3 <= eps p^2, |q/p^2 + sgn p| <= 1/2) at eta_in <= 1e6 "
+          f"and stay in it with r = sigma (1 + |G|)^3/p^2 non-increasing: " + "; ".join(rows))
+
+
 CHECKS = [
     ("theta_form", c_theta_form),
     ("root_series", c_root_series),
@@ -920,6 +1029,8 @@ CHECKS += [
     ("basin_map", c_basin_map),
     ("approach", c_approach),
     ("no_limit", c_no_limit),
+    ("trap_bounds", c_trap_bounds),
+    ("trap_entry", c_trap_entry),
     ("invariants_conv", c_invariants_conv),
     ("n_floor", c_n_floor),
     ("dd_qd", c_dd_qd),
@@ -935,13 +1046,15 @@ CHECKS += [
 MUTATIONS.update({
     "class-sign": (["basin", "no_limit"], "the LOGLOG test uses q = +p^2 for p > 0"),
     "inv-conv": (["invariants_conv"], "T computed as 1/p + t"),
+    "trap-bound": (["trap_bounds"], "the bound on |A1| is 2.6 u^2 p^6 in place of 26"),
+    "trap-eps": (["trap_entry"], "the region D(eps) has eps = 1e-12"),
     "parity-sign": (["parity"], "F' summed with the wrong sign in the regular-side comparison"),
     "series-k": (["approach"], "the approach uses K = 1"),
     "walk-eq": (["approach", "independent"], "one coefficient of N in the hp walker changed"),
     "indep-q": (["independent"], "the independent integration uses Q_0 = -p^2 only"),
-    "plant-exact": (["plant_loglog"], "the exact solution of the log-log plant has g + 0.001"),
+    "plant-exact": (["plant_loglog"], "the exact solution the log-log walk is compared with has g + 0.001 (the start state does not)"),
     "plant-c": (["plant_shift"], "the planted equation has c = 1003/3000 in place of 1/3"),
-    "limit-class": (["plant_limit", "plant_loglog"], "the LIMIT test reads |p| >= 1e-6"),
+    "limit-class": (["plant_limit"], "the LIMIT test reads |p| >= 1e-6"),
     "no-project": (["plant_scale", "n_floor", "dd_qd"], "project runs as conserve"),
     "recip-dd": (["recip_check"], "the QD lanes use double-double constants"),
 })
