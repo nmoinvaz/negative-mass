@@ -1,0 +1,65 @@
+# python3 step3_table.py (exit 0)
+raw folder ~/Source/negative-mass-raw/I30-mac
+jobs (informative): 15 logs, exit codes ['0']; not exit 0: none
+environment lines in the job logs (informative):
+  -- env: CLD 5fcadda2 Delta tables: the form-S direct solve at D 50000 (#1088); hp status []; kernel sha1 3b1a9a221956
+
+real-axis zeros (E1), stored (ghost_mu.jsonl, section 1.3) against re-found here (ghost_mu3.jsonl)
+  D 10: stored -0.676124203429 (M 48), re-found -0.676124203430 (M 48, width 7.9e-13), 16 evaluations
+  D 12: stored -0.734531644203 (M 48), re-found -0.734531644204 (M 48, width 9.1e-13), 16 evaluations
+  D 20.04: stored -0.874313093543 (M 32), re-found -0.874313093541 (M 32, width 3.1e-13), 16 evaluations
+
+counts (aLL < Re mu < aR, |Im mu| < 1.5 omega; B0, U0 left of aL, full right of it)
+  D 10.0000 M 48 (up_D10.0000.npz): aLL -0.5961, aL 0.2989, aR 6.7000, y2 3.738; windings {'B0': 0, 'U0': 0, 'full': 0}; max step 0.358; 84 evaluations (84 new, 3.5 s each)
+      determinants evaluated for the plain and planted runs together: 108
+      planted -0.45 +- 0.6i: windings {'B0': 2, 'U0': 0, 'full': 0}; 105 evaluations (105 new)
+  D 12.0000 M 48 (up_D12.0000.npz): aLL -0.7145, aL 0.3000, aR 6.7000, y2 3.945; windings {'B0': 0, 'U0': 0, 'full': 0}; max step 0.388; 92 evaluations (92 new, 3.6 s each)
+      determinants evaluated for the plain and planted runs together: 117
+      planted -0.55 +- 0.7i: windings {'B0': 2, 'U0': 0, 'full': 0}; 116 evaluations (116 new)
+  D 20.0437 M 32 (up2_D20.0437.npz): aLL -0.7943, aL 0.2538, aR 6.3115, y2 4.464; windings {'B0': 0, 'U0': 0, 'full': 0}; max step 0.387; 92 evaluations (92 new, 1.1 s each)
+      determinants evaluated for the plain and planted runs together: 112
+      planted -0.65 +- 0.8i: windings {'B0': 2, 'U0': 0, 'full': 0}; 108 evaluations (108 new)
+
+other parity sector, Im mu = omega
+  D 10 (up_D10.0000.npz): section 6.2's scan (h 0.05): jumps [(-1.05, -1.0)]; its refinement [(-1.2936263734, 0.999583)]
+      section 6.2's point: ln|g| there is -0.002 below the line's trend interpolated from its samples (a zero: tens; on the trend: about 0)
+      rung 0, section 6.2's start (X1): zero Re -1.2928396758, Im/omega - 1 -4.13e-04, ln|g| -994.71; tests (a)ok (b)FAIL (c)FAIL (d)ok; 150 s
+      X1: C4's tests fire (b,c) on the old start; it does not reproduce section 6.2's point to 1e-6 (differences in Re 7.9e-04, in Im/omega 4.5e-06; the window's pole set, hence g, differs from the full scan's)
+      rung 1, the record: zero Re -1.0016613614, Im/omega - 1 +0.00e+00, ln|g| -996.78; tests (a)ok (b)ok (c)ok (d)ok; 76 s
+      rung 2: not run
+  D 12 (up_D12.0000.npz): section 6.2's scan (h 0.05): jumps [(-1.05, -1.0)]; its refinement [(-1.324789606, 0.999684)]
+      section 6.2's point: ln|g| there is -0.004 below the line's trend interpolated from its samples (a zero: tens; on the trend: about 0)
+      rung 0, section 6.2's start (X1): zero Re -1.3249767934, Im/omega - 1 -3.17e-04, ln|g| -1102.94; tests (a)ok (b)FAIL (c)FAIL (d)ok; 132 s
+      X1: C4's tests fire (b,c) on the old start; it does not reproduce section 6.2's point to 1e-6 (differences in Re 1.9e-04, in Im/omega 5.1e-07; the window's pole set, hence g, differs from the full scan's)
+      rung 1, the record: zero Re -1.0033895309, Im/omega - 1 +0.00e+00, ln|g| -1104.50; tests (a)ok (b)ok (c)ok (d)ok; 74 s
+      rung 2: not run
+  controls (C5):
+    D 16.76: zero Re -1.0033192792, Im/omega - 1 +2.22e-16
+    D 20.04: zero Re -1.0026635066, Im/omega - 1 +2.22e-16
+
+checks
+PASS  E1 D10: stored -0.676124203429, re-found -0.676124203430, difference 1.4e-13 (limit 1e-09), 1 zero(s) in the window
+PASS  E1 D12: stored -0.734531644203, re-found -0.734531644204, difference 5.9e-13 (limit 1e-09), 1 zero(s) in the window
+PASS  E1 D20.04: stored -0.874313093543, re-found -0.874313093541, difference 1.8e-12 (limit 1e-09), 1 zero(s) in the window
+PASS  C1 D10: resolved True, windings {'B0': 0, 'U0': 0, 'full': 0}
+PASS  C2 D10: plant -0.45 +- 0.6i (margin 0.146 inside B0): windings {'B0': 2, 'U0': 0, 'full': 0}, expected {'B0': 2, 'U0': 0, 'full': 0}, resolved True
+PASS  C1 D12: resolved True, windings {'B0': 0, 'U0': 0, 'full': 0}
+PASS  C2 D12: plant -0.55 +- 0.7i (margin 0.164 inside B0): windings {'B0': 2, 'U0': 0, 'full': 0}, expected {'B0': 2, 'U0': 0, 'full': 0}, resolved True
+PASS  C1 D20.04: resolved True, windings {'B0': 0, 'U0': 0, 'full': 0}
+PASS  C2 D20.04: plant -0.65 +- 0.8i (margin 0.144 inside B0): windings {'B0': 2, 'U0': 0, 'full': 0}, expected {'B0': 2, 'U0': 0, 'full': 0}, resolved True
+PASS  C3 D10: section 6.2's scan: jumps [(-1.05, -1.0)], real-axis zero -0.676124
+PASS  C4 D10: (a) ok 1 jump(s) [(-1.005, -1.0)]; (b) ok Im/omega - 1 = +0.0e+00; (c) ok Re -1.0016613614 in cell (-1.005000, -1.000000); (d) ok ln|g| at the zero +30.3 below the lower end sample
+PASS  C3 D12: section 6.2's scan: jumps [(-1.05, -1.0)], real-axis zero -0.734532
+PASS  C4 D12: (a) ok 1 jump(s) [(-1.005, -1.0)]; (b) ok Im/omega - 1 = +0.0e+00; (c) ok Re -1.0033895309 in cell (-1.005000, -1.000000); (d) ok ln|g| at the zero +29.6 below the lower end sample
+PASS  C5 D16.76: (a) ok 1 jump(s) [(-1.005, -1.0)]; (b) ok Im/omega - 1 = +2.2e-16; (c) ok Re -1.0033192792 in cell (-1.005000, -1.000000); (d) ok ln|g| at the zero +30.5 below the lower end sample; against section 6.2's -1.0033192792: 0.0e+00 (limit 1e-08)
+PASS  C5 D20.04: (a) ok 1 jump(s) [(-1.005, -1.0)]; (b) ok Im/omega - 1 = +2.2e-16; (c) ok Re -1.0026635066 in cell (-1.005000, -1.000000); (d) ok ln|g| at the zero +30.3 below the lower end sample; against section 6.2's -1.0026635066: 0.0e+00 (limit 1e-08)
+
+# python3 step3_table.py --selftest (exit 0)
+PASS  --mutate=mu: fails ['E1'] (unmutated fails []), target ['E1']
+PASS  --mutate=winding: fails ['C1'] (unmutated fails []), target ['C1']
+PASS  --mutate=noplant: fails ['C2'] (unmutated fails []), target ['C2']
+PASS  --mutate=realzero: fails ['C3'] (unmutated fails []), target ['C3']
+PASS  --mutate=offline: fails ['C4'] (unmutated fails []), target ['C4']
+PASS  --mutate=trend: fails ['C4'] (unmutated fails []), target ['C4']
+PASS  --mutate=old: fails ['C4'] (unmutated fails []), target ['C4']
+PASS  --mutate=ctrl: fails ['C5'] (unmutated fails []), target ['C5']
