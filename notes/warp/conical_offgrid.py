@@ -14,6 +14,7 @@ Every option other than the harness's own is forwarded to the control subprocess
 numerical is numerical evidence."""
 import hashlib
 import json
+import math
 import os
 import subprocess
 import sys
@@ -556,6 +557,27 @@ def c_scan():
         if k[1] != 0:
             ratios.append((abs(k[1]), r))
         print(f"   F_inf={k[0]:g} C={k[1]:g} ({v['kind']}): F = {v['floor'][2][0][0]:.6g}; p = {ps[0]:.4e}, {ps[1]:.4e}, {ps[2]:.4e}; p0 C/(4 F_inf^2) = {r:.6f}")
+    rat = []
+    for k in fl:
+        ps = [x * st[1][0] for x, st in zip((1e-2, 1e-4, 1e-6), res[k]["floor"])]
+        rat.append((k, ps[2] / ps[1]))
+    flat = [k for k, r in rat if abs(r - 1) <= 0.1]
+    print(f"  FLOOR, p(1e-6)/p(1e-4) within 10% of 1 (a log end, p0 = p): {len(flat)} of {len(fl)}; larger (p still rising at the floor: the flow closes on a singularity below it): {len(fl) - len(flat)}")
+    for fi in sorted({k[0] for k in fl}, key=lambda f: (abs(f), f)):
+        r = [x for k, x in rat if k[0] == fi]
+        nfl = sum(1 for x in r if abs(x - 1) <= 0.1)
+        print(f"   F_inf={fi:g}: {len(r)} floor points, {nfl} with p flat; p(1e-6)/p(1e-4) from {min(r):.4f} to {max(r):.4f}")
+    frs = [p0_of(res[k]) * k[1] / (4 * k[0] ** 2) for k in flat if k[1] != 0]
+    if frs:
+        print(f"  flat FLOOR points ({len(frs)}): p0 C/(4 F_inf^2) from {min(frs):.5f} to {max(frs):.5f}")
+    kap = [k for k in pts if res[k]["kind"] == "a3->0"]
+    print(f"  kappa-curve ends: {len(kap)} at R <= 1e-12 and {sum(1 for k in pts if first[k]['kind'] == 'a3->0')} at R <= 1e-8; by F_inf (points, C range, eta* range, sqrt(F_inf^2 - 1)):")
+    for fi in sorted({k[0] for k in kap}, key=lambda f: (abs(f), f)):
+        ks = [k for k in kap if k[0] == fi]
+        xs = [res[k]["xstar"] for k in ks]
+        print(f"   F_inf={fi:g}: {len(ks)} points, C from {min(k[1] for k in ks):g} to {max(k[1] for k in ks):g}, eta* from {min(xs):.8g} to {max(xs):.8g}; sqrt(F_inf^2 - 1) = {math.sqrt(max(fi * fi - 1, 0)):.8g}")
+    nfz = [res[k]["xstar"] for k in pts if res[k]["kind"] == "F->0" and res[k]["xstar"] < 1e-4]
+    print(f"  F->0 points with eta* < 1e-4: {len(nfz)}" + (f" (smallest {min(nfz):.4g})" if nfz else ""))
     sign_ok = all(p0_of(res[k]) * k[0] > 0 for k in fl if p0_of(res[k]) is not None)
     print(f"  FLOOR: p0 F_inf > 0 at every FLOOR point: {sign_ok}")
     fz = [res[k] for k in pts if res[k]["kind"] == "F->0" and res[k]["alpha_pred"]]
@@ -740,6 +762,10 @@ def c_bisect():
     for f in fs:
         pts = line_points(f) if GRID == "full" else line_points_ctl(f)
         res = og_scan(pts)
+        cnt = {}
+        for q_ in pts:
+            cnt[label(res[q_])] = cnt.get(label(res[q_]), 0) + 1
+        print(f"   line F_inf={f:g}: {len(pts)} points (C from {pts[0][1]:g} to {pts[-1][1]:g}), classes {cnt}")
         for a, b in zip(pts, pts[1:]):
             if label(res[a]) == label(res[b]):
                 continue
