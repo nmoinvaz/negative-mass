@@ -68,6 +68,7 @@ pub fn recips<T: Num>() -> [T; KMAX + 1] {
 }
 
 /// Gram-Schmidt of the columns in place; returns the positive diagonal of R.
+#[cfg(not(feature = "lib_plane"))]
 pub fn gram_schmidt<T: Num, const R: usize, const C: usize>(y: &mut [[T; R]; C]) -> [T; C] {
     let mut diag = [T::zero(); C];
     for c in 0..C {
@@ -98,6 +99,7 @@ pub fn gram_schmidt<T: Num, const R: usize, const C: usize>(y: &mut [[T; R]; C])
 
 /// Integrates the plane y (C columns of R rows) from ra to rb, either direction, at s^2 = s2.
 /// Returns the sum of ln R_ii over all steps (the log of the plane's volume growth) and the step statistics.
+#[cfg(not(feature = "lib_plane"))]
 pub fn integrate<T: Num, const R: usize, const C: usize>(
     src: &dyn JetSource<T>,
     y: &mut [[T; R]; C],
@@ -197,4 +199,92 @@ pub fn integrate<T: Num, const R: usize, const C: usize>(
         x0 = x1;
     }
     (lnvol, st)
+}
+
+/// Gram-Schmidt of the columns in place by multishoot's `plane::orthonormalize`; returns the positive diagonal of R.
+#[cfg(feature = "lib_plane")]
+pub fn gram_schmidt<T: Num, const R: usize, const C: usize>(y: &mut [[T; R]; C]) -> [T; C] {
+    let mut flat: Vec<T::Lib> = y.iter().flatten().map(|x| x.to_lib()).collect();
+    let mut diag = vec![<T::Lib as multishoot::plane::Real>::zero(); C];
+    multishoot::plane::orthonormalize(&mut flat, R, C, &mut diag);
+    for (c, col) in y.iter_mut().enumerate() {
+        for (i, x) in col.iter_mut().enumerate() {
+            *x = T::from_lib(flat[c * R + i]);
+        }
+    }
+    std::array::from_fn(|c| T::from_lib(diag[c]))
+}
+
+/// The crate's `JetSource` seen as multishoot's: the jets at s^2 = s2 into the crate's own `Jets`, copied across. It also
+/// keeps `integrate`'s wall-time guard (`TP_MAX_SECONDS`), checked every 1024 steps.
+#[cfg(feature = "lib_plane")]
+struct Bridge<'a, T: Num> {
+    src: &'a dyn JetSource<T>,
+    s2: T,
+    scratch: std::cell::RefCell<Jets<T>>,
+    calls: std::cell::Cell<usize>,
+    t_start: std::time::Instant,
+    max_s: f64,
+}
+
+#[cfg(feature = "lib_plane")]
+impl<T: Num> multishoot::plane::JetSource<T::Lib> for Bridge<'_, T> {
+    fn pattern(&self) -> Vec<(usize, usize)> {
+        self.src.pattern()
+    }
+    fn jets(&self, x0: f64, kj: usize, out: &mut multishoot::plane::Jets<T::Lib>) {
+        let calls = self.calls.get();
+        self.calls.set(calls + 1);
+        if calls % 1024 == 1023 && self.t_start.elapsed().as_secs_f64() > self.max_s {
+            panic!("integrate: more than {} s by x = {x0:e} after {calls} steps", self.max_s);
+        }
+        let mut sc = self.scratch.borrow_mut();
+        self.src.jets(x0, self.s2, kj, &mut sc);
+        for (e, en) in out.ent.iter_mut().enumerate() {
+            let n = sc.ent[e].n.min(kj);
+            for k in 0..n {
+                en.c[k] = sc.ent[e].c[k].to_lib();
+            }
+            en.n = n;
+        }
+    }
+}
+
+/// Integrates the plane y (C columns of R rows) from ra to rb, either direction, at s^2 = s2, by multishoot's
+/// `plane::Plane::advance` (the mutations `lowsum` and `noqr` of the crate's own integrator do not apply here).
+/// Returns the sum of ln R_ii over all steps (the log of the plane's volume growth) and the step statistics.
+#[cfg(feature = "lib_plane")]
+pub fn integrate<T: Num, const R: usize, const C: usize>(
+    src: &dyn JetSource<T>,
+    y: &mut [[T; R]; C],
+    ra: f64,
+    rb: f64,
+    s2: T,
+    ctl: &Ctl,
+) -> (T, Stats) {
+    assert!(ctl.order + 2 <= KMAX && ctl.kj <= ctl.order);
+    for m in ["lowsum", "noqr"] {
+        if crate::mutate::on(m) {
+            eprintln!("lib_plane: the mutation {m} is not applied by multishoot's stepper");
+        }
+    }
+    let max_s: f64 = std::env::var("TP_MAX_SECONDS").ok().and_then(|v| v.parse().ok()).unwrap_or(f64::INFINITY);
+    let bridge = Bridge {
+        src,
+        s2,
+        scratch: std::cell::RefCell::new(Jets::<T>::new(&src.pattern())),
+        calls: std::cell::Cell::new(0),
+        t_start: std::time::Instant::now(),
+        max_s,
+    };
+    let basis: Vec<T::Lib> = y.iter().flatten().map(|x| x.to_lib()).collect();
+    let mut pl = multishoot::plane::Plane::<T::Lib>::new(R, C, &basis);
+    let plan = multishoot::Plan { kt: ctl.order, tol: ctl.tol, hmax: ctl.hmax };
+    let st = pl.advance(&bridge, ra, rb, &plan, ctl.kj);
+    for (c, col) in y.iter_mut().enumerate() {
+        for (i, x) in col.iter_mut().enumerate() {
+            *x = T::from_lib(pl.column(c)[i]);
+        }
+    }
+    (T::from_lib(pl.ln_vol()), Stats { steps: st.steps, hmin: st.hmin, hmax: st.hmax })
 }

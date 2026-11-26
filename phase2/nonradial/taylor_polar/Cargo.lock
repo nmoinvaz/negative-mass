@@ -44,8 +44,7 @@ dependencies = [
 [[package]]
 name = "multishoot"
 version = "4.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "07a1646672d6fc76d633bbc08282c45510630b31e1dcb025d4e446f5696ccd34"
+source = "git+https://github.com/nmoinvaz/multishoot?rev=a880903331a43b6f49694cc9222acce8ebd34b37#a880903331a43b6f49694cc9222acce8ebd34b37"
 dependencies = [
  "multidouble",
  "multisolver",
