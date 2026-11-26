@@ -255,6 +255,9 @@ def check_E_solve():
           f"t h j E c P - 1 is {list(gb.exprs)} (rank 3 wherever h j E c != 0), gcd of the minors {g3}; "
           f"(ii) linsolve gives {pt if pt is not None else sol}, expected (1/(32 pi), 1/(32 pi), 0), substituted: "
           f"{'0' if ok_ii else 'not 0'}; (iii) c-free {ok_iii} ({time.time() - t0:.0f} s)")
+    for nm, e in zip(names, eqs):  # information, not a check: the residual's components, = 0
+        print(f"    component {nm}: {sp.factor(e)} = 0   (H' -> h, J' -> j, e^(2HJ) -> E, A1 = alpha_1^2, A2 = alpha_2^2, "
+              f"Vh = V at the point; numerator)", flush=True)
 
 
 def check_E_residual():
@@ -272,6 +275,11 @@ def check_E_residual():
           f"signs {signs}: {'all 16 components of G_ab - 8 pi (T_1 - T_2)_ab are 0' if not bad else brief(bad)}; "
           f"G_yy = G_zz = {Kc} (nonzero components of G: {len(Gnz)}), T_1 has {len(T1)} nonzero components "
           f"({time.time() - t0:.0f} s)")
+    T = (8 * PI * stress(geo, fl, signs, V)).applyfunc(simp)  # information, not a check
+    nzT = [(i, j, v) for i, j, v in nonzero(T) if i <= j]
+    dTc = nonzero(T.applyfunc(lambda e: sp.diff(e, c)))
+    print(f"    information: components (i <= j, order p, q, y, z) of G: {[(i, j, geo['G'][i, j]) for i, j in Gnz]}; "
+          f"of 8 pi (T_1 - T_2): {nzT}; components of d/dc of 8 pi (T_1 - T_2) that are not 0: {len(dTc)}", flush=True)
 
 
 def check_E_rform():
