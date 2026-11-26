@@ -11,6 +11,13 @@ pub const PI_STR: &str = "3.1415926535897932384626433832795028841971693993751058
 pub trait Num:
     Copy + Add<Output = Self> + Sub<Output = Self> + Mul<Output = Self> + Div<Output = Self> + Neg<Output = Self> + Debug + Send + Sync + 'static
 {
+    /// the same number type as multishoot's plane stepper knows it (feature `lib_plane`)
+    #[cfg(feature = "lib_plane")]
+    type Lib: multishoot::plane::Real;
+    #[cfg(feature = "lib_plane")]
+    fn to_lib(self) -> Self::Lib;
+    #[cfg(feature = "lib_plane")]
+    fn from_lib(x: Self::Lib) -> Self;
     const NAME: &'static str;
     /// unit roundoff of the lane
     const EPS: f64;
@@ -46,6 +53,16 @@ pub trait Num:
 }
 
 impl Num for f64 {
+    #[cfg(feature = "lib_plane")]
+    type Lib = f64;
+    #[cfg(feature = "lib_plane")]
+    fn to_lib(self) -> f64 {
+        self
+    }
+    #[cfg(feature = "lib_plane")]
+    fn from_lib(x: f64) -> f64 {
+        x
+    }
     const NAME: &'static str = "f64";
     const EPS: f64 = 1.1102230246251565e-16;
     fn zero() -> f64 {
@@ -87,6 +104,16 @@ impl Num for f64 {
 }
 
 impl Num for DD {
+    #[cfg(feature = "lib_plane")]
+    type Lib = DD;
+    #[cfg(feature = "lib_plane")]
+    fn to_lib(self) -> DD {
+        self
+    }
+    #[cfg(feature = "lib_plane")]
+    fn from_lib(x: DD) -> DD {
+        x
+    }
     const NAME: &'static str = "dd";
     const EPS: f64 = 1.232595164407831e-32;
     fn zero() -> DD {
@@ -128,6 +155,16 @@ impl Num for DD {
 }
 
 impl Num for QD {
+    #[cfg(feature = "lib_plane")]
+    type Lib = QD;
+    #[cfg(feature = "lib_plane")]
+    fn to_lib(self) -> QD {
+        self
+    }
+    #[cfg(feature = "lib_plane")]
+    fn from_lib(x: QD) -> QD {
+        x
+    }
     const NAME: &'static str = "qd";
     const EPS: f64 = 1.504632769052528e-64;
     fn zero() -> QD {
@@ -169,6 +206,16 @@ impl Num for QD {
 }
 
 impl Num for OD {
+    #[cfg(feature = "lib_plane")]
+    type Lib = OD;
+    #[cfg(feature = "lib_plane")]
+    fn to_lib(self) -> OD {
+        self
+    }
+    #[cfg(feature = "lib_plane")]
+    fn from_lib(x: OD) -> OD {
+        x
+    }
     const NAME: &'static str = "od";
     const EPS: f64 = 2.3e-128;
     fn zero() -> OD {
