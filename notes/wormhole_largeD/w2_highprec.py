@@ -317,6 +317,7 @@ def check_planted(lanes):
     fails = {k: [] for k in ("S1", "S2", "S3", "S4", "S4w", "S5", "S5s")}
     seen = {k: 0 for k in fails}
     notconv = []
+    table = []
     for lane in lanes:
         d = LANE_D[lane]
         rows = planted_rows(lane)
@@ -327,6 +328,10 @@ def check_planted(lanes):
             D = r["D"]
             s = 2 * (D - 3)
             tag = f"{lane} D={D}"
+            w2s = float(mp.log10(mp.mpf("2.5") / (s + mp.mpf("2.5"))))
+            table.append(f"  {lane:<4s} {D:<6d} {max(r['S1y'], r['S1w']):>7.2f} {max(r['S2y'], r['S2w']):>7.2f} {r['S3']:>7.2f} "
+                         f"{r['S4a']:>7.2f} {r['S4b']:>7.2f} {r['S4a'] + w2s:>8.2f} {r['S4b'] + w2s:>8.2f} {r['S5']:>7.2f} {r['S5bound']:>9.2f} "
+                         f"{r['S4nodes'][1]:>3d}  {r['secs']:>7.1f}")
             def bad(name, cond, val):
                 seen[name] += 1
                 if not cond:
@@ -345,6 +350,10 @@ def check_planted(lanes):
             b5s = float(mp.log10(100 * mp.mpf(s)**2 * mp.exp(-mp.mpf(r["T5"])) + mp.mpf(10)**(-d))) if lane != "f64" else None
             if lane != "f64":
                 bad("S5s", r["S5"] <= b5s, f"{r['S5']} vs {b5s:.2f}")
+    if table:
+        print("  planted eigenproblem, log10 of the relative error (stated digits: f64 11, dd 27, qd 56, od 110); S4 in Omega, S4w in W^2")
+        print("  lane D        S1      S2      S3     S4a     S4b  S4w(a)   S4w(b)      S5  S5bound  nodes(b)  secs")
+        print("\n".join(table) + "\n")
     for k, v in fails.items():
         if seen[k] == 0:
             continue
