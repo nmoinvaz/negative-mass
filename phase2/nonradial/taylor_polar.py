@@ -9,6 +9,10 @@
     python taylor_polar.py --scipy-timing OUT run the scipy path (convergence.py's base variant) at the timing points,
                                               appending one JSON line per evaluation to OUT (long: about 30 min)
     python taylor_polar.py --list             the checks and the controls
+    python taylor_polar.py --rows [--l=2,4,5,6] [--only=QP,RA2,CAP5] [--jsonl-dir=DIR] [--mutate=NAME] [--raw=DIR]
+                                              #187: convergence.py's rows (every variant, q_int, q_ext) from the crate, printed in
+                                              the stored format and checked against convergence_l{2,4,5,6}_output.txt, with the
+                                              two capped rows of #114; --print-rows=3 prints rows for an l without a stored file
 
 jgen.rs holds J(r; s) of polar_matrix_generated.py (written by reduce_polar.py, the symbolic source) as generic Rust
 over truncated power series: every statement of the Python function is translated, operation by operation, by walking
@@ -19,6 +23,7 @@ import ast
 import json
 import math
 import os
+import re
 import subprocess
 import sys
 import time
@@ -234,8 +239,10 @@ RESULTS = []
 
 
 def report(name, ok, text):
+    """ok is True (passed), False (failed) or None (skipped: it did not run, and counts as neither)"""
+    ok = None if ok is None else bool(ok)   # a numpy bool (S2's) is neither `is True` nor `is False`
     RESULTS.append((name, ok))
-    print(f"CHECK {name}: {'PASS' if ok else 'FAIL'}  {text}", flush=True)
+    print(f"CHECK {name}: {'SKIPPED' if ok is None else 'PASS' if ok else 'FAIL'}  {text}", flush=True)
 
 
 def fmt(x):
@@ -842,7 +849,7 @@ def check_TS():
     (gated at the file's spread), and the wall time of each"""
     path = SCIPY_FILE
     if not path or not os.path.exists(path):
-        print("CHECK TS: SKIPPED  no scipy timing file (--scipy-file=PATH)")
+        report("TS", None, "no scipy timing file (--scipy-file=PATH)")
         return
     recs = [json.loads(x) for x in open(path)]
     lines, ok = [], True
@@ -857,6 +864,362 @@ def check_TS():
         lines.append(f"(l={l}, g={g:g}) scipy {o['wall']:.1f} s (cpu {o['cpu']:.1f}, load {o['load1']:.1f}) D={o['D']:.7e}; crate dd {rows['dd']['wall']:.3f} s "
                      f"(x{o['wall'] / rows['dd']['wall']:.0f}), f64 {rows['f64']['wall']:.4f} s (x{o['wall'] / rows['f64']['wall']:.0f}); D rel {fmt(e)}")
     report("TS", ok, f"scipy path (base variant, this Mac, one process) against the crate (one thread); load {os.getloadavg()[0]:.1f} now; " + "; ".join(lines))
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# #187: the rows of convergence.py from the crate (python taylor_polar.py --rows)
+# ---------------------------------------------------------------------------------------------------------------
+RAW = os.path.normpath(os.path.join(HERE, "..", "..", "..", "negative-mass-raw"))
+JDIR = None
+G8 = [0.001, 0.03, 0.3, 1.0, 3.0, 10.0, 40.0, 137.0]
+ROW_GAMMAS = {2: G8 + [300.0], 3: G8 + [300.0, 1000.0], 4: G8 + [300.0, 1000.0, 3000.0],
+              5: G8 + [300.0, 1000.0, 6000.0], 6: G8 + [300.0, 1000.0, 12000.0]}
+CAPS = {5: 6000.0, 6: 12000.0}
+NAMES = {"base": "base (rtol1e-10, phi_cut1e-9, R60)", "tol": "rtol 1e-12", "phi": "phi_cut 1e-12 (larger r_m)",
+         "r90": "background R=90", "r0": "r0 = 3e-3"}
+VKEYS = list(NAMES)
+HDR = dict(NAMES, tol="rtol 1e-12 [crate: Taylor tol 1e-12]")   # the crate has no scipy rtol: said in the header
+CAP_BAR = MEAN_SPREAD           # #114: each capped variant within 2.1e-4 of base
+CAP_VS_SCIPY = 1e-8             # crate against #114's finished l = 5 values
+RP_CASES = [(1e-9, 60.0, 1e-3), (1e-12, 60.0, 1e-3), (1e-9, 90.0, 1e-3), (1e-9, 60.0, 3e-3)]
+QP_BAR = {("f64", "well"): 1e-12, ("dd", "well"): 1e-28, ("qd", "well"): 1e-60,
+          ("f64", "near"): 1e-5, ("dd", "near"): 1e-20, ("qd", "near"): 1e-50}
+ROW_RE = re.compile(r"^gamma=\s*(?P<gamma>\S+): D_base=(?P<D>\S+)  signs=(?P<signs>\[.*?\])  rel\.spread \(same r_m\)=(?P<spread>\S+)  "
+                    r"D\(r_m~34\)=(?P<D34>\S+)  q_int=(?P<qi>\S+) q_ext=(?P<qe>\S+)  \((?P<T>\d+)s\)")
+HDR_RE = re.compile(r"^(?P<name>.{38}): r_m=(?P<rm>\S+)$")
+_rows_cache = {}
+
+
+def get_rows(l, gammas, lane, variants, tag="", rs=None):
+    """The crate's `rows` for (l, gammas, variants), streamed: every JSON line goes to jsonl-dir/rows_l{l}_{lane}{tag}.jsonl as it arrives,
+    so a stopped run resumes at the next gamma. Returns (setup, {(gamma, variant): record}). Records already there are reused.
+    A run with a mutation reads and writes no file. rs: the start radius of the crate's star shooting (None: its default 1e-8)."""
+    path = None if (MUTATE or not JDIR) else os.path.join(JDIR, f"rows_l{l}_{lane}{tag}.jsonl")
+    key = (l, lane, tag, MUTATE)
+    got, setup = _rows_cache.setdefault(key, ({}, [None]))
+    if not got and path and os.path.exists(path):
+        for line in open(path):
+            if line.startswith("{"):
+                o = json.loads(line)
+                if o["cmd"] == "rowsetup":
+                    setup[0] = o
+                elif o["cmd"] == "row":
+                    got[(o["gamma"], o["variant"])] = o
+    need = [g for g in gammas if any((g, v) not in got for v in variants)]
+    if need or setup[0] is None:
+        args = [BIN, "rows", f"l={l}", f"lane={lane}", f"variants={','.join(variants)}"]
+        if need:
+            args.append(f"gammas={','.join(repr(g) for g in need)}")
+        args += [f"{k}={v}" for k, v in star_kw(rs).items()]
+        if MUTATE:
+            args.append(f"mutate={MUTATE}")
+        env = dict(os.environ, RAYON_NUM_THREADS="2")
+        if MUTATE:
+            env["TP_MAX_SECONDS"] = "900"
+        fp = open(path, "a") if path else None
+        p = subprocess.Popen(["nice", "-n", "10"] + args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True, env=env, cwd=HERE)
+        errs = []
+        for line in p.stdout:
+            if not line.startswith("{"):
+                errs.append(line)
+                continue
+            if fp:
+                fp.write(line)
+                fp.flush()
+            o = json.loads(line)
+            if o["cmd"] == "rowsetup":
+                setup[0] = o
+            else:
+                got[(o["gamma"], o["variant"])] = o
+        rc = p.wait()
+        if fp:
+            fp.close()
+        if rc:
+            raise RuntimeError(f"rows l={l} {lane} exited {rc}: {''.join(errs)[-400:]}")
+    return setup[0], got
+
+
+def rm_of(setup):
+    return {v["variant"]: v["rm"] for v in setup["variants"]}
+
+
+def format_rows(gammas, got, setup, notes=None):
+    """convergence.py's header and row lines (its f-strings, its names), from the crate's records"""
+    import numpy as np
+    rm = rm_of(setup)
+    out = [f"{HDR[k]:38s}: r_m={rm[k]:.2f}" for k in VKEYS] + [""]
+    for g in gammas:
+        Ds = {NAMES[k]: float(got[(g, k)]["d_f64"]) for k in VKEYS}
+        qi, qe = float(got[(g, "base")]["q_int_f64"]), float(got[(g, "base")]["q_ext_f64"])
+        T = sum(got[(g, k)]["wall"] for k in VKEYS)
+        signs = set(np.sign(list(Ds.values())))
+        same_rm = [Ds[k] for k in Ds if "phi_cut" not in k]
+        spread = (max(same_rm) - min(same_rm)) / abs(np.mean(same_rm))
+        out.append(f"gamma={g:8.3g}: D_base={Ds[NAMES['base']]:+.6e}  signs={sorted(signs)}  "
+                   f"rel.spread (same r_m)={spread:.1e}  D(r_m~34)={Ds[NAMES['phi']]:+.3e}  "
+                   f"q_int={qi:+.6e} q_ext={qe:+.6e}  ({T:.0f}s)" + (notes or {}).get(g, ""))
+    return out
+
+
+def stored_block(l):
+    hdr, rows = [], {}
+    for line in open(os.path.join(HERE, f"convergence_l{l}_output.txt")).read().splitlines():
+        m = ROW_RE.match(line)
+        if m:
+            rows[float(m["gamma"])] = m.groupdict()
+            continue
+        m = HDR_RE.match(line)
+        if m:
+            hdr.append((m["name"].strip(), m["rm"]))
+    return hdr, rows
+
+
+def margin_rel(s, digits):
+    """distance of the decimal string s to the nearest rounding boundary of its print with `digits` places after the
+    leading digit, relative to |s| (0 would sit on a boundary)"""
+    import mpmath as mp
+    mp.mp.dps = 50
+    x = abs(mp.mpf(s))
+    e = int(mp.floor(mp.log10(x)))
+    sc = x / mp.mpf(10) ** e * mp.mpf(10) ** digits
+    return float(abs((sc - mp.floor(sc)) - mp.mpf(1) / 2) / sc)
+
+
+def scipy_full(l):
+    """scipy's full-precision values of every variant at every gamma (read only, negative-mass-raw): {(name, gamma): D or [q_int, q_ext]}"""
+    out = {}
+    for folder in ("I4-win", "I114-win"):
+        p = os.path.join(RAW, folder, f"convergence_l{l}_w0.7603.partial.csv")
+        if os.path.exists(p):
+            for line in open(p):
+                if line.startswith("["):
+                    k, g, v, _ = json.loads(line)
+                    out[(k, g)] = v
+    return out
+
+
+def check_RA(l):
+    gammas = ROW_GAMMAS[l]
+    setup, got = get_rows(l, gammas, "dd", VKEYS)
+    hdr_s, rows_s = stored_block(l)
+    notes = {g: "  [no stored row]" for g in gammas if g not in rows_s}
+    if l in CAPS:
+        notes[CAPS[l]] = "  [#114's capped row; the rtol 1e-12 column is the crate's Taylor tol 1e-12]"
+    block = format_rows(gammas, got, setup, notes)
+    print(f"# l = {l}: rows from the crate (lane dd, one process, nice 10, load {os.getloadavg()[0]:.1f}); setup per l: star {setup['t_star']:.1f} s, J table {setup['t_table']:.1f} s")
+    for line in block:
+        print(line, flush=True)
+    new_rows = {float(m["gamma"]): m for m in (ROW_RE.match(x) for x in block) if m}
+    mism, ntok, nok = [], 0, 0
+
+    def cmp(where, tok, st, nw):
+        nonlocal ntok, nok
+        ntok += 1
+        if st == nw:
+            nok += 1
+        else:
+            mism.append(f"{where} {tok}: stored {st} crate {nw}")
+    rm = rm_of(setup)
+    for k, (sname, srm) in zip(VKEYS, hdr_s):
+        cmp(k, "name", sname, HDR[k].split(" [")[0])   # the rtol line carries a bracketed note by design
+        cmp(k, "r_m", srm, f"{rm[k]:.2f}")
+    for g, st in rows_s.items():
+        nw = new_rows[g].groupdict()
+        for tok in ("gamma", "D", "signs", "spread", "D34", "qi", "qe"):
+            cmp(f"g={g:g}", tok, st[tok], nw[tok])
+    # nearest rounding boundary of the crate's unrounded values at the stored rows, and scipy's full-precision values
+    near = (9.0, None)
+    for g in rows_s:
+        for tok, s, d in (("D", got[(g, "base")]["d"], 6), ("q_int", got[(g, "base")]["q_int"], 6), ("q_ext", got[(g, "base")]["q_ext"], 6),
+                          ("D34", got[(g, "phi")]["d"], 3)):
+            m = margin_rel(s, d)
+            if m < near[0]:
+                near = (m, (g, tok))
+    info = f"closest rounding boundary of any D/q token: {near[0]:.2e} relative at (gamma, token) = {near[1]}"
+    sf = scipy_full(l)
+    if sf:
+        worst = {}
+        for g in rows_s:
+            for k in VKEYS:
+                ref = sf.get((NAMES[k], g))
+                if ref is not None:
+                    e = abs(float(got[(g, k)]["d_f64"]) / ref - 1)
+                    if e > worst.get(NAMES[k], (0.0, 0))[0]:
+                        worst[NAMES[k]] = (e, g)
+            q = sf.get(("q", g))
+            if q is not None:
+                for j, kk in enumerate(("q_int", "q_ext")):
+                    e = abs(float(got[(g, "base")][kk + "_f64"]) / q[j] - 1)
+                    if e > worst.get(kk, (0.0, 0))[0]:
+                        worst[kk] = (e, g)
+        info += "; crate against scipy's full-precision values (I4-win/I114-win partial files), worst relative per column: " + ", ".join(
+            f"{k.split(' (')[0]} {v[0]:.1e}@{v[1]:g}" for k, v in worst.items())
+    report(f"RA{l}", nok == ntok, f"l = {l}: {nok} of {ntok} tokens of {len(rows_s)} stored rows and the 5 header lines equal as strings"
+           + (f" ({len(gammas) - len(rows_s)} extra row, not compared)" if len(gammas) > len(rows_s) else "") + "; "
+           + ("; ".join(mism[:12]) + ("; ..." if len(mism) > 12 else "") + "; " if mism else "") + info)
+
+
+def check_RX():
+    p = os.path.join(RAW, "I186-mac", "scipy_timing.jsonl")
+    if not os.path.exists(p):
+        report("RX", None, f"{p} not found (--raw=DIR)")
+        return
+    ref = [o for o in map(json.loads, open(p)) if o["l"] == 2 and o["gamma"] == 300.0 and o["status"] == "done"][0]
+    setup, got = get_rows(2, [300.0], "dd", VKEYS)
+    tc, ts = f"{float(got[(300.0, 'base')]['d_f64']):+.7e}", f"{ref['D']:+.7e}"
+    report("RX", tc == ts, f"l = 2, gamma = 300 (no stored row): crate D_base {tc} against #186's fresh scipy D {ts} (I186-mac/scipy_timing.jsonl), 8-digit tokens equal as strings")
+
+
+def i114_l5(g):
+    """#114's finished l = 5 evaluations at gamma = g, all five variants, scipy full precision (read only): {name: D}, or None"""
+    p = os.path.join(RAW, "I114-win", "convergence_l5_w0.7603.partial.csv")
+    if not os.path.exists(p):
+        return None
+    sf = {}
+    for line in open(p):
+        if line.startswith("["):
+            k, gg, v, _ = json.loads(line)
+            if gg == g and k in NAMES.values():
+                sf[k] = v
+    return sf
+
+
+def check_CAP(l):
+    """the capped row of #114 at l: (a) D < 0 in the five variants, (b) the crate's rtol analogue within 2.1e-4 of base (error bars
+    E1 to E3 printed), and for l = 5 (c) the crate's five D against #114's scipy D at CAP_VS_SCIPY each"""
+    import mpmath as mp
+    mp.mp.dps = 60
+    g = CAPS[l]
+    setup, got = get_rows(l, [g], "dd", VKEYS)
+    D = {k: mp.mpf(got[(g, k)]["d"]) for k in VKEYS}
+    neg = all(D[k] < 0 for k in VKEYS)
+    e1 = abs(D["tol"] / D["base"] - 1)
+    _, g24 = get_rows(l, [g], "dd", ["o24"], tag="_o24")
+    e2 = abs(mp.mpf(g24[(g, "o24")]["d"]) / D["base"] - 1)
+    _, g64 = get_rows(l, [g], "f64", ["base"])
+    e3 = abs(mp.mpf(g64[(g, "base")]["d"]) / D["base"] - 1)
+    head = f"l = {l}, gamma = {g:g}"
+    report(f"CAP{l}a", neg, f"{head}: D (dd) " + ", ".join(f"{k} {mp.nstr(D[k], 12)}" for k in VKEYS) + f"; all five D < 0: {neg}")
+    report(f"CAP{l}b", float(e1) <= CAP_BAR,
+           f"{head}: E1 = |D(tol 1e-12)/D(base) - 1| = {float(e1):.2e} (bar {CAP_BAR:.1e}); error bars, printed not gated: E2 (order 24, tol 1e-22 against "
+           f"order 30, 1.2e-30) = {float(e2):.2e}, E3 (f64 lane against dd) = {float(e3):.2e}; crate time per variant (dd, load {os.getloadavg()[0]:.1f}, "
+           f"one thread): " + ", ".join(f"{k} {got[(g, k)]['wall']:.1f} s" for k in VKEYS))
+    if l == 5:
+        sf = i114_l5(g)
+        if sf is None:
+            report("CAP5c", None, f"{os.path.join(RAW, 'I114-win')} not found (--raw=DIR)")
+            return
+        e4 = {k: abs(float(D[k]) / sf[NAMES[k]] - 1) for k in VKEYS}
+        report("CAP5c", all(v <= CAP_VS_SCIPY for v in e4.values()),
+               f"{head}: E4 = crate D against #114's scipy D (its rtol 1e-12 evaluation finished; I114-win partial file), per variant: "
+               + ", ".join(f"{k} {v:.1e}" for k, v in e4.items()) + f" (bar {CAP_VS_SCIPY:.0e} each); scipy's rtol 1e-12 value {sf[NAMES['tol']]:.9e} "
+               f"against its base {sf[NAMES['base']]:.9e}")
+
+
+def check_CAP5s():
+    """CAP5 (c) again with the crate's star started as scipy's: rs = 1e-3 with the leading-order boundary condition (#186's S1 matched start)"""
+    g = CAPS[5]
+    sf = i114_l5(g)
+    if sf is None:
+        report("CAP5s", None, f"{os.path.join(RAW, 'I114-win')} not found (--raw=DIR)")
+        return
+    setup, got = get_rows(5, [g], "dd", VKEYS, tag="_rs1e-3", rs=1e-3)
+    _, ex = get_rows(5, [g], "dd", VKEYS)
+    e4 = {k: abs(float(got[(g, k)]["d_f64"]) / sf[NAMES[k]] - 1) for k in VKEYS}
+    shift = {k: abs(float(got[(g, k)]["d_f64"]) / float(ex[(g, k)]["d_f64"]) - 1) for k in VKEYS}
+    report("CAP5s", all(v <= CAP_VS_SCIPY for v in e4.values()),
+           f"l = 5, gamma = {g:g}, the crate's star shot from rs = 1e-3 with scipy's leading-order boundary condition: crate D against #114's scipy D, per variant: "
+           + ", ".join(f"{k} {v:.1e}" for k, v in e4.items()) + f" (bar {CAP_VS_SCIPY:.0e} each); printed, not gated: the change of the crate's D from rs = 1e-8 to rs = 1e-3: "
+           + ", ".join(f"{k} {v:.1e}" for k, v in shift.items()))
+
+
+def check_QP():
+    import mpmath as mp
+    from fractions import Fraction as Fr
+    import sympy
+    mp.mp.dps = 120
+    lines, ok = [], True
+    for case in ("well", "near"):
+        y = [[Fr(((3 * i + 5 * c + 1) % 7) - 3, 8) for i in range(6)] for c in range(3)]
+        if case == "near":
+            for i in range(6):
+                y[2][i] = y[1][i] + Fr(((i + 2) % 3) - 1, 2 ** 27)
+        c0 = [Fr(1, 2), Fr(-1, 4), Fr(3, 8)]
+        s = [[sum(y[c][2 + i] * c0[c] for c in range(3)) for i in range(4)], [Fr(((2 * i + 1) % 5) - 2, 4) for i in range(4)]]
+        M = sympy.Matrix(4, 5, lambda i, k: sympy.Rational(y[k][2 + i].numerator, y[k][2 + i].denominator) if k < 3
+                         else -sympy.Rational(s[k - 3][i].numerator, s[k - 3][i].denominator))
+        ns = M.nullspace()
+        assert len(ns) == 1, "planted planes are degenerate"
+        c = [Fr(int(ns[0][j].p), int(ns[0][j].q)) for j in range(3)]
+        met = [sum(y[cc][r] * c[cc] for cc in range(3)) for r in (0, 1)]
+        mm, rm, l = Fr(1, 64), Fr(193, 8), 3
+        lam = Fr((l - 1) * (l + 2), 2)
+        f = 1 - 2 * mm / rm
+        T = [[(lam * rm * rm - 3 * lam * mm * rm - 3 * mm * mm) / ((rm - 2 * mm) * (lam * rm + 3 * mm)), rm],
+             [(lam * (lam + 1) * rm * rm + 3 * lam * mm * rm + 6 * mm * mm) / (rm * rm * (lam * rm + 3 * mm)), f]]
+        det = T[0][0] * T[1][1] - T[0][1] * T[1][0]
+        z = (T[1][1] * met[0] - T[0][1] * met[1]) / det
+        zp = (T[0][0] * met[1] - T[1][0] * met[0]) / det
+        q = f * zp / z
+        exact = mp.mpf(q.numerator) / mp.mpf(q.denominator)
+        for lane in ("f64", "dd", "qd"):
+            o = rust("qplant", whole=True, lane=lane, case=case, l=l)
+            e = float(abs(mp.mpf(o["q_int"]) / exact - 1))
+            bar = QP_BAR[(lane, case)]
+            ok &= e <= bar
+            lines.append(f"{case} {lane} {e:.1e} (bar {bar:.0e})")
+    report("QP", ok, "planted q_int: dyadic planes with Y[2:] c0 in span S, exact q_int from sympy's rational null space and Fractions, "
+                     "l = 3, r_m = 24.125, M = 1/64: relative error " + "; ".join(lines))
+
+
+def check_RP():
+    import numpy as np
+    lines, ok = [], True
+    for cut, R, g0 in RP_CASES:
+        o = rust("rmplant", whole=True, cut=repr(cut), R=repr(R), g0=repr(g0))
+        rr = np.linspace(g0, R, 20000)
+        phi = 0.02 * np.exp(-0.65 * rr)
+        i = int(np.argmax(phi < cut))
+        same = o["i"] == i and float(o["rm"]) == float(rr[i])
+        ok &= same
+        lines.append(f"(cut {cut:g}, R {R:g}, start {g0:g}) crate i = {o['i']} r_m = {float(o['rm']):.17g}, numpy i = {i} r_m = {float(rr[i]):.17g}: {'equal' if same else 'DIFFER'}")
+    report("RP", ok, "planted r_m, phi = 0.02 exp(-0.65 r) through the crate's grid rule against numpy's linspace and argmax: " + "; ".join(lines))
+
+
+def check_RM():
+    import background as B
+    from polar_solver import PolarProblem
+    st60 = scipy_star()
+    st90 = B.solve_star(OMEGA, EPS, guess=st60, R=90.0)
+    spec = {"base": (st60, {}), "tol": (st60, dict(rtol=1e-12)), "phi": (st60, dict(phi_cut=1e-12)), "r90": (st90, {}), "r0": (st60, dict(r0=3e-3))}
+    setup, _ = get_rows(2, [], "dd", VKEYS)
+    rm_c = rm_of(setup)
+    lines, ok = [], True
+    for k, (st, kw) in spec.items():
+        rs = float(PolarProblem(st, 2, **kw).rm)
+        same = rs == rm_c[k]
+        ok &= same
+        mg = [v for v in setup["variants"] if v["variant"] == k][0]
+        lines.append(f"{k}: scipy {rs:.17g}, crate {rm_c[k]:.17g} ({'equal' if same else 'DIFFER'}; ln(phi/cut) at r_m {mg['ln_phi_over_cut_at_rm']:.1e}, one grid point before {mg['ln_phi_over_cut_before']:.1e})")
+    report("RM", ok, "r_m of the five variants, the crate's own star against PolarProblem(...).rm on scipy's stars: " + "; ".join(lines))
+
+
+ROW_CHECKS = {"QP": check_QP, "RP": check_RP, "RM": check_RM, "RA2": lambda: check_RA(2), "RX": check_RX,
+              "RA4": lambda: check_RA(4), "RA5": lambda: check_RA(5), "CAP5": lambda: check_CAP(5), "CAP5s": check_CAP5s,
+              "RA6": lambda: check_RA(6), "CAP6": lambda: check_CAP(6)}
+
+# the controls of --rows mode: --rows --mutate=NAME runs the checks named here with one deliberate error; every one must fail
+ROW_CONTROLS = {
+    "qint_cofsign": ["QP", "RA2"],   # the cofactor signs of q_int's null vector not alternated
+    "qint_f": ["QP", "RA2"],         # q_int without the factor f
+    "rm_off1": ["RP", "RM", "RA2"],  # the r_m grid index one too low
+    "rm_cut": ["RM", "RA2"],         # the phi_cut variant's cut at 1e-11
+    "r0_grid": ["RM", "RA2"],        # the r0 variant's r_m grid starting at 1e-3
+    "tol_loose": ["CAP5b"],           # the rtol-analogue variant at tol 1e-1 (1e-3 moved D by 3.9e-6 only: dev_33; its entries of CAP5c and CAP5s are read in the log: those two fail on real data already)
+    "qstart": ["RA2"],               # #186's: the Riccati started at r_m + 1 (RX at gamma = 300 does not see it: dev_31)
+    "moncrief": ["RA2", "RX", "QP"],  # #186's: a sign in the Moncrief map
+    "jsign": ["CAP5a"],              # #186's: J[3][2] negated, which flips the sign of D
+}
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -894,7 +1257,7 @@ CONTROLS = {
 
 
 def main():
-    global MUTATE
+    global MUTATE, JDIR, RAW
     args = sys.argv[1:]
     if "--gen" in args:
         return gen()
@@ -902,10 +1265,13 @@ def main():
         return build()
     if "--scipy-timing" in args:
         return scipy_timing(args[args.index("--scipy-timing") + 1])
+    rows_mode = "--rows" in args
     if "--list" in args:
         print("checks:", " ".join(CHECKS))
+        print("--rows checks:", " ".join(ROW_CHECKS))
+        print("--rows controls:", " ".join(ROW_CONTROLS))
         return
-    only = None
+    only, ls, print_rows = None, [2, 4, 5, 6], []
     for a in args:
         if a.startswith("--mutate="):
             MUTATE = a.split("=", 1)[1]
@@ -913,25 +1279,51 @@ def main():
             global SCIPY_FILE
             SCIPY_FILE = a.split("=", 1)[1]
         if a.startswith("--only="):
-            only = a.split("=", 1)[1].split(",")
+            only = [x for x in a.split("=", 1)[1].split(",") if x]   # --only= alone: no check
+        if a.startswith("--l="):
+            ls = [int(x) for x in a.split("=", 1)[1].split(",")]
+        if a.startswith("--print-rows="):
+            print_rows = [int(x) for x in a.split("=", 1)[1].split(",")]
+        if a.startswith("--jsonl-dir="):
+            JDIR = a.split("=", 1)[1]
+        if a.startswith("--raw="):
+            RAW = a.split("=", 1)[1]
     if not os.path.exists(BIN):
         build()
-    if MUTATE and MUTATE not in CONTROLS:
-        sys.exit(f"unknown control {MUTATE}; known: {' '.join(CONTROLS)}")
-    names = only or (CONTROLS[MUTATE] if MUTATE else list(CHECKS))
+    checks, controls = (ROW_CHECKS, ROW_CONTROLS) if rows_mode else (CHECKS, CONTROLS)
+    if MUTATE and MUTATE not in controls:
+        sys.exit(f"unknown control {MUTATE}; known: {' '.join(controls)}")
+    if rows_mode:
+        default = [n for n in checks if re.sub(r"\D", "", n) == "" or int(re.sub(r"\D", "", n)) in ls or n == "RX" and 2 in ls]
+    else:
+        default = list(checks)
+    names = only if only is not None else (controls[MUTATE] if MUTATE else default)
+    # a control's targets are report names (CAP5b is a clause of the check CAP5): run each check once
+    names = list(dict.fromkeys(n if n in checks else re.sub(r"[a-z]$", "", n) for n in names))
+    if JDIR:
+        os.makedirs(JDIR, exist_ok=True)
     t0 = time.time()
+    if rows_mode:
+        print(f"# taylor_polar.py --rows: start {time.strftime('%Y-%m-%d %H:%M:%S')}, load average {os.getloadavg()[0]:.2f}, one process, nice 10; mutate = {MUTATE}", flush=True)
     for n in names:
         try:
-            CHECKS[n]()
+            checks[n]()
         except Exception as e:  # a crash under a mutation is a failure of the check, and is reported as one
             report(n, False, f"raised {type(e).__name__}: {str(e)[:300]}")
-    bad = [n for n, ok in RESULTS if not ok]
-    print(f"SUMMARY: {len(RESULTS) - len(bad)} of {len(RESULTS)} checks passed" + (f"; failed: {', '.join(bad)}" if bad else "")
-          + f"; mutate = {MUTATE}; {time.time() - t0:.0f} s")
+    for l in print_rows:
+        gm = ROW_GAMMAS[l]
+        setup, got = get_rows(l, gm, "dd", VKEYS)
+        print(f"# l = {l}: rows from the crate (lane dd), no stored file, not compared")
+        print("\n".join(format_rows(gm, got, setup)), flush=True)
+    passed = [n for n, s in RESULTS if s is True]
+    failed = [n for n, s in RESULTS if s is False]
+    skipped = [n for n, s in RESULTS if s is None]
+    print(f"SUMMARY: {len(passed)} passed, {len(failed)} failed, {len(skipped)} skipped" + (f" ({', '.join(skipped)}: not run)" if skipped else "")
+          + f" of {len(RESULTS)} checks" + (f"; failed: {', '.join(failed)}" if failed else "") + f"; mutate = {MUTATE}; {time.time() - t0:.0f} s")
     if MUTATE:
-        target_ok = [n for n in CONTROLS[MUTATE] if not any(r.startswith(n) and not ok for r, ok in RESULTS if r.startswith(n))]
-        print(f"CONTROL {MUTATE}: " + ("every targeted check failed, as it must" if not target_ok else f"NOT FIRED on {', '.join(target_ok)}"))
-    sys.exit(1 if bad else 0)
+        not_fired = [n for n in controls[MUTATE] if not any(r.startswith(n) and s is False for r, s in RESULTS)]
+        print(f"CONTROL {MUTATE}: " + ("every targeted check failed, as it must" if not not_fired else f"NOT FIRED on {', '.join(not_fired)}"))
+    sys.exit(1 if failed else 0)
 
 
 if __name__ == "__main__":

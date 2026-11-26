@@ -25,6 +25,9 @@ pub struct Cfg {
 pub struct DOut<T: Num> {
     pub d: T,
     pub q: T,
+    /// the interior Zerilli log-derivative f Z'/Z at r_m (`interior_q`), and the residual of its null vector
+    pub q_int: T,
+    pub qint_res: f64,
     pub r_far: f64,
     pub r_s: f64,
     pub steps_y: Stats,
@@ -237,6 +240,60 @@ pub fn moncrief<T: Num>(r: T, mass: T, l: usize) -> [[T; 2]; 2] {
     [[a, r], [c, if crate::mutate::on("moncrief") { -f } else { f }]]
 }
 
+/// q_int = f Z'/Z at r_m of the interior solution that also matches the decaying scalar exterior
+/// (`polar_solver.interior_zerilli`). y: the interior 3-plane at r_m (rows H1/s, K, F, F', G/s, G'/s); ys: the exterior scalar
+/// 2-plane (its 4 scalar rows). The coefficients c with Y[2:] c in span S are the null vector of the 4 x 5 matrix [Y[2:] | -S],
+/// n_j = (-1)^j det(M without column j) (the scipy path takes an SVD null vector instead). (H1/s, K) = Y[:2] c, then
+/// (Z, Z') = T^-1 (H1/s, K) with T the Moncrief map. Returns q_int and max |M n| / max |n|.
+pub fn interior_q<T: Num>(y: &[[T; 6]; 3], ys: &[[T; 4]; 2], mext: T, rm: T, l: usize) -> (T, f64) {
+    let mut m = [[T::zero(); 5]; 4];
+    for i in 0..4 {
+        for c in 0..3 {
+            m[i][c] = y[c][2 + i];
+        }
+        for k in 0..2 {
+            m[i][3 + k] = -ys[k][i];
+        }
+    }
+    let mut n = [T::zero(); 5];
+    for j in 0..5 {
+        let mut sub = [[T::zero(); 4]; 4];
+        for i in 0..4 {
+            let mut cc = 0;
+            for k in 0..5 {
+                if k != j {
+                    sub[i][cc] = m[i][k];
+                    cc += 1;
+                }
+            }
+        }
+        let d = det_n(&sub);
+        // mutation qint_cofsign: the cofactor signs are not alternated
+        n[j] = if j % 2 == 0 || crate::mutate::on("qint_cofsign") { d } else { -d };
+    }
+    let nmax = n.iter().map(|x| x.to_f64().abs()).fold(0.0, f64::max);
+    let mut res = 0.0f64;
+    for i in 0..4 {
+        let mut s = T::zero();
+        for k in 0..5 {
+            s = s + m[i][k] * n[k];
+        }
+        res = res.max(s.to_f64().abs());
+    }
+    let mut met = [T::zero(); 2];
+    for c in 0..3 {
+        met[0] = met[0] + y[c][0] * n[c];
+        met[1] = met[1] + y[c][1] * n[c];
+    }
+    let mon = moncrief(rm, mext, l);
+    let det = mon[0][0] * mon[1][1] - mon[0][1] * mon[1][0];
+    let z = (mon[1][1] * met[0] - mon[0][1] * met[1]) / det;
+    let zp = (mon[0][0] * met[1] - mon[1][0] * met[0]) / det;
+    // mutation qint_f: the factor f of q = f Z'/Z left out
+    let f = if crate::mutate::on("qint_f") { T::one() } else { T::one() - (mext + mext) / rm };
+    (f * zp / z, res / nmax)
+}
+
 /// the start radius of the scalar plane, R_s = r_m + 40 / min Re sqrt(1 + (s -+ i w)^2)
 pub fn scalar_start(rm: f64, gamma: f64, omega: f64) -> f64 {
     // sqrt(1 + (g - i w)^2) = sqrt(1 + g^2 - w^2 - 2 i g w): real part sqrt((|z| + Re z)/2)
@@ -318,6 +375,7 @@ pub fn d_eval<T: Num>(cfg: &Cfg, table: &JTable<T>, mext: T, gamma: f64) -> DOut
     }
     let (_, steps_s) = integrate::<T, 4, 2>(&vac, &mut ys, r_s, cfg.rm, s2, &cfg.ctl);
     let t_s = t0.elapsed().as_secs_f64();
+    let (q_int, qint_res) = interior_q(&y, &ys, mext, rmt, l);
     // assemble
     let mut z = [[T::zero(); 6]; 3];
     z[0][0] = m[0];
@@ -335,5 +393,5 @@ pub fn d_eval<T: Num>(cfg: &Cfg, table: &JTable<T>, mext: T, gamma: f64) -> DOut
         }
     }
     let d = det_n(&mat);
-    DOut { d, q, r_far, r_s, steps_y, steps_q, steps_s, t_y, t_q, t_s, lnvol_y }
+    DOut { d, q, q_int, qint_res, r_far, r_s, steps_y, steps_q, steps_s, t_y, t_q, t_s, lnvol_y }
 }
