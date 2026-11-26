@@ -434,6 +434,23 @@ def c_scan():
             else:
                 cells.append(f"{c}:{label(v)}")
         print(f"   F_inf={fi}: " + " ".join(cells))
+    print("  FLOOR points (the walk reached eta = 1e-6): F and p = eta F' at eta = 1e-2, 1e-4, 1e-6; F' = p/eta there")
+    for v in rows:
+        if v["class"] == "FLOOR":
+            ps = [x * st[1][0] for x, st in zip((1e-2, 1e-4, 1e-6), v["floor"])]
+            fs = [st[0][0] for st in v["floor"]]
+            print(f"   F_inf={v['fi']:g} C={v['c'][0]:g} ({v['kind']}): F = {fs[0]:.5f}, {fs[1]:.5f}, {fs[2]:.5f}; p = {ps[0]:.4e}, {ps[1]:.4e}, {ps[2]:.4e}")
+    print("  points that end at the curve F^2 = eta^2 + 1 (a3->0) or with another label: fitted exponent field, gamma, alpha; F, F', F'' at the last step")
+    for v in rows:
+        if v["class"] == "SINGULAR" and v["kind"] in ("a3->0", "other"):
+            e, sl = v["est"], v["s_last"]
+            print(f"   F_inf={v['fi']:g} C={v['c'][0]:g} {v['kind']} at eta* = {v['xstar']:.10g}: field {e['field']}, gamma {e['gamma']:.4f}, alpha {e['alpha']:.4f}, "
+                  f"F = {sl[0][0]:.5g}, F' = {sl[1][0]:.5g}, F'' = {sl[2][0]:.5g}, |F^2 - eta^2 - 1| = {abs(sl[0][0] ** 2 - v['x_last'] ** 2 - 1):.1e}")
+    fz = [v for v in rows if v["kind"] == "F->0"]
+    print(f"  F->0 points: {len(fz)}, eta* from {min(v['xstar'] for v in fz):.4g} to {max(v['xstar'] for v in fz):.4g}; examples (F_inf, C): measured alpha / 2/(eta*^2 + 4):")
+    for fi, c in ((1.0, 0.0), (0.25, 0.0), (2.0, 0.0), (4.0, 0.0), (1.0, 100.0), (0.5, 30.0)):
+        v = next(v for v in rows if v["fi"] == fi and v["c"][0] == c)
+        print(f"   ({fi:g}, {c:g}): eta* = {v['xstar']:.12g} (bar {v['bar']:.1e}), alpha {v['est']['alpha']:.5f} / {v['alpha_pred']:.5f}")
     bar_ok = all(v["bar"] is not None and v["bar"] <= 1e-8 for v in rows if v["class"] == "SINGULAR")
     n_floor = sum(v["class"] == "FLOOR" for v in rows)
     through = [v for v in rows if v["class"] == "THROUGH"]
@@ -501,7 +518,7 @@ def c_bisect():
         ok &= good
         xl = o["v_lo"]["xstar"]
         xh = o["v_hi"]["xstar"]
-        lines.append(f"F_inf={fi:g} C in ({lo:g}, {hi:g}) {la} -> {lb}: C_c = {fr(o['hi']):.0f}~{float(fr(o['hi'])):.12g}, ends {o['final_lo']} (eta* "
+        lines.append(f"F_inf={fi:g} C in ({lo:g}, {hi:g}) {la} -> {lb}: C_c = {float(fr(o['hi'])):.12g}, ends {o['final_lo']} (eta* "
                      f"{xl if xl is None else f'{xl:.6g}'}) | {o['final_hi']} (eta* {xh if xh is None else f'{xh:.6g}'}), {o['iters']} halvings")
     print("  bisections:")
     for l in lines:
@@ -696,6 +713,18 @@ def c_forward():
             if not ok:
                 bad.append((r["f"], r["f1"], side, k, sd.get("bar")))
     byk = {(r["f"], r["f1"]): r for r in rows}
+
+    def cell(sd):
+        k = fwd_class(sd)
+        if k == "SINGULAR":
+            return f"{sd['kind']}@{sd['xstar']:.6g}"
+        if k.startswith("NONFINITE"):
+            return f"kappa@{sd['xstar']:.6g}"
+        return k
+
+    print("  forward walks: for each F(0) = f, the plus side (eta > 0) for F'(0) = f1; the minus side of (f, f1) is the plus side of (f, -f1) (checked below)")
+    for f in F0S:
+        print(f"   f = {f}: " + " ".join(f"{f1}:{cell(byk[(float(f), float(f1))]['plus'])}" for f1 in F1S))
     par_bad = []
     for r in rows:
         o = byk[(r["f"], -r["f1"])]
