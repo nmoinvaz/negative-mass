@@ -1,0 +1,21 @@
+[package]
+name = "taylor_polar"
+version = "0.1.0"
+edition = "2021"
+description = "Polar matching determinant D(gamma) of phase2/nonradial/polar_solver.py by a Taylor integrator (#186)"
+publish = false
+
+[dependencies]
+multishoot = "=4.2.0"
+multidouble = "5.1.0"
+
+# multidouble main at ba0ad101ce76: the series module (mullow, Relaxed) of multidouble#186, unreleased.
+# multishoot's requirement "5.1.0" accepts it, so both resolve to this one revision.
+[patch.crates-io]
+multidouble = { git = "https://github.com/nmoinvaz/multidouble", rev = "ba0ad101ce7661f45153bc557dcb093d4dd41893" }
+
+[profile.release]
+opt-level = 3
+debug = false
+lto = "thin"
+codegen-units = 4
