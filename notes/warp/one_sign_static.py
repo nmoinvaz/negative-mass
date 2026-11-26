@@ -50,6 +50,7 @@ MUTATIONS = {
     "plant-s2": (["planted_s1"], "the planted test at s = 2 in place of s = 1"),
     "toy-flat": (["toy"], "the flat toy is passed to the rejection test"),
     "sconst-kappa": (["sconst"], "kap = c sg in place of 2 c sg"),
+    "fields-sx": (["fields"], "the s component of X1 doubled inside the commutator identity of the fields check only"),
     "cert-corrupt": (["slice_modp"], "one cofactor coefficient of the first stored slice certificate changed by 1"),
     "cert-satdrop": (["slice_modp"], "the saturation generator verified with u dropped from P"),
 }
@@ -269,6 +270,8 @@ def check_blocks_AB():
 def check_fields(sys_, gen):
     K = sys_["K"]
     X1c, X2c = sys_["X1c"], sys_["X2c"]
+    if MUT == "fields-sx":
+        X1c = X1c[:3] + (2 * X1c[3],)
     gens = sys_["gens"]
     comm = [Xapply(K, gens, X2c[k], X1c) - Xapply(K, gens, X1c[k], X2c) + X1c[k] for k in range(4)]
     u, b, v, s = gens
