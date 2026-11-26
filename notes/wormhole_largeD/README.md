@@ -29,6 +29,14 @@ W^2a^2 = 2(D-3) - 4\ln 2 + \frac{\pi^2/3 + 4\ln^2 2}{D-3} + O(D^{-2}) .
   **identified** as 2π²/3 + 8 ln²2 = 10.42336037874, with 3Ω₁ − 2π² − 24 ln²2 = 0 found by PSLQ at tolerance 10⁻⁹.
 - Against the full numerics the three terms leave about 73/(2(D − 3))² at D = 200 and 500, as an O(1/D²) remainder
   should. D = 1000 gives 66 ± 6, within that value's numerical error (table below).
+- **Update from #195** ([w2_highprec.md](w2_highprec.md), W² in quad-double at 64 D from 50 to 10⁴; quad- against
+  octo-double to at least 60 digits). Ω₁ = 10.42336037873851714322648088 by a fit, equal to 2π²/3 + 8 ln²2 to 8e-50.
+  The fourth term is Ω₂ = 74.3693867279333175953847, not "about 73". It is **identified** as
+  80ζ(3) − (8/3)π² ln 2 − (32/3) ln³2 (PSLQ at 2.7e-44; the coordinator's independent extrapolation agrees to 1e-40).
+  Both remain identifications, and the derivation is #25's and #26's.
+  The `modes_r.py` values of the table below and of growth.csv (D ≥ 20) are low by 2.7e-9 (D = 30) to 6e-6
+  (D = 2000); `w2_output.txt` has the 60-digit values.
+  *Added by the coordinator:* the "66 ± 6" at D = 1000 above came from those low values.
 
 **What it means.**
 - **Faster in higher D.** The e-folding time is a/√(2(D − 3)) at large D. The exact values are 0.846 a (D = 4),
@@ -132,6 +140,7 @@ comes only from the absence of the growing term.
 - Radial (spherically symmetric) perturbations only.
 - The massless symmetric member only. The asymmetric (two masses), charged and massive-potential families are not done.
 - The third term's closed form is an identification, not a derivation.
+  **Update from #195:** this now holds for the fourth term too (Ω₂, identified above). What changed is the precision.
 - **Prior work** (searched only briefly, three web searches). [TS13] give the numbers and say the time scale "becomes
   shorter as n becomes large", but give no formula. No large-D analysis of these wormholes was found. This is not a
   full literature check, and nothing here claims novelty.

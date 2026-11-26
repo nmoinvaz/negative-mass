@@ -268,3 +268,35 @@ The same qd list took 75 s at the development stage (`dev_16`). Memory is report
 - `w2_crate/` the crate; `w2_highprec.py` the driver; `w2_output.txt` its output of record; this note.
 - Raw: `negative-mass-raw/I195-dh610` (README with the criteria and amendments A1, A2; `dev_*` the development runs; `run_*` the runs of
   record, `run_08_driver_final` the output above).
+
+## Coordinator's review
+
+Under review: `wip/i195-w2-largeD` at 514ac42, raw `I195-dh610` at e70f58a. Review folder
+`negative-mass-raw/I195-mac-review`, whose README holds the criteria, committed before the first run of `ind195.py`. The
+changed files are those the brief names.
+
+- **Rerun on the Mac** of every run of record, with paths mapped from the `.env` files.
+  - The 68 od values are bit-identical to dh610's.
+  - 4 of the 64 qd values of the D list differ, by 3e-64 to 3e-63, and a few planted fields and Newton traces differ.
+    *Added by the coordinator:* the cause is the step planner's f64 `powf` (`flow.rs:161`) and the ℓ_∞ rule's f64 `exp`
+    (`flow.rs:191`). Their results differ by an ulp between macOS's libm and glibc, so step sizes differ. multishoot's
+    `kth_root` would make the planner bit-portable. Every difference is at qd roundoff, far below every bar.
+  - The driver rerun gives the same verdicts, fit and PSLQ numbers.
+- **ind195**, run 1, 4 of 4:
+  - K1: the coordinator's own transformation of E2 into the ℓ system gives the A and B used here (sympy residual 0).
+  - K2: an independent W², in Python and mpmath at 50 digits. It matches at ℓ_m = 3 instead of the throat series at
+    ℓ₀ = 1, and starts the far side on the frozen decaying eigenvector at ℓ_∞ = 180 instead of (1, 1). It agrees with the
+    crate to 5.6e-51 at D = 50 and 4.2e-40 at D = 1000.
+  - K3: Neville extrapolation instead of least squares. It gives Ω₁ within 4e-43 of 2π²/3 + 8 ln²2, and Ω₂ within 1e-39
+    of 80ζ(3) − (8/3)π² ln 2 − (32/3) ln³2 at N = 16, 20 and 24.
+  - K4: PSLQ returns (3, −240, 8, 32), and nothing for a perturbed basis.
+  - The mutations `k1-B`, `k2-eps` and `k3-omega1` fail exactly their targets.
+- **Not met, as ruled:** S4, S5, F3 (one admitted cell), G1 (0 of 16 csv rows) and R4. R4 is new: Newton from the start
+  shifted by −0.5 does not converge at D = 4 … 11, and from +0.5 it reaches the same root. These stand as the runner
+  reports them. Silent controls (`fit_drop_term` on F3k, `short_contraction` at dd D = 5, `wrong_eps` on the planted
+  checks) are reported as silent.
+- *Added by the coordinator:* G1's failure is a finding about growth.csv, whose `modes_r.py` rows are low. The
+  `logs_modes_r.txt` run at tighter settings moves each row toward this crate's value. The README's table and its
+  "66 ± 6" rested on those rows. README.md's "Result" and "Limits" carry an update from this issue.
+- Follow-ups: the recommended tasks 1, 2 and 4 are filed. Task 3 waits for a multidouble release with the correctly
+  rounded reciprocals (multidouble PR #188; #193 was closed for it).
