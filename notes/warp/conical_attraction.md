@@ -356,3 +356,44 @@ both integrators (6.4e-12); the inequality trajectories use h = 1/400. These set
 `dev_09` and known to pass. M7 is numerical evidence. Other amendments: A2 (a README sentence with a wrong inequality;
 the code checks the right one), A3 to A5 (float slack 1e-12, wording), A6 (the stop rule of M16 ended small-root runs
 early; criteria unchanged), A7 (P′(2) < 0 added to M4), A8 (a secant crash in a control run).
+
+## Coordinator's review
+
+Reviewed 2026-11-26 at aff2d76 (raw `I168-rpi5` cd80040). The review's files are in `negative-mass-raw/I168-mac`
+(raw b9f8bf3), with its criteria committed before the first run of `ind168.py` (raw 0814c4b). This is the independent
+review that §10 asks for.
+
+| item | result |
+|---|---|
+| scope | the three files the task named, and the raw folder |
+| rerun on the Mac | exit 0, 21 of 21 checks, 27 of 27 controls on target only, 157 s; the output is identical to `conical_attraction_output.txt` apart from the timing line |
+| independent check `ind168.py` | run 2: 10 of 10 criteria pass; all 9 mutations make exactly their targets fail. Run 1 failed K5 and K10 by defects of the coordinator's code (README A1) |
+| hand proofs | §1's identities and (1); Lemma 1's shape argument; Lemma 2; Theorem A's Steps 1–4 (the constant B = 1/4 + 200ū and the integrating factor); Theorem B's induction and the triangular stage equations; Lemma 3 (the root bound 13/27 < 1), Corollary 4, and every case of Theorem C, including Regime B's three ratios. All read and rederived; no gap found |
+
+`ind168.py` imports nothing from this repository. It shares sympy and mpmath, the block entries of a conical shift
+(`det_classify.md` §6), and the objects under test. It checks:
+- **N and its forms:** sympy's determinant of the block gives c₃q³ + c₂q² + c₁q + c₀ and p⁶P(q/p²) exactly, and the
+  reduction (1) follows.
+- **The certified constants**, rederived with its own exact interval arithmetic over Fractions, with branch and bound:
+  - Lemma 1's (i) and (A)–(E) on the stated box;
+  - Lemma 2's three coefficient bounds on the simplex;
+  - Regime B's 3Θ ≤ 0.0363|p|, through the three ratios;
+  - the small-branch rate;
+  - the three huge-branch bounds on y′;
+  - Theorem A's chain, c_e = 57.6, ū ≤ 1.00452·10⁻³, B ≤ 0.450904, H ≤ 0.12883, e^H ≤ 1.13769, with its own
+    exponential bounds.
+- **Re-solved:** its own RK4 in (ln G, ln p) from G₀ = 1, ζ₀ = 1/4, u₀ = 1/1000 to τ = 10 stays on the huge root and
+  meets (b) and (c) of Theorem A. The largest ratios to the bounds are 0.553 and 0.875, and |y − 4| = 1.6·10⁻¹⁰ at the
+  end.
+
+Findings:
+- **The answer stands.** Theorems A, B and C are *proved*, with constants *certified* and now independently rederived.
+  #159's existence near the family and its classification no longer depend on a cited theorem or on assumption H.
+- **Lemma 2's bound is loose but valid.** Its y² coefficient never exceeds 2, where the note bounds it by 51/25: at
+  f = 1 it equals (2 + 2u)/(1 + u) = 2. The coordinator's first control for that bound claimed 2 and could not fail (A1).
+- **Process.** Both M7 failures stay on the record (§11), the second one the coordinator's. Control `class-sign` was
+  declared before a development run computed it; it fired on target in the run of record. `A-kappa`'s target was
+  mispredicted and corrected in the README.
+- The Aulbach citation stays *(unverified)* and is not used.
+
+Follow-ups: #180 (which (F_∞, C) occur); #135 row 33 (L1–L9).

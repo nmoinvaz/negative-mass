@@ -207,7 +207,9 @@ two-parameter family F = F_∞ − 2F_∞/η² + (C + F_∞(F_∞² + 7) ln η)/
 integration to 1e-10 **numerical evidence**, existence **conditional** on a standard theorem). The pure power series
 fails at η⁻¹⁰ because k = 4 is a resonance, and the logarithm absorbs it. For F_∞ = 0, and for other leading
 balances, there is none, **conditional** on a leading-monomial form of F − F_∞. Localization in x for conical shifts is
-therefore not excluded; whether a global bubble exists is not decided.
+therefore not excluded; whether a global bubble exists is not decided. *Update from #168* ([`conical_attraction.md`](conical_attraction.md)):
+existence near the family and the exclusion of every other approach, including F_∞ = 0 and oscillation, are now
+**proved**, with certified constants.
 
 ## 7. The far field of a localized shift
 

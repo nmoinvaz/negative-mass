@@ -21,10 +21,10 @@ constants F ≡ F_∞ are exact solutions for every F_∞ and are not counted.
 | formal solution, F_∞ ≠ 0 | the series above through η⁻⁹; N = O(η⁻¹⁶ (ln η)^m); one free parameter C besides F_∞; odd coefficients zero | **checked symbolically** |
 | logs needed | yes for every real F_∞ ≠ 0: the pure series stops at η⁻¹⁰ with −512 F_∞⁴ (F_∞² + 7) = 0, and F_∞² + 7 has no real root | **checked symbolically** |
 | an actual solution follows the series | N = 0 integrated inward from the series at η = 1000 agrees with it at η = 200 and 100 to 4.4e-13 (tolerance 1e-10), for four (F_∞, C); an outward integration from perturbed data tends to a limit and follows the series to 1e-17 | **numerical evidence** |
-| existence for all data near the family | an open set of data (F, η³F′) near (F_∞, 4F_∞) at large η gives a limit solution | **conditional** on a standard theorem, hypotheses **checked symbolically** (§4) |
-| the branch a₂ = 0, other leading balances | none: Newton polygon has one edge, k = 2, c = −2F_∞; starts k = 1..8 give only u = 0 | **checked symbolically** for the polygon and the starts; for every real k and log power, **conditional** on H |
+| existence for all data near the family | an open set of data (F, η³F′) near (F_∞, 4F_∞) at large η gives a limit solution | **proved**, constants **certified** ([`conical_attraction.md`](conical_attraction.md) Theorem A, #168): data with \|ζ₀\| ≤ 1/4, u₀ ≤ 1/1000 on the huge root |
+| the branch a₂ = 0, other leading balances | none: Newton polygon has one edge, k = 2, c = −2F_∞; starts k = 1..8 give only u = 0 | **proved**, constants **certified**, for every real C² solution on a half line with a limit ([`conical_attraction.md`](conical_attraction.md) Theorem C, #168); assumption H is not needed |
 | exponentially small terms | none: the linearization about the family has exponents 0 and 4 only, with a nonvanishing highest coefficient | **checked symbolically** |
-| F_∞ = 0 | no limit solution but F ≡ 0 | **conditional** on H |
+| F_∞ = 0 | no limit solution but F ≡ 0 | **proved**: F ≡ 0 near infinity ([`conical_attraction.md`](conical_attraction.md) Theorem C, #168) |
 | η → −∞ | the mirror image F(−η); N contains η only through η² | **checked symbolically** |
 
 So `conical_limit` of #80 is resolved the other way: **limits at η → ±∞ exist** for conical shifts. That removes the
@@ -78,6 +78,11 @@ approach such as sin(η)/η² does not, and is not covered. Under H the list abo
 = 2, c = −2F_∞; F_∞ = 0: F ≡ 0.** That is a dominant-balance argument, **conditional** on H. It excludes no solution
 that oscillates.
 
+**Update from #168** ([`conical_attraction.md`](conical_attraction.md)): for solutions with a limit, H is replaced by
+Theorem C there. F′ = 0 forces F″ = 0, so F − F_∞ has one sign, and a branch analysis of the cubic leaves only the
+family. It is **proved**, with constants **certified**. The dominant-balance argument above stays as the explanation of
+why only k = 2 occurs.
+
 ## 3. The series with logarithms
 
 `series_pure` solves g = −2F_∞ν² + Σ_{k≥3} a_k ν^k (no logs) stage by stage: a₃ = 0 at η⁻⁹, and at η⁻¹⁰ no unknown is
@@ -124,6 +129,11 @@ C. The resonance of the rate −2 with σ′ = −2σ is the logarithm. That the
 these solutions follows the same way (a Gronwall bootstrap in the variable z = r − 4G, not written out).
 **Conditional** on the theorem and that bootstrap; §5 is the numerical test.
 
+**Update from #168** ([`conical_attraction.md`](conical_attraction.md)): no cited theorem is needed. Theorem A there
+proves the attraction with explicit constants (rate (1 + ln η)η⁻², sharp), and Theorem B proves that the series is the
+asymptotic expansion to every order. Both are **proved**, with the interval constants **certified** and rederived by
+the coordinator's independent check (`negative-mass-raw/I168-mac`, `ind168.py`).
+
 ## 5. Numerical comparison
 
 `num_inward` integrates N = 0 with mpmath (30 digits, `odefun`, tolerance 1e-20, degree 10) in t = ln η on the state
@@ -161,7 +171,8 @@ limit F_∞ → 0 of the family degenerates (b → 0, a₂ → 0, and the divisi
 Not decided here: (a) a global solution on η ∈ ℝ with the same F_∞ at both ends (the two ends are mirror images, but
 nothing here connects them through η = 0); (b) whether the shift is regular at η = 0 or only singular at ρ = 0 as
 stated in §6 of the earlier note; (c) closure (ω) on this family; (d) approaches that oscillate (H); (e) the rigorous
-proof of §4.
+proof of §4. *Update from #168:* (d) is decided, with no oscillating approach (Corollary 4 and Theorem C of
+[`conical_attraction.md`](conical_attraction.md)), and (e) is Theorems A and B there.
 
 ## 7. A discrepancy with §7 of det_classify.md
 
