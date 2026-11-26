@@ -148,3 +148,129 @@ Findings:
 Follow-ups: #187 (`convergence.py`'s rows and #114's capped rows from the crate), #188 (complex s for the box counts).
 The note's recommended tasks 2 (the star by multishoot's `Shooting`) and 4 (quad-double at (6, 12000)) are not filed:
 they are low priority beside #187.
+
+## #187: convergence.py's rows, and #114's two capped rows, from the crate
+
+Status: **numerical evidence**, with one criterion **not met** (CAP5c below). The crate prints `convergence.py`'s rows for l = 2 … 6 in the
+stored format. Every token of the four stored files (41 rows of 7 tokens and 40 header tokens, 327 tokens) equals the crate's token as a string. The two
+capped rows of #114 come out with D < 0 in all five variants. Against #114's finished l = 5 evaluation the φ_cut variant differs by 4.7e-8
+where the bar, set before any run, was 1e-8. Every number below is in `taylor_rows_output.txt` (the runs of record; raw folder
+`negative-mass-raw/I187-mac`, README first with the criteria, amendments A1 to A3, last commit when assembled in the file's second line).
+No sentence here claims novelty.
+
+### What was added
+
+- **q_int** (`polar.rs: interior_q`): the null vector of [Y[2:] | −S] (4 × 5) by signed 4 × 4 cofactors in the lane, (H1/s, K) = Y[:2] c, the
+  Moncrief map, q_int = f Z′/Z. The scipy path takes an SVD null vector; the symbolic source, the planes and the Moncrief map are shared.
+  q_ext is #186's `q`.
+- **The r_m rule of `PolarProblem`** (`rows.rs: grid_rm`): the first point with φ0 < φ_cut of numpy's `linspace(r0, R, 20000)`, φ0 from the crate's
+  own star. The crate's r_m equals scipy's to the last bit for all five variants (RM); the margin of the rule (ln φ/φ_cut at r_m) is at least 7.8e-5
+  (the R = 90 variant), 1.0e-3 for the base.
+- **The five variants** (`rows` command; one star and one J table per l, then one `d_eval` per (γ, variant), each a flushed JSON line):
+
+  | convergence.py | the crate's analogue |
+  |---|---|
+  | base | order 30, tol 1.2e-30 (dd), φ_cut 1e-9, grid [1e-3, 60], r0 = 1e-3 |
+  | `rtol 1e-12` | **the crate has no scipy rtol**: a looser step control, order 30, tol 1e-12. Printed `rtol 1e-12 [crate: Taylor tol 1e-12]` |
+  | `phi_cut 1e-12` | as base with φ_cut 1e-12 (r_m = 34.2051) |
+  | `background R=90` | the same star (P_c, Z_c are the same 33 digits for classification radius 60 and 90) and the grid over [r0, 90] (r_m = 24.1084) |
+  | `r0 = 3e-3` | interior start at 3e-3 and the grid from 3e-3 (r_m = 24.1110) |
+
+  The spread keeps convergence.py's quirk: it is taken over the names without `phi_cut`, which leaves base out (#114 found this).
+- **`python taylor_polar.py --rows`** prints the rows and runs the checks below; `--mutate=NAME` runs a control; `--jsonl-dir=DIR` keeps and resumes the
+  crate's lines. #186's 22 checks still pass by default (run_18: 22 passed, 0 failed, 1 skipped of 23).
+- **The reporting fix.** A skipped check reports `SKIPPED` and is counted apart: before, `--only=TS` printed `0 of 0 checks passed` and exit 0 (`dev_37`);
+  now `0 passed, 0 failed, 1 skipped (TS: not run) of 1` (`dev_38`). My first version missed a numpy bool (S2's), so `run_07` summed to 22 of 23; the verdict is now
+  coerced to a bool and the default mode was run again as `run_18`.
+
+### Results of the runs of record
+
+| Check | Result |
+|---|---|
+| QP, planted q_int (dyadic planes, exact sympy null space, l = 3) | well-conditioned f64 6.6e-15, dd 3.6e-31, qd 2.1e-63; near-degenerate planes (2⁻²⁷) f64 3.2e-10, dd 1.8e-26, qd 1.8e-58 |
+| RP, planted r_m (φ = 0.02 e^{−0.65 r}) against numpy | 4 of 4 cases equal (index and float) |
+| RM, r_m of the five variants against `PolarProblem.rm` on scipy's stars | 5 of 5 equal to the last bit |
+| RA2, RA4, RA5, RA6: every token of the stored file as a string | 66 of 66, 87 of 87, 87 of 87, 87 of 87 |
+| RX, l = 2, γ = 300 (no stored row) against #186's fresh scipy D | −1.0204252e-9 both |
+| CAP5a, CAP6a: D < 0 in the five variants | met, both |
+| CAP5b, CAP6b: the rtol analogue within 2.1e-4 of base | E1 = 1.4e-14, 1.8e-15 |
+| **CAP5c**: the five crate D against #114's finished scipy D, 1e-8 each | **not met**: base 5.4e-9, rtol 3.1e-9, R = 90 8.0e-10, r0 4.2e-9, **φ_cut 4.7e-8** |
+| **CAP5s**: the same with the crate's star started as scipy's (rs = 1e-3) | **not met**, the same five numbers |
+| #186's default mode | 22 passed, 0 failed, 1 skipped (TS), 847 s |
+| the controls | each fires on its declared targets (below) |
+
+The closest any D or q token comes to a rounding boundary of its print is 8.3e-10 relative (l = 2, q_ext at γ = 0.001), 6.2e-9 (l = 4), 1.5e-9 (l = 5, q_int
+at γ = 0.001) and 5.2e-9 (l = 6, D at γ = 137): the equality of the strings is not by luck of rounding at the 1e-8 scale, but q_ext at γ = 0.001 is within 1e-9 of flipping.
+
+**The capped rows** (dd, one thread; D, crate):
+
+| | (l = 5, γ = 6000) | (l = 6, γ = 12000) |
+|---|---|---|
+| base | −8.93608292806e-13 | −1.59579128004e-13 |
+| rtol analogue (Taylor tol 1e-12) | −8.93608292806e-13 | −1.59579128004e-13 |
+| φ_cut 1e-12 | −4.43895159701e-13 | −7.92691720653e-14 |
+| R = 90 | −8.93709571709e-13 | −1.59597214579e-13 |
+| r0 = 3e-3 | −8.93519613293e-13 | −1.59563291452e-13 |
+| stored row (4 variants, scipy) | D_base −8.936083e-13, spread 2.1e-4 | D_base −1.595791e-13, spread 2.1e-4 |
+| #114's scipy rtol 1e-12 (win) | −8.936082956e-13 | still running, not touched |
+| row time, five evaluations | 176 s | 352 s |
+
+Error bars, each named and none rigorous:
+- **E1**, the spread over two Taylor tolerances (1e-12 and 1.2e-30, order 30, dd): 1.4e-14 and 1.8e-15. An estimator range for the looser setting.
+- **E2**, the spread over order and tolerance (order 24 at 1e-22 against order 30 at 1.2e-30, dd): 1.3e-24 and 2.4e-26.
+- **E3**, the spread over two lanes (f64 against dd): 1.5e-9 and 6.9e-9. This is f64's roundoff scale, not dd's, which is smaller by about 1e-16. At (5, 6000) the f64 lane differs from dd by
+  1.5e-9 (base, rtol, φ_cut), 1.7e-9 (R = 90) and 7.4e-9 (r0); at (6, 12000) by 4.7e-9 to 1.7e-8 (`run_20`).
+- **E4**, the spread over two solvers (the crate against #114's scipy evaluation): 5.4e-9 (base) at l = 5; it contains scipy's own error, which #114 measures as 2.33e-9
+  between its rtol 1e-10 and 1e-12 evaluations here.
+- The 2.1e-4 spread between the variants is not an error bar: it is the shift of r_m (24.1098, 24.1084, 24.1110) to which D, a normalized determinant, is sensitive (#186, V4); R = 90 is +1.13e-4 and
+  r0 = 3e-3 is −9.9e-5 of base at both rows.
+- No quad-double evaluation at these γ was made (about 1.5 to 3 h each); #186's dd against qd 5.7e-26 and 5.4e-29 at (2, 300) and (6, 137) is cited, not repeated.
+
+**CAP5c is not met, and CAP5s says the star's start is not why.** The φ_cut variant at (5, 6000) differs from scipy's by 4.7e-8 against the bar 1e-8, set a priori as twice
+#186's worst 4.5e-9; the coordinator's ruling kept it. CAP5s repeats the comparison with the crate's star shot from rs = 1e-3 with scipy's leading-order boundary condition (the start that
+agrees with `solve_star` to 1e-10 in #186's S1): the five numbers are the same, and the crate's D does not change in its f64 digits between the two starts (a development value at l = 2, γ = 1 in dd: 5e-21, `dev_21`), because the star beyond
+the centre is the same decaying solution (m(r_m) agrees to 5e-18). What `run_19` shows beyond that: the crate agrees with scipy's full-precision D to 8e-13 up to γ = 10 in every variant and every l (4e-12 at γ = 40), and the gap
+grows with γ (up to 2e-11 at 137, 2e-10 at 300, 3e-9 at 1000, and 5e-8 to 8e-8 at the top γ of l = 4, 5, 6, in the φ_cut, R = 90 and r0 columns), so it is not a static input such as the star or M_ext, which would be the same at every γ. The crate's own convergence
+is far tighter (E1, E2), and its f64 lane differs from dd by about the size of the gap for the base, R = 90 and r0 columns but not for φ_cut (1.5e-9 against 4.7e-8). **The cause is not established.**
+Candidates: scipy's integration error at rtol 1e-10 over the longer path to r_m = 34, and roundoff in scipy's f64. Against truncation alone: scipy's rtol 1e-12 value is still 3.1e-9 from the crate, only 1.7 times closer than
+its rtol 1e-10 value (5.4e-9) for a hundred times tighter rtol.
+
+The crate's check numbers for the stored rows alone, before any variant: the worst crate-against-scipy relative differences at the stored γ are in the RA lines of the output (base 2.1e-9, 5.4e-9, 1.9e-8 at l = 4, 5, 6).
+
+**Timings** (one process, one thread, nice 10, load 1.9 to 3.0, Apple M5; the crate in dd; the evaluations of every (γ, variant) of the stored rows, setup 3.3 to 3.5 s per l extra):
+
+| l | evaluations | crate (s) | stored time column, summed (s) |
+|---|---|---|---|
+| 2 | 45 | 16 | 462 |
+| 3 | 50 | 45 | no stored file |
+| 4 | 55 | 134 | 36810 |
+| 5 | 55 | 221 | 51614 |
+| 6 | 55 | 400 | 91606 |
+
+The stored column is the sum of worker wall times on the win laptop (below-normal priority, other work running), and covers the evaluation of q and the capped rows differently, so the two are not like for
+like; #186 measured scipy on this Mac 4 to 5 times faster than the stored times. Peak resident: 57 MiB per rows run, 114 MiB for the default mode (reported only).
+
+**The controls** (each run alone, exit 1; the values are in `run_08` to `run_17`): `qint_cofsign` (QP 9.0, RA2 63 of 66), `qint_f` (QP 1.3e-3, RA2 58 of 66), `rm_off1` (RP 4 of 4 differ, RM 5 of 5, RA2 33 of 66), `rm_cut`
+(RM φ_cut 30.82 against 34.21, RA2 57 of 66), `r0_grid` (RM r0 24.1098 against 24.1110, RA2 58 of 66), `qstart` (RA2 54 of 66), `moncrief` (RA2 35 of 66, RX −3.7e-6, QP 0.26), `tol_loose` at tol 1e-1 (CAP5b E1 = 1.4e-3; the `tol`
+entry of CAP5c and of CAP5s 1.4e-3, run_15 and run_17), `jsign` (CAP5a: D > 0 in base, rtol and r0).
+
+### Defects and discrepancies found
+
+- **CAP5c and CAP5s not met** (above).
+- **The control `qint_sign` could not fire** (a sign of S does not change the null vector); replaced by `qint_cofsign` before any run.
+- **`qstart` does not fire on RX**: at γ = 300 the Riccati forgets its start; RX is not its target (`dev_31`).
+- **`tol_loose` at tol 1e-3 did not fire** (E1 3.9e-6 against the bar 2.1e-4, `dev_33`); the control runs at 1e-1. A sweep run at tol = 1 did not finish in 8 minutes (the integrator at that tolerance
+  had not finished) and was stopped by its PID with its script (`dev_34`).
+- **My skip fix missed S2's numpy bool** (above); found by the run of record of the default mode and rerun.
+- **`convergence.py`'s spread leaves out the base variant** (its name contains `phi_cut`; #114 noted it). The crate's rows keep it so that the stored spreads reproduce.
+- The R = 90 grid index is the least certain of the five (ln φ/φ_cut 7.8e-5 from flipping): a φ error of that size at r = 24 would change r_m by one grid point (about 3e-4 in D at γ ≥ 1).
+
+### Recommended tasks
+
+1. **Compare #114's l = 6, γ = 12000 rtol 1e-12 value with the crate's five D.** What: when #114 finishes, a one-line comparison of its D with the crate's −1.59579128004e-13 (rtol analogue) and of the other four
+   variants with its stored values. Why: the second source for the row that took 89 h. Accept: a bar set before the value is read (at l = 5 the same difference was 3.1e-9, and the crate's f64 lane differs from dd by 6.9e-9 here); reported as it is. Depends: #114.
+2. **Where scipy's D drifts from the crate with γ.** What: scipy's φ_cut and base D at (5, 1000) to (5, 3000) at rtol 1e-10, 1e-11, 1e-12, 1e-13, and its D with the crate's M_ext and star substituted. Why: CAP5c is not met and its cause is open: truncation,
+   roundoff or an input. Accept: the gap against rtol curve at each γ, with a mutated input that moves it. Depends: none.
+3. **Complex s** (#188), the engine for the argument-principle counts. Accept as in #186's recommended task 3, with the rows' q_int as a second output. Depends: this issue.
+4. **Quad-double at (5, 6000)** (about 1.5 h): closes the lane question for the capped rows. Accept: agreement with dd to 1e-20. Depends: none; low priority.
+
