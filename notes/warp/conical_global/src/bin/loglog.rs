@@ -88,6 +88,9 @@ fn planted_poly(name: &str, m_plant_c: bool) -> PolyQ {
         ]),
         // eta^6 F'^4 F'' + 4 eta^5 F'^5 (= p^4 (q + 3p))
         "pl5" => PolyQ::new(&[(0, 4, 1, 6, 1, 1), (0, 5, 0, 5, 4, 1)]),
+        // #183: F'' = 2 F^3 (F = 1/(x - x*)) and F F'' + F'^2 = 0 (F^2 linear in x): planted blow-ups
+        "pl6" => PolyQ::new(&[(0, 0, 1, 0, 1, 1), (3, 0, 0, 0, -2, 1)]),
+        "pl7" => PolyQ::new(&[(1, 0, 1, 0, 1, 1), (0, 2, 0, 0, 1, 1)]),
         other => panic!("unknown planted equation {other}"),
     }
 }
@@ -129,6 +132,10 @@ fn go<P: Precision<Native>>(a: &HashMap<String, Vec<String>>, flag: &dyn Fn(&str
     if let Some(v) = get("max-steps") {
         cfg.max_steps = v[0].parse().unwrap();
     }
+    if let Some(v) = get("rstop") {
+        cfg.rstop = Some(v[0].parse().unwrap());
+    }
+    cfg.flip_side = flag("plant-locator");
     let to: f64 = get("to").map(|v| v[0].parse().unwrap()).expect("--to");
     let cps: Vec<f64> = get("cp").map(|v| v[0].split(',').map(|t| t.parse().unwrap()).collect()).unwrap_or_default();
     let (x0, s0): (f64, [P::Scalar; 3]) = if let Some(v) = get("fwd") {
@@ -162,9 +169,17 @@ fn go<P: Precision<Native>>(a: &HashMap<String, Vec<String>>, flag: &dyn Fn(&str
         Stop::NonFinite => "NonFinite",
         Stop::TinyStep => "TinyStep",
         Stop::StepLimit => "StepLimit",
+        Stop::Singular => "Singular",
+    };
+    let sing = match &o.sing {
+        None => "null".to_string(),
+        Some(g) => format!(
+            "{{\"xstar\": {:e}, \"bar\": {:e}, \"x_last\": {:e}, \"r\": {:e}, \"gamma\": {:e}, \"field\": {}, \"side\": {}, \"alpha\": {:e}}}",
+            g.xstar, g.bar, g.x_last, g.est.r, g.est.gamma, g.est.field, g.est.side, g.est.alpha()
+        ),
     };
     println!(
-        "{{\"end\": true, \"stop\": \"{}\", \"x\": {:e}, \"steps\": {}, \"n_rel_max\": {:e}, \"n_rel_pre_max\": {:e}, \"kt\": {}, \"tol\": {:e}, \"project\": {}, {}}}",
+        "{{\"end\": true, \"stop\": \"{}\", \"x\": {:e}, \"steps\": {}, \"n_rel_max\": {:e}, \"n_rel_pre_max\": {:e}, \"kt\": {}, \"tol\": {:e}, \"project\": {}, \"sing\": {}, {}}}",
         stop,
         o.x_end,
         o.steps,
@@ -173,6 +188,7 @@ fn go<P: Precision<Native>>(a: &HashMap<String, Vec<String>>, flag: &dyn Fn(&str
         kt,
         tol,
         cfg.project,
+        sing,
         s_json::<P>(&o.s_end)
     );
     let _ = (abs_s::<P>, hi::<P>, lane_i::<P>, Fl::<<P as Precision<Native>>::V, 1>::zero);
@@ -190,7 +206,7 @@ fn main() {
         if let Some(n) = t.strip_prefix("--mutate=") {
             match n {
                 "eq-coeff" | "n-drift" => m = Mutation::from_name(n).unwrap(),
-                "recip-dd" | "no-project" | "plant-c" => flags.push(n.to_string()),
+                "recip-dd" | "no-project" | "plant-c" | "plant-locator" => flags.push(n.to_string()),
                 _ => panic!("unknown mutation {n}"),
             }
             i += 1;
