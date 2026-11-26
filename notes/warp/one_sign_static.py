@@ -42,19 +42,22 @@ SINGULAR = "/usr/bin/Singular"
 
 # name: (checks that must fail, what the mutation does)
 MUTATIONS = {
-    "Phi1-sign": (["blocks", "chain", "denoms", "planted_s1"], "Phi1 with the opposite sign of a^2"),
-    "Psi-sign": (["blocks", "chain"], "Psi with the opposite sign"),
+    "Phi1-sign": (["blocks", "chain", "denoms", "planted_s1", "slice_modp"], "Phi1 with the opposite sign of a^2"),
+    "Psi-sign": (["blocks", "chain", "slice_modp"], "Psi with the opposite sign"),
     "AB-sign": (["AB"], "B built as PQY + Z(Q^2 + Y^2)"),
     "denoms-claim": (["denoms"], "claims the denominator 4 s u Delta' in place of 8 s u Delta'"),
     "Cpoints-s1": (["Cpoints"], "the three points drawn on s = 1, where C-bar = 0"),
     "plant-s2": (["planted_s1"], "the planted test at s = 2 in place of s = 1"),
     "toy-flat": (["toy"], "the flat toy is passed to the rejection test"),
-    "cert-corrupt": (["slice_cert"], "one cofactor coefficient of the first stored slice certificate changed by 1"),
-    "cert-satdrop": (["slice_cert"], "the saturation generator verified with u dropped from P"),
+    "sconst-kappa": (["sconst"], "kap = c sg in place of 2 c sg"),
+    "cert-corrupt": (["slice_modp"], "one cofactor coefficient of the first stored slice certificate changed by 1"),
+    "cert-satdrop": (["slice_modp"], "the saturation generator verified with u dropped from P"),
 }
 MUT = None
 RESULTS = []
 SKIPPED = []
+NOT_MET = ["D1 slice_cert: exact certificate over Q for the saturated level-2 ideal at fixed s (none obtained; see the raw README, probes 11 and 13)",
+           "D2 full_cert: exact certificate over Q for all s (none obtained; the 60 min full-ring run is recorded in certs/fullring.json)"]
 INFO = []
 
 
@@ -435,6 +438,35 @@ def check_planted(sys_, gen):
           f"and F0 = F1 = F2 = 0: {c_ok}; (d) f0, f1, f2 do not vanish at s = 1: {d_ok}")
 
 
+def check_sconst():
+    """s = tan(theta/2) constant = s* on an open set, s* not in {0, +-1} (c = cos theta*, sg = sin theta*, both nonzero). Then
+    Q = -v0 v1 gives u_rho rho + u_rho/rho = kap u_rho^2 with kap = sin(2 theta*) = 2 c sg != 0, so B = rho u_rho has B_rho = kap B^2/rho
+    and u = -ln(W)/kap + d(x), W = k(x) - kap ln(rho). Z and Y give u_x rho = -2 c u_rho a/(u c - sg) (a = u_x). The residual times
+    rho W^2 equals -(k'(c u - sg) + 2 c k'/kap - 2 c W d'), linear in the independent functions ln W, W, 1 of rho: so k' = 0, d' = 0, u_x = 0."""
+    x, L, c, sg, LW, Wv = sp.symbols("x L c sg LW Wv")
+    kap = c * sg if MUT == "sconst-kappa" else 2 * c * sg
+    k, d = sp.Function("k")(x), sp.Function("d")(x)
+    W = k - kap * L
+    u = -sp.log(W) / kap + d
+    rho = sp.exp(L)
+    uL, uLL = sp.diff(u, L), sp.diff(u, L, 2)
+    u_r, u_rr = uL / rho, (uLL - uL) / rho**2
+    eq_Q = sp.simplify(u_rr + u_r / rho - 2 * c * sg * u_r**2) == 0
+    a = sp.diff(u, x)
+    u_xr = sp.diff(uL, x) / rho
+    resid = sp.simplify((u_xr * (u * c - sg) + 2 * c * u_r * a) * rho * W**2)
+    kp, dp_ = sp.diff(k, x), sp.diff(d, x)
+    want_sym = -(kp * (c * (-LW / kap + d) - sg) + 2 * c * kp / kap - 2 * c * Wv * dp_)
+    eq_res = sp.simplify(resid - want_sym.subs({LW: sp.log(W), Wv: W})) == 0
+    P = sp.Poly(sp.expand(want_sym), LW, Wv)
+    coef_lnW, coef_W = P.coeff_monomial(LW), P.coeff_monomial(Wv)
+    ok_coef = sp.simplify(coef_lnW - c * kp / kap) == 0 and sp.simplify(coef_W - 2 * c * dp_) == 0
+    check("sconst", eq_Q and eq_res and ok_coef,
+          f"for s = s* not in {{0, +-1}} (kap = 2 c sg != 0): u = -ln(W)/kap + d(x), W = k(x) - kap ln(rho) solves u_rho rho + u_rho/rho = kap u_rho^2 "
+          f"({eq_Q}); (Z)(Y) residual times rho W^2 = -(k'(c u - sg) + 2 c k'/kap - 2 c W d') ({eq_res}); the coefficients of ln W and W are "
+          f"c k'/kap and 2 c d' ({ok_coef}), so k' = d' = 0 and u_x = 0")
+
+
 # --------------------------------------------------------------------------------------------------------------------
 # toy systems through the same chain code
 # --------------------------------------------------------------------------------------------------------------------
@@ -571,10 +603,11 @@ def slice_mod(poly, s0, p):
 
 
 def check_slice_certs(gen, rawdir):
-    """For each stored modular slice certificate (p, s0): sum c_i g_i = kappa != 0 in GF(p)[t, u, b, v]."""
+    """D1m: for each stored modular slice certificate (p, s0): sum c_i g_i = kappa != 0 in GF(p)[t, u, b, v]. Modular evidence
+    (a statement about the reduction mod p at s = s0), not a certificate over Q: D1 (exact over Q) is NOT MET."""
     files = sorted(f for f in os.listdir(os.path.join(rawdir, "certs")) if f.startswith("slice_p")) if os.path.isdir(os.path.join(rawdir, "certs")) else []
     if not files:
-        check("slice_cert", False, "no stored slice certificates in certs/")
+        check("slice_modp", False, "no stored modular slice certificates in certs/")
         return
     all_ok, notes = True, []
     first = True
@@ -609,7 +642,7 @@ def check_slice_certs(gen, rawdir):
         ok = const and tot[(0, 0, 0, 0)] != 0
         all_ok &= ok
         notes.append(f"p = {p}, s0 = {s0}: sum = {'const ' + str(tot[(0, 0, 0, 0)]) if const else str(len(tot)) + ' terms'} ({'ok' if ok else 'FAIL'})")
-    check("slice_cert", all_ok, "for each stored modular certificate (g = f0, f1, f2, f11 at s = s0 reduced mod p, and 1 - t u v b D Delta' at s0), "
+    check("slice_modp", all_ok, "modular evidence: for each stored modular certificate (g = f0, f1, f2, f11 at s = s0 reduced mod p, and 1 - t u v b D Delta' at s0), "
           "sum c_i g_i is a nonzero constant in GF(p)[t, u, b, v]: " + "; ".join(notes))
 
 
@@ -786,20 +819,18 @@ def main():
     check_denoms(sys_, gen)
     print("\n== 2. Planted cases ==", flush=True)
     check_planted(sys_, gen)
+    check_sconst()
     check_toy(args.raw)
     print("\n== 3. The chain and its stored certificates ==", flush=True)
     check_chain(gen, args.raw)
-    chain_ok = dict(RESULTS)["chain"]
-    if chain_ok:
-        check_slice_certs(gen, args.raw)
-    else:
-        SKIPPED.append("slice_cert")
-        print("[skip] slice_cert: the chain check failed, so the stored certificates are not tested against it", flush=True)
+    check_slice_certs(gen, args.raw)
     read_dims(args.raw)
     read_fullring(args.raw)
     bad = [n for n, ok in RESULTS if not ok]
     print(f"\n{len(RESULTS)} checks, {len(RESULTS) - len(bad)} pass" + (f", FAILED: {bad}" if bad else "") +
           (f", skipped: {SKIPPED}" if SKIPPED else "") + f" ({time.time() - t0:.0f} s)")
+    for line in NOT_MET:
+        print(f"[NOT MET] {line}")
     if MUT:
         want = sorted(MUTATIONS[MUT][0])
         fired = sorted(bad)
