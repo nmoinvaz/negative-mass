@@ -140,7 +140,7 @@ the integral of the lower bound in 1. For 3, T′ = −w/p² and g′ = w/p with
 
 A solution with a limit F_∞ ≠ 0 has p = 4F_∞σ + … (`conical_limit.md` §3), hence r ≈ u³/(16F_∞²σ) → ∞ and |q| ≈
 8|F_∞|σ ≫ p²: it is never in D, while a solution of Theorem 1 never leaves D. So a solution in D cannot cross over to
-#159's family at any η, however large; that is a property of the equation, not of the precision of a walk.
+the family of #159 at any η, however large; that is a property of the equation, not of the precision of a walk.
 
 ## 4. The walks
 
