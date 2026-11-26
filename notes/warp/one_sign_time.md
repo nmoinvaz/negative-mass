@@ -309,3 +309,36 @@ None beyond the notes cited. No new claim of novelty is made, and no literature 
   points and then closure; planted: members T1 to T4 of this note (Z = 0) must pass the same jet equations, and a
   control that flips the sign of the c ODE must reject them. Depends on #177 or #178 for method, not result.
 - **Lean rows** for Lemmas Z, Sep, Ell, ODE and K of the section above (#135).
+
+## Coordinator's review
+
+Reviewed 2026-11-26 at 1df365a (raw `I166-rpi5` 6ee0ec3); the review's files are in `negative-mass-raw/I166-mac` (raw
+63a0d43), with its criteria committed before the first run of `ind166.py` (raw 65308b0).
+
+| item | result |
+|---|---|
+| scope | the three files the task named, and the raw folder |
+| rerun on the Mac | exit 0, 14 of 14 checks, 21 controls all fired, 106 s; the output is identical to `one_sign_time_output.txt` apart from timings and the Python patch version |
+| independent check `ind166.py` | 7 of 7 criteria pass, 5 s; all 7 mutations make exactly their targets fail |
+| hand proofs | Lemma Z and its inequalities, the density of the branches, branch A (the ℓ-coefficient, the ODE and its closed form), branch B's separation and the f-constant case, the gauge and its invariants, the closure bracket and the localization argument were read and rederived; no gap found |
+| amendment A1 | no criterion was weakened. The dropped "degree 1" test was extra to the README. The README's "no floating point decision" is not met by `same_sign_form`'s 60-digit inertia, as A1 says; ind166's J2 decides the inertia exactly for T1, T2, T4 and the static member |
+
+`ind166.py` has its own Ricci tensor from Christoffel symbols, imports nothing from this repository, and shares with #166
+only sympy, the metric, and #158's block formulas and Lemma R's equations (in its Lemma Z and branch B criteria).
+- **Planted case:** b = x gives the 2D curvature-1 Ricci tensor.
+- **Family identity:** R_ab = λ(g_ab − ρ²dφ_adφ_b) − α_aα_b holds for undefined c, C, d on the ODE, and fails with the
+  ODE's sign flipped.
+- **Stage at exact points:** at three exact points each, the characteristic polynomial of R − λg is X²(X² − τX + e)
+  with τ < 0 < e for T1, T2, T4 (shifted to t = 1) and the static member. For F1 the 3 × 3 minors have no common root.
+- **Lemma Z and the bracket:** Lemma Z's two elimination ideals, and the kernel and bracket of closure, match.
+- **Re-solved:** branch B's separation by `solve`, and the c-ODE by `dsolve`.
+
+Findings:
+- **The answer stands as stated.** The issue's second alternative is false: c(t) = b_x and C(t) = ρb_ρ are gauge
+  invariants, so a member with C′ ≢ 0 is gauge-equivalent to no static one. Closure fails for every member, so
+  within Z ≡ 0 only the planar shifts with constant K pass both stages, and none is localized.
+- **The silent control** `gauge-drop` exposed a vacuous comparison in the check code. It was fixed before the run of
+  record and is reported as silent.
+
+Follow-ups: #179 (time-dependent shifts with Z ≢ 0, the remaining time-dependent class); #135 row 32 (Z, Sep, Ell,
+ODE, K).

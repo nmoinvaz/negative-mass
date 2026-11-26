@@ -281,9 +281,12 @@ the local leaf space of 𝒦 regular where Lemma K is used.
   u = X(x) + R(ρ), multiplicative, conical and spherical profiles it is decided (*proved*, with the identities *checked
   symbolically*). The ρ-dependent families that pass are b = C ln ρ + b₀ and u = c x + C ln ρ + d, and closure fails for
   both. Every planar shift with K = −a_x ≠ 0 passes with λ = K; closure holds iff K is constant (#78's P1, P2), and no
-  planar shift with constant K ≠ 0 is bounded in x at two close times. Static shifts with u_xρ ≠ 0 and time-dependent
-  shifts beyond the planar and the gauge x → x + D(t) are *not classified*. *Added by the coordinator:* #165
-  ([`one_sign_static.md`](one_sign_static.md)) excludes the static ones *conditionally* on a dimension hypothesis (H)
+  planar shift with constant K ≠ 0 is bounded in x at two close times. Time-dependent additive shifts X(t, x) +
+  R(t, ρ) (Z ≡ 0) are decided in [`one_sign_time.md`](one_sign_time.md) (#166): the ρ-dependent ones that pass are b =
+  c(t) x + C(t) ln ρ + d(t) with c′ = 2γc − γ², γ = C′/(2C), two phantoms, and closure fails for every member (*proved*,
+  with the identities *checked symbolically*). Static shifts with u_xρ ≠ 0 (conditionally excluded in #165) and
+  time-dependent shifts with Z ≢ 0 beyond the planar and the gauge x → x + D(t) are *not classified*. *Added by the
+  coordinator:* #165 ([`one_sign_static.md`](one_sign_static.md)) excludes the static ones *conditionally* on a dimension hypothesis (H)
   that has modular evidence only, outside the branch Δ′ ≡ 0.
 - The isolated angles that pass F = 0, the equator and θ₀. The stage may pass on a curve of the wall for special profiles;
   closure is a statement on a neighborhood, so it is not asked there. No such profile was found, and 40 random trials of

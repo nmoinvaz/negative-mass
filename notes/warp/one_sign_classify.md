@@ -26,19 +26,22 @@ static shift it is not.
 | conical u = F(x/ρ) + v | none with F′ ≠ 0 | — | — | **proved**, **checked symbolically** |
 | spherical profile u = w(r) (the bubble at constant speed) | none: F ≠ 0 off finitely many angles | — | not reached | **proved** (as #78), **checked symbolically** |
 | static or traveling u(x, ρ) with u_xρ ≠ 0 | resolved to a finite-type system with a compatibility condition C ≢ 0; ends are b(ρ) solutions; the tangent space at b(ρ) is w = c x + g(ρ). *Added by the coordinator:* none outside Δ′ ≡ 0 if (H) holds ([`one_sign_static.md`](one_sign_static.md), #165) | **not decided** | not run | **not classified**; *conditional* (H) |
-| b(t, x, ρ) with t-dependence beyond the planar and the gauge x → x + D(t) | — | — | — | **not classified** |
+| time-dependent additive b = X(t, x) + R(t, ρ), Z ≡ 0, R_ρ ≢ 0 | b = c(t) x + C(t) ln ρ + d(t), C ≠ 0, c′ = 2γc − γ², γ = C′/(2C), λ = C²/(2ρ²) + (γ − c)², two phantoms; d(t) is gauge; a member with C′ ≢ 0 is gauge-equivalent to no static one; v₂ = 0, v₀ ≠ 0 has no solution ([`one_sign_time.md`](one_sign_time.md), #166) | no: affine in x | **fails** for every member (kernel not integrable) | **proved**, **checked symbolically** |
+| b(t, x, ρ) with Z ≢ 0 and t-dependence beyond the planar and the gauge | — | — | — | **not classified** |
 
 So the answer to the issue is: **within the reductions b(ρ), planar, additive, multiplicative, conical and spherical, no
 bubble-like shift (u_ρ ≢ 0, u_x ≢ 0, limits in x) passes the one-sign stage and closure.** The planar shifts pass the
 stage and, when K is constant, closure. They are not bubbles (u_ρ ≡ 0), and a planar shift with constant K is not
-localized. The only ρ-dependent families that pass the algebraic stage on an open set are b(ρ) and u = c x + C ln ρ + d,
-both two phantoms, and closure kills both. No counterexample family is found. The general static class with u_xρ ≠ 0 and
-the time-dependent shifts beyond the planar and gauge ones are open (**not classified**), so the statement "no bubble
+localized. The only ρ-dependent families that pass the algebraic stage on an open set with Z ≡ 0 are b = c(t) x + C(t)
+ln ρ + d(t) with c′ = 2γc − γ² (it contains b(ρ) and u = c x + C ln ρ + d as the case C′ = 0), all two phantoms, and
+closure kills all of them. No counterexample family is found. The general static class with u_xρ ≠ 0 and
+the time-dependent shifts with Z ≢ 0 are open (**not classified**), so the statement "no bubble
 passes" is **not** proved for them. *Added by the coordinator:* #165 excludes the static class *conditionally* on a
 dimension hypothesis (H) that has modular evidence only, outside the branch Δ′ ≡ 0 ([`one_sign_static.md`](one_sign_static.md)).
 
 A shift b = c x + C ln ρ + d(t) with any d(t) is the static member u = c x + C ln ρ + d up to the gauge x → x + D(t)
-(`travel`), so it passes and fails in the same way.
+(`travel`), so it passes and fails in the same way. A shift b = c(t) x + C(t) ln ρ + d(t) with C′ ≢ 0 is not
+gauge-equivalent to a static member, and fails closure too (#166).
 
 ## Setup
 
@@ -357,8 +360,8 @@ metrics and the closure code. No independent check (`ind158.py`) was run: that i
 ## Not covered, and what `same_sign_scalars.md`'s "Not covered" should now say
 
 Not classified here: static or traveling shifts with u_xρ ≠ 0 (§General static; *added by the coordinator:* excluded by
-#165 *conditionally* on (H), outside Δ′ ≡ 0); time-dependent shifts other than planar
-b(t, x) and the gauge x → x + D(t); the Galilean-dilation similarity forms b = μ ln ρ + F((x − μ t ln ρ)/ρ, t/ρ), which
+#165 *conditionally* on (H), outside Δ′ ≡ 0); time-dependent shifts with Z ≢ 0 other than the planar ones and the
+gauge x → x + D(t) (the Z ≡ 0 class is decided in #166); the Galilean-dilation similarity forms b = μ ln ρ + F((x − μ t ln ρ)/ρ, t/ρ), which
 contain the planted b(ρ) and are a PDE in two variables; non-axisymmetric shifts; three or more scalars; non-minimal
 coupling.
 
@@ -396,7 +399,9 @@ None beyond the notes cited. No new claim of novelty is made, and no literature 
   certificate that no real jet with s ∉ {0, ±1} survives, or an explicit solution that passes Lemma R at exact points;
   planted: the s = 1 family; a control that breaks Φ₁. Depends on this note. Cost: C is a large rational function, so
   work modulo a prime or with a random-point rank test first.
-- **Time-dependent b(t, x, ρ) with Z ≡ 0, b = X(t, x) + R(t, ρ).** The rank-1 equations are a short ODE system in t.
+- *Added by the coordinator:* done in #166 ([`one_sign_time.md`](one_sign_time.md)); the second alternative below is
+  false for this class.
+  **Time-dependent b(t, x, ρ) with Z ≡ 0, b = X(t, x) + R(t, ρ).** The rank-1 equations are a short ODE system in t.
   Acceptance: the solution set, with closure, or a proof that every solution is gauge-equivalent to u = c x + C ln ρ +
   d. Depends on Lemma R.
 - **The Galilean-dilation similarity form.** b = μ ln ρ + F((x − μ t ln ρ)/ρ, t/ρ), a two-variable PDE that contains
