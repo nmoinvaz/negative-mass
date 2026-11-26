@@ -1278,7 +1278,7 @@ def main():
             global SCIPY_FILE
             SCIPY_FILE = a.split("=", 1)[1]
         if a.startswith("--only="):
-            only = a.split("=", 1)[1].split(",")
+            only = [x for x in a.split("=", 1)[1].split(",") if x]   # --only= alone: no check
         if a.startswith("--l="):
             ls = [int(x) for x in a.split("=", 1)[1].split(",")]
         if a.startswith("--print-rows="):
@@ -1296,7 +1296,7 @@ def main():
         default = [n for n in checks if re.sub(r"\D", "", n) == "" or int(re.sub(r"\D", "", n)) in ls or n == "RX" and 2 in ls]
     else:
         default = list(checks)
-    names = only or (controls[MUTATE] if MUTATE else default)
+    names = only if only is not None else (controls[MUTATE] if MUTATE else default)
     # a control's targets are report names (CAP5b is a clause of the check CAP5): run each check once
     names = list(dict.fromkeys(n if n in checks else re.sub(r"[a-z]$", "", n) for n in names))
     if JDIR:
