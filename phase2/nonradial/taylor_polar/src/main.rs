@@ -6,6 +6,7 @@ mod num;
 mod planted;
 mod plane;
 mod polar;
+mod rows;
 mod ser;
 mod star;
 mod table;
@@ -35,16 +36,16 @@ impl Args {
     }
 }
 
-fn model(a: &Args) -> table::Model {
+pub fn model(a: &Args) -> table::Model {
     table::Model { omega: a.f("omega", 0.7603), epsilon: a.f("eps", -1.0), lambda: a.f("lam", 10240.0), mu: a.f("mu", 10240.0f64 * 10240.0 / 4.8) }
 }
 
-fn star_pars<T: Num>(m: &table::Model) -> star::StarPars<T> {
+pub fn star_pars<T: Num>(m: &table::Model) -> star::StarPars<T> {
     let eps = if mutate::on("star_eps") { -m.epsilon } else { m.epsilon };
     star::StarPars { w: T::from_f64(m.omega), eps: T::from_f64(eps), lam: T::from_f64(m.lambda), mu: T::from_f64(m.mu), pi: T::pi() }
 }
 
-fn solve_cfg(a: &Args) -> star::SolveCfg {
+pub fn solve_cfg(a: &Args) -> star::SolveCfg {
     star::SolveCfg { rs: a.f("rs", 1e-8), tol: a.f("startol", 1e-30), r_norm: a.f("rnorm", 32.0), r_class: a.f("rclass", 60.0), verbose: a.u("verbose", 0) > 0 }
 }
 
@@ -111,6 +112,24 @@ fn lane_dispatch(a: &Args) {
     }
 }
 
+fn lane_rows(a: &Args) {
+    match a.s("lane", "dd") {
+        "f64" => rows::run::<f64>(a),
+        "dd" => rows::run::<DD>(a),
+        "qd" => rows::run::<multidouble::qd::QD>(a),
+        x => panic!("lane {x}"),
+    }
+}
+
+fn lane_qplant(a: &Args) {
+    match a.s("lane", "dd") {
+        "f64" => rows::qplant::<f64>(a),
+        "dd" => rows::qplant::<DD>(a),
+        "qd" => rows::qplant::<multidouble::qd::QD>(a),
+        x => panic!("lane {x}"),
+    }
+}
+
 fn run_d<T: Num>(a: &Args) {
     let m = model(a);
     let l = a.u("l", 2);
@@ -150,13 +169,15 @@ fn run_d<T: Num>(a: &Args) {
         let o = polar::d_eval(&cfg, &tabl, mext, g);
         let wall = t.elapsed().as_secs_f64();
         println!(
-            "{{\"cmd\":\"d\",\"lane\":\"{}\",\"l\":{},\"gamma\":{},\"d\":\"{}\",\"d_f64\":{:e},\"q\":{:e},\"steps_y\":{},\"steps_q\":{},\"steps_s\":{},\"hmin_y\":{:e},\"hmax_y\":{:e},\"t_y\":{:.4},\"t_q\":{:.4},\"t_s\":{:.4},\"wall\":{:.4},\"order\":{},\"tol\":{:e},\"kj\":{},\"r_far\":{:e},\"r_s\":{:e},\"lnvol_y\":{:e}}}",
+            "{{\"cmd\":\"d\",\"lane\":\"{}\",\"l\":{},\"gamma\":{},\"d\":\"{}\",\"d_f64\":{:e},\"q\":{:e},\"q_int\":{:e},\"qint_res\":{:e},\"steps_y\":{},\"steps_q\":{},\"steps_s\":{},\"hmin_y\":{:e},\"hmax_y\":{:e},\"t_y\":{:.4},\"t_q\":{:.4},\"t_s\":{:.4},\"wall\":{:.4},\"order\":{},\"tol\":{:e},\"kj\":{},\"r_far\":{:e},\"r_s\":{:e},\"lnvol_y\":{:e}}}",
             T::NAME,
             l,
             g,
             o.d.sci(130),
             o.d.to_f64(),
             o.q.to_f64(),
+            o.q_int.to_f64(),
+            o.qint_res,
             o.steps_y.steps,
             o.steps_q,
             o.steps_s.steps,
@@ -303,7 +324,10 @@ fn main() {
             "tabcheck" => cmd_tabcheck(&args),
             "recipcheck" => cmd_recipcheck(&args),
             "planted" => planted::run(&args),
-            _ => eprintln!("commands: star starcheck d jcheck planted"),
+            "rows" => lane_rows(&args),
+            "rmplant" => rows::rmplant(&args),
+            "qplant" => lane_qplant(&args),
+            _ => eprintln!("commands: star starcheck d jcheck planted rows rmplant qplant"),
         })
         .unwrap();
     h.join().unwrap();
