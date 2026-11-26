@@ -1,0 +1,125 @@
+[PASS] theta_form: conical_N with F' = p nu, F'' = (q - p) nu^2, eta = 1/nu minus A0 + nu^2 A1 + nu^4 A2 expands to 0; the crate's N at 40 rational points against conical_N: worst |dN|/sum|terms| 2.08e-32 (threshold 1e-26)
+  (0 s)
+  root series to order 6: 27 s
+[PASS] root_series: N(G, p, Q_6, sigma) has no term below order sigma^7 (Laurent verifier: lowest order 7); A1(G, p, -p^2) = p**6*(G - 1)**2; e1 = -p**2*(G - 1)**2/2; e2 = -(3*G**4*p**2 - 8*G**3*p**2 - 8*G**3*p + 2*G**2*p**2 - 16*G**2 + 8*G*p**2 + 8*G*p - 5*p**2)/8; e1: p^2..p^2, deg_G 2; e2: p^0..p^2, deg_G 4; e3: p^0..p^2, deg_G 6; e4: p^-2..p^2, deg_G 8; e5: p^-2..p^2, deg_G 10; e6: p^-4..p^2, deg_G 12
+  (27 s)
+  (planted) root series to order 4: 0 s
+[PASS] shift_series: the generator on N = p^2 w'(2p^2 - w'), w' = q + p^2 + 2c sigma (1 - p) + c^2 sigma^2, c = 1/3: e1 = 2*(p - 1)/3, e2 = -1/9, e3 = 0, e4 = 0; expected -2c(1 - p), -c^2, 0, 0; residual order None
+  (0 s)
+[PASS] invariants: T = 1/p - t: T' = -(q + p^2)/p^2 (True); g = G + ln p: g' = (q + p^2)/p (True); both vanish at q = -p^2 (True); p = 1/(t + T), G = ln(t + T) + g solves G' = p, p' = -p^2 (True)
+  (0 s)
+  NOT MET (as first worded) [W0 regress, does not gate]: 100 plus sides to 200: the new DD walker reaches 200 exactly where #167's class is LOGLOG (15 of 100; disagreements []); F, F', F'' at 200 against #167's walker for those: worst relative difference 5.2e-18 (bar 1e-24). Both are N-conserving double-double walks: the rounding of N from the first steps stays in N while the scale of N shrinks, so each is good only to about its own n_rel at 200 (up to 3e-17 at F'(0) = 100); check dd_qd (DD project against QD) is the accuracy gate. The others stop at TinyStep near #167's eta*: |x_end - eta*|/eta* at most 6.0e-09 over 85 (printed, no bar)
+  (41 s)
+[PASS] basin: #167's forward grid (100 solutions, plus sides), a rerun of #167's crate here: the class and kind labels equal #167's printed table at 100 of 100; eta* within 1e-8 of #167's raw records (I167-mac/dev_09_forward.log, full digits) at 82 of 85 points that have one (the 3 kappa-locus points below are NOT MET as first worded and do not gate), worst |d eta*| over all 7.9e-07; other disagreements []; the LOGLOG set is the printed 15: True; the DD project walks of the 15 reach 1e12 with verdict LOGLOG: 15 of 15
+  NOT MET (as first worded) [W1, does not gate]: eta* to 1e-8 at the kappa-locus points, where eta* is the x of an F'' overflow and #167 states it to 1e-6 only: 3 points differ from the raw records by 4.7e-07 to 7.9e-07: (1.5, 0.01); (2, 0.01); (-2, -0.01)
+  the 15 members (F(0), F'(0)): (-2,-100) (-2,-10) (-2,-1) (1.5,1) (1.5,10) (1.5,100) (2,1) (2,10) (2,100) (3,1) (3,10) (3,100) (5,1) (5,10) (5,100)
+  (2 s)
+  basin map (not gating): rows F(0) from 5 down to 0.1, columns F'(0) = -100 ... -0.01, 0.01 ... 100 (log-spaced); L: the DD walk reaches 200 in the band q = -p^2 (p > 0) or q = +p^2 (p < 0); . : it stops at a singularity
+    F(0) =   5.000 .........................LLLLLLLLLLLLLLL
+    F(0) =   4.070 ..........................LLLLLLLLLLLLLL
+    F(0) =   3.312 ..........................LLLLLLLLLLLLLL
+    F(0) =   2.696 ..........................LLLLLLLLLLLLLL
+    F(0) =   2.194 ...........................LLLLLLLLLLLLL
+    F(0) =   1.786 ...........................LLLLLLLLLLLLL
+    F(0) =   1.454 ...........................LLLLLLLLLLLLL
+    F(0) =   1.183 ...........................LLLLLLLLLLLLL
+    F(0) =   0.963 ........................................
+    F(0) =   0.784 ........................................
+    F(0) =   0.638 ........................................
+    F(0) =   0.519 ........................................
+    F(0) =   0.423 ........................................
+    F(0) =   0.344 ........................................
+    F(0) =   0.280 ........................................
+    F(0) =   0.228 ........................................
+    F(0) =   0.185 ........................................
+    F(0) =   0.151 ........................................
+    F(0) =   0.123 ........................................
+    F(0) =   0.100 ........................................
+    109 of 800 walks reach 200
+  basin boundary (smallest F'(0) > 0 that reaches 200, bisection between 0.01 and 100, each end checked): F(0) = 1.05: F'(0)* = 0.19711702; F(0) = 1.25: F'(0)* = 0.25130392; F(0) = 1.5: F'(0)* = 0.23717945; F(0) = 2: F'(0)* = 0.19953695; F(0) = 3: F'(0)* = 0.14921864; F(0) = 5: F'(0)* = 0.10036288; F(0) = 10: F'(0)* = 0.056068824; F(0) = 30: not bracketed
+  (171 s)
+  precision a conserve walk needs to see a crossover (printed, not gating): eta_c 1e+03: u <= 2.6e-25 (needed u/100 below it): DD yes, QD yes, OD yes; eta_c 1e+05: u <= 2.6e-49 (needed u/100 below it): DD no, QD yes, OD yes; eta_c 1e+06: u <= 2.6e-61 (needed u/100 below it): DD no, QD yes, OD yes; eta_c 1e+09: u <= 2.6e-97 (needed u/100 below it): DD no, QD no, OD yes; eta_c 1e+12: u <= 2.6e-133 (needed u/100 below it): DD no, QD no, OD no. With a margin of 100 in u: DD up to eta_c = 2.8e+3, QD up to eta_c = 1.3e+6, OD up to eta_c = 2.3e+11
+  (0 s)
+[PASS] approach: 15 members, DD project walks (15 reach 1e12): worst over the members of rho_4 = |q - Q_4(G, p, eta^-2)|/p^2 (mirrored to p > 0) at eta = 1e3: 1.0e-14, 1e6: 5.8e-30, 1e12: 2.1e-29 (bar 1e-10 at each)
+    (-2, -100): 2e+02: rho0 1.7e-02 rho1 1.9e-04 rho2 1.3e-06 rho4 1.7e-09 rho6 1.1e-12 | 1e+03: rho0 6.8e-04 rho1 1.6e-07 rho2 1.5e-10 rho4 3.9e-16 rho6 7.2e-23 | 1e+04: rho0 6.9e-06 rho1 7.4e-12 rho2 5.2e-16 rho4 5.4e-26 rho6 5.7e-31 | 1e+06: rho0 7.1e-10 rho1 6.6e-19 rho2 1.4e-27 rho4 7.2e-31 rho6 7.2e-31 | 1e+09: rho0 7.2e-16 rho1 5.0e-30 rho2 3.2e-30 rho4 3.2e-30 rho6 3.2e-30 | 1e+12: rho0 7.3e-22 rho1 5.4e-30 rho2 5.4e-30 rho4 5.4e-30 rho6 5.4e-30
+    (-2, -10): 2e+02: rho0 1.8e-03 rho1 5.4e-06 rho2 3.3e-08 rho4 3.8e-14 rho6 7.6e-18 | 1e+03: rho0 7.5e-05 rho1 1.9e-08 rho2 4.0e-12 rho4 3.8e-20 rho6 3.2e-27 | 1e+04: rho0 7.9e-07 rho1 3.8e-12 rho2 7.4e-18 rho4 1.8e-29 rho6 9.8e-31 | 1e+06: rho0 8.5e-11 rho1 9.2e-20 rho2 1.4e-29 rho4 3.3e-30 rho6 3.3e-30 | 1e+09: rho0 9.1e-17 rho1 4.5e-30 rho2 4.7e-30 rho4 4.7e-30 rho6 4.7e-30 | 1e+12: rho0 9.5e-23 rho1 7.0e-30 rho2 7.0e-30 rho4 7.0e-30 rho6 7.0e-30
+    (-2, -1): 2e+02: rho0 2.6e-04 rho1 1.4e-06 rho2 1.1e-09 rho4 1.2e-15 rho6 3.5e-22 | 1e+03: rho0 1.2e-05 rho1 4.1e-09 rho2 1.3e-13 rho4 3.8e-22 rho6 2.9e-31 | 1e+04: rho0 1.3e-07 rho1 7.7e-13 rho2 2.7e-19 rho4 2.9e-31 rho6 1.7e-31 | 1e+06: rho0 1.5e-11 rho1 1.9e-20 rho2 9.9e-31 rho4 1.7e-30 rho6 1.7e-30 | 1e+09: rho0 1.8e-17 rho1 2.2e-30 rho2 2.3e-30 rho4 2.3e-30 rho6 2.3e-30 | 1e+12: rho0 1.9e-23 rho1 1.1e-29 rho2 1.1e-29 rho4 1.1e-29 rho6 1.1e-29
+    (1.5, 1): 2e+02: rho0 1.8e-04 rho1 1.1e-06 rho2 5.9e-10 rho4 4.9e-16 rho6 4.3e-23 | 1e+03: rho0 8.2e-06 rho1 3.1e-09 rho2 7.4e-14 rho4 1.6e-22 rho6 1.2e-30 | 1e+04: rho0 9.4e-08 rho1 6.0e-13 rho2 1.5e-19 rho4 8.9e-31 rho6 8.4e-31 | 1e+06: rho0 1.1e-11 rho1 1.5e-20 rho2 2.4e-30 rho4 2.0e-30 rho6 2.0e-30 | 1e+09: rho0 1.3e-17 rho1 1.1e-29 rho2 1.1e-29 rho4 1.1e-29 rho6 1.1e-29 | 1e+12: rho0 1.5e-23 rho1 1.1e-29 rho2 1.1e-29 rho4 1.1e-29 rho6 1.1e-29
+    (1.5, 10): 2e+02: rho0 1.3e-03 rho1 4.6e-06 rho2 1.9e-08 rho4 2.3e-14 rho6 1.8e-18 | 1e+03: rho0 5.7e-05 rho1 1.5e-08 rho2 2.3e-12 rho4 2.1e-20 rho6 6.8e-28 | 1e+04: rho0 6.0e-07 rho1 2.9e-12 rho2 4.3e-18 rho4 7.3e-30 rho6 1.6e-30 | 1e+06: rho0 6.5e-11 rho1 7.1e-20 rho2 1.1e-29 rho4 6.0e-31 rho6 6.0e-31 | 1e+09: rho0 7.0e-17 rho1 3.5e-30 rho2 3.7e-30 rho4 3.7e-30 rho6 3.7e-30 | 1e+12: rho0 7.3e-23 rho1 6.2e-30 rho2 6.2e-30 rho4 6.2e-30 rho6 6.2e-30
+    (1.5, 100): 2e+02: rho0 1.3e-02 rho1 8.7e-05 rho2 2.4e-08 rho4 6.5e-10 rho6 1.5e-13 | 1e+03: rho0 5.1e-04 rho1 4.4e-08 rho2 1.2e-10 rho4 1.2e-16 rho6 1.4e-23 | 1e+04: rho0 5.2e-06 rho1 1.2e-11 rho2 3.1e-16 rho4 1.3e-26 rho6 4.2e-31 | 1e+06: rho0 5.3e-10 rho1 5.4e-19 rho2 7.7e-28 rho4 5.8e-30 rho6 5.8e-30 | 1e+09: rho0 5.5e-16 rho1 1.8e-30 rho2 4.5e-31 rho4 4.5e-31 rho6 4.5e-31 | 1e+12: rho0 5.6e-22 rho1 7.1e-30 rho2 7.1e-30 rho4 7.1e-30 rho6 7.1e-30
+    (2, 1): 2e+02: rho0 2.6e-04 rho1 1.4e-06 rho2 1.1e-09 rho4 1.2e-15 rho6 3.5e-22 | 1e+03: rho0 1.2e-05 rho1 4.1e-09 rho2 1.3e-13 rho4 3.8e-22 rho6 2.9e-31 | 1e+04: rho0 1.3e-07 rho1 7.7e-13 rho2 2.7e-19 rho4 2.9e-31 rho6 1.7e-31 | 1e+06: rho0 1.5e-11 rho1 1.9e-20 rho2 9.9e-31 rho4 1.7e-30 rho6 1.7e-30 | 1e+09: rho0 1.8e-17 rho1 2.2e-30 rho2 2.3e-30 rho4 2.3e-30 rho6 2.3e-30 | 1e+12: rho0 1.9e-23 rho1 1.1e-29 rho2 1.1e-29 rho4 1.1e-29 rho6 1.1e-29
+    (2, 10): 2e+02: rho0 1.8e-03 rho1 5.4e-06 rho2 3.3e-08 rho4 3.8e-14 rho6 7.6e-18 | 1e+03: rho0 7.5e-05 rho1 1.9e-08 rho2 4.0e-12 rho4 3.8e-20 rho6 3.2e-27 | 1e+04: rho0 7.9e-07 rho1 3.8e-12 rho2 7.4e-18 rho4 1.8e-29 rho6 9.8e-31 | 1e+06: rho0 8.5e-11 rho1 9.2e-20 rho2 1.4e-29 rho4 3.3e-30 rho6 3.3e-30 | 1e+09: rho0 9.1e-17 rho1 4.5e-30 rho2 4.7e-30 rho4 4.7e-30 rho6 4.7e-30 | 1e+12: rho0 9.5e-23 rho1 7.0e-30 rho2 7.0e-30 rho4 7.0e-30 rho6 7.0e-30
+    (2, 100): 2e+02: rho0 1.7e-02 rho1 1.9e-04 rho2 1.3e-06 rho4 1.7e-09 rho6 1.1e-12 | 1e+03: rho0 6.8e-04 rho1 1.6e-07 rho2 1.5e-10 rho4 3.9e-16 rho6 7.2e-23 | 1e+04: rho0 6.9e-06 rho1 7.4e-12 rho2 5.2e-16 rho4 5.4e-26 rho6 5.7e-31 | 1e+06: rho0 7.1e-10 rho1 6.6e-19 rho2 1.4e-27 rho4 7.2e-31 rho6 7.2e-31 | 1e+09: rho0 7.2e-16 rho1 5.0e-30 rho2 3.2e-30 rho4 3.2e-30 rho6 3.2e-30 | 1e+12: rho0 7.3e-22 rho1 5.4e-30 rho2 5.4e-30 rho4 5.4e-30 rho6 5.4e-30
+    (3, 1): 2e+02: rho0 4.4e-04 rho1 2.1e-06 rho2 2.7e-09 rho4 4.4e-15 rho6 6.7e-21 | 1e+03: rho0 1.9e-05 rho1 6.2e-09 rho2 3.2e-13 rho4 1.5e-21 rho6 1.9e-30 | 1e+04: rho0 2.1e-07 rho1 1.2e-12 rho2 6.3e-19 rho4 7.3e-32 rho6 5.5e-31 | 1e+06: rho0 2.4e-11 rho1 2.8e-20 rho2 3.2e-30 rho4 4.8e-30 rho6 4.8e-30 | 1e+09: rho0 2.7e-17 rho1 8.6e-30 rho2 8.7e-30 rho4 8.7e-30 rho6 8.7e-30 | 1e+12: rho0 2.9e-23 rho1 2.1e-29 rho2 2.1e-29 rho4 2.1e-29 rho6 2.1e-29
+    (3, 10): 2e+02: rho0 2.7e-03 rho1 6.0e-06 rho2 7.2e-08 rho4 8.3e-13 rho6 5.7e-17 | 1e+03: rho0 1.1e-04 rho1 2.5e-08 rho2 9.0e-12 rho4 2.9e-20 rho6 2.8e-26 | 1e+04: rho0 1.2e-06 rho1 5.5e-12 rho2 1.7e-17 rho4 5.6e-29 rho6 7.1e-32 | 1e+06: rho0 1.3e-10 rho1 1.4e-19 rho2 4.1e-29 rho4 3.3e-30 rho6 3.3e-30 | 1e+09: rho0 1.3e-16 rho1 8.9e-30 rho2 9.3e-30 rho4 9.3e-30 rho6 9.3e-30 | 1e+12: rho0 1.4e-22 rho1 1.9e-29 rho2 1.9e-29 rho4 1.9e-29 rho6 1.9e-29
+    (3, 100): 2e+02: rho0 2.6e-02 rho1 5.1e-04 rho2 9.6e-06 rho4 4.1e-09 rho6 1.4e-11 | 1e+03: rho0 1.0e-03 rho1 5.6e-07 rho2 5.0e-12 rho4 1.9e-15 rho6 2.8e-21 | 1e+04: rho0 1.0e-05 rho1 1.7e-11 rho2 9.5e-16 rho4 3.4e-25 rho6 1.4e-30 | 1e+06: rho0 1.1e-09 rho1 8.0e-19 rho2 3.1e-27 rho4 3.5e-31 rho6 3.5e-31 | 1e+09: rho0 1.1e-15 rho1 1.0e-30 rho2 1.6e-30 rho4 1.6e-30 rho6 1.6e-30 | 1e+12: rho0 1.1e-21 rho1 8.3e-30 rho2 8.3e-30 rho4 8.3e-30 rho6 8.3e-30
+    (5, 1): 2e+02: rho0 9.0e-04 rho1 3.6e-06 rho2 9.7e-09 rho4 2.1e-14 rho6 2.6e-19 | 1e+03: rho0 3.9e-05 rho1 1.1e-08 rho2 1.1e-12 rho4 9.0e-21 rho6 8.4e-29 | 1e+04: rho0 4.2e-07 rho1 2.1e-12 rho2 2.1e-18 rho4 3.9e-30 rho6 7.2e-31 | 1e+06: rho0 4.6e-11 rho1 5.1e-20 rho2 7.9e-30 rho4 2.9e-30 rho6 2.9e-30 | 1e+09: rho0 5.0e-17 rho1 2.1e-30 rho2 2.2e-30 rho4 2.2e-30 rho6 2.2e-30 | 1e+12: rho0 5.3e-23 rho1 1.2e-29 rho2 1.2e-29 rho4 1.2e-29 rho6 1.2e-29
+    (5, 10): 2e+02: rho0 4.8e-03 rho1 2.1e-06 rho2 1.8e-07 rho4 1.2e-11 rho6 5.5e-16 | 1e+03: rho0 2.0e-04 rho1 3.2e-08 rho2 2.5e-11 rho4 1.1e-18 rho6 4.4e-25 | 1e+04: rho0 2.0e-06 rho1 8.5e-12 rho2 4.9e-17 rho4 1.2e-28 rho6 5.1e-31 | 1e+06: rho0 2.1e-10 rho1 2.3e-19 rho2 1.1e-28 rho4 3.5e-30 rho6 3.5e-30 | 1e+09: rho0 2.2e-16 rho1 8.6e-32 rho2 4.5e-31 rho4 4.5e-31 rho6 4.5e-31 | 1e+12: rho0 2.3e-22 rho1 5.8e-30 rho2 5.8e-30 rho4 5.8e-30 rho6 5.8e-30
+    (5, 100): 2e+02: rho0 4.5e-02 rho1 1.7e-03 rho2 6.9e-05 rho4 7.7e-08 rho6 1.1e-10 | 1e+03: rho0 1.7e-03 rho1 2.1e-06 rho2 2.2e-09 rho4 1.0e-14 rho6 8.8e-20 | 1e+04: rho0 1.7e-05 rho1 1.3e-10 rho2 1.1e-15 rho4 3.0e-24 rho6 1.2e-31 | 1e+06: rho0 1.8e-09 rho1 5.6e-19 rho2 8.3e-27 rho4 3.3e-30 rho6 3.3e-30 | 1e+09: rho0 1.8e-15 rho1 3.9e-30 rho2 1.9e-31 rho4 1.9e-31 rho6 1.9e-31 | 1e+12: rho0 1.8e-21 rho1 6.3e-31 rho2 6.3e-31 rho4 6.3e-31 rho6 6.3e-31
+  (0 s)
+[PASS] no_limit: verdicts at 1e12 of the 15 (LIMIT if |dG| <= 1e-3 and |p| <= 1e-6): (-2,-100) LOGLOG dG 0.6751, (-2,-10) LOGLOG dG 0.7197, (-2,-1) LOGLOG dG 0.7013, (1.5,1) LOGLOG dG 0.6951, (1.5,10) LOGLOG dG 0.7199, (1.5,100) LOGLOG dG 0.6862 ...; G(1e12) - G(1e6) against ln((t2 + T1)/(t1 + T1)) with T1 = 1/p - t at 1e6: worst difference 2.4e-11 (bar 1e-8)
+  (0 s)
+[PASS] trap_bounds: the hand bounds for 0 < p <= 1/4, |w| <= p^2/2, u = 1 + |G| (|A1| <= 26 u^2 p^6, |dA1/dq| <= 30 u^2 p^4, |A2| <= 15 u^3 p^4, |dA2/dq| <= 35 u^3 p^3), worst ratio of |.| to the bound over 4000 random states: 0.12, 0.30, 0.09, 0.25 (bar 1); in D(1/5) at 300 random states: N changes sign across |w| <= p^2/2 and is increasing there: True; the root has |w|/p^2 <= 20 sigma u^2 (worst ratio 0.03, bar 1); p' = q in p^2 [-1.001, -1.0] (claim [-5/4, -3/4]); (ln r)' <= -1.003 (claim < -3/5), r = sigma u^3/p^2
+  (4 s)
+[PASS] trap_entry: the 15 DD project walks (every step) enter D(eps), eps = 0.2 (0 < |p| <= 1/4, sigma (1 + |G|)^3 <= eps p^2, |q/p^2 + sgn p| <= 1/2) at eta_in <= 1e6 and stay in it with r = sigma (1 + |G|)^3/p^2 non-increasing: (-2,-100): eta_in 4.95e+03; (-2,-10): eta_in 725; (-2,-1): eta_in 199; (1.5,1): eta_in 161; (1.5,10): eta_in 559; (1.5,100): eta_in 3.78e+03; (2,1): eta_in 199; (2,10): eta_in 725; (2,100): eta_in 4.95e+03; (3,1): eta_in 276; (3,10): eta_in 1e+03; (3,100): eta_in 7.4e+03; (5,1): eta_in 429; (5,10): eta_in 1.59e+03; (5,100): eta_in 1.27e+04
+  (3 s)
+[PASS] invariants_conv: 15 members, QD project: |T(eta) - T(1e12)| and |g(eta) - g(1e12)| at eta = 1e6, 1e9: worst 8.8e-10 and 5.4e-11 (bar 1e-8). T_inf, g_inf printed below (T = 1/p - t, g = G + ln p, mirrored to p > 0)
+    (-2, -100): T_inf = 0.511326188718064, g_inf = 35.9449751061919
+    (-2, -10): T_inf = -0.704658558493984, g_inf = 11.4641840684214
+    (-2, -1): T_inf = -0.222981470145369, g_inf = 3.92349305604542
+    (1.5, 1): T_inf = -0.0541948015271614, g_inf = 3.12186573915179
+    (1.5, 10): T_inf = -0.710279178088436, g_inf = 9.81785387665439
+    (1.5, 100): T_inf = 0.195262307628019, g_inf = 31.0292416821883
+    (2, 1): T_inf = -0.222981470145369, g_inf = 3.92349305604542
+    (2, 10): T_inf = -0.704658558493984, g_inf = 11.4641840684214
+    (2, 100): T_inf = 0.511326188718064, g_inf = 35.9449751061919
+    (3, 1): T_inf = -0.425636958757215, g_inf = 5.37643959827916
+    (3, 10): T_inf = -0.646342581558269, g_inf = 14.2919143737187
+    (3, 100): T_inf = 1.07776096778973, g_inf = 44.2454612991283
+    (5, 1): T_inf = -0.602622511337024, g_inf = 7.9786897245194
+    (5, 10): T_inf = -0.468576892763, g_inf = 18.9988008875739
+    (5, 100): T_inf = 2.04163533916803, g_inf = 57.5465792203548
+  (100 s)
+[PASS] n_floor: max |N|/sum|terms| at the step ends over the 15 walks: DD project 2.5e-32 (bar 1e-26), QD project 3.3e-64 (bar 1e-54); printed: DD conserve 3.1e-17
+  (2 s)
+[PASS] dd_qd: DD against QD (project) at 200, 1e3, 1e4, 1e6, 1e9, 1e12 for the 15: worst relative difference of G, p, q 2.0e-29 (bar 1e-26)
+  (0 s)
+[PASS] independent: own mpmath integration (30 digits, odefun) of G' = p, p' = Q_6(G, p, e^(-2t)) from eta = 1e3 (QD state) against the QD walk: worst relative difference of G, p 4.0e-22 (bar 1e-12): (2,1) at 1e+06: 1.4e-28, (2,1) at 1e+09: 1.2e-28, (2,1) at 1e+12: 1.0e-28, [91 s], (5,100) at 1e+06: 4.0e-22, (5,100) at 1e+09: 2.8e-22, (5,100) at 1e+12: 2.1e-22, [91 s], (-2,-10) at 1e+06: 1.5e-28, (-2,-10) at 1e+09: 1.3e-28, (-2,-10) at 1e+12: 1.1e-28, [91 s]
+  (294 s)
+[PASS] parity: W9': singular sides, the minus side of (f, f1) against the plus side of (f, -f1) in #167's crate rerun here: class, kind and eta* within 1e-8 at 100 of 100 (85 with an eta*, worst 0.0e+00; []); regular sides: the walk of (f, -f1) to -200 against that of (f, f1) to +200 for the 15 members, F, F' (sign) and F'' worst relative difference 0.0e+00 (bar 1e-24)
+  NOT MET (as first worded): W9 asks for the walk of (f, f1) to -200 against the walk of (f, -f1) to +200 for three members whose minus sides end singular (eta* 0.5276, 0.1173, 0.0226), so neither walk reaches 200; W9' above replaces it (README A1, item 3)
+  (1 s)
+[PASS] plant_167: #167's planted cases through the rebuilt crate: linear (|C- - a|, |e|, |C+ - b|, nodes) linear: 6.5e-28, 5.8e-34, 3.5e-29, 2.8e-29, cubic: 7.7e-28, 5.9e-34, 4.0e-29, 2.1e-29 (thresholds 1e-20, 1e-22); blowup: 8 walks, worst error 7.5e-12, worst bar 1.2e-12 (1e-8)
+  (1 s)
+[PASS] plant_loglog: q + p^2 = 0 from eta = 2 (T = 13/10, g = 7/10) to 1e12, error of F, F', F'' at 200, 1e3, 1e6, 1e9, 1e12: dd project: worst 8.4e-32 (bar 1e-26), 407 steps; dd conserve: worst 2.8e-30 (bar 1e-26), 407 steps; qd project: worst 1.1e-64 (bar 1e-55), 372 steps; qd conserve: worst 2.5e-62 (bar 1e-55), 372 steps; od project: worst 1.2e-126 (bar 1e-115), 327 steps; od conserve: worst 7.8e-123 (bar 1e-115), 327 steps; verdict LOGLOG
+  (22 s)
+[PASS] plant_shift: N = p^2 w'(2p^2 - w'), w' = q + p^2 + 2c sigma (1 - p) + c^2 sigma^2, c = 1/3, exact p = 1/(t + T) + c sigma: DD project to 1e12, worst error of F', F'' 9.0e-31 (bar 1e-25) at 200, 1e3, 1e6, 1e9, 1e12; (p - 1/(t + T))/(c sigma) at 1e6 = 1.0 (1 +- 1e-3)
+  (0 s)
+[PASS] plant_limit: the planted linear equation (1 + eta^2)F'' + 4 eta F' + 2(F - alpha), alpha = 7/10, F = alpha + (a + b eta)/(1 + eta^2) to 1e12: DD project worst error of F 1.7e-32 (bar 1e-24), verdict LIMIT; printed: F', F'' errors 1.1e-20 (project) against 1.2e-31 (conserve): project slaves F'' to the cancellation in F - alpha
+  (0 s)
+[PASS] plant_scale: N = p^4 (q + 3p), F' = eta^-4, p falls by 2.7e7 and the scale of N by 7e-38 from eta = 10 to 3000; relative error of F' at 3000: dd conserve: 1.1e+01 (predicted fail, bar 1e-03: as predicted); qd conserve: 1.1e-28 (predicted pass, bar 1e-20: as predicted); dd project: 1.0e-31 (predicted pass, bar 1e-24: as predicted); qd project: 2.3e-64 (predicted pass, bar 1e-50: as predicted); u (p0/p)^5 predicts 1e5 (DD) and 1e-27 (QD)
+  (1 s)
+[PASS] recip_check: QD walk of (F(0), F'(0)) = (2, 1) to 1e6: halving every step (223 to 438 steps) changes G and p by 7.6e-65 (bar 1e-55); the control (--mutate=recip-dd, constants rounded to double-double) is run in the controls and must exceed 1e-45
+  (10 s)
+
+checks: 20 passed, 0 failed []. 681 s
+
+== Controls: each mutation must make its target checks fail, and no others ==
+[FIRED] --mutate=theta-coeff (one coefficient of A1 typed wrong): exit 1, failed ['theta_form', 'root_series'], 37 s
+[FIRED] --mutate=root-coef (one coefficient of e2 perturbed in the residual): exit 1, failed ['root_series'], 28 s
+[FIRED] --mutate=shift-series (the planted generator expected e2 = -c^2/2): exit 1, failed ['shift_series'], 1 s
+[FIRED] --mutate=inv-sign (T' expected +w/p^2): exit 1, failed ['invariants'], 1 s
+[FIRED] --mutate=class-sign (the LOGLOG test uses q = +p^2 for p > 0): exit 1, failed ['basin', 'no_limit'], 25 s
+[FIRED] --mutate=inv-conv (T computed as 1/p + t): exit 1, failed ['invariants_conv'], 123 s
+[FIRED] --mutate=trap-bound (the bound on |A1| is 2.6 u^2 p^6 in place of 26): exit 1, failed ['trap_bounds'], 5 s
+[FIRED] --mutate=trap-eps (the region D(eps) has eps = 1e-12): exit 1, failed ['trap_entry'], 25 s
+[FIRED] --mutate=parity-sign (F' summed with the wrong sign in the regular-side comparison): exit 1, failed ['parity'], 24 s
+[FIRED] --mutate=series-k (the approach uses K = 1): exit 1, failed ['approach'], 52 s
+[FIRED] --mutate=walk-eq (one coefficient of N in the hp walker changed): exit 1, failed ['approach', 'independent'], 252 s
+[FIRED] --mutate=indep-q (the independent integration uses Q_0 = -p^2 only): exit 1, failed ['independent'], 117 s
+[FIRED] --mutate=plant-exact (the exact solution the log-log walk is compared with has g + 0.001 (the start state does not)): exit 1, failed ['plant_loglog'], 23 s
+[FIRED] --mutate=plant-c (the planted equation has c = 1003/3000 in place of 1/3): exit 1, failed ['plant_shift'], 1 s
+[FIRED] --mutate=limit-class (the LIMIT test reads |p| >= 1e-6): exit 1, failed ['plant_limit'], 1 s
+[FIRED] --mutate=no-project (project runs as conserve): exit 1, failed ['n_floor', 'dd_qd', 'plant_scale'], 128 s
+[FIRED] --mutate=recip-dd (the QD lanes use double-double constants): exit 1, failed ['recip_check'], 10 s
+controls: all fired on target only
