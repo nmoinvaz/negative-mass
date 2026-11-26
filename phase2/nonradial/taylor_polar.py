@@ -240,6 +240,7 @@ RESULTS = []
 
 def report(name, ok, text):
     """ok is True (passed), False (failed) or None (skipped: it did not run, and counts as neither)"""
+    ok = None if ok is None else bool(ok)   # a numpy bool (S2's) is neither `is True` nor `is False`
     RESULTS.append((name, ok))
     print(f"CHECK {name}: {'SKIPPED' if ok is None else 'PASS' if ok else 'FAIL'}  {text}", flush=True)
 
