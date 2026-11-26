@@ -173,7 +173,7 @@ that have one. The LOGLOG set is #167's 15. The three differences are κ-locus p
 - ρ_K = |q − Q_K|/p² for the worst member (5, 100): ρ₀ 4.5e-2, 1.7e-3, 1.7e-5, 1.8e-9 and 1.8e-21 at η = 200, 10³,
   10⁴, 10⁶, 10¹²; ρ₄ 7.7e-8, 1.0e-14, 3.0e-24 at 200, 10³, 10⁴, then roundoff (3e-30, 6e-31); ρ₆ 1.1e-10 at 200. The
   15 have ρ₄ ≤ 1.0e-14 (10³), 5.8e-30 (10⁶), 2.1e-29 (10¹²) against the bar 1e-10. The whole table is in the output.
-- the verdict at 10¹² is LOGLOG for all 15 (none LIMIT): G(10¹²) − G(10⁶) is 0.675 to 0.720, equal to ln((t₂ + T₁)/(t₁
+- the verdict at 10¹² is LOGLOG for all 15 (none LIMIT): G(10¹²) − G(10⁶) is 0.627 to 0.720, equal to ln((t₂ + T₁)/(t₁
   + T₁)) with T₁ = 1/p − t at 10⁶ to 2.4e-11.
 - an independent integration (30 digits, `mp.odefun`, no Rust) of the reduced system G′ = p, p′ = Q₆(G, p, e⁻²ᵗ) from
   η = 10³ (the quad-double state) matches the walk at 10⁶, 10⁹, 10¹² to 4.0e-22 at worst, for (2, 1), (5, 100) and
