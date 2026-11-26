@@ -411,14 +411,15 @@ def ex_pl5(eta):
 
 
 def plant_run(name, exf, x0, to, cps, prec, mode, exf_cmp=None):
-    args = ["--poly", name, "--prec", prec, "--mode", mode, "--x0", x0, "--s0", state_args(exf, x0, prec), "--to", repr(float(to)),
-            "--cp", ",".join(repr(float(c)) for c in cps)]
-    recs = ll(args, mutate=cmut())
-    errs = []
-    for r in records_at(recs):
-        x = mp.mpf(r.get("cp", r.get("x")))
-        ex = (exf_cmp or exf)(x)
-        errs.append((float(x), [float(abs((val(r[k]) - ex[i]) / ex[i])) for i, k in enumerate(("F", "F1", "F2"))]))
+    with mp.workdps(160 if prec == "od" else mp.mp.dps):
+        args = ["--poly", name, "--prec", prec, "--mode", mode, "--x0", x0, "--s0", state_args(exf, x0, prec), "--to", repr(float(to)),
+                "--cp", ",".join(repr(float(c)) for c in cps)]
+        recs = ll(args, mutate=cmut())
+        errs = []
+        for r in records_at(recs):
+            x = mp.mpf(r.get("cp", r.get("x")))
+            ex = (exf_cmp or exf)(x)
+            errs.append((float(x), [float(abs((val(r[k]) - ex[i]) / ex[i])) for i, k in enumerate(("F", "F1", "F2"))]))
     return recs, errs
 
 
@@ -446,7 +447,9 @@ def c_plant_167():
 
 def c_plant_loglog():
     res, ok = [], True
-    for prec, mode, bar in (("dd", "project", 1e-26), ("dd", "conserve", 1e-26), ("qd", "project", 1e-55), ("qd", "conserve", 1e-55)):
+    # the octo-double bars 1e-115 were set after the first octo-double run (1.2e-126 project, 7.8e-123 conserve)
+    for prec, mode, bar in (("dd", "project", 1e-26), ("dd", "conserve", 1e-26), ("qd", "project", 1e-55), ("qd", "conserve", 1e-55),
+                            ("od", "project", 1e-115), ("od", "conserve", 1e-115)):
         cmp_ = (lambda e: ex_pl2(e, shifted=True)) if MUT == "plant-exact" else None
         recs, errs = plant_run("pl2", ex_pl2, "2", 1e12, CPS_BIG, prec, mode, exf_cmp=cmp_)
         worst = max(max(e) for _, e in errs)
@@ -1009,6 +1012,22 @@ def c_trap_entry():
           f"and stay in it with r = sigma (1 + |G|)^3/p^2 non-increasing: " + "; ".join(rows))
 
 
+def c_precision_table():
+    """printed, not gating: the unit roundoff a conserve walk needs to follow N = 0 to a crossover at eta_c, (4 sigma_c / p0)^6 with p0 = 0.05 and F_inf = 1"""
+    p0 = mp.mpf("0.05")
+    rows = []
+    for ec in (1e3, 1e5, 1e6, 1e9, 1e12):
+        sig = mp.mpf(ec) ** -2
+        need = (4 * sig / p0) ** 6
+        ok = ["yes" if u <= need / 100 else "no" for u in (mp.mpf(10) ** -32, mp.mpf(10) ** -64, mp.mpf(10) ** -127)]
+        rows.append(f"eta_c {ec:.0e}: u <= {mp.nstr(need, 2)} (needed u/100 below it): DD {ok[0]}, QD {ok[1]}, OD {ok[2]}")
+    reach = []
+    for name, u in (("DD", mp.mpf(10) ** -32), ("QD", mp.mpf(10) ** -64), ("OD", mp.mpf(10) ** -127)):
+        sig = (p0 / 4) * (100 * u) ** (mp.mpf(1) / 6)
+        reach.append(f"{name} up to eta_c = {mp.nstr(sig ** -mp.mpf(0.5), 2)}")
+    print("  precision a conserve walk needs to see a crossover (printed, not gating): " + "; ".join(rows) + ". With a margin of 100 in u: " + ", ".join(reach))
+
+
 CHECKS = [
     ("theta_form", c_theta_form),
     ("root_series", c_root_series),
@@ -1027,6 +1046,7 @@ CHECKS += [
     ("regress", c_regress),
     ("basin", c_basin),
     ("basin_map", c_basin_map),
+    ("precision_table", c_precision_table),
     ("approach", c_approach),
     ("no_limit", c_no_limit),
     ("trap_bounds", c_trap_bounds),
