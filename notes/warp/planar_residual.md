@@ -170,3 +170,23 @@ sympy 1.14.0.
 Not covered: Theorem E's global statements (they do not depend on the scalars). Other splittings of the same R: where
 H′J′ ≠ 0, `two_scalars.md` stage 2 allows only a constant χ (ω = 0 there, since k and m are closed and independent),
 so c is the only freedom; not rechecked here.
+
+## Coordinator's review
+
+Reviewed 2026-11-26 at bfab8bf (raw `I171-rpi5` 8840bed); the review's files are in `negative-mass-raw/I171-mac`, with
+its criteria committed before the first run of `ind171.py` (raw ff964a6).
+
+| item | result |
+|---|---|
+| scope | the three files the task named, and the raw folder |
+| rerun on the Mac | exit 0, 8 of 8 checks, every control on its declared target, 131 s; identical to `planar_residual_output.txt` apart from timings |
+| independent check `ind171.py` | 3 of 3 criteria pass, 4 of 4 mutations on target |
+| by hand | the identification √(8π)α = ½, R_pq = a_pa_q − b_pb_q = −2H′J′, and the c-independence of a a − b b: rederived |
+
+`ind171.py` has its own Christoffel, Ricci and Einstein tensors and imports nothing from this repository; it shares
+sympy, the metric, the fields and two_scalars.md's sign convention. It finds:
+- the residual is 0 exactly for undefined H, J and symbolic c, with G ≠ 0;
+- at an exact point, the component equations have the unique solution (α₁², α₂², V) = (1/(32π), 1/(32π), 0);
+- #78's P1 (two normal scalars, V = −1/(8π)) has residual 0.
+
+Findings: the answer stands as stated, and `planar_closure.md` §3 now carries it. No follow-up.

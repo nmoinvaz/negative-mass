@@ -149,8 +149,10 @@ equals it as soon as the slice lies above [0, 1]². This is (d). ∎
 By the equivalence of [`two_scalars.md`](two_scalars.md) (Setup, stages 1 and 2), R = a a − b b with a = ½(c dH −
 (4/c) dJ), b = ½(c dH + (4/c) dJ), any real c ≠ 0 (so k = a + b = c dH, m = a − b = −(4/c) dJ, ½κ₁κ₂ = −2H′J′ = R_pq):
 the scalars are φ₁ ∝ cH − (4/c)J and φ₂ ∝ cH + (4/c)J up to normalization, λ = 0, and these metrics are exact
-solutions with one normal and one phantom scalar, planar in b(t, x). *By hand; the residual stage with these fields is
-not computed here.*
+solutions with one normal and one phantom scalar, planar in b(t, x). *Update from #171:* with α = 1/(4√(2π)) the
+scalars φ₁ = α(cH − (4/c)J) (normal) and φ₂ = α(cH + (4/c)J) (phantom), V = 0, satisfy G_ab − 8π(T₁ − T₂)_ab = 0
+exactly for H, J undefined and every c ≠ 0 (*checked symbolically*, [`planar_residual.md`](planar_residual.md), #171).
+The normalizations and V = 0 are forced wherever H′J′ ≠ 0.
 
 **Numerical illustration** (E1 to E5, **numerical evidence**; H = (3/2)S(p), J = (3/2)S(q), S(x) = f(x)/(f(x) + f(1 −
 x)), f = e^{−1/x}; RK4, dt = 0.002, 601 geodesics on s ∈ [−6, 6], t ∈ [0, 10]; thresholds in the README of the raw
@@ -403,4 +405,4 @@ ind161 shares no code with this note's script, `two_scalars.py` or `phantom_sour
   slack. `E-ext` was silent because its effect was guessed; `E-ext5` replaced it after its effect was computed.
 - The coordinator's own Q4 failed in the same way as `E_hol`: a tolerance tighter than the integration step allows. It
   stays failed, with its diagnostic.
-- Not computed: the residual stage G − 8πT = 0 with the explicit scalars of Theorem E (§3, by hand).
+- Not computed: the residual stage G − 8πT = 0 with the explicit scalars of Theorem E (§3, by hand). *Update from #171:* computed, zero exactly.
