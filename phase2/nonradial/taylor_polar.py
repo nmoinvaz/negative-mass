@@ -889,10 +889,10 @@ HDR_RE = re.compile(r"^(?P<name>.{38}): r_m=(?P<rm>\S+)$")
 _rows_cache = {}
 
 
-def get_rows(l, gammas, lane, variants, tag=""):
+def get_rows(l, gammas, lane, variants, tag="", rs=None):
     """The crate's `rows` for (l, gammas, variants), streamed: every JSON line goes to jsonl-dir/rows_l{l}_{lane}{tag}.jsonl as it arrives,
     so a stopped run resumes at the next gamma. Returns (setup, {(gamma, variant): record}). Records already there are reused.
-    A run with a mutation reads and writes no file."""
+    A run with a mutation reads and writes no file. rs: the start radius of the crate's star shooting (None: its default 1e-8)."""
     path = None if (MUTATE or not JDIR) else os.path.join(JDIR, f"rows_l{l}_{lane}{tag}.jsonl")
     key = (l, lane, tag, MUTATE)
     got, setup = _rows_cache.setdefault(key, ({}, [None]))
@@ -909,7 +909,7 @@ def get_rows(l, gammas, lane, variants, tag=""):
         args = [BIN, "rows", f"l={l}", f"lane={lane}", f"variants={','.join(variants)}"]
         if need:
             args.append(f"gammas={','.join(repr(g) for g in need)}")
-        args += [f"{k}={v}" for k, v in star_kw().items()]
+        args += [f"{k}={v}" for k, v in star_kw(rs).items()]
         if MUTATE:
             args.append(f"mutate={MUTATE}")
         env = dict(os.environ, RAYON_NUM_THREADS="2")
@@ -1069,7 +1069,23 @@ def check_RX():
     report("RX", tc == ts, f"l = 2, gamma = 300 (no stored row): crate D_base {tc} against #186's fresh scipy D {ts} (I186-mac/scipy_timing.jsonl), 8-digit tokens equal as strings")
 
 
+def i114_l5(g):
+    """#114's finished l = 5 evaluations at gamma = g, all five variants, scipy full precision (read only): {name: D}, or None"""
+    p = os.path.join(RAW, "I114-win", "convergence_l5_w0.7603.partial.csv")
+    if not os.path.exists(p):
+        return None
+    sf = {}
+    for line in open(p):
+        if line.startswith("["):
+            k, gg, v, _ = json.loads(line)
+            if gg == g and k in NAMES.values():
+                sf[k] = v
+    return sf
+
+
 def check_CAP(l):
+    """the capped row of #114 at l: (a) D < 0 in the five variants, (b) the crate's rtol analogue within 2.1e-4 of base (error bars
+    E1 to E3 printed), and for l = 5 (c) the crate's five D against #114's scipy D at CAP_VS_SCIPY each"""
     import mpmath as mp
     mp.mp.dps = 60
     g = CAPS[l]
@@ -1081,27 +1097,39 @@ def check_CAP(l):
     e2 = abs(mp.mpf(g24[(g, "o24")]["d"]) / D["base"] - 1)
     _, g64 = get_rows(l, [g], "f64", ["base"])
     e3 = abs(mp.mpf(g64[(g, "base")]["d"]) / D["base"] - 1)
-    lines = [f"l = {l}, gamma = {g:g}: D (dd) " + ", ".join(f"{k} {mp.nstr(D[k], 12)}" for k in VKEYS),
-             f"(a) D < 0 in all five: {neg}", f"(b) E1 = |D(tol 1e-12)/D(base) - 1| = {float(e1):.2e} (bar {CAP_BAR:.1e})",
-             f"E2 (order 24, tol 1e-22 against order 30, 1.2e-30) = {float(e2):.2e}, E3 (f64 lane against dd) = {float(e3):.2e} (printed, not gated)",
-             f"crate time per variant (dd, load {os.getloadavg()[0]:.1f}, one thread): " + ", ".join(f"{k} {got[(g, k)]['wall']:.1f} s" for k in VKEYS)]
-    ok = neg and float(e1) <= CAP_BAR
+    head = f"l = {l}, gamma = {g:g}"
+    report(f"CAP{l}a", neg, f"{head}: D (dd) " + ", ".join(f"{k} {mp.nstr(D[k], 12)}" for k in VKEYS) + f"; all five D < 0: {neg}")
+    report(f"CAP{l}b", float(e1) <= CAP_BAR,
+           f"{head}: E1 = |D(tol 1e-12)/D(base) - 1| = {float(e1):.2e} (bar {CAP_BAR:.1e}); error bars, printed not gated: E2 (order 24, tol 1e-22 against "
+           f"order 30, 1.2e-30) = {float(e2):.2e}, E3 (f64 lane against dd) = {float(e3):.2e}; crate time per variant (dd, load {os.getloadavg()[0]:.1f}, "
+           f"one thread): " + ", ".join(f"{k} {got[(g, k)]['wall']:.1f} s" for k in VKEYS))
     if l == 5:
-        p = os.path.join(RAW, "I114-win", "convergence_l5_w0.7603.partial.csv")
-        if not os.path.exists(p):
-            report("CAP5", None, f"{p} not found (--raw=DIR); " + "; ".join(lines))
+        sf = i114_l5(g)
+        if sf is None:
+            report("CAP5c", None, f"{os.path.join(RAW, 'I114-win')} not found (--raw=DIR)")
             return
-        sf = {}
-        for line in open(p):
-            if line.startswith("["):
-                k, gg, v, _ = json.loads(line)
-                if gg == g and k in NAMES.values():
-                    sf[k] = v
         e4 = {k: abs(float(D[k]) / sf[NAMES[k]] - 1) for k in VKEYS}
-        ok &= all(v <= CAP_VS_SCIPY for v in e4.values())
-        lines.append(f"(c) E4 = crate D against #114's scipy D (rtol 1e-12 finished there; I114-win partial file) per variant: " + ", ".join(f"{k} {v:.1e}" for k, v in e4.items())
-                     + f" (bar {CAP_VS_SCIPY:.0e} each); scipy's rtol 1e-12 value {sf[NAMES['tol']]:.9e} against its base {sf[NAMES['base']]:.9e}")
-    report(f"CAP{l}", ok, "; ".join(lines))
+        report("CAP5c", all(v <= CAP_VS_SCIPY for v in e4.values()),
+               f"{head}: E4 = crate D against #114's scipy D (its rtol 1e-12 evaluation finished; I114-win partial file), per variant: "
+               + ", ".join(f"{k} {v:.1e}" for k, v in e4.items()) + f" (bar {CAP_VS_SCIPY:.0e} each); scipy's rtol 1e-12 value {sf[NAMES['tol']]:.9e} "
+               f"against its base {sf[NAMES['base']]:.9e}")
+
+
+def check_CAP5s():
+    """CAP5 (c) again with the crate's star started as scipy's: rs = 1e-3 with the leading-order boundary condition (#186's S1 matched start)"""
+    g = CAPS[5]
+    sf = i114_l5(g)
+    if sf is None:
+        report("CAP5s", None, f"{os.path.join(RAW, 'I114-win')} not found (--raw=DIR)")
+        return
+    setup, got = get_rows(5, [g], "dd", VKEYS, tag="_rs1e-3", rs=1e-3)
+    _, ex = get_rows(5, [g], "dd", VKEYS)
+    e4 = {k: abs(float(got[(g, k)]["d_f64"]) / sf[NAMES[k]] - 1) for k in VKEYS}
+    shift = {k: abs(float(got[(g, k)]["d_f64"]) / float(ex[(g, k)]["d_f64"]) - 1) for k in VKEYS}
+    report("CAP5s", all(v <= CAP_VS_SCIPY for v in e4.values()),
+           f"l = 5, gamma = {g:g}, the crate's star shot from rs = 1e-3 with scipy's leading-order boundary condition: crate D against #114's scipy D, per variant: "
+           + ", ".join(f"{k} {v:.1e}" for k, v in e4.items()) + f" (bar {CAP_VS_SCIPY:.0e} each); printed, not gated: the change of the crate's D from rs = 1e-8 to rs = 1e-3: "
+           + ", ".join(f"{k} {v:.1e}" for k, v in shift.items()))
 
 
 def check_QP():
@@ -1176,7 +1204,7 @@ def check_RM():
 
 
 ROW_CHECKS = {"QP": check_QP, "RP": check_RP, "RM": check_RM, "RA2": lambda: check_RA(2), "RX": check_RX,
-              "RA4": lambda: check_RA(4), "RA5": lambda: check_RA(5), "CAP5": lambda: check_CAP(5),
+              "RA4": lambda: check_RA(4), "RA5": lambda: check_RA(5), "CAP5": lambda: check_CAP(5), "CAP5s": check_CAP5s,
               "RA6": lambda: check_RA(6), "CAP6": lambda: check_CAP(6)}
 
 # the controls of --rows mode: --rows --mutate=NAME runs the checks named here with one deliberate error; every one must fail
@@ -1186,7 +1214,7 @@ ROW_CONTROLS = {
     "rm_off1": ["RP", "RM", "RA2"],  # the r_m grid index one too low
     "rm_cut": ["RM", "RA2"],         # the phi_cut variant's cut at 1e-11
     "r0_grid": ["RM", "RA2"],        # the r0 variant's r_m grid starting at 1e-3
-    "tol_loose": ["CAP5"],           # the rtol-analogue variant at tol 1e-3
+    "tol_loose": ["CAP5b"],           # the rtol-analogue variant at tol 1e-3 (its entries of CAP5c and CAP5s are read in the log: those two fail on real data already)
     "qstart": ["RA2"],               # #186's: the Riccati started at r_m + 1
     "moncrief": ["RA2", "QP"],       # #186's: a sign in the Moncrief map
 }
