@@ -257,7 +257,10 @@ and a profile with f(r_s) C² on ℝ³. The bubble moves at a constant v ≠ 0, 
   limits F_∞ ≠ 0 at x/ρ → ±∞, a two-parameter family with a logarithm ([`conical_limit.md`](conical_limit.md), #159),
   so localization in x is not excluded; whether a global bubble exists, and what closure says, is not decided.
   Multiplicative separable shifts u = X(x)R(ρ) + v have no solution with X X′ R R′ ≠ 0
-  ([`mult_classify.md`](mult_classify.md), #160, *proved*). The general static PDE is not classified.
+  ([`mult_classify.md`](mult_classify.md), #160, *proved*). Sums of two separable products are decided only in the
+  strata of [`sum_products.md`](sum_products.md) (#169: no solution with constant ρ-coefficients or a real exponential
+  x-side, *proved*); outside them, the rank bound of #160 gives 59 to 102 products and does not decide. The general static
+  PDE is not classified.
 - Non-minimal coupling, kinetic terms that are not quadratic, and scalars with other matter.
 
 ## Prior work

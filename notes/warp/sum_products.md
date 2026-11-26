@@ -297,3 +297,36 @@ otherwise **not decided** (#169)." For §12's "Not covered", add: "sums of two s
 [`sum_products.md`](sum_products.md); the rank bound of #160 gives 59 to 102 products and does not decide." For
 `two_scalars.md`'s "Not covered" bullet on separable shifts: the same sentence. The remark in `det_classify.md` §5 that
 the multiplicative case is decided (#160) stays as it is.
+
+## Coordinator's review
+
+Reviewed 2026-11-26 at 64e6b43 (raw `I169-rpi5` 9af50f6); the review's files are in `negative-mass-raw/I169-mac`, with
+its criteria committed before the first run of `ind169.py` (raw 05eb0aa).
+
+| item | result |
+|---|---|
+| scope | the three files the task named, and the raw folder |
+| rerun on the Mac | exit 0, 13 of 13 checks, every control on its target only, the two declared silent ones silent, 1104 s; the output is identical to `sum_products_output.txt` apart from timings |
+| independent check `ind169.py` | 7 of 7 criteria pass; 6 of 7 mutations fire on target alone, and `j1-v0` also fires two checks that share its E (the coordinator's misprediction, recorded) |
+| hand proofs | the compact form 4hD = C² − A² − B² (expanded), Lemmas 1–4, Theorem K (both root cases, the ρ⁻²e^{4μρ} coefficient), Theorem E (the top frequency, the frequency count, the reduction to E″): read and rederived; no gap found |
+
+`ind169.py` imports nothing from this repository. It shares sympy, the formula for D with its entries, and the claims
+under test. It rederives:
+- E (376 terms) and its divisibility by a₁² at X₂ = 0;
+- the compact form;
+- the exact ranks 59 (107 × 72) and 93 (180 × 106);
+- Theorem K's ι² coefficient −u_ρ⁴;
+- Theorem E's z₁⁶ coefficient a₁²(a₁² + 4k₁²a₀²)(a₁² + 5k₁²a₀²);
+- E = z₂²b₁²E″, the generic unit ideal and the seven resonant ones, with the resonant set {−2, −1, 4/3, 3/2, 2, 3, 4}
+  found by its own enumeration;
+- the planted additive Bessel family, E = 0 exactly, and an exact nonzero value for a perturbed member.
+
+Findings:
+- **The answer stands:** not decided in general. The decided strata (one product, the excluded forms, constant
+  ρ-coefficients, real exponential x-side) are *proved*.
+- **The silent controls.** `s-rank-drop` and `s-xexp-sat` were silent and are declared so. The second reflects a fact:
+  E″ already has b₁² divided out, so the saturation is not needed for the unit ideal. `s-xexp-planar` is the control that
+  reaches that step.
+- The neighbouring notes now carry the suggested rows (`det_classify.md` Answer table and §12, `two_scalars.md`).
+
+Follow-ups: #181 (complex-exponent and double-root x-sides), #182 (case (c), u = A(x)R(ρ) + B(x) + v); #135 row 34.

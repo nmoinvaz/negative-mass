@@ -19,6 +19,7 @@ D = det R₃ vanishes on an open set for many shifts, so "classify" is done insi
 | b(ρ) of #65 and its linear-in-x deformation u = c x + g(ρ) | g = −ε ln(α J₀(√2 c ρ) + β Y₀(√2 c ρ)); c = 0 is #65 | no (linear or constant in x) | fails on every open set, every member (#162) | **proved**, **checked symbolically** |
 | additive b = X(x) + R(ρ) | exactly planar, or u = c x + d + g(ρ) as above | only the planar ones | as above | **proved** (hand argument), **checked symbolically** |
 | multiplicative b = X(ξ) R(ρ) | none with X X′ R R′ ≠ 0, for every v (#160); X′ ≡ 0 is #65's b(ρ), R′ ≡ 0 is planar | — | not needed | **proved** in [`mult_classify.md`](mult_classify.md), steps **checked symbolically** (§5) |
+| sum of two products b = X₁R₁ + X₂R₂ + v, W_xW_ρ ≠ 0 | if 1 ∈ V_X and 1 ∈ V_R: one product plus a constant (#160) or additive (#80); with constant ODE coefficients on the ρ-side, or with the x-side X₁ = e^{k₁x}, X₂ = e^{k₂x}, k₁ ≠ k₂ real: none ([`sum_products.md`](sum_products.md), #169) | — | not needed where none | **proved** for those strata; otherwise **not decided** (#169) |
 | conical b = F(x/ρ) | ODE of second order, cubic in F″ | **not decided**: "no limit at η → ±∞" is not established (§6) | not run | ODE **checked symbolically** |
 | static or traveling b(x, ρ), general | one second-order PDE, many local solutions | only inside the rows above | not run | not classified |
 
@@ -297,7 +298,7 @@ Statements only; `ℝ` throughout; D as in §Setup.
 
 ## 12. Not covered, and what `two_scalars.md`'s "Not covered" bullet should say
 
-Not classified here: the general static or traveling PDE D = 0; time-dependent shifts beyond planar b(t, x) and the traveling reduction; multiplicative separable shifts (§5); the conical reduction's behavior at η → ±∞ (§6); planar shifts with closure and equal limits at every t, with K of both signs (§2, #161); closure on the conical family. Two scalars of one sign, three scalars and non-minimal coupling are as in [`two_scalars.md`](two_scalars.md).
+Not classified here: the general static or traveling PDE D = 0; time-dependent shifts beyond planar b(t, x) and the traveling reduction; multiplicative separable shifts (§5); *update from #169:* sums of two separable products, outside the strata of [`sum_products.md`](sum_products.md), where the rank bound of #160 gives 59 to 102 products and does not decide; the conical reduction's behavior at η → ±∞ (§6); planar shifts with closure and equal limits at every t, with K of both signs (§2, #161); closure on the conical family. Two scalars of one sign, three scalars and non-minimal coupling are as in [`two_scalars.md`](two_scalars.md).
 
 **For #158 (one-sign pairs), by hand, not in the script.** For a planar shift R₃ − λη₃ = diag(P + λ, −P − λ, −λ), which has rank 1 at λ = −P = K (the φ direction supplies the second square), so planar shifts pass the algebraic stage of
 [`same_sign_scalars.md`](same_sign_scalars.md) with λ = K and gradients along y and z. M = R − λg = K (dy² + dz²) is invariant along the (t, x) kernel only if K is constant, which is then dS₂ × ℝ² or AdS₂ × ℝ² (#78's P1, P2) in a
