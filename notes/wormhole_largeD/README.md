@@ -48,6 +48,11 @@ W^2a^2 = 2(D-3) - 4\ln 2 + \frac{\pi^2/3 + 4\ln^2 2}{D-3} + O(D^{-2}) .
   *Added by the coordinator:* the review derived the order equations again from #195's ℓ-system and integrated them by
   its own Taylor stepper (raw `I26-mac-review`, ind26). Its Ω₀, Ω₁ and Ω₂ equal the closed forms to 7e-45, 2e-44 and
   4e-40.
+- *Added by the coordinator:* each coefficient found so far is of uniform weight, counting ln 2 as weight 1, π² as 2
+  and ζ(3) as 3, with products adding. Ω₀ = −4 ln 2 has weight 1, Ω₁ = 2π²/3 + 8 ln²2 weight 2, and Ω₂ weight 3. On the
+  wider basis with all weights up to 3, #26's PSLQ gives zero coefficients to the lower weights at 1e-30. This is an
+  observation about three terms, not a claim about the series. A pure weight-4 search for Ω₃ at 35 digits found
+  nothing (#195), and #208 repeats it with more digits.
 
 **What it means.**
 - **Faster in higher D.** The e-folding time is a/√(2(D − 3)) at large D. The exact values are 0.846 a (D = 4),
