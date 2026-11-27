@@ -1,0 +1,169 @@
+# settled_mass_output.txt: output of record of settled_mass.py (#41). Raw: negative-mass-raw I41-rpi5 (commit given in settled_mass.md).
+# Produced by:  python3 settled_mass.py analyze --raw=<negative-mass-raw>/I41-rpi5   (the runs are in <raw>/runs; to rerun them: launch_jobs.sh, pstar, pstar_an)
+
+################ analyze (13 checks) ################
+settled_mass.py analyze {'raw': '/home/nathan/Source/negative-mass-raw/I41-rpi5'}: numba 0.68.1, numpy 2.5.4, python 3.14.10, rpi5-ubuntu, load average at start 1.09 2.20 2.61, mutation None, 2026-11-27 07:22:50
+
+== Planted exact solutions through the chain
+    P1 h = 0.02: status limit, columns 507, F to 1.556e+06, max |M - 0.3| 1.109e-04, max |x- - x_h| 3.298e-04
+    P1 h = 0.01: status limit, columns 1013, F to 1.543e+06, max |M - 0.3| 2.773e-05, max |x- - x_h| 8.245e-05
+    P1 h = 0.005: status limit, columns 2027, F to 1.567e+06, max |M - 0.3| 6.817e-06, max |x- - x_h| 2.061e-05
+    P1 h = 0.0025: status limit, columns 4054, F to 1.571e+06, max |M - 0.3| 1.684e-06, max |x- - x_h| 5.153e-06
+[pass] PL1: exact Schwarzschild (M = 0.3) in the stretching gauge, through the chain: M recovered, second order, limit reached  (max |M - 0.3| at h = 0.005: 6.82e-06 (bar 1e-4); orders [2.0, 2.024, 2.018] in (1.75, 2.25); status ['limit', 'limit', 'limit', 'limit']; F reached [1556237, 1543328, 1567301, 1571383] of 1.57286e+06)
+    P2 h = 0.02: columns 106 (levels [100, 4, 2]), max |r - r_exact| on r_+ = 0: 1.703e-04, max |x- - 2 a x+| 1.577e-04, min edge 26 cells
+    P2 h = 0.01: columns 212 (levels [200, 8, 4]), max |r - r_exact| on r_+ = 0: 4.266e-05, max |x- - 2 a x+| 3.948e-05, min edge 51 cells
+    P2 h = 0.005: columns 424 (levels [400, 16, 8]), max |r - r_exact| on r_+ = 0: 1.067e-05, max |x- - 2 a x+| 9.877e-06, min edge 101 cells
+    P2 h = 0.0025: columns 848 (levels [800, 32, 16]), max |r - r_exact| on r_+ = 0: 2.670e-06, max |x- - 2 a x+| 2.470e-06, min edge 201 cells
+[pass] PL2: exact Roberts ghost solution, moving contour r_+ = 0, two forced zoom levels: r on the contour, second order  (max error at h = 0.005: 1.07e-05 (bar 5e-5); orders [1.997, 1.999, 1.999] in (1.75, 2.25))
+[pass] PL3: level 0 of the chain equals dn.evolve bit for bit (nodes, dead flags) and finds the same first trapped cell  (h = 0.02, delta = 1e-06: nodes equal True, dead equal True, events (385, 385) and (385, 385))
+[pass] AN: chain against a zoom-free uniform anisotropic grid (h, h/32): horizon M and x- where e^{-f} < 40  (h = 0.02, delta = 1e-06: events (12335, 385) / (385, 385), max |dM| 1.98e-04 (bar 3e-4), max |dx-| 3.30e-04, 4000 columns, AN series to F = 40.81)
+
+== p*_h on this machine against #40's (dh610-fedora)
+    h = 0.02: p*_h = 4.7527725360001875e-05, hi - lo = 6.10e-15, minus #40's +9.16e-15, 18 runs, 14 s
+    h = 0.01: p*_h = 1.1884163318125821e-05, hi - lo = 6.10e-15, minus #40's -4.58e-14, 18 runs, 48 s
+    h = 0.005: p*_h = 2.9711800304035538e-06, hi - lo = 6.10e-15, minus #40's -3.05e-15, 18 runs, 140 s
+    h = 0.0025: p*_h = 7.4280396930694569e-07, hi - lo = 9.54e-15, minus #40's +nan, 23 runs, 627 s
+[pass] RC1: p*_h bisected to hi - lo <= 1e-14 and, where #40 has it, within 1e-11 of #40's
+[pass] RC2: fates (collapse at p*_h - delta, expansion at p*_h + delta; all h, both delta); the first trapped cell and its time against #40's at delta = 1e-8  (events {0.02: [522, 522], 0.01: [1045, 1045], 0.005: [2090, 2090], 0.0025: [4179, 4179]} against #40's {0.02: [522, 522], 0.01: [1045, 1045], 0.005: [2090, 2090]})
+[pass] RC3: M_AH at the first trapped cell against #40's formation value at p*_h - 1e-8  (|dM| 1.5e-04, 1.5e-04, 1.5e-04 (bar 2e-3); M_AH [0.49425, 0.49419, 0.49421], #40 [0.49411, 0.49404, 0.49406])
+[pass] RC4: first law on the horizon: M(x+_b) - M(x+_a) = integral of (r^2/2) e^f r_- phi_+^2 along it, from the first trapped cell to F = 20  (max relative difference 3.92e-04 over all runs (bar 2e-2))
+[pass] RC5: every run ends at the declared limit (F = e^-f on the horizon, 786432 <= F_end < 1.57286e+06), horizon at least Nc/8 cells from the box edges, no gaps  (h=0.02,d=1e-06: F_end 1531824, edge 96/240; h=0.01,d=1e-06: F_end 1570757, edge 192/480; h=0.005,d=1e-06: F_end 1564201, edge 385/960; h=0.0025,d=1e-06: F_end 1567482, edge 771/1920; h=0.02,d=1e-08: F_end 1543987, edge 97/240; h=0.01,d=1e-08: F_end 1557499, edge 193/480; h=0.005,d=1e-08: F_end 1564151, edge 385/960; h=0.0025,d=1e-08: F_end 1567404, edge 771/1920)
+
+== Second-order convergence of M_AH(x+): max |M_h - M_h/2| over windows of x+ - x+_f (cubic splines)
+    RC6 h = (0.02, 0.01, 0.005), delta = 1e-06, x+ - x+_f in [0, 1.5]: E12 2.77e-05, E23 7.07e-06, order 1.97 ok
+    RC6 h = (0.02, 0.01, 0.005), delta = 1e-06, x+ - x+_f in [1.5, 3]: E12 9.68e-05, E23 2.61e-05, order 1.89 ok
+    RC6 h = (0.02, 0.01, 0.005), delta = 1e-06, x+ - x+_f in [3, 99]: E12 1.71e-04, E23 3.76e-05, order 2.18 ok
+    RC6 h = (0.02, 0.01, 0.005), delta = 1e-08, x+ - x+_f in [0, 1.5]: E12 2.64e-05, E23 6.72e-06, order 1.98 ok
+    RC6 h = (0.02, 0.01, 0.005), delta = 1e-08, x+ - x+_f in [1.5, 3]: E12 1.05e-04, E23 2.41e-05, order 2.12 ok
+    RC6 h = (0.02, 0.01, 0.005), delta = 1e-08, x+ - x+_f in [3, 99]: E12 1.55e-04, E23 3.85e-05, order 2.01 ok
+[pass] RC6: M_AH(x+) converges at second order at the three h (0.02, 0.01, 0.005), three windows, both deltas (observed order in (1.5, 2.5))
+    RC6b h = (0.01, 0.005, 0.0025), delta = 1e-06, x+ - x+_f in [0, 1.5]: E12 7.07e-06, E23 1.79e-06, order 1.98 ok
+    RC6b h = (0.01, 0.005, 0.0025), delta = 1e-06, x+ - x+_f in [1.5, 3]: E12 2.61e-05, E23 5.45e-06, order 2.26 ok
+    RC6b h = (0.01, 0.005, 0.0025), delta = 1e-06, x+ - x+_f in [3, 99]: E12 3.71e-05, E23 9.64e-06, order 1.94 ok
+    RC6b h = (0.01, 0.005, 0.0025), delta = 1e-08, x+ - x+_f in [0, 1.5]: E12 6.72e-06, E23 1.67e-06, order 2.01 ok
+    RC6b h = (0.01, 0.005, 0.0025), delta = 1e-08, x+ - x+_f in [1.5, 3]: E12 2.41e-05, E23 4.53e-06, order 2.41 ok
+    RC6b h = (0.01, 0.005, 0.0025), delta = 1e-08, x+ - x+_f in [3, 99]: E12 3.84e-05, E23 9.09e-06, order 2.08 ok
+[pass] RC6b: M_AH(x+) converges at second order at the three h (0.01, 0.005, 0.0025), three windows, both deltas (observed order in (1.5, 2.5))
+[pass] RC8: M_AH has settled at the limit: the plateau mean over the last 1.0 of x+ differs from the previous 1.0 by <= 1e-4 and the mean horizon flux over the last 0.5 is <= 1e-5, every run  (plateau change -1.1e-06, -7.1e-06, +2.8e-06, +3.3e-06, -1.7e-05, -7.3e-06, +2.9e-06, +3.3e-06; flux 2.6e-07, 2.7e-07, 2.7e-07, 2.6e-07, 2.7e-07, 2.7e-07, 2.7e-07, 2.6e-07)
+[pass] RC7: the settled value does not depend on delta: plateau means over the last 1.0 at 1e-6 and 1e-8 agree  (|dM| 1.7e-05, 3.1e-07, 2.0e-07, 7.0e-08 (bar 1e-4))
+
+== M_AH(x+) against x+ - x+_f (a = 1, 8 pi G = 1; M = r_AH / 2); t = (x+ + x-)/sqrt2 at the horizon; finest h
+  delta = 1e-06, h = 0.0025: x+_f = 7.6938, t_f = 10.8669
+    dx+     x+       x-         t       r_AH     M_AH      e^-f       r_-
+     0.00   7.6938   7.67443  10.8669  0.98848  0.49424      1.024    -0.01968
+     0.25   7.9438   7.91452  11.2135  0.98260  0.49130      1.036    -0.03007
+     0.50   8.1937   8.14961  11.5565  0.97380  0.48690      1.055    -0.04607
+     1.00   8.6937   8.59411  12.2244  0.94146  0.47073      1.133     -0.1099
+     1.50   9.1937   8.97505  12.8473  0.87463  0.43732      1.335     -0.2733
+     2.00   9.6938   9.24262  13.3900  0.75599  0.37800      1.936     -0.7358
+     2.50  10.1938   9.36724  13.8317  0.60629  0.30314      4.074      -2.205
+     3.00  10.6938   9.39779  14.2069  0.49996  0.24998      11.96      -6.895
+     3.50  11.1938   9.40182  14.5633  0.45859  0.22930      36.23      -20.45
+     4.00  11.6938   9.40217  14.9171  0.44863  0.22432      100.2      -56.86
+     4.50  12.1938   9.40219  15.2706  0.44740  0.22370      259.7      -151.1
+     5.00  12.6938   9.40219  15.6242  0.44735  0.22368      652.8        -390
+     5.50  13.1938   9.40219  15.9777  0.44707  0.22354       1615      -985.2
+     6.00  13.6937   9.40219  16.3313  0.44669  0.22335       3951       -2450
+     6.50  14.1938   9.40219  16.6848  0.44641  0.22320       9583       -6017
+     7.00  14.6938   9.40219  17.0384  0.44625  0.22313  2.306e+04  -1.462e+04
+     7.50  15.1938   9.40219  17.3920  0.44619  0.22309   5.51e+04  -3.525e+04
+     8.00  15.6938   9.40219  17.7455  0.44617  0.22308  1.309e+05  -8.436e+04
+     8.50  16.1938   9.40219  18.0991  0.44617  0.22308  3.094e+05  -2.007e+05
+     9.00  16.6938   9.40219  18.4526  0.44617  0.22308   7.28e+05  -4.748e+05
+     9.40  17.0938   9.40219  18.7355  0.44617  0.22308   1.44e+06  -9.428e+05
+  delta = 1e-08, h = 0.0025: x+_f = 10.4488, t_f = 14.7631
+    dx+     x+       x-         t       r_AH     M_AH      e^-f       r_-
+     0.00  10.4488  10.42943  14.7631  0.98848  0.49424      1.024    -0.01968
+     0.25  10.6988  10.66952  15.1097  0.98261  0.49130      1.036    -0.03006
+     0.50  10.9488  10.90461  15.4527  0.97380  0.48690      1.055    -0.04607
+     1.00  11.4488  11.34911  16.1205  0.94147  0.47073      1.133     -0.1099
+     1.50  11.9488  11.73006  16.7434  0.87464  0.43732      1.335     -0.2733
+     2.00  12.4488  11.99764  17.2862  0.75600  0.37800      1.936     -0.7357
+     2.50  12.9488  12.12227  17.7279  0.60630  0.30315      4.074      -2.205
+     3.00  13.4488  12.15282  18.1030  0.49997  0.24998      11.96      -6.895
+     3.50  13.9488  12.15685  18.4594  0.45860  0.22930      36.23      -20.45
+     4.00  14.4488  12.15720  18.8132  0.44863  0.22432      100.2      -56.86
+     4.50  14.9488  12.15721  19.1668  0.44740  0.22370      259.7      -151.1
+     5.00  15.4488  12.15721  19.5204  0.44735  0.22367      652.8      -389.9
+     5.50  15.9488  12.15721  19.8739  0.44707  0.22354       1615      -985.1
+     6.00  16.4488  12.15721  20.2275  0.44669  0.22335       3951       -2450
+     6.50  16.9488  12.15721  20.5810  0.44641  0.22320       9583       -6016
+     7.00  17.4488  12.15721  20.9346  0.44625  0.22313  2.306e+04  -1.462e+04
+     7.50  17.9488  12.15721  21.2881  0.44619  0.22309   5.51e+04  -3.525e+04
+     8.00  18.4488  12.15721  21.6417  0.44617  0.22308  1.309e+05  -8.435e+04
+     8.50  18.9488  12.15721  21.9952  0.44617  0.22308  3.093e+05  -2.007e+05
+     9.00  19.4487  12.15721  22.3488  0.44617  0.22308   7.28e+05  -4.748e+05
+     9.40  19.8487  12.15721  22.6316  0.44617  0.22308   1.44e+06  -9.427e+05
+
+== Late-time values (reports)
+  delta   h        M_end     plat(1.0)  range(1.0) plat(0.5)  drift(1.0)  plat change  flux(0.5)   2 M_end
+   1e-06    0.02  0.223149  0.223138  1.8e-04  0.223121  +4.82e-06  -1.10e-06  2.61e-07  0.44630
+   1e-06    0.01  0.223125  0.223102  4.1e-05  0.223103  -2.50e-05  -7.07e-06  2.70e-07  0.44625
+   1e-06   0.005  0.223087  0.223086  1.1e-05  0.223085  -7.76e-07  +2.83e-06  2.65e-07  0.44617
+   1e-06  0.0025  0.223084  0.223083  2.1e-06  0.223083  -1.12e-06  +3.25e-06  2.64e-07  0.44617
+   1e-08    0.02  0.223255  0.223155  1.6e-04  0.223175  -1.50e-04  -1.68e-05  2.66e-07  0.44651
+   1e-08    0.01  0.223124  0.223102  4.1e-05  0.223102  -2.46e-05  -7.29e-06  2.66e-07  0.44625
+   1e-08   0.005  0.223089  0.223085  8.5e-06  0.223085  -4.35e-06  +2.91e-06  2.65e-07  0.44618
+   1e-08  0.0025  0.223085  0.223083  2.6e-06  0.223083  -1.54e-06  +3.25e-06  2.64e-07  0.44617
+  delta = 1e-06, h = (0.02, 0.01, 0.005): M_end [0.223149, 0.223125, 0.223087], differences +2.38e-05, +3.80e-05, Richardson (second order) M_end(0) = 0.223074; plateau(1.0) [0.223138, 0.223102, 0.223086], differences +3.57e-05, +1.64e-05, Richardson 0.223080
+  delta = 1e-06, h = (0.01, 0.005, 0.0025): M_end [0.223125, 0.223087, 0.223084], differences +3.80e-05, +2.91e-06, Richardson (second order) M_end(0) = 0.223083; plateau(1.0) [0.223102, 0.223086, 0.223083], differences +1.64e-05, +2.40e-06, Richardson 0.223082
+  delta = 1e-08, h = (0.02, 0.01, 0.005): M_end [0.223255, 0.223124, 0.223089], differences +1.31e-04, +3.48e-05, Richardson (second order) M_end(0) = 0.223078; plateau(1.0) [0.223155, 0.223102, 0.223085], differences +5.30e-05, +1.63e-05, Richardson 0.223080
+  delta = 1e-08, h = (0.01, 0.005, 0.0025): M_end [0.223124, 0.223089, 0.223085], differences +3.48e-05, +4.56e-06, Richardson (second order) M_end(0) = 0.223083; plateau(1.0) [0.223102, 0.223085, 0.223083], differences +1.63e-05, +2.13e-06, Richardson 0.223082
+
+13 checks, 0 failed; 43 s
+
+################ scan: M at the limit against the distance from threshold, family S, h = 0.01 (settled_mass.py scan --h=0.01 ...) ################
+  delta        A = p*_h - delta     E0 (SH02 3.3)    x+_f     M_start   M_end     r_AH(end)   F_end   status
+  1e-08  1.187e-05  6.86e-08  10.46  0.4942  0.2231  0.4462  1.557e+06  limit
+  1e-07  1.178e-05  6.809e-08  9.075  0.4942  0.2231  0.4462  1.551e+06  limit
+  1e-06  1.088e-05  6.293e-08  7.695  0.4942  0.2231  0.4463  1.571e+06  limit
+  1e-05  1.884e-06  1.097e-08  6.325  0.4942  0.2231  0.4462  1.564e+06  limit
+  0.0001  -8.812e-05  -5.508e-07  4.945  0.4942  0.2231  0.4462  1.557e+06  limit
+  0.001  -0.0009881  -1.039e-05  3.525  0.4947  0.2231  0.4462  1.568e+06  limit
+  0.01  -0.009988  -0.0005308  2.495  0.4984  0.2228  0.4456  1.562e+06  limit
+  0.03  -0.02999  -0.004432  2.305  0.4987  0.2294  0.4588  1.557e+06  limit
+  0.1  -0.09999  -0.0479  2.125  0.4989  0.2332  0.4663  1.555e+06  limit
+
+################ sh02: [SH02] Table I data through the chain, h = 0.01 (settled_mass.py sh02 --h=0.01 ...) ################
+  c_a      c_b   E0 here    E0 SH02    x-_H here  x-_H SH02   M_end here  M SH02   x+_f   F_end   status   F* (our e^-f where M_AH = M SH02)  dx+ since formation
+  -0.0001    3  4.225e-05  4.390e-05     7.6733       8.42   0.22318   0.296  5.985  1559764  limit   4.51   2.53
+   -0.001    3  4.219e-04  4.380e-04     6.8391       6.98   0.22367   0.310  5.225  1561677  limit   3.76   2.37
+    -0.01    3  4.160e-03  4.320e-03     5.5768       5.64   0.22785   0.325  4.075  1550312  limit   3.35   2.23
+     -0.1    3  3.568e-02  3.700e-02     4.2690       4.46   0.26035   0.420  3.385  1563013  limit   2.07   1.46
+     -0.1    6  2.512e-02  2.600e-02     4.6123       4.82   0.25075   0.380  3.735  1563266  limit   2.68   1.64
+     -0.1    9  2.048e-02  2.120e-02     4.7769       4.90   0.24621   0.350  3.885  1557165  limit   3.36   1.78
+
+################ sh02: [SH02] Table I data through the chain, h = 0.005 (settled_mass.py sh02 --h=0.005 ...) ################
+  c_a      c_b   E0 here    E0 SH02    x-_H here  x-_H SH02   M_end here  M SH02   x+_f   F_end   status   F* (our e^-f where M_AH = M SH02)  dx+ since formation
+  -0.0001    3  4.225e-05  4.390e-05     8.0819       8.42   0.22316   0.296  6.388  1569975  limit   4.51   2.54
+   -0.001    3  4.219e-04  4.380e-04     6.9169       6.98   0.22366   0.310  5.277  1560269  limit   3.76   2.39
+    -0.01    3  4.160e-03  4.320e-03     5.5854       5.64   0.22784   0.325  4.083  1572687  limit   3.35   2.24
+     -0.1    3  3.568e-02  3.700e-02     4.2699       4.46   0.26034   0.420  3.348  1566090  limit   2.07   1.50
+     -0.1    6  2.512e-02  2.600e-02     4.6139       4.82   0.25074   0.380  3.708  1564769  limit   2.68   1.67
+     -0.1    9  2.048e-02  2.120e-02     4.7790       4.90   0.24619   0.350  3.868  1569353  limit   3.36   1.80
+
+################ sh02_uniform: [SH02] data on one uniform grid of their size, no zoom (settled_mass.py sh02_uniform ...) ################
+  uniform grid h = 0.00208; c_a c_b: M_AH on the uniform grid at x+ = 12, 16, 20 (e^-f there), the chain's M_end, SH02's M
+  {"c_a": -0.0001, "c_b": 3.0, "M_SH02": 0.296, "event": [3156, 3156], "M12": null, "F12": null, "M16": null, "F16": null, "M20": null, "F20": null, "x_last": 10.586458333333333, "F_last": 101.11624522642013, "M_last": 0.22897422245907517}
+  {"c_a": -0.001, "c_b": 3.0, "M_SH02": 0.31, "event": [2528, 2529], "M12": null, "F12": null, "M16": null, "F16": null, "M20": null, "F20": null, "x_last": 9.601041666666667, "F_last": 136.22386043017698, "M_last": 0.27231623272485833}
+  {"c_a": -0.01, "c_b": 3.0, "M_SH02": 0.325, "event": [1956, 1961], "M12": null, "F12": null, "M16": null, "F16": null, "M20": null, "F20": null, "x_last": 8.240625, "F_last": 126.87836980642345, "M_last": 0.2638405549920906}
+  {"c_a": -0.1, "c_b": 3.0, "M_SH02": 0.42, "event": [1597, 1604], "M12": null, "F12": null, "M16": null, "F16": null, "M20": null, "F20": null, "x_last": 7.315625, "F_last": 114.7898160395228, "M_last": 0.266994992542498}
+  {"c_a": -0.1, "c_b": 6.0, "M_SH02": 0.38, "event": [1772, 1779], "M12": null, "F12": null, "M16": null, "F16": null, "M20": null, "F20": null, "x_last": 7.5718749999999995, "F_last": 120.21220160310656, "M_last": 0.26895665178015105}
+  {"c_a": -0.1, "c_b": 9.0, "M_SH02": 0.35, "event": [1846, 1854], "M12": null, "F12": null, "M16": null, "F16": null, "M20": null, "F20": null, "x_last": 7.840625, "F_last": 137.95598243670995, "M_last": 0.2887860273645937}
+
+################ mutations of record (declared set, fired set) ################
+mutation an_nodes: fired ['AN'], declared ['AN']: MATCH
+mutation col_shift: fired ['PL2', 'RC6', 'RC6b'], declared ['PL2', 'RC6', 'RC6b']: MATCH
+mutation delta_swap: fired ['RC7'], declared ['RC7']: MATCH
+mutation finder_sign: fired ['AN', 'PL1', 'PL2', 'RC2', 'RC3', 'RC4', 'RC5', 'RC6', 'RC6b', 'RC7', 'RC8'], declared ['AN', 'PL1', 'PL2', 'RC2', 'RC3', 'RC4', 'RC5', 'RC6', 'RC6b', 'RC7', 'RC8']: MATCH
+mutation flux_sign: fired ['RC4'], declared ['RC4']: MATCH
+mutation hm_swap: fired ['AN', 'PL1', 'PL2', 'RC4', 'RC5', 'RC6', 'RC6b', 'RC7', 'RC8'], declared ['AN', 'PL1', 'PL2', 'RC4', 'RC5', 'RC6', 'RC6b', 'RC7', 'RC8']: MATCH
+mutation i40_shift: fired ['RC1'], declared ['RC1']: MATCH
+mutation interp_shift: fired ['AN', 'PL1', 'PL2', 'RC6', 'RC6b', 'RC7', 'RC8'], declared ['AN', 'PL1', 'PL2', 'RC6', 'RC6b', 'RC7', 'RC8']: MATCH
+mutation mass_exponent: fired ['PL1', 'RC3', 'RC4'], declared ['PL1', 'RC3', 'RC4']: MATCH
+mutation no_zoom: fired ['PL1', 'RC5', 'RC6', 'RC6b', 'RC7', 'RC8'], declared ['PL1', 'RC5', 'RC6', 'RC6b', 'RC7', 'RC8']: MATCH
+mutation pstar_off: fired ['RC2', 'RC3', 'RC4', 'RC5', 'RC6', 'RC6b', 'RC7', 'RC8'], declared ['RC2', 'RC3', 'RC4', 'RC5', 'RC6', 'RC6b', 'RC7', 'RC8']: MATCH
+mutation rcut_off: fired ['PL3'], declared ['PL3']: MATCH
+mutation short_limit: fired ['RC5', 'RC8'], declared ['RC5', 'RC8']: MATCH
+mutation theta_coef: fired ['AN', 'PL1', 'PL2', 'PL3', 'RC2', 'RC3', 'RC4', 'RC5', 'RC6', 'RC6b', 'RC7', 'RC8'], declared ['AN', 'PL1', 'PL2', 'PL3', 'RC2', 'RC3', 'RC4', 'RC5', 'RC6', 'RC6b', 'RC7', 'RC8']: MATCH
+mutation time_unit: fired ['RC2'], declared ['RC2']: MATCH
