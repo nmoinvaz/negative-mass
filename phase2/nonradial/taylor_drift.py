@@ -82,12 +82,14 @@ def make_problem_class():
                      PolarProblem uses the star's J up to r = star.R (= 60), which is every r of that plane
         mext         M_ext replaced after construction (alpha_m and the lapse ratio stay the star's)
         noise_ulp    every entry of every J the integrator evaluates is multiplied by 1 + noise_ulp 2^-53 xi, xi standard normal
-                     (numpy default_rng(noise_seed)): rounding noise of the size and kind of f64 arithmetic, planted at a stated amplitude"""
+                     (numpy default_rng(noise_seed)): rounding noise relative to each entry, planted at a stated amplitude
+        noise_row    every nonzero entry J_ij gets the absolute noise noise_row 2^-53 xi max_j |J_ij| (xi standard normal, the row's largest entry):
+                     the size `jround` measures for the generated J in f64 (rms 1.0 ulp of the row maximum)"""
 
-        def __init__(self, star, l, rm=None, atol=1e-14, extra_chunks=0, vac_scalar=False, mext=None, noise_ulp=0.0, noise_seed=0, **kw):
+        def __init__(self, star, l, rm=None, atol=1e-14, extra_chunks=0, vac_scalar=False, mext=None, noise_ulp=0.0, noise_seed=0, noise_row=0.0, **kw):
             super().__init__(star, l, rm=rm, **kw)
             self.atol, self.extra_chunks, self.vac_scalar = atol, extra_chunks, vac_scalar
-            self.noise_ulp, self.rng = noise_ulp, np.random.default_rng(noise_seed)
+            self.noise_ulp, self.noise_row, self.rng = noise_ulp, noise_row, np.random.default_rng(noise_seed)
             if mext is not None:
                 self.Mext = float(mext)
 
@@ -95,6 +97,9 @@ def make_problem_class():
             Jm = super().J(r, s)
             if self.noise_ulp:
                 Jm = Jm * (1.0 + self.noise_ulp * 2.0 ** -53 * self.rng.standard_normal(Jm.shape))
+            if self.noise_row:
+                scale = np.abs(Jm).max(axis=1, keepdims=True)
+                Jm = Jm + np.where(Jm != 0.0, self.noise_row * 2.0 ** -53 * scale * self.rng.standard_normal(Jm.shape), 0.0)
             return Jm
 
         def _integrate_plane(self, Y, ra, rb, s, nchunks=None, Jfun=None):
@@ -180,13 +185,13 @@ PLANTS = {
 }
 
 
-def build(l, variant, plant, rtol, steps_path, atol=1e-14, extra_chunks=0, rm_from=None, noise_ulp=0.0, noise_seed=0):
+def build(l, variant, plant, rtol, steps_path, atol=1e-14, extra_chunks=0, rm_from=None, noise_ulp=0.0, noise_seed=0, noise_row=0.0):
     """a DriftProblem for the case. rm_from: None (PolarProblem's own grid rule on the plant's star), or 'crate' (the crate's r_m, passed in)"""
     DP = make_problem_class()
     pl = PLANTS[plant]
     star = scipy_star() if pl["star"] == "sci" else crate_star(steps_path)
     kw = dict(rtol=rtol, phi_cut=VARIANTS[variant]["phi_cut"], atol=atol, extra_chunks=extra_chunks, vac_scalar=pl["vac"],
-              noise_ulp=noise_ulp, noise_seed=noise_seed)
+              noise_ulp=noise_ulp, noise_seed=noise_seed, noise_row=noise_row)
     rm = RM[variant] if rm_from == "crate" else None
     pp = DP(star, l, rm=rm, **kw)
     if pl["mext"] != "star":
@@ -220,7 +225,7 @@ def run_cases(args):
                 for pl in args.plants:
                     for sd in args.noise_seeds:
                         cases.append(dict(l=args.l, gamma=g, variant=v, rtol=rtol, plant=pl, atol=args.atol, extra_chunks=args.extra_chunks,
-                                          rm_from=args.rm_from, noise_ulp=args.noise_ulp, noise_seed=sd))
+                                          rm_from=args.rm_from, noise_ulp=args.noise_ulp, noise_seed=sd, noise_row=args.noise_row))
     signal.signal(signal.SIGALRM, _alarm)
     for c in cases:
         if case_key(c) in done:
@@ -229,7 +234,7 @@ def run_cases(args):
         rec = dict(c, host=os.uname().nodename, load=os.getloadavg()[0])
         try:
             signal.alarm(int(args.max_seconds))
-            pp = build(c["l"], c["variant"], c["plant"], c["rtol"], args.steps, c["atol"], c["extra_chunks"], c["rm_from"], c["noise_ulp"], c["noise_seed"])
+            pp = build(c["l"], c["variant"], c["plant"], c["rtol"], args.steps, c["atol"], c["extra_chunks"], c["rm_from"], c["noise_ulp"], c["noise_seed"], c["noise_row"])
             t1 = time.time()
             D = pp.D(c["gamma"])
             signal.alarm(0)
@@ -290,7 +295,7 @@ def planted_exact(gamma, mp_dps=90):
     return mp.det(M) * sy * sz
 
 
-def planted_scipy(gamma, rtol, atol, L, Lz):
+def planted_scipy(gamma, rtol, atol, L, Lz, noise_ulp=0.0, seed=0):
     """scipy's chunked DOP853 plane integration (PolarProblem._integrate_plane, unchanged) on the planted system"""
     import taylor_polar as TP
     DP = make_problem_class()
@@ -304,9 +309,15 @@ def planted_scipy(gamma, rtol, atol, L, Lz):
 
     pp = DP(_Star(), 5, rm=L, r0=1e-3, rtol=rtol, atol=atol)
     A = np.array([[float(TP.planted_A(gamma)[i, j]) for j in range(6)] for i in range(6)])
-    Jf = lambda r, s: A
+    rng = np.random.default_rng(seed)
+    if noise_ulp:
+        Jf = lambda r, s: A * (1.0 + noise_ulp * 2.0 ** -53 * rng.standard_normal(A.shape))   # as DriftProblem.J's planted noise
+    else:
+        Jf = lambda r, s: A
     Y, py = pp._integrate_plane(np.array(TP.Y0, dtype=float).T, 0.0, L, gamma, Jfun=Jf)
     Z, pz = pp._integrate_plane(np.array(TP.Z0, dtype=float).T, L + Lz, L, gamma, Jfun=Jf)
+    R = Z - Y @ (Y.T @ Z)
+    planted_scipy.sines = [float(x) for x in np.linalg.svd(R, compute_uv=False)]    # the principal angles of the planes scipy produced
     return float(np.linalg.det(np.hstack([Y, Z])) * py * pz)
 
 
@@ -317,20 +328,21 @@ def run_planted(args):
         for line in open(args.out):
             if line.startswith("{"):
                 o = json.loads(line)
-                done.add((o["gamma"], o["rtol"], o["atol"], o["L"]))
+                done.add((o["gamma"], o["rtol"], o["atol"], o["L"], o.get("noise_ulp", 0.0), o.get("noise_seed", 0)))
     for rtol in args.rtols:
         for g in args.gammas:
-            if (g, rtol, args.atol, args.L) in done:
-                continue
-            t = time.time()
-            ex = planted_exact(g)
-            Lz = 30.0 / g
-            D = planted_scipy(g, rtol, args.atol, args.L, Lz)
-            rec = dict(gamma=g, rtol=rtol, atol=args.atol, L=args.L, Lz=Lz, D=D, D_exact=mp.nstr(ex, 30), err=float(abs(mp.mpf(D) / ex - 1)),
-                       wall=time.time() - t, host=os.uname().nodename)
-            print(json.dumps(rec), flush=True)
-            with open(args.out, "a") as fp:
-                fp.write(json.dumps(rec) + "\n")
+            for sd in args.noise_seeds:
+                if (g, rtol, args.atol, args.L, args.noise_ulp, sd) in done:
+                    continue
+                t = time.time()
+                ex = planted_exact(g)
+                Lz = 30.0 / g
+                D = planted_scipy(g, rtol, args.atol, args.L, Lz, args.noise_ulp, sd)
+                rec = dict(gamma=g, rtol=rtol, atol=args.atol, L=args.L, Lz=Lz, D=D, D_exact=mp.nstr(ex, 30), err=float(abs(mp.mpf(D) / ex - 1)),
+                           noise_ulp=args.noise_ulp, noise_seed=sd, sines=planted_scipy.sines, wall=time.time() - t, host=os.uname().nodename)
+                print(json.dumps(rec), flush=True)
+                with open(args.out, "a") as fp:
+                    fp.write(json.dumps(rec) + "\n")
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -393,8 +405,8 @@ def load_scipy(d):
     return out
 
 
-def sget(sc, g, v, rtol, plant="sci", atol=1e-14, extra=0, rm_from=None, l=5, noise=0.0, seed=0):
-    return sc.get((l, g, v, rtol, plant, atol, extra, rm_from, noise, seed))
+def sget(sc, g, v, rtol, plant="sci", atol=1e-14, extra=0, rm_from=None, l=5, noise=0.0, seed=0, row=0.0):
+    return sc.get((l, g, v, rtol, plant, atol, extra, rm_from, noise, seed, row))
 
 
 def crate_ref(crate, lane, v, g):
@@ -435,10 +447,12 @@ def check_IDENT(steps):
     d3 = DP(st, l, extra_chunks=1).D(g)
     d4 = DP(st, l, noise_ulp=1.0, noise_seed=1).D(g)
     d5 = DP(st, l, noise_ulp=1.0, noise_seed=1).D(g)
-    ok = (d0 == d1) and (d2 != d0) and (d3 != d0) and (d4 != d0) and (d4 == d5)
+    d6 = DP(st, l, noise_row=1.0, noise_seed=1).D(g)
+    d7 = DP(st, l, noise_row=1.0, noise_seed=1).D(g)
+    ok = (d0 == d1) and (d2 != d0) and (d3 != d0) and (d4 != d0) and (d4 == d5) and (d6 != d0) and (d6 == d7)
     report("IDENT", ok, f"(l, gamma) = ({l}, {g:g}): PolarProblem D {d0!r}, DriftProblem with no knob {d1!r} (equal: {d0 == d1}); atol 1e-6 moves D by "
-           f"{fmt(abs(d2 / d0 - 1))}, one extra chunk by {fmt(abs(d3 / d0 - 1))}, 1 ulp of planted noise by {fmt(abs(d4 / d0 - 1))} "
-           f"(each must move it), the same seed again gives the same D: {d4 == d5}")
+           f"{fmt(abs(d2 / d0 - 1))}, one extra chunk by {fmt(abs(d3 / d0 - 1))}, 1 ulp of planted noise by {fmt(abs(d4 / d0 - 1))}, "
+           f"1 ulp of the row maximum by {fmt(abs(d6 / d0 - 1))} (each must move it), the same seed again gives the same D: {d4 == d5 and d6 == d7}")
 
 
 def check_CS(steps):
@@ -544,18 +558,19 @@ def verdicts(sc, crate, plc):
     pl13 = [classify_plant(gap(sget(sc, g, v, 1e-13)["D"], ref(v, g)), gap(sget(sc, g, v, 1e-13, "crate")["D"], ref(v, g))) for g, v in cells]
     st["H2"] = "supported" if all(mv) and all(x == "removes" for x in pl13) else ("ruled out" if sum(mv) <= 1 else "undecided")
     lines.append(f"H2 the star and M_ext as inputs: the crate's star moves D beyond 3 eta in {sum(mv)} of 6 cells; the gap at rtol 1e-13 with the plant {pl13}; {st['H2']}")
-    # H3: rounding noise in J, amplified by D's conditioning
+    # H3: rounding noise in J, amplified by D's conditioning: planted at the measured amplitude (1 ulp of the row maximum, `jround`)
     nz = {}
     for g in (1000.0, 3000.0):
         d0 = sget(sc, g, "base", 1e-10)["D"]
         for u in (1.0, 0.1):
-            xs = [abs(r["D"] / d0 - 1) for (l_, g_, v_, rt, pl_, at, ex, rf, nu, sd), r in sc.items() if (g_, v_, rt, pl_, at, ex, nu) == (g, "base", 1e-10, "sci", 1e-14, 0, u) and sd > 0]
+            xs = [abs(r["D"] / d0 - 1) for (l_, g_, v_, rt, pl_, at, ex, rf, nu, sd, nr), r in sc.items()
+                  if (g_, v_, rt, pl_, at, ex, nu, nr) == (g, "base", 1e-10, "sci", 1e-14, 0, 0.0, u) and sd > 0]
             nz[(g, u)] = float(np.sqrt(np.mean(np.square(xs)))) if xs else None
     r1 = [nz[(g, 1.0)] / eta0[(g, "base")] for g in (1000.0, 3000.0) if nz.get((g, 1.0))]
     lin = nz.get((1000.0, 0.1)) is not None and nz.get((1000.0, 1.0)) is not None and nz[(1000.0, 0.1)] <= CRIT["NOISE_LINEAR"] * nz[(1000.0, 1.0)]
     st["H3"] = ("supported" if len(r1) == 2 and all(x >= CRIT["NOISE_ACCOUNTS"] for x in r1) and lin else
                 "ruled out" if len(r1) == 2 and all(x <= CRIT["NOISE_NOT"] for x in r1) else "undecided")
-    lines.append(f"H3 rounding noise in J: rms |D(noise)/D - 1| at 1 ulp over eta {['%.2f' % x for x in r1]}, 0.1 ulp scatter {nz.get((1000.0, 0.1))} against 1 ulp {nz.get((1000.0, 1.0))} (linear: {lin}); {st['H3']}")
+    lines.append(f"H3 rounding noise in J (1 ulp of the row maximum): rms |D(noise)/D - 1| over eta {['%.2f' % x for x in r1]}, 0.1 ulp scatter {nz.get((1000.0, 0.1))} against 1 ulp {nz.get((1000.0, 1.0))} (linear: {lin}); {st['H3']}")
     # H4: the BVP star's kinks make the integrator's error erratic: eta falls when the star is smooth
     eta1 = {c: abs(sget(sc, c[0], c[1], 1e-10, "crate", extra=1)["D"] / sget(sc, c[0], c[1], 1e-10, "crate")["D"] - 1) for c in cells}
     rr = [eta1[c] / eta0[c] for c in cells]
@@ -563,6 +578,14 @@ def verdicts(sc, crate, plc):
     nhigh = sum(1 for x in rr if x >= CRIT["KINK_NONE"])
     st["H4"] = "supported" if nlow >= 5 else ("ruled out" if nhigh >= 5 else "undecided")
     lines.append(f"H4 the BVP star's kinks: eta(crate star) / eta(scipy star) per cell {['%.2f' % x for x in rr]}; {st['H4']}")
+    # H5: scipy's absolute tolerance (atol 1e-14) sets the plane error: atol 1e-17 at rtol 1e-13 against atol 1e-14 at rtol 1e-13, three cells
+    try:
+        lab5 = [classify_plant(gap(sget(sc, g, v, 1e-13)["D"], ref(v, g)), gap(sget(sc, g, v, 1e-13, atol=1e-17)["D"], ref(v, g)))
+                for g, v in ((1000.0, "base"), (1000.0, "phi"), (3000.0, "base"))]
+        st["H5"] = "supported" if all(x == "removes" for x in lab5) else ("ruled out" if all(x == "none" for x in lab5) else "undecided")
+    except TypeError:
+        lab5, st["H5"] = "not run", "undecided"
+    lines.append(f"H5 scipy's atol: the gap with atol 1e-17 against atol 1e-14 at rtol 1e-13, per cell {lab5}; {st['H5']}")
     return st, lines
 
 
@@ -609,12 +632,12 @@ def check_COMPLETE(sc, crate, need):
 # ---------------------------------------------------------------------------------------------------------------
 # the declared grid and the checks and tables over it
 # ---------------------------------------------------------------------------------------------------------------
-def K(g, v, rtol, plant="sci", atol=1e-14, extra=0, noise=0.0, seed=0):
+def K(g, v, rtol, plant="sci", atol=1e-14, extra=0, noise=0.0, seed=0, row=0.0):
     """a scipy case's key (case_key's tuple), l = 5, r_m by PolarProblem's own rule"""
-    return (5, g, v, rtol, plant, atol, extra, None, noise, seed)
+    return (5, g, v, rtol, plant, atol, extra, None, noise, seed, row)
 
 
-CORE = ["P0", "P1", "N0", "N1", "NOISE"]
+CORE = ["P0", "P1", "N0", "N1", "NOISE", "NOISEROW"]
 
 
 def grid_cases():
@@ -628,6 +651,8 @@ def grid_cases():
     out["N1"] = [K(g, v, 1e-10, "crate", extra=1) for g in G for v in V]
     out["NOISE"] = ([K(1000.0, "base", 1e-10, noise=1.0, seed=s) for s in (1, 2, 3)] + [K(1000.0, "base", 1e-10, noise=0.1, seed=s) for s in (1, 2)]
                     + [K(3000.0, "base", 1e-10, noise=1.0, seed=s) for s in (1, 2)])
+    out["NOISEROW"] = ([K(1000.0, "base", 1e-10, row=1.0, seed=s) for s in (1, 2, 3)] + [K(1000.0, "base", 1e-10, row=0.1, seed=s) for s in (1, 2)]
+                       + [K(3000.0, "base", 1e-10, row=1.0, seed=s) for s in (1, 2)])
     out["X_N0R13"] = [K(1000.0, v, 1e-13, extra=1) for v in V] + [K(3000.0, "base", 1e-13, extra=1)]
     out["X_P2"] = [K(g, v, 1e-10, "sci_vac") for g in (1000.0, 3000.0) for v in V]
     out["X_ATOL"] = [K(1000.0, v, 1e-13, atol=1e-17) for v in V] + [K(3000.0, "base", 1e-13, atol=1e-17)]
@@ -713,6 +738,19 @@ def run_report(args):
     block("NULL: P0 with one extra chunk (the same problem on another chunk grid), rtol 1e-10", "sci", [1e-10], extra=1)
     block("P2: scipy's star, the exterior scalar plane in vacuum as the crate integrates it, rtol 1e-10", "sci_vac", [1e-10])
 
+    P("\n# every realization per cell, signed D/D_crate - 1 (atol 1e-14, no planted noise): scipy's star (P0 at each rtol, N0, X_N0R13) and the crate's star (P1, N1, X_P1R)."
+      "\n# n, mean, standard deviation (ddof 1), and mean / (std / sqrt n): a mean beyond about 2 says the realizations share an offset")
+    for plant, title in (("sci", "scipy's star"), ("crate", "the crate's star")):
+        for g in G:
+            for v in V:
+                xs = []
+                for k, r in sorted(sc.items(), key=lambda kv: (kv[0][3], kv[0][6])):
+                    if k[1] == g and k[2] == v and k[4] == plant and k[5] == 1e-14 and k[8] == 0.0 and k[10] == 0.0:
+                        xs.append(float(mp.mpf(r["D"]) / ref(v, g) - 1))
+                if len(xs) >= 2:
+                    m, sd = float(np.mean(xs)), float(np.std(xs, ddof=1))
+                    P(f"  {title:>16s} gamma {g:g} {v:>4s}: n {len(xs)}  mean {m:+.2e}  std {sd:.2e}  mean/(std/sqrt n) {m / (sd / np.sqrt(len(xs))):+.1f}   values " + " ".join(f"{x:+.1e}" for x in xs))
+
     P("\n# the rtol curve per cell: gap(1e-13) / gap(1e-10) and its label (truncation <= %g, floor >= %g)" % (CRIT["TRUNC_RATIO"], CRIT["FLOOR_RATIO"]))
     labels = []
     for g in G:
@@ -770,16 +808,26 @@ def run_report(args):
         P("\n# scipy's integrator on the planted system (taylor_polar P1's A, L = 24.1), error against the invariant subspaces at 90 digits")
         for line in open(pl):
             o = json.loads(line)
-            P(f"  gamma {o['gamma']:g} rtol {o['rtol']:g} atol {o['atol']:g}: D {o['D']:+.10e} exact {o['D_exact'][:16]}  error {o['err']:.1e}  ({o['wall']:.0f} s)")
-            plc[(o["gamma"], o["rtol"])] = o["err"]
+            nz = o.get("noise_ulp", 0.0)
+            P(f"  gamma {o['gamma']:g} rtol {o['rtol']:g} atol {o['atol']:g}" + (f" planted noise {nz:g} ulp seed {o['noise_seed']}" if nz else "")
+              + f": D {o['D']:+.10e} exact {o['D_exact'][:16]}  error {o['err']:.1e}"
+              + (f"  sines {o['sines'][0]:.2e} {o['sines'][1]:.2e} {o['sines'][2]:.2e}, error * min sine {o['err'] * min(o['sines']):.1e}" if "sines" in o else "")
+              + f"  ({o['wall']:.0f} s)")
+            if not nz:
+                plc[(o["gamma"], o["rtol"])] = o["err"]
 
-    P("\n# planted rounding noise in J (scipy's star, rtol 1e-10): |D / D(no noise) - 1|")
+    P("\n# planted rounding noise in J (scipy's star, base, rtol 1e-10): |D / D(no noise) - 1|; `row` is the amplitude in ulps of the row maximum (the size `jround` measures), `entry` in ulps of each entry")
     for g in (1000.0, 3000.0):
         d0 = sget(sc, g, "base", 1e-10)
-        for u in (1.0, 0.1):
-            for (l_, g_, v_, rt, pl_, at, ex, rf, nu, sd), r in sorted(sc.items(), key=lambda kv: kv[0][-1]):
-                if (g_, v_, rt, pl_, at, ex, nu) == (g, "base", 1e-10, "sci", 1e-14, 0, u) and sd > 0 and d0:
-                    P(f"  gamma {g:g} noise {u:g} ulp seed {sd}: {abs(r['D'] / d0['D'] - 1):.1e}  (gap {gap(r['D'], ref('base', g)):.1e})")
+        for kind in ("row", "entry"):
+            for u in (1.0, 0.1):
+                xs = []
+                for (l_, g_, v_, rt, pl_, at, ex, rf, nu, sd, nr), r in sorted(sc.items(), key=lambda kv: kv[0][-2]):
+                    if (g_, v_, rt, pl_, at, ex) == (g, "base", 1e-10, "sci", 1e-14, 0) and sd > 0 and d0 and ((nr == u and nu == 0.0) if kind == "row" else (nu == u and nr == 0.0)):
+                        xs.append(abs(r["D"] / d0["D"] - 1))
+                        P(f"  gamma {g:g} {kind} {u:g} ulp seed {sd}: {xs[-1]:.1e}  (gap {gap(r['D'], ref('base', g)):.1e})")
+                if xs:
+                    P(f"  gamma {g:g} {kind} {u:g} ulp: rms {float(np.sqrt(np.mean(np.square(xs)))):.1e} over {len(xs)} seeds")
     try:
         st, lines = verdicts(sc, crate, plc)
         P("\n# verdicts by the declared rules")
@@ -790,9 +838,46 @@ def run_report(args):
         P(f"\n# verdicts: not computed, a case is missing ({type(e).__name__}: {e})")
 
 
+# ---------------------------------------------------------------------------------------------------------------
+# the rounding error of the generated J in f64: J_and_h at the inputs the integrator gives it, against the same source at 60 digits
+# ---------------------------------------------------------------------------------------------------------------
+def run_jround(args):
+    """for each gamma: over `n` radii in [0.5, r_m] and the 36 entries of J (l = 5, scipy's star): |J_f64 - J_60digits| / |J_60digits| in units of 2^-53,
+    rms and max over the entries that are not exactly zero, the worst entry, and the same error relative to the largest entry of its row"""
+    import mpmath as mp
+    import taylor_polar as TP
+    from polar_matrix_generated import J_and_h
+    mp.mp.dps = 60
+    f = TP.mp_J()
+    st = scipy_star()
+    l = 5
+    LL = l * (l + 1)
+    import background as B
+    for g in args.gammas:
+        ulps, rowrel, worst = [], [], (0.0, None)
+        for r in np.linspace(0.5, RM["phi"], args.n):
+            al, a, ph, u = (float(x[0]) for x in st.bg(np.array([r])))
+            Jf, _ = J_and_h(r, al, a, ph, u, OMEGA, EPS, g, LL, B.LAM, B.MU)
+            Jm, _ = f(mp.mpf(r), mp.mpf(al), mp.mpf(a), mp.mpf(ph), mp.mpf(u), mp.mpf(OMEGA), mp.mpf(EPS), mp.mpf(g), mp.mpf(LL), mp.mpf(B.LAM), mp.mpf(B.MU))
+            for i in range(6):
+                rmax = max(abs(Jm[i, j]) for j in range(6))
+                for j in range(6):
+                    if Jm[i, j] == 0:
+                        continue
+                    e = float(abs(mp.mpf(float(Jf[i, j])) - Jm[i, j]) / abs(Jm[i, j])) / 2.0 ** -53
+                    ulps.append(e)
+                    rowrel.append(float(abs(mp.mpf(float(Jf[i, j])) - Jm[i, j]) / rmax) / 2.0 ** -53)
+                    if e > worst[0]:
+                        worst = (e, (round(float(r), 3), i, j))
+        ulps, rowrel = np.array(ulps), np.array(rowrel)
+        rec = dict(cmd="jround", gamma=g, l=l, radii=args.n, entries=int(ulps.size), rms_ulp=float(np.sqrt(np.mean(ulps ** 2))), max_ulp=float(ulps.max()),
+                   rms_ulp_of_row_max=float(np.sqrt(np.mean(rowrel ** 2))), max_ulp_of_row_max=float(rowrel.max()), worst_entry=worst[1])
+        print(json.dumps(rec), flush=True)
+
+
 def case_key(o):
     return (o["l"], o["gamma"], o["variant"], o["rtol"], o["plant"], o.get("atol", 1e-14), o.get("extra_chunks", 0), o.get("rm_from"),
-            o.get("noise_ulp", 0.0), o.get("noise_seed", 0))
+            o.get("noise_ulp", 0.0), o.get("noise_seed", 0), o.get("noise_row", 0.0))
 
 
 def floats(s):
@@ -814,6 +899,7 @@ def main():
     s.add_argument("--extra-chunks", dest="extra_chunks", type=int, default=0)
     s.add_argument("--rm-from", dest="rm_from", default=None)
     s.add_argument("--noise-ulp", dest="noise_ulp", type=float, default=0.0)
+    s.add_argument("--noise-row", dest="noise_row", type=float, default=0.0)
     s.add_argument("--noise-seeds", dest="noise_seeds", type=lambda x: [int(y) for y in x.split(",")], default=[0])
     s.add_argument("--max-seconds", dest="max_seconds", type=float, default=7200)
     c = sub.add_parser("crate")
@@ -828,6 +914,8 @@ def main():
     q.add_argument("--rtols", type=floats, default=[1e-10, 1e-13])
     q.add_argument("--atol", type=float, default=1e-14)
     q.add_argument("--L", type=float, default=24.1)
+    q.add_argument("--noise-ulp", dest="noise_ulp", type=float, default=0.0)
+    q.add_argument("--noise-seeds", dest="noise_seeds", type=lambda x: [int(y) for y in x.split(",")], default=[0])
     k = sub.add_parser("check")
     k.add_argument("--dir", required=True, help="folder of the scipy*.jsonl files")
     k.add_argument("--crate-dir", dest="crate_dir", default=None, help="folder of the crate's rows_l5_*.jsonl (default --dir)")
@@ -836,6 +924,9 @@ def main():
     k.add_argument("--only", default=None)
     k.add_argument("--mutate", default=None)
     k.add_argument("--synthetic", action="store_true")
+    jr = sub.add_parser("jround")
+    jr.add_argument("--gammas", type=floats, default=[1000.0, 3000.0])
+    jr.add_argument("--n", type=int, default=40)
     rp = sub.add_parser("report")
     rp.add_argument("--dir", required=True)
     rp.add_argument("--crate-dir", dest="crate_dir", default=None)
@@ -844,6 +935,8 @@ def main():
     a = ap.parse_args()
     if a.cmd == "scipy":
         run_cases(a)
+    elif a.cmd == "jround":
+        run_jround(a)
     elif a.cmd == "report":
         run_report(a)
     elif a.cmd == "check":
