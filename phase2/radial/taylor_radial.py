@@ -732,19 +732,26 @@ def check_C(arc_log=None, alpha_max=None):
     if alpha_max:
         stored = {a: v for a, v in stored.items() if a <= alpha_max + 1e-9}
     nbad, ntok, out = 0, 0, []
+    nmiss, halves = 0, []
     worst_rel = 0.0
     for al, st in sorted(stored.items()):
         r = rows.get(round(al, 6))
         if r is None:
             nbad += 3
             ntok += 3
-            out.append(f"  alpha_c={al}: no row (the continuation did not reach it)")
+            nmiss += 3
+            stall = [l for l in lines if l["cmd"] == "step_error"]
+            why = (f"A2: Newton stepping in alpha_c stalled at alpha_c {stall[0]['last_alpha']:.7f}, no other method tried" if stall and al > stall[0]["last_alpha"]
+                   else "the continuation did not reach it")
+            out.append(f"  alpha_c={al}: NOT COMPUTED, no row ({why})")
             continue
         res = []
         for name, tok, val in (("w", st["w"], r["omega"]), ("N", st["N"], r["N"]), ("M", st["M"], r["M"])):
             good, fmt, half = tok_ok(tok, val)
             ntok += 1
             nbad += not good
+            if not good:
+                halves.append(half)
             rel = abs(float(Decimal(val) / Decimal(tok) - 1))
             worst_rel = max(worst_rel, rel)
             res.append(f"{name} {tok}{'=' if good else '!='}{fmt} ({half:.2f}, rel {rel:.1e})")
@@ -755,12 +762,15 @@ def check_C(arc_log=None, alpha_max=None):
     tr = [l for l in lines if l["cmd"] == "arc_track"][0]
     err = [l for l in lines if l["cmd"] in ("arc_error", "step_error")]
     name1 = "Cs" if alpha_max else "C1"
-    n_arc = sum(1 for l in lines if l["cmd"] == "row" and l["_kind"] == "arc")
-    n_step = sum(1 for l in lines if l["cmd"] == "row" and l["_kind"] == "step")
+    n_arc = len({round(l["alpha_c"], 6) for l in lines if l["cmd"] == "row" and l["_kind"] == "arc"})
+    n_step = len({round(l["alpha_c"], 6) for l in lines if l["cmd"] == "row" and l["_kind"] == "step"})
+    lo, hi = (min(halves), max(halves)) if halves else (0.0, 0.0)
     ends = [l for l in lines if l["cmd"] == "step_end"]
     report(name1, nbad == 0 and not err, f"{ntok - nbad} of {ntok} tokens (w, N, M of {len(stored)} stored rows) equal their stored print; largest relative difference {worst_rel:.1e}; "
-           f"{n_arc} rows beside the arclength path (to alpha_c = {max(c['alpha_end'] for c in chunks):.4f} in {len(chunks)} chunks, {sum(c['points'] for c in chunks)} points, "
-           f"{sum(c['refused'] for c in chunks)} refused steps), {n_step} rows by Newton stepping in alpha_c ({sum(e['solves'] for e in ends)} solves, {sum(e['refused'] for e in ends)} refused); "
+           f"{len(halves)} tokens differ, by {lo:.2f} to {hi:.2f} half-units of the last printed digit (the stored rows are boundary-value solutions at 1e-8), {nmiss} are NOT COMPUTED (3 rows without a result); "
+           f"{n_arc} distinct rows beside the arclength path (to alpha_c = {max(c['alpha_end'] for c in chunks):.4f} in {len(chunks)} chunks, {sum(c['points'] for c in chunks)} points, "
+           f"{sum(c['refused'] for c in chunks)} refused steps), {n_step} distinct rows by Newton stepping in alpha_c (over the {len(ends)} stepping stage runs: {sum(e['solves'] for e in ends)} solves, "
+           f"{sum(e['refused'] for e in ends)} refused; rows 2.5, 3.0, 3.5, 3.9 are computed in two stage runs each); "
            f"omega_min on the path {tr['omega_min_point'][1]:.8f} at alpha_c {tr['omega_min_point'][0]:.5f} (path point, not the fold)" + (f"; ERROR {err[0]['err'][:200]}" if err else ""))
     reached = max(c["alpha_end"] for c in chunks)
     if alpha_max:
@@ -787,7 +797,15 @@ def check_F(arc_log=None, alpha_max=None):
         if key not in base or key not in rows:
             nbad += 1
             ntok += 1
-            out.append(f"  alpha_0={al}: not computed")
+            gate = [l for l in lines if l["cmd"] == "mroots_error" and round(l["alpha_c"], 6) == key]
+            stall = [l for l in lines if l["cmd"] == "step_error"]
+            if gate and key in rows:
+                why = f"the star's Newton residual {rows[key]['fnorm']:.2e} is above A1.8's gate 1e-28; A3's supplementary run is outside the gate and gives no verdict"
+            elif stall and al > stall[0]["last_alpha"]:
+                why = f"A2: Newton stepping in alpha_c stalled at alpha_c {stall[0]['last_alpha']:.7f}"
+            else:
+                why = "no scan in the logs"
+            out.append(f"  alpha_0={al}: NOT COMPUTED ({why})")
             continue
         got = [Decimal(x) for x in base[key]["roots"]]
         res = []
@@ -857,7 +875,7 @@ def check_Z(arc_log=None):
             parts.append(f"stored double {fr[0]:.15e} (rel {float(r0) / fr[0] - 1:.1e}); phantom_fd.py's extrapolated FD was {'6.0e-3' if al == 2.0 else '1.04e-2'} off")
         out.append("; ".join(parts))
     print("\n".join(out), flush=True)
-    report("Z", ok_all, "sigma_0^2 at alpha_0 = 2.0 and 3.0 in double-double, with the spread over R x1.5, order 24 at tol 1e-22, a second node layout and the f64 lane (an estimator range over choices of the method, not an enclosure)")
+    report("Z", ok_all, "sigma_0^2 at alpha_0 = 2.0 and 3.0 in double-double, with the spread over R x1.5, order 24 at tol 1e-22, a second node layout and the f64 lane (an estimator range over choices of the method, not an enclosure); the third declared error bar, the independent multishoot eigenvalue solver, is NOT DONE (E2, dd against qd, is its own check)")
 
 
 def check_fold():
