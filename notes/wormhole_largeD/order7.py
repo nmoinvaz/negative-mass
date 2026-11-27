@@ -23,7 +23,8 @@ Parts (the arguments of a run; the checks of omega5.md and of the raw README of 
     values   PL0 .. PL4, SL, RES, M5, RNG (--load=FILE.json,...)
     pslq     PQ1 .. PQ9 and the real PSLQ of the bases Q1 .. Q9 (--bases=Q1,Q3 --no-real --pslq-cap=D)
     remainder R6, R7, X3 against #195's W^2 (--w2raw=inputs_w2_growthD.txt)
-    reduce7  RD1 .. RD7, RD5b, RD5c, LN2, RD8, A7: the finite-part reduction of the integrand of G_7 to masters and its closed form
+    reduce7  RD1 .. RD7, RD5b, LN2, RD8, A7: the finite-part reduction of the integrand of G_7 to masters and its closed form
+    euler7   RD5c: the Euler sums behind three of the masters, numerically, and the exact assembly of the Parseval sum
 Mutations: --mutate=NAME (MUTATIONS below). Exit status 1 when a check fails.
 """
 import json
@@ -1399,33 +1400,6 @@ def check_reduce7(ev=None):
         dmb[key] = digits(mp.mpf(sp.N(masters[key], 110)), vnum)
     report("RD5b", min(dmb.values()) >= 90, "the two identified masters <lt^2 C^2> = pi (3 zeta(3)^2/4 - 95 zeta(6)/96) and <lt^3 D3> = pi (9 zeta(3)^2/16 - 11 zeta(6)/4) (found by PSLQ at 55 digits "
            "in {pi^7, pi zeta(3)^2}) against quadrature at 100 digits, digits: " + ", ".join(f"({','.join(str(i) for i in k)}) {float(v):.1f}" for k, v in dmb.items()) + f" (bar 90; {time.time() - t2b:.0f} s)")
-    # RD5c: the Euler sums behind <K2^2>, <lt^3 D3> and the Parseval form of <lt^2 C^2>, numerically (40 digits, Euler-Maclaurin)
-    t2c = time.time()
-    mp.mp.dps = 40
-    z2m, z3m, z4m, z6m = mp.zeta(2), mp.zeta(3), mp.zeta(4), mp.zeta(6)
-    Hn = lambda n: mp.digamma(n + 1) + mp.euler  # noqa: E731
-    H2n = lambda n: z2m - mp.zeta(2, n + 1)  # noqa: E731
-    es = {"H/n^3 = 5 zeta(4)/4": (mp.nsum(lambda n: Hn(n) / n**3, [1, mp.inf], method="e"), mp.mpf(5) / 4 * z4m),
-          "H/n^5 = 7 zeta(6)/4 - zeta(3)^2/2": (mp.nsum(lambda n: Hn(n) / n**5, [1, mp.inf], method="e"), mp.mpf(7) / 4 * z6m - z3m**2 / 2),
-          "H^2/n^4 = 97 zeta(6)/24 - 2 zeta(3)^2": (mp.nsum(lambda n: Hn(n) ** 2 / n**4, [1, mp.inf], method="e"), mp.mpf(97) / 24 * z6m - 2 * z3m**2),
-          "H2/n^2 = 7 zeta(4)/4": (mp.nsum(lambda n: H2n(n) / n**2, [1, mp.inf], method="e"), mp.mpf(7) / 4 * z4m),
-          "H2/n^4 = zeta(3)^2 - zeta(6)/3": (mp.nsum(lambda n: H2n(n) / n**4, [1, mp.inf], method="e"), z3m**2 - z6m / 3),
-          "H2^2/n^2 = 19 zeta(6)/24 + zeta(3)^2": (mp.nsum(lambda n: H2n(n) ** 2 / n**2, [1, mp.inf], method="e"), mp.mpf(19) / 24 * z6m + z3m**2),
-          "H H2/n^3 = 5 zeta(3)^2/2 - 101 zeta(6)/48": (mp.nsum(lambda n: Hn(n) * H2n(n) / n**3, [1, mp.inf], method="e"), mp.mpf(5) / 2 * z3m**2 - mp.mpf(101) / 48 * z6m)}
-    sm2 = mp.nsum(lambda m: ((H2n(m) - z2m) / m + 2 * Hn(m) / m**2 - mp.mpf(3) / (2 * m**3)) ** 2, [1, mp.inf], method="e")
-    de = {k: digits(b, a) for k, (a, b) in es.items()}
-    # the Parseval sum assembled exactly from the closed forms of the Euler sums (sympy)
-    Z2, Z3, Z4, Z6 = sp.pi**2 / 6, sp.zeta(3), sp.pi**4 / 90, sp.pi**6 / 945
-    E3, E5, E42, T2, T5, T1, T3 = sp.Rational(5, 4) * Z4, sp.Rational(7, 4) * Z6 - Z3**2 / 2, sp.Rational(97, 24) * Z6 - 2 * Z3**2, sp.Rational(7, 4) * Z4, Z3**2 - Z6 / 3, \
-        sp.Rational(19, 24) * Z6 + Z3**2, sp.Rational(5, 2) * Z3**2 - sp.Rational(101, 48) * Z6
-    if MUTATE == "rd_master":
-        T3 = sp.Rational(5, 2) * Z3**2 - sp.Rational(100, 48) * Z6
-    ssum = T1 - 2 * Z2 * T2 + Z2**3 + 4 * E42 + sp.Rational(9, 4) * Z6 + 4 * T3 - 4 * Z2 * E3 - 3 * T5 + 3 * Z2 * Z4 - 6 * E5
-    rs = sp.simplify(sp.expand(ssum - (3 * Z3**2 - sp.Rational(95, 24) * Z6)))
-    dA = digits(mp.pi * (mp.mpf(3) / 4 * z3m**2 - mp.mpf(95) / 96 * z6m), mp.pi / 4 * sm2)
-    report("RD5c", min(de.values()) >= 30 and dA >= 30 and rs == 0, "the Euler sums used, against their closed forms (Euler-Maclaurin at 40 digits), digits: " + ", ".join(f"{k}: {float(v):.1f}" for k, v in de.items())
-           + f"; (pi/4) sum_m s_m^2, s_m = (-1)^m[(H2_m - zeta(2))/m + 2 H_m/m^2 - 3/(2m^3)], against pi (3 zeta(3)^2/4 - 95 zeta(6)/96): {float(dA):.1f} digits; "
-           f"sum s_m^2 assembled from the closed forms of the Euler sums, minus 3 zeta(3)^2 - 95 zeta(6)/24: sympy residual {rs} (bar 30 digits, residual 0; {time.time() - t2c:.0f} s)")
     # RD6: the reduction numerically: sum of the boundary terms + quadrature of I_final at Omega5 = 0 against method A
     mp.mp.dps = 45
     Jtn = [mp.mpf(sp.N(j, 60)) for j in Jt]
@@ -1509,6 +1483,36 @@ def check_reduce7(ev=None):
     return om5_a
 
 
+def check_euler7():
+    """RD5c: the Euler sums behind <K2^2>, <lt^3 D3> and the Parseval form of <lt^2 C^2>"""
+    t2c = time.time()
+    mp.mp.dps = 34
+    z2m, z3m, z4m, z6m = mp.zeta(2), mp.zeta(3), mp.zeta(4), mp.zeta(6)
+    Hn = lambda n: mp.digamma(n + 1) + mp.euler  # noqa: E731
+    H2n = lambda n: z2m - mp.zeta(2, n + 1)  # noqa: E731
+    es = {"H/n^3 = 5 zeta(4)/4": (mp.nsum(lambda n: Hn(n) / n**3, [1, mp.inf], method="e"), mp.mpf(5) / 4 * z4m),
+          "H/n^5 = 7 zeta(6)/4 - zeta(3)^2/2": (mp.nsum(lambda n: Hn(n) / n**5, [1, mp.inf], method="e"), mp.mpf(7) / 4 * z6m - z3m**2 / 2),
+          "H^2/n^4 = 97 zeta(6)/24 - 2 zeta(3)^2": (mp.nsum(lambda n: Hn(n) ** 2 / n**4, [1, mp.inf], method="e"), mp.mpf(97) / 24 * z6m - 2 * z3m**2),
+          "H2/n^2 = 7 zeta(4)/4": (mp.nsum(lambda n: H2n(n) / n**2, [1, mp.inf], method="e"), mp.mpf(7) / 4 * z4m),
+          "H2/n^4 = zeta(3)^2 - zeta(6)/3": (mp.nsum(lambda n: H2n(n) / n**4, [1, mp.inf], method="e"), z3m**2 - z6m / 3),
+          "H2^2/n^2 = 19 zeta(6)/24 + zeta(3)^2": (mp.nsum(lambda n: H2n(n) ** 2 / n**2, [1, mp.inf], method="e"), mp.mpf(19) / 24 * z6m + z3m**2),
+          "H H2/n^3 = 5 zeta(3)^2/2 - 101 zeta(6)/48": (mp.nsum(lambda n: Hn(n) * H2n(n) / n**3, [1, mp.inf], method="e"), mp.mpf(5) / 2 * z3m**2 - mp.mpf(101) / 48 * z6m)}
+    sm2 = mp.nsum(lambda m: ((H2n(m) - z2m) / m + 2 * Hn(m) / m**2 - mp.mpf(3) / (2 * m**3)) ** 2, [1, mp.inf], method="e")
+    de = {k: digits(b, a) for k, (a, b) in es.items()}
+    # the Parseval sum assembled exactly from the closed forms of the Euler sums (sympy)
+    Z2, Z3, Z4, Z6 = sp.pi**2 / 6, sp.zeta(3), sp.pi**4 / 90, sp.pi**6 / 945
+    E3, E5, E42, T2, T5, T1, T3 = sp.Rational(5, 4) * Z4, sp.Rational(7, 4) * Z6 - Z3**2 / 2, sp.Rational(97, 24) * Z6 - 2 * Z3**2, sp.Rational(7, 4) * Z4, Z3**2 - Z6 / 3, \
+        sp.Rational(19, 24) * Z6 + Z3**2, sp.Rational(5, 2) * Z3**2 - sp.Rational(101, 48) * Z6
+    if MUTATE == "rd_master":
+        T3 = sp.Rational(5, 2) * Z3**2 - sp.Rational(100, 48) * Z6
+    ssum = T1 - 2 * Z2 * T2 + Z2**3 + 4 * E42 + sp.Rational(9, 4) * Z6 + 4 * T3 - 4 * Z2 * E3 - 3 * T5 + 3 * Z2 * Z4 - 6 * E5
+    rs = sp.simplify(sp.expand(ssum - (3 * Z3**2 - sp.Rational(95, 24) * Z6)))
+    dA = digits(mp.pi * (mp.mpf(3) / 4 * z3m**2 - mp.mpf(95) / 96 * z6m), mp.pi / 4 * sm2)
+    report("RD5c", min(de.values()) >= 30 and dA >= 30 and rs == 0, "the Euler sums used, against their closed forms (Euler-Maclaurin at 34 digits), digits: " + ", ".join(f"{k}: {float(v):.1f}" for k, v in de.items())
+           + f"; (pi/4) sum_m s_m^2, s_m = (-1)^m[(H2_m - zeta(2))/m + 2 H_m/m^2 - 3/(2m^3)], against pi (3 zeta(3)^2/4 - 95 zeta(6)/96): {float(dA):.1f} digits; "
+           f"sum s_m^2 assembled from the closed forms of the Euler sums, minus 3 zeta(3)^2 - 95 zeta(6)/24: sympy residual {rs} (bar 30 digits, residual 0; {time.time() - t2c:.0f} s)")
+
+
 def main():
     parse(sys.argv[1:])
     mp.mp.dps = 60
@@ -1536,6 +1540,8 @@ def main():
         check_exch7()
     if "reduce7" in PARTS:
         check_reduce7(ev)
+    if "euler7" in PARTS:
+        check_euler7()
     if "pslq" in PARTS:
         check_pslq(ev)
     if "remainder" in PARTS:
