@@ -195,3 +195,30 @@ enter at k = 4); `short_tail` is shared by both B grids so M2 stays; `coarse_B` 
 - Raw: `negative-mass-raw/I26-dh610` (README with the criteria and amendments A1 to A3; `dev_*` the development runs;
   `run_01` … `run_05` the runs of record; `inputs_w2_growthD.txt`; the scratch derivations `dev_12_reduce1` …
   `dev_17_l3ansatz`).
+
+## Coordinator's review
+
+Under review: `wip/i26-omega2` at 5b53626, raw `I26-dh610` at ef60780. Review folder
+`negative-mass-raw/I26-mac-review` (at 7f6b6aa), whose README holds the criteria, committed before the first run of
+`ind26.py`. The changed files are those the brief names.
+
+- **Rerun on the Mac** of the five runs of record, from their `.env` files. Every line equals dh610's except the
+  timings, with the same exit codes. N3 and N4b fail as written there too.
+- **ind26**, run 1, 3 of 3. It shares with this note only mpmath, sympy and README.md's matching conditions.
+  - K1: the order equations, derived again from #195's ℓ-system (Y_l = εw, F w_l = AY + Bw, with w = e^{εl}L), equal
+    `order4.py`'s h_k and dY_k/dl for k = 0 … 4 (sympy residual 0). *Added by the coordinator:* methods A and B share
+    that table, so this checks the one input they have in common, from a different form of the exact system.
+  - K2: a third evaluation. It uses Taylor jets of order 40 in v = √l, with C_k integrated from the throat outward
+    rather than B's tail from the right, and no Chebyshev panels. It gives Ω₀, Ω₁ and Ω₂ equal to −4 ln 2,
+    2π²/3 + 8 ln²2 and 80ζ(3) − (8/3)π² ln 2 − (32/3) ln³2 to 7e-45, 2e-44 and 4e-40, and equal to A70 to 4e-40.
+  - K3: against K2's numbers, the slopes are −4π to 1e-47. G₃(Ω₁ = 0) and G₄(Ω₂ = 0) equal step 7's and step 6's
+    closed forms to 3e-45 and 5e-42. The Clausen integral of step 3 is π³/12 at 60 digits.
+  - The mutations `k1-B`, `short-V` and `clausen` fail exactly their declared targets.
+- **Not met, as ruled:** N3 and N4b as written, by cancellation in the checks themselves. N3g and N4bg, added by the
+  ruling (A1) with the same bars, are met. *Added by the coordinator:* the raw README says it was written after two
+  prototypes had shown the answer. That costs little here, since the target was #195's identified closed form.
+- **What the review does not cover.** ind26 checks the end points of the reduction (G₃ and G₄ in closed form) and the
+  Clausen integral, not the exchange identities E1 and E2 between them. Their independent re-derivation is #209. #25
+  stays open until then: step 7 meets its first three acceptance lines (H5, H6, H7, P1 and the control P3).
+- **Follow-ups:** #208 (Ω₃ from G₅ = 0, this note's recommended task 3), #209 (task 4, and #25), and #210 (Paper III,
+  task 2). README.md's Result, Method and Limits carry an update from this issue (task 2's README part).

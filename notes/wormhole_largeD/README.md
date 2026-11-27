@@ -37,6 +37,17 @@ W^2a^2 = 2(D-3) - 4\ln 2 + \frac{\pi^2/3 + 4\ln^2 2}{D-3} + O(D^{-2}) .
   The `modes_r.py` values of the table below and of growth.csv (D ≥ 20) are low by 2.7e-9 (D = 30) to 6e-6
   (D = 2000); `w2_output.txt` has the 60-digit values.
   *Added by the coordinator:* the "66 ± 6" at D = 1000 above came from those low values.
+- **Update from #26** ([omega2.md](omega2.md)). Ω₂ = 80ζ(3) − (8/3)π² ln 2 − (32/3) ln³2 is **derived**. G₄ = 0, written
+  as one integral of closed forms, reduces by hand to the Clausen integral ∫₀^{π/2} tan θ Cl₂(π − 2θ) dθ = π³/12 and the
+  moments ∫₀^{π/2} lnⁿcos θ dθ. Each step is checked in sympy, or in mpmath at 43 to 45 digits. An evaluation from the
+  hierarchy's definitions, which uses none of the reduction, gives the same Ω₂ to 64 digits, and #195's fit to its 38
+  printed digits. The same steps at order 3 give Ω₁ = 2π²/3 + 8 ln²2 with no Clausen term. Both reductions use the
+  exchange identities E1 and E2, derived in omega2.md and checked numerically; their independent re-derivation is #209.
+  In the form above, the next term is (20ζ(3) − (2/3)π² ln 2 − (8/3) ln³2)/(D − 3)². The remainder after it is
+  Ω₃/(2(D − 3))³, with Ω₃ = −652.84010757006 a fit (#195), not the "about 73/(2(D − 3))²" above.
+  *Added by the coordinator:* the review derived the order equations again from #195's ℓ-system and integrated them by
+  its own Taylor stepper (raw `I26-mac-review`, ind26). Its Ω₀, Ω₁ and Ω₂ equal the closed forms to 7e-45, 2e-44 and
+  4e-40.
 
 **What it means.**
 - **Faster in higher D.** The e-folding time is a/√(2(D − 3)) at large D. The exact values are 0.846 a (D = 4),
@@ -130,6 +141,10 @@ far zone's *growing* solution. So the mode requires G_k = 0 at every order.
     term vanishes exactly when Ω₀ = −4 ln 2, as it must.
   - G₃(Ω₁) is linear, with slope −4π (computed: −12.5663706143, against −4π = −12.5663706144). G₃ = 0 gives
     **Ω₁ = 10.4233603788** (`order3.py`; the two finer of three grids agree to 10⁻⁹).
+- **Update from #26, orders 3 and 4** ([omega2.md](omega2.md), `order4.py`). Y₃ is closed in Cl₂ and Cl₃, and L₃ also
+  needs Li₂ and Li₃, through ∫₀^θ ln²cos φ dφ. G₄ = 0 gives Ω₂ = 80ζ(3) − (8/3)π² ln 2 − (32/3) ln³2. The integral is
+  evaluated two ways: from the closed forms after the exchange identities E1 and E2, and from the definitions on
+  Chebyshev panels in √ℓ. With E2, the order-3 integral needs no K(u): it reduces to ∫ lnⁿcos θ dθ, n ≤ 2.
 
 **Matching.** The decaying far solution r^{(n+1)/2}K_ν(Wr), expanded in the overlap 1 ≪ R ≪ e^s, gives Y′/Y =
 −1 − (2Ω₀ + 3 ln R)/s + …. The near zone gives the same, so the O(1/s) matching holds automatically. The constraint
@@ -141,6 +156,9 @@ comes only from the absence of the growing term.
 - The massless symmetric member only. The asymmetric (two masses), charged and massive-potential families are not done.
 - The third term's closed form is an identification, not a derivation.
   **Update from #195:** this now holds for the fourth term too (Ω₂, identified above). What changed is the precision.
+  **Update from #26:** both Ω₁ and Ω₂ are now derived (Result). The derivation rests on the exchange identities E1
+  and E2, which are derived in omega2.md and checked numerically, but not yet re-derived independently (#209). Ω₃ is a
+  fit, not identified (#195; #208 computes it from the order-5 integral).
 - **Prior work** (searched only briefly, three web searches). [TS13] give the numbers and say the time scale "becomes
   shorter as n becomes large", but give no formula. No large-D analysis of these wormholes was found. This is not a
   full literature check, and nothing here claims novelty.
@@ -152,6 +170,8 @@ comes only from the absence of the growing term.
 - `modes_r.py`: the r-integration with its convergence check (`logs_modes_r.txt`).
 - `matched.py`: the h_k from the series (`logs_matched.txt`).
 - `order3.py`: Ω₁ (`logs_order3.txt`).
+- `w2_crate/`, `w2_highprec.py`, `w2_highprec.md`: W² to 60 digits at 64 D, and the fit of Ω₁ … Ω₄ (#195, `w2_output.txt`).
+- `order4.py`, `omega2.md`: orders 3 and 4, Ω₂ from G₄ = 0, and its reduction by hand (#26, `order4_output.txt`).
 - `profiles.py`: the mode profiles and the table of growth rates behind Paper III's figure (`profiles.csv`,
   `growth.csv`).
 - `paper_numbers.py`: every number quoted in Paper III, with checks (`logs_paper_numbers.txt`).
