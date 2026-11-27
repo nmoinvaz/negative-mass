@@ -607,7 +607,7 @@ FAMILY_TARGETS = [1.10, 1.15, 1.17, 1.20, 1.25, 1.30] + [round(1.4 + 0.1 * i, 2)
 MODES_TARGETS = [1.10, 1.20, 1.50, 2.00, 2.50, 3.00, 3.50, 3.90, 4.00, 4.015]
 Z_TARGETS = [2.00, 3.00]
 ARC_MAX = 2.0  # Amendment A2: arclength to here; Newton stepping in alpha_c above
-fmt_list = lambda xs: ",".join(f"{x:g}" for x in xs)
+fmt_list = lambda xs: ",".join(repr(float(x)) for x in xs)  # not :g, which keeps 6 digits (4.017906 -> 4.01791)
 # each stage is one child run of at most 3600 s: `arc` (multisolver arclength through the fold) or `step` (Newton, alpha_c stepped with halving)
 STAGES = {
     "arc": dict(cmd="arc", alphas=[x for x in FAMILY_TARGETS if x <= ARC_MAX], modes=[1.10, 1.20, 1.50, 2.00], zvariants=[2.00],
@@ -623,7 +623,9 @@ TAG = None  # --tag=NAME: the jsonl of a stage is RAW/NAME.jsonl (development ru
 def run_stage(name):
     """one stage: the child's JSON lines (also in RAW/<name>[_MUTATE].jsonl as they arrive)"""
     st = STAGES[name]
-    kw = dict(eps=-1, omega=0.66, omega_to=0.45, dw=0.003, alphas=fmt_list(st["alphas"]), modes=fmt_list(st["modes"]), verbose=1, **st["extra"])
+    kw = dict(eps=-1, omega=0.66, omega_to=0.45, dw=0.003, alphas=fmt_list(st["alphas"]), verbose=1, **st["extra"])
+    if st["modes"]:
+        kw["modes"] = fmt_list(st["modes"])
     if st["zvariants"]:
         kw["zvariants"] = fmt_list(st["zvariants"])
     lines = rust(st["cmd"], timeout=3600, tag=f"{TAG or name}{'_' + MUTATE if MUTATE else ''}", **kw)

@@ -37,7 +37,7 @@ impl Args {
         self.get(k).unwrap_or(d)
     }
     pub fn list(&self, k: &str) -> Vec<f64> {
-        self.get(k).map(|s| s.split(',').map(|x| x.parse().unwrap()).collect()).unwrap_or_default()
+        self.get(k).map(|s| s.split(',').filter(|x| !x.is_empty()).map(|x| x.parse().unwrap_or_else(|_| panic!("bad {k}={s}"))).collect()).unwrap_or_default()
     }
 }
 
@@ -424,6 +424,9 @@ fn cmd_arc(a: &Args) {
 /// no arclength. The rows, mode scans and variants are those of `arc`.
 fn cmd_step(a: &Args) {
     use multidouble::dd::DD as D;
+    let targets = a.list("alphas");
+    let modes = a.list("modes");
+    let zvar = a.list("zvariants");
     let eps = a.f("eps", -1.0);
     let omega0 = D::from_f64(a.f("omega", 0.7603));
     let mut cfg = bvp::StarCfg::new(eps);
@@ -442,9 +445,6 @@ fn cmd_step(a: &Args) {
         wcur = wn;
     }
     println!("{{\"cmd\":\"step_start\",\"alpha_c\":{},\"omega\":{},\"t\":{:.1}}}", info.alpha_c.to_f64(), info.omega.to_f64(), t0.elapsed().as_secs_f64());
-    let targets = a.list("alphas");
-    let modes = a.list("modes");
-    let zvar = a.list("zvariants");
     let cfg2 = cfg.clone();
     let mut on_row = |r: &cont::FamRow| row_handler(&cfg2, &modes, &zvar, r);
     let mut log = cont::StepLog::default();

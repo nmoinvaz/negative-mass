@@ -226,7 +226,7 @@ pub struct StepLog {
 }
 
 /// Newton at each stated alpha_c on the alpha_c-pinned layout (`solve_z`), alpha_c stepped up from `start` by at most `hmax`.
-/// A step is taken when Newton converges to fnorm <= 1e-24 and k changes by at most `max_dlnk` in ln k; otherwise the step is
+/// A step is taken when Newton's scaled residual is at most 1e-24 and k changes by at most `max_dlnk` in ln k (not when Newton's own flag, tolerance 1e-28, is set: its floor is 2e-27 to 3e-27 from alpha_c = 3); otherwise the step is
 /// halved, and it grows by 1.3 after each success. The step lands on every target. The stepping stops with an error when the
 /// step falls below 1e-7 (no other method is tried), and `log.last_alpha` is then the last alpha_c reached.
 pub fn step_family(
@@ -253,17 +253,23 @@ pub fn step_family(
             let last = tg - cur.to_f64() <= h;
             let next = if last { tgd } else { cur + DD::from_f64(h) };
             log.solves += 1;
+            let mut why = String::new();
             let ok = match solve_z(cfg, &info.profile(), next, None, false) {
                 Ok(sz) => {
                     let ni = sz.info();
                     let dlnk = (ni.k.to_f64() / info.k.to_f64()).ln().abs();
-                    if ni.converged && *ni.fnorm.last().unwrap() <= 1e-24 && dlnk <= max_dlnk {
+                    let fl = *ni.fnorm.last().unwrap();
+                    if fl <= 1e-24 && dlnk <= max_dlnk {
                         Some(ni)
                     } else {
+                        why = format!("converged {} fnorm {:?} dlnk {:.3}", ni.converged, ni.fnorm.iter().map(|v| format!("{v:.1e}")).collect::<Vec<_>>(), dlnk);
                         None
                     }
                 }
-                Err(_) => None,
+                Err(e) => {
+                    why = format!("error {}", e.chars().take(160).collect::<String>());
+                    None
+                }
             };
             match ok {
                 Some(ni) => {
@@ -283,6 +289,9 @@ pub fn step_family(
                 }
                 None => {
                     log.failures += 1;
+                    if verbose {
+                        eprintln!("step refused at alpha_c {:.8} (h {:.2e}): {}", next.to_f64(), h, why);
+                    }
                     h /= 2.0;
                     if h < 1e-7 {
                         return Err(format!("alpha_c stepping stalled: the step fell below 1e-7 at alpha_c {} (target {tg}, {} refused of {} solves)", cur.to_f64(), log.failures, log.solves));
