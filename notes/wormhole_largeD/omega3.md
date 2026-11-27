@@ -152,3 +152,30 @@ because PSLQ is given the 15 digits the grids share; `wrong_AD` is seen by RD3 a
   concatenated), this note. It imports `PanelB`, the closed forms and the moments from `order4.py`, which is unchanged.
 - Raw: `negative-mass-raw/I208-dh610` (README with the criteria, controls and amendments A1 to A3; `dev_*` the development runs including the sympy scripts `dev_34`, `dev_35` and the numerical method A `dev_28`;
   `run_01` … `run_04` the runs of record; `inputs_w2_growthD.txt`; `assemble_output.py`).
+
+## Coordinator's review
+
+Under review: `wip/i208-omega3` at fd15081, raw `I208-dh610` at ace0b32. Review folder
+`negative-mass-raw/I208-mac-review` (at e9cf98a), whose README holds the criteria, committed before the first run of
+`ind208.py`. The changed files are those the brief names.
+
+- **Rerun on the Mac** of the four runs of record, from their `.env` files. Every line equals dh610's except the
+  timings, with the same exit codes. X1 fails as worded there too.
+- **ind208**, run 1, 3 of 3. It is the review's ind26 carried to order 5, and shares with this note only mpmath, sympy
+  and README.md's matching conditions.
+  - K1: the order equations for k = 0 … 5, derived again from #195's ℓ-system, equal `order5.py`'s h_k and dY_k/dl (sympy
+    residual 0). This includes the new c₅.
+  - K2: a Taylor integration of that hierarchy in √l, with C_k from the throat outward, gives
+    Ω₃ = −652.840107570056125435239303799647361080405. That is within 5.6e-38 of the closed form, and within 9.5e-38 of
+    #195's median. Ω₀ … Ω₂ match their closed forms as in #26's review.
+  - K3: the slopes are −4π at k = 2 … 5, and G₅(Ω₃ = 0)/(4π) matches the closed form to 8.6e-41 relative.
+  - The mutations `k1-B`, `short-V` and `drop-z3` fail exactly their declared targets. Without its −384ζ(3) term the
+    closed form misses the computed Ω₃ by 462.
+- **Not met, as ruled:** X1 as worded. Its reference string was the coordinator's truncation of #195's median to 28
+  decimals; X1b, against the 40-digit median, is met.
+- *Added by the coordinator:* Ω₃ is not of uniform weight. Its −384ζ(3) term has weight 3, so README.md's observation
+  about Ω₀ … Ω₂ stops at three terms; README.md says so.
+- **What the review does not cover.** As in #26's review, ind208 checks the end point of the reduction, not the
+  exchange identities. E3 is new here, and #209 now covers E1, E2 and E3.
+- **Follow-ups.** #201's question, Ω₃ in weight-4 constants, is answered here, and #201 is closed. #210 (Paper III) now
+  includes the fifth term. Ω₄ remains a fit; no task computes it from G₆ yet.

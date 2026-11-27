@@ -4,7 +4,7 @@ each truncation against #195's quad-double W^2 at 64 values of D.
 
     python3 omega_graph.py            (writes omega_coeffs.svg beside this file, prints the numbers)
 
-Omega0, Omega1, Omega2 are the closed forms (README.md, omega2.md); Omega3, Omega4 are #195's fit (w2_output.txt), as are
+Omega0 .. Omega3 are the closed forms (README.md, omega2.md, omega3.md); Omega4 is #195's fit (w2_output.txt), as are
 the W^2 values. Standard library only: decimal at 70 digits for the differences, which fall to about 1e-17 of W^2.
 """
 import math
@@ -49,9 +49,11 @@ def zeta3_dec():
 PI, Q, Z3 = pi_dec(), D_(2).ln(), zeta3_dec()
 out = open(os.path.join(HERE, "w2_output.txt")).read()
 OM = [-4 * Q, 2 * PI**2 / 3 + 8 * Q**2, 80 * Z3 - D_(8) / 3 * PI**2 * Q - D_(32) / 3 * Q**3,
-      D_(re.search(r"Omega3 = (-?[0-9.]+)", out).group(1)), D_(re.search(r"Omega4 = (-?[0-9.]+)", out).group(1))]
-FORM = ["−4 ln 2", "2π²/3 + 8 ln²2", "80ζ(3) − (8/3)π² ln 2 − (32/3) ln³2", "fit (#195)", "fit (#195)"]
-CLOSED = [True, True, True, False, False]
+      22 * PI**4 / 45 + D_(16) / 3 * PI**2 * Q**2 + D_(32) / 3 * Q**4 - 320 * Z3 * Q - 384 * Z3,
+      D_(re.search(r"Omega4 = (-?[0-9.]+)", out).group(1))]
+FORM = ["−4 ln 2", "2π²/3 + 8 ln²2", "80ζ(3) − (8/3)π² ln 2 − (32/3) ln³2",
+        "22π⁴/45 + (16/3)π² ln²2 + (32/3) ln⁴2 − 320ζ(3) ln 2 − 384ζ(3)", "fit (#195)"]
+CLOSED = [True, True, True, True, False]
 ROWS = [(int(m.group(1)), D_(m.group(2)))
         for m in re.finditer(r"^\s+D=(\d+)\s+([0-9.]+)\s+digits qd/od", out, re.M)]
 assert len(ROWS) == 64, len(ROWS)
@@ -98,13 +100,13 @@ for k, o in enumerate(OM):
     marker(svg, "circle" if o > 0 else "triangle-down", x, y, cols[CLOSED[k]],
            f"Ω{k} = {float(o):.15g} ({FORM[k]})")
 lab = [f"Ω₀ = −4 ln 2 = {float(OM[0]):.6f}", f"Ω₁ = 2π²/3 + 8 ln²2 = {float(OM[1]):.6f}",
-       f"Ω₂ = 80ζ(3) − (8/3)π² ln 2 − (32/3) ln³2 = {float(OM[2]):.6f}", f"Ω₃ = {float(OM[3]):.6f} (fit)",
+       f"Ω₂ = 80ζ(3) − (8/3)π² ln 2 − (32/3) ln³2 = {float(OM[2]):.6f}", f"Ω₃ = {float(OM[3]):.6f}",
        f"Ω₄ = {float(OM[4]):.1f} (fit)"]
 for k in range(4):
     svg.text(pts[k][0] + 16, pts[k][1] + 4, lab[k], size=11, fill=INK)
 svg.text(pts[4][0] - 12, pts[4][1] + 4, lab[4], size=11, fill=INK, anchor="end")
 callout(svg, *pts[2], "derived in #26", dx=-40, dy=-36)
-callout(svg, *pts[3], "#208 computes it from G₅ = 0", dx=-40, dy=-34)
+callout(svg, *pts[3], "derived in #208; its −384ζ(3) term has weight 3", dx=-40, dy=-34)
 legend(svg, px + pw, py - 12, [("closed form", SERIES[0]), ("fit to W² (#195)", SERIES[1])])
 
 # panel (b): error of each truncation against W^2
@@ -129,8 +131,8 @@ better_arrow(svg, px + 36, ym2(-9), px + 36, ym2(-15), label="smaller")
 xe, ye = xm2(ROWS[-1][0]), ym2(math.log10(ERR[4][-1][1]))
 callout(svg, xe, ye, "≈ Ω₅/s⁵, with Ω₅ ≈ 4.1 × 10⁴ (estimate)", dx=-150, dy=-34)
 
-h = footnote(svg, ["closed forms: README.md, omega2.md (#26)",
-                   "Ω₃, Ω₄ and W² (quad-double, dh610-fedora): w2_output.txt (#195)"],
+h = footnote(svg, ["closed forms: README.md, omega2.md (#26), omega3.md (#208)",
+                   "Ω₄ and W² (quad-double, dh610-fedora): w2_output.txt (#195)"],
              "", [], py2 + ph2 + 44, "https://github.com/nmoinvaz/negative-mass")
 path = os.path.join(HERE, "omega_coeffs.svg")
 open(path, "w").write(svg.finish(h))

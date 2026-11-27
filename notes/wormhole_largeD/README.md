@@ -53,6 +53,14 @@ W^2a^2 = 2(D-3) - 4\ln 2 + \frac{\pi^2/3 + 4\ln^2 2}{D-3} + O(D^{-2}) .
   wider basis with all weights up to 3, #26's PSLQ gives zero coefficients to the lower weights at 1e-30. This is an
   observation about three terms, not a claim about the series. A pure weight-4 search for Ω₃ at 35 digits found
   nothing (#195), and #208 repeats it with more digits.
+  **Update from #208:** Ω₃ breaks the pattern. Its closed form below has four terms of weight 4 and one, −384ζ(3), of
+  weight 3. The pure weight-4 search fails at 112 digits too, and the search with all weights up to 4 finds the relation.
+- **Update from #208** ([omega3.md](omega3.md)). The fifth term is **derived**:
+  Ω₃ = 22π⁴/45 + (16/3)π² ln²2 + (32/3) ln⁴2 − 320ζ(3) ln 2 − 384ζ(3) = −652.8401075700561254352393037996473610804617….
+  G₅ = 0 reduces by hand to Clausen integrals and log-cosine moments, using #26's E1 and E2 and one new identity, E3,
+  which removes Y₄. Two evaluations from the hierarchy's definitions agree on Ω₃ to 112 digits, and #195's fit agrees to
+  4e-38. In the form above, the next term is (Ω₃/8)/(D − 3)³ = −81.60501344625701568…/(D − 3)³. The remainder after it is
+  Ω₄/(2(D − 3))⁴, with Ω₄ = −12794.49986 a fit (#195).
 
 **What it means.**
 - **Faster in higher D.** The e-folding time is a/√(2(D − 3)) at large D. The exact values are 0.846 a (D = 4),
@@ -164,6 +172,8 @@ comes only from the absence of the growing term.
   **Update from #26:** both Ω₁ and Ω₂ are now derived (Result). The derivation rests on the exchange identities E1
   and E2, which are derived in omega2.md and checked numerically, but not yet re-derived independently (#209). Ω₃ is a
   fit, not identified (#195; #208 computes it from the order-5 integral).
+  **Update from #208:** Ω₃ is now derived too, resting on E1, E2 and a third identity, E3, which #209 should also
+  re-derive. Ω₄ is a fit (#195), not computed from the matching integral or identified.
 - **Prior work** (searched only briefly, three web searches). [TS13] give the numbers and say the time scale "becomes
   shorter as n becomes large", but give no formula. No large-D analysis of these wormholes was found. This is not a
   full literature check, and nothing here claims novelty.
@@ -177,6 +187,7 @@ comes only from the absence of the growing term.
 - `order3.py`: Ω₁ (`logs_order3.txt`).
 - `w2_crate/`, `w2_highprec.py`, `w2_highprec.md`: W² to 60 digits at 64 D, and the fit of Ω₁ … Ω₄ (#195, `w2_output.txt`).
 - `order4.py`, `omega2.md`: orders 3 and 4, Ω₂ from G₄ = 0, and its reduction by hand (#26, `order4_output.txt`).
+- `order5.py`, `omega3.md`: order 5, Ω₃ from G₅ = 0, its identification and its reduction by hand (#208, `order5_output.txt`).
 - `omega_graph.py`: `omega_coeffs.svg`, the coefficients Ω₀ … Ω₄ and the error of each truncation against #195's W².
 - `profiles.py`: the mode profiles and the table of growth rates behind Paper III's figure (`profiles.csv`,
   `growth.csv`).
