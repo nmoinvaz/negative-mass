@@ -21,6 +21,7 @@ import random
 import re
 import sys
 import time
+import types
 
 import mpmath as mp
 import sympy as sp
@@ -33,7 +34,7 @@ sys.argv = _argv
 
 MUTATIONS = ("wrong_h", "wrong_c6", "wrong_c7", "wrong_Om0", "wrong_Om1", "wrong_Om2", "wrong_Om3", "wrong_Om4", "coarse_B", "short_tail",
              "stale_cache", "pslq_wrong_basis", "pslq_wrong_target", "wrong_Om5_series", "wrong_closed4", "e1_sign", "e2_weight", "e3_factor",
-             "e4_g", "e4_noC", "e2w_g", "e2w_P", "e5_noD3", "e5_const")
+             "e4_g", "e4_noC", "e2w_g", "e2w_P", "e5_noD3", "e5_const", "rd_kit", "rd_Dstep", "rd_J5", "rd_master", "rd_B")
 MUTATE = None
 W2FILE = "w2_output.txt"
 SAVE = None
@@ -428,7 +429,7 @@ def check_evals():
     return ev
 
 
-OM5_REF = None          # the Omega5 of record (set in the controls after the runs of record, for PLW of `wrong_Om4`)
+OM5_REF = "40860.4553545256873125440648260337"          # a reference for PLW of `wrong_Om4` (a development value of Omega5, 31 digits; only a change of 1e-3 is read)
 
 
 def check_values(ev):
@@ -1025,48 +1026,402 @@ def r7_numeric_integrand(Om):
     return o4.guarded(f, 150)
 
 
+# ---------------------------------------------------------------------------------------------------------------
+# the finite-part reduction of the integrand of G_7 to master integrals (RD)
+# ---------------------------------------------------------------------------------------------------------------
+# Generators on theta in (0, pi/2), in lt = ln(2 cos th) = ell + ln 2 (so that the masters have no ln 2): lt' = -u, u' = 1 + u^2, ui = cot th, C' = 2 lt, D3' = 2 C,
+# K2 = int_0^th lt^2 (K2' = lt^2), K3' = lt^3. <f> is the finite part at theta -> pi/2 (cutoff x = pi/2 - th: the constant term of x^0 ln^0 x) and at theta -> 0 of int f;
+# for an integrable f it is the integral, <.> is linear, and <F'> = B[F] = FP F(pi/2) - FP F(0). One step is I <- I - dF, const += B[F]; the integral of the final I is a sum of masters.
+RS = types.SimpleNamespace(**{n: sp.Symbol(n) for n in ("lt", "u", "ui", "th", "C", "D3", "K2", "K3", "Jt2", "Jt3", "v5")})
+RS_X, RS_L, RS_T, RS_S, RS_R = sp.symbols("x L t s r", positive=True)
+RS_ORD, RS_SHIFT = 10, 9
+RD_STATE = {}
+
+
+def rd_dth(e):
+    lt, u, ui, th, C, D3, K2, K3 = (RS.lt, RS.u, RS.ui, RS.th, RS.C, RS.D3, RS.K2, RS.K3)
+    return (sp.diff(e, lt) * (-u) + sp.diff(e, u) * (1 + u**2) + sp.diff(e, ui) * (-(1 + ui**2)) + sp.diff(e, th) + sp.diff(e, C) * 2 * lt
+            + sp.diff(e, D3) * 2 * C + sp.diff(e, K2) * lt**2 + sp.diff(e, K3) * lt**3)
+
+
+def rd_kit():
+    """the asymptotic series of the generators at theta -> pi/2 (x = pi/2 - th, L = ln x) and at theta -> 0, for the finite parts"""
+    x, L, t, s, r, q = RS_X, RS_L, RS_T, RS_S, RS_R, X_Q
+    z3 = sp.zeta(3)
+    logs = lambda e: sp.expand(e).subs(sp.log(x), L)  # noqa: E731
+    ell1 = sp.series(sp.log(sp.sin(s) / s), s, 0, RS_ORD).removeO()
+    sgn = -1 if MUTATE == "rd_kit" else 1
+    ell_s = sp.log(s) + q + ell1                                      # ln(2 sin x)
+    C_s = sp.expand(-sp.integrate(sp.expand(2 * (sp.log(s) + sgn * q + ell1)), (s, 0, s)))
+    D3_s = sp.expand(sp.Rational(7, 4) * z3 - 2 * sp.integrate(C_s.subs(s, r), (r, 0, s)))
+    K2_s = sp.expand(RS.Jt2 - sp.integrate(sp.expand(ell_s.subs(s, r) ** 2), (r, 0, s)))
+    K3_s = sp.expand(RS.Jt3 - sp.integrate(sp.expand(ell_s.subs(s, r) ** 3), (r, 0, s)))
+    pi2 = {"lt": L + q + ell1.subs(s, x), "u": sp.series(sp.cot(x), x, 0, RS_ORD).removeO(), "ui": sp.series(sp.tan(x), x, 0, RS_ORD).removeO(),
+           "th": sp.pi / 2 - x, "C": logs(C_s.subs(s, x)), "D3": logs(D3_s.subs(s, x)), "K2": logs(K2_s.subs(s, x)), "K3": logs(K3_s.subs(s, x))}
+    lt_t = q + sp.series(sp.log(sp.cos(t)), t, 0, RS_ORD).removeO()
+    C_t = sp.expand(sp.integrate(sp.expand(2 * lt_t), (t, 0, t)))
+    D3_t = sp.expand(sp.integrate(sp.expand(2 * C_t.subs(t, r)), (r, 0, t)))
+    K2_t = sp.expand(sp.integrate(sp.expand(lt_t.subs(t, r) ** 2), (r, 0, t)))
+    K3_t = sp.expand(sp.integrate(sp.expand(lt_t.subs(t, r) ** 3), (r, 0, t)))
+    zero = {"lt": lt_t, "u": sp.series(sp.tan(t), t, 0, RS_ORD).removeO(), "ui": sp.series(sp.cot(t), t, 0, RS_ORD).removeO(), "th": t, "C": C_t, "D3": D3_t,
+            "K2": K2_t, "K3": K3_t}
+    return pi2, zero
+
+
+def rd_const_term(e, v, logsym=None):
+    e = sp.expand(e * v**RS_SHIFT)
+    gens = (v, logsym) if logsym is not None else (v,)
+    P = sp.Poly(e, *gens)
+    return P.coeff_monomial((RS_SHIFT,) + ((0,) if logsym is not None else ()))
+
+
+def rd_bnd(expr):
+    """B[F] = FP_{pi/2} F - FP_0 F"""
+    if "kit" not in RD_STATE:
+        RD_STATE["kit"] = rd_kit()
+    pi2, zero = RD_STATE["kit"]
+    expr = sp.expand(expr).replace(lambda e: e.is_Pow and e.base == RS.u and e.exp < 0, lambda e: RS.ui ** (-e.exp))
+    names = {"lt": RS.lt, "u": RS.u, "ui": RS.ui, "th": RS.th, "C": RS.C, "D3": RS.D3, "K2": RS.K2, "K3": RS.K3}
+    syms = {k: v for k, v in names.items() if expr.has(v)}
+    a = rd_const_term(expr.subs({syms[k]: pi2[k] for k in syms}, simultaneous=True), RS_X, RS_L)
+    b = rd_const_term(expr.subs({syms[k]: zero[k] for k in syms}, simultaneous=True), RS_T)
+    return sp.expand(a - b)
+
+
+def rd_integrand():
+    """the integrand of G_7 after E1 .. E5 in the generators lt, u, th, C, D3, K2 (Omega0 = -4 ln 2, Omega1 .. Omega4 at their closed forms, Omega5 = v5)"""
+    parts, tot = r7_parts()
+    q, pi, z3, z5 = X_Q, sp.pi, sp.zeta(3), sp.zeta(5)
+    v = sp.symbols("v0:6")
+    om = {v[1]: 2 * pi**2 / 3 + 8 * q**2, v[2]: 80 * z3 - sp.Rational(8, 3) * pi**2 * q - sp.Rational(32, 3) * q**3,
+          v[3]: 22 * pi**4 / 45 + sp.Rational(16, 3) * pi**2 * q**2 + sp.Rational(32, 3) * q**4 - 320 * z3 * q - 384 * z3,
+          v[4]: -10432 * z5 - 160 * pi**2 * z3 + 640 * q**2 * z3 - sp.Rational(64, 9) * pi**2 * q**3 - sp.Rational(88, 45) * pi**4 * q
+          - sp.Rational(128, 15) * q**5 - sp.Rational(2432, 45) * pi**4 + 1536 * q * z3 + 3072 * z3}
+    e = tot.subs(om).subs(X_J2, pi**3 / 24 + q**2 * pi / 2).subs(v[5], RS.v5)
+    e = e.subs(X_LC, RS.K2 - q * X_C + q**2 * X_TH).subs(X_LG, RS.lt - q)
+    return sp.expand(e)
+
+
+def rd_chain(I):
+    """the integration by parts as a list of (name, F); returns (I_final, Fs, notes)"""
+    lt, u, ui, th, C, D3, K2, K3 = (RS.lt, RS.u, RS.ui, RS.th, RS.C, RS.D3, RS.K2, RS.K3)
+    st = {"I": sp.expand(I), "Fs": []}
+    notes = {}
+
+    def coeff(a, b, c):
+        return sp.expand(sp.Poly(st["I"], C, D3, K2).coeff_monomial(C**a * D3**b * K2**c))
+
+    def apply(name, F):
+        dF = sp.expand(rd_dth(F).subs(ui, 1 / u) if F.has(ui) else rd_dth(F))
+        st["I"] = sp.expand(st["I"] - dF)
+        st["Fs"].append((name, F))
+
+    def P_b(b):
+        return [th, C / 2, K2, RS.K3][b]
+
+    def primitive_c(c):
+        """the primitive in th of c = alpha(lt) + beta(lt) u^-2: lt^b -> P_b, lt^b (1 + ui^2) -> -lt^b ui - b P_{b-1}"""
+        cu = sp.collect(sp.expand(c), u, evaluate=False)
+        assert set(cu) <= {sp.Integer(1), u**-2}, list(cu)
+        alpha, beta = sp.expand(cu.get(sp.Integer(1), 0)), sp.expand(cu.get(u**-2, 0))
+        c0, c1 = sp.expand(alpha - beta), beta
+        A = 0
+        sg = 1 if MUTATE == "rd_Dstep" else -1
+        if c0 != 0:
+            pc0 = sp.Poly(c0, lt)
+            A += sum(pc0.coeff_monomial(lt**b) * P_b(b) for b in range(pc0.degree() + 1))
+        if c1 != 0:
+            pc1 = sp.Poly(c1, lt)
+            A += sum(pc1.coeff_monomial(lt**b) * (-lt**b * ui + sg * (b * P_b(b - 1) if b else 0)) for b in range(pc1.degree() + 1))
+        return sp.expand(A), sp.simplify(sp.expand(rd_dth(sp.expand(A)).subs(ui, 1 / u) - c))
+
+    def solve_ft(g):
+        """f with f - f' = g (a polynomial in lt)"""
+        f, d = 0, sp.expand(g)
+        while d != 0:
+            f += d
+            d = sp.diff(d, lt)
+        return sp.expand(f)
+
+    # the quadratic terms
+    a1 = sp.expand(coeff(0, 0, 2) / u**2)
+    assert not a1.has(u)
+    apply("LL", a1 * u * K2**2)                                                  # <u^2 K2^2> = B[u K2^2] - 2<u lt^2 K2> - <K2^2>
+    a2 = sp.expand(coeff(0, 1, 1) / u)
+    assert not a2.has(u)
+    apply("DL", -a2 * lt * D3 * K2)                                              # <u D3 K2> = B[-lt D3 K2] + 2<lt C K2> + <lt^3 D3>
+    A, res = primitive_c(coeff(0, 2, 0))
+    notes["DD primitive residual"] = res
+    apply("DD", A * D3**2)                                                       # <c D3^2> = B[A D3^2] - 4<A D3 C>, A = 512 (3 lt + q) cot
+    cCD = sp.collect(coeff(1, 1, 0), u, evaluate=False)
+    notes["CD: 1/u part after DD"] = sp.expand(cCD.get(1 / u, 0))
+    G = sp.integrate(sp.expand(cCD.get(u, 0)), lt)
+    apply("CD", -G * C * D3)                                                     # <u g C D3> = B[-G C D3] + <G (2 lt D3 + 2 C^2)>
+    cu = sp.collect(coeff(1, 0, 1), u, evaluate=False)
+    gt = solve_ft(cu.get(u**2, 0))
+    apply("CL", u * gt * C * K2)                                                 # <u^2 (gt - gt') C K2> = B[u gt C K2] - <gt C K2> - ...
+    cu = sp.collect(coeff(2, 0, 0), u, evaluate=False)
+    f = solve_ft(cu.get(u**2, 0))
+    apply("CC", u * f * C**2)                                                    # <u^2 (f - f') C^2> = B[u f C^2] - <f C^2> - 4<u f lt C>
+    # the D3 coefficient: its u theta part, then the primitive of the rest
+    cu = sp.collect(coeff(0, 1, 0), u, evaluate=False)
+    apply("D_u", -lt * sp.expand(cu.get(u, 0)) * D3)
+    A, res = primitive_c(coeff(0, 1, 0))
+    notes["D primitive residual"] = res
+    apply("D", A * D3)                                                           # <c D3> = B[A D3] - 2<A C>
+    cK3C = sp.expand(sp.expand(st["I"]).coeff(RS.K3, 1)).coeff(C, 1)
+    notes["K3 apart from C K3"] = sp.expand(sp.expand(st["I"]).coeff(RS.K3, 1) - cK3C * C)
+    apply("K3C", sp.Rational(1, 2) * cK3C * D3 * RS.K3)                          # <C K3> = B[D3 K3/2] - <lt^3 D3>/2
+
+    def uC():
+        c1 = sp.expand(sp.collect(coeff(1, 0, 0), u, evaluate=False).get(u, 0))
+        if c1 != 0:
+            pc = sp.Poly(c1, lt)
+            for b in range(pc.degree() + 1):
+                if pc.coeff_monomial(lt**b) != 0:
+                    apply(f"C_u_lt{b}", -pc.coeff_monomial(lt**b) * lt**(b + 1) / (b + 1) * C)        # <u lt^b C> = B[-lt^{b+1} C/(b+1)] + 2<lt^{b+2}>/(b+1)
+    notes["C: 1/u part after D"] = sp.expand(sp.collect(coeff(1, 0, 0), u, evaluate=False).get(1 / u, 0))
+    uC()
+    c2 = sp.expand(sp.collect(coeff(1, 0, 0), u, evaluate=False).get(u**2, 0))        # u^2 theta g(lt) C: by parts, top degree first
+    for b in range(sp.Poly(c2, lt).degree(), -1, -1):
+        cb = sp.expand(sp.Poly(sp.expand(sp.collect(coeff(1, 0, 0), u, evaluate=False).get(u**2, 0)), lt).coeff_monomial(lt**b))
+        if cb != 0:
+            cth = sp.Poly(cb, th).coeff_monomial(th)
+            assert sp.expand(cb - cth * th) == 0, cb
+            apply(f"C_u2th_lt{b}", cth * u * th * lt**b * C)
+    uC()
+    # the K2 coefficient
+    def uK():
+        c1 = sp.expand(sp.collect(coeff(0, 0, 1), u, evaluate=False).get(u, 0))
+        if c1 != 0:
+            pc = sp.Poly(c1, lt)
+            for b in range(pc.degree() + 1):
+                if pc.coeff_monomial(lt**b) != 0:
+                    apply(f"K_u_lt{b}", -pc.coeff_monomial(lt**b) * lt**(b + 1) / (b + 1) * K2)       # <u lt^b K2> = B[-lt^{b+1} K2/(b+1)] + <lt^{b+3}>/(b+1)
+    uK()
+    c2 = sp.expand(sp.collect(coeff(0, 0, 1), u, evaluate=False).get(u**2, 0))
+    cth = sp.Poly(c2, th).coeff_monomial(th)
+    assert sp.expand(c2 - cth * th) == 0
+    apply("K_u2th", cth * u * th * K2)
+    uK()
+    # the pure terms
+    c2 = sp.expand(sp.collect(coeff(0, 0, 0), u, evaluate=False).get(u**2, 0))
+    if c2 != 0:
+        assert sp.expand(c2 - sp.Poly(c2, th).coeff_monomial(th**2) * th**2) == 0
+        apply("P_u2", sp.Poly(c2, th).coeff_monomial(th**2) * u * th**2)                  # <u^2 th^2> = B[u th^2] - 2<u th> - <th^2>
+    st["I"] = sp.expand(st["I"].replace(lambda e: e.is_Pow and e.base == u and e.exp < 0, lambda e: ui ** (-e.exp)))
+    pcm = sp.Poly(sp.expand(sp.collect(sp.expand(coeff(0, 0, 0)), ui, evaluate=False).get(ui**2, 0)), lt)
+    for b in range(pcm.degree(), -1, -1):
+        cbl = sp.Poly(sp.expand(sp.collect(sp.expand(coeff(0, 0, 0)), ui, evaluate=False).get(ui**2, 0)), lt).coeff_monomial(lt**b)
+        if cbl != 0:
+            F = -cbl * lt**b * ui                                                          # d(-lt^b ui) = lt^b (1 + ui^2) + b lt^(b-1)
+            dF = sp.expand(rd_dth(F).replace(lambda e: e.is_Mul and e.has(u) and e.has(ui), lambda e: sp.simplify(e.subs(ui, 1 / u))))
+            st["I"] = sp.expand(st["I"] - dF)
+            st["Fs"].append((f"P_ui_lt{b}", F))
+    c1 = sp.expand(sp.collect(sp.expand(coeff(0, 0, 0)), u, evaluate=False).get(u, 0))
+    for (b, j), cf in sp.Poly(c1, lt, th).terms():
+        apply(f"P_u_th{j}_lt{b}", -cf * th**j * lt**(b + 1) / (b + 1))                    # <u th^j lt^b> = B[-th^j lt^{b+1}/(b+1)] + ...
+    I = sp.expand(st["I"])
+    notes["u or 1/u left"] = I.has(u) or I.has(ui)
+    return I, st["Fs"], notes
+
+
+def rd_Jt():
+    """Jt_n = int_0^{pi/2} ln^n(2 cos th) = n! [a^n] (pi/2) Gamma(a + 1)/Gamma(a/2 + 1)^2, n <= 7 (sympy, closed forms)"""
+    a = sp.Symbol("a")
+    ser = sp.series((sp.pi / 2) * sp.gamma(a + 1) / sp.gamma(a / 2 + 1)**2, a, 0, 8).removeO()
+    Jt = [sp.simplify(sp.expand_func(sp.factorial(n) * ser.coeff(a, n))) for n in range(8)]
+    if MUTATE == "rd_J5":
+        Jt[5] = Jt[5].subs(sp.zeta(5), sp.Rational(17, 18) * sp.zeta(5))
+    return Jt
+
+
+def rd_masters(Jt):
+    """closed forms of the master integrals <C^a D3^b K2^c th^j lt^k>, keyed (a, b, c, j, k); A = <lt^2 C^2> and B = <lt^3 D3> are identified numerically"""
+    pi, z3, z5 = sp.pi, sp.zeta(3), sp.zeta(5)
+    z2, z6 = pi**2 / 6, pi**6 / 945
+    A = pi * (sp.Rational(3, 4) * z3**2 - sp.Rational(95, 96) * z6)
+    B = pi * (sp.Rational(9, 16) * z3**2 - sp.Rational(11, 4) * z6)
+    if MUTATE == "rd_master":
+        A = pi * (sp.Rational(3, 4) * z3**2 - sp.Rational(94, 96) * z6)
+    Cm = pi**7 / 3456 - pi**7 / 2880 + (pi / 16) * (sp.Rational(61, 6) * z6 - 6 * z3**2)          # <K2^2>: Parseval; Euler's sums of H_n/n^5 and H_n^2/n^4
+    Dm = 11 * pi**5 / 1440                                                                      # <th^2 lt^2>: Fourier; Euler's sum of H_n/n^3
+    lt2D3 = (pi / 4) * (5 * z5 - 2 * z2 * z3) + pi**3 * z3 / 32                                 # <lt^2 D3>: #220's integral of ell^2 D3, with lt = ell + ln 2
+    m = {(0, 0, 2, 0, 0): Cm, (1, 0, 1, 0, 0): sp.Rational(7, 8) * z3 * Jt[2] - lt2D3 / 2, (1, 0, 1, 0, 1): -A / 4, (2, 0, 0, 0, 0): pi**5 / 360,
+         (2, 0, 0, 0, 1): sp.Integer(0), (2, 0, 0, 0, 2): A, (0, 0, 1, 1, 0): pi**2 / 8 * Jt[2] - Dm / 2, (0, 1, 0, 0, 3): B, (1, 0, 0, 1, 0): pi * z3 / 4,
+         (1, 0, 0, 1, 1): -pi**5 / 1440, (0, 0, 0, 2, 0): pi**3 / 24}
+    for b in range(7):
+        m[(0, 0, 0, 0, b)] = Jt[b]
+    return m
+
+
+RD_NEED_K2 = {(0, 0, 2, 0, 0), (1, 0, 1, 0, 0), (1, 0, 1, 0, 1), (0, 0, 1, 1, 0)}
+
+
+def rd_quad_master(key, dps):
+    """<C^a D3^b K2^c th^j lt^k> by quadrature at dps digits"""
+    mp.mp.dps = dps
+    q_, z3 = mp.ln2, mp.zeta(3)
+    a, b, c, j, k = key
+
+    def fn(th, x, tail):
+        if tail:
+            th = mp.pi / 2 - x
+        with mp.extradps(60):
+            lt = mp.log(2 * mp.sin(x)) if tail else mp.log(2 * mp.cos(th))
+            a2 = 2 * x if tail else mp.pi - 2 * th
+            C = mp.clsin(2, a2)
+            D3 = mp.clcos(3, a2) + 3 * z3 / 4 if b else 0
+            K2 = (o4.Lc2_poly(th) + q_ * C - q_**2 * th) if c else 0
+            r = C**a * D3**b * K2**c * th**j * lt**k
+        return +r
+    return o4.both(fn)
+
+
+def rd_kit_check():
+    """RD4: the series of the generators at pi/2 and 0 against the functions"""
+    pi2, zero = RD_STATE["kit"] if "kit" in RD_STATE else (RD_STATE.setdefault("kit", rd_kit()))
+    mp.mp.dps = 60
+    q_, z3 = mp.ln2, mp.zeta(3)
+    Jt2v, Jt3v = mp.pi**3 / 24, -3 * mp.pi * z3 / 4
+    xv = mp.mpf(1) / 1000
+    th_v = mp.pi / 2 - xv
+    K2f = lambda a: o4.Lc2_poly(a) + q_ * mp.clsin(2, mp.pi - 2 * a) - q_**2 * a  # noqa: E731
+    K3f = lambda a: mp.quad(lambda p: mp.log(2 * mp.cos(p)) ** 3, [0, a])  # noqa: E731
+    ref = {"lt": mp.log(2 * mp.cos(th_v)), "u": mp.tan(th_v), "ui": 1 / mp.tan(th_v), "C": mp.clsin(2, mp.pi - 2 * th_v),
+           "D3": mp.clcos(3, mp.pi - 2 * th_v) + 3 * z3 / 4, "K2": K2f(th_v), "K3": K3f(th_v)}
+    subs = {RS_X: xv, RS_L: mp.log(xv), X_Q: q_, RS.Jt2: Jt2v, RS.Jt3: Jt3v}
+    e1 = max(abs(mp.mpf(sp.N(pi2[k].subs(subs), 70)) - ref[k]) / max(abs(ref[k]), mp.mpf(1)) for k in ref)
+    tv0 = mp.mpf(1) / 1000
+    ref0 = {"lt": mp.log(2 * mp.cos(tv0)), "u": mp.tan(tv0), "ui": 1 / mp.tan(tv0), "C": mp.clsin(2, mp.pi - 2 * tv0),
+            "D3": mp.clcos(3, mp.pi - 2 * tv0) + 3 * z3 / 4, "K2": K2f(tv0), "K3": K3f(tv0)}
+    e2 = max(abs(mp.mpf(sp.N(zero[k].subs({RS_T: tv0, X_Q: q_}), 70)) - ref0[k]) / max(abs(ref0[k]), mp.mpf(1e-30)) for k in ref0)
+    return e1, e2
+
+
 def check_reduce7(ev=None):
     t0 = time.time()
     mp.mp.dps = 45
     parts, tot = r7_parts()
     cl = closed_omegas()
+    pi, z3 = sp.pi, sp.zeta(3)
     # RD1: the decomposition against the numeric integrand of closed forms at four points
     w5v = mp.mpf("0.3")
     Om = [cl[0], cl[1], cl[2], cl[3], cl[4], w5v, mp.mpf(0)]
     gens = (X_LG, X_U, X_TH, X_C, X_D3, X_LC, X_Q, X_J2) + tuple(sp.symbols("v1:6"))
     tot_f = sp.lambdify(gens, sum(cf * X_C**a * X_D3**b * X_LC**c for (a, b, c), cf in parts.items()), "mpmath")
+    I0 = rd_integrand()
+    I0_f = sp.lambdify((RS.lt, RS.u, RS.th, RS.C, RS.D3, RS.K2, RS.v5, X_Q), I0, "mpmath")
     fn = r7_numeric_integrand(Om)
-    worst = mp.mpf(99)
+    worst, worst2 = mp.mpf(99), mp.mpf(99)
     for tv in ("0.2", "0.7", "1.1", "1.4"):
         tv = mp.mpf(tv)
         with mp.extradps(60):
             ell, s2, u_, Cn, D3n = o4.basics(tv, mp.pi / 2 - tv, False)
-            dec = tot_f(ell, u_, tv, Cn, D3n, o4.Lc2_poly(tv), mp.ln2, mp.pi * (12 * mp.ln2**2 + mp.pi**2) / 24, cl[1], cl[2], cl[3], cl[4], w5v)
+            Lc2v = o4.Lc2_poly(tv)
+            dec = tot_f(ell, u_, tv, Cn, D3n, Lc2v, mp.ln2, mp.pi * (12 * mp.ln2**2 + mp.pi**2) / 24, cl[1], cl[2], cl[3], cl[4], w5v)
+            dec2 = I0_f(ell + mp.ln2, u_, tv, Cn, D3n, Lc2v + mp.ln2 * Cn - mp.ln2**2 * tv, w5v, mp.ln2)
             num = fn(tv, mp.pi / 2 - tv, False)
         worst = min(worst, digits(num, dec))
-    report("RD1", worst >= 30, f"the decomposition (sympy; coefficients of C^a D3^b Lc2^c: {sorted(parts)}) against the numeric integrand of closed forms "
-           f"at theta = 0.2, 0.7, 1.1, 1.4: worst {float(worst):.1f} digits (bar 30)")
-    # A7: method A at order 7: G_7 by quadrature (40 digits) of the numeric integrand, Omega_5 from the affine G_7 at Omega_5 = 0, 1
+        worst2 = min(worst2, digits(num, dec2))
+    report("RD1", worst >= 30 and worst2 >= 30, f"the decomposition (sympy; coefficients of C^a D3^b Lc2^c: {sorted(parts)}) against the numeric integrand of closed forms at theta = 0.2, 0.7, 1.1, 1.4: "
+           f"worst {float(worst):.1f} digits; the same integrand in lt = ln(2 cos th) and K2 = int lt^2 (the masters' variables): {float(worst2):.1f} digits (bar 30)")
+    # the chain of integrations by parts
+    t1 = time.time()
+    I1, Fs, notes = rd_chain(I0)
+    dFs = sum(sp.expand(rd_dth(F).subs(RS.ui, 1 / RS.u)) for _, F in Fs)
+    r_id = sp.expand(I0 - dFs - I1)
+    report("RD2", r_id == 0 and notes["DD primitive residual"] == 0 and notes["D primitive residual"] == 0 and not notes["u or 1/u left"],
+           f"{len(Fs)} integrations by parts I <- I - dF (steps {', '.join(n for n, _ in Fs)}): I - sum dF - I_final = {r_id}; the primitives' residuals {notes['DD primitive residual']}, "
+           f"{notes['D primitive residual']}; no u or 1/u left in I_final: {not notes['u or 1/u left']} ({time.time() - t1:.0f} s)")
+    Bs = [(n, rd_bnd(F)) for n, F in Fs]
+    if MUTATE == "rd_B":
+        Bs = [(n, -b if n == "CL" else b) for n, b in Bs]
+    Jt = rd_Jt()
+    Bsum = sp.expand(sum(b for _, b in Bs).subs({RS.Jt2: Jt[2], RS.Jt3: Jt[3]}))
+    masters = rd_masters(Jt)
+    Pm = sp.Poly(I1, RS.C, RS.D3, RS.K2, RS.th, RS.lt)
+    total = Bsum + sum(cf * masters[m] for m, cf in Pm.terms())
+    total = sp.expand(total)
+    slope = sp.simplify(sp.diff(total, RS.v5))
+    cancel_ok = (notes["CD: 1/u part after DD"] == 0 and notes["C: 1/u part after D"] == 0 and notes["K3 apart from C K3"] == 0)
+    report("RD3", cancel_ok and sp.simplify(slope + 4 * pi) == 0,
+           f"cancellations: the 1/u part of the C D3 coefficient after the D3^2 step: {notes['CD: 1/u part after DD']}; the 1/u part of the C coefficient after the D3 step: "
+           f"{notes['C: 1/u part after D']}; K3 only in C K3: {notes['K3 apart from C K3'] == 0}; slope of G_7 in Omega5 = {slope} (= -4 pi)")
+    e1, e2 = rd_kit_check()
+    report("RD4", max(e1, e2) <= mp.mpf("1e-24"), f"the asymptotic series (order {RS_ORD}) of lt, u, 1/u, C, D3, K2, K3 against the functions at x = pi/2 - theta = 1e-3 (worst relative "
+           f"difference {nd(e1, 3)}) and at theta = 1e-3 ({nd(e2, 3)}) (bar 1e-24)")
+    # RD5: the masters, numerically (30 digits)
+    dm = {}
+    t2 = time.time()
+    for key, cf in sorted(masters.items(), key=lambda kv: kv[0]):
+        mp.mp.dps = 30
+        vnum = rd_quad_master(key, 30)
+        mp.mp.dps = 30
+        vcl = mp.mpf(sp.N(cf, 40))
+        dm[key] = digits(vcl, vnum) if vcl != 0 else (mp.mpf(30) if abs(vnum) < mp.mpf("1e-28") else -mp.log10(abs(vnum)))
+    report("RD5", min(dm.values()) >= 25, "the master integrals <C^a D3^b K2^c th^j lt^k> against their closed forms (quadrature at 30 digits), digits: "
+           + ", ".join(f"({','.join(str(i) for i in k)}) {float(v):.1f}" for k, v in dm.items()) + f" (bar 25; {time.time() - t2:.0f} s)")
+    # RD5b: the two masters identified numerically (found at 55 digits) at 100 digits
+    t2b = time.time()
+    dmb = {}
+    for key in ((2, 0, 0, 0, 2), (0, 1, 0, 0, 3)):
+        mp.mp.dps = 100
+        vnum = rd_quad_master(key, 100)
+        mp.mp.dps = 100
+        dmb[key] = digits(mp.mpf(sp.N(masters[key], 110)), vnum)
+    report("RD5b", min(dmb.values()) >= 90, "the two identified masters <lt^2 C^2> = pi (3 zeta(3)^2/4 - 95 zeta(6)/96) and <lt^3 D3> = pi (9 zeta(3)^2/16 - 11 zeta(6)/4) (found by PSLQ at 55 digits "
+           "in {pi^7, pi zeta(3)^2}) against quadrature at 100 digits, digits: " + ", ".join(f"({','.join(str(i) for i in k)}) {float(v):.1f}" for k, v in dmb.items()) + f" (bar 90; {time.time() - t2b:.0f} s)")
+    # RD6: the reduction numerically: sum of the boundary terms + quadrature of I_final at Omega5 = 0 against method A
+    mp.mp.dps = 45
+    Jtn = [mp.mpf(sp.N(j, 60)) for j in Jt]
+    q_ = mp.ln2
+    Bnum = mp.mpf(0)
+    for n, b in Bs:
+        Bnum += mp.mpf(str(sp.N(b.subs({RS.Jt2: sp.Float(str(Jtn[2]), 50), RS.Jt3: sp.Float(str(Jtn[3]), 50), X_Q: sp.log(2)}), 50)))
+    I1_f = sp.lambdify((RS.lt, RS.th, RS.C, RS.D3, RS.K2, RS.v5, X_Q), I1, "mpmath")
+
+    def fn1(th, x, tail):
+        if tail:
+            th = mp.pi / 2 - x
+        with mp.extradps(80):
+            lt = mp.log(2 * mp.sin(x)) if tail else mp.log(2 * mp.cos(th))
+            a2 = 2 * x if tail else mp.pi - 2 * th
+            Cv = mp.clsin(2, a2)
+            r = I1_f(lt, th, Cv, mp.clcos(3, a2) + 3 * mp.zeta(3) / 4, o4.Lc2_poly(th) + q_ * Cv - q_**2 * th, mp.mpf(0), q_)
+        return +r
+    g_red = Bnum + o4.both(fn1)
     w_ = [cl[0], cl[1], cl[2], cl[3], cl[4]]
 
     def G(o5):
         f = r7_numeric_integrand(w_ + [o5, mp.mpf(0)])
         return (mp.quad(lambda t: f(t, mp.pi / 2 - t, False), [0, mp.mpf(1) / 2, 1], method="gauss-legendre")
                 + mp.quad(lambda x: f(mp.pi / 2 - x, x, True), [0, mp.pi / 2 - 1]))
-
-    t1 = time.time()
+    t3 = time.time()
     g0n, g1n = G(mp.mpf(0)), G(mp.mpf(1))
     slope_n, om5_a = g1n - g0n, -g0n / (g1n - g0n)
     mp.mp.dps = 60
+    dred = digits(g0n, g_red)
+    report("RD6", dred >= 30, f"G_7(Omega5 = 0) from the integrations by parts (sum of the boundary terms {nd(Bnum, 25)} + quadrature of I_final) = {nd(g_red, 32)} against the integrand of closed forms by "
+           f"quadrature = {nd(g0n, 32)}: {float(dred):.1f} digits (bar 30)")
+    # A7: method A
     ds = digits(-4 * mp.pi, slope_n)
-    msg = f"method A at order 7 (closed forms, E1 .. E5, quadrature at 40 digits, {time.time() - t1:.0f} s): G_7(Omega_5 = 0) = {nd(g0n, 30)}, slope against -4 pi {float(ds):.1f} digits; Omega_5 = {nd(om5_a, 38)}"
+    msg = f"method A at order 7 (closed forms, E1 .. E5, quadrature at 40 digits, {time.time() - t3:.0f} s): slope against -4 pi {float(ds):.1f} digits; Omega_5 = {nd(om5_a, 38)}"
+    mp.mp.dps = 600
+    om5_closed = sp.N(total.subs(RS.v5, 0).subs(X_Q, sp.log(2)) / (4 * sp.pi), 520)
+    om5_c = mp.mpf(str(om5_closed))
+    RD_STATE["om5_closed_expr"] = sp.expand(total.subs(RS.v5, 0) / (4 * pi))
     if ev is not None:
-        mp.mp.dps = 600
         dc = {n: digits(ev[n]["Om5"], om5_a) for n in ev}
-        mp.mp.dps = 60
         report("A7", ds >= 30 and all(dc[n] >= 30 for n in ("G1", "G2") if n in dc), msg + " against the grids' Omega_5, digits: " + ", ".join(f"{n} {float(d):.1f}" for n, d in dc.items()) + " (bar 30)")
+        dd = {n: digits(ev[n]["Om5"], om5_c) for n in ev}
+        report("RD7", all(dd[n] >= 100 for n in ("G1", "G2") if n in dd), "Omega5 of the closed form of the reduction (boundary terms + masters, A and B identified) against the grids' Omega5, digits: "
+               + ", ".join(f"{n} {float(d):.1f}" for n, d in dd.items()) + " (bar 100 on G1, G2; the others reported)")
     else:
         print("  " + msg)
+        print(f"  closed form of the reduction: Omega5 = {mp.nstr(om5_c, 60)}")
+    mp.mp.dps = 60
+    print("  Omega5 (derived, symbolic, in q = ln 2) = " + str(RD_STATE["om5_closed_expr"]))
     print(f"  ({time.time() - t0:.0f} s)")
     return om5_a
 
