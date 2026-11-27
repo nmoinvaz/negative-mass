@@ -54,6 +54,46 @@
   predicts d(400) ≈ 10.7.
 - **Ghost-wormhole thresholds vs. Choptuik critical collapse** (Shinkai–Hayward gr-qc/0205041, González–Guzmán–Sarbach
   0806.0608/0806.1370, normal + ghost σ-models, phantom collapse): see `notes/critical_ghost.md`.
+- **Torii & Shinkai 2013** (TS13), "Wormholes in higher dimensional space-time: Exact solutions and their linear stability
+  analysis", Phys. Rev. D 88, 064027, arXiv:1309.2058, doi:10.1103/PhysRevD.88.064027. Read 2026-11-26 (#202): arXiv v1
+  (9 Sep 2013, 6 pages, the only arXiv version) as page image, text layer and TeX source, which agree on Table I. Reference
+  checked against arXiv, INSPIRE (recid 1253353) and Crossref (volume 88, issue 6, article 064027, issued 2013-09-13).
+  Journal text not read (publisher HTTP 403): whether its Table I differs from v1 is *(unverified)*.
+  - **Contains.** The ghost-scalar (ε = −1, massless) wormhole in n = D spacetime dimensions, static, spherical and
+    reflection symmetric: f ≡ 1, R′ = √(1 − (a/R)^{2(n−3)}), Ellis's R = √(r² + a²) at n = 4, throat radius scaled to a = 1.
+    Linear stability of the spherical modes e^{iωt}: a gauge-invariant ψ₁ with −ψ₁″ + Vψ₁ = ω²ψ₁ (V singular at the
+    throat), regularized with the zero mode ψ̄₁ = 1/(R₀^{(n−4)/2}R₀′) into −Ψ₁″ + W(r)Ψ₁ = ω²Ψ₁ (3.17), W(r) =
+    −[3(n−2)²R₀^{−2(n−3)} − (n−4)(n−6)]/(4R₀²) (3.18). Table I lists the one negative ω² found at n = 4 … 11, 20, 50, 100,
+    each printed to 15 significant digits, and says the time scale of the instability shortens as n grows.
+  - **Does not contain.** How the eigenvalues were computed (no scheme, grid, domain or tolerance; the acknowledgments
+    name only the computers). Any uncertainty or statement of precision for Table I. A proof that there is exactly one
+    negative eigenvalue (the abstract says "all higher-dimensional wormholes"; Table I has 11 values of n). Values at other n,
+    any formula or large-n behavior, tabulated eigenfunctions (Fig. 3 only), nonlinear evolution (deferred to later papers).
+  - **Table I against #195's crate** (`notes/wormhole_largeD/ts13_digits.py`, output `ts13_digits_output.txt`). W²a² = −ω²
+    (a = 1, e^{Wt} = e^{iωt}). The crate's quad-double values are rounded to 15 digits here.
+
+    | n | ω² as printed | crate W²a² | crate − (−ω²) |
+    |---|---|---|---|
+    | 4 | −1.39705243371511 | 1.39705243433351 | +6.18e−10 |
+    | 5 | −2.98495893027790 | 2.98495893035176 | +7.39e−11 |
+    | 6 | −4.68662054299460 | 4.68662054311946 | +1.25e−10 |
+    | 7 | −6.46258414126318 | 6.46258414136979 | +1.07e−10 |
+    | 8 | −8.28975936306259 | 8.28975936307248 | +9.89e−12 |
+    | 9 | −10.1535530451867 | 10.1535530449455 | −2.41e−10 |
+    | 10 | −12.0442650147438 | 12.0442650144979 | −2.46e−10 |
+    | 11 | −13.9552091676647 | 13.9552091674964 | −1.68e−10 |
+    | 20 | −31.5751101285105 | 31.5751101283585 | −1.52e−10 |
+    | 50 | −91.3457759137153 | 91.3457759136296 | −8.57e−11 |
+    | 100 | −191.283017729717 | 191.283017730359 | +6.42e−10 |
+
+    The printed values agree with the crate to 9.35 … 12.03 significant digits, at no row to the last printed digit.
+    `one_mode.log` (N4: shooting for TS13's own (3.18) potential, which `ts13_digits.py` checks equals its U exactly; no code
+    shared with the crate) equals the crate at all 12 digits it prints at n = 4, 10, 20, 50. Table I minus that value is
+    −6.2e−10, +2.4e−10, +1.1e−10, +1.2e−10 there. That is **numerical evidence** that Table I's digits beyond about the 9th
+    to 12th significant are not accurate at those four n. At the other seven rows the evidence is the crate alone (its qd and
+    od lanes agree to 60 digits but share code). growth.csv's D = 4 … 11 rows are Table I rounded to 12 decimals, so they
+    carry that error; no csv digit there goes beyond the printed ones. README.md's quoted [TS13] values are roundings of
+    Table I.
 
 ## Warp drives: matter sources, energy conditions, ADM quantities
 Read for #60 on 2026-11-13. Journal data checked against INSPIRE, arXiv identifiers against arXiv. The comparison with
