@@ -118,11 +118,16 @@ def make_problem_class():
                      (numpy default_rng(noise_seed)): rounding noise relative to each entry, planted at a stated amplitude
         jtab         J(r; s) read from the crate's tables (`CrateJ`) in place of the generated J_and_h on the star's values (the interior and
                      the exterior scalar plane's J; the vacuum J of r > R is not replaced)
+        riccati_rtol, riccati_atol   the tolerances of the Riccati integration of the exterior Zerilli q (`zerilli_q` hard-codes 1e-11 and 1e-14 and
+                     ignores `rtol`)
+        q_eps        q is multiplied by 1 + q_eps after the integration (a planted error of the exterior column, for D's sensitivity to it)
         noise_row    every nonzero entry J_ij gets the absolute noise noise_row 2^-53 xi max_j |J_ij| (xi standard normal, the row's largest entry):
                      the size `jround` measures for the generated J in f64 (rms 1.0 ulp of the row maximum)"""
 
-        def __init__(self, star, l, rm=None, atol=1e-14, extra_chunks=0, vac_scalar=False, mext=None, noise_ulp=0.0, noise_seed=0, noise_row=0.0, jtab=None, **kw):
+        def __init__(self, star, l, rm=None, atol=1e-14, extra_chunks=0, vac_scalar=False, mext=None, noise_ulp=0.0, noise_seed=0, noise_row=0.0, jtab=None,
+                     riccati_rtol=1e-11, riccati_atol=1e-14, q_eps=0.0, **kw):
             super().__init__(star, l, rm=rm, **kw)
+            self.riccati_rtol, self.riccati_atol, self.q_eps = riccati_rtol, riccati_atol, q_eps
             self.atol, self.extra_chunks, self.vac_scalar = atol, extra_chunks, vac_scalar
             self.noise_ulp, self.noise_row, self.rng = noise_ulp, noise_row, np.random.default_rng(noise_seed)
             self.jtab = jtab
@@ -152,6 +157,28 @@ def make_problem_class():
                 Q, p = self._qr(sol.y[:, -1].reshape(6, k))
                 ph *= p
             return Q, ph
+
+        def zerilli_q(self, s, r_start=None):
+            """PolarProblem.zerilli_q, line for line, with the integrator's tolerances and a planted multiplicative error as knobs (defaults: PolarProblem's)"""
+            M, lam = self.Mext, (self.l - 1) * (self.l + 2) / 2.0
+
+            def V(r):
+                f = 1 - 2 * M / r
+                return 2 * f * (lam ** 2 * r ** 2 * ((lam + 1) * r + 3 * M) + 9 * M ** 2 * (lam * r + M)) / (r ** 3 * (lam * r + 3 * M) ** 2)
+            if r_start is None:
+                r_start = self.rm + 40.0 / abs(s) + 20.0 * self.l / abs(s) + 50.0
+            q0 = -np.sqrt(s * s + V(r_start))
+
+            def rhs(rho, q):
+                r = np.exp(rho); f = 1 - 2 * M / r
+                return r * (s * s + V(r) - q * q) / f
+            if np.iscomplexobj(q0) or np.iscomplexobj(s):
+                q0 = complex(q0); q0 = q0 if q0.real <= 0 else -q0
+                q0 = -np.sqrt(complex(s * s + V(r_start)))
+                if (q0 / s).real > 0: q0 = -q0
+            sol = solve_ivp(rhs, (np.log(r_start), np.log(self.rm)), [q0], method="DOP853", rtol=self.riccati_rtol, atol=self.riccati_atol)
+            q = sol.y[0, -1] if np.iscomplexobj(sol.y) else float(sol.y[0, -1])
+            return q * (1.0 + self.q_eps)
 
         def D(self, s):
             """PolarProblem.D, the same operations in the same order; the planes are kept (self.planes) for the principal angles"""
@@ -225,6 +252,9 @@ PLANTS = {
     "int_crate": dict(star="crate", mext="sci",   vac=False),   # crate's star in the interior, scipy's M_ext
     "ext_crate": dict(star="sci",   mext="crate", vac=False),   # scipy's star in the interior, the crate's M_ext
     "crate_j":   dict(star="crate", mext="star",  vac=False, j=True),   # the crate's star, M_ext and J tables: J rounded once from double-double
+    "crate_j_r13": dict(star="crate", mext="star", vac=False, j=True, rq=(1e-13, 1e-16)),     # as crate_j, the Riccati of q at rtol 1e-13, atol 1e-16 (A5)
+    "crate_j_q13": dict(star="crate", mext="star", vac=False, j=True, qeps=1e-13),            # as crate_j, q planted 1e-13 too large (A5)
+    "crate_j_q12": dict(star="crate", mext="star", vac=False, j=True, qeps=1e-12),
     "crate_j_vac": dict(star="crate", mext="star", vac=True, j=True),   # as crate_j, the exterior scalar plane in vacuum as the crate integrates it (A4)
 }
 JTABLE_PATH = [None]
@@ -240,6 +270,10 @@ def build(l, variant, plant, rtol, steps_path, atol=1e-14, extra_chunks=0, rm_fr
     rm = RM[variant] if rm_from == "crate" else None
     if pl.get("j"):
         kw["jtab"] = crate_j(JTABLE_PATH[0])
+    if pl.get("rq"):
+        kw["riccati_rtol"], kw["riccati_atol"] = pl["rq"]
+    if pl.get("qeps"):
+        kw["q_eps"] = pl["qeps"]
     pp = DP(star, l, rm=rm, **kw)
     if pl["mext"] != "star":
         other = scipy_star() if pl["mext"] == "sci" else crate_star(steps_path)
@@ -498,10 +532,12 @@ def check_IDENT(steps):
     d5 = DP(st, l, noise_ulp=1.0, noise_seed=1).D(g)
     d6 = DP(st, l, noise_row=1.0, noise_seed=1).D(g)
     d7 = DP(st, l, noise_row=1.0, noise_seed=1).D(g)
-    ok = (d0 == d1) and (d2 != d0) and (d3 != d0) and (d4 != d0) and (d4 == d5) and (d6 != d0) and (d6 == d7)
+    d8 = DP(st, l, q_eps=1e-9).D(g)
+    d9 = DP(st, l, riccati_rtol=1e-5).D(g)
+    ok = (d0 == d1) and (d2 != d0) and (d3 != d0) and (d4 != d0) and (d4 == d5) and (d6 != d0) and (d6 == d7) and (d8 != d0) and (d9 != d0)
     report("IDENT", ok, f"(l, gamma) = ({l}, {g:g}): PolarProblem D {d0!r}, DriftProblem with no knob {d1!r} (equal: {d0 == d1}); atol 1e-6 moves D by "
            f"{fmt(abs(d2 / d0 - 1))}, one extra chunk by {fmt(abs(d3 / d0 - 1))}, 1 ulp of planted noise by {fmt(abs(d4 / d0 - 1))}, "
-           f"1 ulp of the row maximum by {fmt(abs(d6 / d0 - 1))} (each must move it), the same seed again gives the same D: {d4 == d5 and d6 == d7}")
+           f"1 ulp of the row maximum by {fmt(abs(d6 / d0 - 1))}, q planted 1e-9 off by {fmt(abs(d8 / d0 - 1))}, the Riccati at rtol 1e-5 by {fmt(abs(d9 / d0 - 1))} (each must move it), the same seed again gives the same D: {d4 == d5 and d6 == d7}")
 
 
 def check_CS(steps):
@@ -683,6 +719,19 @@ def verdicts(sc, crate, plc):
     except TypeError:
         st["H6"] = "undecided"
         lines.append("H6 the exterior scalar plane through the star's J against vacuum: not run; undecided")
+    # H7 (A5): the Riccati integration of the exterior q at its hard-coded rtol 1e-11 against rtol 1e-13, at (3000, base), rtol 1e-13, atol 1e-14
+    try:
+        import mpmath as mp5
+        mp5.mp.dps = 60
+        rf5 = crate_ref(crate, "dd", "base", 3000.0)
+        mr_ = float(np.mean([float(mp5.mpf(sget(sc, 3000.0, "base", 1e-13, "crate_j_r13", extra=e)["D"]) / rf5 - 1) for e in range(CJE_N)]))
+        md_ = cje_stats(sc, crate, 3000.0, "base", 1e-13, 1e-14)[1]
+        q7 = abs(mr_) / abs(md_)
+        st["H7"] = "supported" if q7 <= 0.3 else ("ruled out" if q7 >= 0.7 else "undecided")
+        lines.append(f"H7 the Riccati of the exterior q at rtol 1e-11 against 1e-13, (3000, base) rtol 1e-13: mean signed gap {md_:+.2e} at 1e-11, {mr_:+.2e} at 1e-13, ratio {q7:.2f}; {st['H7']}")
+    except TypeError:
+        st["H7"] = "undecided"
+        lines.append("H7 the Riccati of the exterior q: not run; undecided")
     # H4: the BVP star's kinks make the integrator's error erratic: eta falls when the star is smooth
     rr = [eta1[c] / eta0[c] for c in cells]
     nlow = sum(1 for x in rr if x <= CRIT["KINK_REMOVES"])
@@ -760,6 +809,8 @@ def grid_cases():
     out["CJN"] = ([K(1000.0, "base", 1e-10, "crate_j", noise=u, seed=sd) for (kind, u) in CJN_NOISE if kind == "noise" for sd in (1, 2, 3, 4)]
                   + [K(1000.0, "base", 1e-10, "crate_j", row=u, seed=sd) for (kind, u) in CJN_NOISE if kind == "row" for sd in (1, 2, 3, 4)])   # A3
     out["CJV"] = [K(g, v, 1e-13, "crate_j_vac", extra=e) for (g, v) in CJ_CELLS for e in range(CJE_N)]                                      # A4
+    out["CJR"] = [K(g, v, 1e-13, "crate_j_r13", extra=e) for (g, v) in CJ_CELLS for e in range(CJE_N)]                                       # A5
+    out["CJQ"] = [K(g, "base", 1e-10, pl) for g in (1000.0, 3000.0) for pl in ("crate_j_q13", "crate_j_q12")]                                 # A5
     out["X_P1_13"] = [K(g, v, 1e-13, "crate") for g in G for v in V]
     out["X_ATOL"] = [K(1000.0, v, 1e-13, atol=1e-17) for v in V] + [K(3000.0, "base", 1e-13, atol=1e-17)]
     out["X_N0R13"] = [K(1000.0, v, 1e-13, extra=1) for v in V] + [K(3000.0, "base", 1e-13, extra=1)]
@@ -771,7 +822,7 @@ def grid_cases():
     return out
 
 
-CORE = ["P0", "P1", "N0", "N1", "CJE", "CJN", "CJV"]
+CORE = ["P0", "P1", "N0", "N1", "CJE", "CJN", "CJV", "CJR", "CJQ"]
 
 
 def run_checks(args):
@@ -954,6 +1005,24 @@ def run_report(args):
         if len(xs) >= 2:
             m, sd = float(np.mean(xs)), float(np.std(xs, ddof=1))
             P(f"  {'%g %s' % (g, v):>14s}: n {len(xs)} mean {m:+.2e} std {sd:.2e} t {m / (sd / np.sqrt(len(xs))):+.1f}   " + " ".join(f"{x:+.1e}" for x in xs))
+    P("\n# CJR: as CJE with the Riccati of the exterior q at rtol 1e-13, atol 1e-16 (crate_j_r13), interior rtol 1e-13, atol 1e-14")
+    import mpmath as mp6
+    for (g, v) in CJ_CELLS:
+        xs = []
+        for e in range(CJE_N):
+            rec = sget(sc, g, v, 1e-13, "crate_j_r13", extra=e)
+            if rec:
+                xs.append(float(mp6.mpf(rec["D"]) / ref(v, g) - 1))
+        if len(xs) >= 2:
+            m, sd = float(np.mean(xs)), float(np.std(xs, ddof=1))
+            P(f"  {'%g %s' % (g, v):>14s}: n {len(xs)} mean {m:+.2e} std {sd:.2e} t {m / (sd / np.sqrt(len(xs))):+.1f}   " + " ".join(f"{x:+.1e}" for x in xs))
+    P("\n# CJQ: D's sensitivity to a planted error of q (the same chunk grid, so no realization noise): (D(q (1 + eps)) / D(q) - 1) / eps, rtol 1e-10")
+    for g in (1000.0, 3000.0):
+        d0 = sget(sc, g, "base", 1e-10, "crate_j")
+        for pl, eps in (("crate_j_q13", 1e-13), ("crate_j_q12", 1e-12)):
+            d1 = sget(sc, g, "base", 1e-10, pl)
+            if d0 and d1:
+                P(f"  gamma {g:g} eps {eps:g}: D moves {abs(d1['D'] / d0['D'] - 1):.2e}, sensitivity {(d1['D'] / d0['D'] - 1) / eps:+.3g}")
     P("\n# CJN: planted noise on the exact-J system (1000 base, rtol 1e-10, atol 1e-14): std of the signed gap over seeds 1 .. 4 (noise 0: the 8 realizations of CJE)")
     try:
         xs0, m0, s0 = cje_stats(sc, crate, 1000.0, "base", 1e-10, 1e-14)
