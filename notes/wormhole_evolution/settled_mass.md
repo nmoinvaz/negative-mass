@@ -174,3 +174,33 @@ and in §4 item 1 and the Summary, "0.30 a [SH02] against 0.22 a [GGS09b]" becom
 
 `settled_mass.py` (commands `pstar`, `pstar_an`, `job`, `planted`, `analyze`, `scan`, `sh02`, `sh02_uniform`), `settled_mass_output.txt`, this note; raw `negative-mass-raw/I41-rpi5`
 (`runs/`: p*ₕ, the eight series, scan, sh02, sh02_uniform; `mut/`: the 15 mutated analyses; `dev/`: development logs and scripts; `papers.sha256`).
+
+## Coordinator's review
+
+Review of branch `wip/i41-threshold-masses` at dd4cad9 and raw `I41-rpi5` at 9d6082b, recorded in negative-mass-raw
+`I41-mac-review` (criteria 8be196a; amendment A1; runs 020171c). On the Mac, nice 10.
+
+- **Scope.** The branch adds `settled_mass.py`, its output and this note, nothing else.
+- **Rerun.**
+  - `analyze` gives 13 of 13, the same lines.
+  - The job h = 0.01, δ = 1e-6 again agrees with the runner's M_AH(x⁺) to 1e-9 for the first half of the run. Deep in the
+    zoom it agrees to 1.6e-5 at the end (0.223109 against 0.223125).
+  - So the same code on another machine reproduces the settled value to about 2e-5. That is above the finest-h difference
+    this note quotes (2.4e-6), and it is why the paper and `critical_ghost.md` quote 0.2231 a.
+- **Independent check** (`ind41.py`). The review's own half-domain double-null march, sharing only the family's
+  definition, reads the apparent horizon row by row on a uniform grid.
+  - At e^{−f} = 1.335, 1.936, 4.074 and 11.96 it gives M_AH = 0.43726, 0.37797, 0.30315 and 0.25010 at h = 0.00125,
+    within 1.2e-4 of this note's table. The horizon's x⁻ agrees to 4e-5.
+  - Its first pair (h = 0.005, 0.0025) did not resolve the horizon at e^{−f} = 11.96 (K1 not met, amendment A1).
+  - A uniform grid cannot reach the settled value (e^{−f} ≥ 1e5), so the plateau rests on this note's zoom chain and its
+    planted Schwarzschild (to 1.7e-6).
+- **Process.** Two choices were made after development runs and before the runs of record, without a ruling:
+  - the declared limit moved from e^{−f} = 6144 to 1.57e6;
+  - the AN bar was set at 3e-4, above an observed 2.0e-4.
+
+  Both are recorded in the raw README. The first is justified by the flux that had not died. The second makes AN a weak
+  test, and it is read as such.
+- **Applied.**
+  - `critical_ghost.md` §1.3 and §4 carry the proposed text, with 0.2231 a.
+  - Paper III's threshold section states the settled mass. `paper_numbers.py` checks it (0 failures).
+- **Follow-ups.** Tasks 1 and 4 are #245 and #246; tasks 2 and 5 together are #247. Task 3, family G, is added to #225.

@@ -205,5 +205,14 @@ k4 = {v for (D, _), v in kk.items() if D == 4}
 k5 = {f"{float(v):.2f}" for (D, _), v in kk.items() if D == 5}
 check(k4 == {"2.0000"} and "$k=2.0000$ in $D=4$" in TEX, f"k at D = 4 is {k4} and is printed in main.tex")
 check(len(k5) == 1 and f"$k\\approx{k5.pop()}$ in $D=5$" in TEX, "k at D = 5 printed in main.tex")
+
+# the settled threshold mass (notes/wormhole_evolution/settled_mass_output.txt, #41): plateau Richardson value and r_AH
+SM = open(os.path.join(EV, "settled_mass_output.txt")).read()
+rich = [float(x) for x in re.findall(r"h = \(0\.01, 0\.005, 0\.0025\): M_end \[[^]]*\], differences [^,]*, [^,]*, Richardson \(second order\) M_end\(0\) = ([0-9.]+)", SM)]
+rah = [float(x) for x in re.findall(r"^\s+9\.40\s+\S+\s+\S+\s+\S+\s+([0-9.]+)\s+0\.22308", SM, re.M)]
+print("\n  settled mass (Richardson, finest triple):", rich, " r_AH at the limit:", rah)
+check(len(rich) == 2 and all(f"${x:.4f}a$" in TEX for x in rich), f"the settled mass {rich} printed in main.tex as 0.2231a")
+check(len(rah) >= 1 and f"radius ${rah[0]:.3f}a$" in TEX, f"r_AH {rah} printed in main.tex")
+check("falls from $0.494a$ at formation" in TEX and "0.49424" in SM, "the formation value 0.494 a printed and in the output")
 print("\nchecks failed:", bad)
 sys.exit(1 if bad else 0)

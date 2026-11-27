@@ -60,4 +60,6 @@ J = 17.4206887224287 (direct), 17.4206887224288 (u form);  8 pi ln 2 = 17.420688
 
   k of the tuned members (D, h):  {(4, 0.01): '2.0000', (4, 0.02): '2.0000', (5, 0.00354): '3.9875', (5, 0.00707): '3.9875'}
 
+  settled mass (Richardson, finest triple): [0.223083, 0.223083]  r_AH at the limit: [0.44617, 0.44617]
+
 checks failed: 0

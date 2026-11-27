@@ -35,8 +35,9 @@ members) [GGS09c]. Shinkai and Hayward's
 That last number is what type I scaling predicts from the single unstable mode. The mode's e-folding time is 0.846 a
 [GGS09a, TS13], and converting to their null coordinate x⁻ = (t − l)/√2 gives 0.846/√2 = 0.598 (**checked here**; neither
 paper makes this comparison). Shinkai and Torii found the same finite-mass behaviour in 5 and 6 dimensions and in
-Einstein–Gauss–Bonnet gravity [ST17]. Nobody has done a careful bisection, and the published threshold masses disagree:
-0.30 a [SH02] against 0.22 a [GGS09b]. The 3+1 runs of [SN26] (massive throat, two amplitudes) follow the lifetime law
+Einstein–Gauss–Bonnet gravity [ST17]. Nobody had done a careful bisection, and the published threshold masses disagreed:
+0.30 a [SH02] against 0.22 a [GGS09b]. *Update from #40 and #41:* the bisection is done (§1.3), and the settled mass here is
+0.2231 a, [GGS09b]'s value; [SH02]'s 0.30 a is not reproduced. The 3+1 runs of [SN26] (massive throat, two amplitudes) follow the lifetime law
 τ ln(1/ε) but, in their words, "do not establish the scaling".
 
 **Choptuik's threshold is type II, and in the massless normal + ghost model the two live in different sectors of initial
@@ -254,9 +255,21 @@ Two more details fit the same picture:
 0.494, 0.492 and 0.490 a^{D−3} at D = 4, 5, 6 in S and O, with r ≈ 0.99 a there. This is a formation value in a grid
 that stretches after the horizon forms. It is not a settled mass, and it does not settle #41.
 
-The **0.30 a against 0.22 a discrepancy is unresolved.** For a single static critical solution, type I predicts one value:
-the black hole at the end of the unstable manifold. Different perturbation families plus late accretion of field that has
-not dispersed are a plausible cause (**conjecture**).
+**Update from #41** (`wormhole_evolution/settled_mass.md`; *numerical evidence*; the coordinator's review reproduced the
+apparent-horizon mass with a second code to 1.2e-4 up to e^{−f} ≈ 12):
+- All three papers define M as a Misner–Sharp mass with G = 1 in units of the throat radius, so no unit factor separates
+  them. m_AH = r_AH/2 on the apparent horizon.
+- In the symmetric family S at D = 4, the mass on the apparent horizon falls from 0.494 a at the first trapped cell and
+  settles at **0.22308 a** (r_AH = 0.4462 a). It is the same for p*ₕ − δ with δ from 1e-8 to 1e-3, and second order from
+  h = 0.02 to 0.0025, to e^{−f} = 1.6e6 on the horizon, 9.4 time units after formation. That is [GGS09b]'s r_AH = 0.45.
+- [ST17]'s E_f equals the static throat's own energy: a formation value, which is why it does not depend on the injected
+  energy.
+- [SH02]'s 0.30 a is not reproduced with their own data (E₀ and x_H⁻ are; M is 0.223 to 0.26). It equals this code's M_AH
+  about two time units after formation, while the mass is still falling.
+- So the discrepancy is resolved for [GGS09b] and [ST17] and remains for [SH02]. A resolution limit of their reading is a
+  *conjecture*, not shown.
+- *Added by the coordinator:* the same code on another machine reproduces the settled value to about 2e-5, so quote it as
+  0.2231 a.
 
 **Type II?** Nobody reports a power law, and none is expected: the critical solution is static and has a scale.
 
@@ -444,7 +457,7 @@ Beyond `notes/literature.md` and the repo's phase 2 and phase 5 results:
 1. **Precision type I scaling at the Ellis threshold.**
    - No bisection to p* in a generic family. The lifetime exponent is known to two digits [SH02] and has never been compared
      with 1/λ₀ in print.
-   - The threshold mass is 0.30 a [SH02] or 0.22 a [GGS09b], unresolved.
+   - The threshold mass is 0.30 a [SH02] or 0.22 a [GGS09b], unresolved. *Update from #40 and #41:* the bisection and the lifetime law are done for families through the static wormhole (#40), and the settled mass is 0.2231 a ([GGS09b]'s value; [SH02]'s not reproduced, #41). Open: generic families (#225).
    - One accurate 1+1 run along the unstable manifold of the massless symmetric wormhole would settle the mass. A bisection
      with the lifetime fitted against ln|p − p*| would test the type I law.
 2. **Universality on the two-ended side.**
