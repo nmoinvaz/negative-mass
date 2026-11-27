@@ -75,7 +75,7 @@ def read_csv_text(text):
 def read_crate_table(path):
     """{D: (old label, old csv string, crate string)} of the table "growth.csv against the crate (qd)" of w2_output.txt"""
     out, inside = {}, False
-    pat = re.compile(r"^\s*(\d+)\s+(modes_r\.py|TS13 Table I)\s+(\d+\.\d+)\s+(\d+\.\d{15,})\s+(-?\d\.\d+e[+-]\d+)\s")
+    pat = re.compile(r"^\s*(\d+)\s+(\S.*?)\s{2,}(\d+\.\d+)\s+(\d+\.\d{15,})\s+(-?\d\.\d+e[+-]\d+)\s")  # any source label
     for line in open(path):
         if "growth.csv against the crate (qd)" in line:
             inside = True
