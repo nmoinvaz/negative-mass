@@ -810,6 +810,43 @@ def mass_table(M, lines):
     lines.append(f"    M at the start of the edge (x- = 0), x+ = X: {M0:+.6f}; the static wormhole's 1/(2 r^(n-1)) there is {1 / (2 * float(sol(N * h / SQ2)[0]) ** (n - 1)):.6f}, so the pulse's E0 = {M0 - 1 / (2 * float(sol(N * h / SQ2)[0]) ** (n - 1)):+.6f}")
 
 
+def limit_report(M, lines):
+    """Reported, not gated (the coordinator's request after the runs of record started): the limiting proper time tau_s of the throat from the linear fit of 1/H, the
+    fitted exponents of r, H, |rho| and the two scalar invariants against (tau_s - tau), and the throat's values as tau -> tau_s. On the diagonal the Ricci scalar is
+    R = eps (d phi)^2 = 2 rho and the sectional curvature of the angular planes is K = (1 - (grad r)^2)/r^2 = 2 m/r^(n+1) = H^2 + 1/r^2; both are scalars of the
+    metric, so a rise in them is not a coordinate effect."""
+    n = M["n"]
+    g = diag_arrays(M["R"])
+    tau, r, H, rho, m = g["tau"], g["r"], g["H"], g["rho"], g["m"]
+    K = 2 * m / r ** (n + 1)
+    Rs = 2 * rho
+    out = {}
+    for nf in (0.5, 1.0, 2.0):
+        ix = final_window(tau, r, nf)
+        b, a = np.polyfit(tau[ix], 1 / H[ix], 1)
+        out[nf] = (-a / b, -1 / b)
+    ts = out[1.0][0]
+    ix = final_window(tau, r, CRIT["CL"]["nfold"])
+    d = ts - tau[ix]
+    ok = d > 0
+    ex = {}
+    for name, v in (("r", r), ("H", H), ("|rho|", np.abs(rho)), ("|R|", np.abs(Rs)), ("K", K)):
+        ex[name] = float(np.polyfit(np.log(d[ok]), np.log(v[ix][ok]), 1)[0])
+    M["limit"] = dict(tau_s=ts, k=out[1.0][1], exps=ex, windows=out)
+    lines.append(f"    tau_s (linear fit of 1/H over the last 0.5, 1, 2 e-folds of r): " + ", ".join(f"{out[nf][0]:.5f} (k = {out[nf][1]:.4f})" for nf in (0.5, 1.0, 2.0))
+                 + f"; last live cell tau = {tau[-1]:.5f}, tau_s - tau = {ts - tau[-1]:.4f}")
+    lines.append("    fitted exponents against (tau_s - tau) over the last e-fold, d ln(.)/d ln(tau_s - tau): " + ", ".join(f"{k} {v:+.4f}" for k, v in ex.items())
+                 + f"; r/a = (tau_s - tau)^-q with q = {-ex['r']:.4f} and k = {out[1.0][1]:.4f}")
+    lines.append(f"    K - (H^2 + 1/r^2) max {float(np.max(np.abs(K - H ** 2 - 1 / r ** 2))):.1e}; R - 2 rho = 0 by the identity of the diagonal")
+    lines.append(f"    {'tau_s-tau':>10s} {'t':>9s} {'r/a':>10s} {'H':>9s} {'rho':>11s} {'R = 2 rho':>11s} {'K':>10s} {'K (tau_s-tau)^2':>16s} {'|rho|(tau_s-tau)^2':>19s}")
+    for dd in (3.0, 1.0, 0.3, 0.1, 0.03, 0.01, 0.003, 0.001):
+        j = int(np.argmin(np.abs((ts - tau) - dd)))
+        if abs((ts - tau[j]) - dd) > 0.2 * dd or j < 5:
+            continue
+        lines.append(f"    {ts - tau[j]:10.4f} {g['t'][j]:9.2f} {r[j]:10.2f} {H[j]:9.4f} {rho[j]:+11.3e} {Rs[j]:+11.3e} {K[j]:10.3e} {K[j] * (ts - tau[j]) ** 2:16.4f} {abs(rho[j]) * (ts - tau[j]) ** 2:19.4f}")
+    lines.append(f"    {ts - tau[-1]:10.4f} {g['t'][-1]:9.2f} {r[-1]:10.2f} {H[-1]:9.4f} {rho[-1]:+11.3e} {Rs[-1]:+11.3e} {K[-1]:10.3e} {K[-1] * (ts - tau[-1]) ** 2:16.4f} {abs(rho[-1]) * (ts - tau[-1]) ** 2:19.4f}   (last live cell)")
+
+
 def analyze_suite(suite, scale):
     runs, ctrls = suite["runs"], suite["ctrl"]
     print(f"expansion.py analyze: scale {scale}, mutation {EMUT or dn.MUT}, numba {dn.nb.__version__ if dn.HAVE_NUMBA else 'absent'}, numpy {np.__version__}, {time.strftime('%Y-%m-%d %H:%M:%S')}")
@@ -860,6 +897,9 @@ def analyze_suite(suite, scale):
         print("\n".join(lines))
         print(f"    final window (last e-fold of r, {cl['npts']} pts, r/a = {cl['r0']:.1f} to {cl['r1']:.1f}): H max/min {cl['Hratio']:.3f}, H end/start {cl['Hgrow']:.3f}, |rho| max/min {cl['rhoratio']:.3f}, "
               f"w_bar in [{cl['wmin']:.4f}, {cl['wmax']:.4f}]; 1/H linear in tau: k = {cl['k']:.4f}, tau_s = {cl['tau_s']:.4f} (last point {cl['tau_end']:.4f}), max residual {cl['ft_resid']:.1e}  -> class {cl['class']}")
+        lines = []
+        limit_report(M, lines)
+        print("\n".join(lines))
         print(f"    slope test (#211): H/W at r/a = " + ", ".join(f"{r0:g}: {v:.3f}" for r0, v in vals.items()) + f"; bar {CRIT['SL']['bar']:.0%}: {'met' if met else 'not met'}")
         R = M["R"]
         ja = np.where(R["cls_diag"] == 1)[0]
@@ -932,7 +972,7 @@ def analyze_suite(suite, scale):
             dl = abs(math.log(ga["r"].max()) - math.log(gb["r"].max()))
             ok = ca["class"] == cb["class"] and (max(dH) if dH else 0) <= cres["H_rel"] and dk <= cres["k_rel"] and dts <= cres["ts_rel"] and dl <= cres["lnr"]
             allok &= ok
-            lines.append(f"D{key[0] + 2} {key[1]}: h {a['h']:.5f} vs {b['h']:.5f}: class {ca['class']} / {cb['class']}; H at fixed r/a (10, 25, 50) differs by {fmt(dH)}; k {dk:.1e}; tau_s {dts:.1e}; |d ln r_max| {dl:.1e}")
+            lines.append(f"D{key[0] + 2} {key[1]}: h {a['h']:.5f} vs {b['h']:.5f}: class {ca['class']} / {cb['class']}; tau_s {ca['tau_s']:.5f} / {cb['tau_s']:.5f}, k {ca['k']:.4f} / {cb['k']:.4f}; H at fixed r/a (10, 25, 50) differs by {fmt(dH)}; k {dk:.1e}; tau_s {dts:.1e}; |d ln r_max| {dl:.1e}")
     for x in lines:
         print("    RES " + x)
     if lines:
