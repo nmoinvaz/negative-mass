@@ -284,12 +284,42 @@ def check_command():
     w = family_vs_generic(D, MUT)
     line("S5 family coefficients vs generic derived equation (mpmath 30 digits)", w < 1e-25, f"max abs difference {float(w):.3e}")
     print(f"      elapsed {time.time() - t0:.0f} s", flush=True)
+    w = check_vhat_vs_bkz(MUT)
+    line("S8 Vhat of u = Y/rho against [BKZ12] (40), (41) (mpmath 30 digits, members c = 0, -0.3, -1.5)", w < 1e-25, f"max abs difference {float(w):.3e} (declared <= 1e-25)")
     lim, resid = check_pt_limit(MUT)
     line("S7 Poeschl-Teller limit c -> -1 (sympy)", resid == 0, f"limit of Vhat = {lim}; residual of u = sech(A1 x/2), W = A1/2: {resid}")
     err = check_pt_numeric(MUT)
     line("S7b Vhat of the member c = -1.0001 against the Poeschl-Teller well", err < 3e-3, f"max |Vhat - V_PT|/(A1^2/2) over the well = {err:.3e} (declared <= 3e-3)")
     printed_vs_derived()
     return ok_all
+
+
+def check_vhat_vs_bkz(mut=(), cs=(0.0, -0.3, -1.5), pts=("-1.3", "0.7", "2.4")):
+    """Vhat of the Schroedinger form (u = Y/rho) against [BKZ12] (40), (41): V_eff = U + R_{r* r*}/R with
+    U/A = eps phi'^2/R'^2 (R^2 V - 1) + 2 phi' R V_phi/R' + eps V_phiphi; d/dr* = A d/d rho. mpmath, 30 digits."""
+    import mpmath as mp
+    mp.mp.dps = 30
+    worst = mp.mpf(0)
+    sgn = -1 if "veff_sign" in mut else 1                          # control: the sign of the V_phi term, as in the printed (37)
+    for c in cs:
+        f = family_mp(c)
+        A, V = f["A"], f["V"]
+        for r0 in pts:
+            r0 = mp.mpf(r0)
+            R = lambda r: mp.sqrt(r * r + 1)
+            phip = lambda r: mp.sqrt(2) / (r * r + 1)
+            Vphi = lambda r: mp.diff(V, r) / phip(r)
+            Rr, Rp, Rpp = R(r0), mp.diff(R, r0), mp.diff(R, r0, 2)
+            Ar, Ap = A(r0), mp.diff(A, r0)
+            Vv = V(r0)
+            Vpp = mp.diff(Vphi, r0) / phip(r0)
+            e = -1
+            U = Ar * (e * phip(r0)**2 / Rp**2 * (Rr**2 * Vv - 1) + sgn * 2 * phip(r0) * Rr * Vphi(r0) / Rp + e * Vpp)
+            Veff = U + (Ar * Ap * Rp + Ar**2 * Rpp) / Rr
+            R2 = r0 * r0 + 1
+            Vhat = 2 * Ar**2 / r0**2 - (1 + 1 / R2) * Ar * Ap / r0 + Ar**2 / R2**2 - 2 * Ar / R2
+            worst = max(worst, abs(Veff - Vhat))
+    return worst
 
 
 def check_pt_limit(mut=()):
@@ -703,7 +733,7 @@ CONTROLS = {
     "master_p": ("check", "S4 linearized"), "bkz41_sign": ("check", "S4 linearized"), "family_q": ("check", "S5 family"),
     "eps": ("planted", "P1 planted"), "throat_wall": ("planted", "P1 planted"), "rmax": ("planted", "P1 planted"),
     "hz_start": ("agree", "R1 v R2"), "scan_range": ("bkz", "[BKZ12] verdict"), "spec_sign": ("spectral", "S6 spectral"),
-    "pt_ell": ("check", "S7 Poeschl"),
+    "pt_ell": ("check", "S7 Poeschl"), "veff_sign": ("check", "S8 Vhat"),
 }
 CONTROL_MEMBER = -0.3
 
