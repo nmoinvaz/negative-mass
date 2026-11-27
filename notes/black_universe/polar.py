@@ -835,7 +835,7 @@ def report_command(d):
     for fn in glob.glob(d + "/mads_*_R*.json"):
         o = json.load(open(fn))
         mrows.setdefault(o["c"], {})[o["res"]] = o
-    print("M-AdS wormholes, radial modes, Dirichlet at the AdS end, W in [%g, %g]" % (W_LO, W_HI))
+    print("M-AdS wormholes, radial modes, Dirichlet at the AdS end, W in [%g, %g]" % (W_LO, W_HI_M))
     print("%8s | %-3s %-3s | %-18s %-18s | %-10s %-10s %s" % ("c", "nR1", "nR2", "W R1", "W R2", "R1 v R2", "monodromy", "status"))
     for c in sorted(mrows):
         r1, r2 = mrows[c].get("R1"), mrows[c].get("R2")
