@@ -296,7 +296,7 @@ its reference list.
     (A/r²)′ = 2(ρ₀ − h)/r⁴ with A(h) = 0, gives A′(h) = 2(ρ₀ − h)/r²(h). Checked here by hand from the printed (7); #212
     S3 confirms it to 40 digits. The printed (8) halves the surface gravity κ = |A′(h)|/2. #212 also finds the closed
     forms (9)–(14) satisfy (3)–(6) with residual 0 (S1, S2, *checked symbolically*).
-- **[BMD07] Bronnikov, Melnikov & Dehnen 2007**, "Regular black holes and black universes", GRG 39, 973,
+- **[BMD07] Bronnikov, Dehnen & Melnikov 2007** (author order corrected 2026-11-27 against arXiv gr-qc/0611022 and Crossref), "Regular black holes and black universes", GRG 39, 973,
   arXiv:gr-qc/0611022 v2, doi:10.1007/s10714-007-0430-6 (INSPIRE and arXiv checked). Read: abstract, §1, concluding
   paragraphs.
   - Claim: "It also looks possible that our Universe has originated from phantom-dominated collapse in another universe
