@@ -2,7 +2,7 @@
 
 November 2026, issue [#206](https://github.com/nmoinvaz/negative-mass/issues/206), a follow-up to
 [#191](https://github.com/nmoinvaz/negative-mass/issues/191) ([`singularity_locator.md`](singularity_locator.md)). Pull request
-[nmoinvaz/multisolver#28](https://github.com/nmoinvaz/multisolver/pull/28) (branch `feat/locate-late-windows`, commits c5b5ea7 and 21b9829 on multisolver main 63d6e4d). Raw folder: negative-mass-raw `I206-mac` at 771f2c2
+[nmoinvaz/multisolver#28](https://github.com/nmoinvaz/multisolver/pull/28) (branch `feat/locate-late-windows`, commits c5b5ea7 and 21b9829 on multisolver main 63d6e4d). Raw folder: negative-mass-raw `I206-mac` at 035fc85
 (README with the readings of the acceptance, the criteria and the control inputs written before the first run of record, amendment A1 with the
 development runs and the controls' targets, every log). Status words as in AGENTS.md: **numerical evidence**; nothing is proved or certified. Every number quoted
 below is in a log of the raw folder named in section 7.
