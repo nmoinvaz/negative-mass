@@ -680,6 +680,8 @@ fmt_list = lambda xs: ",".join(repr(float(x)) for x in xs)  # not :g, which keep
 STAGES = {
     "arc": dict(cmd="arc", alphas=[x for x in FAMILY_TARGETS if x <= ARC_MAX], modes=[1.10, 1.20, 1.50, 2.00], zvariants=[2.00],
                 extra=dict(alpha_stop=ARC_MAX, chunk=10, ds=0.05, ds_max=5)),
+    "arcm": dict(cmd="arc", alphas=[1.10, 1.15, 1.17, 1.20, 1.25, 1.30], modes=[1.10], zvariants=[],  # the family controls (A4): alpha_c <= 1.3, one scan
+                 extra=dict(alpha_stop=1.30, chunk=10, ds=0.05, ds_max=5)),
     "stepA": dict(cmd="step", alphas=[x for x in FAMILY_TARGETS if x > ARC_MAX], modes=[], zvariants=[], extra=dict(hmax=0.05, dlnk=0.25)),
     "stepB": dict(cmd="step", alphas=[2.50, 3.00], modes=[2.50, 3.00], zvariants=[3.00], extra=dict(hmax=0.05, dlnk=0.25)),
     "stepS": dict(cmd="step", alphas=[3.50, 3.90], modes=[3.50, 3.90], zvariants=[], extra=dict(hmax=0.05, dlnk=0.25, ungated=1)),  # A3, supplementary
@@ -722,10 +724,13 @@ def arc_lines(arc_log=None):
     return ARC_LINES
 
 
-def check_C(arc_log=None):
+def check_C(arc_log=None, alpha_max=None):
+    """alpha_max: the family controls (A4) compare only the stored rows up to it; the verdict is then `Cs`"""
     lines = arc_lines(arc_log)
     rows = {round(l["alpha_c"], 6): l for l in lines if l["cmd"] == "row"}
     stored = stored_family()
+    if alpha_max:
+        stored = {a: v for a, v in stored.items() if a <= alpha_max + 1e-9}
     nbad, ntok, out = 0, 0, []
     worst_rel = 0.0
     for al, st in sorted(stored.items()):
@@ -749,22 +754,28 @@ def check_C(arc_log=None):
     chunks = [l for l in lines if l["cmd"] == "arc_chunk"]
     tr = [l for l in lines if l["cmd"] == "arc_track"][0]
     err = [l for l in lines if l["cmd"] in ("arc_error", "step_error")]
+    name1 = "Cs" if alpha_max else "C1"
     n_arc = sum(1 for l in lines if l["cmd"] == "row" and l["_kind"] == "arc")
     n_step = sum(1 for l in lines if l["cmd"] == "row" and l["_kind"] == "step")
     ends = [l for l in lines if l["cmd"] == "step_end"]
-    report("C1", nbad == 0 and not err, f"{ntok - nbad} of {ntok} tokens (w, N, M of {len(stored)} stored rows) equal their stored print; largest relative difference {worst_rel:.1e}; "
+    report(name1, nbad == 0 and not err, f"{ntok - nbad} of {ntok} tokens (w, N, M of {len(stored)} stored rows) equal their stored print; largest relative difference {worst_rel:.1e}; "
            f"{n_arc} rows beside the arclength path (to alpha_c = {max(c['alpha_end'] for c in chunks):.4f} in {len(chunks)} chunks, {sum(c['points'] for c in chunks)} points, "
            f"{sum(c['refused'] for c in chunks)} refused steps), {n_step} rows by Newton stepping in alpha_c ({sum(e['solves'] for e in ends)} solves, {sum(e['refused'] for e in ends)} refused); "
            f"omega_min on the path {tr['omega_min_point'][1]:.8f} at alpha_c {tr['omega_min_point'][0]:.5f} (path point, not the fold)" + (f"; ERROR {err[0]['err'][:200]}" if err else ""))
     reached = max(c["alpha_end"] for c in chunks)
+    if alpha_max:
+        return
     report("C2", reached >= 4.017906 and not any(l["cmd"] == "arc_error" for l in lines),
            f"the pseudo-arclength continuation as worded in the README (the weak-field star up to alpha_c = 4.017906): the arclength path reached alpha_c = {reached:.4f}; "
            f"Amendment A2 ends it at {ARC_MAX} (cost: dev_02, dev_05) and takes the rows above by Newton stepping; as worded: NOT MET")
 
 
-def check_F(arc_log=None):
+def check_F(arc_log=None, alpha_max=None):
+    """alpha_max: the family controls (A4) compare only the stored alpha_0 up to it; the verdict is then `Fs`"""
     lines = arc_lines(arc_log)
     stored = stored_modes()
+    if alpha_max:
+        stored = {a: v for a, v in stored.items() if a <= alpha_max + 1e-9}
     fam = stored_family()
     full = stored_modes_full()
     rows = {round(l["alpha_c"], 6): l for l in lines if l["cmd"] == "row"}
@@ -818,7 +829,7 @@ def check_F(arc_log=None):
             ntok += 1
         out.append(f"  alpha_0={al}: " + "; ".join(res))
     print("\n".join(out), flush=True)
-    report("F", nbad == 0, f"{ntok - nbad} of {ntok} tokens of the phantom modes table (w, (1-w)^2, roots on [-0.2, (1-w)^2), 'none') equal their stored print or hold on the 4x denser grid")
+    report("Fs" if alpha_max else "F", nbad == 0, f"{ntok - nbad} of {ntok} tokens of the phantom modes table (w, (1-w)^2, roots on [-0.2, (1-w)^2), 'none') equal their stored print or hold on the 4x denser grid")
 
 
 def check_Z(arc_log=None):
@@ -926,11 +937,9 @@ def main():
                              "multishoot's recursion against the crate's own Num-lane recursion (star_ref.rs) at the node r = 4.5 of the canonical star"),
         "S3": check_S3, "S5": check_S5, "A": check_A, "E2": lambda: check_E2(arc_log),
         "X1": lambda: (check_X1(1, "p"), check_X1(-1, "m")),
-        "C": lambda: check_C(arc_log), "F": lambda: check_F(arc_log), "Z": lambda: check_Z(arc_log), "FOLD": check_fold,
+        "C": lambda: check_C(arc_log), "F": lambda: check_F(arc_log), "Cs": lambda: check_C(arc_log, alpha_max=1.30), "Fs": lambda: check_F(arc_log, alpha_max=1.10), "Z": lambda: check_Z(arc_log), "FOLD": check_fold,
     }
-    for name in CHECKS:
-        if only and name not in only:
-            continue
+    for name in (only if only else CHECKS):  # `only` may name the control checks Cs and Fs, which are not in the default list
         print(f"--- {name} ({time.time() - t0:.0f} s)", flush=True)
         try:
             table[name]()
