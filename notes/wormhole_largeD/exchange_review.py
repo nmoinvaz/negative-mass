@@ -611,9 +611,9 @@ def check_grid():
         print(f"    Omega{j} = {nd(e[f'Om{j}'], min(dps, 110))}")
     bar = 40
     d_a70, d_b4 = digits(a70, e["Om2"]), digits(b4, e["Om3"])
-    report("GR1", d_a70 > bar, f"Omega_2 on the third grid {nd(e['Om2'], 50)} against #26's A70 {nd(a70, 50)} (order4_output.txt, 48 printed digits): "
+    report("GR1", d_a70 > bar, f"Omega_2 on the third grid {nd(e['Om2'], 50)} against #26's A70 {nd(a70, 50)} (order4_output.txt, 47 printed decimals): "
                                f"{float(d_a70):.1f} digits (bar {bar})")
-    report("GR2", d_b4 > bar, f"Omega_3 on the third grid {nd(e['Om3'], 50)} against #208's B4 {nd(b4, 50)} (order5_output.txt, 113 printed digits): "
+    report("GR2", d_b4 > bar, f"Omega_3 on the third grid {nd(e['Om3'], 50)} against #208's B4 {nd(b4, 50)} (order5_output.txt, 107 printed decimals): "
                               f"{float(d_b4):.1f} digits (bar {bar})")
     d0, d1 = digits(cl[0], e["Om0"]), digits(cl[1], e["Om1"])
     report("GR3", min(d0, d1) > bar, f"planted: Omega_0, Omega_1 against -4 ln 2 and 2 pi^2/3 + 8 ln^2 2: {float(d0):.1f} and {float(d1):.1f} digits (bar {bar})")
