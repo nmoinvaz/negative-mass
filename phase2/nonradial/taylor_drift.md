@@ -153,3 +153,24 @@ The number of renormalizations of the interior plane changes ε_Y little (median
 2. **Set #198's bar from the floor.** What: before the l = 6 value of #114 is compared, the bar is 3 × the predicted rms (task 1), not 1e-8. Accept: the bar is committed before the value is read. Depends: 1, #114.
 3. **Why the sign repeats.** What: at (3000, base) the 16 realizations of CJE share a negative offset of 1.3e-9 … 1.6e-9, with ε_Y 8e-15 … 3e-14. Candidates: a systematic part of the interior plane's rounding. Accept: a planted test that moves the offset, or the offset gone with the interior plane in double-double. Depends: none; low priority.
 4. **A double-double scipy path.** What: `PolarProblem` with J and the plane arithmetic in double-double (or the crate's `d_eval` with the chunking of scipy). Why: the only direct test that the floor is f64 rounding of J. Accept: the gap against the crate falls to 1e-14 or better at (5, 3000). Depends: none.
+
+## Coordinator's review
+
+Review of branch `wip/i196-polar-drift` at 64b4e35 and raw `I196-mac` at edd24a2a, recorded in negative-mass-raw `I196-mac-review`.
+On the Mac, nice 10, under a load of 20 to 60 from other projects.
+
+- **Scope.** The branch adds the script, its output and this note. The crate gains commands only: `starsteps`, `jtable`, the variant
+  `phio24`, and `rows planes=1`. `DOut` gains the two planes. The default rows are unchanged (REP, and #187's rows through `rows`).
+- **Rerun.** `taylor_drift.py check` on the stored runs, with the crate built in the review worktree, gives the note's verdicts: 8
+  pass, and COMPLETE fails on the seven cases not run. The first two rerun attempts failed on the coordinator's side, from missing
+  arguments and an unbuilt crate; their logs are kept.
+- **No independent code.** This is a diagnostic study. Its claims rest on controlled comparisons: the extra-chunk realizations, the
+  exact-J ensembles, and the plane angles against the crate's double-double planes. REP compares this Mac with the win laptop's stored D,
+  so two machines enter.
+- **Status.** The cause is "not established" by the declared rules, as the note says. The γ² reading is post hoc, and it predicts
+  #187's top-γ gaps to within a factor of 3.
+- **Applied.** `taylor_polar.md` gains the proposed #196 section and a correction of #187's step that does not follow.
+- **Follow-ups.**
+  - Task 1 (test the reading at (5, 6000) and (6, 12000)) is #271.
+  - Task 2 (#198's bar from the floor) is added to #198.
+  - Tasks 3 and 4 are not filed: the offset's sign and a double-double scipy path matter only if #271 fails.

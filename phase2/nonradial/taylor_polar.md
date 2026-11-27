@@ -230,7 +230,7 @@ Error bars, each named and none rigorous:
 #186's worst 4.5e-9; the coordinator's ruling kept it. CAP5s repeats the comparison with the crate's star shot from rs = 1e-3 with scipy's leading-order boundary condition (the start that
 agrees with `solve_star` to 1e-10 in #186's S1): the five numbers are the same, and the crate's D does not change in its f64 digits between the two starts (a development value at l = 2, γ = 1 in dd: 5e-21, `dev_21`), because the star beyond
 the centre is the same decaying solution (m(r_m) agrees to 5e-18). What `run_19` shows beyond that: the crate agrees with scipy's full-precision D to 8e-13 up to γ = 10 in every variant and every l (4e-12 at γ = 40), and the gap
-grows with γ (up to 2e-11 at 137, 2e-10 at 300, 3e-9 at 1000, and 5e-8 to 8e-8 at the top γ of l = 4, 5, 6, in the φ_cut, R = 90 and r0 columns), so it is not a static input such as the star or M_ext, which would be the same at every γ. The crate's own convergence
+grows with γ (up to 2e-11 at 137, 2e-10 at 300, 3e-9 at 1000, and 5e-8 to 8e-8 at the top γ of l = 4, 5, 6, in the φ_cut, R = 90 and r0 columns), so it is not a static input such as the star or M_ext, which would be the same at every γ. The crate's own convergence *Coordinator, from #196:* this step does not follow. A plane error that grows as γ and a smallest sine that falls as 1/γ give a gap ∝ γ². #196's direct test (the crate's star and M_ext in `PolarProblem`) supports the conclusion.
 is far tighter (E1, E2), and its f64 lane differs from dd by about the size of the gap for the base, R = 90 and r0 columns but not for φ_cut (1.5e-9 against 4.7e-8). **The cause is not established.**
 Candidates: scipy's integration error at rtol 1e-10 over the longer path to r_m = 34, and roundoff in scipy's f64. Against truncation alone: scipy's rtol 1e-12 value is still 3.1e-9 from the crate, only 1.7 times closer than
 its rtol 1e-10 value (5.4e-9) for a hundred times tighter rtol.
@@ -308,3 +308,12 @@ already filed).
 **Update from #189.** The crate can step its planes with multishoot's plane stepper (pull request #70, unmerged) behind the
 cargo feature `lib_plane`. With it, every D and q token of #187's rows is the same; see [taylor_plane_lib.md](taylor_plane_lib.md) and its
 review.
+
+## #196: where scipy's D drifts from the crate
+
+Status: **numerical evidence**; cause by the declared rules not established. At (l = 5, γ = 1000 … 3000) the gap between `PolarProblem`'s D and the crate's is not a drift: one extra chunk moves scipy's D by 4e-10 … 2e-8,
+and the gap does not fall with rtol (1e-10 … 1e-13) or atol (1e-14 … 1e-17). The crate's star and M_ext in `PolarProblem` move D by no more than that scatter; the exterior (the scalar plane, q), the star's interpolation and the generated J's rounding
+do not make it. Scipy's interior plane at r_m differs from the crate's double-double plane by 4e-16 … 4e-14, the exterior plane by 3e-16; D is the product of the sines of the three principal angles between the planes, the smallest 4.8e-5 at γ = 1000 and
+1.6e-5 at 3000, so the plane error is amplified 2e4 … 6e4 times. **#187's "the gap grows with γ, so it is not a static input" does not follow**: a plane error that grows as γ and a sine that falls as 1/γ give a gap ∝ γ².
+Post hoc, A = ε_Y/sin θ_min at γ = 1000 gives A (γ/1000)² = 5.3e-9 and 1.6e-8 at (5, 6000) against the stored 5.4e-9 and 4.7e-8 (CAP5c), 2.1e-8 and 6.3e-8 at (6, 12000) against 1.9e-8 and 5.1e-8: **CAP5c's bar 1e-8 was below scipy's own floor**.
+Scipy with the crate's J tables (J rounded once from double-double) runs 10 times faster (11 s at (5, 1000)). Raw `I196-mac`; script `taylor_drift.py`, note `taylor_drift.md`.
