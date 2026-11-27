@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="494" viewBox="0 0 780 494" font-family="system-ui, sans-serif">
+<style>@media (prefers-color-scheme: dark){[fill="#fcfcfb"]{fill:#201f1d}[stroke="#fcfcfb"]{stroke:#201f1d}[fill="#0b0b0b"]{fill:#e8e6e3}[stroke="#0b0b0b"]{stroke:#e8e6e3}[fill="#52514e"]{fill:#a8a49d}[stroke="#52514e"]{stroke:#a8a49d}[fill="#e7e6e2"]{fill:#343230}[stroke="#e7e6e2"]{stroke:#343230}[fill="#c98500"]{fill:#d69a2d}[stroke="#c98500"]{stroke:#d69a2d}[fill="#eb6834"]{fill:#dd5c26}[stroke="#eb6834"]{stroke:#dd5c26}[fill="#eda100"]{fill:#c08800}[stroke="#eda100"]{stroke:#c08800}[fill="#e87ba4"]{fill:#d1678f}[stroke="#e87ba4"]{stroke:#d1678f}[fill="#4a3aa7"]{fill:#7263cf}[stroke="#4a3aa7"]{stroke:#7263cf}[fill="#a6339a"]{fill:#c257b5}[stroke="#a6339a"]{stroke:#c257b5}[fill="#7a7668"]{fill:#948e82}[stroke="#7a7668"]{stroke:#948e82}}</style>
+<rect width="780" height="494" fill="#fcfcfb"/>
+<text x="16.0" y="26.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">The ghost sector of Choptuik's solution decays in every dimension computed</text>
+<text x="16.0" y="42.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">μ = least-damped real rate of a ghost-field perturbation on Choptuik's critical solution, per echo. Negative = the ghost admixture dies out.</text>
+<line x1="136.9" y1="72.0" x2="136.9" y2="402.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="136.9" y="417.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">5</text>
+<line x1="264.0" y1="72.0" x2="264.0" y2="402.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="264.0" y="417.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">10</text>
+<line x1="391.0" y1="72.0" x2="391.0" y2="402.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="391.0" y="417.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">20</text>
+<line x1="559.0" y1="72.0" x2="559.0" y2="402.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="559.0" y="417.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">50</text>
+<line x1="686.0" y1="72.0" x2="686.0" y2="402.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="686.0" y="417.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">100</text>
+<line x1="96.0" y1="360.7" x2="686.0" y2="360.7" stroke="#e7e6e2" stroke-width="1"/>
+<text x="90.0" y="364.7" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">-1.0</text>
+<line x1="96.0" y1="278.2" x2="686.0" y2="278.2" stroke="#e7e6e2" stroke-width="1"/>
+<text x="90.0" y="282.2" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">-0.8</text>
+<line x1="96.0" y1="195.7" x2="686.0" y2="195.7" stroke="#e7e6e2" stroke-width="1"/>
+<text x="90.0" y="199.7" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">-0.6</text>
+<line x1="96.0" y1="113.2" x2="686.0" y2="113.2" stroke="#e7e6e2" stroke-width="1"/>
+<text x="90.0" y="117.2" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">-0.4</text>
+<line x1="96.0" y1="402.0" x2="686.0" y2="402.0" stroke="#52514e" stroke-width="1"/>
+<line x1="96.0" y1="72.0" x2="96.0" y2="402.0" stroke="#52514e" stroke-width="1"/>
+<text x="391.0" y="436.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">spacetime dimension D</text>
+<text x="52.5" y="237.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 52.5 237.0)">μ (ghost-sector rate)</text>
+<rect x="630.8" y="72" width="55.2" height="330" fill="#e7e6e2" opacity="0.6"/>
+<text x="635.8" y="88.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">D ≥ 74:</text>
+<text x="635.8" y="101.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">matrix</text>
+<text x="635.8" y="114.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">singular</text>
+<text x="635.8" y="127.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">in double-</text>
+<text x="635.8" y="140.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">double</text>
+<line x1="96" y1="360.7" x2="686" y2="360.7" stroke="#52514e" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="104.0" y="375.7" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">μ = −1: the conjectured large-D limit (not tested: ±0.02 cannot be resolved)</text>
+<line x1="148.9" y1="133.9" x2="148.9" y2="132.2" stroke="#eb6834" stroke-width="3"/>
+<g><rect x="144.9" y="132.2" width="8" height="1.6" fill="none" stroke="#eb6834" stroke-width="1.5"/><title>[MGM26], D = 5, evolutions: -0.45 to -0.446</title></g>
+<polyline points="96.0,98.9 136.9,131.0 170.3,156.7 198.6,178.1 228.7,200.9 264.0,227.2 297.4,251.2 358.6,291.2 391.4,308.9 465.7,337.0 539.8,350.7 566.3,353.4 576.5,354.2 586.2,354.9 592.4,355.3 612.6,356.4 616.7,356.6 621.9,356.9" fill="none" stroke="#2a78d6" stroke-width="1.5" opacity="0.6"/>
+<g><circle cx="96.0" cy="98.9" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 4: μ = -0.3651202372 (M = 64)</title></g>
+<g><circle cx="136.9" cy="131.0" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 5: μ = -0.4430361582 (M = 64)</title></g>
+<g><circle cx="170.3" cy="156.7" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 6: μ = -0.5052240827 (M = 64)</title></g>
+<g><circle cx="198.6" cy="178.1" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 7: μ = -0.5573230924 (M = 48)</title></g>
+<g><circle cx="228.7" cy="200.9" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 8.25: μ = -0.6124708660 (M = 48)</title></g>
+<g><circle cx="264.0" cy="227.2" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 10: μ = -0.6761242034 (M = 48)</title></g>
+<g><circle cx="297.4" cy="251.2" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 12: μ = -0.7345316442 (M = 48)</title></g>
+<g><circle cx="358.6" cy="291.2" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 16.76: μ = -0.8312825960 (M = 32)</title></g>
+<g><circle cx="391.4" cy="308.9" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 20.0437: μ = -0.8743130935 (M = 32)</title></g>
+<g><circle cx="465.7" cy="337.0" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 30.0688: μ = -0.9423919782 (M = 48)</title></g>
+<g><circle cx="539.8" cy="350.7" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 45.0507: μ = -0.9755511996 (M = 32)</title></g>
+<g><circle cx="566.3" cy="353.4" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 52.0414: μ = -0.9820679890 (M = 32)</title></g>
+<g><circle cx="576.5" cy="354.2" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 55.0351: μ = -0.9840968362 (M = 32)</title></g>
+<g><circle cx="586.2" cy="354.9" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 58.006: μ = -0.9857920452 (M = 32)</title></g>
+<g><circle cx="592.4" cy="355.3" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 60.002: μ = -0.9867848269 (M = 32)</title></g>
+<g><circle cx="612.6" cy="356.4" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 67.0115: μ = -0.9895615865 (M = 32)</title></g>
+<g><circle cx="616.7" cy="356.6" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 68.5: μ = -0.9900225636 (M = 32)</title></g>
+<g><circle cx="621.9" cy="356.9" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>D = 70.5: μ = -0.9906206434 (M = 32)</title></g>
+<circle cx="136.9" cy="131.0" r="10" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
+<line x1="143.1" y1="123.1" x2="172.9" y2="85.0" stroke="#0b0b0b" stroke-width="1"/>
+<text x="176.9" y="89.0" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="bold">D = 5: −0.44304, outside evolutions' −0.450 to −0.446 (open)</text>
+<circle cx="96.0" cy="98.9" r="10" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
+<line x1="103.7" y1="92.5" x2="132.0" y2="68.9" stroke="#0b0b0b" stroke-width="1"/>
+<text x="136.0" y="72.9" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="bold">D = 4: −0.3651, within perturbation theory's −0.362 ± 0.012</text>
+<g opacity="0.35"><line x1="704.0" y1="102.0" x2="704.0" y2="158.0" stroke="#52514e" stroke-width="2"/><polygon points="704.0,164.0 700.0,155.0 708.0,155.0" fill="#52514e"/><text x="704.0" y="126.0" font-size="11" fill="#52514e" text-anchor="middle" transform="rotate(90.0 704.0 133.0)">more damped</text></g>
+<text x="686.0" y="456.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">evolutions at D = 5 [MGM26]</text>
+<circle cx="503.7" cy="452" r="4.5" fill="#eb6834"/>
+<text x="487.7" y="456.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">test-field determinant on choptuik-large-d's solutions</text>
+<circle cx="133.2" cy="452" r="4.5" fill="#2a78d6"/>
+<text x="16.0" y="482.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">μ: ghost_mu.jsonl, ghost_mu2.jsonl (wormhole_next.md §§1.3, 6.3; #30)  ·  solutions and determinant: choptuik-large-d, read-only</text>
+<a href="https://github.com/nmoinvaz/negative-mass"><text x="764" y="482" font-size="10" fill="#52514e" text-anchor="end" text-decoration="underline">github.com/nmoinvaz/negative-mass</text></a>
+</svg>

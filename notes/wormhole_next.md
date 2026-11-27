@@ -542,6 +542,7 @@ The proof is in [`wormhole_largeD/one_mode.md`](wormhole_largeD/one_mode.md), an
 
 All in `wormhole_next/`. `ghost_mu.py` runs under CLD's `.venv` (it needs hpkernel and `modecount_cx`), as the
 queue scripts do. The other two need only this repository's setup (numpy, sympy).
+`ghost_mu_graph.py` draws `ghost_mu.svg`, μ(D) from the two record files, with `mu_inf.py`'s selection (standard library only).
 - `ghost_mu.py`: real-axis zeros of CLD's test-field determinant (mode 1) or its control (mode 2), with a planted zero
   (`--plant`).
 - `ghost_mu_table.py`: the table of §1.3, its six checks and the μ∞ fits. Run it as
