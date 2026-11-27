@@ -54,7 +54,7 @@ decimal (D = 20), far above the crate's error.
 **Independent support for the crate.** `one_mode.log:29,31,33,35` (an unrelated shooting code that shares only the
 master equation) gives −E = 1.39705243433, 12.0442650145, 31.5751101284 and 91.3457759136 at D = 4, 10, 20, 50. These
 equal the crate's values at every printed digit (`logs_check_growth.txt:11,17,19,21`). At D = 4 and 10 they do not
-equal TS13's printed digits (1.39705243372, 12.0442650147). That is evidence for #202.
+equal TS13's printed digits (1.39705243371511, 12.0442650147). That is evidence for #202.
 
 ## paper_numbers.py, rerun on the new csv
 
