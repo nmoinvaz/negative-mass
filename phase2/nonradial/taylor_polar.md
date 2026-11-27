@@ -308,3 +308,130 @@ already filed).
 **Update from #189.** The crate can step its planes with multishoot's plane stepper (pull request #70, unmerged) behind the
 cargo feature `lib_plane`. With it, every D and q token of #187's rows is the same; see [taylor_plane_lib.md](taylor_plane_lib.md) and its
 review.
+
+## #188: complex s
+
+Status: **numerical evidence**. The crate evaluates winding2's D (its fixed R_s and its phase strip) at a complex growth rate s on a pair lane
+`Cx<T>` of f64, double-double or quad-double. At the 147 stored points of the §5 box (l = 2, Re s ∈ [0.1, 2], |Im s| ≤ 2.5) it agrees with the
+scipy path at rtol 1e-13 to 1.2e-12 in modulus and 5.1e-11 rad in phase (bar 1e-9), in both f64 and double-double, and 8 points of an
+l = 6 box at R_s = 1293 agree to 5.4e-12 and 8.5e-11 rad. winding2's counter with the crate as its evaluator gives the stored count
+(winding 0, planted pair 2) of both boxes, asking for exactly the stored points. **One declared check, XR, is not met** (below). Every number is in
+`taylor_complex_output.txt` (the runs of record; raw folder `negative-mass-raw/I188-mac`, README first, design in `design.md`, last commit when
+the output was assembled in its first line); numbers named `dev_NN` come from development runs in that folder and are not in the output file. No sentence here claims novelty.
+
+### What was added
+
+- **Feature `complex`** (off by default; exclusive with `lib_plane`, `compile_error!`). `src/complex.rs`: `Cx<T: Num> { re, im }` implements `Num`, so the
+  series, the plane stepper, `det_n`, the projector, the Riccati integration, `JTable::to_lane` and `VacSource` run on it unchanged. A `Cx` with im = 0 is
+  its real part bit for bit (products with exact zeros; quotient, reciprocal, square root, logarithm take the lane's own operation); `ln`, `exp`, `to_f64`
+  of a number with im ≠ 0 panic. `src/cdrive.rs`: `dc` (a list of s) and `dserve` (s on stdin, one JSON line out each). `src/cplanted.rs`: `cp1` (the planted
+  complex plane) and `czserve` (the planted determinant). `table.rs` is not touched.
+- **Shared code** (every change is the identity on the real lanes; R1 compares the binaries): four trait defaults in `num.rs` (`conj`, `abs2`, `mag`,
+  `re_f64`); `gram_schmidt` takes `conj(y_p) · y_c` and `abs2`; nine `.to_f64().abs()` became `.mag()`; `zerilli_q` has `polar_solver`'s branch rule for
+  a complex s (`if Re(q/s) > 0 { q = -q }`, never true for real γ > 0); `d_eval` is split into itself and `d_eval_s(cfg, table, mext, s, r_s, r_far)`.
+  725 lines are added in 8 files and 16 changed.
+- **Gauge.** Gram–Schmidt with a real positive R diagonal, the phase in Q, `ln_vol` real. LAPACK's complex QR also has a real R diagonal (`dev_16`), so
+  `polar_solver`'s `ph` is a sign, and Hermitian Gram–Schmidt gives the same D (`dev_07`: 3.3e-12). D = det[Q_Y | Q_Z] · det R_Y · det R_Z with
+  det R real positive, so its phase is that of the holomorphic determinant.
+- **winding2's normalization**: the Python driver passes the fixed R_s (`rsfix`, from winding2's own kmin) and `zfac`, and applies the phase strip
+  exp(−i Im[(k₊+k₋)(R_s − r_m) + (k₊+k₋+s) r_m]) in double precision to the crate's unstripped D.
+- **`python taylor_polar.py --complex`**: the checks and controls below; the counter is a copy of winding2's `count()` and `--plant`; `--scipy-ref-make=BOX`
+  makes the scipy references; `--list`, `--only=`, `--mutate=`.
+
+### Results of the runs of record
+
+| Check | Result |
+|---|---|
+| R1, the real lanes: main 0d1d376 against this branch, default and `lib_plane`, 65 records each (D at l = 2, 6, γ = 0.001, 1, 40 in f64, dd, qd; planted; star), every field but the times | 0 differ in both pairs |
+| R2, the complex lane at Im s = 0 against the real lane, 19 cases | all equal as strings, Im D = 0, steps, q, r_s, r_far equal |
+| P1C, planted complex plane (P1 of #189 with phases 7, −3, 5, −11), Λ = ln_vol + ln det(Q₀ᵀQ) = 384.8047 + 48i | plane f64 1.1e-14, dd 6.8e-32, qd 1.4e-64; Λ 5.5e-13, 6.2e-31, 2.5e-61; orthonormality 2e-16, 9e-33, 1e-64; every one under its bar (1e4 ε, 1e4 ε max(1, \|Λ\|), 1e2 ε) |
+| X1, D at 147 stored points of the l = 2 box against scipy at rtol 1e-13 | dd and f64 worst modulus ratio 1.2e-12, worst phase 5.1e-11 rad, 0 over 1e-9 |
+| X1b, 8 points of the l = 6 box Re s ∈ [0.03, 0.1], R_s = 1293.18 | worst modulus ratio 5.4e-12, phase 8.5e-11 rad |
+| W0, winding2's counter ported, on the stored values alone | winding +0.0000, max step 0.39, plant +2.0000 (0.40), all 147 and 195 stored points asked, none missing: the stored results |
+| CX2, the counter with the crate (dd) as the evaluator | b1 and b2: winding 0.0000, max step 0.39, min\|D\| 6.70e-04 and 1.95e-05, plant +2.0000 (0.40); the evaluated points are exactly the stored 147 and 195 |
+| XRc, b1 counted with the scalar plane started at rsmult 40 and 80 (R_s 404.9, 785.6) | winding 0, plant +2.0000 at both |
+| CXZ, a planted determinant with zeros at 0.75 ± 0.5i, through the stepper | D against mpmath's `expm` at 20 contour points 18 ε·(growth) (bar 1e4); winding +2.0000 in Re s ∈ [0.2, 1.2], 0.0000 in [1.3, 2.0] |
+| L1C, qd against dd at 3 points | 1.5e-29 modulus, 7.6e-27 phase (bar 1e-20); f64 against dd 3.4e-14, 6.7e-14 |
+| **XR**, the stripped D at R_s = 200, 300, 600 against 404.85 (8 points) | **not met**: modulus 2.2e-16, **phase 0.11 rad** (bar 1e-9) |
+| the default mode (#186's checks) with this branch's default binary | 22 passed, 0 failed, 1 skipped (TS) |
+
+**The stored values.** The caches were made at scipy's rtol 1e-8, and their phase is off: against scipy at rtol 1e-13 the stored values of the l = 2 box differ by
+6.0e-10 in modulus and **9.8e-7 rad in phase** (up to 3.1e-6 at l = 6), so the issue's 1e-9 cannot hold against them for any accurate evaluator; X1 and X1b
+use the rtol 1e-13 reference, the stored comparison is reported without a bar, and the crate against the stored values (9.8e-7, 3.1e-6) is the same number. The
+phase error falls like rtol (`dev_14`: successive phase changes 5.8e-7, 5.6e-8, 6.0e-9, 6.5e-10, 7.2e-11 for rtol 1e-8 → 1e-13). **It cannot move a stored
+count**: the smallest distance of any quantity the counter compares with its thresholds (0.4, 0.4, 0.1 rad) from them is 2.2e-3 rad on b1 (2.2e-3 with the
+plant) and 5.6e-3 (2.9e-3 with the plant) on b2, against a phase error of 1e-6, and CX2 reproduces every stored count and asks for the same points.
+
+**XR and its cause.** winding2 strips the exponential rotation e^((k₊+k₋)(R_s−r_m)); the exterior solution's tails remain: a 1/R_s term from the start
+vectors (the eigenvectors of the frozen matrix) and the angular term, and a ln R_s term from the mass. At 8 points the phase relative to R_s = 1200 falls like
+1/R_s with M = 0 (`mext0`: 2.6e-2, 1.7e-2, 1.2e-2, 7.1e-3, 4.0e-3, 2.4e-3, 7.9e-4 at R_s = 100 … 900 for l = 2, s = 0.1 + i) and like ln R_s with the mass
+(0.16, 0.13, 0.11, 0.081, 0.056, 0.039, 0.016); the modulus agrees to 4e-14 throughout (`run_19_xr_diag`). Both tails are holomorphic and nonzero at a fixed R_s,
+which is all the argument principle needs, and XRc confirms the counts. The design's XR premise (that the strip makes D independent of R_s) was wrong; winding2's
+own docstring claims only holomorphy up to a zero-free factor at a fixed R_s. XR is reported as not met, not changed.
+
+### Timings (one process, nice 10, load 5 to 7, Apple M5; the crate with one star and one J table per process, setup 5 s per l not included)
+
+| box | R_s | scipy rtol 1e-8 (the stored) | scipy rtol 1e-13 | crate f64 | crate dd |
+|---|---|---|---|---|---|
+| l = 2, Re s ∈ [0.1, 2], 8 points | 404.9 | 4.59 s (2.0 to 8.4) | 13.6 s | 0.053 s (×87) | 1.16 s (×4) |
+| l = 6, Re s ∈ [0.03, 0.1], 8 points | 1293.2 | 12.1 s (6.3 to 23.0) | 38.5 s | 0.163 s (×74) | 2.77 s (×4) |
+
+f64 agrees with scipy at 1e-13 as well as dd does (X1), so f64 is the lane for counts; quad-double takes 88 to 104 s per D at the box's points (L1C). The cost
+is the vacuum plane: R_s − r_m steps at about 1.3 per unit, each re-expanding J's series at the lane (`run_18_tc_big_Rs`, l = 2, s = 0.1 + i, f64 / dd per D):
+0.059 / 0.744 s at R_s = 405, 0.131 / 1.72 s at 1000, 0.262 / 3.16 s at 2000, 0.560 / 6.33 s at 4000, 1.19 / 12.6 s at 8000; the interior plane takes
+0.005 / 0.11 s. The design's estimate for double-double (0.3 to 0.6 s at R_s = 405) was low by 1.5 to 2: the vacuum series, not the planes, dominate.
+
+**What #116's strips take.** The call is the same with `rsfix` = r_m + 40 / kmin; R_s is 1.3 × 10³ for the l = 6 box above and a few 10³ at Re s of order 10⁻⁴ (kmin about 0.01, an estimate), which costs 0.13 to 1.2 s per D in f64 (R_s 1000 to 8000), so a box of
+about 150 evaluations is minutes, against 3.7 h on rpi5. The phase strip's argument reaches 6 × 10³ rad at R_s = 4000 (1.2 × 10⁴ at 8000), whose double-precision error is
+about 1e-12 rad, below the counter's 0.4 rad steps. No check covers R_s above 1293 against scipy (the l = 6 scipy values there take 20 to 70 s each at rtol 1e-13).
+
+### The controls (each run alone, exit 1; effects as computed in the development runs before they were declared)
+
+| control | target | effect |
+|---|---|---|
+| `r1_ulp` | R1 | 1 of 65 records differs in each pair |
+| `cx_recip_general` (the general complex quotient at im = 0) | R2 | 18 of 19 cases differ |
+| `bilinear` (no conjugate: "drops the phase") | P1C | plane 4.9e-15, orthonormality 1.2e-16 and ln_vol's real part 5.5e-13 unchanged (f64); **the phase of Λ off by 2.27 rad** in every lane (on D, in a development run on X1's 8 points: modulus 4.6, phase 3.0) |
+| `redot` (the projector's imaginary part dropped) | P1C | orthonormality 1.0 (f64), Λ off by 55; the plane stays |
+| `f_scaled` (f₂ × (1 + 1e-6) in the system) | P1C | Im Λ off by 3.60e-5 in every lane |
+| `cx_mul_sign` | P1C, X1 | Λ off by 3.2e2 (f64); D modulus off by 9.3 |
+| `strip_off`, `conj_s`, `rs_shift` (R_s + 1, strip unchanged), `strip_sign` | X1 (and X1b for the first three) | phase off by 2.4, 2.9, 2.6, 3.1 rad at 6 of 8 points (the two real-axis points do not move) |
+| `lowsum` | L1C | qd against dd 1.1e-6 modulus, 3.8e-3 phase |
+| #186's `jsign`, `moncrief`, `swapcols`, `mext0`, `star_eps`, `shift_off` | X1 | 8 of 8 points over the bar: modulus 0.99, 39, 3e-13 (phase 3.1), 1.4e-2, 4.4e-3, 9.1e-2 |
+| the counter's `reverse`, `wrongdouble`, `misplant`, `onesided` | W0, CX2, XRc | plant difference −2.0000, +1.0000, 0.0000, +1.7195 (b2: +1.4735) against 2 |
+| `conj_s`, `reverse`, `wrongdouble` | CXZ | winding −2.0000, −2.0000, +1.0000 against +2; for `conj_s` D is also off from mpmath (6.0e31 in the check's units, bar 1e4) |
+
+XR has no control: it fails on the unmutated crate, so none could serve.
+
+### Defects and discrepancies found
+
+- **XR** (above): a declared check not met because its premise was wrong.
+- The stored caches' phase errors of 1e-7 to 3e-6 rad (above); the 1e-9 bar of the issue was moved to the rtol 1e-13 reference with the coordinator's approval.
+- The crate's option for the fixed R_s could not be `rs`: `rs` is the star's start radius (first comparison `dev_22`, crashed; renamed `rsfix`).
+- The control `bilinear` crashed on `ln` of a complex norm until `ln` took ln |z| under the mutation; the first conjugate-free probe of stage 1 (`dev_01`) shared
+  a class attribute with its Hermitian twin and read the same as it.
+- The first launch of the runs of record ran every command with exit 127 (zsh does not split `$TP`); kept in `failed_launch_1/`, rerun.
+- The crate in double-double is 4 times faster than the stored scipy time, not the 4 to 25 times the design estimated (the vacuum plane's series per step, see the timings); f64 is 74 to 87 times faster.
+
+### Recommended tasks
+
+1. **Recount the winding2 boxes of #5, #54, #115, #117 and #126 with the crate (f64) as a second evaluator.** What: `taylor_polar.py --complex`'s counter on the 31 winding2 boxes of #126's list
+   (the Z boxes need task 3) and #117's four. Why: it is the first independent evaluation of those counts and takes minutes per box. Accept: every
+   count and planted check equals the stored one, with the thresholds' margin (as W0) printed per box and a control as CX2's. Depends: this issue.
+2. **#116 on the crate.** What: the strips next to Re s = 0 at `rsfix` 10³ to 10⁴. Why: 3.7 h per box in scipy. Accept: the count equal to a scipy count on a short strip at rtol 1e-12, f64 and dd.
+   Depends: this issue.
+3. **Zerilli zeros on the crate.** What: the counts of zeros of Z(r_m; s) (`zerilli_zeros.py`, the poles of D) need Z itself, not q; one more complex linear integration. Why: #121 and #124 call it
+   thousands of times. Accept: Z at stored points to 1e-9 against its scipy path at tight rtol. Depends: this issue.
+4. **Faster vacuum jets.** What: the vacuum plane re-expands J's series per step; at R_s = 4000 it is 98% (dd) and 99% (f64) of the cost. Why: 2 to 10 times in dd. Accept: D unchanged to 1e-14 relative at 8 points, a control that
+   changes the jets. Depends: none.
+5. **Move the crate to the library's complex plane** once multishoot's pull request is merged and released, and `Cx<T>::Lib` can be `plane::Complex<T::Lib>` so that `lib_plane` and `complex`
+   can be on together. Depends: the pull request below, #199.
+
+### The library pull request (stage 3)
+
+multishoot's plane module takes a complex scalar with a small change: `plane::Complex<R>` (a pair of lane values, a `Real` itself), four defaulted methods on `Real`
+(`conj`, `abs2`, `mag`, `re_f64`: the identity, `z * z`, `|x|`, `x` on the real lanes), the Hermitian product in `orthonormalize`, and the control `NoConj`. Pull request https://github.com/nmoinvaz/multishoot/pull/81 (branch
+`feat/complex-plane`, 9aebbcd, not merged and not published): `tests/plane_complex.rs` runs P1c (this note's planted system) in f64, dd and qd against a closed form with the bars of the plane tests, the real lanes' digests
+of P1, P2, P3 are those of #189's runs of record (10 of 10), the complex lane with real data has the real lane's digest, and 16 digests are the same on the default backend (aarch64 NEON) and with `--features portable`;
+`cargo fmt` and `cargo clippy --all-targets --features mutate -- -D warnings` (also `portable,mutate`) are clean. `+avx2,+fma` was not run (no x86 machine). With the pull request merged and released the crate's `Cx<T>` can
+become `plane::Complex<T::Lib>` (recommended task 5).

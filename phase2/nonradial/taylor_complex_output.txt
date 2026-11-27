@@ -1,0 +1,658 @@
+# taylor_complex_output.txt: the runs of record of #188, assembled by negative-mass-raw/I188-mac/assemble_output.py
+# raw folder I188-mac, last commit touching it when assembled: 16bfc018
+# machine: Apple M5 Mac (10 cores, 32 GB), shared with other sessions; two queues of one process each (run_all.sh A and B), nice 10, the references of run_01 to run_04 one process; the crate is single-threaded;
+# the load average is on the first lines of each run's log below
+
+========================================================================================================================
+run_00_env: the environment of the runs of record: code commit, toolchains, binaries
+no .err file
+========================================================================================================================
+# code: 8b8bb4debe692a38e75827b3a67685443a65df82 branch wip/i188-complex-s
+# rustc: rustc 1.94.0 (4a4ef493e 2026-03-02); cargo: cargo 1.94.0 (85eff7c80 2026-01-15)
+# python: Python 3.14.7; numpy 2.5.4, scipy 1.18.1, mpmath 1.3.0
+# machine: Apple M5, 10 cores, Darwin 27.0.0
+# binaries (sha256), built in /Users/nathan/Source/negative-mass-i188/phase2/nonradial/taylor_polar/target/bins:
+#   a26b5a03bc3807dcf52664c3a50876dd24dc446b34261df678b14344007faa99  new_complex
+#   14cebd27d55cecbaa99237be98d070b9bd0db77e3a3c564715464b5f4d719a94  new_default
+#   5980b919d4161f958d8136b8461b23396a690ab0bc30e8c6910a2ffc4ff04797  new_libplane
+#   9238868e47afad687818260eea62f993b34436bb3fc39cd93e3469aeca5a07dc  old_default
+#   b88dba38d54cd3b8149f3240cb2b451d718197b246d799d235484c0cd2aeb328  old_libplane
+# old_default and old_libplane: main 0d1d376 built before any edit (default, and --features lib_plane); new_*: this branch's head, default, --features complex, --features lib_plane
+
+========================================================================================================================
+run_01_scipy_ref_b1_rtol1e-13: winding2's D by the scipy path at rtol 1e-13 at the 147 stored points of the box l = 2, Re s in [0.1, 2], |Im s| <= 2.5 (the reference of X1)
+exit 0, wall 2286.92 s, peak resident 99 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 12:13:58 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=3.66 4.39 4.80
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --scipy-ref-make=b1 --rtol=1e-13 --out=/Users/nathan/Source/negative-mass-raw/I188-mac/ref/scipy_b1_rtol1e-13.jsonl
+# scipy path, box b1, l = 2, rtol 1e-13, R_s fixed 404.8501936481817, 147 points (0 done), load 3.93
+(0.1+0j) (-0.02998514153515513-5.2031064646762435e-18j) 6.7 s
+(0.1+0.0078125j) (-0.029761183262117376+0.003322791582504389j) 6.0 s
+(0.1+0.015625j) (-0.029095812063027252+0.006571771298642538j) 6.1 s
+(0.1+0.0234375j) (-0.028008389995182112+0.009675709869704542j) 6.3 s
+(0.1+0.03125j) (-0.02653063538517595+0.01256860368068678j) 6.4 s
+(0.1+0.0390625j) (-0.024705622992861036+0.015192359460376273j) 6.6 s
+(0.1+0.046875j) (-0.022586118558532462+0.01749936833675889j) 6.7 s
+(0.1+0.0546875j) (-0.020232148029651426+0.019454679099168405j) 6.3 s
+(0.1+0.0625j) (-0.017707859115485138+0.02103740158222175j) 6.2 s
+(0.1+0.0703125j) (-0.015077936514730635+0.022241005787047845j) 6.8 s
+(0.1+0.078125j) (-0.012404007393598388+0.023072346125023808j) 6.8 s
+(0.1+0.0859375j) (-0.009741544400940537+0.023549491789035207j) 6.4 s
+(0.1+0.09375j) (-0.007137701704824497+0.023698698703378148j) 6.4 s
+(0.1+0.109375j) (-0.002248145690061468+0.023139147857571974j) 6.4 s
+(0.1+0.125j) (0.0020639303972702855+0.021647033807016245j) 6.2 s
+(0.1+0.140625j) (0.005696542599861845+0.019442023733299764j) 6.2 s
+(0.1+0.15625j) (0.008594542073232497+0.01670205137531381j) 6.3 s
+(0.1+0.171875j) (0.010724701697370479+0.013594729281729504j) 6.5 s
+(0.1+0.1875j) (0.012087778559806132+0.010307442922398833j) 6.4 s
+(0.1+0.1953125j) (0.012497522028066409+0.00865991447699373j) 6.3 s
+(0.1+0.203125j) (0.012742816695106083+0.0070427761024035125j) 6.4 s
+(0.1+0.2109375j) (0.012840698058871258+0.005477875255150296j) 6.5 s
+(0.1+0.21875j) (0.012810676626424666+0.0039835346792780465j) 7.5 s
+(0.1+0.234375j) (0.012450955045293857+0.0012594854356800026j) 7.7 s
+(0.1+0.25j) (0.011830136570777026-0.001063586710859001j) 7.8 s
+(0.1+0.265625j) (0.011094610794102948-0.002974496969077j) 7.5 s
+(0.1+0.28125j) (0.010352990759996272-0.004495767276638603j) 7.4 s
+(0.1+0.296875j) (0.009671401029727179-0.005661925580866384j) 7.5 s
+(0.1+0.3125j) (0.009082004633882394-0.006509465826810441j) 7.9 s
+(0.1+0.34375j) (0.008221507898290466-0.007439477749295843j) 8.1 s
+(0.1+0.375j) (0.00777610287934466-0.00779655546214793j) 8.0 s
+(0.1+0.4375j) (0.007475037470152349-0.008327896299342856j) 8.0 s
+(0.1+0.5j) (0.0065455801091806615-0.008619641044709922j) 8.5 s
+(0.1+0.5625j) (0.005360678844143211-0.009083450431749074j) 8.4 s
+(0.1+0.625j) (0.003870261320502587-0.009140181775921906j) 8.5 s
+(0.1+0.6875j) (0.002443416461664608-0.009068561888968922j) 9.0 s
+(0.1+0.75j) (0.001104028898345218-0.00866386105801021j) 9.8 s
+(0.1+0.8125j) (-5.0609846114894846e-05-0.008119549616879954j) 9.4 s
+(0.1+0.875j) (-0.001011975734917245-0.007466074142005363j) 9.7 s
+(0.1+0.9375j) (-0.0017690742915077162-0.0066919463964055055j) 9.7 s
+(0.1+1j) (-0.002374034796205699-0.005986828925996375j) 10.7 s
+(0.1+1.0625j) (-0.002773453031010017-0.005171006673572726j) 11.9 s
+(0.1+1.125j) (-0.0031067341336725035-0.004508999665413857j) 12.0 s
+(0.1+1.1875j) (-0.0032376746148055553-0.0037570722612496024j) 12.6 s
+(0.1+1.25j) (-0.0033751951418926405-0.003166980533257747j) 13.0 s
+(0.1+1.3125j) (-0.0033231389033072677-0.0025169117711544243j) 15.1 s
+(0.1+1.375j) (-0.0033161614180394422-0.0019929059916622646j) 12.9 s
+(0.1+1.40625j) (-0.0032199850273777536-0.0017003542825911552j) 12.6 s
+(0.1+1.4375j) (-0.0031403933284656757-0.0014345798317191045j) 12.3 s
+(0.1+1.46875j) (-0.003094221933959574-0.001193512974455316j) 13.0 s
+(0.1+1.5j) (-0.003010190078072508-0.0009422662461852679j) 13.7 s
+(0.1+1.53125j) (-0.0028678297029468844-0.0006781474538870272j) 14.6 s
+(0.1+1.5625j) (-0.0027255886651408098-0.0004167708008361827j) 13.3 s
+(0.1+1.59375j) (-0.0025965622337457716-0.0001496723601333749j) 13.0 s
+(0.1+1.625j) (-0.0024275771451432193+0.0001382845838054463j) 13.4 s
+(0.1+1.640625j) (-0.0023164815240450842+0.0002903394875473309j) 13.7 s
+(0.1+1.65625j) (-0.0021894207403275693+0.0004472442836487514j) 13.8 s
+(0.1+1.671875j) (-0.0020495345626675844+0.0006095412157254075j) 13.9 s
+(0.1+1.6875j) (-0.0018972912222301407+0.000777885681297904j) 14.6 s
+(0.1+1.703125j) (-0.0017294006424868817+0.0009511559876287936j) 15.5 s
+(0.1+1.71875j) (-0.001541000228509169+0.0011246429999874797j) 15.7 s
+(0.1+1.7265625j) (-0.0014381584990826814+0.0012088703536881546j) 15.1 s
+(0.1+1.734375j) (-0.0013297257606322776+0.001289643672366468j) 17.3 s
+(0.1+1.7421875j) (-0.001216412434420352+0.0013655589162471522j) 15.8 s
+(0.1+1.75j) (-0.0010994241825971248+0.0014353292065123952j) 15.7 s
+(0.1+1.7578125j) (-0.0009804057758820482+0.0014979446833167669j) 17.9 s
+(0.1+1.765625j) (-0.0008613135157726057+0.0015528085658334104j) 15.3 s
+(0.1+1.7734375j) (-0.0007442339599061747+0.0015998145064811677j) 14.8 s
+(0.1+1.78125j) (-0.0006311843619186233+0.001639342661663726j) 14.1 s
+(0.1+1.796875j) (-0.0004239011382170863+0.0016993569223281938j) 14.6 s
+(0.1+1.8125j) (-0.00024905763100665677+0.0017413325012301496j) 15.3 s
+(0.1+1.828125j) (-0.00011020374143400837+0.0017735400988849969j) 16.3 s
+(0.1+1.84375j) (-6.471593046374096e-06+0.0018016341799573525j) 15.3 s
+(0.1+1.859375j) (6.557811739451653e-05+0.0018281965245577232j) 14.6 s
+(0.1+1.875j) (0.00011074151476007344+0.0018530691711742542j) 14.7 s
+(0.1+1.9375j) (0.00013456150911886897+0.0019063121229911972j) 14.9 s
+(0.1+2j) (0.00012755753300445553+0.001920630604612445j) 18.6 s
+(0.1+2.0625j) (0.0001968388992741085+0.0018885258301563224j) 19.4 s
+(0.1+2.125j) (0.000323425001441601+0.0018094235093660573j) 21.5 s
+(0.1+2.1875j) (0.0004762011662808346+0.0017150090243742908j) 18.3 s
+(0.1+2.25j) (0.0006194515952979402+0.0015708984778159073j) 21.5 s
+(0.1+2.3125j) (0.0007580048260541508+0.0014377332627276557j) 20.4 s
+(0.1+2.375j) (0.0008551815869558885+0.0012603836499154157j) 19.6 s
+(0.1+2.4375j) (0.0009517271941106532+0.001115031673612354j) 21.9 s
+(0.1+2.5j) (0.0009924511410066372+0.0009349582053216161j) 19.6 s
+(0.1475+2.5j) (0.0008967387312232392+0.001037157232148568j) 20.0 s
+(0.195+2.5j) (0.0007851571147075525+0.001119017846578579j) 23.1 s
+(0.2425+2.5j) (0.0006663679532748703+0.0011861011982379098j) 23.3 s
+(0.29+2.5j) (0.0005428103291453038+0.0012387200614573674j) 23.4 s
+(0.385+2.5j) (0.0002890133266953875+0.0013004659265852302j) 24.0 s
+(0.48+2.5j) (3.8380420274827975e-05+0.001306183743239169j) 24.6 s
+(0.575+2.5j) (-0.00019628559300612384+0.0012614362008055726j) 24.8 s
+(0.67+2.5j) (-0.00040512375603901055+0.0011745504512930478j) 24.7 s
+(0.765+2.5j) (-0.0005816642157819407+0.0010552999762704675j) 25.2 s
+(0.86+2.5j) (-0.0007226642251700028+0.0009137008774674758j) 27.1 s
+(0.955+2.5j) (-0.0008275954432796649+0.0007591284471402184j) 26.0 s
+(1.05+2.5j) (-0.0008980030218587987+0.0005997741644757538j) 26.2 s
+(1.145+2.5j) (-0.000936872686865183+0.0004423829427413922j) 26.8 s
+(1.24+2.5j) (-0.0009480742913858397+0.00029219292128122214j) 25.2 s
+(1.335+2.5j) (-0.0009359080687886059+0.00015300851897081003j) 20.8 s
+(1.43+2.5j) (-0.000904756635056064+2.735263584462378e-05j) 21.7 s
+(1.525+2.5j) (-0.0008588341602985436-8.334157014164859e-05j) 23.3 s
+(1.62+2.5j) (-0.0008020189472769548-0.00017852695096133326j) 24.7 s
+(1.715+2.5j) (-0.0007377540074027183-0.00025834499529942266j) 25.9 s
+(1.81+2.5j) (-0.0006690005320144671-0.0003234460699414193j) 24.7 s
+(1.905+2.5j) (-0.0005982305350406776-0.00037483330217550866j) 20.9 s
+(2+0j) (-0.001772880780388719-1.5008968433339766e-19j) 12.4 s
+(2+0.0625j) (-0.0017476625031387675+0.00028857421872167775j) 11.7 s
+(2+0.125j) (-0.0016729821932065718+0.0005677063282024292j) 12.6 s
+(2+0.1875j) (-0.001551709602835916+0.0008283882293922857j) 14.7 s
+(2+0.25j) (-0.0013884525301707262+0.001062451222762949j) 15.3 s
+(2+0.3125j) (-0.0011893085575223445+0.0012629168322249764j) 15.5 s
+(2+0.375j) (-0.0009615447025437708+0.00142427212722455j) 16.0 s
+(2+0.4375j) (-0.000713228651286887+0.0015426553170032361j) 16.3 s
+(2+0.5j) (-0.00045283751705680274+0.001615944992329146j) 16.0 s
+(2+0.5625j) (-0.00018886987733890737+0.0016437540186492853j) 15.7 s
+(2+0.625j) (7.051557545268547e-05+0.001627335950718385j) 16.4 s
+(2+0.6875j) (0.0003178155933653036+0.0015694173277232663j) 16.0 s
+(2+0.75j) (0.0005464382450428768+0.0014739729428681566j) 15.9 s
+(2+0.8125j) (0.0007508909352449476+0.0013459630388186245j) 16.8 s
+(2+0.875j) (0.0009268979809457905+0.0011910514662238456j) 16.7 s
+(2+0.9375j) (0.0010714500798510154+0.0010153224381731104j) 17.6 s
+(2+1j) (0.0011827919565493058+0.0008250110067638017j) 18.0 s
+(2+1.0625j) (0.0012603572798794243+0.000626259205012453j) 19.2 s
+(2+1.125j) (0.0013046615995800184+0.00042490634235888355j) 19.0 s
+(2+1.1875j) (0.0013171646537940577+0.00022631855656628369j) 18.2 s
+(2+1.25j) (0.001300113131203794+3.5259664119552736e-05j) 18.5 s
+(2+1.3125j) (0.0012563740492007923-0.0001441972217314113j) 18.9 s
+(2+1.375j) (0.0011892675533780163-0.00030871984376430506j) 19.5 s
+(2+1.4375j) (0.001102406354265063-0.00045573269648429724j) 19.7 s
+(2+1.5j) (0.0009995473605557972-0.0005834035391920212j) 19.8 s
+(2+1.5625j) (0.0008844594691439439-0.0006906058448776882j) 23.4 s
+(2+1.625j) (0.0007608100156844083-0.0007768625776580111j) 23.8 s
+(2+1.6875j) (0.0006320711246999627-0.0008422764848137873j) 23.8 s
+(2+1.75j) (0.0005014461466242451-0.0008874516849675057j) 23.5 s
+(2+1.8125j) (0.00037181553130322353-0.0009134108020160097j) 21.8 s
+(2+1.875j) (0.0002457008514614852-0.0009215112918646186j) 21.3 s
+(2+1.9375j) (0.0001252452352424781-0.000913363980113995j) 21.4 s
+(2+2j) (1.2208171503848292e-05-0.0008907562057251889j) 22.3 s
+(2+2.0625j) (-9.20275084243874e-05-0.0008555813716785473j) 24.1 s
+(2+2.125j) (-0.00018643871587372795-0.0008097761549051288j) 25.2 s
+(2+2.1875j) (-0.00027033745518288015-0.0007552661351134329j) 23.8 s
+(2+2.25j) (-0.0003433405201505772-0.0006939201724594369j) 22.0 s
+(2+2.3125j) (-0.0004053354445653948-0.0006275135010735364j) 22.2 s
+(2+2.375j) (-0.0004564444039646006-0.0005576992101790097j) 24.0 s
+(2+2.4375j) (-0.0004969875306157906-0.0004859875558398153j) 25.0 s
+(2+2.5j) (-0.0005274468584088722-0.0004137323806819996j) 25.2 s
+
+========================================================================================================================
+run_02_scipy_ref_b1_rtol1e-08_tc: the same at rtol 1e-8 (the stored rtol) at the 8 timing points (TC)
+exit 0, wall 42.77 s, peak resident 100 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 12:52:15 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=4.66 5.39 5.71
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --scipy-ref-make=b1 --rtol=1e-8 --points=tc --out=/Users/nathan/Source/negative-mass-raw/I188-mac/ref/scipy_b1_rtol1e-08.jsonl
+# scipy path, box b1, l = 2, rtol 1e-08, R_s fixed 404.8501936481817, 8 points (0 done), load 5.01
+(0.1+0.234375j) (0.01245095489717923+0.001259486899485451j) 2.0 s
+(0.1+1.7578125j) (-0.0009804048138065903+0.001497945313023716j) 5.0 s
+(0.1+2.5j) (0.0009924519684375262+0.0009349573274166318j) 7.0 s
+(2+0j) (-0.0017728807803161092-1.5008968432725544e-19j) 5.9 s
+(2+2.5j) (-0.0005274470429258619-0.00041373214537783915j) 8.4 s
+(0.1+1j) (-0.0023740366718964815-0.005986828182417125j) 3.2 s
+(0.1+0j) (-0.029985141534974613-5.203106464645003e-18j) 2.4 s
+(0.1+0.5j) (0.006545581089160535-0.008619640300536831j) 2.7 s
+
+========================================================================================================================
+run_03_scipy_ref_b6_rtol1e-13_tc: the scipy path at rtol 1e-13 at 8 points of the l = 6 box Re s in [0.03, 0.1] (the reference of X1b)
+exit 0, wall 315.31 s, peak resident 102 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 12:52:58 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=5.66 5.56 5.76
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --scipy-ref-make=b6 --rtol=1e-13 --points=tc --out=/Users/nathan/Source/negative-mass-raw/I188-mac/ref/scipy_b6_rtol1e-13.jsonl
+# scipy path, box b6, l = 6, rtol 1e-13, R_s fixed 1293.1822459165362, 8 points (0 done), load 5.93
+(0.03+0.240234375j) (0.11578848444271113-0.043214556673297655j) 22.4 s
+(0.03+1.759765625j) (0.006909113729910586-0.011461284597903099j) 51.6 s
+(0.03+2.5j) (0.01044383814748321+0.0020799352376272146j) 72.6 s
+(0.1+0j) (-0.1513570182898498+4.959194148507864e-17j) 21.3 s
+(0.1+2.5j) (0.009099223665757791+0.010365735756148652j) 70.0 s
+(0.03+1j) (-0.03482161065108755-0.0426436765748945j) 28.2 s
+(0.03+0j) (-0.1539528434766241+1.4753187624553575e-16j) 19.5 s
+(0.1+0.5j) (0.07474524371438651+0.09719086285069126j) 22.3 s
+
+========================================================================================================================
+run_04_scipy_ref_b6_rtol1e-08_tc: the same at rtol 1e-8 (TC)
+exit 0, wall 104.57 s, peak resident 103 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 12:58:13 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=5.76 6.05 5.96
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --scipy-ref-make=b6 --rtol=1e-8 --points=tc --out=/Users/nathan/Source/negative-mass-raw/I188-mac/ref/scipy_b6_rtol1e-08.jsonl
+# scipy path, box b6, l = 6, rtol 1e-08, R_s fixed 1293.1822459165362, 8 points (0 done), load 5.64
+(0.03+0.240234375j) (0.11578848944028451-0.04321454328059565j) 6.7 s
+(0.03+1.759765625j) (0.006909085335822957-0.01146130172092625j) 14.9 s
+(0.03+2.5j) (0.010443844599119146+0.0020799023649573476j) 22.9 s
+(0.1+0j) (-0.15135701828923867+4.959194148487875e-17j) 6.3 s
+(0.1+2.5j) (0.009099254278667328+0.010365708874606451j) 23.0 s
+(0.03+1j) (-0.034821678626219196-0.04264362084303369j) 9.2 s
+(0.03+0j) (-0.15395284347547478+1.4753187624442922e-16j) 6.7 s
+(0.1+0.5j) (0.07474520775812385+0.09719089050309021j) 7.5 s
+
+========================================================================================================================
+run_05_R1_real_lanes_old_new: R1: the real lanes of main 0d1d376 against this branch, default and lib_plane
+exit 0, wall 205.31 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:13:44 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=5.96 5.07 5.24
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --only=R1
+# taylor_polar.py --complex: start 2026-11-27 13:13:44, load average 5.96, one process, nice 10; lane dd; mutate = None
+CHECK R1: PASS  real lanes, every field except times as strings (d at l = 2, 6, gamma = 0.001, 1, 40 in f64, dd, qd; planted const and linear; star): old_default against new_default: 65 records, 0 differ; old_libplane against new_libplane: 65 records, 0 differ
+SUMMARY: 1 passed, 0 failed, 0 skipped of 1 checks; mutate = None; 205 s
+
+========================================================================================================================
+run_06_R2_complex_at_real_s: R2: the complex lane at Im s = 0 against the real lane
+exit 0, wall 136.25 s, peak resident 82 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:17:09 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=6.19 5.70 5.47
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --only=R2
+# taylor_polar.py --complex: start 2026-11-27 13:17:09, load average 6.19, one process, nice 10; lane dd; mutate = None
+CHECK R2: PASS  complex lane at real s against the real lane, 19 cases (the d list of R1 against `dc`, and P1c with f = 0 on cx = 0 and 1): all equal as strings, Im D = 0
+SUMMARY: 1 passed, 0 failed, 0 skipped of 1 checks; mutate = None; 136 s
+
+========================================================================================================================
+run_07_P1C_planted_complex_plane: P1C: the planted complex plane, f64, dd, qd
+exit 0, wall 0.71 s, peak resident 36 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:19:25 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=6.23 5.84 5.56
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --only=P1C
+# taylor_polar.py --complex: start 2026-11-27 13:19:26, load average 6.23, one process, nice 10; lane dd; mutate = None
+CHECK P1C: PASS  J = P diag(24 + 7i, 8 - 3i, -8 + 5i, -24 - 11i) P^-1, plane P[:, :2], x = 12; exact Lambda = ln_vol + ln det(Q0^T Q) = (384.804718956 + 48.0j) at 140 digits; f64: plane 1.08e-14 (bar 1.11e-12), Lambda 5.50e-13 (re 5.50e-13, im 2.23e-13; bar 4.31e-10), orthonormality 2.04e-16 (bar 1.11e-14), 78 steps; dd: plane 6.77e-32 (bar 1.23e-28), Lambda 6.21e-31 (re 9.86e-32, im 6.21e-31; bar 4.78e-26), orthonormality 8.69e-33 (bar 1.23e-30), 277 steps; qd: plane 1.35e-64 (bar 1.50e-60), Lambda 2.46e-61 (re 2.46e-61, im 4.73e-63; bar 5.83e-58), orthonormality 1.06e-64 (bar 1.50e-62), 3486 steps
+SUMMARY: 1 passed, 0 failed, 0 skipped of 1 checks; mutate = None; 1 s
+
+========================================================================================================================
+run_08_W0_counter_port_stored: W0: winding2's counter ported, on the stored values alone, with the thresholds' margins
+exit 0, wall 0.11 s, peak resident 42 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:19:26 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=6.45 5.90 5.58
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --only=W0
+# taylor_polar.py --complex: start 2026-11-27 13:19:26, load average 6.45, one process, nice 10; lane dd; mutate = None
+CHECK W0: PASS  winding2's counter ported, on the stored values alone: b1: winding +0.0000 (stored +0.0000), max step 0.39 (stored 0.39), plant difference +2.0000 (expected 2, step 0.40, stored 0.4), asked 147 of 147 stored points, 0 missing; smallest distance of a compared quantity from its threshold (0.4, 0.4, 0.1 rad): 2.22e-03 without the plant, 2.22e-03 with it, and the plant's largest step is 0.05 rad under 0.45; b2: winding +0.0000 (stored +0.0000), max step 0.39 (stored 0.39), plant difference +2.0000 (expected 2, step 0.40, stored 0.4), asked 195 of 195 stored points, 0 missing; smallest distance of a compared quantity from its threshold (0.4, 0.4, 0.1 rad): 5.63e-03 without the plant, 2.92e-03 with it, and the plant's largest step is 0.05 rad under 0.45
+SUMMARY: 1 passed, 0 failed, 0 skipped of 1 checks; mutate = None; 0 s
+
+========================================================================================================================
+run_09_CX2_counts_crate_evaluator: CX2: the counter with the crate (dd) as the evaluator, two boxes with the planted pair
+exit 0, wall 230.23 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:13:44 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=5.96 5.07 5.24
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --only=CX2
+# taylor_polar.py --complex: start 2026-11-27 13:13:44, load average 5.96, one process, nice 10; lane dd; mutate = None
+CHECK CX2: PASS  winding2's counter with the crate as the evaluator: b1 (dd): winding -0.0000 (stored +0.0000), max step 0.39 rad, min|D| 6.70e-04, plant difference +2.0000 (expected 2, step 0.40); 147 points asked, 0 not in the stored cache, 0 stored points not asked; 147 evaluated now, 155 s; b2 (dd): winding +0.0000 (stored +0.0000), max step 0.39 rad, min|D| 1.95e-05, plant difference +2.0000 (expected 2, step 0.40); 195 points asked, 0 not in the stored cache, 0 stored points not asked; 195 evaluated now, 62 s
+SUMMARY: 1 passed, 0 failed, 0 skipped of 1 checks; mutate = None; 230 s
+
+========================================================================================================================
+run_10_XRc_counts_two_Rs: XRc: the count of the box at two outer radii (rsmult 40 and 80)
+exit 0, wall 493.66 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:17:34 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=6.12 5.72 5.49
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --only=XRc
+# taylor_polar.py --complex: start 2026-11-27 13:17:34, load average 6.12, one process, nice 10; lane dd; mutate = None
+CHECK XRc: PASS  b1 counted with the scalar plane started at two outer radii (dd): rsmult 40 (R_s 404.9): winding -0.0000, max step 0.39, plant difference +2.0000 (step 0.40); rsmult 80 (R_s 785.6): winding +0.0000, max step 0.40, plant difference +2.0000 (step 0.40)
+SUMMARY: 1 passed, 0 failed, 0 skipped of 1 checks; mutate = None; 494 s
+
+========================================================================================================================
+run_11_default_mode_186_checks: the default mode (#186's checks) with this branch's default binary
+exit 0, wall 2539.59 s, peak resident 100 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:25:48 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=6.47 6.51 6.01
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py
+CHECK T1: PASS  J at order 0, crate (dd) against the generated function at 60 digits, 8 points x 36 entries: worst relative 5.49e-28 at (l, r, s, i, j) = (6, 24.1, 12000.0, 3, 5) (bar 1.00e-24)
+CHECK T2: PASS  J's series (30 coefficients) at 0.1 of a star step against the generated function at 60 digits on the series' own background, 4 cases, 96 entries: worst relative 3.10e-29 (bar 1.00e-24)
+CHECK R1: PASS  real lanes, every field except times as strings (d at l = 2, 6, gamma = 0.001, 1, 40 in f64, dd, qd; planted const and linear; star): old_default against new_default: 65 records, 0 differ; old_libplane against new_libplane: 65 records, 0 differ
+CHECK P1[f64]: PASS  y' = A y, A = blockdiag([[0,1],[g^2,0]]) + C, L = 24.0, Lz = 40.0 against the invariant subspaces at 90 digits; worst D 8.36e-16, planes 3.06e-16, ln vol 2.11e-12 (bars 1.00e-06, 1.00e-09, 1.00e-09); g=3: D=0.090986 steps 25+42; g=10: D=0.00376077 steps 72+125; g=300: D=1.59705e-7 steps 2123+3545; g=12000: D=2.5056e-12 steps 84921+141541
+CHECK P1[dd]: PASS  y' = A y, A = blockdiag([[0,1],[g^2,0]]) + C, L = 24.0, Lz = 40.0 against the invariant subspaces at 90 digits; worst D 5.16e-32, planes 2.19e-32, ln vol 9.66e-29 (bars 1.00e-24, 1.00e-24, 1.00e-24); g=3: D=0.090986 steps 82+149; g=10: D=0.00376077 steps 253+441; g=300: D=1.59705e-7 steps 7535+12581; g=12000: D=2.5056e-12 steps 301420+502388
+CHECK P1[qd]: PASS  y' = A y, A = blockdiag([[0,1],[g^2,0]]) + C, L = 24.0, Lz = 40.0 against the invariant subspaces at 90 digits; worst D 2.67e-64, planes 3.43e-64, ln vol 1.73e-62 (bars 1.00e-56, 1.00e-56, 1.00e-56); g=10: D=0.00376077 steps 3180+5554; g=300: D=1.59705e-7 steps 94958+158552
+CHECK P0[f64]: PASS  transient, gamma L = 40, expm at 140 digits, gamma = 3, 300, 12000: worst D 7.90e-16, planes 2.05e-16, ln vol 2.20e-16 (bars 1.00e-06, 1.00e-09, 1.00e-09)
+CHECK P0[dd]: PASS  transient, gamma L = 40, expm at 140 digits, gamma = 3, 300, 12000: worst D 1.18e-32, planes 1.90e-32, ln vol 2.24e-32 (bars 1.00e-24, 1.00e-24, 1.00e-24)
+CHECK P2[dd]: PASS  A(r) = A0 + r A1, gamma = 3, 6, L = 1, mpmath odefun at 60 digits: worst D 2.52e-30, planes 7.23e-32, ln vol 3.74e-32 (bar 1.00e-28)
+CHECK S1: PASS  star by shooting against solve_star's mesh at r = 0.002 .. 24.10980364018201 (10 radii, alpha, a, phi0, u): exact regular start worst relative 4.10e-08 at ('u', 0.002) (bar 1.00e-06); start at r0 = 1e-3 with scipy's leading-order boundary condition 1.05e-10 at ('phi0', 24.10980364018201) (bar 1.00e-09)
+CHECK S2: PASS  star's equations: crate state at r = 8.0 against DOP853 (rtol 1e-13) on background.odes from the crate's state at r = 0.5: worst of (ln phi0, u, m, nu) 1.97e-12 (bar 1.00e-09)
+CHECK S3: PASS  central data (P_c, Z_c) against the shooting's start radius: rs = 1e-8 vs 1e-9 moves them by 8.59e-18, 1.64e-19 (bar 1.00e-16); rs = 1e-6 vs 1e-7 by 8.59e-14, 1.64e-15; ratio 1.00e-04, 1.00e-04 (rs^2 law: 1e-4, bar [3.33e-05, 3.0e-04]); phi_c = 0.0196642435159, alpha_c = 1.00957594934 (solve_star: 0.0196642426625, 1.0095759485)
+CHECK T3: PASS  table against direct J at 150 radii, l = 2 (s = 0.3) and l = 6 (s = 300), dd: worst entry relative to itself 4.58e-23 at (l, s, r, entry) = (2, 0.3, 0.0011151576529999999, '3,5') (bar 1.00e-20); info, not gated: worst error relative to the largest |J| entry 8.58e-27 at (l, s, r) = (6, 300.0, 0.0012895889249131133)
+CHECK A2[l=2]: PASS  l = 2, base variant, lane dd: worst |D/D_stored - 1| = 4.23e-07 over 8 rows (bar 2.1e-04, the file's relative spread); g=0.001 D=-5.2854306e-02 stored -5.2854310e-02 rel 7.27e-08 (row spread 1.1e-04) 0.09s; g=0.03 D=-4.7253152e-02 stored -4.7253150e-02 rel 4.92e-08 (row spread 1.3e-04) 0.08s; g=0.3 D=-1.6753535e-02 stored -1.6753530e-02 rel 2.81e-07 (row spread 2.1e-04) 0.07s; g=1 D=-6.0022029e-03 stored -6.0022030e-03 rel 8.98e-09 (row spread 2.1e-04) 0.07s; g=3 D=-7.0990331e-04 stored -7.0990330e-04 rel 1.18e-08 (row spread 2.1e-04) 0.08s; g=10 D=-2.6455736e-05 stored -2.6455740e-05 rel 1.53e-07 (row spread 2.1e-04) 0.14s; g=40 D=-4.2939218e-07 stored -4.2939220e-07 rel 3.80e-08 (row spread 2.1e-04) 0.43s; g=137 D=-1.0712895e-08 stored -1.0712890e-08 rel 4.23e-07 (row spread 2.1e-04) 1.43s
+CHECK A6[l=6]: PASS  l = 6, base variant, lane dd: worst |D/D_stored - 1| = 4.61e-07 over 11 rows (bar 2.1e-04, the file's relative spread); g=0.001 D=-1.5424250e-01 stored -1.5424250e-01 rel 2.31e-08 (row spread 1.3e-04) 0.09s; g=0.03 D=-1.5395284e-01 stored -1.5395280e-01 rel 2.82e-07 (row spread 1.3e-04) 0.09s; g=0.3 D=-1.3575438e-01 stored -1.3575440e-01 rel 1.63e-07 (row spread 1.7e-04) 0.08s; g=1 D=-5.7826977e-02 stored -5.7826980e-02 rel 5.17e-08 (row spread 2.0e-04) 0.07s; g=3 D=-7.0516572e-03 stored -7.0516570e-03 rel 3.21e-08 (row spread 2.1e-04) 0.09s; g=10 D=-2.6453467e-04 stored -2.6453470e-04 rel 9.80e-08 (row spread 2.1e-04) 0.15s; g=40 D=-4.2971787e-06 stored -4.2971790e-06 rel 7.67e-08 (row spread 2.1e-04) 0.47s; g=137 D=-1.0721595e-07 stored -1.0721590e-07 rel 4.61e-07 (row spread 2.1e-04) 1.50s; g=300 D=-1.0212580e-08 stored -1.0212580e-08 rel 1.96e-08 (row spread 2.1e-04) 3.21s; g=1000 D=-2.7575156e-10 stored -2.7575160e-10 rel 1.29e-07 (row spread 2.1e-04) 10.64s; g=12000 D=-1.5957913e-13 stored -1.5957910e-13 rel 1.75e-07 (row spread 2.1e-04) 160.68s
+CHECK A4[l=4]: PASS  l = 4, base variant, lane dd: worst |D/D_stored - 1| = 3.86e-07 over 11 rows (bar 2.1e-04, the file's relative spread); g=0.001 D=-9.9929808e-02 stored -9.9929810e-02 rel 1.91e-08 (row spread 1.2e-04) 0.13s; g=0.03 D=-9.8739260e-02 stored -9.8739260e-02 rel 4.69e-09 (row spread 1.2e-04) 0.13s; g=0.3 D=-6.8621120e-02 stored -6.8621120e-02 rel 6.63e-09 (row spread 1.9e-04) 0.11s; g=1 D=-2.6632166e-02 stored -2.6632170e-02 rel 1.55e-07 (row spread 2.1e-04) 0.11s; g=3 D=-3.1875633e-03 stored -3.1875630e-03 rel 8.89e-08 (row spread 2.1e-04) 0.12s; g=10 D=-1.1909334e-04 stored -1.1909330e-04 rel 3.17e-07 (row spread 2.1e-04) 0.23s; g=40 D=-1.9335855e-06 stored -1.9335860e-06 rel 2.34e-07 (row spread 2.1e-04) 0.66s; g=137 D=-4.8241976e-08 stored -4.8241980e-08 rel 8.63e-08 (row spread 2.1e-04) 2.19s; g=300 D=-4.5951545e-09 stored -4.5951540e-09 rel 1.01e-07 (row spread 2.1e-04) 4.57s; g=1000 D=-1.2407445e-10 stored -1.2407450e-10 rel 3.86e-07 (row spread 2.1e-04) 15.35s; g=3000 D=-4.5953673e-12 stored -4.5953670e-12 rel 5.98e-08 (row spread 2.1e-04) 54.18s
+CHECK A5[l=5]: PASS  l = 5, base variant, lane dd: worst |D/D_stored - 1| = 3.96e-07 over 11 rows (bar 2.1e-04, the file's relative spread); g=0.001 D=-1.2606324e-01 stored -1.2606320e-01 rel 2.81e-07 (row spread 1.3e-04) 0.29s; g=0.03 D=-1.2543605e-01 stored -1.2543610e-01 rel 3.89e-07 (row spread 1.3e-04) 0.23s; g=0.3 D=-1.0085816e-01 stored -1.0085820e-01 rel 3.96e-07 (row spread 1.8e-04) 0.18s; g=1 D=-4.0994851e-02 stored -4.0994850e-02 rel 2.21e-08 (row spread 2.1e-04) 0.15s; g=3 D=-4.9484441e-03 stored -4.9484440e-03 rel 1.79e-08 (row spread 2.1e-04) 0.15s; g=10 D=-1.8522317e-04 stored -1.8522320e-04 rel 1.49e-07 (row spread 2.1e-04) 0.28s; g=40 D=-3.0079673e-06 stored -3.0079670e-06 rel 1.02e-07 (row spread 2.1e-04) 0.69s; g=137 D=-7.5048373e-08 stored -7.5048370e-08 rel 3.71e-08 (row spread 2.1e-04) 2.33s; g=300 D=-7.1485307e-09 stored -7.1485310e-09 rel 4.23e-08 (row spread 2.1e-04) 4.95s; g=1000 D=-1.9301860e-10 stored -1.9301860e-10 rel 1.94e-08 (row spread 2.1e-04) 19.03s; g=6000 D=-8.9360829e-13 stored -8.9360830e-13 rel 8.05e-09 (row spread 2.1e-04) 118.78s
+CHECK L1: PASS  lanes: (l=2, g=300): f64 -1.0204252371e-09 vs dd -1.0204252377e-09 rel 6.11e-10 (bar 2.1e-04), 0.259 s vs 9.84 s; (l=6, g=1000): f64 -2.7575156446e-10 vs dd -2.7575156447e-10 rel 4.62e-11 (bar 2.1e-04), 0.836 s vs 18.19 s; (l=6, g=12000): f64 -1.5957912910e-13 vs dd -1.5957912800e-13 rel 6.90e-09 (bar 2.1e-04), 5.057 s vs 211.48 s; (l=2, g=300): dd vs qd rel 5.72e-26 (bar 1.00e-20), qd 241.9 s, 93342 steps; (l=6, g=137): dd vs qd rel 5.38e-29 (bar 1.00e-20), qd 119.2 s, 42945 steps
+CHECK V1: PASS  variant r0 = 3e-3 against base, same code, dd: (l=2, g=1) 9.87e-05; (l=2, g=137) 9.92e-05; (l=6, g=1000) 9.92e-05 (bar 2.1e-04)
+CHECK V2: PASS  variant r_m = 34.2051, dd: (l=2, g=0.001) D=-3.6822e-02 stored -3.6820e-02 rel 5.59e-05 (bar 3.5e-04); (l=2, g=1) D=-2.9904e-03 stored -2.9900e-03 rel 1.49e-04 (bar 3.8e-04); (l=2, g=137) D=-5.3228e-09 stored -5.3230e-09 rel 3.80e-05 (bar 3.0e-04); (l=6, g=1) D=-2.9361e-02 stored -2.9360e-02 rel 2.21e-05 (bar 3.8e-04); (l=6, g=137) D=-5.3258e-08 stored -5.3260e-08 rel 2.82e-05 (bar 3.0e-04); (l=6, g=1000) D=-1.3698e-10 stored -1.3700e-10 rel 1.71e-04 (bar 5.7e-04); (l=6, g=12000) D=-7.9269e-14 stored -7.9270e-14 rel 1.04e-05 (bar 2.7e-04)
+CHECK V3: PASS  order 24, tol 1e-22 against order 30, tol 1.2e-30, dd: (l=2, g=10) 4.68e-25 steps 301 -> 291; (l=6, g=1000) 3.24e-25 steps 24628 -> 26111 (bar 1e-15)
+CHECK V4: PASS  variants through scipy and the crate at the same (r0, r_m): worst crate vs scipy 8.48e-10 (bar 1.00e-07); (l=2, g=1) R=90: r_m 24.1084, scipy vs base +1.13e-04, crate vs scipy 3.99e-13; (l=2, g=1) r0=3e-3: r_m 24.1110, scipy vs base -9.87e-05, crate vs scipy 5.33e-13; (l=2, g=1) rtol 1e-12: r_m 24.1098, scipy vs base +4.47e-13, crate vs scipy 2.09e-14; (l=2, g=10) R=90: r_m 24.1084, scipy vs base +1.13e-04, crate vs scipy 2.93e-12; (l=2, g=10) r0=3e-3: r_m 24.1110, scipy vs base -9.92e-05, crate vs scipy 1.29e-12; (l=2, g=10) rtol 1e-12: r_m 24.1098, scipy vs base -3.48e-12, crate vs scipy 1.02e-11; (l=6, g=10) R=90: r_m 24.1084, scipy vs base +1.13e-04, crate vs scipy 1.84e-13; (l=6, g=10) r0=3e-3: r_m 24.1110, scipy vs base -9.91e-05, crate vs scipy 3.02e-13; (l=6, g=10) rtol 1e-12: r_m 24.1098, scipy vs base +1.42e-14, crate vs scipy 2.59e-13; (l=2, g=137) R=90: r_m 24.1084, scipy vs base +1.13e-04, crate vs scipy 4.68e-11; (l=2, g=137) r0=3e-3: r_m 24.1110, scipy vs base -9.92e-05, crate vs scipy 7.34e-10; (l=2, g=137) rtol 1e-12: r_m 24.1098, scipy vs base -2.27e-09, crate vs scipy 8.48e-10
+CHECK TS: SKIPPED  no scipy timing file (--scipy-file=PATH)
+SUMMARY: 22 passed, 0 failed, 1 skipped (TS: not run) of 23 checks; mutate = None; 2539 s
+
+========================================================================================================================
+run_12_L1C_lanes: L1C: qd against dd at three points
+exit 0, wall 334.08 s, peak resident 82 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:19:26 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=6.45 5.90 5.58
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --only=L1C
+# taylor_polar.py --complex: start 2026-11-27 13:19:26, load average 6.45, one process, nice 10; lane dd; mutate = None
+CHECK L1C: PASS  crate D at 3 points of b1: qd against dd worst modulus ratio 1.5e-29, phase 7.6e-27 (bar 1e-20); f64 against dd (reported) 3.4e-14, 6.7e-14; wall per D dd 1.14 s, qd 103.9 s
+SUMMARY: 1 passed, 0 failed, 0 skipped of 1 checks; mutate = None; 334 s
+
+========================================================================================================================
+run_13_CXZ_planted_determinant: CXZ: the planted determinant with zeros
+exit 0, wall 0.53 s, peak resident 46 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:25:01 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=6.70 6.54 5.99
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --only=CXZ
+# taylor_polar.py --complex: start 2026-11-27 13:25:01, load average 6.70, one process, nice 10; lane dd; mutate = None
+CHECK CXZ: PASS  planted determinant, dd, L = 2.0, Lz = 2.0, zeros at 0.75 +- 0.5i; J equal to the crate's: True; D against mpmath expm at 20 contour points: worst |D/D_exact - 1| / (eps max(1, ln growth)) = 1.80e+01 (bar 10000); box Re s in [0.2, 1.2]: winding +2.0000 (planted 2), max step 0.27; box Re s in [1.3, 2.0]: winding +0.0000 (planted 0), max step 0.23
+SUMMARY: 1 passed, 0 failed, 0 skipped of 1 checks; mutate = None; 0 s
+
+========================================================================================================================
+run_14_X1_box_b1_vs_scipy: X1: the crate (dd, then f64) against the scipy path at rtol 1e-13, 147 points
+exit 0, wall 188.70 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:25:01 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=6.70 6.54 5.99
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --only=X1
+# taylor_polar.py --complex: start 2026-11-27 13:25:01, load average 6.70, one process, nice 10; lane dd; mutate = None
+CHECK X1: PASS  box b1 (l = 2, Re s in [0.1, 2.0], |Im s| <= 2.5, R_s 404.8502), crate dd against winding2's D by the scipy path at rtol 1e-13 at 147 stored points: worst modulus ratio 1.2e-12, worst phase 5.1e-11 rad (bar 1e-09 each), 0 points over the bar. Reported without a bar: crate against the stored values (rtol 1e-8) modulus 6.0e-10, phase 9.8e-07; the stored values against scipy at 1e-13 modulus 6.0e-10, phase 9.8e-07; crate wall per D: median 1.15 s, max 2.01 s
+CHECK X1-f64: PASS  box b1 (l = 2, Re s in [0.1, 2.0], |Im s| <= 2.5, R_s 404.8502), crate f64 against winding2's D by the scipy path at rtol 1e-13 at 147 stored points: worst modulus ratio 1.2e-12, worst phase 5.1e-11 rad (bar 1e-09 each), 0 points over the bar. Reported without a bar: crate against the stored values (rtol 1e-8) modulus 6.0e-10, phase 9.8e-07; the stored values against scipy at 1e-13 modulus 6.0e-10, phase 9.8e-07; crate wall per D: median 0.05 s, max 0.06 s
+SUMMARY: 2 passed, 0 failed, 0 skipped of 2 checks; mutate = None; 189 s
+
+========================================================================================================================
+run_15_X1b_box_b6_vs_scipy: X1b: the l = 6 box at R_s = 1293, 8 points
+exit 0, wall 30.33 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:28:10 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=6.57 6.57 6.10
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --only=X1b
+# taylor_polar.py --complex: start 2026-11-27 13:28:10, load average 6.57, one process, nice 10; lane dd; mutate = None
+CHECK X1b: PASS  box b6 (l = 6, Re s in [0.03, 0.1], |Im s| <= 2.5, R_s 1293.1822), crate dd against winding2's D by the scipy path at rtol 1e-13 at 8 stored points: worst modulus ratio 5.4e-12, worst phase 8.5e-11 rad (bar 1e-09 each), 0 points over the bar. Reported without a bar: crate against the stored values (rtol 1e-8) modulus 8.8e-09, phase 3.1e-06; the stored values against scipy at 1e-13 modulus 8.8e-09, phase 3.1e-06; crate wall per D: median 2.06 s, max 4.45 s
+SUMMARY: 1 passed, 0 failed, 0 skipped of 1 checks; mutate = None; 30 s
+
+========================================================================================================================
+run_16_XR_Rs_independence: XR: the stripped D at four start radii (declared as a check; not met)
+exit 1, wall 53.91 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:28:40 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=6.38 6.51 6.09
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --only=XR
+# taylor_polar.py --complex: start 2026-11-27 13:28:40, load average 6.38, one process, nice 10; lane dd; mutate = None
+CHECK XR: FAIL  stripped D at R_s = 200.00, 300.00, 600.00 against R_s = 404.85 (dd, 8 points of b1): worst modulus ratio 2.2e-16, worst phase 1.1e-01 rad (bar 1e-09 each); the premise is false: the phase carries tails of the exterior solution that winding2's strip does not remove (1/R_s from the start vectors and the angular term, ln R_s from the mass); they are holomorphic and zero-free at a fixed R_s, so a count is unaffected (XRc)
+SUMMARY: 0 passed, 1 failed, 0 skipped of 1 checks; failed: XR; mutate = None; 54 s
+
+========================================================================================================================
+run_17_TC_time_per_D: TC: time per D, scipy against the crate
+exit 0, wall 58.62 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:29:34 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=6.86 6.62 6.16
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --only=TC
+# taylor_polar.py --complex: start 2026-11-27 13:29:34, load average 6.86, one process, nice 10; lane dd; mutate = None
+CHECK TC: PASS  time per D, one process each, nice 10, load 6.6: b1 (l = 2, R_s 404.9, 8 points) crate f64: 0.053 s per D (range 0.052 to 0.053); scipy rtol 1e-8: 4.59 s (range 2.02 to 8.39), rtol 1e-13: 13.59 s; speed-up over rtol 1e-8 x87; b1 (l = 2, R_s 404.9, 8 points) crate dd: 1.158 s per D (range 0.656 to 2.081); scipy rtol 1e-8: 4.59 s (range 2.02 to 8.39), rtol 1e-13: 13.59 s; speed-up over rtol 1e-8 x4; b6 (l = 6, R_s 1293.2, 8 points) crate f64: 0.163 s per D (range 0.158 to 0.169); scipy rtol 1e-8: 12.14 s (range 6.32 to 23.04), rtol 1e-13: 38.48 s; speed-up over rtol 1e-8 x74; b6 (l = 6, R_s 1293.2, 8 points) crate dd: 2.770 s per D (range 1.679 to 4.810); scipy rtol 1e-8: 12.14 s (range 6.32 to 23.04), rtol 1e-13: 38.48 s; speed-up over rtol 1e-8 x4
+SUMMARY: 1 passed, 0 failed, 0 skipped of 1 checks; mutate = None; 59 s
+
+========================================================================================================================
+run_18_tc_big_Rs: the crate's time per D as R_s grows to 8000 (for the note on #116; not a check)
+exit 0, wall 79.65 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:30:33 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=6.57 6.57 6.17
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python /Users/nathan/Source/negative-mass-raw/I188-mac/tc_big_rs.py
+# l = 2, s = 0.1 + 1i; time per D by R_s (one process, nice 10)
+# lane R_s steps_y steps_q steps_s t_y t_s wall strip_argument
+f64 405 51 30 381 0.005 0.053 0.059 621.4
+f64 1000 51 30 976 0.005 0.126 0.131 1499.0
+f64 2000 51 30 1976 0.004 0.258 0.262 2973.8
+f64 4000 51 30 3976 0.005 0.555 0.560 5923.5
+f64 8000 51 30 7976 0.005 1.187 1.192 11823.0
+dd 405 131 102 501 0.116 0.624 0.744 621.4
+dd 1000 131 102 1284 0.116 1.599 1.718 1499.0
+dd 2000 131 102 2600 0.103 3.049 3.155 2973.8
+dd 4000 131 102 5231 0.110 6.215 6.328 5923.5
+dd 8000 131 102 10494 0.103 12.475 12.581 11823.0
+
+========================================================================================================================
+run_19_xr_diag: why XR fails: the stripped D's phase against R_s at two points and two l, with the mass and with M = 0 (not a check)
+exit 0, wall 731.19 s, peak resident 53 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 14:17:51 cwd=/Users/nathan/Source/negative-mass-raw/I188-mac load=47.48 66.03 53.85
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python dev_xr_diag.py
+mutate=None l=2 s=(0.1+1j): phase vs R_s=1200: 100:+1.59e-01 150:+1.28e-01 200:+1.07e-01 300:+8.11e-02 450:+5.63e-02 600:+3.94e-02 900:+1.61e-02 1200:+2.07e-17 | modulus max 4.0e-14
+mutate=None l=2 s=(2+2.5j): phase vs R_s=1200: 100:+3.78e-01 150:+3.13e-01 200:+2.68e-01 300:+2.06e-01 450:+1.45e-01 600:+1.02e-01 900:+4.24e-02 1200:-3.76e-17 | modulus max 3.3e-16
+mutate=None l=6 s=(0.1+1j): phase vs R_s=1200: 100:+2.76e-01 150:+2.02e-01 200:+1.61e-01 300:+1.13e-01 450:+7.40e-02 600:+5.00e-02 900:+1.97e-02 1200:-1.97e-19 | modulus max 2.8e-14
+mutate=None l=6 s=(2+2.5j): phase vs R_s=1200: 100:+4.52e-01 150:+3.60e-01 200:+3.02e-01 300:+2.26e-01 450:+1.56e-01 600:+1.09e-01 900:+4.46e-02 1200:-1.29e-20 | modulus max 7.8e-16
+mutate=mext0 l=2 s=(0.1+1j): phase vs R_s=1200: 100:+2.60e-02 150:+1.66e-02 200:+1.18e-02 300:+7.10e-03 450:+3.95e-03 600:+2.37e-03 900:+7.89e-04 1200:+9.42e-18 | modulus max 4.1e-14
+mutate=mext0 l=2 s=(2+2.5j): phase vs R_s=1200: 100:+1.63e-02 150:+1.04e-02 200:+7.43e-03 300:+4.46e-03 450:+2.48e-03 600:+1.49e-03 900:+4.95e-04 1200:+3.52e-17 | modulus max 2.2e-16
+mutate=mext0 l=6 s=(0.1+1j): phase vs R_s=1200: 100:+1.43e-01 150:+9.11e-02 200:+6.51e-02 300:+3.91e-02 450:+2.17e-02 600:+1.30e-02 900:+4.34e-03 1200:-7.87e-18 | modulus max 3.1e-14
+mutate=mext0 l=6 s=(2+2.5j): phase vs R_s=1200: 100:+8.97e-02 150:+5.71e-02 200:+4.08e-02 300:+2.45e-02 450:+1.36e-02 600:+8.17e-03 900:+2.72e-03 1200:-1.79e-17 | modulus max 4.4e-16
+
+========================================================================================================================
+run_30_ctl_r1_ulp: control r1_ulp (must exit 1)
+exit 1, wall 333.75 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:31:52 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=6.63 6.64 6.23
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=r1_ulp
+# taylor_polar.py --complex: start 2026-11-27 13:31:53, load average 6.63, one process, nice 10; lane dd; mutate = r1_ulp
+CHECK R1: FAIL  real lanes, every field except times as strings (d at l = 2, 6, gamma = 0.001, 1, 40 in f64, dd, qd; planted const and linear; star): old_default against new_default: 65 records, 1 differ (first: d); old_libplane against new_libplane: 65 records, 1 differ (first: d)
+SUMMARY: 0 passed, 1 failed, 0 skipped of 1 checks; failed: R1; mutate = r1_ulp; 334 s
+CONTROL r1_ulp: every targeted check failed, as it must
+
+========================================================================================================================
+run_31_ctl_cx_recip_general: control cx_recip_general (must exit 1)
+exit 1, wall 296.80 s, peak resident 82 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:37:26 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=22.64 14.97 10.06
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=cx_recip_general
+# taylor_polar.py --complex: start 2026-11-27 13:37:26, load average 22.64, one process, nice 10; lane dd; mutate = cx_recip_general
+CHECK R2: FAIL  complex lane at real s against the real lane, 19 cases (the d list of R1 against `dc`, and P1c with f = 0 on cx = 0 and 1): 18 differ: f64 l=2 g=0.001, f64 l=2 g=1, f64 l=2 g=40, dd l=2 g=0.001, dd l=2 g=1, dd l=2 g=40
+SUMMARY: 0 passed, 1 failed, 0 skipped of 1 checks; failed: R2; mutate = cx_recip_general; 297 s
+CONTROL cx_recip_general: every targeted check failed, as it must
+
+========================================================================================================================
+run_32_ctl_bilinear: control bilinear (must exit 1)
+exit 1, wall 1.23 s, peak resident 36 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:42:23 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=25.34 24.02 15.95
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=bilinear
+# taylor_polar.py --complex: start 2026-11-27 13:42:23, load average 25.34, one process, nice 10; lane dd; mutate = bilinear
+CHECK P1C: FAIL  J = P diag(24 + 7i, 8 - 3i, -8 + 5i, -24 - 11i) P^-1, plane P[:, :2], x = 12; exact Lambda = ln_vol + ln det(Q0^T Q) = (384.804718956 + 48.0j) at 140 digits; f64: plane 4.93e-15 (bar 1.11e-12), Lambda 2.27e+00 (re 5.50e-13, im 2.27e+00; bar 4.31e-10), orthonormality 1.20e-16 (bar 1.11e-14), 78 steps; dd: plane 6.50e-32 (bar 1.23e-28), Lambda 2.27e+00 (re 9.05e-32, im 2.27e+00; bar 4.78e-26), orthonormality 6.94e-32 (bar 1.23e-30), 277 steps; qd: plane 5.63e-64 (bar 1.50e-60), Lambda 2.27e+00 (re 2.54e-61, im 2.27e+00; bar 5.83e-58), orthonormality 1.68e-64 (bar 1.50e-62), 3486 steps
+SUMMARY: 0 passed, 1 failed, 0 skipped of 1 checks; failed: P1C; mutate = bilinear; 1 s
+CONTROL bilinear: every targeted check failed, as it must
+
+========================================================================================================================
+run_33_ctl_redot: control redot (must exit 1)
+exit 1, wall 1.70 s, peak resident 36 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:42:24 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=25.34 24.02 15.95
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=redot
+# taylor_polar.py --complex: start 2026-11-27 13:42:25, load average 25.34, one process, nice 10; lane dd; mutate = redot
+CHECK P1C: FAIL  J = P diag(24 + 7i, 8 - 3i, -8 + 5i, -24 - 11i) P^-1, plane P[:, :2], x = 12; exact Lambda = ln_vol + ln det(Q0^T Q) = (384.804718956 + 48.0j) at 140 digits; f64: plane 2.93e-16 (bar 1.11e-12), Lambda 5.54e+01 (re 5.54e+01, im 1.52e+00; bar 4.31e-10), orthonormality 1.00e+00 (bar 1.11e-14), 77 steps; dd: plane 9.56e-32 (bar 1.23e-28), Lambda 7.36e-29 (re 7.36e-29, im 2.99e-29; bar 4.78e-26), orthonormality 9.99e-01 (bar 1.23e-30), 274 steps; qd: plane 3.15e-64 (bar 1.50e-60), Lambda 1.60e-61 (re 1.60e-61, im 4.62e-63; bar 5.83e-58), orthonormality 3.37e-02 (bar 1.50e-62), 3481 steps
+SUMMARY: 0 passed, 1 failed, 0 skipped of 1 checks; failed: P1C; mutate = redot; 2 s
+CONTROL redot: every targeted check failed, as it must
+
+========================================================================================================================
+run_34_ctl_f_scaled: control f_scaled (must exit 1)
+exit 1, wall 1.60 s, peak resident 36 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:42:26 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=25.34 24.02 15.95
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=f_scaled
+# taylor_polar.py --complex: start 2026-11-27 13:42:26, load average 25.34, one process, nice 10; lane dd; mutate = f_scaled
+CHECK P1C: FAIL  J = P diag(24 + 7i, 8 - 3i, -8 + 5i, -24 - 11i) P^-1, plane P[:, :2], x = 12; exact Lambda = ln_vol + ln det(Q0^T Q) = (384.804718956 + 48.0j) at 140 digits; f64: plane 3.93e-15 (bar 1.11e-12), Lambda 3.60e-05 (re 4.30e-13, im 3.60e-05; bar 4.31e-10), orthonormality 3.04e-16 (bar 1.11e-14), 78 steps; dd: plane 4.11e-16 (bar 1.23e-28), Lambda 3.60e-05 (re 6.03e-16, im 3.60e-05; bar 4.78e-26), orthonormality 1.05e-32 (bar 1.23e-30), 277 steps; qd: plane 4.11e-16 (bar 1.50e-60), Lambda 3.60e-05 (re 6.03e-16, im 3.60e-05; bar 5.83e-58), orthonormality 6.15e-65 (bar 1.50e-62), 3486 steps
+SUMMARY: 0 passed, 1 failed, 0 skipped of 1 checks; failed: P1C; mutate = f_scaled; 1 s
+CONTROL f_scaled: every targeted check failed, as it must
+
+========================================================================================================================
+run_35_ctl_cx_mul_sign: control cx_mul_sign (must exit 1)
+exit 1, wall 38.01 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:42:28 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=28.68 24.73 16.25
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=cx_mul_sign
+# taylor_polar.py --complex: start 2026-11-27 13:42:28, load average 28.68, one process, nice 10; lane dd; mutate = cx_mul_sign
+CHECK P1C: FAIL  J = P diag(24 + 7i, 8 - 3i, -8 + 5i, -24 - 11i) P^-1, plane P[:, :2], x = 12; exact Lambda = ln_vol + ln det(Q0^T Q) = (384.804718956 + 48.0j) at 140 digits; f64: plane 2.97e-16 (bar 1.11e-12), Lambda 3.24e+02 (re 3.24e+02, im 1.93e+00; bar 4.31e-10), orthonormality 1.00e+00 (bar 1.11e-14), 95 steps; dd: plane 1.86e-32 (bar 1.23e-28), Lambda 2.84e+02 (re 2.84e+02, im 2.74e+00; bar 4.78e-26), orthonormality 1.00e+00 (bar 1.23e-30), 337 steps; qd: plane 1.13e-65 (bar 1.50e-60), Lambda 2.02e+02 (re 2.02e+02, im 1.74e+00; bar 5.83e-58), orthonormality 1.00e+00 (bar 1.50e-62), 4237 steps
+CHECK X1: FAIL  box b1 (l = 2, Re s in [0.1, 2.0], |Im s| <= 2.5, R_s 404.8502), crate dd against winding2's D by the scipy path at rtol 1e-13 at 8 stored points: worst modulus ratio 9.3e+00, worst phase 3.1e+00 rad (bar 1e-09 each), 6 points over the bar. Reported without a bar: crate against the stored values (rtol 1e-8) modulus 9.3e+00, phase 3.1e+00; the stored values against scipy at 1e-13 modulus 2.0e-10, phase 8.8e-07; crate wall per D: median 1.73 s, max 4.05 s
+SUMMARY: 0 passed, 2 failed, 0 skipped of 2 checks; failed: P1C, X1; mutate = cx_mul_sign; 38 s
+CONTROL cx_mul_sign: every targeted check failed, as it must
+
+========================================================================================================================
+run_36_ctl_strip_off: control strip_off (must exit 1)
+exit 1, wall 87.84 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:43:06 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=26.82 24.85 16.65
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=strip_off
+# taylor_polar.py --complex: start 2026-11-27 13:43:06, load average 26.82, one process, nice 10; lane dd; mutate = strip_off
+CHECK X1: FAIL  box b1 (l = 2, Re s in [0.1, 2.0], |Im s| <= 2.5, R_s 404.8502), crate dd against winding2's D by the scipy path at rtol 1e-13 at 8 stored points: worst modulus ratio 3.1e-13, worst phase 2.4e+00 rad (bar 1e-09 each), 6 points over the bar. Reported without a bar: crate against the stored values (rtol 1e-8) modulus 2.0e-10, phase 2.4e+00; the stored values against scipy at 1e-13 modulus 2.0e-10, phase 8.8e-07; crate wall per D: median 2.33 s, max 3.11 s
+CHECK X1b: FAIL  box b6 (l = 6, Re s in [0.03, 0.1], |Im s| <= 2.5, R_s 1293.1822), crate dd against winding2's D by the scipy path at rtol 1e-13 at 8 stored points: worst modulus ratio 5.4e-12, worst phase 2.8e+00 rad (bar 1e-09 each), 6 points over the bar. Reported without a bar: crate against the stored values (rtol 1e-8) modulus 8.8e-09, phase 2.8e+00; the stored values against scipy at 1e-13 modulus 8.8e-09, phase 3.1e-06; crate wall per D: median 4.25 s, max 15.97 s
+SUMMARY: 0 passed, 2 failed, 0 skipped of 2 checks; failed: X1, X1b; mutate = strip_off; 88 s
+CONTROL strip_off: every targeted check failed, as it must
+
+========================================================================================================================
+run_37_ctl_conj_s: control conj_s (must exit 1)
+exit 1, wall 75.04 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:44:34 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=28.43 25.26 17.58
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=conj_s
+# taylor_polar.py --complex: start 2026-11-27 13:44:34, load average 28.43, one process, nice 10; lane dd; mutate = conj_s
+CHECK X1: FAIL  box b1 (l = 2, Re s in [0.1, 2.0], |Im s| <= 2.5, R_s 404.8502), crate dd against winding2's D by the scipy path at rtol 1e-13 at 8 stored points: worst modulus ratio 3.1e-13, worst phase 2.9e+00 rad (bar 1e-09 each), 6 points over the bar. Reported without a bar: crate against the stored values (rtol 1e-8) modulus 2.0e-10, phase 2.9e+00; the stored values against scipy at 1e-13 modulus 2.0e-10, phase 8.8e-07; crate wall per D: median 1.98 s, max 3.60 s
+CHECK X1b: FAIL  box b6 (l = 6, Re s in [0.03, 0.1], |Im s| <= 2.5, R_s 1293.1822), crate dd against winding2's D by the scipy path at rtol 1e-13 at 8 stored points: worst modulus ratio 5.4e-12, worst phase 3.0e+00 rad (bar 1e-09 each), 6 points over the bar. Reported without a bar: crate against the stored values (rtol 1e-8) modulus 8.8e-09, phase 3.0e+00; the stored values against scipy at 1e-13 modulus 8.8e-09, phase 3.1e-06; crate wall per D: median 3.97 s, max 7.67 s
+CHECK CXZ: FAIL  planted determinant, dd, L = 2.0, Lz = 2.0, zeros at 0.75 +- 0.5i; J equal to the crate's: True; D against mpmath expm at 20 contour points: worst |D/D_exact - 1| / (eps max(1, ln growth)) = 5.98e+31 (bar 10000); box Re s in [0.2, 1.2]: winding -2.0000 (planted 2), max step 0.27; box Re s in [1.3, 2.0]: winding -0.0000 (planted 0), max step 0.23
+SUMMARY: 0 passed, 3 failed, 0 skipped of 3 checks; failed: X1, X1b, CXZ; mutate = conj_s; 75 s
+CONTROL conj_s: every targeted check failed, as it must
+
+========================================================================================================================
+run_38_ctl_rs_shift: control rs_shift (must exit 1)
+exit 1, wall 67.97 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:45:49 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=18.07 22.66 17.23
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=rs_shift
+# taylor_polar.py --complex: start 2026-11-27 13:45:49, load average 18.07, one process, nice 10; lane dd; mutate = rs_shift
+CHECK X1: FAIL  box b1 (l = 2, Re s in [0.1, 2.0], |Im s| <= 2.5, R_s 404.8502), crate dd against winding2's D by the scipy path at rtol 1e-13 at 8 stored points: worst modulus ratio 3.1e-13, worst phase 2.6e+00 rad (bar 1e-09 each), 6 points over the bar. Reported without a bar: crate against the stored values (rtol 1e-8) modulus 2.0e-10, phase 2.6e+00; the stored values against scipy at 1e-13 modulus 2.0e-10, phase 8.8e-07; crate wall per D: median 1.52 s, max 3.09 s
+CHECK X1b: FAIL  box b6 (l = 6, Re s in [0.03, 0.1], |Im s| <= 2.5, R_s 1293.1822), crate dd against winding2's D by the scipy path at rtol 1e-13 at 8 stored points: worst modulus ratio 5.4e-12, worst phase 2.5e+00 rad (bar 1e-09 each), 6 points over the bar. Reported without a bar: crate against the stored values (rtol 1e-8) modulus 8.8e-09, phase 2.5e+00; the stored values against scipy at 1e-13 modulus 8.8e-09, phase 3.1e-06; crate wall per D: median 3.29 s, max 7.21 s
+SUMMARY: 0 passed, 2 failed, 0 skipped of 2 checks; failed: X1, X1b; mutate = rs_shift; 68 s
+CONTROL rs_shift: every targeted check failed, as it must
+
+========================================================================================================================
+run_39_ctl_strip_sign: control strip_sign (must exit 1)
+exit 1, wall 27.67 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:46:57 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=12.25 20.03 16.64
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=strip_sign
+# taylor_polar.py --complex: start 2026-11-27 13:46:57, load average 12.25, one process, nice 10; lane dd; mutate = strip_sign
+CHECK X1: FAIL  box b1 (l = 2, Re s in [0.1, 2.0], |Im s| <= 2.5, R_s 404.8502), crate dd against winding2's D by the scipy path at rtol 1e-13 at 8 stored points: worst modulus ratio 3.1e-13, worst phase 3.1e+00 rad (bar 1e-09 each), 6 points over the bar. Reported without a bar: crate against the stored values (rtol 1e-8) modulus 2.0e-10, phase 3.1e+00; the stored values against scipy at 1e-13 modulus 2.0e-10, phase 8.8e-07; crate wall per D: median 1.78 s, max 3.09 s
+SUMMARY: 0 passed, 1 failed, 0 skipped of 1 checks; failed: X1; mutate = strip_sign; 28 s
+CONTROL strip_sign: every targeted check failed, as it must
+
+========================================================================================================================
+run_40_ctl_lowsum: control lowsum (must exit 1)
+exit 1, wall 178.72 s, peak resident 82 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 13:47:25 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=11.64 19.13 16.43
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=lowsum
+# taylor_polar.py --complex: start 2026-11-27 13:47:25, load average 11.64, one process, nice 10; lane dd; mutate = lowsum
+CHECK L1C: FAIL  raised RuntimeError: /Users/nathan/Source/negative-mass-i188/phase2/nonradial/taylor_polar/target/complex/release/taylor_polar dc lane=qd l=2 rsfix=404.8501936481817 re=0.1,2.0,0.1 im=1.7578125,2.5,0.5 omega=0.7603 eps=-1 exited 101: 
+thread '<unnamed>' (106114669) panicked at src/plane.rs:133:13:
+integrate: more than 1
+SUMMARY: 0 passed, 1 failed, 0 skipped of 1 checks; failed: L1C; mutate = lowsum; 179 s
+CONTROL lowsum: every targeted check failed, as it must
+
+========================================================================================================================
+run_50_ctl_jsign: control jsign (must exit 1)
+exit 1, wall 51.23 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 14:08:07 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=95.96 54.32 35.45
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=jsign
+# taylor_polar.py --complex: start 2026-11-27 14:08:08, load average 95.96, one process, nice 10; lane dd; mutate = jsign
+CHECK X1: FAIL  box b1 (l = 2, Re s in [0.1, 2.0], |Im s| <= 2.5, R_s 404.8502), crate dd against winding2's D by the scipy path at rtol 1e-13 at 8 stored points: worst modulus ratio 9.9e-01, worst phase 3.1e+00 rad (bar 1e-09 each), 8 points over the bar. Reported without a bar: crate against the stored values (rtol 1e-8) modulus 9.9e-01, phase 3.1e+00; the stored values against scipy at 1e-13 modulus 2.0e-10, phase 8.8e-07; crate wall per D: median 3.41 s, max 5.60 s
+SUMMARY: 0 passed, 1 failed, 0 skipped of 1 checks; failed: X1; mutate = jsign; 51 s
+CONTROL jsign: every targeted check failed, as it must
+
+========================================================================================================================
+run_51_ctl_moncrief: control moncrief (must exit 1)
+exit 1, wall 52.05 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 14:08:59 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=79.66 56.58 37.37
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=moncrief
+# taylor_polar.py --complex: start 2026-11-27 14:08:59, load average 79.66, one process, nice 10; lane dd; mutate = moncrief
+CHECK X1: FAIL  box b1 (l = 2, Re s in [0.1, 2.0], |Im s| <= 2.5, R_s 404.8502), crate dd against winding2's D by the scipy path at rtol 1e-13 at 8 stored points: worst modulus ratio 3.9e+01, worst phase 1.5e+00 rad (bar 1e-09 each), 8 points over the bar. Reported without a bar: crate against the stored values (rtol 1e-8) modulus 3.9e+01, phase 1.5e+00; the stored values against scipy at 1e-13 modulus 2.0e-10, phase 8.8e-07; crate wall per D: median 3.52 s, max 5.63 s
+SUMMARY: 0 passed, 1 failed, 0 skipped of 1 checks; failed: X1; mutate = moncrief; 52 s
+CONTROL moncrief: every targeted check failed, as it must
+
+========================================================================================================================
+run_52_ctl_swapcols: control swapcols (must exit 1)
+exit 1, wall 53.45 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 14:09:51 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=86.33 62.76 40.90
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=swapcols
+# taylor_polar.py --complex: start 2026-11-27 14:09:51, load average 86.33, one process, nice 10; lane dd; mutate = swapcols
+CHECK X1: FAIL  box b1 (l = 2, Re s in [0.1, 2.0], |Im s| <= 2.5, R_s 404.8502), crate dd against winding2's D by the scipy path at rtol 1e-13 at 8 stored points: worst modulus ratio 3.1e-13, worst phase 3.1e+00 rad (bar 1e-09 each), 8 points over the bar. Reported without a bar: crate against the stored values (rtol 1e-8) modulus 2.0e-10, phase 3.1e+00; the stored values against scipy at 1e-13 modulus 2.0e-10, phase 8.8e-07; crate wall per D: median 3.64 s, max 5.47 s
+SUMMARY: 0 passed, 1 failed, 0 skipped of 1 checks; failed: X1; mutate = swapcols; 53 s
+CONTROL swapcols: every targeted check failed, as it must
+
+========================================================================================================================
+run_53_ctl_mext0: control mext0 (must exit 1)
+exit 1, wall 59.77 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 14:10:44 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=89.12 67.13 43.76
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=mext0
+# taylor_polar.py --complex: start 2026-11-27 14:10:45, load average 89.12, one process, nice 10; lane dd; mutate = mext0
+CHECK X1: FAIL  box b1 (l = 2, Re s in [0.1, 2.0], |Im s| <= 2.5, R_s 404.8502), crate dd against winding2's D by the scipy path at rtol 1e-13 at 8 stored points: worst modulus ratio 1.4e-02, worst phase 4.3e-01 rad (bar 1e-09 each), 8 points over the bar. Reported without a bar: crate against the stored values (rtol 1e-8) modulus 1.4e-02, phase 4.3e-01; the stored values against scipy at 1e-13 modulus 2.0e-10, phase 8.8e-07; crate wall per D: median 3.43 s, max 8.66 s
+SUMMARY: 0 passed, 1 failed, 0 skipped of 1 checks; failed: X1; mutate = mext0; 60 s
+CONTROL mext0: every targeted check failed, as it must
+
+========================================================================================================================
+run_54_ctl_star_eps: control star_eps (must exit 1)
+exit 1, wall 52.98 s, peak resident 65 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 14:11:44 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=81.22 69.21 46.15
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=star_eps
+# taylor_polar.py --complex: start 2026-11-27 14:11:44, load average 81.22, one process, nice 10; lane dd; mutate = star_eps
+CHECK X1: FAIL  box b1 (l = 2, Re s in [0.1, 2.0], |Im s| <= 2.5, R_s 404.8502), crate dd against winding2's D by the scipy path at rtol 1e-13 at 8 stored points: worst modulus ratio 4.4e-03, worst phase 2.1e+00 rad (bar 1e-09 each), 8 points over the bar. Reported without a bar: crate against the stored values (rtol 1e-8) modulus 4.4e-03, phase 2.1e+00; the stored values against scipy at 1e-13 modulus 2.0e-10, phase 8.8e-07; crate wall per D: median 3.42 s, max 5.43 s
+SUMMARY: 0 passed, 1 failed, 0 skipped of 1 checks; failed: X1; mutate = star_eps; 53 s
+CONTROL star_eps: every targeted check failed, as it must
+
+========================================================================================================================
+run_55_ctl_shift_off: control shift_off (must exit 1)
+exit 1, wall 49.79 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 14:12:37 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=75.11 69.20 47.57
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=shift_off
+# taylor_polar.py --complex: start 2026-11-27 14:12:37, load average 75.11, one process, nice 10; lane dd; mutate = shift_off
+CHECK X1: FAIL  box b1 (l = 2, Re s in [0.1, 2.0], |Im s| <= 2.5, R_s 404.8502), crate dd against winding2's D by the scipy path at rtol 1e-13 at 8 stored points: worst modulus ratio 9.1e-02, worst phase 2.6e-01 rad (bar 1e-09 each), 8 points over the bar. Reported without a bar: crate against the stored values (rtol 1e-8) modulus 9.1e-02, phase 2.6e-01; the stored values against scipy at 1e-13 modulus 2.0e-10, phase 8.8e-07; crate wall per D: median 3.30 s, max 5.38 s
+SUMMARY: 0 passed, 1 failed, 0 skipped of 1 checks; failed: X1; mutate = shift_off; 50 s
+CONTROL shift_off: every targeted check failed, as it must
+
+========================================================================================================================
+run_56_ctl_reverse: control reverse (must exit 1)
+exit 1, wall 68.60 s, peak resident 63 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 14:13:27 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=73.30 69.83 49.05
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=reverse
+# taylor_polar.py --complex: start 2026-11-27 14:13:27, load average 73.30, one process, nice 10; lane dd; mutate = reverse
+CHECK W0: FAIL  winding2's counter ported, on the stored values alone: b1: winding -0.0000 (stored +0.0000), max step 0.39 (stored 0.39), plant difference -2.0000 (expected 2, step 0.40, stored 0.4), asked 147 of 147 stored points, 0 missing; smallest distance of a compared quantity from its threshold (0.4, 0.4, 0.1 rad): 2.22e-03 without the plant, 2.22e-03 with it, and the plant's largest step is 0.05 rad under 0.45; b2: winding -0.0000 (stored +0.0000), max step 0.39 (stored 0.39), plant difference -2.0000 (expected 2, step 0.40, stored 0.4), asked 195 of 195 stored points, 0 missing; smallest distance of a compared quantity from its threshold (0.4, 0.4, 0.1 rad): 5.63e-03 without the plant, 2.92e-03 with it, and the plant's largest step is 0.05 rad under 0.45
+CHECK CX2: FAIL  winding2's counter with the crate as the evaluator: b1 (dd): winding -0.0000 (stored +0.0000), max step 0.39 rad, min|D| 6.70e-04, plant difference -2.0000 (expected 2, step 0.40); 147 points asked, 0 not in the stored cache, 0 stored points not asked; 0 evaluated now, 0 s; b2 (dd): winding -0.0000 (stored +0.0000), max step 0.39 rad, min|D| 1.95e-05, plant difference -2.0000 (expected 2, step 0.40); 195 points asked, 0 not in the stored cache, 0 stored points not asked; 0 evaluated now, 0 s
+CHECK XRc: FAIL  b1 counted with the scalar plane started at two outer radii (dd): rsmult 40 (R_s 404.9): winding -0.0000, max step 0.39, plant difference -2.0000 (step 0.40); rsmult 80 (R_s 785.6): winding -0.0000, max step 0.40, plant difference -2.0000 (step 0.40)
+CHECK CXZ: FAIL  planted determinant, dd, L = 2.0, Lz = 2.0, zeros at 0.75 +- 0.5i; J equal to the crate's: True; D against mpmath expm at 20 contour points: worst |D/D_exact - 1| / (eps max(1, ln growth)) = 1.80e+01 (bar 10000); box Re s in [0.2, 1.2]: winding -2.0000 (planted 2), max step 0.27; box Re s in [1.3, 2.0]: winding +0.0000 (planted 0), max step 0.23
+SUMMARY: 0 passed, 4 failed, 0 skipped of 4 checks; failed: W0, CX2, XRc, CXZ; mutate = reverse; 69 s
+CONTROL reverse: every targeted check failed, as it must
+
+========================================================================================================================
+run_57_ctl_wrongdouble: control wrongdouble (must exit 1)
+exit 1, wall 71.43 s, peak resident 63 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 14:14:36 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=89.60 75.25 52.72
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=wrongdouble
+# taylor_polar.py --complex: start 2026-11-27 14:14:36, load average 89.60, one process, nice 10; lane dd; mutate = wrongdouble
+CHECK W0: FAIL  winding2's counter ported, on the stored values alone: b1: winding +0.0000 (stored +0.0000), max step 0.39 (stored 0.39), plant difference +1.0000 (expected 2, step 0.40, stored 0.4), asked 147 of 147 stored points, 0 missing; smallest distance of a compared quantity from its threshold (0.4, 0.4, 0.1 rad): 2.22e-03 without the plant, 2.22e-03 with it, and the plant's largest step is 0.05 rad under 0.45; b2: winding +0.0000 (stored +0.0000), max step 0.39 (stored 0.39), plant difference +1.0000 (expected 2, step 0.40, stored 0.4), asked 195 of 195 stored points, 0 missing; smallest distance of a compared quantity from its threshold (0.4, 0.4, 0.1 rad): 5.63e-03 without the plant, 2.92e-03 with it, and the plant's largest step is 0.05 rad under 0.45
+CHECK CX2: FAIL  winding2's counter with the crate as the evaluator: b1 (dd): winding -0.0000 (stored +0.0000), max step 0.39 rad, min|D| 6.70e-04, plant difference +1.0000 (expected 2, step 0.40); 147 points asked, 0 not in the stored cache, 0 stored points not asked; 0 evaluated now, 0 s; b2 (dd): winding +0.0000 (stored +0.0000), max step 0.39 rad, min|D| 1.95e-05, plant difference +1.0000 (expected 2, step 0.40); 195 points asked, 0 not in the stored cache, 0 stored points not asked; 0 evaluated now, 0 s
+CHECK XRc: FAIL  b1 counted with the scalar plane started at two outer radii (dd): rsmult 40 (R_s 404.9): winding -0.0000, max step 0.39, plant difference +1.0000 (step 0.40); rsmult 80 (R_s 785.6): winding +0.0000, max step 0.40, plant difference +1.0000 (step 0.40)
+CHECK CXZ: FAIL  planted determinant, dd, L = 2.0, Lz = 2.0, zeros at 0.75 +- 0.5i; J equal to the crate's: True; D against mpmath expm at 20 contour points: worst |D/D_exact - 1| / (eps max(1, ln growth)) = 1.80e+01 (bar 10000); box Re s in [0.2, 1.2]: winding +1.0000 (planted 2), max step 0.27; box Re s in [1.3, 2.0]: winding +0.0000 (planted 0), max step 0.23
+SUMMARY: 0 passed, 4 failed, 0 skipped of 4 checks; failed: W0, CX2, XRc, CXZ; mutate = wrongdouble; 71 s
+CONTROL wrongdouble: every targeted check failed, as it must
+
+========================================================================================================================
+run_58_ctl_misplant: control misplant (must exit 1)
+exit 1, wall 59.10 s, peak resident 64 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 14:15:47 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=88.79 77.67 55.39
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=misplant
+# taylor_polar.py --complex: start 2026-11-27 14:15:47, load average 88.79, one process, nice 10; lane dd; mutate = misplant
+CHECK W0: FAIL  winding2's counter ported, on the stored values alone: b1: winding +0.0000 (stored +0.0000), max step 0.39 (stored 0.39), plant difference +0.0000 (expected 2, step 0.40, stored 0.4), asked 133 of 147 stored points, 0 missing; smallest distance of a compared quantity from its threshold (0.4, 0.4, 0.1 rad): 2.22e-03 without the plant, 2.78e-04 with it, and the plant's largest step is 0.05 rad under 0.45; b2: winding +0.0000 (stored +0.0000), max step 0.39 (stored 0.39), plant difference -0.0000 (expected 2, step 2.64, stored 0.4), asked 341 of 195 stored points, 172 missing; smallest distance of a compared quantity from its threshold (0.4, 0.4, 0.1 rad): 5.63e-03 without the plant, 3.58e-03 with it, and the plant's largest step is -2.19 rad under 0.45
+CHECK CX2: FAIL  winding2's counter with the crate as the evaluator: b1 (dd): winding -0.0000 (stored +0.0000), max step 0.39 rad, min|D| 6.70e-04, plant difference +0.0000 (expected 2, step 0.40); 133 points asked, 0 not in the stored cache, 14 stored points not asked; 0 evaluated now, 0 s; b2 (dd): winding +0.0000 (stored +0.0000), max step 0.39 rad, min|D| 1.95e-05, plant difference -0.0000 (expected 2, step 0.39); 173 points asked, 4 not in the stored cache, 26 stored points not asked; 4 evaluated now, 4 s
+CHECK XRc: FAIL  b1 counted with the scalar plane started at two outer radii (dd): rsmult 40 (R_s 404.9): winding -0.0000, max step 0.39, plant difference +0.0000 (step 0.40); rsmult 80 (R_s 785.6): winding +0.0000, max step 0.40, plant difference +0.0000 (step 0.40)
+SUMMARY: 0 passed, 3 failed, 0 skipped of 3 checks; failed: W0, CX2, XRc; mutate = misplant; 59 s
+CONTROL misplant: every targeted check failed, as it must
+
+========================================================================================================================
+run_59_ctl_onesided: control onesided (must exit 1)
+exit 1, wall 52.42 s, peak resident 63 MiB (reported only)
+========================================================================================================================
+# 2026-11-27 14:16:47 cwd=/Users/nathan/Source/negative-mass-i188/phase2/nonradial load=64.55 72.91 55.14
+# cmd: /Users/nathan/Source/negative-mass/.venv/bin/python -u taylor_polar.py --complex --raw=/Users/nathan/Source/negative-mass-raw --ref-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/ref --jsonl-dir=/Users/nathan/Source/negative-mass-raw/I188-mac/jsonl_rec --mutate=onesided
+# taylor_polar.py --complex: start 2026-11-27 14:16:47, load average 64.55, one process, nice 10; lane dd; mutate = onesided
+CHECK W0: FAIL  winding2's counter ported, on the stored values alone: b1: winding +0.0000 (stored +0.0000), max step 0.39 (stored 0.39), plant difference +1.7195 (expected 2, step 0.39, stored 0.4), asked 147 of 147 stored points, 0 missing; smallest distance of a compared quantity from its threshold (0.4, 0.4, 0.1 rad): 2.22e-03 without the plant, 2.22e-03 with it, and the plant's largest step is 0.06 rad under 0.45; b2: winding +0.0000 (stored +0.0000), max step 0.39 (stored 0.39), plant difference +1.4735 (expected 2, step 0.40, stored 0.4), asked 185 of 195 stored points, 0 missing; smallest distance of a compared quantity from its threshold (0.4, 0.4, 0.1 rad): 5.63e-03 without the plant, 1.56e-03 with it, and the plant's largest step is 0.05 rad under 0.45
+CHECK CX2: FAIL  winding2's counter with the crate as the evaluator: b1 (dd): winding -0.0000 (stored +0.0000), max step 0.39 rad, min|D| 6.70e-04, plant difference +1.7195 (expected 2, step 0.39); 147 points asked, 0 not in the stored cache, 0 stored points not asked; 0 evaluated now, 0 s; b2 (dd): winding +0.0000 (stored +0.0000), max step 0.39 rad, min|D| 1.95e-05, plant difference +1.4735 (expected 2, step 0.40); 185 points asked, 0 not in the stored cache, 10 stored points not asked; 0 evaluated now, 0 s
+CHECK XRc: FAIL  b1 counted with the scalar plane started at two outer radii (dd): rsmult 40 (R_s 404.9): winding -0.0000, max step 0.39, plant difference +1.7195 (step 0.39); rsmult 80 (R_s 785.6): winding +0.0000, max step 0.40, plant difference +1.7195 (step 0.40)
+SUMMARY: 0 passed, 3 failed, 0 skipped of 3 checks; failed: W0, CX2, XRc; mutate = onesided; 52 s
+CONTROL onesided: every targeted check failed, as it must
+
