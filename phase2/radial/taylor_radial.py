@@ -899,6 +899,7 @@ def main():
     arc_log = None
     stage = None
     supp_log = None
+    p_lanes = ("f64", "dd", "qd")
     for a in argv:
         if a.startswith("--mutate="):
             MUTATE = a.split("=", 1)[1]
@@ -908,6 +909,8 @@ def main():
             RAW = a.split("=", 1)[1]
         elif a.startswith("--arc-log="):
             arc_log = a.split("=", 1)[1]
+        elif a.startswith("--p-lanes="):  # the lanes of the planted checks P1 and P2 (the controls noqr and lowsum never finish in dd and qd)
+            p_lanes = tuple(a.split("=", 1)[1].split(","))
         elif a.startswith("--supp-log="):
             supp_log = a.split("=", 1)[1]
         elif a.startswith("--stage="):
@@ -932,7 +935,7 @@ def main():
         print(f"stage {stage}: {len(lines)} lines, {sum(1 for l in lines if l['cmd'] == 'row')} rows, {len(bad)} errors; mutation: {MUTATE}; {time.time() - t0:.0f} s")
         sys.exit(1 if bad else 0)
     table = {
-        "P1": check_P1, "P2": check_P2, "P3": check_P3, "G1": check_G1, "G2": check_G2, "S1": check_S1,
+        "P1": lambda: check_P1(p_lanes), "P2": lambda: check_P2(p_lanes), "P3": check_P3, "G1": check_G1, "G2": check_G2, "S1": check_S1,
         "S2": lambda: report("S2", float([l for l in rust("s2", omega="0.75", eps=1, x0=4.5) if l["cmd"] == "S2"][0]["worst_rel"]) <= CRIT["S2_TOL"],
                              "multishoot's recursion against the crate's own Num-lane recursion (star_ref.rs) at the node r = 4.5 of the canonical star"),
         "S3": check_S3, "S5": check_S5, "A": check_A, "E2": lambda: check_E2(arc_log),
