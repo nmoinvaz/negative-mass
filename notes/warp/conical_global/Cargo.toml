@@ -6,7 +6,7 @@ rust-version = "1.89"
 publish = false
 
 [dependencies]
-multishoot = { git = "https://github.com/nmoinvaz/multishoot", rev = "6bfd9b13ee9b5ca24a14267d19d33aa31fa7854f" }
+multishoot = { git = "https://github.com/nmoinvaz/multishoot", rev = "eaf55a8d53b9a1379b64a60f4f14e59ccc270687" }
 multisolver = "=0.2.2"
 multidouble = "=5.1.0"
 
