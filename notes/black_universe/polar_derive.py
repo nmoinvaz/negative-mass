@@ -382,6 +382,16 @@ def run_checks():
         V_ab = L / R2 - (2 if mutating("pot") else 3) / R2**2
         line("D5b Z = R F obeys Z'' = (V + lam) Z with V = L/R^2 - 3/R^4, the master equation of [ABCKY23] (eq_Schr)", not Zpp.has(sp.diff(Z, rho)) and sp.simplify(sp.diff(Zpp, Z) - (V_ab + lam)) == 0,
              "derived V = %s" % sp.factor(sp.simplify(sp.diff(Zpp, Z) - lam)))
+        # D5c with (47) as printed, F does not decouple at c = 0: the (ell+2)(ell-1) K term of the F' equation has the opposite sign, and F'' keeps H1 and K terms
+        printed_corr = 0 if mutating("print47") else sp.sqrt(2) * Ks * (Lq - 2) / 2        # control: the derived row in place of the printed one
+        prow = sp.expand((Me * v)[3] - printed_corr)
+        rws = [(Me * v)[0], (Me * v)[1], (Me * v)[2], prow]
+        f2 = [sp.diff(prow, v[i]) for i in range(4)]
+        g2 = [sp.simplify(sp.diff(sp.diff(prow, rho) + sum(sp.diff(prow, v[i]) * rws[i] for i in range(4)), v[j])) for j in range(4)]
+        a2 = sp.simplify(g2[0] / f2[0])
+        res2 = [sp.simplify(g2[i] - a2 * f2[i]) for i in range(3)]
+        line("D5c with (47) as printed the scalar does not decouple at c = 0 (F'' - a F' keeps H1 and K terms)", any(e != 0 for e in res2),
+             "residuals of the H0, H1, K coefficients: %s" % [sp.factor(e) for e in res2])
         print("      elapsed %.0f s" % (time.time() - T0), flush=True)
 
         # D6 l = 1
@@ -473,7 +483,7 @@ def run_checks():
 
 
 CONTROLS = {"bg_V": "D1 background", "lin_sign": "D2 linearized", "ang_L": "D4a Ellis", "alg_coef": "D3c constraint", "ellis_sign": "D4a Ellis",
-            "pot": "D5b Z = R F", "l1_gauge": "D6c l = 1", "susy": "D6e V(l = 1)", "susy_end": "D6f the Darboux", "code": "D7 coefficient code"}
+            "pot": "D5b Z = R F", "print47": "D5c with (47)", "l1_gauge": "D6c l = 1", "susy": "D6e V(l = 1)", "susy_end": "D6f the Darboux", "code": "D7 coefficient code"}
 
 
 def controls_command():
