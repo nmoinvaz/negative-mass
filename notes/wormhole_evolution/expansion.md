@@ -270,3 +270,40 @@ Two of the first-run mutation logs (`runs/mut_run1/`, `mirror_parity`, `scalar_c
 ## Files
 
 `expansion.py`, `expansion_output.txt`, this note; raw `negative-mass-raw/I213-dh610` (README with the declarations, `dev/`, `runs/`, `scripts/`, `figures/`).
+
+## Coordinator's review
+
+Review of branch `wip/i213-expanding-branch` at 94d89f7 and raw `I213-dh610` at 6cba01a, recorded in negative-mass-raw
+`I213-mac-review` (criteria committed at 0ce65c1 before the first run). On the Mac (Apple M5), nice 10.
+
+- **Scope.** The branch adds `expansion.py`, `expansion_output.txt` and this note, nothing else. `dn.py` and `checks.py` are unchanged.
+- **Rerun.**
+  - `expansion.py analyze` over the runner's stored runs prints `expansion_output.txt` again: 12 of 13 checks pass, and CT
+    fails. The only difference is ST's own streamed test, which recomputes on the Mac (edge mass 2.6e-13 against 3.0e-13).
+  - The job D = 4 tuned, h = 0.02 was run again. Its `meta` equals the runner's apart from the timing, and its cell classes
+    are equal.
+  - The throat series agree to 6e-9 in r and 1.4e-9 in τ, not to the 1e-12 the review expected. The stall amplifies the
+    two machines' last-bit differences by about e^{Wt}. The final values agree to 1e-10.
+- **Independent check** (`ind213.py` in the raw folder). The review's second code (`threshold_check.py`'s march, extended
+  to run without stopping) shares no code with `dn.py` or `expansion.py`. Its own p*_h gives the tuned member. 3 of 3
+  criteria pass:
+  - K1: k = 2.00001 to 2.00040 and |ρ|/H² = 3.99993 to 4.00000 for the eight D = 4 runs;
+  - K2: H/W at r/a = 10, 25, 50 for the tuned member, 1.2307, 1.9459, 2.7523, within 5.8e-4 of this note's;
+  - K3: τ_s within 4.6e-6 of this note's for all eight runs.
+  - D = 5, reported: k = 3.9875 and 3.9897, |ρ|/H² = 6.7508, and τ_s within 1e-6 of this note's.
+  - So the "Limits" item "not by a second code" no longer holds for the symmetric throat at D = 4 and 5.
+- **Mutations of the check.**
+  - `rho-factor` fires exactly K1.
+  - `tuned-offset` fires K3 and not K2: H/W at fixed r/a moves by only 5e-4 when the offset grows from 1e-6 to 1e-3.
+  - `coord-time` stops with an exception before any criterion is evaluated.
+- **Remark.** The data fit the asymptotic relation c = n(1/k + (n+1)/2) of recommended task 1, with c = |ρ|/H², at
+  (n, k) = (2, 2) and (3, 4): c = 4 and 6.75. That k = 2(n − 1) is a *conjecture* from two points, and task 1 tests it.
+- **Applied.**
+  - critical_ghost.md §1.2 and baby_universes.md §3 have this note's proposals, marked as updates from #213.
+  - Paper III no longer calls the expanding side inflationary in its own voice. Sec. 6 gains a paragraph on H = k/(τ_s − τ),
+    which `paper_numbers.py` checks against `expansion_output.txt`.
+  - The figure is copied next to this note as `expansion_H.svg` (task 5).
+- **Follow-ups.**
+  - Task 1 is filed as #230 and task 4 as #231.
+  - Task 2 is folded into #230 as its D = 4 check.
+  - Task 3 is added to #225, which runs the one-sided family on the throat locus.

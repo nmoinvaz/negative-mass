@@ -103,6 +103,10 @@ The numpy kernel is 3.7 to 5.2 times slower and needs the whole grid in memory (
 coordinator's second code for family S in `threshold_check.py` (`threshold_check_output.txt`). For S and O the slope is 1/W to 3e-6, 3e-5 and 5e-4
 at D = 4, 5, 6 over [1e-9, 1e-4], converging at second order in h; the generic one-sided family G departs from 1/W (cause open).
 
+**Update from #213:** the symmetric expanding branch, followed along the throat, is in [expansion.md](expansion.md)
+(`expansion.py`, `expansion_output.txt`, figure `expansion_H.svg`). The throat's rate does not settle: H = k/(τ_s − τ) with k = 2.0000
+(D = 4) and 3.99 (D = 5), not a de Sitter rate; the coordinator's second code reproduces k, H/W and τ_s.
+
 **Not built** (design items left out of the minimal build): symmetric-reduction by reflection, the asymmetric static family and Tangherlini in the
 tortoise gauge as data, a D = 6 growth control (W²a² = 4.68662054311946479 is known), the Bondi-type extrapolation of the edge mass, a regular centre
 (#45, #46), long-run output beyond the diagonal series (the full grid is kept when `store=True`).
@@ -111,7 +115,8 @@ tortoise gauge as data, a D = 6 growth control (W²a² = 4.68662054311946479 is 
 
 `dn.py`, `checks.py`, `probe_expansion.py` (+ `probe_expansion_output.txt`), `derive.py` (+ `derive_output.txt`), `cost_model.py` (+ `cost_model_output.txt`),
 `bench/` (the design's kernel stand-ins, not the evolution), `design.md`, `domain.svg`; `threshold.py` (+ `threshold_output.txt`,
-`threshold.md`, #40) and `threshold_check.py` (+ `threshold_check_output.txt`, the coordinator's review of #40).
+`threshold.md`, #40) and `threshold_check.py` (+ `threshold_check_output.txt`, the coordinator's review of #40); `expansion.py`
+(+ `expansion_output.txt`, `expansion.md`, `expansion_H.svg`, #213).
 
 ## Coordinator's review
 
