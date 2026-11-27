@@ -98,7 +98,7 @@ Re λ > 1e-3. Rates against shooting: c ≤ −1, S-B 4.6e-7 at worst (c = −10
 
 **Planted (P1).** Through the same code at c = 0: one growing mode, `W²a² = 1.397052434006988` (R1) and `1.397052434332310` (R2) against
 `1.39705243433350684` of `../wormhole_largeD/w2_output.txt`: errors 3.3e-10 and 1.2e-12, declared tolerances 1e-7 and 1e-9. With the kinetic
-sign flipped, the same code gives three growing modes at c = 0 (S, `--mutate=eps`).
+sign flipped (`--mutate=eps`), the same code gives three growing modes at c = 0.
 
 ## 4. The counts
 
@@ -144,7 +144,7 @@ Near the horizon, with the scaling ρ = ρ_h t at fixed t and ρ_h → 0, V̂ in
 | c → −1 from above (ρ_h < 0) | `(A₁²/2)/sinh²(A₁x/2)`, with the throat's wall | `u = 1/sinh(A₁x/2)`, `Y = ρu` regular | κ = A₁/2 |
 
 with A₁ = A′(ρ_h). The well stays at a fixed shape while it moves to x → −∞ like (1/A₁) ln|ρ_h|, so the bound state keeps W = κ. At c = −1 exactly
-there is no well at finite x: V̂ → 0 smoothly at the horizon (the wall and the horizon cancel), and the operator has no bound state. The
+there is no well at finite x: V̂ → 0 smoothly at the horizon (the wall and the horizon cancel), and the computation finds no bound state (no root on [0.01, 8], no positive eigenvalue). The
 rates agree: W/κ = 0.99969, 0.99997 at c = −1.001, −1.0001 and 1.00003, 1.00031 at c = −0.9999, −0.999. This is why the count is 0 at one point
 and 1 at points arbitrarily close to it; it is not a numerical threshold effect.
 
@@ -182,7 +182,29 @@ do show matches the computation in kind:
 
 ## 7. Members with exactly one growing mode
 
-All 19 members with c ≠ −1 listed above. Each has one unstable mode, the ground state of its operator, so each could serve as the critical
+The 19 members with c ≠ −1, with the rate of the one growing mode:
+
+- c = −10: W = 0.0895350811 per b (0.569998 in m = 1/3 units), e-folding time 11.169 b
+- c = −3: W = 0.2827745372 per b (0.540060 in m = 1/3 units), e-folding time 3.536 b
+- c = −2: W = 0.3984523430 per b (0.507325 in m = 1/3 units), e-folding time 2.510 b
+- c = −1.5: W = 0.4941711675 per b (0.471899 in m = 1/3 units), e-folding time 2.024 b
+- c = −1.1: W = 0.6031905199 per b (0.422403 in m = 1/3 units), e-folding time 1.658 b
+- c = −1.01: W = 0.6331476235 per b (0.407105 in m = 1/3 units), e-folding time 1.579 b
+- c = −1.001: W = 0.6362712254 per b (0.405468 in m = 1/3 units), e-folding time 1.572 b
+- c = −1.0001: W = 0.6365849043 per b (0.405303 in m = 1/3 units), e-folding time 1.571 b
+- c = −0.9999: W = 0.6366546434 per b (0.405266 in m = 1/3 units), e-folding time 1.571 b
+- c = −0.999: W = 0.6369686164 per b (0.405101 in m = 1/3 units), e-folding time 1.570 b
+- c = −0.99: W = 0.6401216241 per b (0.403439 in m = 1/3 units), e-folding time 1.562 b
+- c = −0.95: W = 0.6544315613 per b (0.395793 in m = 1/3 units), e-folding time 1.528 b
+- c = −0.9: W = 0.6730206207 per b (0.385612 in m = 1/3 units), e-folding time 1.486 b
+- c = −0.7: W = 0.7558707523 per b (0.336842 in m = 1/3 units), e-folding time 1.323 b
+- c = −0.5: W = 0.8541005253 per b (0.271869 in m = 1/3 units), e-folding time 1.171 b
+- c = −0.3: W = 0.9700800261 per b (0.185272 in m = 1/3 units), e-folding time 1.031 b
+- c = −0.2: W = 1.0354140714 per b (0.131833 in m = 1/3 units), e-folding time 0.966 b
+- c = −0.1: W = 1.1059696680 per b (0.070408 in m = 1/3 units), e-folding time 0.904 b
+- c = −0.01: W = 1.1741182764 per b (0.007475 in m = 1/3 units), e-folding time 0.852 b
+
+Each mode is the ground state of its operator (no nodes), so each could serve as the critical
 solution of a threshold of the kind the issue calls "type III" after [CHM99] (a critical solution with one unstable mode). Nothing is claimed here beyond that: whether
 a threshold in phantom collapse approaches any of them is not tested.
 
@@ -232,10 +254,12 @@ infinite wall hides the instability: with independent sides and a Dirichlet cond
 
 ## 11. What this does not show
 
-- Only radial (ℓ = 0) perturbations in the static region ρ > ρ_h. The Kantowski–Sachs region beyond the horizon, polar ℓ ≥ 1 modes (BKZ12
-  treat axial modes only at c = −1) and the M-AdS wormholes are not computed.
+- Only radial (ℓ = 0) perturbations in the static region ρ > ρ_h. The Kantowski–Sachs region beyond the horizon, polar ℓ ≥ 1 modes
+  ([BKZ12] treat polar ℓ = 0 and the axial modes of the black universe at c = −1, Fig 9, Table I) and the M-AdS wormholes are not computed.
 - Members of this one family and one potential only. Counts are for the 20 values of c listed; between them nothing is computed.
 - The count rests on a sign-change search on [0.01, 8] with the node and spectral guards; no argument-principle count, no rigorous bound.
+
+The development history, the controls that were silent or replaced, and the amendments are in the raw README (`negative-mass-raw/I212-rpi5/README.md`).
 
 ## Reproduce
 
