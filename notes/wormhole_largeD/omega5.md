@@ -62,3 +62,20 @@ The derivatives close: ℓ′ = −u, u′ = 1 + u², C′ = 2ℓ + 2 ln 2, D₃
    - **⟨lt²C²⟩ = π((3/4)ζ(3)² − (95/96)ζ(6)) is identified, not derived.** PSLQ at 55 digits in {π⁶, ζ(3)²} for ⟨lt²C²⟩/π gives the relation (−18144, −19, 13608), and the value holds at 100 digits (RD5b). By Parseval ⟨lt²C²⟩ = (π/4)Σ_m s_m², where lt·C = Σs_m sin 2mθ,
      s_m = (−1)^m[(H_m^{(2)} − ζ(2))/m + 2H_m/m² − 3/(2m³)] (derived by hand, not checked here): a sum of Euler sums of weight 6 that I did not evaluate.
 10. **Assembly.** ⟨F′⟩ sums: G₇ = Σ_i B[F_i] + Σ (coefficient)·(master). Its slope in Ω₅ is −4π exactly (RD3), so Ω₅ = G₇(Ω₅ = 0)/(4π), which is the closed form of the Result. The number G₇(Ω₅ = 0) = 513467.625456446519397870844712… equals the quadrature of the integrand of closed forms to 39 digits (RD6); the closed form equals the grids to their digits (RD7).
+
+## The structure of the series in ln 2
+
+All the ln 2 in Ω₀ … Ω₅ is that of exp(−4 ln 2/s): with ε = 1/s,
+
+    s (1 + Ω₀ε + Ω₁ε² + … ) = s e^{−4 ln 2 ε} F(ε),   F(ε) = 1 + f₂ε² + f₃ε³ + f₄ε⁴ + f₅ε⁵ + f₆ε⁶ + O(ε⁷),
+
+with f₂ … f₆ free of ln 2 (check LN2, sympy: d/d ln 2 of each coefficient is 0 through ε⁶). So W²a² = 2(D − 3) 2^{−2/(D−3)}F(1/(2(D − 3))), or W² ã² = s F(1/s) with ã = a 2^{1/(D−3)}. In the integrals this is the variable lt = ln(2 cos θ) of the masters, in which no ln 2 appears.
+This is a statement about the six terms; nothing is claimed for the series beyond them.
+
+## What each status word covers
+
+*Derived* (by hand, each step checked): steps 1 to 10, given E1, E2, E3 (#209), the closed forms of Y₀ … Y₃, L₀ … L₃ and Ω₀ … Ω₄ (#26, #208, #220), the Beta-function moments, Parseval's identity, and **seven classical Euler sums**
+(ΣH_n/n³, ΣH_n/n⁵, ΣH_n²/n⁴, ΣH_n^{(2)}/n², ΣH_n^{(2)}/n⁴, Σ(H_n^{(2)})²/n², ΣH_nH_n^{(2)}/n³), which RD5c checks numerically at 40 digits and which are not proved here.
+*Checked symbolically*: XS, RD2, RD3, the exact assembly in RD5c, LN2. *Numerical evidence*: RD1, RD4 to RD7, E1_7 … G7R, A7, and the agreement of G1, G2 and #195's fit (X3), which use none of the reduction.
+Not derived here: E5's and E2W's boundary terms are argued as E3's in #209 and checked on the hierarchy; the finite-part calculus beyond its statement (step 7), whose series RD4 checks numerically; the Euler sums.
+**The reduction is not independent of the closed-form evaluation (A7 shares E1 … E5 and the closed forms); G1 and G2, which use none of them, are the independent check**, and #195's refit shares no machinery with either.

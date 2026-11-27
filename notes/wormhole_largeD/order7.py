@@ -13,6 +13,18 @@ closed form of Y_k or L_k and no input value of Omega_0 .. Omega_4. Levels below
 (`cached`; the same operations on the same numbers as the uncached chain, which CACHE compares).
 
     python3 order7.py grid --grid=N,w,V,dps [--kmax=7]      (a development run of one grid; no gate)
+
+Parts (the arguments of a run; the checks of omega5.md and of the raw README of #263 in parentheses):
+    sym      E0, the table against the epsilon-expansion of the master equation, k <= 7
+    cache    CACHE, the cached chain against the uncached chain on a small grid
+    xsym     XS, the primitives of the steps E2W and E5, symbolically
+    exch7    E1_7 .. G7R on the hierarchy of one grid: E1, E2, E3, E4 (Y_5), E2W (L_4), E5 (Y_4) and the reduced form of G_7
+    evals    the grids (--grids=G1,G2,B1,B2,B3 or --cgrids), --save=FILE.json
+    values   PL0 .. PL4, SL, RES, M5, RNG (--load=FILE.json,...)
+    pslq     PQ1 .. PQ9 and the real PSLQ of the bases Q1 .. Q9 (--bases=Q1,Q3 --no-real --pslq-cap=D)
+    remainder R6, R7, X3 against #195's W^2 (--w2raw=inputs_w2_growthD.txt)
+    reduce7  RD1 .. RD7, RD5b, RD5c, LN2, RD8, A7: the finite-part reduction of the integrand of G_7 to masters and its closed form
+Mutations: --mutate=NAME (MUTATIONS below). Exit status 1 when a check fails.
 """
 import json
 import math
