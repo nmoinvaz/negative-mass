@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="780" height="730" viewBox="0 0 780 730" font-family="system-ui, sans-serif">
+<style>@media (prefers-color-scheme: dark){[fill="#fcfcfb"]{fill:#201f1d}[stroke="#fcfcfb"]{stroke:#201f1d}[fill="#0b0b0b"]{fill:#e8e6e3}[stroke="#0b0b0b"]{stroke:#e8e6e3}[fill="#52514e"]{fill:#a8a49d}[stroke="#52514e"]{stroke:#a8a49d}[fill="#e7e6e2"]{fill:#343230}[stroke="#e7e6e2"]{stroke:#343230}[fill="#c98500"]{fill:#d69a2d}[stroke="#c98500"]{stroke:#d69a2d}[fill="#eb6834"]{fill:#dd5c26}[stroke="#eb6834"]{stroke:#dd5c26}[fill="#eda100"]{fill:#c08800}[stroke="#eda100"]{stroke:#c08800}[fill="#e87ba4"]{fill:#d1678f}[stroke="#e87ba4"]{stroke:#d1678f}[fill="#4a3aa7"]{fill:#7263cf}[stroke="#4a3aa7"]{stroke:#7263cf}[fill="#a6339a"]{fill:#c257b5}[stroke="#a6339a"]{stroke:#c257b5}[fill="#7a7668"]{fill:#948e82}[stroke="#7a7668"]{stroke:#948e82}}</style>
+<rect width="780" height="730" fill="#fcfcfb"/>
+<text x="16.0" y="26.0" font-size="14" fill="#0b0b0b" text-anchor="start" font-weight="bold">The one growing radial mode of the black universes, W against c (b = 1)</text>
+<text x="16.0" y="54.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">(a) Growth rate W and the horizon's surface gravity κ</text>
+<text x="16.0" y="70.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">units 1/b; the throat radius b = 1 is the minimum of R; c = −1 puts the horizon at the throat and has no growing mode.</text>
+<line x1="114.3" y1="100.0" x2="114.3" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="114.3" y="345.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.01</text>
+<line x1="171.2" y1="100.0" x2="171.2" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="171.2" y="345.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.02</text>
+<line x1="246.4" y1="100.0" x2="246.4" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="246.4" y="345.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.05</text>
+<line x1="303.2" y1="100.0" x2="303.2" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="303.2" y="345.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.1</text>
+<line x1="360.1" y1="100.0" x2="360.1" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="360.1" y="345.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.2</text>
+<line x1="435.3" y1="100.0" x2="435.3" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="435.3" y="345.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.5</text>
+<line x1="492.1" y1="100.0" x2="492.1" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="492.1" y="345.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">1</text>
+<line x1="549.0" y1="100.0" x2="549.0" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="549.0" y="345.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">2</text>
+<line x1="624.2" y1="100.0" x2="624.2" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="624.2" y="345.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">5</text>
+<line x1="681.0" y1="100.0" x2="681.0" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="681.0" y="345.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">10</text>
+<line x1="96.0" y1="330.0" x2="696.0" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="90.0" y="334.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">0</text>
+<line x1="96.0" y1="247.9" x2="696.0" y2="247.9" stroke="#e7e6e2" stroke-width="1"/>
+<text x="90.0" y="251.9" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">0.5</text>
+<line x1="96.0" y1="165.7" x2="696.0" y2="165.7" stroke="#e7e6e2" stroke-width="1"/>
+<text x="90.0" y="169.7" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1</text>
+<line x1="96.0" y1="330.0" x2="696.0" y2="330.0" stroke="#52514e" stroke-width="1"/>
+<line x1="96.0" y1="100.0" x2="96.0" y2="330.0" stroke="#52514e" stroke-width="1"/>
+<text x="396.0" y="364.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">−c (log scale)</text>
+<text x="58.9" y="215.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 58.9 215.0)">rate (1/b)</text>
+<polyline points="681.0,315.3 582.3,283.5 549.0,264.5 525.4,248.8 499.9,230.9 492.9,226.0 492.2,225.5 492.1,225.4 492.1,225.4 492.0,225.4 491.3,224.8 487.9,222.5 483.5,219.4 462.9,205.8 435.3,189.7 393.4,170.6 360.1,159.9 303.2,148.3 114.3,137.1" fill="none" stroke="#2a78d6" stroke-width="2"/>
+<polyline points="681.0,310.9 582.3,272.3 549.0,252.7 525.4,239.4 499.9,228.0 492.9,225.7 492.2,225.4 492.1,225.4 492.1,225.4 492.1,225.4 492.0,225.4 491.3,225.2 487.9,224.2 483.5,223.1 462.9,220.2 435.3,221.4 393.4,231.2 360.1,242.5 303.2,262.7 114.3,307.0" fill="none" stroke="#eb6834" stroke-width="2" stroke-dasharray="5 4"/>
+<g><circle cx="681.0" cy="315.3" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -10: W = 0.0895350811, κ = 0.116522</title></g>
+<g><circle cx="582.3" cy="283.5" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -3: W = 0.2827745372, κ = 0.351374</title></g>
+<g><circle cx="549.0" cy="264.5" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -2: W = 0.398452343, κ = 0.470502</title></g>
+<g><circle cx="525.4" cy="248.8" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -1.5: W = 0.4941711675, κ = 0.551682</title></g>
+<g><circle cx="499.9" cy="230.9" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -1.1: W = 0.6031905199, κ = 0.620954</title></g>
+<g><circle cx="492.9" cy="226.0" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -1.01: W = 0.6331476235, κ = 0.635123</title></g>
+<g><circle cx="492.2" cy="225.5" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -1.001: W = 0.6362712254, κ = 0.636471</title></g>
+<g><circle cx="492.1" cy="225.4" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -1.0001: W = 0.6365849043, κ = 0.636605</title></g>
+<g><circle cx="492.1" cy="225.4" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.9999: W = 0.6366546434, κ = 0.636635</title></g>
+<g><circle cx="492.0" cy="225.4" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.999: W = 0.6369686164, κ = 0.636768</title></g>
+<g><circle cx="491.3" cy="224.8" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.99: W = 0.6401216241, κ = 0.638098</title></g>
+<g><circle cx="487.9" cy="222.5" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.95: W = 0.6544315613, κ = 0.643811</title></g>
+<g><circle cx="483.5" cy="219.4" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.9: W = 0.6730206207, κ = 0.650428</title></g>
+<g><circle cx="462.9" cy="205.8" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.7: W = 0.7558707523, κ = 0.668151</title></g>
+<g><circle cx="435.3" cy="189.7" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.5: W = 0.8541005253, κ = 0.660873</title></g>
+<g><circle cx="393.4" cy="170.6" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.3: W = 0.9700800261, κ = 0.6013</title></g>
+<g><circle cx="360.1" cy="159.9" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.2: W = 1.035414071, κ = 0.532819</title></g>
+<g><circle cx="303.2" cy="148.3" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.1: W = 1.105969668, κ = 0.409506</title></g>
+<g><circle cx="114.3" cy="137.1" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.01: W = 1.174118276, κ = 0.140086</title></g>
+<line x1="96" y1="135.8" x2="696" y2="135.8" stroke="#0b0b0b" stroke-width="1" stroke-dasharray="2 3"/>
+<text x="102.0" y="130.8" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">Ellis wormhole (c = 0, planted): W = 1.18197</text>
+<circle cx="492.1" cy="330.0" r="6" fill="none" stroke="#2a78d6" stroke-width="2"/>
+<text x="492.1" y="316.0" font-size="11" fill="#0b0b0b" text-anchor="middle" font-weight="normal">c = −1: no mode</text>
+<text x="696.0" y="88.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">κ = A′(ρ_h)/2</text>
+<circle cx="603.1" cy="84" r="4.5" fill="#eb6834"/>
+<text x="587.1" y="88.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">W</text>
+<circle cx="570.7" cy="84" r="4.5" fill="#2a78d6"/>
+<text x="16.0" y="392.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">(b) W/κ</text>
+<text x="16.0" y="408.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">W/κ → 1 on both sides of c = −1, but the mode is absent at c = −1: it is bound in a Pöschl–Teller well at the horizon (note).</text>
+<line x1="114.3" y1="438.0" x2="114.3" y2="658.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="114.3" y="673.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.01</text>
+<line x1="171.2" y1="438.0" x2="171.2" y2="658.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="171.2" y="673.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.02</text>
+<line x1="246.4" y1="438.0" x2="246.4" y2="658.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="246.4" y="673.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.05</text>
+<line x1="303.2" y1="438.0" x2="303.2" y2="658.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="303.2" y="673.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.1</text>
+<line x1="360.1" y1="438.0" x2="360.1" y2="658.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="360.1" y="673.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.2</text>
+<line x1="435.3" y1="438.0" x2="435.3" y2="658.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="435.3" y="673.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.5</text>
+<line x1="492.1" y1="438.0" x2="492.1" y2="658.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="492.1" y="673.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">1</text>
+<line x1="549.0" y1="438.0" x2="549.0" y2="658.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="549.0" y="673.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">2</text>
+<line x1="624.2" y1="438.0" x2="624.2" y2="658.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="624.2" y="673.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">5</text>
+<line x1="681.0" y1="438.0" x2="681.0" y2="658.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="681.0" y="673.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">10</text>
+<line x1="96.0" y1="658.0" x2="696.0" y2="658.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="90.0" y="662.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">0</text>
+<line x1="96.0" y1="579.4" x2="696.0" y2="579.4" stroke="#e7e6e2" stroke-width="1"/>
+<text x="90.0" y="583.4" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1</text>
+<line x1="96.0" y1="500.9" x2="696.0" y2="500.9" stroke="#e7e6e2" stroke-width="1"/>
+<text x="90.0" y="504.9" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">2</text>
+<line x1="96.0" y1="658.0" x2="696.0" y2="658.0" stroke="#52514e" stroke-width="1"/>
+<line x1="96.0" y1="438.0" x2="96.0" y2="658.0" stroke="#52514e" stroke-width="1"/>
+<text x="396.0" y="692.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">−c (log scale)</text>
+<text x="71.6" y="548.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 71.6 548.0)">W/κ</text>
+<line x1="96" y1="579.4" x2="696" y2="579.4" stroke="#0b0b0b" stroke-width="1" stroke-dasharray="2 3"/>
+<polyline points="681.0,597.6 582.3,594.8 549.0,591.5 525.4,587.6 499.9,581.7 492.9,579.7 492.2,579.5 492.1,579.4 492.1,579.4 492.0,579.4 491.3,579.2 487.9,578.1 483.5,576.7 462.9,569.1 435.3,556.5 393.4,531.2 360.1,505.3 303.2,445.8 114.3,439.6" fill="none" stroke="#1baf7a" stroke-width="2"/>
+<g><circle cx="681.0" cy="597.6" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -10: W/κ = 0.768396</title></g>
+<g><circle cx="582.3" cy="594.8" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -3: W/κ = 0.804768</title></g>
+<g><circle cx="549.0" cy="591.5" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -2: W/κ = 0.846866</title></g>
+<g><circle cx="525.4" cy="587.6" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -1.5: W/κ = 0.895754</title></g>
+<g><circle cx="499.9" cy="581.7" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -1.1: W/κ = 0.971393</title></g>
+<g><circle cx="492.9" cy="579.7" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -1.01: W/κ = 0.996890</title></g>
+<g><circle cx="492.2" cy="579.5" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -1.001: W/κ = 0.999686</title></g>
+<g><circle cx="492.1" cy="579.4" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -1.0001: W/κ = 0.999968</title></g>
+<g><circle cx="492.1" cy="579.4" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.9999: W/κ = 1.000031</title></g>
+<g><circle cx="492.0" cy="579.4" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.999: W/κ = 1.000315</title></g>
+<g><circle cx="491.3" cy="579.2" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.99: W/κ = 1.003171</title></g>
+<g><circle cx="487.9" cy="578.1" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.95: W/κ = 1.016496</title></g>
+<g><circle cx="483.5" cy="576.7" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.9: W/κ = 1.034735</title></g>
+<g><circle cx="462.9" cy="569.1" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.7: W/κ = 1.131287</title></g>
+<g><circle cx="435.3" cy="556.5" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.5: W/κ = 1.292382</title></g>
+<g><circle cx="393.4" cy="531.2" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.3: W/κ = 1.613305</title></g>
+<g><circle cx="360.1" cy="505.3" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.2: W/κ = 1.943275</title></g>
+<g><circle cx="303.2" cy="445.8" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.1: W/κ = 2.700741</title></g>
+<g><circle cx="114.3" cy="439.6" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>c = -0.01: W/κ = 8.381411</title></g>
+<text x="128.6" y="489.1" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">c = −0.01: W/κ = 8.38 (off scale)</text>
+<text x="16.0" y="718.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">stability_output.txt (stability.py, #212)  ·  c = −0.1, …, −10 and the Ellis plant: raw I212-rpi5</text>
+<a href="https://github.com/nmoinvaz/negative-mass"><text x="764" y="718" font-size="10" fill="#52514e" text-anchor="end" text-decoration="underline">github.com/nmoinvaz/negative-mass</text></a>
+</svg>
