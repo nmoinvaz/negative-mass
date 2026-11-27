@@ -177,6 +177,7 @@ comes only from the absence of the growing term.
 - `order3.py`: Ω₁ (`logs_order3.txt`).
 - `w2_crate/`, `w2_highprec.py`, `w2_highprec.md`: W² to 60 digits at 64 D, and the fit of Ω₁ … Ω₄ (#195, `w2_output.txt`).
 - `order4.py`, `omega2.md`: orders 3 and 4, Ω₂ from G₄ = 0, and its reduction by hand (#26, `order4_output.txt`).
+- `omega_graph.py`: `omega_coeffs.svg`, the coefficients Ω₀ … Ω₄ and the error of each truncation against #195's W².
 - `profiles.py`: the mode profiles and the table of growth rates behind Paper III's figure (`profiles.csv`,
   `growth.csv`).
 - `paper_numbers.py`: every number quoted in Paper III, with checks (`logs_paper_numbers.txt`).
