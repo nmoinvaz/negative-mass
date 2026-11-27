@@ -34,6 +34,12 @@ MUTATIONS = {
     "gauge_sign": ["B1", "B2"],     # sign of xi' + eta' in df of the gauge perturbation
     "frob_log": ["D3"],             # the resonance coefficient of the Frobenius recursion evaluated at the wrong exponent
     "V2_coef": ["E1"],              # V'' = V_psipsi (the factor 1/2 dropped)
+    "lin_const": ["A0"],            # a term independent of the perturbation added to the dphi row of the linearization
+    "Y_coef": ["B3"],               # Y = dr - (rho R/2) dphi in the invariance check
+    "M_ep": ["C1"],                 # a dphi_p term added to the right-hand side of the dphi equation in the master-equation check
+    "hz_rp": ["D1"],                # r_p not set to zero in the horizon constraint
+    "exp_W": ["D2"],                # the expected exponents of Y at the c = -1.5 horizon scaled by 1.1
+    "exp_one": ["D3a"],             # the expected exponents at c = -1 without the 1
 }
 if MUT is not None and MUT not in MUTATIONS:
     sys.exit(f"unknown mutation {MUT}; known: {', '.join(MUTATIONS)}")
@@ -92,6 +98,8 @@ def lin(F):
 Lin = [lin(Fr), lin(Ff), lin(Fp)]
 if MUT == "lin_cross":
     Lin[1] = sp.expand(Lin[1].subs({em: -em, ep: -ep}, simultaneous=True))
+if MUT == "lin_const":
+    Lin[2] = sp.expand(Lin[2] + E * V0)
 Uj = [a, d, e]
 Upj = [ap, dp, ep]
 Umj = [am, dm, em]
@@ -180,7 +188,7 @@ def gauge_residuals(c):
     res_ev = Upm - (Bn[0] * Uv + Bn[1] * Upv + Bn[2] * Umv)
     Cpp = Dp(Dp(dr_)) + r_p * Dp(df_) + fp_ * Dp(dr_) + sp.Rational(EPS, 2) * ph_p ** 2 * dr_ + EPS * R * ph_p * Dp(dph_)
     Cmm = Dm(Dm(dr_)) + r_m * Dm(df_) + fm_ * Dm(dr_) + sp.Rational(EPS, 2) * ph_m ** 2 * dr_ + EPS * R * ph_m * Dm(dph_)
-    Y = dr_ - rho * R / s2 * dph_
+    Y = dr_ - (rho * R / 2 if MUT == "Y_coef" else rho * R / s2) * dph_
     return list(res_ev) + [Cpp, Cmm], Y
 
 
@@ -222,6 +230,8 @@ def master_coeffs(c):
     Upv = sp.Matrix([ap, dp, ep])
     Umv = sp.Matrix([am, dm, em])
     rhs = Bn[0] * Uv + Bn[1] * Upv + Bn[2] * Umv                      # (a_pm, d_pm, e_pm)
+    if MUT == "M_ep":
+        rhs = rhs + sp.Matrix([0, 0, ep])
     g = rho * R / s2
     Y = a - g * e
     Yp = ap - g * ep - Dp(g) * e
@@ -287,7 +297,7 @@ def part_d():
     # D1: the constraint C_pp on a null surface along which r_p = phi_p = 0 (the horizon): the equation for dr along it
     rq, rp_, php_, fp_s, a_, ap_, app_, dp_, ep_ = sp.symbols("rq rp_ php_ fp_s a_ ap_ app_ dp_ ep_")
     dCpp = app_ + dp_ * rp_ + fp_s * ap_ + sp.Rational(EPS, 2) * php_ ** 2 * a_ + EPS * rq * php_ * ep_
-    hz = sp.simplify(dCpp.subs({rp_: 0, php_: 0}))
+    hz = sp.simplify(dCpp.subs({php_: 0} if MUT == "hz_rp" else {rp_: 0, php_: 0}))
     check("D1", "on a null surface with r_p = phi_p = 0 the linearized constraint is dr_pp + f_p dr_p = 0, so dr = c1 + c2 e^{b p} when f_p = -b",
           sp.simplify(hz - (app_ + fp_s * ap_)) == 0)
     # D2: exponents of the Y equation at a horizon, c = -1.5
@@ -302,7 +312,7 @@ def part_d():
     p0h = Pn(rhm + eps_)
     q0h = Qn(rhm + eps_, W0)
     roots = mp.polyroots([1, -1 - p0h, -q0h])                  # s(s-1) - p0 s - q0 = 0
-    want = sorted([-W0 / Ap_h, W0 / Ap_h])
+    want = sorted([-W0 / Ap_h * (mp.mpf('1.1') if MUT == 'exp_W' else 1), W0 / Ap_h * (mp.mpf('1.1') if MUT == 'exp_W' else 1)])
     got = sorted([mp.re(x) for x in roots])
     check("D2", "c = -1.5: the exponents of Y at the horizon are +-W/A'(rho_h), so Y ~ (rho - rho_h)^{W/A'} e^{Wt} = e^{Wv}, regular and nonzero on the horizon",
           max(abs(got[0] - want[0]), abs(got[1] - want[1])) < mp.mpf("1e-8"), f"{mp.nstr(got[0], 8)}, {mp.nstr(got[1], 8)} against {mp.nstr(want[0], 8)}, {mp.nstr(want[1], 8)}")
@@ -322,7 +332,7 @@ def part_d():
     sx = sp.Symbol("s")
     ind = sp.expand(sx * (sx - 1) + p0f * sx + q0f)
     ex1 = sp.solve(ind, sx)
-    okex = sorted([sp.simplify(t) for t in ex1], key=str) == sorted([1 - w / 2, 1 + w / 2], key=str)
+    okex = sorted([sp.simplify(t) for t in ex1], key=str) == sorted([-w / 2, w / 2] if MUT == "exp_one" else [1 - w / 2, 1 + w / 2], key=str)
     check("D3a", "c = -1: the exponents of Y at the horizon (which is the throat) are 1 -+ W/(2 kappa), kappa = 2/pi (sympy, W = w kappa)", okex, f"kappa = {kap1}, exponents {ex1}")
     s_lo = (1 - w / 2) if MUT != "frob_log" else (1 + w / 2)
     res_c = sp.simplify((p1f * s_lo + q1f).subs(w, 1))
