@@ -345,6 +345,33 @@ its reference list.
     with 0–4 horizons. Does not contain: formation or a stability computation. It says that "Most of the known
     scalar-vacuum wormhole and black-universe solutions proved to be unstable under radial perturbations ... and it is
     of interest to find out whether or not they can be stabilized by electric or magnetic fields", left for later.
+- **[BCK18] Blázquez-Salcedo, Chew & Kunz 2018**, "Scalar and axial quasinormal modes of massive static phantom wormholes",
+  PRD 98, 044035, arXiv:1806.03282, doi:10.1103/PhysRevD.98.044035 (INSPIRE and arXiv checked). Read: the TeX source, §V
+  (radial, scalar and axial results) and its figures' data (the EPS files).
+  - Claim: "scalar, axial and radial perturbations of massive static spherically symmetric wormholes supported by a phantom
+    scalar field", quasinormal modes by direct integration and WKB. The unstable radial mode at M = 0 has ω_I = −1.182 in
+    its convention, i.e. W = 1.182 per r0 (#212: 1.18197); the scalar and axial modes are damped.
+  - Contains: figures only, no tables. From the EPS data at M = 0 (r0 = 1; read from the plotted points, three digits): the
+    scalar branches ω_R = 0.684 (ℓ = 0), 1.573 (ℓ = 1), 2.547 (ℓ = 2), and ω_I(ℓ = 1) = 0.530 (their sign convention, damped).
+    #218 reproduces the ℓ = 1 value as the quasinormal mode of the *test*-scalar potential 2/R² + 1/R⁴: 1.572708 − 0.529701i.
+    Does not contain: polar gravitational perturbations.
+- **[ABCKY23] Azad, Blázquez-Salcedo, Chew, Kunz & Yeom 2023**, "Polar modes and isospectrality of Ellis–Bronnikov wormholes",
+  PRD 107, 084024, arXiv:2212.12601, doi:10.1103/PhysRevD.107.084024 (INSPIRE and arXiv checked). Read: the TeX source and the
+  PDF text of the arXiv version of 27 Dec 2022 (equation numbers below are that version's), all sections and Table 1.
+  - Claim: "For massless wormholes the perturbations decouple, and we obtain two identical master equations for the scalar
+    and gravitational modes, which moreover agree with the master equation for the axial modes. Consequently there is
+    isospectrality with threefold degenerate modes." For C = 0, ℓ ≥ 2: Z″ + (ω² − V)Z = 0, V = ℓ(ℓ+1)/(r² + r0²) − 3r0²/(r² + r0²)²
+    ((52), (53)). Table 1, row M/r0 = 0: ω r0 = 1.74 − 0.305i, 2.95 − 0.410i, 4.08 − 0.449i for ℓ = 2, 3, 4.
+  - Contains: the polar system in Regge–Wheeler gauge for C ≠ 0 and C = 0, ℓ ≥ 2 numerically; ℓ = 1 and ℓ = 0 by a scalar
+    equation, (69) and (72), with no numbers. Does not contain: a count of growing polar modes, members with a potential
+    (black universes, M-AdS), or any value for ℓ = 1.
+  - #218 (`black_universe/polar.md`, *checked symbolically* and *numerical evidence*): the derived ℓ ≥ 2 system reproduces (44)–(46) and
+    the master equation (52), (53), and Table 1's M = 0 row (1.737692 − 0.305138i, 2.952415 − 0.409984i, 4.076253 − 0.449105i).
+    Three disagreements with the printed text, reported and not corrected (polar.md Sec. 5): (47) has the sign of its
+    (ℓ+2)(ℓ−1)K term opposite to the derivation; (69) has the sign of its 2/R² term opposite to the test scalar's, and
+    neither is the derived ℓ = 1 equation (the gauge-invariant scalar obeys V = 1/R⁴, the Darboux partner of V at L = 2);
+    the statement that ℓ = 1 "corresponds to the scalar branch" of [BCK18] holds, in their wording, only for the backreacted
+    potential 1/R⁴, not for the test field's 2/R² + 1/R⁴.
 
 ### Black bounces
 - **[SV19] Simpson & Visser 2019**, "Black-bounce to traversable wormhole", JCAP 02 (2019) 042, arXiv:1812.07114 v3,
