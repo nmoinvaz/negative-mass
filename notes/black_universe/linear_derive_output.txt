@@ -1,0 +1,35 @@
+== Part A: the linearization ==
+  B0 =
+     [(E*V0*r**2 + E + 2*rm*rp)/(2*r**2),  E*(-V0*r**2 + 1)/(2*r),  E*V1*r/2]
+     [2*(E + 2*rm*rp)/r**3,  E/r**2,  0]
+     [(phm*rp + php*rm)/r**2,  -E*V1/2,  E*V2/2]
+  Bp =
+     [-rm/r,  0,  0]
+     [-2*rm/r**2,  0,  -phm]
+     [-phm/r,  0,  -rm/r]
+  Bm =
+     [-rp/r,  0,  0]
+     [-2*rp/r**2,  0,  -php]
+     [-php/r,  0,  -rp/r]
+[pass] A0: the linearization is a linear combination of (dr, df, dphi) and their first derivatives (no remainder)
+[pass] A1: the linearized right-hand sides equal the derivative of the nonlinear ones (central difference, h = 1e-15, 40 digits, 25 random states)  (max difference 1.82e-25)
+
+== Part B: gauge perturbations of the exact member ==
+[pass] B1: L_xi(member) solves the three linearized evolution equations: six members, three points, random jets of xi(p), eta(m) (40 digits)  (max residual 5.81e-41, 1 s)
+[pass] B2: and both linearized constraints  (max residual 2.3e-41)
+[pass] B3: Y = dr - (rho R/sqrt2) dphi vanishes on them (gauge invariance)  (max |Y| 1.15e-41)
+
+== Part C: the master equation of #212 ==
+[pass] C1: M = u_pm + Vhat u/2 on solutions of the evolution equations contains dr, dphi, dr_p - dr_m and df only, no dphi_p, dphi_m: four members, four points  (max coefficient of dphi_p, dphi_m 4.59e-41)
+[pass] C2: (d/dt) M = 0 on solutions of the evolution equations and both constraints, so M is a function of x alone: the master equation holds up to a static term  (max residual coefficient 9.05e-40; M itself is not zero (largest coefficient 16.4))
+
+== Part D: the horizon ==
+[pass] D1: on a null surface with r_p = phi_p = 0 the linearized constraint is dr_pp + f_p dr_p = 0, so dr = c1 + c2 e^{b p} when f_p = -b
+[pass] D2: c = -1.5: the exponents of Y at the horizon are +-W/A'(rho_h), so Y ~ (rho - rho_h)^{W/A'} e^{Wt} = e^{Wv}, regular and nonzero on the horizon  (-0.44787709, 0.44787709 against -0.44787709, 0.44787709)
+[pass] D3a: c = -1: the exponents of Y at the horizon (which is the throat) are 1 -+ W/(2 kappa), kappa = 2/pi (sympy, W = w kappa)  (kappa = 2/pi, exponents [1 - w/2, w/2 + 1])
+[pass] D3: c = -1: the logarithm of the exponent 1 - W/(2 kappa) branch has the coefficient p1 s + q1 = pi w (1 - w)/8, which vanishes at W = kappa: both branches are smooth there  (p1 s + q1 at w = 1: 0)
+
+== Part E: the potential ==
+[pass] E1: V''(phi) of linear.py (V_psipsi/2, psi = arctan rho) equals the second derivative of V along the member: four members, three points, 40 digits  (max difference 9.18e-41)
+
+12 checks, 12 pass; failed: []; mutation None; 3 s
