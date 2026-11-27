@@ -107,3 +107,31 @@ tortoise gauge as data, a D = 6 growth control (W²a² = 4.68662054311946479 is 
 
 `dn.py`, `checks.py`, `probe_expansion.py` (+ `probe_expansion_output.txt`), `derive.py` (+ `derive_output.txt`), `cost_model.py` (+ `cost_model_output.txt`),
 `bench/` (the design's kernel stand-ins, not the evolution), `design.md`, `domain.svg`.
+
+## Coordinator's review
+
+Under review: `wip/i39-throat-evolution` at 3a233b6, raw `I39-dh610` at ae8bff6. Review folder
+`negative-mass-raw/I39-mac-review`, whose README holds the criteria, committed before the first run of `ind39.py`. The
+changed files are those the brief names (`notes/wormhole_evolution/` and the raw folder).
+
+- **Rerun on the Mac:** `derive.py` 25 of 25. `checks.py` with numba 11 of 11. With numpy and numba absent, 10 of 11
+  pass and K is skipped. These are the verdicts of #39's runs of record.
+- **ind39 K1, the equations.** The review's own brute-force Ricci tensor of ds² = −2e^{−f}du dv + r²dΩ_n² (n = 2, 3), with
+  R_ab = Σ ε ∂_aφ ∂_bφ and □φ = 0, gives the three evolution equations of `dn.py`'s docstring with sympy residual 0.
+  `dn.F_np` agrees with them to 3e-16 at 40 random states, with a ghost and a normal field. The constraint comes out as
+  r_uu + f_u r_u = −(r/n)Σ ε φ_u². The mutation `theta-coef` fails it.
+- **ind39 K2, a case #39 did not run: the tuned growth rate at D = 6.** With `checks.py`'s own G1 protocol, at
+  h = 0.005/√3 and 0.0025/√3, W_fit = 2.1604 and 2.1625 against W = 2.1649 (−0.2% and −0.1%). The two agree to 1e-3,
+  and the A*_h ratio is 4.005. *Added by the coordinator:* the first pair the review chose, h = 0.01/√3 and 0.005/√3,
+  failed (K2, not met as worded), because at h = 0.0058 the fit is meaningless. So D = 6 needs h ≤ about 0.003, and #40
+  was told. K2b (amendment A1, same bars) passes.
+- **Development departures** (reported by the runner, all before the runs of record): P2 in Kruskal form, F1's pulse in
+  dφ, the D = 5 pair at h = 0.00707 and 0.00354, and a cost 5 to 6 times the kernel-only estimate. A `check()` that
+  failed to count numpy bools was fixed before any run of record.
+- *Added by the coordinator:* the expansion probe (one-sided, to t = 42) shows no coordinate limit. The diagonal's proper
+  time saturates near 8.3 while H rises from 0.75 to 2.9. Like the runner, I give no reading of this; #213 chooses its
+  observer first.
+- **Follow-ups.** #40 runs on this code. The runner's recommended tasks go to the issues they serve:
+  - task 1, the asymmetric static family and the one-sided threshold, to #42;
+  - task 2, the expansion observer with a symmetric long run, to #213;
+  - task 3, the settled black-hole mass, to #41.

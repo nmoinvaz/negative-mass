@@ -75,6 +75,10 @@ model they sit in disjoint sets of initial data. Saved to investigate later:
   this repo's 1+1 code) cannot pass a throat, which shows up like an apparent horizon. Investigate whether a change of
   coordinates (proper radius, or double-null/characteristic coordinates as Shinkai–Hayward used) makes it possible,
   and what it would cost.
+  **Update from #39:** yes, in double-null coordinates. `notes/wormhole_evolution/` evolves gravity with massless
+  normal and ghost scalars in any D, with both ends of the wormhole on the grid. It reproduces the static wormhole at
+  second order, the exact Tangherlini and Roberts-ghost solutions, and the unstable mode's rate W at D = 4 and 5 to
+  better than 1e-4. A bisection to |p − p*| = 1e-10 costs minutes. #40 now runs on it.
 
 ## Out of scope
 Quantum vacuum instability of the phantom sector.

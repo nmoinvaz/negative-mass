@@ -509,6 +509,8 @@ signs ε_i (ε₁ = +1, ε₂ = −1) give:
   4. **Anything with a throat (not natural).**
      - It needs a different gauge: proper radial distance, as in [GGS09a, TS13], or double-null, as in [SH02, ST17].
      - It needs two-ended boundary conditions.
+     - **Update from #39:** built in double-null form (`wormhole_evolution/`, #39). Both ends are on the grid, so no
+       outer boundary condition is needed. It passes the throat, and its checks are listed in its README.
      - Here the wormhole's linear problem in D dimensions is already solved [TS13], and it has no self-similar structure to
        share with the echoing solver.
 - **On the evolution side**, the direct test of open items 3–4 is a two-field version of the repo's 1+1 code. It needs two
