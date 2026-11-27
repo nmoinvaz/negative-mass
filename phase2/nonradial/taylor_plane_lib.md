@@ -135,6 +135,10 @@ From a clone of multishoot at `feat/plane-stepper`: `cargo test --release --feat
 Under review: multishoot pull request #70 (`feat/plane-stepper` at a880903, **not merged**: its review and release are
 the user's), `wip/i189-plane-lib` at 6c40e02, raw `I189-mac` at bb964b6. Review folder
 `negative-mass-raw/I189-mac-review`, whose README holds the criteria, committed before the first run of `ind189.py`.
+*Update, 2026-11-27:* the user squash-merged multishoot#70 into multishoot main as 70fea18. No release contains it yet
+(the latest is 4.2.0). The merged `plane.rs` adds one change: a column whose length falls outside 2^±256 is rescaled by
+a power of two before normalizing, and other columns are normalized bitwise as before. The crate still pins a880903,
+which is on no branch now. #199 repins it to main and checks the rows bit for bit.
 The changed files are those the brief names.
 
 - **ind189, a planted case the runner did not use.**

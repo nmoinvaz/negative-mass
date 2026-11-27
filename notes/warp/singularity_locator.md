@@ -154,6 +154,8 @@ the raw folder's README.
 Under review: multisolver pull request #26 (`feat/locate-singularity` at 0db3966, **not merged**: its review and
 release are the user's), `wip/i191-singularity-locator` at 71ebf1c, raw `I191-rpi5` at d19334b. Review folder
 `negative-mass-raw/I191-mac-review`, whose README holds the criteria, committed before the first run of `ind191.py`.
+*Update, 2026-11-27:* the user merged multisolver#26 into multisolver main as eb52618. No release contains it yet (the
+latest is 0.2.2). #206's follow-up branches from main.
 
 - **The suite on the Mac**, a fourth build: 4 passed, with the same fingerprint 0xa5113e9ccb6776c8 as the Pi, `portable`
   and the PR's x86 CI.
