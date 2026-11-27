@@ -36,14 +36,18 @@ _argv, sys.argv = sys.argv, sys.argv[:1]          # order4.py parses sys.argv wh
 import order5 as o5  # noqa: E402
 sys.argv = _argv
 
-MUTATIONS = ("sym_c1", "sym_P", "exact_L1", "exact_h2", "e1_sign", "e1_factor", "e2_weight", "bnd_G", "bnd_Y0", "e3_Om0", "e3_factor",
-             "cl_arg", "cl_arg2", "grid_coarse", "grid_short", "grid_wrongh", "grid_wrongOm1")
+MUTATIONS = ("sym_S1", "sym_S2", "sym_c1", "sym_P", "sym_S6", "sym_S7", "sym_S8", "sym_S9", "sym_S10", "sym_S11",
+             "exact_K", "exact_L1", "exact_h2", "e1_sign", "e1_factor", "e2_weight", "bnd_G", "bnd_Y0", "e3_Om0", "e3_factor",
+             "cl_moment", "cl_arg", "cl_arg2", "grid_coarse", "grid_short", "grid_wrongh", "grid_wrongOm1")
 MUTATE = None
 PARTS = []
 EGRID = (36, (1, 2), 16, 80)          # N, w as (num, den), V, dps: the grid of the E checks (declared in the raw README)
 GRID3 = (64, (1, 3), 24, 130)         # the third method-B grid (declared in the raw README)
 ORDER4_OUT = os.path.join(HERE, "order4_output.txt")
 ORDER5_OUT = os.path.join(HERE, "order5_output.txt")
+OUTFILE = None
+CTLDIR = None
+CTLPREFIX = "ctl"
 
 for a in sys.argv[1:]:
     if a.startswith("--mutate="):
@@ -52,6 +56,12 @@ for a in sys.argv[1:]:
     elif a.startswith("--egrid="):
         n, w, v, d = a.split("=", 1)[1].split(",")
         EGRID = (int(n), tuple(int(t) for t in w.split("/")) if "/" in w else (int(w), 1), int(v), int(d))
+    elif a.startswith("--out="):
+        OUTFILE = a.split("=", 1)[1]
+    elif a.startswith("--ctldir="):
+        CTLDIR = a.split("=", 1)[1]
+    elif a.startswith("--ctlprefix="):
+        CTLPREFIX = a.split("=", 1)[1]
     elif a.startswith("--grid="):
         n, w, v, d = a.split("=", 1)[1].split(",")
         GRID3 = (int(n), tuple(int(t) for t in w.split("/")) if "/" in w else (int(w), 1), int(v), int(d))
@@ -68,10 +78,10 @@ def report(cid, ok, text):
 
 
 def digits(a, b):
-    """-log10 of the relative difference of two numbers, capped at the working precision in digits"""
+    """-log10 of the relative difference of two numbers (to the larger one), capped at the working precision in digits"""
     a, b = mp.mpf(a), mp.mpf(b)
     d = abs(a - b)
-    return mp.mpf(mp.mp.dps) if d == 0 else min(mp.mpf(mp.mp.dps), -mp.log10(d / abs(a)))
+    return mp.mpf(mp.mp.dps) if d == 0 else min(mp.mpf(mp.mp.dps), -mp.log10(d / max(abs(a), abs(b))))
 
 
 def dg(a, b):
@@ -102,17 +112,18 @@ def check_sym():
     zero = lambda e: sp.simplify(e) == 0  # noqa: E731
 
     # S1: the substitution R = sec^2 th turns (R - 1)^(-3/2) dR into 2 dth / sin^2 th (u = sqrt(R - 1) = tan th)
-    ok = zero(R - 1 - tth ** 2) and zero(sp.diff(R, th) / tth ** 3 - 2 / S)
+    ok = zero(R - 1 - tth ** 2) and zero(sp.diff(R, th) / tth ** 3 - (2 if MUTATE != "sym_S1" else 1) / S)
     report("S1", ok, "R - 1 = tan^2 and (R - 1)^(-3/2) dR/dth = 2/sin^2: residuals 0 (sympy)")
 
     # S2: 1 - 1/R = sin^2, l = ln R = -2 ln cos, dl/dth = 2 tan
-    ok = zero(1 - 1 / R - S) and zero(sp.expand_log(sp.log(R) - lq, force=True)) and zero(sp.diff(lq, th) - 2 * tth)
+    ok = zero(1 - 1 / R - S) and zero(sp.expand_log(sp.log(R) - lq, force=True)) and zero(sp.diff(lq, th) - (2 if MUTATE != "sym_S2" else 1) * tth)
     report("S2", ok, "1 - 1/R = sin^2, ln R = -2 ln cos, d(ln R)/dth = 2 tan: residuals 0 (sympy)")
 
     # S3: c_1 of the table, divided by sin^2: (Omega0 - 3 ell)/sin^2 - 1
     c1 = o5.cc(1, [Om0], lq, R)
-    coef = 3 if MUTATE != "sym_c1" else 2
-    ok3 = zero(c1 / S - ((Om0 - coef * ell) / S - 1))
+    if MUTATE == "sym_c1":
+        c1 = c1 - lq / 2                                      # 3l/2 taken as l
+    ok3 = zero(c1 / S - ((Om0 - 3 * ell) / S - 1))
     report("S3", ok3, "c_1/sin^2 = (Omega0 - 3 ell)/sin^2 - 1 with c_1 = Omega0 + 3l/2 - 1 + 1/R, l = -2 ell: residual 0 (sympy)")
 
     # S4: P = cot (ell - Omega0): P' = -[(ell - Omega0)/sin^2 + 1] and P dl/dth = 2 (ell - Omega0)
@@ -126,7 +137,7 @@ def check_sym():
     report("S5", ok5, "4 ell/sin^2 (from E2) + 2 c_1/sin^2 (from h_k) = -2[(ell - Omega0)/sin^2 + 1] = 2 P': residual 0 (sympy)")
 
     # S6: ell/sin^2 = d/dth (-cot ell - th); the boundary values of -cot ell - th
-    A = -(cth / sp.sin(th)) * ell - th
+    A = -(cth / sp.sin(th)) * ell - (th if MUTATE != "sym_S6" else -th)
     lim0, lim1 = sp.limit(A, th, 0, "+"), sp.limit(A, th, sp.pi / 2, "-")
     ok = zero(sp.diff(A, th) - ell / S) and lim0 == 0 and sp.simplify(lim1 + sp.pi / 2) == 0
     report("S6", ok, f"d/dth(-cot ell - th) = ell/sin^2; boundary values {lim0} at 0 and {lim1} at pi/2, so int ell/sin^2 = -pi/2 (sympy)")
@@ -135,7 +146,7 @@ def check_sym():
     x = sp.Symbol("x", positive=True)
     lims = {
         "cot ell at 0": sp.limit((cth / sp.sin(th)) * ell, th, 0, "+"),
-        "cot ell at pi/2": sp.limit((cth / sp.sin(th)) * ell, th, sp.pi / 2, "-"),
+        "cot ell at pi/2": sp.limit((cth / sp.sin(th)) * ell if MUTATE != "sym_S7" else ell, th, sp.pi / 2, "-"),
         "ell th^-1 ...: ell * th at 0 (C = O(th))": sp.limit(ell * th, th, 0, "+"),
         "x ln^6 x at 0 (Y_4 P, Y_4 = O(l^5), P ~ x (ln x - Omega0))": sp.limit(x * sp.log(x) ** 6, x, 0, "+"),
         "x ln^2 x at 0 (ell C_Cl, C ~ x(1 - ln x))": sp.limit(x * sp.log(x) ** 2, x, 0, "+"),
@@ -149,6 +160,8 @@ def check_sym():
     Bf = sp.sqrt(sp.pi) * sp.gamma((a + 1) / 2) / (2 * sp.gamma(a / 2 + 1))
     M0, M1, M2 = (sp.simplify(sp.diff(Bf, a, j).subs(a, 0)) for j in range(3))
     M1c, M2c = -sp.pi / 2 * sp.log(2), sp.pi / 2 * (sp.log(2) ** 2 + sp.pi ** 2 / 12)
+    if MUTATE == "sym_S8":
+        M1c = -M1c
     ok = (M0 == sp.pi / 2 and sp.simplify(sp.expand_func(M1) - M1c) == 0 and sp.simplify(sp.expand_func(M2) - M2c) == 0)
     report("S8", ok, f"moments from B(a): int ell = {M1}, int ell^2 = {sp.simplify(sp.expand_func(M2))} (sympy)")
 
@@ -156,7 +169,7 @@ def check_sym():
     x_ = sp.Symbol("x_", positive=True)
     Cl2p = lambda z: -sp.log(2 * sp.sin(z / 2))  # noqa: E731
     dC = sp.diff(sp.pi - 2 * th, th) * Cl2p(sp.pi - 2 * th)
-    ok = zero(sp.expand_log(sp.simplify(dC - 2 * sp.log(2 * cth)), force=True))
+    ok = zero(sp.expand_log(sp.simplify(dC - 2 * sp.log(2 * (cth if MUTATE != "sym_S9" else sp.sin(th)))), force=True))
     val = sp.simplify(sp.expand_func(2 * (M2 + sp.log(2) * M1)))
     ok = ok and sp.simplify(val - sp.pi ** 3 / 12) == 0
     report("S9", ok, f"C' = 2 ln(2 cos th); 2 (int ell^2 + ln2 int ell) = {val} = pi^3/12 (sympy)")
@@ -174,7 +187,7 @@ def check_sym():
     ok = ok and zero(sp.simplify(lhs) - sp.simplify(rhs))
     I1 = sp.integrate(sp.expand(2 * sp.sin(th) ** 2), (th, 0, sp.pi / 2))     # tan sin 2th = 2 sin^2
     I2 = sp.integrate(sp.expand(4 * sp.sin(th) ** 2 * sp.cos(2 * th)), (th, 0, sp.pi / 2))   # tan sin 4th = 4 sin^2 cos 2th
-    ok = ok and sp.simplify(I1 - sp.pi / 2) == 0 and sp.simplify(I2 + sp.pi / 2) == 0
+    ok = ok and sp.simplify(I1 - sp.pi / 2) == 0 and sp.simplify(I2 + (1 if MUTATE != "sym_S10" else -1) * sp.pi / 2) == 0
     report("S10", ok, "int sin(2n)sin(2m) = (pi/4) delta_nm; tan [sin 2(n+1)th - sin 2(n-1)th] = 2 cos 2n th - cos 2(n+1)th - cos 2(n-1)th "
                       "(residual 0), whose integral gives I_(n+1) = I_(n-1) for n >= 2 with I_1 = pi/2, I_2 = -pi/2, "
                       "I_n = int tan sin(2n th) = (-1)^(n+1) pi/2 (sympy)")
@@ -182,7 +195,7 @@ def check_sym():
     # S11: the series sums of the second route: sum (pi/2)/n^2 = pi^3/12, sum pi/(4 n^4) = pi^5/360 (Parseval)
     nn = sp.Symbol("nn", positive=True, integer=True)
     s2, s4 = sp.summation(sp.pi / 2 / nn ** 2, (nn, 1, sp.oo)), sp.summation(sp.pi / 4 / nn ** 4, (nn, 1, sp.oo))
-    ok = sp.simplify(s2 - sp.pi ** 3 / 12) == 0 and sp.simplify(s4 - sp.pi ** 5 / 360) == 0
+    ok = sp.simplify(s2 - (sp.pi ** 3 / 12 if MUTATE != "sym_S11" else sp.pi ** 3 / 6)) == 0 and sp.simplify(s4 - sp.pi ** 5 / 360) == 0
     report("S11", ok, f"sum_n (pi/2)/n^2 = {s2} and sum_n (pi/4)/n^4 = {s4} (sympy)")
     print(f"  sym: {time.time() - t0:.0f} s", flush=True)
 
@@ -195,7 +208,7 @@ def closed_fields(th, Om0, Om1):
     c, s = mp.cos(th), mp.sin(th)
     ell = mp.log(c)
     l, R, S, u = -2 * ell, 1 / c ** 2, s ** 2, mp.tan(th)
-    K = 2 * th * mp.ln2 - cl2(mp.pi - 2 * th)
+    K = (2 if MUTATE != "exact_K" else 1) * th * mp.ln2 - cl2(mp.pi - 2 * th)
     Y = [mp.mpf(1), -l, -2 * Om0 * l - mp.mpf(3) / 2 * l ** 2]
     L1 = -2 * Om0 - 2 * l if MUTATE != "exact_L1" else -2 * Om0 - l
     L = [mp.mpf(-1), L1, -2 * Om1 + 2 * Om0 * l + 4 * l ** 2 - 8 * Om0 * u * th - 16 * u * K]
@@ -229,7 +242,7 @@ def check_exact():
     for th in (mp.mpf("0.3"), mp.mpf("0.9"), mp.mpf("1.4")):
         u = mp.tan(th)
         Kq = mp.quad(lambda t: mp.log(1 + t * t) / (1 + t * t), [0, u])
-        Kc = 2 * th * mp.ln2 - cl2(mp.pi - 2 * th)
+        Kc = (2 if MUTATE != "exact_K" else 1) * th * mp.ln2 - cl2(mp.pi - 2 * th)
         worst = min(worst, digits(Kq, Kc)) if worst != mp.inf else digits(Kq, Kc)
     report("P0b", worst > 40, f"K(u) = int_0^u ln(1 + t^2)/(1 + t^2) dt against 2 th ln 2 - Cl2(pi - 2 th), th = 0.3, 0.9, 1.4: worst "
                              f"{float(worst):.1f} digits (bar 40)")
@@ -313,8 +326,9 @@ def check_clausen():
     dps = 60
     mp.mp.dps = dps
     pi = mp.pi
-    m1, e1 = qthird(lambda th: mp.log(mp.cos(th)), dps)
-    m2, e2 = qthird(lambda th: mp.log(mp.cos(th)) ** 2, dps)
+    sh = mp.ln2 if MUTATE == "cl_moment" else 0
+    m1, e1 = qthird(lambda th: mp.log(mp.cos(th)) + sh, dps)
+    m2, e2 = qthird(lambda th: (mp.log(mp.cos(th)) + sh) ** 2, dps)
     t1, t2 = -pi / 2 * mp.ln2, pi / 2 * (mp.ln2 ** 2 + pi ** 2 / 12)
     report("CM", min(digits(m1, t1), digits(m2, t2)) > 40,
            f"int_0^(pi/2) ln cos = {nd(m1, 30)}, int ln^2 cos = {nd(m2, 30)} against -(pi/2) ln 2 and (pi/2)(ln^2 2 + pi^2/12): "
@@ -547,14 +561,20 @@ def check_exch():
         report("BND", ok_t and ok_o, f"boundary terms: throat end b/th^p at the first two nodes th = {mp.nstr(th1, 3)}, {mp.nstr(th2, 3)} "
                                      f"(constant to 1%, and = the leading coefficient -2 Omega_(k-2) th where known), pi/2 end at the last node "
                                      f"x = pi/2 - th = {mp.nstr(xN, 3)} (bar |b| < 1e-{bar}, and b/(x l^q) bounded along the grid): " + "; ".join(lines))
-        # growth: Y_k, L_k at the last node against powers of l
-        lN = B.l[pN][iN]
-        gl = []
+        # growth: local exponents d ln|f| / d ln l between l = 30 and l = 60 (Y_k, L_k) and Y_k at the last node over l^k
+        n30, n60 = near(30), near(60)
+        l30, l60 = B.l[n30[0]][n30[1]], B.l[n60[0]][n60[1]]
+        ex = []
         for k in range(1, 6):
-            gl.append(f"Y_{k}/l^{k + 1} = {mp.nstr(fl.Y[k][pN][iN] / lN ** (k + 1), 4)}")
+            y30, y60 = fl.Y[k][n30[0]][n30[1]], fl.Y[k][n60[0]][n60[1]]
+            ex.append(f"Y_{k} {mp.nstr(mp.log(abs(y60 / y30)) / mp.log(l60 / l30), 3)}")
         for k in range(1, 5):
-            gl.append(f"L_{k}/l^{k} = {mp.nstr(fl.L[k][pN][iN] / lN ** k, 4)}")
-        report("GROW", True, f"growth at the last node (l = {mp.nstr(lN, 5)}): " + ", ".join(gl))
+            y30, y60 = fl.L[k][n30[0]][n30[1]], fl.L[k][n60[0]][n60[1]]
+            ex.append(f"L_{k} {mp.nstr(mp.log(abs(y60 / y30)) / mp.log(l60 / l30), 3)}")
+        lN = B.l[pN][iN]
+        yl = ', '.join(f"Y_{k}/l^{k} = {mp.nstr(fl.Y[k][pN][iN] / lN ** k, 4)}" for k in range(1, 6))
+        report("GROW", True, f"growth (reported, no bar): local exponents between l = {mp.nstr(l30, 4)} and {mp.nstr(l60, 4)}: " + ", ".join(ex)
+                             + f"; at the last node l = {mp.nstr(lN, 5)}: " + yl)
     print(f"  exch: {time.time() - t0:.0f} s", flush=True)
 
 
@@ -608,7 +628,79 @@ def check_grid():
     print(f"  grid: {time.time() - t0:.0f} s", flush=True)
 
 
+# ---------------------------------------------------------------------------------------------------------------
+# ctlsum: the controls' logs against their declared targets
+# ---------------------------------------------------------------------------------------------------------------
+# name -> (checks that must FAIL, checks declared silent (must PASS: a failure there is reported as off target)).
+# Declared from the development runs dev_ctl_*, dev2_ctl_*, dev3_ctl_* (raw I209-rpi5), before the declared runs.
+_E1 = {"E1_3", "E1_4", "E1_5"}
+_E2 = {"E2_2", "E2_3", "E2_4"}
+_E3 = {"E3_3", "E3_4", "E3_5"}
+_E3G = {"E3G_3", "E3G_4", "E3G_5"}
+TARGETS = {
+    "sym_S1": ({"S1"}, set()), "sym_S2": ({"S2"}, set()), "sym_c1": ({"S3", "S5"}, set()), "sym_P": ({"S4"}, set()),
+    "sym_S6": ({"S6"}, set()), "sym_S7": ({"S7"}, set()), "sym_S8": ({"S8"}, {"S9"}), "sym_S9": ({"S9"}, set()),
+    "sym_S10": ({"S10"}, set()), "sym_S11": ({"S11"}, set()),
+    "exact_K": ({"P0b", "P2_2"}, {"P0c", "P1", "P2_1"}),
+    "exact_L1": ({"P0c", "P1", "P2_1", "P2_2"}, {"P0b"}),
+    "exact_h2": ({"P0c"}, {"P1", "P2_1", "P2_2"}),
+    "e1_sign": ({"P1"} | _E1, _E2 | _E3G), "e1_factor": ({"P1"} | _E1, _E2 | _E3G),
+    "e2_weight": ({"P2_1", "P2_2"} | _E2, _E1 | _E3G),
+    # the grid's L_m = -2 Omega - u (tail) has no growing term for any Omega_0, so the identities stay true for it; the shift
+    # shows at the throat (C_2(0) = -G_2) and in the closed L_2
+    "bnd_G": ({"P0", "BND"}, _E1 | _E2 | _E3 | _E3G),
+    "bnd_Y0": ({"P0", "BND"} | _E1 | _E2 | _E3 | _E3G, set()),
+    # the by-parts identity holds for any constant in place of Omega_0; only the combination with c_1 fixes it
+    "e3_Om0": (_E3G, _E3 | _E1 | _E2), "e3_factor": (_E3G, _E3 | _E1 | _E2),
+    "cl_moment": ({"CM"}, {"CL1", "CL1a", "CL2"}),
+    "cl_arg": ({"CL1", "CL1a", "CL2"}, {"CM"}),
+    "cl_arg2": ({"CL1", "CL1a"}, {"CM", "CL2"}),          # sin(2n th) orthogonality does not see the sign (-1)^(n+1)
+    "grid_coarse": ({"GR1", "GR2", "GR3", "GR4"}, set()), "grid_short": ({"GR1", "GR2", "GR3", "GR4"}, set()),
+    "grid_wrongh": ({"GR1", "GR2", "GR3"}, {"GR4"}), "grid_wrongOm1": ({"GR1", "GR2"}, {"GR3", "GR4"}),
+}
+assert set(TARGETS) == set(MUTATIONS)
+
+
+def check_ctlsum():
+    n_on = 0
+    for name in MUTATIONS:
+        path = os.path.join(CTLDIR, f"{CTLPREFIX}_{name}.log")
+        if not os.path.exists(path):
+            report(f"CT_{name}", False, f"no log {path}")
+            continue
+        txt = open(path).read()
+        fired = set(re.findall(r"^FAIL\s+(\S+):", txt, re.M))
+        ran = re.findall(r"^(?:PASS|FAIL)\s+(\S+):", txt, re.M)
+        fire, silent = TARGETS[name]
+        missing = fire - fired
+        off = silent & fired
+        extra = fired - fire - silent
+        ok = not missing and not off and "exit=1" in txt
+        n_on += ok
+        report(f"CT_{name}", ok, f"fired {sorted(fired)} of {len(ran)} checks; declared targets {sorted(fire)}"
+                                 + (f"; MISSING {sorted(missing)}" if missing else "")
+                                 + (f"; declared silent but fired {sorted(off)}" if off else "")
+                                 + (f"; also fired (not declared) {sorted(extra)}" if extra else "")
+                                 + (f"; declared silent and silent {sorted(silent)}" if silent and not off else ""))
+    print(f"  controls on target: {n_on} of {len(MUTATIONS)}", flush=True)
+
+
+class Tee:
+    def __init__(self, f):
+        self.f, self.o = f, sys.__stdout__
+
+    def write(self, t):
+        self.o.write(t)
+        self.f.write(t)
+
+    def flush(self):
+        self.o.flush()
+        self.f.flush()
+
+
 if __name__ == "__main__":
+    if OUTFILE:
+        sys.stdout = Tee(open(OUTFILE, "w"))
     mp.mp.dps = 60
     print(f"exchange_review.py  mutate={MUTATE}  parts={PARTS}  mpmath {mp.__version__}  sympy {sp.__version__}", flush=True)
     t0 = time.time()
@@ -622,6 +714,8 @@ if __name__ == "__main__":
         check_exch()
     if "grid" in PARTS:
         check_grid()
+    if "ctlsum" in PARTS:
+        check_ctlsum()
     nfail = sum(1 for _, ok in RESULTS if not ok)
     print(f"\n{len(RESULTS) - nfail} passed, {nfail} failed of {len(RESULTS)} checks; {time.time() - t0:.0f} s")
     sys.exit(1 if nfail else 0)
