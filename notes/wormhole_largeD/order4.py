@@ -16,7 +16,7 @@ integrate to 64 (Omega0 - 1) int tan C = 64 (Omega0 - 1) pi^3/12, the rest to th
 Omega1 = 2 pi^2/3 + 8 ln^2 2 and G4 = 0 gives Omega2 = 80 zeta(3) - (8/3) pi^2 ln 2 - (32/3) ln^3 2.
 L3 = -2 h3 + 2 u B(th), B closed in ell, u, th, C and Lc2 = int_0^th ln^2 cos (S4, N5).
 
-    python3 order4.py [sym] [closed] [reduce] [n4b] [n4bg] [evals] [remainder] [--mutate=NAME] [--w2=w2_output.txt] [--w2raw=FILE]
+    python3 order4.py [sym] [closed] [lc2] [reduce] [n4b] [n4bg] [evals] [remainder] [--mutate=NAME] [--w2=w2_output.txt] [--w2raw=FILE]
 (the parts run in this order; evals and remainder together give R1, R2; the nested quadratures n4b, n4bg take 30 to 70 min)
 
 No argument runs everything. The exit status is 1 when a check fails. Status words: sympy residual 0 is "checked symbolically",
@@ -30,7 +30,7 @@ import mpmath as mp
 import sympy as sp
 
 MUTATIONS = ("wrong_h", "wrong_Om0", "wrong_Om1", "T_const", "K_sign", "bad_exchange", "coarse_B", "short_tail",
-             "pslq_wrong_basis", "wrong_Om2_series", "wrong_J3", "wrong_tanC", "wrong_Y3", "wrong_B", "wrong_P", "wrong_L3")
+             "pslq_wrong_basis", "wrong_Om2_series", "wrong_J3", "wrong_tanC", "wrong_Y3", "wrong_B", "wrong_P", "wrong_L3", "wrong_Lc2")
 MUTATE = None
 W2FILE = "w2_output.txt"
 W2RAW = None
@@ -45,7 +45,7 @@ for a in sys.argv[1:]:
         W2RAW = a.split("=", 1)[1]
     else:
         parts.append(a)
-PARTS = parts or ["sym", "closed", "reduce", "n4b", "n4bg", "evals", "remainder"]
+PARTS = parts or ["sym", "closed", "lc2", "reduce", "n4b", "n4bg", "evals", "remainder"]
 
 RESULTS = []
 
@@ -468,6 +468,48 @@ def check_closed():
            f"Omega2 = 0: worst {float(worst5):.1f} digits")
 
 
+def Lc2_poly(th):
+    """Lc2(th) = int_0^th ln^2 cos = (F(t) - F(1))/(2i), t = e^{2 i th}, F built from Li2, Li3 of 1/(1 + t) and -t"""
+    q = mp.ln2
+    sg = -1 if MUTATE == "wrong_Lc2" else 1
+
+    def F(t):
+        L1, Lt = mp.log(1 + t), mp.log(t)
+        w = 1 / (1 + t)
+        return (Lt * L1**2 - mp.mpf(2) / 3 * L1**3 - 2 * L1 * mp.polylog(2, w) - 2 * mp.polylog(3, w) + q**2 * Lt + Lt**3 / 12
+                + 2 * q * mp.polylog(2, -t) + Lt * mp.polylog(2, -t) - sg * mp.polylog(3, -t) + q * Lt**2 / 2)
+
+    return ((F(mp.exp(2j * th)) - F(mp.mpf(1))) / 2j).real
+
+
+def check_lc2():
+    """N6: Lc2 in polylogarithms against quadrature, and L_3 closed (with that Lc2) against -2 h_3(1) + u C_3 by quadrature"""
+    t0 = time.time()
+    mp.mp.dps = 45
+    pts = [mp.mpf(s) for s in ("0.3", "0.9", "1.4")]
+    Om = [-4 * mp.ln2, 2 * mp.pi**2 / 3 + 8 * mp.ln2**2, mp.mpf(0), mp.mpf(0)]
+    q = mp.ln2
+    worst_a, worst_b = mp.mpf(99), mp.mpf(99)
+    for th in pts:
+        def src(p):
+            c2, lc2, l2, u2, R2, s22, Y2, L2, K2, T2 = closed(p, mp.pi / 2 - p, False, Om)
+            return 2 * hk(3, Om, l2, R2, Y2, L2) / s22
+
+        Lq = mp.quad(guarded(lambda p: mp.log(mp.cos(p)) ** 2, 30), [0, th])
+        L3q = mp.tan(th) * mp.quad(guarded(src, 30), [0, th])
+        with mp.extradps(30):
+            Lp = Lc2_poly(th)
+            c, lc, l, u, R, s2, Y, L, K, T = closed(th, mp.pi / 2 - th, False, Om)
+            Cn = mp.clsin(2, mp.pi - 2 * th)
+            sc = mp.sin(th) * mp.cos(th)
+            B = (-32 * (lc + q) * Cn + 16 * s2 * Cn + 32 * Lp + 16 * sc * lc * (lc + 2 * q) - 4 * Om[1] * th - 2 * Om[1] * sc)
+            L3c = -2 * hk(3, Om, l, R, Y, L) + 2 * u * B
+        worst_a = min(worst_a, digits(Lq, +Lp))
+        worst_b = min(worst_b, digits(+L3c, L3q))
+    report("N6", worst_a >= 30 and worst_b >= 30, f"Lc2 = int_0^th ln^2 cos in Li2, Li3 of 1/(1 + e^(2 i th)) and -e^(2 i th) against quadrature at th = 0.3, 0.9, 1.4: worst "
+           f"{float(worst_a):.1f} digits; L_3 closed (that Lc2) against -2 h_3(1) + u C_3 by quadrature: worst {float(worst_b):.1f} digits ({time.time() - t0:.0f} s)")
+
+
 def check_n4b(cid, g):
     """(E2) at k - 1 = 3: int L_3 dth with L_3 = -2 h_3(1) + u C_3 by nested quadrature (left sum up to th = 1, right sum beyond,
     G_3 = 0) against 2 int h_3 ln cos / sin^2; Omega2 = 0; working precision 30 plus g guard digits in the integrands"""
@@ -822,6 +864,8 @@ def main():
         check_sym()
     if "closed" in PARTS:
         check_closed()
+    if "lc2" in PARTS:
+        check_lc2()
     if "reduce" in PARTS:
         check_reduce()
     if "n4b" in PARTS:
