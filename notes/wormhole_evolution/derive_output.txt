@@ -1,0 +1,45 @@
+== Part A: brute-force Ricci tensors against the reduced expressions ==
+[pass] A1[n=2]: Ricci of the D = 4 metric equals the reduced R_pp, R_mm, R_pm, R_ang; the rest vanishes  (1.0 s)
+[pass] A3[n=2]: the evolution equations r_pm, f_pm and the constraints C_pp, C_mm are the brute-force R_ab = sum eps d phi d phi
+[pass] A2: G_ab - T_ab = Q_ab - g_ab Q/2 with Q_ab = R_ab - sum eps d_a phi d_b phi (D = 4)
+[pass] A4: T_pp = sum eps phi_p^2, T_mm likewise, T_pm = 0, T^theta_theta = e^f sum eps phi_p phi_m, rho = p_radial (D = 4)
+[pass] A1[n=3]: Ricci of the D = 5 metric equals the reduced R_pp, R_mm, R_pm, R_ang; the rest vanishes  (1.5 s)
+[pass] A3[n=3]: the evolution equations r_pm, f_pm and the constraints C_pp, C_mm are the brute-force R_ab = sum eps d phi d phi
+[pass] A1[n=4]: Ricci of the D = 6 metric equals the reduced R_pp, R_mm, R_pm, R_ang; the rest vanishes  (4.3 s)
+[pass] A3[n=4]: the evolution equations r_pm, f_pm and the constraints C_pp, C_mm are the brute-force R_ab = sum eps d phi d phi
+[pass] A1[n=5]: Ricci of the D = 7 metric equals the reduced R_pp, R_mm, R_pm, R_ang; the rest vanishes  (10.7 s)
+[pass] A3[n=5]: the evolution equations r_pm, f_pm and the constraints C_pp, C_mm are the brute-force R_ab = sum eps d phi d phi
+
+== Part B: the equations ==
+  r_pm  = -(n-1)/r (r_p r_m + e^{-f}/2)
+  f_pm  = (n/r) r_pm + sum eps phi_p phi_m  =  -n(n-1)/r^2 (r_p r_m + e^{-f}/2) + sum eps phi_p phi_m
+  phi_pm = -n/(2r) (r_p phi_m + r_m phi_p)
+  C_pp  = r_pp + f_p r_p + (r/n) sum eps phi_p^2 = 0,  C_mm likewise
+[pass] B1: the D-dimensional Laplacian of phi(p, m) is -2 e^f [phi_pm + n/(2r)(r_p phi_m + r_m phi_p)]
+[pass] B2: d_m C_pp = -(n-1)(r_m/r) C_pp on solutions of the evolution equations (so r^(n-1) C_pp is constant along x-)
+[pass] B3: d_p C_mm = -(n-1)(r_p/r) C_mm likewise
+
+== Part C: mass, flux, expansions, stress ==
+[pass] C1: d_p M = -(r^n/n) e^f r_m sum eps phi_p^2 for M = r^(n-1)(1 + 2 e^f r_p r_m)/2 on solutions with C_pp = 0
+[pass] C2: d_m M = -(r^n/n) e^f r_p sum eps phi_m^2
+[pass] C3: (grad r)^2 = 2 g^{pm} r_p r_m = -2 e^f r_p r_m = 1 - 2M/r^(n-1)
+  T_pp = sum eps phi_p^2, T_mm = sum eps phi_m^2, T_pm = 0 (massless),  T^theta_theta = sum eps e^f phi_p phi_m
+  rho = T_uu = e^f (T_pp + T_mm)/2,  p_s = T_ss = rho,  p_ang = T^theta_theta = e^f S_pm  (n spheres, D = n + 2)
+  expansions theta_pm = n r_pm-sign: theta_+ = n e^{f} r_p / r, theta_- = n e^{f} r_m / r per unit e^{-f} null normal
+
+== Part D: static solutions and an exact dynamical one ==
+[pass] D1: static Ricci components R_tt, R_ll, R_ang with a lapse (brute force n = 2, 3)
+[pass] D2a: r'' = (n-1)(a/r)^(2n-2)/r follows from r'^2 = 1 - (a/r)^(2(n-1))
+[pass] D2: Ellis: R_ll = -phi'^2 (ghost) and R_ang = 0 with phi' = q/r^n, q^2 = n(n-1) a^(2n-2)  (R_ll residual 0, R_ang residual 0)
+[pass] D3: Ellis, dual-null form (f = 0): sphere equation r_pm = -(n-1)(r_p r_m + 1/2)/r holds
+[pass] D3b: Ellis, dual-null form: C_pp = r_pp + (r/n)(-1)phi_p^2 = 0 and the f equation (f_pm = 0)  (C_pp = 0)
+[pass] D3d: Ellis, dual-null form: phi_pm + n/(2r)(r_p phi_m + r_m phi_p) = 0  (residual 0)
+[pass] D3c: Ellis: Misner-Sharp M = a^(2n-2)/(2 r^(n-1)) (tends to 0 at both ends)
+[pass] D4: Tangherlini (vacuum, M != 0) in dual-null form solves the sphere equation, C_pp = 0 and the f equation  (0, 0, 0)
+  static with a lapse: (e^nu r^n nu')' = 0 and (e^nu r^n phi')' = 0, so nu' = c e^{-nu}/r^n, phi' = q e^{-nu}/r^n;
+  with the G_ll constraint these give the two-parameter family (a, c) of [GGS09a]; integrated as ODEs in the code.
+[pass] D5: Roberts ghost solution (n = 2, f = 0, 1/2 < a): sphere eq., wave eq., C_pp, C_mm and f_pm = 0 hold exactly  (at a = 3/4)
+  Roberts ghost: r^2 = a(x+^2 + x-^2) - x+ x-, phi = sqrt2 atan(x- sin(th)/(x+ - x- cos(th))), cos th = 1/(2a), a > 1/2;
+  r_p > 0 iff x- < 2a x+, r_m > 0 iff x+ < 2a x-: the wedge x+/(2a) < x- < 2a x+ is anti-trapped, both rays regular.
+
+25 of 25 checks pass
