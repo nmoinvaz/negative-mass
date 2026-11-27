@@ -135,7 +135,7 @@ the analysis takes 2 min. The sweep stores no grid.
 
 1. The brief's "dl/dt = +0.58, +0.25" are positions (above).
 2. CMP2 at D = 5 and KX (above). The criteria were not moved.
-3. The brief's remark that G's static end state may carry a normal charge: not seen at D = 4 (≤ 1e-5), and at D = 5 the ratio is ≤ 6e-3 at t = 5 to 7 and below 1e-3 after. The pure-ghost T(γ₁) applies at the member's metric in any case (above).
+3. The brief's remark that G's static end state may carry a normal charge: not seen at D = 4 (≤ 1e-5), and at D = 5 the ratio is 2.6e-2 at t = 5, 7e-3 at t = 6, −6e-3 at t = 7 (the pulse's remnant) and below 1e-3 from t = 8. The pure-ghost T(γ₁) applies at the member's metric in any case (above).
 4. During development: a first D = 5 series used h rounded to six figures (p*ₕ ∝ h², 1e-9 off; the log was overwritten by the rerun, the rule's slip); `points40` read #40's `ed:` points into its dictionary and the control CTL failed on 8 of 40 points at D = 4,
    h = 0.01 until fixed; the development units were stopped once to add two checks at the coordinator's ruling. All kept in the raw README.
 5. The brief's planted velocity (the stall table's 0.58) would have been ≈ 8× the measured drift; v = 0.1 was kept (v = 0.5 for the lever arm).
