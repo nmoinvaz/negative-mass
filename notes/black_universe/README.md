@@ -281,6 +281,8 @@ three processes, 27 s for `check`, 6 minutes for `controls`, 126 MB at most.
 - [CHM99] M. W. Choptuik, E. W. Hirschmann, R. L. Marsa, "New critical behavior in Einstein-Yang-Mills collapse", PRD 60, 124011 (1999),
   arXiv:gr-qc/9903081. Verified against INSPIRE (record 497094); not read here. It is the issue's reference for the "type III" analogy.
 
+**Update from #223 (range and recount).** The counts above search W ∈ [0.01, 8]. #223 recounted the zero-charge members c = −10, −3, −1.1, −1, −0.9, −0.3, −0.01 with the same code on W ∈ [1e-5, 8] and, for c ≤ −1 (no throat in the static region), with a range-free Sturm count: the same counts (1 mode, 0 at c = −1), W equal to the table to 2.8e-9 (R1) and 3.6e-10 (R2). The other 13 members were not recounted. With a Maxwell field the c = −1 member is not stable: along the locus that keeps the horizon at the area minimum a growing mode with W = 3.8e-3 at q = 0.1 appears (numerical evidence). *Added by the coordinator:* #217's double-null development runs grow at a rate near κ at c = −1 itself; #232 compares that with the master equation.
+
 ## Coordinator's review
 
 Under review: `wip/i212-black-universe` at 08a414d, raw `I212-rpi5` at c50bd64. Review folder
@@ -583,3 +585,27 @@ a low-stage R2 run 15 s to 1.5 min), 117 MB at most; `check` about 1 min; `spect
 - [BW22] K. A. Bronnikov, R. K. Walia, "Field sources for Simpson–Visser spacetimes", PRD 105, 044039, arXiv:2112.13198. Read: Secs. II–IV in full for the equations used (the sources (10)–(22)); entry in `../literature.md`.
 - [BBS12] S. V. Bolokhov, K. A. Bronnikov, M. V. Skvortsova, "Magnetic black universes and wormholes with a phantom scalar", CQG 29, 245006, arXiv:1208.4619. Read: Secs. 1–3 for (1)–(20); entry in `../literature.md`.
 - [BF06], [BKZ12]: as above. [BW22] and [BBS12] were read from the arXiv PDFs (v1 of each); (20) of [BBS12] was transcribed from the page image.
+
+## Coordinator's review (#223)
+
+Review of branch `wip/i223-black-bounce` at a44d49d (`bounce.py` 2db4b58) and raw `I223-rpi5` at 476bed0, recorded in
+negative-mass-raw `I223-mac-review` (criteria 56439f9, runs c7b0bb8). On the Mac, nice 10.
+
+- **Scope.** The branch adds `bounce.py`, `bounce_output.txt` and the #223 section of this README, as the brief allowed.
+- **Rerun.**
+  - `check` gives 55 of 55, every verdict line equal to the runner's.
+  - `planted`, `planted_complex` and `complex` (S m = 0.2, 0.3, B1 q = 0.77) give every printed W to its 10 digits.
+  - `count` at R2 for S m = 1 and B1 q = 0.5 gives the roots to 1e-14.
+  - The other 218 count runs were not rerun.
+- **Independent check.**
+  - The method: a finite-difference eigenvalue problem for −∂²_{x*} + V̂ in the tortoise coordinate, the coordinator's own
+    code, sharing only V̂ and A with `bounce.py`.
+  - The members: five whose static region has no throat (S m = 0.75, 1, 5 and B1 q = 0, 0.5).
+  - The result: their real modes with W ≥ 0.005 come back within 2.5e-4 of the shooting (most within 3e-6), with no other
+    eigenvalue with W ≥ 1e-3. Both mutations fire.
+  - Not checked independently:
+    - the complex pairs, which sit at throat members where the problem is not self-adjoint;
+    - the weak modes below 1e-3. A 5 % change of V̂ adds or moves modes near W ≈ 0.005, so those modes are sensitive to
+      the potential.
+- **Follow-ups.** The runner's four recommended tasks are filed as #236 to #238: tasks 1 and 2 together, task 3, and
+  task 4. The c = −1 member is also the subject of #232.
