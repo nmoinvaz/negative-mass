@@ -102,6 +102,41 @@ fn cmd_starcheck(a: &Args) {
     }
 }
 
+/// the star's Taylor steps as data (#196): per step x0, x1 and the coefficients 0..=NS of (P, u, m, Z) about x0, which
+/// `Star::state` sums by Horner. 20 digits per coefficient (an f64 reader loses nothing).
+fn cmd_starsteps(a: &Args) {
+    let m = model(a);
+    let p = star_pars::<DD>(&m);
+    let cfg = solve_cfg(a);
+    let (pc, zc) = parse_star(a);
+    let r_end = a.f("rend", 62.0);
+    let st = star::build_star(pc, zc, &p, &cfg, r_end);
+    println!("{{\"cmd\":\"starsteps_head\",\"ns\":{},\"steps\":{},\"r_end\":{:e},\"pc\":\"{}\",\"zc\":\"{}\",\"rs\":{:e},\"startol\":{:e}}}", star::NS, st.steps.len(), st.r_end, pc.sci(34), zc.sci(34), cfg.rs, cfg.tol);
+    for s in &st.steps {
+        let f: Vec<String> = (0..4).map(|f| format!("[{}]", (0..=star::NS).map(|k| format!("\"{}\"", s.coef[f][k].sci(20))).collect::<Vec<_>>().join(","))).collect();
+        println!("{{\"cmd\":\"starstep\",\"x0\":{:e},\"x1\":{:e},\"coef\":[{}]}}", s.x0, s.x1, f.join(","));
+    }
+}
+
+/// J's tables as data (#196): per table step x0, x1 and the Taylor coefficients 0..NB of every entry of J0 and J1 about x0 (J = J0 + s^2 J1,
+/// l fixed), double-double rounded to 20 digits. `jtable l=5 pc= zc= rmin= rmax=`
+fn cmd_jtable(a: &Args) {
+    let m = model(a);
+    let l = a.u("l", 5);
+    let sp = star_pars::<DD>(&m);
+    let cfg = solve_cfg(a);
+    let (pc, zc) = parse_star(a);
+    let (rmin, rmax) = (a.f("rmin", 5e-4), a.f("rmax", 34.7));
+    let st = star::build_star(pc, zc, &sp, &cfg, rmax + 1.0);
+    let tab = table::build_table(&st, l, &m, rmin, rmax);
+    let pat: Vec<String> = tab.pattern.iter().map(|(i, j)| format!("[{},{}]", i, j)).collect();
+    println!("{{\"cmd\":\"jtable_head\",\"l\":{},\"nb\":{},\"steps\":{},\"pattern\":[{}],\"linear_defect\":{:e}}}", l, table::NB, tab.x0.len(), pat.join(","), tab.linear_defect);
+    let arr = |v: &Vec<[DD; table::NB]>| -> String { v.iter().map(|c| format!("[{}]", c.iter().map(|x| format!("\"{}\"", x.sci(20))).collect::<Vec<_>>().join(","))).collect::<Vec<_>>().join(",") };
+    for k in 0..tab.x0.len() {
+        println!("{{\"cmd\":\"jstep\",\"x0\":{:e},\"x1\":{:e},\"c0\":[{}],\"c1\":[{}]}}", tab.x0[k], tab.x1[k], arr(&tab.c0[k]), arr(&tab.c1[k]));
+    }
+}
+
 fn lane_dispatch(a: &Args) {
     match a.s("lane", "dd") {
         "f64" => run_d::<f64>(a),
@@ -318,6 +353,8 @@ fn main() {
         .spawn(move || match cmd.as_str() {
             "star" => cmd_star(&args),
             "starcheck" => cmd_starcheck(&args),
+            "starsteps" => cmd_starsteps(&args),
+            "jtable" => cmd_jtable(&args),
             "d" => lane_dispatch(&args),
             "jcheck" => cmd_jcheck(&args),
             "jjets" => cmd_jjets(&args),
@@ -327,7 +364,7 @@ fn main() {
             "rows" => lane_rows(&args),
             "rmplant" => rows::rmplant(&args),
             "qplant" => lane_qplant(&args),
-            _ => eprintln!("commands: star starcheck d jcheck planted rows rmplant qplant"),
+            _ => eprintln!("commands: star starcheck starsteps jtable d jcheck planted rows rmplant qplant"),
         })
         .unwrap();
     h.join().unwrap();
