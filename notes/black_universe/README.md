@@ -9,7 +9,7 @@ Status words as in AGENTS.md. Every count below is *numerical evidence* (a conve
 ## Result
 
 - Nineteen of the twenty black universes tested (c from −10 to −0.01 in units b = 1, c ≠ −1) have **exactly one growing radial mode**; the
-  member c = −1, whose horizon sits at the area minimum, has **none**. R1 and R2 agree to 1.2e-8 or better at every member, and an
+  member c = −1, whose horizon sits at the area minimum, has **none**. **Update from #232:** none under the condition used here, u = Y/ρ → 0 at the horizon, which sets Y = 0 on it. For perturbations with Y regular and nonzero on the horizon, the linear double-null response grows at κ (Y_h ∝ e^{κv}; numerical evidence, and the horizon exponents 1 ± W/A₁ checked symbolically in #232's review). Whether such perturbations are free in physical Cauchy data is #248. R1 and R2 agree to 1.2e-8 or better at every member, and an
   independent spectral solver gives the same counts.
 - This is the verdict of [BKZ12] member by member: no disagreement at the 20 members, eight of which they test in the time domain.
 - The stable member is isolated. For c → −1 from either side the growth rate tends to the surface gravity κ = A′(ρ_h)/2 = 2/π ≈ 0.6366
@@ -216,6 +216,7 @@ special class of black universes where the event horizon coincides with the mini
 need adding for it to be read correctly:
 - the "class" is one member of a one-parameter family (c = −1, 3πm = 2b), not an open set;
 - it is a knife edge: members at c = −1 ± 10⁻⁴ have a growing mode of rate κ to 3e-5, not a small one.
+  **Update from #232:** the rate is κ at c = −1 as well, for perturbations with Y_h ≠ 0; the member is stable only against perturbations with Y_h = 0, such as waves incident on an unperturbed horizon (`linear.md`).
 
 [BKZ12] show the instability of the M-AdS wormholes by regularized potentials (Fig 1) and time-domain runs (Fig 2); this work did not recompute them.
 

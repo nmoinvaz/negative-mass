@@ -172,3 +172,31 @@ linear.py mutations DIR PREFIX         # fired sets of stored logs DIR/PREFIX_<n
 ```
 
 `linear_output.txt` is `check`, `table`, `c1` and `mutations` of the runs of record (`I232-mac/runs`), in that order.
+
+## Coordinator's review
+
+Review of branch `wip/i232-c1-linear` at c4552dd and raw `I232-mac` at f5db91a, recorded in negative-mass-raw `I232-mac-review`
+(criteria 889f52d; amendment A1; runs 25b0c3a). On the Mac, nice 10.
+
+- **Scope.** The branch adds `linear_derive.py`, `linear.py`, their outputs and this note, nothing else.
+- **Rerun.** `linear_derive.py` gives 12 of 12 and `linear.py check` 18 of 18. Every line of `table` and `c1` appears
+  verbatim in `linear_output.txt`.
+- **Independent check** (`ind232.py`). The coordinator worked it by hand, then in sympy, from #212's printed master
+  equation, sharing no code.
+  - At c = −1 (ρ_h = 0, A₁ = 4/π) the horizon exponents of Y are 1 ± W/A₁, so {1/2, 3/2} at W = κ = 2/π.
+  - ρ^{1/2}e^{κt} equals a constant times e^{κv}(1 + O(ρ)), so the s = 1/2 branch at W = κ is V: smooth and nonzero on
+    the future horizon.
+  - At c = −1.01 and −0.99 the exponents at W = κ are ±1/2, so there that branch diverges.
+  - So the regular solution growing at κ exists at c = −1 only. This is why #212's condition u = Y/ρ → 0, which keeps
+    1 + W/A₁, removes it there and nowhere else.
+  - One check missed its bar by the review's numerics (K3, amendment A1). K3b passes.
+- **What it changes.**
+  - The c = −1 statement of #212 and #223 is corrected, not refuted: it holds for Y_h = 0.
+  - Whether the c = −1 black universe is unstable against physical perturbations turns on #248.
+  - #217's control is explained: its family lies in the horizon sector.
+- **Applied.** `README.md` (Result and the knife-edge item) and `critical_ghost.md` §1.1 carry the correction, marked as
+  from #232.
+- **Follow-ups.**
+  - #248: is the horizon sector free in Cauchy data? (task 4)
+  - #249: recount with a regular horizon condition, at #212's and #223's members and with the source term (tasks 1, 2, 5).
+  - #250: #217's lifetime law along class R and a tuned family (task 3).
