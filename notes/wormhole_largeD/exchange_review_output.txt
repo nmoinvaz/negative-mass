@@ -22,7 +22,7 @@ PASS    CL1: int_0^(pi/2) tan th Cl2(pi - 2 th) dth = 2.583856390024985014623026
 PASS    CL1a: the by-parts step: int tan C dth = 2.58385639002498501462302625559 against 2 int ln cos ln(2 cos) dth = 2.58385639002498501462302625559: 60.0 digits (bar 40)
 PASS    CL2: int_0^(pi/2) Cl2(pi - 2 th)^2 dth = 0.8500546799591151479520591945650989068897 against pi^5/360 = 0.8500546799591151479520591945650989068897: 60.0 digits (bar 40; quadrature error estimate 1.0e-100)
   clausen: 16 s
-  E-grid: N = 36, w = 1/2, V = 16, dps = 80, panels = 32; chain 12 s; Omega_0..2 against closed forms 44.2, 43.8, 43.7 digits; Omega_3 = -652.8401075700561254352393037996473610805
+  E-grid: N = 36, w = 1/2, V = 16, dps = 80, panels = 32; chain 13 s; Omega_0..2 against closed forms 44.2, 43.8, 43.7 digits; Omega_3 = -652.8401075700561254352393037996473610805
 PASS    P0: hierarchy on the E-grid against README's Y_1, L_1, Y_2, L_2 at the 576 of 1152 nodes with l <= V^2/4: worst |difference|/(1 + |value|) Y1 4.8e-81, L1 8.4e-42, Y2 3.6e-43, L2 9.9e-34 (bar 1e-30; the closed L_2 needs Cl2 and K)
 PASS    E1_3: G_3 against E1's right side: at the root 1.67e-75 against 6.47e-43 (terms of size 117.0); Omega_1 + 1/2: -6.28318530717958647692528676656 against -6.28318530717958647692528676656: 43.0 digits (bar 30)
 PASS    E1_4: G_4 against E1's right side: at the root 3.01e-74 against -4.27e-42 (terms of size 1.39e+3); Omega_2 + 1/2: -6.28318530717958647692528676656 against -6.28318530717958647692528676656: 42.2 digits (bar 30)
@@ -38,22 +38,22 @@ PASS    E3_5: int Y_4 [(ell - Omega0)/sin^2 + 1] dth = -2125.5563577635035145551
 PASS    E3G_5: G_5 (Omega_3 + 1/2) = -6.28318530717958647692528676656 against the reduced form with no Y_4, no Y_5: -6.28318530717958647692528676656: 40.4 digits (bar 30); its four terms -5489.5031, 1292.1853, -60.078104, 4251.1127
 PASS    BND: boundary terms: throat end b/th^p at the first two nodes th = 0.000238, 0.00214 (constant to 1%, and = the leading coefficient -2 Omega_(k-2) th where known), pi/2 end at the last node x = pi/2 - th = 2.58e-56 (bar |b| < 1e-30, and b/(x l^q) bounded along the grid): Y_3 cot: /th^1 -20.8467, -20.8467; outer 2.2e-49, b/(x l^4) at l = 30, 60, 100: 0.0251, 0.0105, 0.00579; Y_4 cot: /th^1 -148.739, -148.739; outer 1.8e-46, b/(x l^5) at l = 30, 60, 100: 0.0531, 0.0278, 0.0168; Y_5 cot: /th^1 1305.68, 1305.68; outer 1.8e-44, b/(x l^6) at l = 30, 60, 100: 0.00353, 0.00719, 0.00553; ell C_2: /th^3 8.31777, 8.31777; outer 3.2e-51, b/(x l^3) at l = 30, 60, 100: 2.18, 2.09, 2.05; ell C_3: /th^3 -46.6446, -46.6446; outer 8.1e-49, b/(x l^4) at l = 30, 60, 100: 1.64, 1.83, 1.9; ell C_4: /th^3 -107.509, -107.51; outer -1.1e-46, b/(x l^5) at l = 30, 60, 100: -1.95, -1.46, -1.27; cot ell: /th^1 -0.5, -0.5; outer -3.3e-54, b/(x l^1) at l = 30, 60, 100: -0.5, -0.5, -0.5; Y_4 P: /th^1 -412.391, -412.392; outer -2.3e-44, b/(x l^6) at l = 30, 60, 100: -0.0217, -0.0126, -0.00795
 PASS    GROW: growth (reported, no bar): local exponents between l = 30.04 and 59.89: Y_1 1.0, Y_2 2.1, Y_3 2.74, Y_4 4.06, Y_5 7.03, L_1 1.07, L_2 1.94, L_3 3.16, L_4 3.58; at the last node l = 255.99: Y_1/l^1 = -1.0, Y_2/l^2 = -1.463, Y_3/l^3 = 0.5148, Y_4/l^4 = 1.645, Y_5/l^5 = 0.6337
-  exch: 49 s
+  exch: 50 s
     k = 2: Omega_0 = -2.77258872223978123766892848583  slope -12.566370614359172954  (13 s)
     k = 3: Omega_1 = 10.4233603787385171432264808772  slope -12.566370614359172954  (19 s)
     k = 4: Omega_2 = 74.3693867279333175953846702958  slope -12.566370614359172954  (27 s)
-    k = 5: Omega_3 = -652.8401075700561254352393038  slope -12.566370614359172954  (34 s)
-  N=64 w=0.333333 V=24 dps=130 panels=72  96 s
+    k = 5: Omega_3 = -652.8401075700561254352393038  slope -12.566370614359172954  (35 s)
+  N=64 w=0.333333 V=24 dps=130 panels=72  97 s
     Omega0 = -2.7725887222397812376689284858327062723020005374410210164827200379735744878787788624234537465823404396406554197
     Omega1 = 10.423360378738517143226480877197420530720223217583558445877145986469352939691479272934107001307357142809376029
     Omega2 = 74.369386727933317595384670295846617266734143415020336877011113172380316896667573022563962938718880125390484875
     Omega3 = -652.8401075700561254352393037996473610804617475455782573645447454198495701098138568844651544623383771734452148
-PASS    GR1: Omega_2 on the third grid 74.36938672793331759538467029584661726673414341502 against #26's A70 74.36938672793331759538467029584661726673414341502 (order4_output.txt, 48 printed digits): 50.3 digits (bar 40)
-PASS    GR2: Omega_3 on the third grid -652.84010757005612543523930379964736108046174754558 against #208's B4 -652.84010757005612543523930379964736108046174754558 (order5_output.txt, 113 printed digits): 87.8 digits (bar 40)
+PASS    GR1: Omega_2 on the third grid 74.36938672793331759538467029584661726673414341502 against #26's A70 74.36938672793331759538467029584661726673414341502 (order4_output.txt, 47 printed decimals): 50.3 digits (bar 40)
+PASS    GR2: Omega_3 on the third grid -652.84010757005612543523930379964736108046174754558 against #208's B4 -652.84010757005612543523930379964736108046174754558 (order5_output.txt, 107 printed decimals): 87.8 digits (bar 40)
 PASS    GR3: planted: Omega_0, Omega_1 against -4 ln 2 and 2 pi^2/3 + 8 ln^2 2: 87.8 and 87.3 digits (bar 40)
 PASS    GR4: slope of G_k in Omega_(k-2), k = 2..5, against -4 pi: 88.8, 88.8, 88.8, 88.8 digits (bar 40)
   reported: Omega_2 against 80 zeta(3) - (8/3) pi^2 ln 2 - (32/3) ln^3 2: 87.2 digits; Omega_3 against #208's closed form: 87.8 digits
-  grid: 96 s
+  grid: 97 s
 PASS    CT_sym_S1: fired ['S1'] of 11 checks; declared targets ['S1']
 PASS    CT_sym_S2: fired ['S2'] of 11 checks; declared targets ['S2']
 PASS    CT_sym_c1: fired ['S3', 'S5'] of 11 checks; declared targets ['S3', 'S5']
@@ -83,4 +83,4 @@ PASS    CT_grid_wrongh: fired ['GR1', 'GR2', 'GR3'] of 4 checks; declared target
 PASS    CT_grid_wrongOm1: fired ['GR1', 'GR2'] of 4 checks; declared targets ['GR1', 'GR2']; declared silent and silent ['GR3', 'GR4']
   controls on target: 27 of 27
 
-66 passed, 0 failed of 66 checks; 198 s
+66 passed, 0 failed of 66 checks; 200 s

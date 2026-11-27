@@ -30,7 +30,7 @@ and checked.
   k = 2 (E1) and m = 1, 2 (E2). The boundary terms decay or scale as predicted (table in §6).
 - **Clausen.** ∫tan θ Cl₂(π − 2θ) = π³/12 from the moments of ln cos, and again from the sine series (two routes);
   ∫Cl₂(π − 2θ)² = π⁵/360 from orthogonality and uniform convergence, without completeness. Quadrature agrees to 60 digits (bar 40).
-- **Third grid** (N = 64, w = 1/3, V = 24): Ω₂ against #26's A70 to 50.3 digits (A70 prints 48), Ω₃ against #208's B4 to 87.8 digits
+- **Third grid** (N = 64, w = 1/3, V = 24): Ω₂ against #26's A70 to 50.3 digits (A70 prints 47 decimals), Ω₃ against #208's B4 to 87.8 digits
   (bar 40 each).
 - **Controls.** 27 of 27 on target (§9); the silences are listed there.
 - **Comparison with omega2.md and omega3.md** (§8): no difference in a sign, constant or result. Differences in route and in what is
@@ -61,7 +61,7 @@ L_k = -2\Omega_{k-1} + u\,C_k,\qquad C_k(\theta) = 2\int_0^\theta \frac{h_k - \O
 ```
 
 **Hypothesis H_k.** G_j = 0 for 2 ≤ j ≤ k − 1 (G₁ = 0 identically). That is, Ω₀ … Ω_{k−3} have their values. Ω_{k−2}
-is free, and Ω_{k−1} cancels in G_k. Every identity below is an identity in Ω_{k−2}, and §7 tests it at three values.
+is free, and Ω_{k−1} cancels in G_k. Every identity below is an identity in Ω_{k−2}, and §6 tests it at several values.
 
 **Four facts, used at every boundary.**
 
@@ -76,7 +76,8 @@ is free, and Ω_{k−1} cancels in G_k. Every identity below is an identity in �
   and h_j are polynomially bounded in l. Because G_j = 0, C_j(θ) = −2∫_θ^{π/2}(h_j − Ω_{j−1})/sin²φ dφ, and with 1/sin²φ ≤ 2 on
   [π/4, π/2] and l(φ) increasing, |C_j| ≤ K x l^q, so |u C_j| ≤ K l^q. Hence L_j is O(l^q) and Y_{j+1} = ∫F_j dl is O(l^{q+1}).
   Without G_j = 0 the term u G_j ~ G_j/x grows like e^{l/2}, and every integral below diverges. *Numerical evidence*
-  (GROW): Y_k ∝ l^{k+1}, L_k ∝ l^k at l = 256.
+  (GROW): at l = 256, Y_k/l^k is −1.0, −1.46, 0.51, 1.65, 0.63 for k = 1 … 5, so Y_k grows no faster than l^k; the induction's
+  bound l^{k+1} is not sharp.
 - **F4, convergence.** By F2 and F3 each integral below converges at both ends, so each split of an integral is legal.
   At θ → 0 the integrands are bounded (O(θ²)/sin²θ), at θ → π/2 they are polynomials in l times at most a bounded function,
   and ∫₀^{π/2} lⁿ dθ < ∞.
@@ -315,13 +316,13 @@ Declared before the run (raw README): N = 64, w = 1/3, V = 24, dps 130, 72 panel
 
 | check | against | digits | bar |
 |---|---|---|---|
-| GR1 Ω₂ = 74.369386727933317595384670295846617266734143415020337… | #26's A70 (`order4_output.txt`, 48 printed digits) | 50.3 | 40 |
-| GR2 Ω₃ = −652.84010757005612543523930379964736108046174754557825736… | #208's B4 (`order5_output.txt`, 113 printed digits) | 87.8 | 40 |
+| GR1 Ω₂ = 74.369386727933317595384670295846617266734143415020337… | #26's A70 (`order4_output.txt`, 47 printed decimals) | 50.3 | 40 |
+| GR2 Ω₃ = −652.84010757005612543523930379964736108046174754557825736… | #208's B4 (`order5_output.txt`, 107 printed decimals) | 87.8 | 40 |
 | GR3 Ω₀, Ω₁ | −4 ln 2, 2π²/3 + 8 ln²2 | 87.8, 87.3 | 40 |
 | GR4 slope of G_k in Ω_{k−2}, k = 2 … 5 | −4π | 88.8 (each) | 40 |
 | reported: Ω₂, Ω₃ | 80ζ(3) − (8/3)π² ln 2 − (32/3) ln³2, #208's closed form | 87.2, 87.8 | |
 
-GR1's 50.3 digits are set by A70's 48 printed digits.
+GR1's 50.3 digits are set by the 47 decimals A70 prints.
 
 ## 8. Comparison with omega2.md and omega3.md
 
@@ -418,7 +419,7 @@ Silences that are results:
 
 ## Files
 
-- `exchange_review.py`, `exchange_review_output.txt`: the checks and the declared run with the controls' summary (66 checks, 198 s
+- `exchange_review.py`, `exchange_review_output.txt`: the checks and the declared run with the controls' summary (66 checks, 200 s
   on rpi5; run `python3 exchange_review.py sym exact clausen exch grid ctlsum --ctldir=<raw folder> --ctlprefix=ctl` from this
   directory after the controls, `run_controls.sh` of the raw folder, have run).
 - Raw `I209-rpi5` (negative-mass-raw): README with the declarations, development logs `dev*`, declared runs `run_*`, control runs
