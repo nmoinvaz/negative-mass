@@ -313,3 +313,273 @@ changed files are those the brief names.
   belong in `notes/literature.md` with #211.
 - `critical_ghost.md` §1.1's row carries an update from this issue.
 - **Follow-ups.** #217 (the evolution of a one-mode member, task 2) and #218 (the polar and M-AdS counts, tasks 1 and 3).
+
+
+# Sourced black bounce and magnetic black universes (#223)
+
+November 2026, #223 (branch `wip/i223-black-bounce`; raw `I223-rpi5` in negative-mass-raw). Code `bounce.py` (it imports the integrator
+helpers of `stability.py`), output `bounce_output.txt`. Method and template: #212 (above). Status words as in AGENTS.md: every count
+below is *numerical evidence*; the algebra is *checked symbolically* (sympy, inside `bounce.py check`). The result is stated for the two
+sources below only: [BW22] say that the stability of an SV geometry may depend on its source.
+
+## Result (#223)
+
+- Of 55 members, 54 have at least one growing radial mode. The exception is B2 at q = 0, which is #212's stable member c = −1; no member
+  with a charge or a source term is stable. A Maxwell field does not stabilize the c = −1 member: along the locus that keeps its horizon
+  at the area minimum, a growing mode with W = 3.8e-3 (q = 0.1) … 0.168 (q = 0.81) appears at every charge tested.
+- A magnetic field adds no radial degree of freedom (*checked symbolically*): in the gauge δφ = 0 the linearized system reduces to one
+  second-order equation for Y = δR, whose only new term is `−R A Λ_R` in the potential. The conjecture of the issue holds for both sources.
+- Zero charge returns #212's table: seven members (c = −10, −3, −1.1, −1, −0.9, −0.3, −0.01), the same counts, W within 2.8e-9 (R1) and
+  3.6e-10 (R2) of the table. The Ellis wormhole through the S code gives W²a² = 1.397052434332 (R2), 1.2e-12 from `w2_output.txt`.
+- **Sourced black bounce (S, 16 members, m = M/a from 0 to 10):** every member is unstable. Real growing modes at 14 members;
+  a **complex-conjugate pair** (oscillatory growth) at m = 0.2 and 0.3, where there is no real mode; and, for 0.55 ≤ m ≤ 3, a
+  **second, exponentially weak real mode** next to the one of rate 0.06 … 0.24 (rates in Sec. 5); at m = 5 and 10 the Sturm count is 1.
+- **Magnetic black universes (B, 35 members on three slices):** growing modes at every q > 0 on all three; the charge adds a second, weak
+  real mode on B1 and B3 whose rate rises with q (Sec. 5), and one complex pair appears at B1, q = 0.77.
+- The counts of the main stage agree between R1 and R2 at every member (rates to 1.3e-7, declared 1e-6). **S9 is NOT MET** at 7 members as
+  worded (the range-free Sturm count is 2, shooting in the declared range finds 1; Sec. 6). **S6 is met on both grids at 41 of 55 members** and not
+  at 14 (Sec. 8).
+
+## 1. The sources
+
+Static, spherically symmetric, `ds² = A dt² − dx²/A − R² dΩ²`, `R = √(x² + b²)`, units b = 1, a phantom scalar with V(φ) and a
+magnetic field F_θφ = q sin θ, `F = 2q²/R⁴`, Lagrangian L(F) ([BW22] (10)–(17), [BBS12] (1), (5)–(7)).
+
+| | metric | scalar and field |
+|---|---|---|
+| **S**, Simpson–Visser with [BW22]'s source at Q = 0 | `A = 1 − 2m/R`, m = M/a, a = 1 | `φ = arctan x`, `V = 4m cos⁵φ/5`, `L = 12m/(5R⁵)`, i.e. `L ∝ F^(5/4)` ([BW22] (19), (21), (22)) |
+| **B**, [BBS12] | `A = R² B`, `B′ = 2(p − x + 2q² arctan x)/(1 + x²)²`, `p = 3m − πq²`, B → 0 at +∞ ([BBS12] (15)–(18)) | `φ = arctan x`, V from (9) = the printed (20), Maxwell field with energy density `q²/R⁴` (7) |
+
+S is a wormhole for m < 0.5 (a > 2m), a one-way wormhole with an extremal horizon at the throat for m = 0.5, a black bounce for m > 0.5;
+m = 0 is the Ellis wormhole. B has p > 0 (a de Sitter end); q = 0 is #212's family (3m = −2c/π). Not computed: the RN-SV source of [BW22],
+the symmetric p = 0 and the p < 0 members of [BBS12], electric fields, other sources of the same metrics.
+
+Checked (`bounce.py check`, 55 checks, residual 0): the closed forms against the field equations; [BW22] (11)–(13), (16), (17), (21), (22) at
+Q = 0 against an independent Einstein tensor in their conventions (signature +−−−, `G^ν_μ = −T^ν_μ`: the printed source is right); [BBS12]
+(8)–(12), (15) as printed, and the printed V (20) against (9). No printed equation checked here disagrees with its derivation.
+
+## 2. The equation
+
+Linearization of `R_μν − ε∂_μφ∂_νφ − V g_μν − g_μν S_μ = 0` (ε = −1; `S_t = S_x = Λ + rΛ′/2`, `S_θ = Λ`; Λ = L/2 the NED energy density) and of
+`ε□φ = V_φ`, in the gauge δφ = 0, e^(Wt) time dependence, `Y = δR` (φ_c = √2 φ is #212's normalization). Checked symbolically:
+
+- `dF = 0` with `F_θφ = f(t, x) sin θ` forces f constant, `∇_μ(L_F F^(μν)) = 0` holds on the perturbed metric, and `F = 2q²/r⁴` exactly:
+  the NED stress tensor depends on the metric only through r, so a radial perturbation has no field of its own;
+- the tx equation gives δλ, the scalar equation δν′, the θθ equation the master equation; the tt and xx equations then hold identically,
+  in the gauge δφ = 0 and in the gauge δR = 0, and the gauge map `F = −φ₀′Y/R′` takes one onto the other (residual 0).
+
+```math
+Y'' = \Big(\frac2x - \frac{A'}A\Big)Y' + \Big(\frac1{R^4} - \frac{A'}{A x R^2} - \frac2{A R^2} - \frac{R\,\Lambda_R}A + \frac{W^2}{A^2}\Big)Y,\qquad
+u_{x_*x_*} = (\hat V + W^2)u,\quad u = Y/x,
+```
+
+`V̂ = V̂_212 − R A Λ_R`, with `V̂_212` of Sec. 2 above and `R Λ_R = −6m/R⁵` (S), `−4q²/R⁴` (B), so the new term is `+6mA/R⁵` and `+4q²A/R⁴`. Only Λ_R
+enters (not Λ, not Λ_RR). The NED extension of [BKZ12] (41), derived here: `A·Ũ = ε φ′²/R′² (R²(V + Λ) − 1) + 2φ′R V_φ/R′ + εV_φφ`, i.e. V → V + Λ in the
+first term only; `V̂ = A²Ũ + R_(x*x*)/R` to 1e-29 at four members. `V̂` is real, so growing modes (ω = iW) with real W² are the negative eigenvalues of
+`−∂²_(x*) + V̂`; a throat in the static region makes the problem a continuation through x = 0 that is not self-adjoint, and W² may be complex (Sec. 7).
+
+## 3. Method
+
+As #212 (Sec. 3), for the static region outside the outermost horizon x_h, open to x → +∞: ingoing at the horizon, decaying at infinity, Y continued
+along a half circle in the complex x-plane through the throat when it lies in the region; a growing mode is a sign change of the Wronskian mismatch on a log grid of W,
+refined by Brent. New here: the extremal horizon of the one-way wormhole (`x_* → −∞` like −2/x, a start at x₀ = clip(0.04W, 1e-4, 0.1)); a horizon exactly at the
+throat (B2); the main stage W ∈ [1e-3, 8] (80 points R1, 200 R2, rtol 1e-9, 1e-12) and a **low stage** W ∈ [1e-5, 1e-3] (40, 100 points; outer radius
+`max(rmax0, 20/W)`, up to 2e6; for B, A and A′ from a series in 1/x at x ≥ 30, which keeps 1e-16 where the closed form loses 1e-11); the **Sturm count** (S9),
+the nodes of the zero-energy solution of `u_(x*x*) = V̂u` regular at the horizon for x_h ≥ 0, which has no W grid and so no range; the spectral check S6 as #212's
+(Chebyshev, N = 401 and 801, plain grid for box X ≤ 150, `x_* = X sinh(5ξ)/sinh 5` above, box `X = max(X₀, k/W)` from the smallest shooting rate); and a **complex-W shooting** C1
+(a 2-D root of the Wronskian mismatch, analytic normalization, from the spectral λ). Planted: P1 Ellis through S, P2 zero charge, P3 a weak bound state W = 3e-5 of a known potential
+through the low stage's machinery (8.8e-11 R1, 2.8e-13 R2), P4 a complex bound state W = 0.3 + 0.2i (2.4e-10, 1.4e-13). Declarations, amendments and the development history, with
+every control's target and prediction, are in the raw README (A1–A10, D1–D12).
+
+## 4. The counts
+
+W in units 1/b (b = 1, the throat radius, a for S); Sturm = nodes of the zero-energy solution (x_h ≥ 0 only); "unresolved" = the Sturm count exceeds the roots
+found down to 1e-5, so the rate lies below 1e-5. R1 and R2 agree at every row (main stage ≤ 1.3e-7, low stage ≤ 3.2e-6 relative). Full table with 10 digits, nodes, κ,
+R1 v R2 in `bounce_output.txt`.
+
+### S, sourced black bounce
+
+| m = M/a | a/m | static region | x_h | κ | real modes, W ∈ [1e-3, 8] | real modes, W ∈ [1e-5, 1e-3] | Sturm | complex pair (Re W, ± Im W) |
+|---|---|---|---|---|---|---|---|---|
+| 0 | ∞ | wormhole (no horizon) | - | - | 1.18197 | - | - | - |
+| 0.1 | 10 | wormhole (no horizon) | - | - | 0.55641; 0.608131 | - | - | - |
+| 0.2 | 5 | wormhole (no horizon) | - | - | none | - | - | 0.506993 +0.36810i |
+| 0.3 | 3.33333 | wormhole (no horizon) | - | - | none | - | - | 0.398398 +0.38720i |
+| 0.4 | 2.5 | wormhole (no horizon) | - | - | 0.0107401 | - | - | - |
+| 0.45 | 2.22222 | wormhole (no horizon) | - | - | 0.0942891 | - | - | - |
+| 0.5 | 2 | one-way, extremal x_h = 0 | 0 | 0 | 0.202427 | - | 1 | - |
+| 0.55 | 1.81818 | black bounce | 0.458258 | 0.189363 | 0.00456251; 0.2374 | - | 2 | - |
+| 0.6 | 1.66667 | black bounce | 0.663325 | 0.230321 | 0.00239336; 0.241409 | - | 2 | - |
+| 0.75 | 1.33333 | black bounce | 1.11803 | 0.248452 | 0.22001 | 0.000553715 | 2 | - |
+| 1 | 1 | black bounce | 1.73205 | 0.216506 | 0.177454 | 0.000105581 | 2 | - |
+| 1.5 | 0.666667 | black bounce | 2.82843 | 0.157135 | 0.123533 | 1.21486e-05 | 2 | - |
+| 2 | 0.5 | black bounce | 3.87298 | 0.121031 | 0.093944 | -; 1 (< 1e-5, unresolved) | 2 | - |
+| 3 | 0.333333 | black bounce | 5.91608 | 0.0821678 | 0.063231 | -; 1 (< 1e-5, unresolved) | 2 | - |
+| 5 | 0.2 | black bounce | 9.94987 | 0.0497494 | 0.0381208 | - | 1 | - |
+| 10 | 0.1 | black bounce | 19.975 | 0.0249687 | 0.0190986 | - | 1 | - |
+
+### B1, fixed mass m = 2/π (c = −3 at q = 0); the horizon crosses the throat at q ≈ 0.7595
+
+| q | x_h | κ | p | real modes, W ∈ [1e-3, 8] | real modes, W ∈ [1e-5, 1e-3] | Sturm | complex pair |
+|---|---|---|---|---|---|---|---|
+| 0 | 1.11873 | 0.351374 | 1.90986 | 0.282775 | - | 1 | - |
+| 0.1 | 1.11063 | 0.351274 | 1.87844 | 0.283023 | 0.000172078 | 2 | - |
+| 0.2 | 1.0858 | 0.350865 | 1.7842 | 0.283736 | 0.000723425 | 2 | - |
+| 0.3 | 1.04242 | 0.349752 | 1.62712 | 0.00176878; 0.284786 | - | 2 | - |
+| 0.4 | 0.976725 | 0.347002 | 1.4072 | 0.00355847; 0.285843 | - | 2 | - |
+| 0.5 | 0.881041 | 0.34035 | 1.12446 | 0.00665847; 0.286012 | - | 2 | - |
+| 0.6 | 0.73732 | 0.323267 | 0.778886 | 0.0126297; 0.282413 | - | 2 | - |
+| 0.7 | 0.480991 | 0.267061 | 0.370479 | 0.0286422; 0.260702 | - | 2 | - |
+| 0.74 | 0.264398 | 0.194611 | 0.189523 | 0.0502899; 0.224485 | - | 2 | - |
+| 0.76 | -0.0147199 | 0.092972 | 0.0952754 | 0.102543; 0.152211 | - | - | - |
+| 0.77 | -1.43678 | 0.11172 | 0.047209 | 0.0395523 | - | - | 0.12126 +0.09153i |
+| 0.775 | -2.8048 | 0.152503 | 0.0229402 | 0.0737792 | - | - | - |
+
+### B2, horizon at the throat, m = (2/3π)(1 + q² + π²q²/4); q = 0 is c = −1; κ = p
+
+| q | x_h | κ | p | real modes, W ∈ [1e-3, 8] | real modes, W ∈ [1e-5, 1e-3] | Sturm | complex pair |
+|---|---|---|---|---|---|---|---|
+| 0 | 0 | 0.63662 | 0.63662 | none | - | 0 | - |
+| 0.1 | 0 | 0.627278 | 0.627278 | 0.00376254 | - | 1 | - |
+| 0.2 | 0 | 0.599253 | 0.599253 | 0.0150493 | - | 1 | - |
+| 0.3 | 0 | 0.552544 | 0.552544 | 0.033276 | - | 1 | - |
+| 0.4 | 0 | 0.487152 | 0.487152 | 0.0571826 | - | 1 | - |
+| 0.5 | 0 | 0.403076 | 0.403076 | 0.0850395 | - | 1 | - |
+| 0.6 | 0 | 0.300316 | 0.300316 | 0.114664 | - | 1 | - |
+| 0.7 | 0 | 0.178873 | 0.178873 | 0.143124 | - | 1 | - |
+| 0.75 | 0 | 0.111145 | 0.111145 | 0.155606 | - | 1 | - |
+| 0.78 | 0 | 0.0682668 | 0.0682668 | 0.162101 | - | 1 | - |
+| 0.8 | 0 | 0.0387468 | 0.0387468 | 0.165884 | - | 1 | - |
+| 0.81 | 0 | 0.0237065 | 0.0237065 | 0.167585 | - | 1 | - |
+
+### B3, fixed mass m = 0.2/π (c = −0.3 at q = 0), throat in the static region
+
+| q | x_h | κ | p | real modes, W ∈ [1e-3, 8] | real modes, W ∈ [1e-5, 1e-3] | Sturm | complex pair |
+|---|---|---|---|---|---|---|---|
+| 0 | -0.926754 | 0.6013 | 0.190986 | 0.97008 | - | - | - |
+| 0.03 | -0.93831 | 0.598328 | 0.188158 | 0.00153827; 0.970845 | - | - | - |
+| 0.06 | -0.974442 | 0.589143 | 0.179676 | 0.00629203; 0.973147 | - | - | - |
+| 0.09 | -1.04014 | 0.572862 | 0.165539 | 0.0146504; 0.977003 | - | - | - |
+| 0.12 | -1.14626 | 0.547742 | 0.145747 | 0.0272512; 0.982445 | - | - | - |
+| 0.15 | -1.31629 | 0.510551 | 0.1203 | 0.0450033; 0.989519 | - | - | - |
+| 0.18 | -1.6088 | 0.454889 | 0.0891983 | 0.069091; 0.998294 | - | - | - |
+| 0.2 | -1.95501 | 0.40076 | 0.0653222 | 0.0893425; 1.00514 | - | - | - |
+| 0.22 | -2.64605 | 0.320925 | 0.0389328 | 0.113382; 1.01284 | - | - | - |
+| 0.23 | -3.39754 | 0.262008 | 0.0247957 | 0.126873; 1.01704 | - | - | - |
+| 0.24 | -5.49002 | 0.171477 | 0.0100302 | 0.141271; 1.02149 | - | - | - |
+
+## 5. The second, weak real mode and the charge dependence, as observed
+
+No reading of these modes is offered here.
+
+- **S.** The real root of largest rate: 1.1820 (m = 0, Ellis), 0.5564 and 0.6081 (0.1), none (0.2, 0.3: a complex pair), 0.0107 (0.4), 0.0943 (0.45), 0.2024 (0.5, extremal), 0.2374 (0.55),
+  0.2414 (0.6), 0.2200 (0.75), 0.1775 (1), 0.1235 (1.5), 0.0939 (2), 0.0632 (3), 0.0381 (5), 0.0191 (10). For 0.55 ≤ m ≤ 3 there is a second real root, W = 4.56e-3 (m = 0.55, one node), 2.39e-3 (0.6, one node),
+  5.54e-4 (0.75), 1.06e-4 (1), 1.21e-5 (1.5); at m = 2 and 3 the Sturm count is 2 and no root is found above 1e-5; at m = 5 and 10 the Sturm count is 1.
+- **B1** (m = 2/π): the strong mode stays at 0.2828 … 0.2860 for q ≤ 0.5 and falls to 0.2245 at q = 0.74; the weak mode is W = 1.72e-4 (q = 0.1), 7.23e-4 (0.2), 1.77e-3 (0.3), 3.56e-3 (0.4), 6.66e-3 (0.5),
+  0.0126 (0.6), 0.0286 (0.7), 0.0503 (0.74): W/q² = 0.0172, 0.0181, 0.0197, 0.0222, 0.0266. Past the horizon–throat crossing: two modes at q = 0.76 (0.1025, 0.1522), one at 0.77 (0.0396, and the complex pair) and 0.775 (0.0738).
+- **B2:** W = 3.763e-3 (q = 0.1), 0.01505 (0.2), 0.03328 (0.3), 0.05718 (0.4), 0.08504 (0.5), 0.1147 (0.6), 0.1431 (0.7), 0.1556 (0.75), 0.1621 (0.78), 0.1659 (0.8), 0.1676 (0.81): W/q² = 0.3763, 0.3762, 0.3697, 0.3574, 0.3402, …
+  one mode at every q > 0 and none at q = 0.
+- **B3:** the first mode rises slowly from 0.9701 (q = 0) to 1.0215 (q = 0.24); a second mode appears at every q > 0 tested: W = 1.54e-3 (0.03), 6.29e-3 (0.06), 0.01465 (0.09), 0.02725 (0.12), 0.04500 (0.15),
+  0.06909 (0.18), 0.08934 (0.2), 0.1134 (0.22), 0.1269 (0.23), 0.1413 (0.24): W/q² = 1.709, 1.748, 1.809, 1.892, 2.000.
+
+## 6. S9: the Sturm count against the shooting count
+
+The shooting counts of record use the declared range W ∈ [1e-3, 8]; the Sturm count has no range. **S9 is NOT MET as worded at 7 of the 33 members where it applies (x_h ≥ 0)**, as found (not loosened; the low stage was added, A2):
+
+| member | shooting, W ∈ [1e-3, 8] | Sturm | low stage, W ∈ [1e-5, 1e-3] | count |
+|---|---|---|---|---|
+| S m = 0.75 | 1 (0.220010) | 2 | 5.53715e-4 | 2 |
+| S m = 1 | 1 (0.177454) | 2 | 1.05581e-4 | 2 |
+| S m = 1.5 | 1 (0.123533) | 2 | 1.21486e-5 | 2 |
+| S m = 2 | 1 (0.093944) | 2 | none | 2, one rate < 1e-5, unresolved |
+| S m = 3 | 1 (0.063231) | 2 | none | 2, one rate < 1e-5, unresolved |
+| B1 q = 0.1 | 1 (0.283023) | 2 | 1.72078e-4 | 2 |
+| B1 q = 0.2 | 1 (0.283736) | 2 | 7.23425e-4 | 2 |
+
+Each weak root is found at R1 and R2 (agreement 1e-7 … 3.2e-6) and by the Sturm count. At the 26 other members with x_h ≥ 0 the Sturm count equals the shooting count in range.
+At the throat members (no Sturm count) the low stage found no root below 1e-3 at any member; a weak mode there would be seen only by shooting and by the spectral check.
+
+## 7. The complex pairs
+
+Eigenvalues λ = W² of the spectral problem (S-B grid, mapped, box from W_ref = 0.03) with Re λ > 1e-3 and Im λ ≠ 0, at 3 of the 55 members; each refined by shooting at complex W (C1, R1 and R2,
+declared: R1 v R2 to 1e-6 and λ to 1e-3 of the spectral value; found: 1.3e-10 … 4.9e-10 and 9e-13 … 5.7e-10):
+
+| member | W (Re ± i Im) | λ = W² | real modes of the shooting scan |
+|---|---|---|---|
+| S m = 0.2 | 0.5069929 ± 0.3680959i | 0.1215472 ± 0.3732441i | none |
+| S m = 0.3 | 0.3983976 ± 0.3872015i | 0.0087956 ± 0.3085203i | none |
+| B1 q = 0.77 | 0.1212596 ± 0.0915307i | 0.0063260 ± 0.0221979i | 1 (0.0396) |
+
+At S m = 0.1 the shooting finds two real roots (0.5564, 0.6081) that are close to each other; at m = 0.4 one (0.0107). The complex search is local to the spectral eigenvalues (no argument-principle count),
+so a pair at another member that the spectral grids miss is not excluded.
+
+## 8. Checks and controls
+
+| check | what | result |
+|---|---|---|
+| S1 | closed forms and printed sources against the field equations (sympy, residual 0); printed (20) | 55 of 55 checks pass |
+| S2, S3 | float64 background against mpmath (incl. the low-stage series); horizons | 3.7e-13 (declared 1e-11); 9e-41 |
+| S4 | linearization, generic A, R, φ₀, Λ(R): background, tt/xx after the master equation (two gauges), gauge map, (41) with V → V + Λ, `dF = 0`, NED equation | all 0 |
+| S5, S8 | family coefficients against the generic equation (S and B, 4 members); V̂ against the δR = 0 gauge | ≤ 8e-31; ≤ 8e-29 |
+| P1, P2 | Ellis through S; zero charge against #212 (7 members) | 3.3e-10 / 1.2e-12; ≤ 2.8e-9 / 3.6e-10 |
+| P3, P4 | weak bound state W = 3e-5; complex bound state 0.3 + 0.2i | 8.8e-11 / 2.8e-13; 2.4e-10 / 1.4e-13 |
+| R | main stage R1 v R2; low stage R1 v R2 | 55 of 55 (≤ 1.3e-7); 55 of 55 (≤ 3.2e-6) |
+| S9 | Sturm against shooting in range (x_h ≥ 0) | **NOT MET at 7 members** (Sec. 6) |
+| S6 | spectral, S-A and S-B | both grids at 41 of 55 members; not at 14 |
+| C1 | complex shooting at the 3 complex eigenvalues | 3 of 3 |
+
+S6, the 14 members: **3 with complex eigenvalues** (S m = 0.2, 0.3, B1 q = 0.77: the spectral check finds λ that the real-W shooting cannot, Sec. 7); **7 with a weak mode** (S m = 0.6 at S-B, B1 q = 0.3, 0.4 (S-B), B2 q = 0.1, B3 q = 0.03, 0.06, 0.09)
+where a missed mode or a rate off by 3e-3 … 0.5 is the discretization of a weakly bound state (the energy of such a state is hypersensitive); **4 at S-A only** (B3 q = 0.2 … 0.24, second mode missed at N = 401). At the three weak
+throat members B3 q = 0.03, 0.06, 0.09 and B2 q = 0.1 the second mode is confirmed only by R1 and R2 of the shooting (a scratch run at N = 2401 moved the spectral rate at B3 q = 0.06 from 0.0092 to 0.0069 against the shooting 0.0063; not part of the record).
+
+Controls (`bounce.py controls`; each `--mutate=` must make its target fire): 26 of the 27 declared controls fire, **one is silent: `cplx_conj` on P4** (the conjugate of W in the left start vector; the growing solution dominates, the wrong
+admixture is suppressed by e^(−2 Re W r₀), as #212's horizon-exponent control). `cplx_hypot` (the real, non-analytic normalization; P4 finds no root at R1) was **added after the runs of record and is not part of the declared set**;
+its target, P4, was computed in run 3 and it fires again in run 4. Those that change a count: `eps` (3 modes instead of 1 at Ellis), `throat_wall` (0), `ned_off` (2 → 1 at B3, q = 0.15), `scan_range` (0
+against Sturm 2), `sturm_sign` (Sturm 0 against 2), `spec_sign` (0 against 2), `rmax_low` (0 against 1). `ned_off` and `cplx_ned` show that the NED term matters; it is guarded by S1, S4, S5, S8. The agreement controls
+(`hz_start`, `ned_off`, `rmax_low`) compare a mutated R1 with an unmutated R2. A control that was mis-built (`cplx_ned` mutated the spectral reference too) is described in the raw README (A10).
+
+## 9. What this does not show
+
+- Only radial (ℓ = 0) perturbations in the static region outside the outermost horizon; polar and axial modes, the region beyond the horizon, M-AdS and p ≤ 0 members, electric fields and the
+  RN-SV source are not computed; the counts are for the members listed, nothing between them.
+- A mode count rests on a sign-change search of the declared ranges, a range-free Sturm count at x_h ≥ 0 and a spectral count; complex pairs are searched only near the spectral eigenvalues;
+  no argument-principle count and no rigorous bound.
+- Nothing is said about whether a bounce or a universe forms from collapse; these are linear modes of static solutions of two particular sources.
+- [BW22] note that the same geometry may be stable with another source; the S results hold for the source with V(φ) and L(F) above. The charge slices B1–B3 are one-parameter cuts of a two-parameter family.
+
+## 10. What #212's README, `critical_ghost.md` §1.1 and #211 should say
+
+Proposed wording, for the coordinator (files not touched here).
+
+**#212 README, Sec. 4 or 11, one added paragraph:** *Range and recount. The counts above search W ∈ [0.01, 8]. #223 recounted the zero-charge members c = −10, −3, −1.1, −1, −0.9, −0.3, −0.01 with the same
+code on W ∈ [1e-5, 8] and, for c ≤ −1 (no throat in the static region), with a range-free Sturm count: the same counts (1 mode, 0 at c = −1), W equal to the table to 2.8e-9 (R1) and 3.6e-10 (R2).
+The other 13 members were not recounted. With a Maxwell field (#223) the c = −1 member is not stable: along the locus that keeps the horizon at the area minimum a growing mode with W = 3.8e-3 at q = 0.1 appears
+(numerical evidence).*
+
+**`critical_ghost.md` §1.1, the [BKZ12] row, result column, to add:** *With the sources of [BW22] (Simpson–Visser metric, phantom scalar and magnetic NED field) and [BBS12] (Maxwell field): growing radial modes at 54 of
+55 members tested (16 black-bounce members m = M/a = 0 … 10; 35 magnetic black universes on three one-parameter slices; 4 zero-charge members); the exception is the c = −1 member of [BKZ12] at zero charge.
+A complex-conjugate pair at S m = 0.2, 0.3 and at one magnetic member; a second, exponentially weak real mode at 0.55 ≤ m ≤ 3 (W = 4.6e-3 … 1.2e-5, below 1e-5 at m = 2 and 3) and at every q > 0 tested on B1 and B3 (#223, numerical evidence, these
+sources only).*
+
+**#211 / `baby_universes.md` §4, T2:** *Done as #223. The black bounce with the source of [BW22] and the magnetic black universes of [BBS12] are linearly unstable under radial perturbations at every member tested but one
+(c = −1, q = 0); a magnetic field adds no radial degree of freedom. Nothing is shown about non-radial modes, the region beyond the horizon, other sources of the same metric, or formation from collapse.*
+
+## Reproduce (#223)
+
+From this directory, with `~/Source/negative-mass-venv314/bin/python`:
+
+```
+bounce.py check; bounce.py planted; bounce.py planted_low; bounce.py planted_complex
+bounce.py members; bounce.py count <id> --res=R1|R2 [--stage=low] --out=<id>_<res>[_low].json
+bounce.py report DIR --complex=complex.json; bounce.py spectral DIR; bounce.py complex S_m0.2 S_m0.3 B1_q0.77 --out=complex.json; bounce.py controls --base=DIR
+```
+
+`bounce_output.txt` is these outputs of record, assembled from negative-mass-raw `I223-rpi5`. The 220 count runs took 6.5 h of CPU on three processes at nice 10 (a main-stage R2 run 1.5 to 7 min,
+a low-stage R2 run 15 s to 1.5 min), 117 MB at most; `check` about 1 min; `spectral` and the controls take minutes to tens of minutes.
+
+## References (#223)
+
+- [SV19] A. Simpson, M. Visser, "Black-bounce to traversable wormhole", JCAP 02 (2019) 042, arXiv:1812.07114. Entry and verification in `../literature.md`.
+- [BW22] K. A. Bronnikov, R. K. Walia, "Field sources for Simpson–Visser spacetimes", PRD 105, 044039, arXiv:2112.13198. Read: Secs. II–IV in full for the equations used (the sources (10)–(22)); entry in `../literature.md`.
+- [BBS12] S. V. Bolokhov, K. A. Bronnikov, M. V. Skvortsova, "Magnetic black universes and wormholes with a phantom scalar", CQG 29, 245006, arXiv:1208.4619. Read: Secs. 1–3 for (1)–(20); entry in `../literature.md`.
+- [BF06], [BKZ12]: as above. [BW22] and [BBS12] were read from the arXiv PDFs (v1 of each); (20) of [BBS12] was transcribed from the page image.
