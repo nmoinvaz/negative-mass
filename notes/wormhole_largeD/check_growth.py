@@ -217,6 +217,7 @@ def main(argv):
     check("G5", fix(Fraction(lst[50]), nd) == crate[50],
           f"the table's D = 50 value {crate[50]} and the list's {lst[50][:nd + 6]}... rounded to {nd} decimals "
           f"{fix(Fraction(lst[50]), nd)}")
+    oldrows = {}
     try:
         old = subprocess.run(["git", "-C", HERE, "show", f"{old_rev}:notes/wormhole_largeD/growth.csv"], capture_output=True,
                              text=True, check=True).stdout
@@ -227,7 +228,6 @@ def main(argv):
               (f"; NOT MET at D = {bad6}" if bad6 else ""))
     except (subprocess.CalledProcessError, FileNotFoundError, KeyError) as exc:
         print(f"SKIP    G6: git show {old_rev} failed ({exc}); the old column below is absent")
-        oldrows = {}
 
     print("\n  reported, not gated: the csv against the crate (exact), and the distance of the crate's value from a rounding tie")
     print("  D       csv                crate (w2_output.txt)         crate - csv      tie margin (units of the 12th decimal)")
@@ -239,6 +239,18 @@ def main(argv):
         frac = (q * 10**12) % 1
         marg_tie = abs(frac - Fraction(1, 2))
         print(f"  {D:<6d}  {csvrows[D][1]:<18s} {crate[D]:<28s} {float(diff):>+11.2e}      {float(marg_tie):.3f}")
+
+    print("\n  reported, not gated: TS13's printed values (profiles.py's dict) against the crate and against the old and new csv rows")
+    print("  D       TS13                 crate - TS13  (rel.)         old row - TS13  (rel.)       new row - TS13  (rel.)")
+    for D in sorted(ts13):
+        if D not in csvrows or D not in crate:
+            continue
+        t, q = Fraction(ts13[D]), Fraction(crate[D])
+        o = Fraction(oldrows[D][1]) if D in oldrows else None
+        n = Fraction(csvrows[D][1])
+        ocol = f"{float(o - t):>+10.2e} ({float(abs(o - t) / t):.1e})" if o is not None else f"{'n/a':>24s}"
+        print(f"  {D:<6d}  {ts13[D]:<20s} {float(q - t):>+10.2e} ({float(abs(q - t) / t):.1e})     {ocol}     "
+              f"{float(n - t):>+10.2e} ({float(abs(n - t) / t):.1e})")
 
     # ----- remainder
     mp.mp.dps = 120
@@ -300,7 +312,7 @@ def main(argv):
         rel = abs(mp.mpf(W) - f3) / mp.mpf(W)
         c1, c2, c3 = column(D, W, 1), column(D, W, 2), column(D, W, 3)
         oldc = f"{float(column(D, oldrows[D][1], 1)):>12.4f}" if D in oldrows else f"{'n/a':>12s}"
-        print(f"  {D:<6d}{int(s):<6d}{W:<20s} {float(rel):9.2e}   {oldc}            {float(c1):>12.4f} {float(enc(D, 1)):9.1e}   "
+        print(f"  {D:<6d}{int(s):<6d}{W:<20s} {float(rel):10.3e}   {oldc}            {float(c1):>12.4f} {float(enc(D, 1)):9.1e}   "
               f"{float(c2):>12.4f} {float(enc(D, 2)):9.1e}   {float(c3):>12.2f} {float(enc(D, 3)):9.1e}")
     print("\n  the four-term series' relative difference from W^2 a^2, and the old and new csv rows' W2a2 where they differ")
     for D in D_ORDER:
