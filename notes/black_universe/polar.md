@@ -236,3 +236,34 @@ polar.py report DIR; polar.py spectral DIR; polar.py controls
 - [BCK18] J. L. Blázquez-Salcedo, X. Y. Chew, J. Kunz, "Scalar and axial quasinormal modes of massive static phantom wormholes", PRD 98, 044035 (2018), arXiv:1806.03282, doi:10.1103/PhysRevD.98.044035
   (INSPIRE and arXiv checked). Read §V and its figure data; the rest not read.
 - [BF06], [BKZ12]: as in `README.md` of this directory.
+
+## Coordinator's review
+
+Review of branch `wip/i218-polar-mads` at 4c8c5ca and raw `I218-dh610` at 2c4663c, recorded in negative-mass-raw
+`I218-mac-review` (criteria 575341f, runs 733a79e). On the Mac, nice 10. The ruling on the ℓ = 1 planted case is on the issue.
+
+- **Scope.** The branch adds `polar_derive.py`, `polar.py`, their outputs and this note, and the `notes/literature.md`
+  entries for [BCK18] and [ABCKY23] that the ruling allowed.
+- **Rerun.**
+  - `polar_derive.py check` gives 20 PASS, the same verdict lines.
+  - `polar.py planted` gives 7 PASS, the same lines.
+  - The count of polar ℓ = 2 at c = −0.3 gives no root.
+  - The M-AdS count at c = 0.5 gives one mode at W = 1.709787002854765, 4e-15 from the runner's.
+- **Independent check** (`ind218.py`). The coordinator's own uniform complex scaling, with a fourth-order stencil and
+  shift-invert eigenvalues, shares only the printed master potentials. It gives:
+  - ℓ = 1 (V = 1/R⁴) 0.6813671876 − 0.6177534480i, 6.0e-10 from P3a;
+  - its Darboux partner 2/R² − 3/R⁴ the same to 1.2e-10, so the two are isospectral;
+  - ℓ = 2 1.7376918464 − 0.3051377413i, 3.0e-7 from P2;
+  - the test scalar 1.5727083913 − 0.5297008824i, 0.90 away from ℓ = 1.
+
+  The review's first domain, L = 40, was too short for the slowly damped ℓ = 1 mode: its K1 failed by 5e-6 (amendment A1).
+  At L = 160 every criterion passes, and both mutations fire.
+- **Not checked independently:** the black-universe polar counts and the M-AdS rates at other c. The rerun reproduces
+  them; the runner's Chebyshev check is the second method, and it misses its declared tolerance at c = 10 only.
+- **Applied.**
+  - `critical_ghost.md` §1.1's [BKZ12] row carries Sec. 6's text, marked as from #218.
+  - The [ABCKY23] disagreements stay in Sec. 5 and in `literature.md`.
+- **Follow-ups.**
+  - #242: complex W for the black universes' polar systems.
+  - #243: the M-AdS polar modes.
+  - #244: evolve an M-AdS wormhole along its mode.
