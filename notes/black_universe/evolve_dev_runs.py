@@ -144,10 +144,10 @@ def fit(rows, ps, win, sides=(-1, 1)):
     return float(coef[-1]), float(math.sqrt(cov[-1, -1])), len(y)
 
 
-def mode(c, rc, h, X, br, Y0=3e-3, Ap=0.0):
+def mode(c, rc, h, X, br, Y0=3e-3, Ap=0.0, Yext=2e-3):
     mem = ep.Member(c)
     t0 = time.time()
-    dR, dL, info = ed.extract_mode(mem, rc, h, X + 20.0, Ap)
+    dR, dL, info = ed.extract_mode(mem, rc, h, X + 20.0, Ap, Y_ext=Yext)
     print(f"c = {c}, corner rho_c = {rc}, h = {h}, X = {X}: mode extracted at t_s = {info['t_s']:.2f} from the run with A_p = {Ap} (row {info['js']}), Y at the corner node {info['Yc']:.3e}; "
           f"largest |dr|, |df|, |dphi| over the rays per unit Y at the corner: {(info['maxdR'] / abs(info['Yc'])).round(1).tolist()} (right ray), {(info['maxdL'] / abs(info['Yc'])).round(1).tolist()} (left ray)")
     N = int(round(X / h))
@@ -162,7 +162,7 @@ def mode(c, rc, h, X, br, Y0=3e-3, Ap=0.0):
     ps = 0.5 * (lo + hi)
     print(f"   A*_h = {ps:.6e} ({k} runs, {time.time() - t0:.1f} s with the extraction); Y_inv departure at |Y| = {Y0} on the diagonal; fate(A < A*) = {fl:+d}")
     rows = []
-    for e in np.arange(2.5, 11.51, 0.5):
+    for e in np.arange(max(2.5, math.floor(-math.log10(Y0) * 2) / 2), 11.51, 0.5):
         for s in (-1, 1):
             r = run(ps + s * 10.0 ** (-e))
             r.update(e=e, side=s, orient=fl)
@@ -171,7 +171,8 @@ def mode(c, rc, h, X, br, Y0=3e-3, Ap=0.0):
         print(f"   side {sd:+d} (A = A* {'-' if sd < 0 else '+'} 10^-e): " + " ".join(f"{r['e']:.1f}:{r['T']:.2f}" for r in rows if r["side"] == sd and r["T"] is not None))
     w = W212[c] or KAPPA[c]                        # c = -1 has no W in #212: the comparison is with kappa (label below)
     lab = "1/W" if W212[c] else "1/kappa (no growing mode in #212)"
-    for win in ((1e-11, 1e-4), (1e-10, 1e-5), (1e-9, 1e-4), (1e-8, 1e-4), (1e-7, 1e-3), (1e-6, 1e-3), (3e-7, 3e-4)):
+    hiw = Y0 / 2
+    for win in [w for w in ((1e-11, hiw), (1e-10, hiw), (1e-9, hiw), (1e-8, hiw), (1e-7, hiw), (1e-6, hiw), (1e-9, 1e-4), (1e-8, 1e-4), (1e-7, 1e-3)) if w[0] < w[1] / 3]:
         try:
             s, se, n = fit(rows, ps, win)
             print(f"   window {win}: slope {s:.5f} +- {se:.5f} (n = {n}); {lab} = {1 / w:.5f}; relative {s * w - 1:+.2e}")

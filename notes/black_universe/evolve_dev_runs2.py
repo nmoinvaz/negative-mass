@@ -4,6 +4,9 @@
     evolve_dev_runs2.py near C RHOC H X         mode family near threshold: raw and weighted finders and the departure, with the late state of the diagonal
     evolve_dev_runs2.py pulseE                  c = -1.5, pulse on the + ray: where the expansion event stops, and where the mode amplitude changes sign
     evolve_dev_runs2.py profile                 profile of the gauge-invariant Y from the truncation seed, c = -1, -1.01, -1.5
+    evolve_dev_runs2.py resp C RHOC             Y on the diagonal after a compact pulse of amplitude +-1e-3 (+ ray) at h = 0.02, 0.01: the part odd in the amplitude (the response) and the even part (the seed)
+    evolve_dev_runs2.py constr                  constraint violation C++, C-- (stencil of dn.constraints, minus the exact static member's) against Y, c = -1, -1.01, -1.5, -0.3
+    evolve_dev_runs2.py tuned C RHOC H X        the mode family at A = A* (tuned): |Y| on the diagonal against t and its local growth rate, against W and kappa
 """
 import math
 import os
@@ -166,9 +169,172 @@ def profile():
             print("   profile at t = 14: Y(c = -1)/Y(c = -1.01) " + " ".join(f"{v:8.3f}" for v in Pm1[14.0] / P[14.0]))
 
 
+def resp(c, rc):
+    mem = ep.Member(c)
+    X = 40.0
+    out = {}
+    for h in (0.02, 0.01):
+        N = int(round(X / h))
+        st = ed.Static(mem, rc, N, h)
+        par = ed.params(mem)
+        res = {}
+        for Ap in (1e-3, -1e-3):
+            d = ed.member_rays(mem, rc, N, h, pulse=dict(A=Ap, xc=3.0, w=0.5, ray="+"))
+            old = np.ascontiguousarray(d.Sp.copy())
+            new = np.empty_like(old)
+            dold = np.zeros(N + 1, np.uint8)
+            dnew = np.zeros(N + 1, np.uint8)
+            Y = []
+            for j in range(int(30.0 / (SQ2 * h))):
+                new[:, 0] = d.Sm[:, j + 1]
+                dnew[0] = 0
+                ed.row_step(old, new, dold, dnew, h, par, d.eps, 0.05, 25.0, 1)
+                c_, up, um = dn.strip_cells(old, new, h)
+                Y.append((c_[0][j] - st.R[N]) - st.Q[N] * (c_[2][j] - st.P[N]))
+                old, new = new, old
+                dold, dnew = dnew, dold
+            res[Ap] = np.array(Y)
+        out[h] = ((res[1e-3] - res[-1e-3]) / 2, (res[1e-3] + res[-1e-3]) / 2)
+    print(f"c = {c}, rho_c = {rc}: pulse of amplitude +-1e-3 on the + ray (centre 3, width 0.5); Y on the diagonal; odd part = (Y(+) - Y(-))/2 (the linear response), even part = (Y(+) + Y(-))/2 (the seed and second order)")
+    tt = (4, 6, 8, 10, 12, 14, 16, 18, 20, 24)
+    for h, (odd, even) in out.items():
+        print(f"   h = {h}: t:      " + " ".join(f"{t:9d}" for t in tt))
+        print(f"   h = {h}: odd:    " + " ".join(f"{odd[int(t / (SQ2 * h))]:+.2e}" for t in tt))
+        print(f"   h = {h}: even:   " + " ".join(f"{even[int(t / (SQ2 * h))]:+.2e}" for t in tt))
+    # local slopes of ln|odd| and ln|even| between t = 8 and 16 at h = 0.01
+    for h in (0.02, 0.01):
+        odd, even = out[h]
+        for name, y in (("odd", odd), ("even", even)):
+            m = np.array([k for k in range(len(y)) if 10.0 <= (2 * k + 1) * h / SQ2 <= 16.0])
+            t = (2 * m + 1) * h / SQ2
+            print(f"   h = {h}: slope of ln|{name}| over t = 10 to 16: {np.polyfit(t, np.log(np.abs(y[m]) + 1e-300), 1)[0]:+.3f}")
+
+
+def resp2(c, rc, Aps=(1e-5, 1e-6)):
+    mem = ep.Member(c)
+    h, X = 0.01, 40.0
+    N = int(round(X / h))
+    st = ed.Static(mem, rc, N, h)
+    par = ed.params(mem)
+
+    def ser(Ap):
+        d = ed.member_rays(mem, rc, N, h, pulse=dict(A=Ap, xc=3.0, w=0.5, ray="+"))
+        old = np.ascontiguousarray(d.Sp.copy())
+        new = np.empty_like(old)
+        dold = np.zeros(N + 1, np.uint8)
+        dnew = np.zeros(N + 1, np.uint8)
+        Y = []
+        for j in range(int(30.0 / (SQ2 * h))):
+            new[:, 0] = d.Sm[:, j + 1]
+            dnew[0] = 0
+            ed.row_step(old, new, dold, dnew, h, par, d.eps, 0.05, 25.0, 1)
+            c_, up, um = dn.strip_cells(old, new, h)
+            Y.append((c_[0][j] - st.R[N]) - st.Q[N] * (c_[2][j] - st.P[N]))
+            old, new = new, old
+            dold, dnew = dnew, dold
+        return np.array(Y)
+    print(f"c = {c}, rho_c = {rc}, h = {h}: Y on the diagonal, odd part (Y(+Ap) - Y(-Ap))/2 per unit Ap (the linear response to the pulse); kappa = {mem.kappa:.4f}")
+    tt = (4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28)
+    print("   t:           " + " ".join(f"{t:9d}" for t in tt))
+    for Ap in Aps:
+        odd = (ser(Ap) - ser(-Ap)) / 2 / Ap
+        print(f"   Ap = {Ap:.0e}: " + " ".join(f"{odd[int(t / (SQ2 * h))]:+.2e}" for t in tt))
+        for ta, tb in ((10, 16), (16, 22), (22, 28)):
+            m = np.array([k for k in range(len(odd)) if ta <= (2 * k + 1) * h / SQ2 <= tb])
+            t = (2 * m + 1) * h / SQ2
+            print(f"      slope of ln|odd| over t = {ta} to {tb}: {np.polyfit(t, np.log(np.abs(odd[m]) + 1e-300), 1)[0]:+.3f}")
+
+
+def constr():
+    h, X = 0.01, 24.0
+    for c, rc in ((-1.0, 1.0), (-1.01, 1.0), (-1.5, 1.0), (-0.3, 0.0)):
+        mem = ep.Member(c)
+        N = int(round(X / h))
+        d = ed.member_rays(mem, rc, N, h)
+        res = ed.evolve(d, ed.params(mem), stop=False, store=True)
+        G = res["G"]
+        ks = np.arange(-N, N + 1)
+        rho, A, f = ed.tortoise_rho(mem, rc, ks * h / SQ2)
+        i = np.arange(N + 1)[:, None]
+        j = np.arange(N + 1)[None, :]
+        kk = (i - j) + N
+        E = np.zeros_like(G)
+        E[0], E[1], E[2] = mem.R(rho)[kk], f[kk], mem.phi(rho)[kk]
+
+        def cons(G):
+            r, ff, ph = G[0], G[1], G[2]
+            rpp = (r[2:, :] - 2 * r[1:-1, :] + r[:-2, :]) / h ** 2
+            fp = (ff[2:, :] - ff[:-2, :]) / (2 * h)
+            rp = (r[2:, :] - r[:-2, :]) / (2 * h)
+            pp = (ph[2:, :] - ph[:-2, :]) / (2 * h)
+            Cpp = rpp + fp * rp + (r[1:-1, :] / 2) * (-1.0) * pp ** 2
+            rmm = (r[:, 2:] - 2 * r[:, 1:-1] + r[:, :-2]) / h ** 2
+            fm = (ff[:, 2:] - ff[:, :-2]) / (2 * h)
+            rm = (r[:, 2:] - r[:, :-2]) / (2 * h)
+            pm = (ph[:, 2:] - ph[:, :-2]) / (2 * h)
+            Cmm = rmm + fm * rm + (r[:, 1:-1] / 2) * (-1.0) * pm ** 2
+            return Cpp, Cmm
+        Cp, Cm = cons(G)
+        Cpe, Cme = cons(E)
+        print(f"c = {c}: at the diagonal node (j, j); dC = C(numerical) - C(exact static member), same stencil; Y = dr - (rho R/sqrt2) dphi; df = f - f_exact")
+        for tc in (6.0, 8.0, 10.0, 12.0, 14.0):
+            jj = int(round(tc / (SQ2 * h)))
+            if jj < 2 or jj >= N - 2:
+                continue
+            # Cpp is [i-1 index shifted]: Cp[i-1, j] is C++ at node (i, j); Cm[i, j-1] is C-- at node (i, j)
+            dCp = Cp[jj - 1, jj] - Cpe[jj - 1, jj]
+            dCm = Cm[jj, jj - 1] - Cme[jj, jj - 1]
+            rr = rho[kk[jj, jj]]
+            Yv = (G[0][jj, jj] - E[0][jj, jj]) - (rr * mem.R(rr) / SQ2) * (G[2][jj, jj] - E[2][jj, jj])
+            dfv = G[1][jj, jj] - E[1][jj, jj]
+            print(f"   t = {tc:4.1f}: Y {Yv:+.2e}, df {dfv:+.2e}, dC++ {dCp:+.2e}, dC-- {dCm:+.2e}; |dC|/|Y| = {abs(dCp) / abs(Yv):.2e}, {abs(dCm) / abs(Yv):.2e}")
+
+
+def tuned(c, rc, h, X):
+    mem = ep.Member(c)
+    dR, dL, info = ed.extract_mode(mem, rc, h, X + 20.0)
+    N = int(round(X / h))
+    par, st = ed.params(mem), ed.Static(mem, rc, N, h)
+
+    def sign(A):
+        d = ed.mode_rays(mem, rc, N, h, A, dR, dL)
+        dp = ed.evolve_dep(d, par, st, Y0=3e-3)["dep"]
+        return 0 if dp is None else dp["sign"]
+    lo, hi = -1e-4, 1e-4
+    fl = sign(lo)
+    while hi - lo > 1e-14:
+        mid = 0.5 * (lo + hi)
+        if sign(mid) == fl:
+            lo = mid
+        else:
+            hi = mid
+    ps = 0.5 * (lo + hi)
+    W = {-0.3: 0.9700800261, -1.5: 0.4941711675}.get(c)
+    print(f"c = {c}, rho_c = {rc}, h = {h}: A*_h = {ps:.6e}, kappa = {mem.kappa:.4f}, #212 W = {W}")
+    for dA in (0.0, 1e-9, -1e-9, 1e-7, -1e-7, 1e-5, -1e-5):
+        A = ps + dA
+        d = ed.mode_rays(mem, rc, N, h, A, dR, dL)
+        r = ed.evolve_dep(d, par, st, Y0=1e9, stop_dep=False)
+        y = r["ymax"]
+        tt = (2 * np.arange(len(y)) + 1.0) * h / SQ2
+        out = []
+        for ta, tb in ((4, 7), (7, 10), (10, 13), (13, 16), (16, 19), (19, 22)):
+            m = (tt >= ta) & (tt <= tb) & (y > 0)
+            out.append(f"[{ta},{tb}] {np.polyfit(tt[m], np.log(y[m]), 1)[0]:+.3f} (|Y| {y[m][0]:.1e} to {y[m][-1]:.1e})")
+        print(f"   A - A* = {dA:+.0e}: local rate of ln|Y| on the diagonal: " + "; ".join(out))
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1]
     if cmd == "near":
         near(float(sys.argv[2]), float(sys.argv[3]), float(sys.argv[4]), float(sys.argv[5]))
+    elif cmd == "resp":
+        resp(float(sys.argv[2]), float(sys.argv[3]))
+    elif cmd == "resp2":
+        resp2(float(sys.argv[2]), float(sys.argv[3]))
+    elif cmd == "constr":
+        constr()
+    elif cmd == "tuned":
+        tuned(float(sys.argv[2]), float(sys.argv[3]), float(sys.argv[4]), float(sys.argv[5]))
     else:
         globals()[cmd]()
