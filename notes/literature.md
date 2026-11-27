@@ -170,3 +170,318 @@ Read for #60 on 2026-11-13. Journal data checked against INSPIRE, arXiv identifi
 - Farnes 2018, A&A 620, A92; critique Socas-Navarro 2019, A&A 626, A5 (large-scale runaway).
 - Trivedi & Loeb 2026, arXiv:2605.10976 — GW signatures of negative-mass binaries.
 - ALPHA-g 2023: antihydrogen falls down, g_H̄ ≈ 0.75 ± 0.29 g; ALPHA-g, AEgIS, GBAR target 1%.
+
+## Universe from collapse: ghost wormholes, phantom black universes, black bounces, black-hole interiors
+Read 2026-11-27 for #211, from local copies of the arXiv texts. What was read of each paper, its version, and the
+verification of every reference against INSPIRE and arXiv are in negative-mass-raw `I211-rpi5/README.md`. Per entry: the
+claim in the paper's words; the mechanism, with the energy condition it violates and the matter; what the paper contains
+(a solution, its formation, its stability); what it does not contain. "Abstract only" means the full text was not read.
+The ranked list of claims that a computation here could test is [baby_universes.md](baby_universes.md). The ghost
+wormhole's thresholds and exponents are in `critical_ghost.md` §1.2–1.3 and are not repeated; [GGS09a] and [TS13] are in
+its reference list.
+
+### The ghost wormhole's expanding branch
+- **[SH02] Shinkai & Hayward 2002**, "Fate of the first traversible wormhole: black-hole collapse or inflationary
+  expansion", PRD 66, 044005, arXiv:gr-qc/0205041 v2, doi:10.1103/PhysRevD.66.044005 (INSPIRE and arXiv checked). Read
+  in full.
+  - Claim: "The wormhole throat suffers a bifurcation of horizons and either explodes to form an inflationary universe
+    or collapses to a black hole, if the total input energy is respectively negative or positive." "The inflationary
+    case provides a mechanism for inflating, to macroscopic size, a Planck-sized wormhole formed in space-time foam." In
+    Sec. III B: "This exponential expansion, combined with the horizon structure, indicates that the wormhole has
+    exploded to an inflationary universe. The two trapping horizons become the cosmological horizons." In Sec. IV: "for
+    one of the simplest classical exotic matter fields, wormholes can naturally inflate. The problem is only to stop the
+    inflation proceeding indefinitely."
+  - Mechanism: Einstein gravity with a massless ghost Klein–Gordon field, R_ab = 2∇ψ∇ψ − 2∇φ∇φ (Eq. 2.1), spherical
+    symmetry, dual-null evolution that covers both universes. For null k, R_kk = −2(k·∇φ)² ≤ 0 from (2.1) (by hand): the
+    NEC fails wherever the ghost varies along k. The paper's words: the Bondi energy-loss property that holds for NEC
+    matter "is reversed for the ghost field".
+  - Contains: evolution to x⁺ = 20 of the Ellis wormhole with Gaussian pulses in the ghost field or in a normal field.
+    The sign of the initial Bondi energy E₀ decides black hole (E₀ > 0) or expansion (E₀ < 0), with the final structure
+    "judged at x⁻ = 10 by the horizon structure". For the expanding case a fit r/a = 1 + b₄ exp(H(τ − b₅)) of the areal
+    radius of the diagonal x⁺ = x⁻ against its proper time, with Ha = 1.56, 1.19, 1.13, 1.12 for pulse amplitudes
+    10⁻¹…10⁻⁴ (Table I) and H ∼ 1.1/a (3.7). The horizon bifurcation (Figs 4–5). The paper assumes the static wormhole
+    is linearly stable ("Accepting that the static wormhole is stable to linear perturbations [11, 12], we seem to have
+    discovered a non-linear instability"); [GGS09a] found the linear mode.
+  - Does not contain: the matter content of the "universe" (no ρ, p or w of the expanding region, no comparison with a
+    de Sitter or Kantowski–Sachs solution); a run past x⁻ = 10; a mechanism or condition that ends the expansion; the
+    energy bookkeeping of the expanding region. The data are asymptotically flat at both ends and the static massless
+    wormhole has zero Bondi energy; that what "inflates" is the region round the throat is an inference from the setup,
+    not a statement of the paper. The "throat" is the diagonal, which the paper says "loses its specific geometrical
+    meaning" once perturbed (note 17). How a Planck-sized wormhole forms in foam is not treated.
+  - Reproduced here (#39, `wormhole_evolution/README.md`): both fates and the sign rule of E₀, and the linear rate to
+    3e-5. Its expansion probe saw no coordinate limit to t = 42 and H on the diagonal rising 0.75 → 2.9, not interpreted
+    (#213).
+- **[GGS09b] González, Guzmán & Sarbach 2009**, "Instability of wormholes supported by a ghost scalar field. II.
+  Nonlinear evolution", CQG 26, 015011, arXiv:0806.1370 v2, doi:10.1088/0264-9381/26/1/015011 (INSPIRE and arXiv
+  checked). Read: abstract, §I, §V–VII; §II–IV skimmed.
+  - Claim: "In the expanding case, the wormholes seem to undergo an exponential expansion, at least during the run time
+    of our simulations." "In the expanding case, we do not observe any apparent horizons and our simulations suggest
+    that the wormhole expands forever."
+  - Mechanism: the same ghost field in Cauchy form, throat radius b, the γ₁ family (opposite-sign ADM masses for γ₁ ≠
+    0), two gauges (λ = 0, 1). The NEC fails as in [SH02].
+  - Contains: for reflection-symmetric data the areal radius at x = 0 fits r(τ) = 1 + e^{(τ−p₁)/p₂}, p₂ → 0.85 as ε_c →
+    0 "in good agreement with the prediction from perturbation theory" (Fig. 10, proper-time axis to 8). No apparent
+    horizon in any expanding run. The scalar "does not seem to dissipate away but actually gains in strength near the
+    point of reflection symmetry". The throat is slicing-dependent: in the λ = 1 gauge r shows two minima, "a pure gauge
+    effect". The amplitude scan with the second collapse window is in `critical_ghost.md` §1.2.
+  - Does not contain: the word "inflation" in its text (it appears only in the title of [SH02] in the reference list); a
+    Hubble rate, an equation of state or any cosmological reading of the expansion; the energy of the expanding state; a
+    run beyond the proper time of Fig. 10.
+
+### Phantom black universes
+- **[BF06] Bronnikov & Fabris 2006**, "Regular phantom black holes", PRL 96, 251101, arXiv:gr-qc/0511109 v1,
+  doi:10.1103/PhysRevLett.96.251101 (INSPIRE and arXiv checked). Read in full, PDF and TeX.
+  - Claim: "The Penrose diagram of a regular BH is Schwarzschild-like, but the singularity at r = 0 is replaced by a de
+    Sitter infinity, which gives a hypothetic BH explorer a chance to survive. Such solutions also lead to the idea that
+    our Universe could be created from a phantom-dominated collapse in another universe, with KS expansion and
+    isotropization after crossing the horizon." In the body: "One may also speculate that our Universe could appear from
+    collapse to a phantom BH in another, 'mother' universe and undergo isotropization (e.g., due to particle creation)
+    soon after crossing the horizon."
+  - Mechanism: a minimally coupled scalar with kinetic sign ε = −1 and a potential V(φ), static spherical metric ds² = A
+    dt² − dρ²/A − r²dΩ². "Since it does not respect the usual energy conditions": Eq. (5), 2r″/r = −εφ′², gives r″ ≥ 0,
+    so a minimal sphere is allowed, which ε = +1 forbids (no-go A). Eq. (9)–(14) is the inverse-problem example r = √(ρ²
+    + b²), φ = √2 arctan(ρ/b), two constants c and ρ₀. It is asymptotically flat at ρ → +∞ iff 2bc = −πρ₀, m = ρ₀/3. For
+    m > 0 it is a regular black hole with a de Sitter far end beyond the horizon. The paper says every model of its
+    classes needs "a potential with at least two zero-slope points".
+  - Contains: a classification of 16 classes of regular static solutions of a phantom scalar; the explicit family; the
+    claim that de Sitter is a global attractor of isotropic phantom cosmologies with V bounded above (Faraoni), with
+    "Very probably this conclusion extends to KS cosmologies after isotropization". The universe-from-collapse idea is a
+    stated speculation.
+  - Does not contain: a collapse or any dynamics, so no formation; a perturbation or stability analysis (its
+    introduction says that "in a classical setting, a massless phantom field even shows a more stable behavior than its
+    usual counterpart [12, 13]", and [12, 13] are the works [SH02] cites for linear stability of the massless wormhole,
+    where [GGS09a] later found a growing mode); isotropization, which is named as possible "due to particle creation"
+    and not computed.
+  - Printed equations, from #212 (`black_universe/README.md` §1): (8) prints A′(h) = (ρ₀ − h)/r²(h), while (7), B′ ≡
+    (A/r²)′ = 2(ρ₀ − h)/r⁴ with A(h) = 0, gives A′(h) = 2(ρ₀ − h)/r²(h). Checked here by hand from the printed (7); #212
+    S3 confirms it to 40 digits. The printed (8) halves the surface gravity κ = |A′(h)|/2. #212 also finds the closed
+    forms (9)–(14) satisfy (3)–(6) with residual 0 (S1, S2, *checked symbolically*).
+- **[BMD07] Bronnikov, Melnikov & Dehnen 2007**, "Regular black holes and black universes", GRG 39, 973,
+  arXiv:gr-qc/0611022 v2, doi:10.1007/s10714-007-0430-6 (INSPIRE and arXiv checked). Read: abstract, §1, concluding
+  paragraphs.
+  - Claim: "It also looks possible that our Universe has originated from phantom-dominated collapse in another universe
+    and underwent isotropization after crossing the horizon." "We are thus facing one more mechanism of universes
+    multiplication, in addition to the well-known mechanism existing in the chaotic inflation scenario."
+  - Mechanism: static distributions of phantom matter in scalar-tensor gravity and k-essence, with "necessary conditions
+    for the existence of black-universe solutions". The NEC fails as in [BF06].
+  - Contains: a comparison of types of regular static black holes; the name "black universes" for those with an
+    expanding Kantowski–Sachs region beyond the horizon. Does not contain: formation, stability or the isotropization
+    computed.
+- **[BKZ12] Bronnikov, Konoplya & Zhidenko 2012**, "Instabilities of wormholes and regular black holes supported by a
+  phantom scalar field", PRD 86, 024028, arXiv:1205.2224 v3, doi:10.1103/PhysRevD.86.024028 (INSPIRE and arXiv checked).
+  Read: abstract, §I–II, §V C, §VI; printed (36)–(41) from the TeX; §III (axial formalism) and the quasinormal-mode
+  computation not read.
+  - Claim: "we have shown that all configurations under study are unstable under spherically symmetric perturbations,
+    except for a special class of black universes where the event horizon coincides with the minimum of the area
+    function." Conclusion 2: black universes "are shown to be stable only in the special case where the horizon
+    coincides with the minimum of the area function R(r) (the parameters: c = −1, b = 3πm/2) and unstable for c ≠ −1."
+    On approaching c = −1: "we do not observe a decrease in the growth rate as expected ... This can be an indication
+    that the only parameter for which a black universe can be stable is c = −1."
+  - Mechanism: the [BF06] family with a phantom scalar, linearized about the static solution: general axial
+    perturbations and the monopole polar mode, a Schrödinger problem whose potential has an infinite wall at a throat,
+    regularized numerically, plus time-domain integration.
+  - Contains: M-AdS wormholes unstable (regularized potentials, Figs 1–2); black universes unstable except c = −1, by
+    potentials and time-domain runs at several c; axial modes stable in the static region; axial quasinormal frequencies
+    at c = −1 (Table I).
+  - Does not contain: nonlinear evolution (listed as open: "a full nonlinear analysis of perturbations in all relevant
+    cases"); formation; polar ℓ ≥ 1; a count of growing modes or any growth rate (no rates are given); the
+    Kantowski–Sachs region.
+  - #212 result (`black_universe/README.md`, *numerical evidence*): the verdict agrees at all 20 members tested.
+    Nineteen members (c = −10…−0.01) have exactly one growing radial mode, with rates 0.09…1.17 per b; c = −1 has none.
+    The "class" is one member of a one-parameter family, and the rate tends to κ = 2/π per b as c → −1, not to zero.
+  - Printed equations, from #212 (§2): the derived wave equation differs from the printed (36)–(38) and agrees with
+    (40), (41). Printed (36): time-derivative coefficient e^{−2μ₂−2ν} (= 1 for e^{2ν} = A, e^{2μ₂} = A⁻¹; the paper's
+    definitions give 1/A², by hand here) and δφ′ coefficient ν′ − 2μ₃′ + μ₂′ (derived: ν′ − μ₂′ + 2μ₃′ = A′/A + 2R′/R).
+    Printed (37): first term ε(e^{2μ₃} − V)φ′²/μ₃′² (derived: ε(V − e^{−2μ₃})φ′²/μ₃′²) and V_φ term −2φ′V_φ/μ₃′
+    (derived: +2φ′V_φ/μ₃′). Printed (38): δφ = Ψe^{μ₃} (derived: Ψ/R). Only the first row was rechecked here; the others
+    are #212's sympy results.
+- **[BBS12] Bolokhov, Bronnikov & Skvortsova 2012**, "Magnetic black universes and wormholes with a phantom scalar", CQG
+  29, 245006, arXiv:1208.4619 v1, doi:10.1088/0264-9381/29/24/245006 (INSPIRE and arXiv checked). Read: abstract,
+  opening of §1, the stability paragraph of the conclusions; the rest by search.
+  - Claim: "The black universe models make possible a cosmological scenario where a phantom-dominated gravitational
+    collapse in some 'mother' universe creates our Universe whose expansion begins from a horizon, and the next stages
+    are isotropization and de Sitter inflationary expansion."
+  - Mechanism: a phantom scalar with a potential plus a magnetic field. Contains: explicit globally regular solutions
+    with 0–4 horizons. Does not contain: formation or a stability computation. It says that "Most of the known
+    scalar-vacuum wormhole and black-universe solutions proved to be unstable under radial perturbations ... and it is
+    of interest to find out whether or not they can be stabilized by electric or magnetic fields", left for later.
+
+### Black bounces
+- **[SV19] Simpson & Visser 2019**, "Black-bounce to traversable wormhole", JCAP 02 (2019) 042, arXiv:1812.07114 v3,
+  doi:10.1088/1475-7516/2019/02/042 (INSPIRE and arXiv checked). Read: abstract, §1, §2 text on the bounce, §5 opening
+  and closing, §8 opening, §9.
+  - Claim: the metric ds² = −(1 − 2m/√(r² + a²))dt² + dr²/(1 − 2m/√(r² + a²)) + (r² + a²)dΩ² "neatly interpolates
+    between the standard Schwarzschild black hole and the Morris–Thorne traversable wormhole; at intermediate stages
+    passing through a black-bounce (into a future incarnation of the universe), an extremal null-bounce ... and a
+    traversable wormhole." In §9 the singularity "is converted into a spacelike hypersurface representing a 'bounce'
+    into a future incarnation of the universe".
+  - Mechanism: a metric ansatz, with no matter model. From the Einstein equations (§5) the stress-energy "clearly
+    violates all the classical energy conditions": the NEC fails everywhere except on horizons. The region beyond the
+    bounce is "a separate copy of our own universe", not a de Sitter region.
+  - Contains: Carter–Penrose diagrams, curvature, the stress-energy and energy conditions, surface gravity, ISCO and
+    photon sphere, Regge–Wheeler potentials for spin 0 and 1 test fields on the fixed background. Does not contain: a
+    matter source, formation by collapse, stability of the geometry under coupled perturbations.
+- **[LRSSV21] Lobo, Rodrigues, Silva, Simpson & Visser 2021**, "Novel black-bounce spacetimes: wormholes, regularity,
+  energy conditions, and causal structure", PRD 103, 084052, arXiv:2009.12057 v3, doi:10.1103/PhysRevD.103.084052
+  (INSPIRE and arXiv checked). Abstract only. Claim: "specific regular black holes where the 'area radius' always
+  remains non-zero, thereby leading to a 'throat' that is either timelike ..., spacelike (corresponding to a 'bounce'
+  into a future universe), or null". It analyzes regularity, energy conditions and causal structure of metrics from a
+  mass function.
+- **[BW22] Bronnikov & Walia 2022**, "Field sources for Simpson–Visser spacetimes", PRD 105, 044039, arXiv:2112.13198
+  v1, doi:10.1103/PhysRevD.105.044039 (INSPIRE checked; the arXiv page prints "Phys. Rev. D 15", an apparent typo).
+  Read: abstract, §I, the NEC statement, concluding remarks.
+  - Claim: "any static, spherically symmetric SV metric can be obtained as an exact solution to the Einstein field
+    equations sourced by a combination of a minimally coupled phantom scalar field with a nonzero potential V(φ) and a
+    magnetic field in the framework of nonlinear electrodynamics". "SV-like geometries cannot be sourced by a scalar
+    field or NED taken separately."
+  - Mechanism and condition: "The NEC is necessarily violated in a neighborhood of any wormhole throat or any black
+    bounce"; with r = √(x² + a²), r″/r = a²/r⁴ > 0, so the NEC fails in the whole space-time except on horizons. The
+    phantom scalar carries the violation.
+  - Contains: V(φ) and L(F) for the Schwarzschild-like and Reissner–Nordström-like cases; Carter–Penrose diagrams. Says
+    of stability: "Another issue of importance is the stability of SV space-times, which problem cannot be formulated
+    until we know their precise dynamic context", and the same geometry may have different stability with different
+    sources. Does not contain: stability, formation, perturbations.
+- **[PPS25] Pal, Pal & Sarkar 2025**, "Dynamical interiors of black-bounce spacetimes", JCAP 01 (2025) 069,
+  arXiv:2410.17150 v1, doi:10.1088/1475-7516/2025/01/069 (INSPIRE checked; the arXiv page has no journal reference).
+  Read: abstract, §I, conclusions.
+  - Claim: a regular FLRW-like interior "can not be matched smoothly with the exterior black-bounce spacetime through a
+    timelike hypersurface, as there always exists a thin shell of non-zero energy-momentum tensor at the matching
+    hypersurface". For an initially collapsing interior the numerical solution "crosses the regular transition surface
+    at l = 0 ... and goes to a separate copy of our universe".
+  - Contains: Israel–Darmois matching, a surface energy density and pressure, an evolution equation for the interior
+    scale factor, and the formation of an event horizon inside the cloud. Does not contain: a matter model. "In our
+    analysis we have not used any detail of the dynamics of the gravitational theory under consideration", and the
+    condition on the surface stress is "in a sense, arbitrary", so the bounce behavior may not hold for other
+    conditions.
+- **[CK21] Chakrabarti & Kar 2021**, "A wormhole geometry from gravitational collapse", PRD 104, 024071,
+  arXiv:2106.14761 v1, doi:10.1103/PhysRevD.104.024071 (INSPIRE checked; the arXiv page gives the DOI only). Read:
+  abstract, conclusion, passages on the energy conditions.
+  - Claim: "gravitational collapse of a NEC (Null Energy Condition) violating spherically symmetric fluid distribution
+    can avoid the formation of a zero proper volume singularity and eventually lead to a Lorentzian wormhole geometry".
+    Conclusion: "a time-dependent wormhole geometry can arise in gravitational collapse, provided the collapsing fluid
+    violates the relevant energy conditions."
+  - Mechanism: a time-dependent metric conformal to the static Simpson–Visser form, with an imperfect fluid read off
+    from the Einstein tensor ("So far we have not used any theory of gravity as such"). Does not contain: a matter model
+    or field equations that produce the fluid, stability, or an evolution from regular data.
+
+### Other proposals of a new universe inside a black hole
+- **[FMM89] Frolov, Markov & Mukhanov 1989**, "Through a black hole into a new universe?", PLB 216, 272,
+  doi:10.1016/0370-2693(89)91114-3, and **[FMM90]** "Black holes as possible sources of closed and semiclosed worlds",
+  PRD 41, 383, doi:10.1103/PhysRevD.41.383. No arXiv text. Bibliographic data checked on INSPIRE; the publisher pages
+  answered HTTP 403, so only the INSPIRE abstracts were read.
+  - Claim ([FMM90] abstract): "instead of the singularity the closed world can be formed inside the black hole". "After
+    passing the deflation stage the closed world in the black-hole interior may begin to inflate and give rise to a new
+    macroscopic universe." "The described model may be considered as an example of the creation of a closed or
+    semiclosed world 'in the laboratory.'"
+  - Mechanism (abstracts): "on the assumption that some limiting curvature exists", "the Schwarzschild metric inside the
+    black hole can be attached to the de Sitter one at some spacelike junction surface which may represent a short
+    transition layer", with Israel's thin-shell method. The abstracts name no matter model or energy condition. [EB01]
+    says of [FMM89] and a 1992 paper of Morgan's that the matching was "postulated without any constructive realization
+    (but based on the limiting curvature conjecture)".
+  - Not determinable from the abstracts: formation from collapse, stability, the shell's energy conditions. Full text
+    not read.
+- **[Smo92] Smolin 1992**, "Did the universe evolve?", CQG 9, 173–192 (INSPIRE; [Smo06] prints 173–191),
+  doi:10.1088/0264-9381/9/1/016, and **[Smo06]**, "The status of cosmological natural selection", arXiv:hep-th/0612185
+  v1 (preprint, no journal reference). Read [Smo06] §1–3 in full and the INSPIRE abstract of [Smo92].
+  - Claim ([Smo92] abstract): "all final singularities 'bounce' or tunnel to initial singularities of new universes at
+    which point the dimensionless parameters of the standard models of particle physics and cosmology undergo small
+    random changes". [Smo06], hypothesis I: "Black hole singularities bounce and evolve to initial states of expanding
+    universes". The "master prediction": "almost no change in the parameters of the standard model from the present
+    values will increase the numbers of black holes produced."
+  - Mechanism: none stated. The bounce is cited to Wheeler and, as "theoretical evidence", to Bojowald's 2005 Living
+    Reviews article (ref. 14; [Smo06] does not print its title). No matter, no energy condition, no solution. The
+    hypothesis is about an ensemble of universes and its falsifiable consequences, listed in [Smo06] §3 (a neutron-star
+    mass limit, single-parameter inflation, little early star formation).
+  - Does not contain: any geometry of the bounce, its formation or its stability. [Smo06] §4, a reply to Vilenkin, was
+    not read.
+- **[EB01] Easson & Brandenberger 2001**, "Universe generation from black hole interiors", JHEP 06 (2001) 024,
+  arXiv:hep-th/0103019 v1, doi:10.1088/1126-6708/2001/06/024 (INSPIRE and arXiv checked). Read: abstract, §I, start of
+  §II.
+  - Claim: "scenarios in which the universe is born from the interior of a black hole may not posses [sic] many of the
+    problems of the Standard Big-Bang (SBB) model", the horizon, flatness and structure problems, "not necessarily
+    requiring a long period of cosmological inflation". "Our conclusions are completely independent of the details of
+    general models."
+  - Mechanism: a Schwarzschild–de Sitter matching (Fig. 1), motivated by limiting curvature; the paper reviews the
+    realizations it knows. The argument for horizon and homogeneity is that the forward light cone of a horizon point
+    covers the radial direction of the de Sitter universe and that a particle may travel "about 180°" round the black
+    hole. No energy condition is discussed (searched). Does not contain: a specific solution, formation, stability.
+- **[BHR21] Brandenberger, Heisenberg & Robnik 2021**, "Through a black hole into a new universe", IJMPD 30, 2142001,
+  arXiv:2105.07166 v1, doi:10.1142/S0218271821420013 (INSPIRE and arXiv checked). Read in full (an essay).
+  - Claim: "an S-Brane which arises in the inside of the black hole horizon when the Weyl curvature reaches the string
+    scale induces a continuous transition between the inside of the black hole and the beginning of a new universe."
+  - Mechanism: a spacelike brane with "positive tension but vanishing energy density. This object violates the usual
+    energy conditions". Israel matching of the Schwarzschild interior to a homogeneous anisotropic cosmology. "Making
+    use of the equations of General Relativity coupled to matter obeying the usual energy conditions is not possible".
+    Late-time isotropy needs "matter which acts for some time as an effective cosmological constant", which "is very
+    difficult to obtain" from string theory in effective field theory.
+  - Does not contain: a collapse that forms the brane ("We assume that there is no matter present to the past of the
+    S-brane"), stability, details (deferred to arXiv:2103.02842, not read).
+- **[Pop10] Popławski 2010**, "Radial motion into an Einstein–Rosen bridge", PLB 687, 110, arXiv:0902.1994 v3,
+  doi:10.1016/j.physletb.2010.03.029, and **[Pop16] Popławski 2016**, "Universe in a black hole in Einstein–Cartan
+  gravity", ApJ 832, 96, arXiv:1410.3881 v2, doi:10.3847/0004-637X/832/2/96 (INSPIRE and arXiv checked). Read:
+  abstracts, introductions, closing paragraphs.
+  - Claim ([Pop10]): "observed astrophysical black holes may be Einstein-Rosen bridges, each with a new universe inside
+    that formed simultaneously with the black hole. Accordingly, our own Universe may be the interior of a black hole
+    existing inside another universe." [Pop16]: "The collapsing matter in a black hole should therefore bounce at a
+    finite density and then expand into a new region of space on the other side of the event horizon, which may be
+    regarded as a nonsingular, closed universe."
+  - Mechanism: [Pop16] spin–torsion coupling "generates gravitational repulsion at extremely high densities in fermionic
+    matter, approximated as a spin fluid", plus particle production for a finite inflation. It does not name an energy
+    condition. [Pop10] notes that the Einstein–Rosen bridge metric needs a source that "violates the energy conditions
+    at the throat".
+  - Does not contain: a collapse computation ([Pop16]: "The formation of trapped surfaces and wormhole throats ... could
+    be explored numerically in the ECSK theory"; the merging of throats is conjectured), stability of the bounce.
+- **[Hay99] Hayward 1999**, "Dynamic wormholes", IJMPD 8, 373, arXiv:gr-qc/9805019 v3, doi:10.1142/S0218271899000286
+  (INSPIRE and arXiv checked). Read: abstract, first section. The framework [SH02] tests: "the null energy condition is
+  violated everywhere on a generic wormhole horizon"; "if a wormhole's negative-energy source fails, it may collapse
+  into a black hole. Conversely, irradiating a black-hole horizon with negative energy could convert it into a wormhole
+  horizon." No universe claim.
+- **[Hay06] Hayward 2006**, "Formation and evaporation of regular black holes" (arXiv title "non-singular"), PRL 96,
+  031103, arXiv:gr-qc/0506126 v2, doi:10.1103/PhysRevLett.96.031103 (INSPIRE and arXiv checked). Read: abstract,
+  introduction. Gives regular space-times that "describe the formation of a (locally defined) black hole from an initial
+  vacuum region, its quiescence as a static region, and its subsequent evaporation". The static region "behaving as a
+  cosmological constant at small radius", with a regular centre; infalling positive-energy flux in collapse and
+  negative-energy flux in evaporation. A formation model of a regular black hole, with no new-universe claim and no
+  throat.
+- **[MSOF23] Masó-Ferrando, Sanchis-Gual, Font & Olmo 2023**, "Birth of baby universes from gravitational collapse in a
+  modified-gravity scenario", JCAP 06 (2023) 028, arXiv:2304.12018 v2, doi:10.1088/1475-7516/2023/06/028 (INSPIRE and
+  arXiv checked). Read: abstract, §4 results, §5 conclusions.
+  - Claim: in the Palatini f(R) = R + ξR² frame, collapsing boson stars show "the formation of a finite-size,
+    exponentially-expanding baby universe connected with the outer (parent) universe via a minimal area surface (a
+    throat or umbilical cord)", "at all times hidden inside a horizon". In the Einstein frame "the endpoint is a
+    nonrotating black hole surrounded by a quasi-stationary cloud".
+  - Mechanism: a complex canonical scalar in a metric-affine theory, mapped to an Einstein-frame problem; the baby
+    universe is read in the f(R)-frame metric. The paper names no energy condition in the passages read.
+  - Contains: a numerical relativity evolution (BSSN, unstable boson-star branch): horizon at t ≈ 80, throat at t ≈
+    84.6, apparent horizon at t ≈ 87; the expansion is "exponential and superluminal" for t ∈ [84.6, 91.8]. Does not
+    contain: a run past t = 91.8 ("the region between the center and the maximal sphere becomes unreachable", from the
+    slicing); a stable throat (it expects the throat to close as the scalar cloud is absorbed); the baby universe's
+    matter content.
+- **[BCHM25] Bueno, Cano, Hennigar & Murcia 2025**, "Dynamical formation of regular black holes", PRL 134, 181401,
+  arXiv:2412.02742 v2, doi:10.1103/PhysRevLett.134.181401 (INSPIRE and arXiv checked). Read: abstract and passages on
+  the new universe.
+  - Claim: in a theory with "an infinite tower of higher-derivative corrections", "the shell bounces into a new universe
+    through a white hole explosion"; the thin dust shell collapse is solved analytically and is "singularity-free,
+    geodesically complete".
+  - Mechanism: higher-curvature gravity with second-order equations on spherical metrics, whose terms give the bounce;
+    the matter is a thin dust shell. No energy condition was read. Contains: "stable time evolution within spherical
+    symmetry" of the theory, the shell collapse, horizons above a critical mass. Does not contain: a scalar or phantom
+    source, or the stability of the inner horizon ("can also be studied in the spherically symmetric sector", left for
+    later).
+
+### Named, not read
+- Farhi, Guth & Guven, "Is it possible to create a universe in the laboratory by quantum tunneling?", NPB 339, 417
+  (1990), doi:10.1016/0550-3213(90)90357-J. Oshita & Yokoyama, "Creation of an inflationary universe out of a black
+  hole", PLB 785, 197 (2018), arXiv:1601.03929. Chakrabarty, Abdujabbarov, Malafarina & Bambi, "A toy model for a baby
+  universe inside a black hole", EPJC 80, 373 (2020), arXiv:1909.07129. Dymnikova, "Universes inside a black hole with
+  the de Sitter interior", Universe 5, 111 (2019). Named in [BHR21]'s reference [3]. The INSPIRE records match; the
+  texts and abstracts were not read.
+- Titles only (INSPIRE citers of [SV19]): Lobo et al., "Dynamic thin-shell black-bounce traversable wormholes", PRD
+  2020, arXiv:2003.09419; Franzin et al., arXiv:2201.01650, 2207.08864 and 2310.11990 (perturbations and stability of
+  regular black holes and wormholes, rotating and not); Bueno et al. as above. [FMM89] and [FMM90] full texts. [BHR21]'s
+  companion arXiv:2103.02842.
+
+*Search limits.* The papers beyond the issue's list came from [BHR21]'s reference [3] and from INSPIRE citer lists of
+[BF06] and [SV19] (`refersto:recid:` queries on stability, collapse, formation and dynamics in the title; raw
+`inspire_citer_searches.txt`). No other search was made. Papers that cite [SH02] were covered by #50
+(`critical_ghost.md` §6). AI-directed text: none found.
