@@ -682,7 +682,14 @@ def spectral_mads(c, N, X):
         if j == N:
             rho[j] = -np.inf
         elif xj >= 0:
-            rho[j] = brentq(lambda r: quad(lambda q: 1 / fam.A(q), 0, r, epsabs=1e-14, epsrel=1e-13)[0] - xj, 0, xj + 10, xtol=1e-14) if xj > 0 else 0.0
+            if xj > 0:
+                fx = lambda r, xj=xj: quad(lambda q: 1 / fam.A(q), 0, r, epsabs=1e-14, epsrel=1e-13)[0] - xj
+                hi = xj + 10.0
+                while fx(hi) < 0:                          # rho(x) > x where A > 1 (large c)
+                    hi *= 2
+                rho[j] = brentq(fx, 0, hi, xtol=1e-14)
+            else:
+                rho[j] = 0.0
         else:
             s = xj - xL
             rho[j] = brentq(lambda r: quad(lambda q: 1 / fam.A(q), -np.inf, r, epsabs=1e-16, epsrel=1e-12, limit=400)[0] - s, -1e12, -1e-9, xtol=1e-14)
@@ -709,7 +716,7 @@ def spectral_mads(c, N, X):
     Aop[N, :] = D1[N, :]                                   # Y_x(x_L) = 0
     ev = eig(Aop, Bop, right=False)
     ev = ev[np.isfinite(ev)]
-    return ev[(ev.real > 1e-4) & (ev.real < 100.0)]
+    return ev[(ev.real > 1e-4) & (ev.real < W_HI_M**2)]
 
 
 SPEC = {"S-A": dict(N=240, X=40.0, tol=2e-3), "S-B": dict(N=360, X=60.0, tol=2e-4)}
