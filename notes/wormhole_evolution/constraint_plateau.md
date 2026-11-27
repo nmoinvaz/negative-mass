@@ -110,3 +110,33 @@ Add under the table: the finest-h entries at D = 5 and 6 are roundoff, not trunc
 
 `constraint_plateau.py` (controls, runs, analysis; `python3 constraint_plateau.py analyze --raw=<raw>/I226-rpi5/runs`, `controls`, `--mutate=NAME`), `constraint_plateau_output.txt` (from raw `I226-rpi5/make_output.sh`, run from this directory), this note.
 Raw: `I226-rpi5/` (`README.md`, `jobs_wave1.txt`, `jobs_wave2.txt`, `launch_I226.sh`, `pstar_table.json`, `pstar_ext/`, `runs/`, `logs/`, `dev/`, `supplement/`).
+
+## Coordinator's review
+
+Review of branch `wip/i226-constraint-plateau` at 576b859 and raw `I226-rpi5` at 6af8b9c, recorded in negative-mass-raw
+`I226-mac-review` (criteria b63eaf0e, results and amendment A1 77d13986). On the Mac, nice 10.
+
+- **Scope.** The branch adds the script, its output and this note, nothing else.
+- **Rerun.**
+  - `analyze` on the stored runs gives every line of `constraint_plateau_output.txt`.
+  - `controls` passes. Its K3 (binary128 against float64) was vacuous on the Mac, because `np.longdouble` is float64 on macOS arm64.
+    The script now refuses the binary128 engine on such a machine (`need_binary128`). The binary128 results rest on rpi5's runs alone.
+  - Two float64 jobs rerun on the Mac. The static D = 6, h = 0.005 maximum differs by 4.3e-7 relative. The review's bar of 1e-8 is not
+    met as worded: it was set without the roundoff part, which the model puts at about 1.5e-5 of that maximum (amendment A1). The S − job
+    at h = 0.00125, where roundoff is twice the truncation, moves by 0.66 %, and its largest node moves from i = 4368 to 4519. That is
+    what roundoff predicts and truncation does not.
+- **Independent check** (`ind226.py`). The coordinator's own half-domain march (the scheme of `threshold_check.py`, no line of
+  `dn.py`) has its own RK4 ray data, its own C₊₊ and its own noise. Its noise model was derived independently and agrees with this note's.
+  - The static D = 6 ratios are 4.197, 3.833 and **1.356**, against 4.204, 3.758 and 1.337 here. So the plateau at the extension h
+    appears in a second code with a different scheme.
+  - The response to injected noise a = 256, taken node by node against the same run without noise, agrees with the model: 1.067 at
+    D = 5 and 0.990 at D = 6. It is linear in a (ratio 4.0006 for a = 1024 against 256).
+  - Mutations fire: `csign` (K0), `model-exp` and `noise-sq` (K1). `model-exp` fires narrowly at D = 5, because r is 1 to 2 in the band.
+  - Shared with the code under test: the static Ellis member and the slab's definition.
+- **Status.** The cause is *numerical evidence*, with two codes now. R2 and R3 are not met at the finest declared halving, as the
+  note says. They are reported, not loosened.
+- **Applied.** `threshold.md` ("Constraint diagnostic", recommended task 2) and the README carry the update. Paper III's limits are
+  unchanged.
+- **Follow-ups.**
+  - Recommended task 1 (a diagnostic without the 1/h² roundoff) is #257.
+  - Recommended task 2 (the roundoff seed of the unstable mode) is added to #227.

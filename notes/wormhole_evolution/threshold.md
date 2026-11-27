@@ -173,8 +173,15 @@ maximum; the coordinator's message says "scaled as C1 does", which it does not, 
 The violation is truncation error where it converges: ratio 4 per halving at D = 4 in every family, and at the first halving at D = 5 and 6 (2.5 to 4.0, G at D = 6 4.03).
 **At the finest h at D = 5 and 6 it stops falling** (ratios 1.4 to 1.6 at D = 5, 0.4 to 0.6 at D = 6, i.e. larger than at h/2). Over the same halving p*ₕ keeps its second-order
 ratio (4.00) and the slope changes by 1.6e-5 to 2.3e-4 (D = 5) and −6.2e-4, −2.8e-4 (D = 6, S and O). So the constraint maximum at the finest h is not the quantity that
-sets p*ₕ or the slope; its plateau is not explained here. Candidates not tested: roundoff in second differences of a field that has grown from the 1e-13 seed, and a local
-maximum at one cell.
+sets p*ₕ or the slope.
+
+**Update from #226** ([constraint_plateau.md](constraint_plateau.md)): at the finest h the maximum is roundoff (*numerical evidence*). The second
+difference of r carries the roundoff 2⁻⁵² r of each node as ε/h², and C rⁿ⁻¹ is constant along x⁻, so a violation made at large r is amplified
+by (r₀/r)ⁿ⁻¹ at the throat. In binary128 the same slabs fall by 4.0 to 4.2 per halving at D = 5 and 6. Noise of a·2⁻⁵² per node raises the
+finest-h maximum in proportion to a. The maximum is not a single cell and not the corner, and the ray data's RK4 step does not change it. The
+roundoff in r is 1e-11 against a truncation error of 4e-4, so the plateau does not bear on p*ₕ or the slope. The finest-h entries of the table
+at D = 5 and 6 are roundoff, not truncation. The coordinator's own march reproduces the static ratios (4.197, 3.833, 1.356 against 4.204, 3.758,
+1.337) and the noise model to 1 to 7 % (`I226-mac-review`).
 
 ## Roundoff floor
 
@@ -238,7 +245,7 @@ critical_ghost.md §1.3 ("Has the boundary been treated as a critical phenomenon
 1. *Lifetime along the throat locus for one-sided families (#42, #40).* What: measure G's lifetime as proper time along the minimum-r locus, and the drift velocity, at D = 4 and 5. Why: G's slope
    is read by an observer that is off the throat. Acceptance: the slope in the locus's proper time agrees between two h; a planted boosted static case recovers its known boost; the diagonal slope is
    reproduced as a control. Depends on: this note.
-2. *The constraint plateau at the finest h (#39).* What: find why max |C| stops falling at h = 0.00177 (D = 5) and 0.00125 (D = 6). Acceptance: a run at h and h/2 on a smooth static case shows ratio 4 or the floor
+2. *The constraint plateau at the finest h (#39).* Done by #226. What: find why max |C| stops falling at h = 0.00177 (D = 5) and 0.00125 (D = 6). Acceptance: a run at h and h/2 on a smooth static case shows ratio 4 or the floor
    is attributed to a named term; a mutation that doubles the roundoff changes it. Depends on: #39.
 3. *The roundoff floor (#40).* What: bisect with extended precision (or perturb the data at 1e-16) to see whether the 1e-11 floor is the evolution's. Acceptance: the series is smooth to the declared level in the
    extended run. Depends on: none.
