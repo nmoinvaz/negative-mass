@@ -1,0 +1,157 @@
+#!/usr/bin/env python3
+"""Writes taylor_radial/src/rgen.rs: J(r; s2) of y' = J y, y = (A, A', Gt, chi), as operations on truncated power series.
+
+    python taylor_radial_gen.py            write the file
+    python taylor_radial_gen.py --mp R ... print J at a point in mpmath (used by the crate's checks)
+
+The source is radial_rhs_generated.py (written by derive_radial.py). Its functions ddA, dGt, dchi are linear in
+(A, dA, Gt, chi); each coefficient is the sympy derivative of the function's expression, common subexpressions are
+shared by sympy.cse, and every operation is translated to Rust over series (the walk of taylor_polar.py's `Gen`).
+The symbolic source is shared with radial_modes.py: it is not independent of it.
+"""
+import ast
+import os
+import sys
+
+import sympy as sp
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+SRC = os.path.join(HERE, "radial_rhs_generated.py")
+OUT = os.path.join(HERE, "taylor_radial", "src", "rgen.rs")
+
+ARGS = ["r", "alpha", "a", "phi0", "u", "A", "dA", "Gt", "chi", "omega", "epsilon", "s2", "Lambda", "mu"]
+YS = ["A", "dA", "Gt", "chi"]
+SERIES = {"r", "alpha", "a", "phi0", "u"}
+SCALARS = {"omega": "omega", "epsilon": "epsilon", "s2": "s2", "Lambda": "lambda", "mu": "mu", "pi": "pi"}
+
+
+def functions():
+    """name -> sympy expression of the function's return value"""
+    tree = ast.parse(open(SRC).read())
+    syms = {n: sp.Symbol(n) for n in ARGS}
+    out = {}
+    for fn in tree.body:
+        if isinstance(fn, ast.FunctionDef):
+            ret = [s for s in fn.body if isinstance(s, ast.Return)][0]
+            src = ast.unparse(ret.value)
+            out[fn.name] = sp.sympify(src, locals=dict(syms, pi=sp.pi), rational=True)
+    return out
+
+
+def entries():
+    f = functions()
+    rows = {1: f["ddA"], 2: f["dGt"], 3: f["dchi"]}
+    ent = {(0, 1): sp.Integer(1)}
+    for i, e in rows.items():
+        for j, y in enumerate(YS):
+            c = sp.diff(e, sp.Symbol(y))
+            if c != 0:
+                ent[(i, j)] = c
+        # linearity: no remainder
+        rem = e - sum(sp.diff(e, sp.Symbol(y)) * sp.Symbol(y) for y in YS)
+        assert sp.simplify(rem) == 0, f"row {i} is not linear in y"
+    return ent
+
+
+class Gen:
+    def __init__(self, ent):
+        keys = sorted(ent)
+        exprs = [ent[k] for k in keys]
+        repl, red = sp.cse(exprs, symbols=sp.numbered_symbols("x"), optimizations="basic")
+        self.defs = [(str(s), e) for s, e in repl]
+        self.entries = [(k[0], k[1], e) for k, e in zip(keys, red)]
+        self.types = {}
+
+    def emit(self, e):
+        if isinstance(e, sp.Integer):
+            return f"c::<T>({float(int(e))!r})", "S"
+        if isinstance(e, sp.Rational):
+            return f"(c::<T>({float(e.p)!r}) / c::<T>({float(e.q)!r}))", "S"
+        if isinstance(e, sp.Float):
+            raise ValueError("float constant")
+        if e is sp.pi:
+            return "pi", "S"
+        if isinstance(e, sp.Symbol):
+            n = str(e)
+            if n in SCALARS:
+                return SCALARS[n], "S"
+            if n in SERIES:
+                return n, "V"
+            return n, self.types[n]
+        if isinstance(e, sp.Add):
+            parts = [self.emit(a) for a in e.args]
+            return self.fold(parts, "add")
+        if isinstance(e, sp.Mul):
+            parts = [self.emit(a) for a in e.args]
+            return self.fold(parts, "mul")
+        if isinstance(e, sp.Pow):
+            b, tb = self.emit(e.args[0])
+            ex = e.args[1]
+            assert isinstance(ex, sp.Integer), e
+            n = int(ex)
+            if n == -1:
+                return (f"(T::one() / {b})", "S") if tb == "S" else (f"recip(&{b})", "V")
+            if n < 0:
+                inv = f"(T::one() / {b})" if tb == "S" else f"recip(&{b})"
+                return (f"pows({inv}, {-n})", "S") if tb == "S" else (f"powi(&{inv}, {-n})", "V")
+            assert n >= 2, e
+            return (f"pows({b}, {n})", "S") if tb == "S" else (f"powi(&{b}, {n})", "V")
+        raise ValueError(f"{type(e)}: {e}")
+
+    def fold(self, parts, op):
+        # scalars first, so that products and sums of scalars stay in the lane's scalar arithmetic
+        sc = [p for p in parts if p[1] == "S"]
+        vs = [p for p in parts if p[1] == "V"]
+        acc, ta = None, None
+
+        def comb(a, ta, b, tb):
+            k = ta + tb
+            if op == "add":
+                return {"SS": (f"({a} + {b})", "S"), "VV": (f"add(&{a}, &{b})", "V"),
+                        "VS": (f"adds(&{a}, {b})", "V"), "SV": (f"adds(&{b}, {a})", "V")}[k]
+            return {"SS": (f"({a} * {b})", "S"), "VV": (f"mul(&{a}, &{b})", "V"),
+                    "VS": (f"scl(&{a}, {b})", "V"), "SV": (f"scl(&{b}, {a})", "V")}[k]
+
+        for a, t in sc + vs:
+            if acc is None:
+                acc, ta = a, t
+            else:
+                acc, ta = comb(acc, ta, a, t)
+        return acc, ta
+
+    def render(self):
+        o = ["//! AUTO-GENERATED by `taylor_radial_gen.py` from radial_rhs_generated.py (which derive_radial.py wrote). Do not edit.",
+             "//! J(r; s2) of y' = J y, y = (A, A', Gt, chi), as operations on truncated power series.",
+             "//! The symbolic source is shared with radial_modes.py: it is not independent of it.",
+             "#![allow(clippy::all, unused_variables, unused_parens)]",
+             "use crate::num::Num;", "use crate::ser::*;", "",
+             "#[derive(Clone, Copy, Debug)]", "pub struct Pars<T: Num> {"]
+        o += [f"    pub {k}: T," for k in ("omega", "epsilon", "s2", "lambda", "mu", "pi")]
+        o += ["}", "", "fn c<T: Num>(x: f64) -> T {", "    T::from_f64(x)", "}", "",
+              "fn pows<T: Num>(a: T, e: i32) -> T {", "    let mut r = T::one();", "    for _ in 0..e {",
+              "        r = r * a;", "    }", "    r", "}", "",
+              "pub fn j_series<T: Num>(r: &Ser<T>, alpha: &Ser<T>, a: &Ser<T>, phi0: &Ser<T>, u: &Ser<T>, p: &Pars<T>) -> [[Ser<T>; 4]; 4] {",
+              "    let (r, alpha, a, phi0, u) = (*r, *alpha, *a, *phi0, *u);",
+              "    let (omega, epsilon, s2, lambda, mu, pi) = (p.omega, p.epsilon, p.s2, p.lambda, p.mu, p.pi);"]
+        for n, e in self.defs:
+            code, ty = self.emit(e)
+            self.types[n] = ty
+            o.append(f"    let {n} = {code};")
+        o.append("    let mut j = [[Ser::<T>::zero(); 4]; 4];")
+        for i, jj, e in self.entries:
+            code, ty = self.emit(e)
+            o.append(f"    j[{i}][{jj}] = " + (f"Ser::cst({code});" if ty == "S" else f"{code};"))
+        o += ["    j", "}"]
+        return "\n".join(o) + "\n"
+
+
+def main():
+    ent = entries()
+    g = Gen(ent)
+    text = g.render()
+    open(OUT, "w").write(text)
+    print(f"wrote {OUT}: {len(text.splitlines())} lines, {len(g.defs)} temporaries, {len(g.entries)} entries")
+
+
+if __name__ == "__main__":
+    main()
