@@ -148,3 +148,27 @@ python3 singularity_locator.py RAW/I183-rpi5/dump_run_03a HARNESS_BIN planted.lo
 
 The criteria, the design exploration (dev_00 to dev_03b), the first run (dev_10), the controls' development run (dev_11), the amendments and the runs of record (run_01, run_02) are in
 the raw folder's README.
+
+## Coordinator's review
+
+Under review: multisolver pull request #26 (`feat/locate-singularity` at 0db3966, **not merged**: its review and
+release are the user's), `wip/i191-singularity-locator` at 71ebf1c, raw `I191-rpi5` at d19334b. Review folder
+`negative-mass-raw/I191-mac-review`, whose README holds the criteria, committed before the first run of `ind191.py`.
+
+- **The suite on the Mac**, a fourth build: 4 passed, with the same fingerprint 0xa5113e9ccb6776c8 as the Pi, `portable`
+  and the PR's x86 CI.
+- **ind191**: three planted series of the coordinator's choosing, none in the suite, through `locate` with default
+  options. Run 1, 2 of 2: the right kind and covering bars in all nine cells.
+  - a logarithm −ln(1 − x/1.7): Real, α = 0, |ds| ≤ 2.2e-16 in f64. This is the log end #203 needs.
+  - cosh(x)·(1 − x/(−2.3))^{−3/2}: Real; in f64 |ds| = 2.0e-8 against a bar of 3.6e-7.
+  - (1 + x²/4)^{−1/3}: a Pair at 2i.
+  - The mutations `wrong-s` and `pair-as-real` fail exactly their targets.
+  - *Added by the coordinator:* the harness prints in f64, so in dd and qd coverage is tested only to f64 resolution.
+- **The driver** (`singularity_locator.py`), rerun with `compare183` built on the Mac against #183's merged crate, gives
+  this note's output exactly.
+- The file `singularity_locator_output.txt` was not in the brief's list. It is the driver's output, kept as an output of
+  record.
+- *Added by the coordinator:* the finding on #183's κ-curve ends is in `conical_global.md` §5 and #183's review: α(F) is
+  ½ at η* = 2.828 and 11.958 and 2 at 4.899 and 31.96. #203 classifies all 126 records.
+- Follow-ups: the recommended tasks 1 and 2 (later window starts, noise-only series) are filed together, and task 3 (the
+  locator in the walkers) separately. Task 4 is #203.
