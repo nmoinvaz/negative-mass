@@ -678,6 +678,8 @@ def check_remainder(ev):
     report("R6", abs(est6 - om[4]) <= R6_BAR * abs(om[4]), f"two-point extrapolation (s2 x2 - s1 x1)/(s2 - s1) of rem6 s^5 from D = 5103, 10^4: {nd(est6, 8)} against the computed "
            f"Omega5 {nd(om[4], 8)}, relative difference {nd((est6 - om[4]) / om[4], 3)} (bar 1e-4: an estimate, not a bound)")
     falls = all(xs7[a] != 0 for a in xs7) and R7_BAR is not None and abs(xs7[10000] - xs7[5103]) <= R7_BAR
+    est7 = (s2 * xs7[10000] - s1 * xs7[5103]) / (s2 - s1)
+    print(f"  reported: two-point extrapolation of rem7 s^6 from D = 5103, 10^4: Omega6 ~ {nd(est7, 8)} (an estimate, not a bound)")
     report("R7", falls, f"rem7 s^6 at D = 5103 and 10^4 differs by {nd(abs(xs7[10000] - xs7[5103]), 5)} (bar {R7_BAR}: a wrong Omega5 adds (error) s, about 10^4 per unit)")
     # X3: Omega5 from the crate's 64 values with Omega0 .. Omega4 fixed (the closed forms)
     mp.mp.dps = 120
@@ -1299,6 +1301,15 @@ def rd_kit_check():
     return e1, e2
 
 
+# the monomials q^a pi^b zeta(3)^c zeta(5)^e of Q6's constants, in its order (weights 6, 5, 4, 3, 2, 1, 0)
+Q6_MONOS = [(6, 0, 0, 0), (4, 2, 0, 0), (2, 4, 0, 0), (0, 6, 0, 0), (3, 0, 1, 0), (1, 2, 1, 0), (0, 0, 2, 0), (1, 0, 0, 1),
+            (5, 0, 0, 0), (3, 2, 0, 0), (1, 4, 0, 0), (2, 0, 1, 0), (0, 2, 1, 0), (0, 0, 0, 1),
+            (4, 0, 0, 0), (2, 2, 0, 0), (0, 4, 0, 0), (1, 0, 1, 0),
+            (3, 0, 0, 0), (1, 2, 0, 0), (0, 0, 1, 0),
+            (2, 0, 0, 0), (0, 2, 0, 0), (1, 0, 0, 0), (0, 0, 0, 0)]
+PSLQ_REL_Q6 = None          # the relation of run_06b (set after that run)
+
+
 def check_reduce7(ev=None):
     t0 = time.time()
     mp.mp.dps = 45
@@ -1372,6 +1383,33 @@ def check_reduce7(ev=None):
         dmb[key] = digits(mp.mpf(sp.N(masters[key], 110)), vnum)
     report("RD5b", min(dmb.values()) >= 90, "the two identified masters <lt^2 C^2> = pi (3 zeta(3)^2/4 - 95 zeta(6)/96) and <lt^3 D3> = pi (9 zeta(3)^2/16 - 11 zeta(6)/4) (found by PSLQ at 55 digits "
            "in {pi^7, pi zeta(3)^2}) against quadrature at 100 digits, digits: " + ", ".join(f"({','.join(str(i) for i in k)}) {float(v):.1f}" for k, v in dmb.items()) + f" (bar 90; {time.time() - t2b:.0f} s)")
+    # RD5c: the Euler sums behind <K2^2>, <lt^3 D3> and the Parseval form of <lt^2 C^2>, numerically (40 digits, Euler-Maclaurin)
+    t2c = time.time()
+    mp.mp.dps = 40
+    z2m, z3m, z4m, z6m = mp.zeta(2), mp.zeta(3), mp.zeta(4), mp.zeta(6)
+    Hn = lambda n: mp.digamma(n + 1) + mp.euler  # noqa: E731
+    H2n = lambda n: z2m - mp.zeta(2, n + 1)  # noqa: E731
+    es = {"H/n^3 = 5 zeta(4)/4": (mp.nsum(lambda n: Hn(n) / n**3, [1, mp.inf], method="e"), mp.mpf(5) / 4 * z4m),
+          "H/n^5 = 7 zeta(6)/4 - zeta(3)^2/2": (mp.nsum(lambda n: Hn(n) / n**5, [1, mp.inf], method="e"), mp.mpf(7) / 4 * z6m - z3m**2 / 2),
+          "H^2/n^4 = 97 zeta(6)/24 - 2 zeta(3)^2": (mp.nsum(lambda n: Hn(n) ** 2 / n**4, [1, mp.inf], method="e"), mp.mpf(97) / 24 * z6m - 2 * z3m**2),
+          "H2/n^2 = 7 zeta(4)/4": (mp.nsum(lambda n: H2n(n) / n**2, [1, mp.inf], method="e"), mp.mpf(7) / 4 * z4m),
+          "H2/n^4 = zeta(3)^2 - zeta(6)/3": (mp.nsum(lambda n: H2n(n) / n**4, [1, mp.inf], method="e"), z3m**2 - z6m / 3),
+          "H2^2/n^2 = 19 zeta(6)/24 + zeta(3)^2": (mp.nsum(lambda n: H2n(n) ** 2 / n**2, [1, mp.inf], method="e"), mp.mpf(19) / 24 * z6m + z3m**2),
+          "H H2/n^3 = 5 zeta(3)^2/2 - 101 zeta(6)/48": (mp.nsum(lambda n: Hn(n) * H2n(n) / n**3, [1, mp.inf], method="e"), mp.mpf(5) / 2 * z3m**2 - mp.mpf(101) / 48 * z6m)}
+    sm2 = mp.nsum(lambda m: ((H2n(m) - z2m) / m + 2 * Hn(m) / m**2 - mp.mpf(3) / (2 * m**3)) ** 2, [1, mp.inf], method="e")
+    de = {k: digits(b, a) for k, (a, b) in es.items()}
+    # the Parseval sum assembled exactly from the closed forms of the Euler sums (sympy)
+    Z2, Z3, Z4, Z6 = sp.pi**2 / 6, sp.zeta(3), sp.pi**4 / 90, sp.pi**6 / 945
+    E3, E5, E42, T2, T5, T1, T3 = sp.Rational(5, 4) * Z4, sp.Rational(7, 4) * Z6 - Z3**2 / 2, sp.Rational(97, 24) * Z6 - 2 * Z3**2, sp.Rational(7, 4) * Z4, Z3**2 - Z6 / 3, \
+        sp.Rational(19, 24) * Z6 + Z3**2, sp.Rational(5, 2) * Z3**2 - sp.Rational(101, 48) * Z6
+    if MUTATE == "rd_master":
+        T3 = sp.Rational(5, 2) * Z3**2 - sp.Rational(100, 48) * Z6
+    ssum = T1 - 2 * Z2 * T2 + Z2**3 + 4 * E42 + sp.Rational(9, 4) * Z6 + 4 * T3 - 4 * Z2 * E3 - 3 * T5 + 3 * Z2 * Z4 - 6 * E5
+    rs = sp.simplify(sp.expand(ssum - (3 * Z3**2 - sp.Rational(95, 24) * Z6)))
+    dA = digits(mp.pi * (mp.mpf(3) / 4 * z3m**2 - mp.mpf(95) / 96 * z6m), mp.pi / 4 * sm2)
+    report("RD5c", min(de.values()) >= 30 and dA >= 30 and rs == 0, "the Euler sums used, against their closed forms (Euler-Maclaurin at 40 digits), digits: " + ", ".join(f"{k}: {float(v):.1f}" for k, v in de.items())
+           + f"; (pi/4) sum_m s_m^2, s_m = (-1)^m[(H2_m - zeta(2))/m + 2 H_m/m^2 - 3/(2m^3)], against pi (3 zeta(3)^2/4 - 95 zeta(6)/96): {float(dA):.1f} digits; "
+           f"sum s_m^2 assembled from the closed forms of the Euler sums, minus 3 zeta(3)^2 - 95 zeta(6)/24: sympy residual {rs} (bar 30 digits, residual 0; {time.time() - t2c:.0f} s)")
     # RD6: the reduction numerically: sum of the boundary terms + quadrature of I_final at Omega5 = 0 against method A
     mp.mp.dps = 45
     Jtn = [mp.mpf(sp.N(j, 60)) for j in Jt]
@@ -1422,6 +1460,35 @@ def check_reduce7(ev=None):
         print(f"  closed form of the reduction: Omega5 = {mp.nstr(om5_c, 60)}")
     mp.mp.dps = 60
     print("  Omega5 (derived, symbolic, in q = ln 2) = " + str(RD_STATE["om5_closed_expr"]))
+    print("  Omega5/32 (the coefficient of 1/(D - 3)^5, derived, symbolic) = " + str(sp.expand(RD_STATE["om5_closed_expr"] / 32)))
+    mp.mp.dps = 600
+    print(f"  Omega5 (derived) = {nd(om5_c, 120)}\n  Omega5/32 = {nd(om5_c / 32, 60)}")
+    mp.mp.dps = 60
+    # LN2: the dependence of Omega0 .. Omega5 on ln 2 is that of exp(-4 ln 2/s): s (1 + sum Omega_k/s^(k+1)) = s exp(-4 ln 2/s) F(1/s) with F free of ln 2
+    qq, ppi, zz3, zz5 = X_Q, sp.pi, sp.zeta(3), sp.zeta(5)
+    eps = sp.Symbol("eps")
+    oms = [-4 * qq, 2 * ppi**2 / 3 + 8 * qq**2, 80 * zz3 - sp.Rational(8, 3) * ppi**2 * qq - sp.Rational(32, 3) * qq**3,
+           22 * ppi**4 / 45 + sp.Rational(16, 3) * ppi**2 * qq**2 + sp.Rational(32, 3) * qq**4 - 320 * zz3 * qq - 384 * zz3,
+           -10432 * zz5 - 160 * ppi**2 * zz3 + 640 * qq**2 * zz3 - sp.Rational(64, 9) * ppi**2 * qq**3 - sp.Rational(88, 45) * ppi**4 * qq
+           - sp.Rational(128, 15) * qq**5 - sp.Rational(2432, 45) * ppi**4 + 1536 * qq * zz3 + 3072 * zz3, RD_STATE["om5_closed_expr"]]
+    Fser = sp.expand(sp.series(sp.exp(4 * qq * eps) * (1 + sum(oms[k] * eps ** (k + 1) for k in range(6))), eps, 0, 7).removeO())
+    fk = [sp.expand(Fser.coeff(eps, k)) for k in range(7)]
+    dq = [sp.simplify(sp.diff(f, qq)) for f in fk]
+    report("LN2", all(d == 0 for d in dq), "F(eps) = exp(4 ln 2 eps)(1 + Omega0 eps + ... + Omega5 eps^6) has coefficients free of ln 2 through eps^6 (d/d ln 2 = " + str(dq) + "): "
+           + "; ".join(f"f{k} = {fk[k]}" for k in range(7)))
+    mp.mp.dps = 60
+    # RD8: the integer relation PSLQ found for Q6 (run_06b) is the derived closed form's coefficients times their common denominator
+    pq, ppi, pz3, pz5 = X_Q, sp.pi, sp.zeta(3), sp.zeta(5)
+    poly = sp.Poly(RD_STATE["om5_closed_expr"], pq, ppi, pz3, pz5)
+    den = sp.ilcm(*[sp.fraction(c)[1] for c in poly.coeffs()])
+    mine = [int(den)] + [int(-den * poly.coeff_monomial(m)) for m in Q6_MONOS]
+    inside = set(poly.monoms()) <= set(Q6_MONOS)
+    if PSLQ_REL_Q6 is not None:
+        report("RD8", inside and (mine == list(PSLQ_REL_Q6) or mine == [-v for v in PSLQ_REL_Q6]),
+               f"the integer relation of run_06b (PSLQ, Q6, {len(PSLQ_REL_Q6) - 1} constants) {list(PSLQ_REL_Q6)} against {den} followed by -{den} x the derived closed form's coefficients {mine} "
+               "(every term of the closed form is a constant of Q6)")
+    else:
+        print(f"  RD8 not run (no PSLQ relation given): the derived relation is {mine}")
     print(f"  ({time.time() - t0:.0f} s)")
     return om5_a
 
