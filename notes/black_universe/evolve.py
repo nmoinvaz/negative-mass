@@ -8,7 +8,9 @@ of the gauge-invariant Y on the diagonal, bisection to A*_h, the lifetime series
                                                                 one-sided pulse of #40 and the weighted trapped-cell finder, the collapse side)
     evolve.py analyze --raw=DIR [--mutate=NAME]                 E8, E9, XC, E11 and every table, from the stored jobs (directories c<c>_h<h>, O_c<c>_h<h>)
     evolve.py name --c=C --h=H --raw=DIR --out=DIR              naming runs: finders, diagonal, mass, at |A - A*| = 1e-4, 1e-5, 1e-6
-    evolve.py resp --c=C [--Ap=1e-6] [--out=DIR]               reported diagnostic: the linear response to a compact pulse to the end of the grid
+    evolve.py resp --c=C [--Ap=1e-6] [--out=DIR] [--tuned=JOBDIR]    reported diagnostic D1: the linear response to a compact pulse to the end of the grid; with --tuned the
+                                                                background is the mode family at that job's A* (D1b, added after D1)
+    evolve.py bgdep --c=C [--h=H]                               when the untuned member's |Y| on the diagonal reaches 2e-5, 1e-3, 1e-2, 1e-1 (when D1's background leaves the member)
 
 Units b = 1, 8 pi G = 1, D = 4, eps = -1 (the potential of [BF06], evolve_potential.py). t = (x+ + x-)/sqrt2 is the Killing time of the member (e^{-f} = A), so
 T is in #212's t. Exit status 1 when a check fails (a mutated run is meant to exit 1).
@@ -1114,7 +1116,7 @@ def name_runs(c, h, raw, out):
 # --------------------------------------------------------------------------------------------------------------------
 # reported diagnostic: the linear response to a compact pulse, to the end of the grid
 # --------------------------------------------------------------------------------------------------------------------
-def resp(c, Ap=1e-6, h=0.01, X=40.0, rc=None, out=None):
+def resp(c, Ap=1e-6, h=0.01, X=40.0, rc=None, out=None, tuned=None):
     mem = ep.Member(c)
     rc = CRIT["RHO_C"].get(c, 1.0) if rc is None else rc
     N = int(round(X / h))
@@ -1125,8 +1127,16 @@ def resp(c, Ap=1e-6, h=0.01, X=40.0, rc=None, out=None):
         Rr = mem.R(rho)
         return 0.5 * Rr * (1.0 - mem.A(rho) * (rho / Rr) ** 2)
 
+    if tuned is not None:                      # D1b (an addition after D1): the background is the mode family at A = A*, so it stays at the member until the floor
+        dR, dL, info = extract_mode(mem, rc, h, X + 25.0, CRIT["Y_ext"], CRIT["tmin_extract"])
+        sm = json.load(open(os.path.join(tuned, "summary.json")))
+        Abg = 0.5 * (sm["lo"] + sm["hi"])
+
     def one(A):
         d = member_rays(mem, rc, N, h, pulse=dict(A=A, xc=3.0, w=0.5, ray="+"))
+        if tuned is not None:
+            d.Sp = d.Sp + Abg * dR[:, :N + 1]
+            d.Sm = d.Sm + Abg * dL[:, :N + 1]
         return evolve_dep(d, par, st, Y0=1e9, stop=False, record=True)["rec"]
     res = {}
     for A in (Ap, -Ap, 10 * Ap, -10 * Ap):
@@ -1145,7 +1155,8 @@ def resp(c, Ap=1e-6, h=0.01, X=40.0, rc=None, out=None):
     Ms_edge = np.full_like(le, np.nan)
     rho_e, _, _ = tortoise_rho(mem, rc, le[good])
     Ms_edge[good] = msm(rho_e)
-    print(f"c = {c}, rho_c = {rc}, h = {h}, X = {X}, pulse +-{Ap:g} on the + ray (centre 3, width 0.5); member: kappa = {mem.kappa if mem.kappa else float('nan'):.4f}, #212 W = {W212.get(c)}, ADM mass m = {m_adm:.5f}")
+    print(("D1b: background = the mode family at A = A*_h = %.6e (tuned). " % Abg if tuned is not None else "D1: background = the untuned member. ")
+          + f"c = {c}, rho_c = {rc}, h = {h}, X = {X}, pulse +-{Ap:g} on the + ray (centre 3, width 0.5); member: kappa = {mem.kappa if mem.kappa else float('nan'):.4f}, #212 W = {W212.get(c)}, ADM mass m = {m_adm:.5f}")
     print("   odd part of Y per unit A_p, and its ratio to the same at 10 A_p (1 = linear):")
     tt = np.arange(6, 55, 4.0)
     for T in tt:
@@ -1155,7 +1166,7 @@ def resp(c, Ap=1e-6, h=0.01, X=40.0, rc=None, out=None):
         print(f"      t = {t[j]:5.1f}: Y/A_p {oY[j]:+.3e}  ratio {oY10[j] / oY[j] if oY[j] != 0 else float('nan'):.4f};  dM_diag/A_p {oM[j]:+.3e}  dM_edge/A_p {oME[j]:+.3e} (edge l = {le[j]:+.1f})")
     print("   local rate of ln|Y| (odd part):")
     rates = []
-    for a, b in ((10, 16), (16, 22), (22, 28), (28, 34), (34, 40), (40, 46), (46, 52)):
+    for a, b in (((6, 10), (10, 14), (14, 18), (18, 22), (22, 26), (26, 30)) if tuned is not None else ((10, 16), (16, 22), (22, 28), (28, 34), (34, 40), (40, 46), (46, 52))):
         m = ok & (t >= a) & (t <= b) & np.isfinite(oY) & (oY != 0)
         if m.sum() > 5:
             rates.append((a, b, float(np.polyfit(t[m], np.log(np.abs(oY[m])), 1)[0])))
@@ -1181,6 +1192,20 @@ def resp(c, Ap=1e-6, h=0.01, X=40.0, rc=None, out=None):
     if out:
         os.makedirs(out, exist_ok=True)
         np.savez(os.path.join(out, f"resp_c{c:g}.npz"), t=t, oY=oY, oM=oM, oME=oME, le=le)
+
+
+def bgdep(c, h=0.01, X=40.0, rc=None):
+    """the untuned member's own departure: the times at which |Y| on the diagonal first reaches 2e-5, 1e-3, 1e-2 and 1e-1 (D1b: when the background of D1 leaves the member)"""
+    mem = ep.Member(c)
+    rc = CRIT["RHO_C"].get(c, 1.0) if rc is None else rc
+    N = int(round(X / h))
+    r = evolve_dep(member_rays(mem, rc, N, h), params(mem), Static(mem, rc, N, h), Y0=1e9, stop=False, record=True)["rec"]
+    t, Y = r["t"], np.abs(r["Y"])
+    out = []
+    for lev in (2e-5, 1e-3, 1e-2, 1e-1):
+        m = np.isfinite(Y) & (Y >= lev) & (t >= 4)
+        out.append(f"{lev:g}: t = {t[m][0]:.2f}" if m.any() else f"{lev:g}: not reached")
+    print(f"c = {c}, h = {h}: the untuned member's |Y| on the diagonal first reaches " + "; ".join(out))
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -1222,8 +1247,11 @@ def main():
     if cmd == "name":
         name_runs(float(kw["c"]), float(kw["h"]), kw["raw"], kw["out"])
         return
+    if cmd == "bgdep":
+        bgdep(float(kw["c"]), float(kw.get("h", 0.01)))
+        return
     if cmd == "resp":
-        resp(float(kw["c"]), float(kw.get("Ap", 1e-6)), out=kw.get("out"))
+        resp(float(kw["c"]), float(kw.get("Ap", 1e-6)), out=kw.get("out"), tuned=kw.get("tuned"))
         return
     sys.exit(f"unknown command {cmd}")
 
