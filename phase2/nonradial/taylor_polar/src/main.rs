@@ -1,5 +1,13 @@
 //! taylor_polar: the polar matching determinant D(gamma) by a Taylor integrator (negative-mass #186).
 //! Usage: taylor_polar <cmd> key=value ...   (see taylor_polar.py for the calls it makes)
+#[cfg(all(feature = "complex", feature = "lib_plane"))]
+compile_error!("the features complex and lib_plane are exclusive until multishoot's plane stepper takes complex lanes (#188)");
+#[cfg(feature = "complex")]
+mod cdrive;
+#[cfg(feature = "complex")]
+mod complex;
+#[cfg(feature = "complex")]
+mod cplanted;
 mod jgen;
 mod mutate;
 mod num;
@@ -311,6 +319,8 @@ fn main() {
     if let Some(m) = map.get("mutate") {
         mutate::set(m);
     }
+    #[cfg(feature = "complex")]
+    complex::init();
     let args = Args(map);
     // the generated J keeps hundreds of series on the stack
     let h = std::thread::Builder::new()
@@ -327,6 +337,14 @@ fn main() {
             "rows" => lane_rows(&args),
             "rmplant" => rows::rmplant(&args),
             "qplant" => lane_qplant(&args),
+            #[cfg(feature = "complex")]
+            "dc" => cdrive::dc(&args),
+            #[cfg(feature = "complex")]
+            "dserve" => cdrive::dserve(&args),
+            #[cfg(feature = "complex")]
+            "cp1" => cplanted::cp1(&args),
+            #[cfg(feature = "complex")]
+            "czserve" => cplanted::czserve(&args),
             _ => eprintln!("commands: star starcheck d jcheck planted rows rmplant qplant"),
         })
         .unwrap();

@@ -50,6 +50,22 @@ pub trait Num:
     }
     /// decimal text with about `digits` significant digits
     fn sci(self, digits: usize) -> String;
+    /// complex conjugate; the identity on the real lanes
+    fn conj(self) -> Self {
+        self
+    }
+    /// |z|^2 as a lane value; z * z on the real lanes
+    fn abs2(self) -> Self {
+        self * self
+    }
+    /// |z| as f64; |x| on the real lanes
+    fn mag(self) -> f64 {
+        self.to_f64().abs()
+    }
+    /// the real part as f64; the value on the real lanes
+    fn re_f64(self) -> f64 {
+        self.to_f64()
+    }
 }
 
 impl Num for f64 {
