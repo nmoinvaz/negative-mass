@@ -526,6 +526,9 @@ NORM_C = 0.37 + 0.61j                                      # fixed complex funct
 
 def normc(s):
     """divide (Y, Y_x) by the analytic scalar Y + NORM_C Y_x (the real hypot normalization of the real code is not analytic in W)"""
+    if mutating("cplx_hypot"):                                       # control: the real, non-analytic normalization
+        s[1:] /= math.hypot(abs(s[1]), abs(s[2]))
+        return s
     s[1:] /= (s[1] + NORM_C * s[2])
     return s
 
@@ -646,7 +649,11 @@ def complex_command(mids, res_list=("R1", "R2"), out=None):
     found = []
     for mid in mids:
         spec = member_spec(mid)
+        had = "cplx_ned" in MUT
+        MUT.discard("cplx_ned")                                       # the control mutates the shooting only, not the spectral eigenvalue it is checked against
         lams = spectral_complex(spec)
+        if had:
+            MUT.add("cplx_ned")
         if not lams:
             print(f"FAIL  C1 {mid}: no complex eigenvalue with Re lambda > 1e-3 in the S-B spectral problem", flush=True)
             ok_all = False
@@ -1368,7 +1375,8 @@ CONTROLS = {
     "bg_kappa": ("check", "S3 horizons"), "az_series": ("check", "S2 float64"), "ser_coef": ("check", "S2 float64"),
     "eps": ("planted", "P1 planted"), "throat_wall": ("planted", "P1 planted"), "rmax": ("planted", "P1 planted"),
     "hz_start": ("agree", "R1 v R2"), "ned_off": ("agree", "R1 v R2"),
-    "cplx_conj": ("plantedcomplex", "P4 planted"), "cplx_V": ("plantedcomplex", "P4 planted"), "cplx_ned": ("complex", "C1 complex"),
+    "cplx_conj": ("plantedcomplex", "P4 planted"), "cplx_V": ("plantedcomplex", "P4 planted"), "cplx_hypot": ("plantedcomplex", "P4 planted"),
+    "cplx_ned": ("complex", "C1 complex shooting"),
     "lowW_V": ("plantedlow", "P3 planted"), "lowW_range": ("plantedlow", "P3 planted"), "rmax_low": ("agreelow", "low R1 v R2"),
     "scan_range": ("sturm", "S9 Sturm"), "sturm_sign": ("sturm", "S9 Sturm"), "spec_sign": ("spectral", "S6 spectral"),
 }
