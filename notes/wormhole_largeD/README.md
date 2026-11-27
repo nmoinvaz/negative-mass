@@ -174,6 +174,10 @@ comes only from the absence of the growing term.
   fit, not identified (#195; #208 computes it from the order-5 integral).
   **Update from #208:** Ω₃ is now derived too, resting on E1, E2 and a third identity, E3, which #209 should also
   re-derive. Ω₄ is a fit (#195), not computed from the matching integral or identified.
+  **Update from #209:** E1, E2, E3 and the two Clausen integrals are re-derived independently, without the notes
+  ([exchange_review.md](exchange_review.md)), with every boundary term stated. No sign, constant or result differs.
+  So Ω₁, Ω₂ and Ω₃ are **derived**, and #25 is closed. *Added by the coordinator:* the review checked E1 to E3 on a
+  hierarchy that shares no code with method B, and showed that they need G_m = 0 (raw `I209-mac-review`).
 - **Prior work** (searched only briefly, three web searches). [TS13] give the numbers and say the time scale "becomes
   shorter as n becomes large", but give no formula. No large-D analysis of these wormholes was found. This is not a
   full literature check, and nothing here claims novelty.
@@ -188,6 +192,7 @@ comes only from the absence of the growing term.
 - `w2_crate/`, `w2_highprec.py`, `w2_highprec.md`: W² to 60 digits at 64 D, and the fit of Ω₁ … Ω₄ (#195, `w2_output.txt`).
 - `order4.py`, `omega2.md`: orders 3 and 4, Ω₂ from G₄ = 0, and its reduction by hand (#26, `order4_output.txt`).
 - `order5.py`, `omega3.md`: order 5, Ω₃ from G₅ = 0, its identification and its reduction by hand (#208, `order5_output.txt`).
+- `exchange_review.py`, `exchange_review.md`: E1, E2, E3 and the Clausen integrals re-derived independently (#209, `exchange_review_output.txt`).
 - `omega_graph.py`: `omega_coeffs.svg`, the coefficients Ω₀ … Ω₄ and the error of each truncation against #195's W².
 - `profiles.py`: the mode profiles and the table of growth rates behind Paper III's figure (`profiles.csv`,
   `growth.csv`).

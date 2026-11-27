@@ -112,6 +112,8 @@ Notation: S = sin²θ, ℓ = ln cos θ, u = tan θ, C = Cl₂(π − 2θ), D₃ 
 
 1. **The D₃ term, by parts.** With P = cot θ (ℓ − Ω₀), P′ = (Ω₀ − S − ℓ)/S, so δ = −32P′ (H2a, residual 0); D₃′ = 2C and
    D₃(0) = 0, P(π/2) = 0, so ∫δD₃ = 64∫C P dθ (H2b, 45 digits; the boundary terms vanish).
+   *Update from #209:* P has a pole at θ = 0, so the boundary term there also needs D₃ = O(θ²), which holds
+   (D₃′ = 2C, D₃ = 2 ln 2 θ² + …). The conclusion stands (`exchange_review.md` §8, difference 3).
 2. **The C terms combine.** γ + 64P = 64(Ω₀ − 1)u (H3, residual 0). So the Clausen content of G₄ is 64(Ω₀ − 1)∫₀^{π/2}
    tan θ C dθ.
 3. **The Clausen integral.** C′ = 2ℓ + 2q (checked to 45 digits), ℓC → 0 at both ends, so ∫tan θ C dθ = ∫ℓ C′ dθ = 2J₂ +

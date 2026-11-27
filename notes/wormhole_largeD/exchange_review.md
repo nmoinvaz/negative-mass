@@ -424,3 +424,28 @@ Silences that are results:
   directory after the controls, `run_controls.sh` of the raw folder, have run).
 - Raw `I209-rpi5` (negative-mass-raw): README with the declarations, development logs `dev*`, declared runs `run_*`, control runs
   `ctl_*`, `units.txt`.
+
+## Coordinator's review
+
+Under review: `wip/i209-exchange-review` at 76db404, raw `I209-rpi5` at b7c952b. Review folder
+`negative-mass-raw/I209-mac-review`, whose README holds the criteria, committed before the first run of `ind209.py`. The
+changed files are those the brief names.
+
+- **Rerun on the Mac** of `run_03`: the verdict lines equal the Pi's, and the control summary is 27 of 27. The first
+  attempt omitted the control-log arguments; that error was the review's, and the log is kept.
+- **ind209**, run 2, 4 of 4. This is the note's recommended task 1. E1, E2 and E3, in `exchange_review.py`'s forms, are
+  evaluated on the coordinator's own Taylor-jet hierarchy (`I208-mac-review/ind208.py`), which shares no code with
+  method B's `PanelK`.
+  - E1 holds at k = 3, 4, 5 to 9e-38 or better, at the root and off it, with Ω_{k−2} + 1/10, where G_k = −0.4π is
+    reproduced.
+  - E2 holds at m = 2, 3, 4 to 1e-39 or better.
+  - E3 holds at m = 2, 3, 4 to 1e-41 or better.
+  - *Added by the coordinator:* on this hierarchy L_m carries the growing solution whenever G_m ≠ 0. With Ω₀ + 1e-3,
+    E2 at m = 2 fails by 0.062. So the hypothesis G_m = 0, which the note argues and `PanelK` cannot test, is shown to
+    be needed.
+  - The mutation `e3-Om0` is silent here as in the note. The constant in E3 multiplies two sides that are equal by E1's
+    by-parts step, so E3 holds for any constant in Ω₀'s place. This is a property of E3's form, not a weakness of the
+    check.
+- **The differences of §8** are differences of route and statement. Difference 3, step 1's boundary term in
+  `omega2.md`, is now noted there. With this issue, the derivations of Ω₁, Ω₂ and Ω₃ are accepted, and #25 is closed.
+- **Follow-up:** the note's task 2, Ω₄ from G₆ = 0, is filed as a low-priority issue.
