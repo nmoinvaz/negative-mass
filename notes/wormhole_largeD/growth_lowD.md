@@ -3,9 +3,10 @@
 Status: **checked** by `check_growth.py` (G1 to G6, R0 to R2 pass; 64 mutations and the unmutated run, 65 of 65 on their
 declared targets). All 16 rows of growth.csv are now #195's quad-double values rounded to 12 decimals, source
 `w2_crate qd (#195)`. **None of the 31 printed numbers in Paper III and README.md that read the eight rows changes.**
-Two things outside the issue's file list do change and are reported below: `ts13_digits.py` C1 now fails, and
-`make_figures.py` draws the D ≤ 11 markers in the wrong style. The coordinator applies the text below. Branch
-`wip/i221-growth-lowD`, raw `negative-mass-raw/I221-rpi5` (README first).
+`ts13_digits.py` was added to the file list afterwards (hc, 2026-11-27): its C1 failed on the new csv, so C1 now reads
+the old rows as a constant and a new C2 checks the current rows against the crate; its `--selftest` passes (below).
+`make_figures.py`'s marker split and the text proposals below go into #210. Branch `wip/i221-growth-lowD`, raw
+`negative-mass-raw/I221-rpi5` (README first).
 
 ## Result
 
@@ -29,6 +30,9 @@ notes/wormhole_largeD/
 │                          ts13_digit:D (new), source:D relabelled
 ├── logs_check_growth.txt  its output
 ├── logs_paper_numbers.txt paper_numbers.py rerun
+├── ts13_digits.py         C1 against OLD_ROWS (the old csv rows, a constant), new C2 (current rows against the crate),
+│                          mutations csv retargeted, old_rows and crate_lowD new
+├── ts13_digits_output.txt its output and `--selftest`, refreshed
 └── growth_lowD.md         this note
 ```
 
@@ -95,7 +99,7 @@ Paper III, `main.tex:124-126`, Table 1's caption. This also fixes the D ≥ 20 h
 ```
 
 "Equal to the eight decimals shown": TS13's printed values rounded to 8 decimals equal the new rows at D = 4, 5, 6, 7, 8, 10
-(and 11; `ts13_digits_output.txt:52-61`, column "A = B at 8 decimals"); D = 9 would not.
+(and 11; `ts13_digits_output.txt:54-62`, column "A = B at 8 decimals"); D = 9 would not.
 
 Paper III, `main.tex:225-227`, Fig. 1 caption, if `make_figures.py` keeps the open circles for D ≤ 11 (below):
 
@@ -161,24 +165,15 @@ the print at `logs_paper_numbers.txt:22` and the check text "~ 73"):
 
 ## Reported, not fixed
 
-- **`ts13_digits.py` C1 fails (exit 1).** C1 asserts that growth.csv's D = 4 … 11 rows equal −ω² rounded to 12 decimals. After this
-  change 0 of 8 do (raw `run_05_ts13_digits.log`); the other nine checks pass. `--selftest` fails at its baseline, and 9 of its
-  15 mutations report off target, because C1 fails in each run (raw `run_05_ts13_digits_selftest.log`). The file is not on the issue's
-  list, so it is unedited and its committed `ts13_digits_output.txt` is stale. #202's recommended task 1 anticipated this ("C1 retargeted"). A one-line
-  retarget, tried on a scratch copy outside the repository (raw `ts13_digits_C1_retarget.diff`, `run_06_ts13_digits_C1_retarget_selftest.log`): C1 compares the
-  csv with the crate rounded to 12 decimals. Then the script passes, the `csv` mutation still fires C1, and five mutation targets lose
-  C1 (`digit_8`, `digit_12`, `digit_6`, `sign`, `sqrt`: they change the printed value, not the csv); the other ten stay on target. Those five
-  targets would be re-declared after a development run.
-
-  ```diff
-  -    bad_c = [D for D in D_CSV if d["csv"][D][0] != str(rnd(w2[D], 12)) or ndec(pr[D]) <= 12]
-  -    check("C1", not bad_c, f"{len(D_CSV) - len(bad_c)} of {len(D_CSV)} rows D = 4..11 equal -omega^2 at 12 decimals; TS13 prints "
-  -          f"{min(ndec(pr[D]) for D in D_CSV)} to {max(ndec(pr[D]) for D in D_CSV)} decimals there" + (f"; NOT MET at D = {bad_c}" if bad_c else ""))
-  +    bad_c = [D for D in D_CSV if d["csv"][D][0] != str(rnd(crate[D], 12))]
-  +    check("C1", not bad_c, f"{len(D_CSV) - len(bad_c)} of {len(D_CSV)} rows D = 4..11 equal the crate's value at 12 decimals"
-  +          + (f"; NOT MET at D = {bad_c}" if bad_c else ""))
-  ```
-
+- **`ts13_digits.py` (added to the file list by the coordinator after the first report).** On the new csv its C1 ("the csv's D = 4 … 11
+  rows equal −ω² at 12 decimals") failed 0 of 8, and `--selftest` failed at its baseline (raw `run_05_*`). Now: C1 checks TS13's
+  printed values, rounded to 12 decimals, against `OLD_ROWS`, a constant holding growth.csv's rows at 4bced01 (equal to the git file at
+  4bced01 and 613e866, raw `dev_06_verify_old_rows.log`); it does not read the current csv. C2 checks the current rows D = 4 … 11
+  against the crate rounded to 12 decimals, as `check_growth.py` G2 does, with the script's own parser and `Decimal` rounding. The
+  baseline passes (C1 8 of 8, C2 8 of 8, the other nine checks as before) and `--selftest` passes, 18 of 18 runs (raw `run_12_*`,
+  `ts13_digits_output.txt`). One declared target changed, `csv` (C1 to C2); `old_rows` (C1) and `crate_lowD` (C2) are new; the other
+  fifteen are as in #202. Predictions, development run and runs of record: raw README, amendments A3 and A3b. `README.md`'s
+  table is still read by R1 (the [TS13] column, `read_readme`), so #210's edit of that table must keep its layout.
 - **`make_figures.py`'s marker split**, above.
 - **Readers of `w2_output.txt` keyed on the source label.** `w2_output.txt` is unchanged, so nothing breaks now. A rerun of
   `w2_highprec.py` prints `w2_crate qd (#195)` in the table's source column. Then `notes/black_universe/stability.py:54`
@@ -213,10 +208,13 @@ also supported by code that shares nothing with the crate: `one_mode.log` equals
 | G6 | D ≥ 20 rows equal 4bced01's | 8 of 8 |
 | R0 | closed forms Ω₀ … Ω₃ against `order5_output.txt` | 8.3e-109 to 4.6e-59 (bar 1e-50) |
 | R1, R2 | remainder columns against the printed 60-digit values | pass |
+| `ts13_digits.py` C1 | TS13's printed values rounded to 12 decimals equal `OLD_ROWS` (the old csv rows), which print 13 to 14 decimals | 8 of 8 |
+| `ts13_digits.py` C2 | the current csv's D = 4 … 11 rows equal the crate rounded to 12 decimals | 8 of 8 |
 
 | controls | result |
 |---|---|
 | `check_growth.py --mutate=`: `last_digit:D`, `drop_row:D`, `source:D` at all 16 D; `ts13_digit:D` at D = 4 … 11; `revert_lowD`, `ts13_swap`, `crate_scale`, `round_trunc`, `list50`, `wrong_om2`, `wrong_om3`, `s_off` | 64 of 64 fire exactly their declared checks, none silent (`run_03_compare_targets.log`) |
+| `ts13_digits.py --mutate=`: 15 of #202 (`csv` now targets C2) and `old_rows`, `crate_lowD` (new) | 17 of 17 fire exactly their declared checks, and `--selftest` passes (raw `dev_05_*`, `run_13_*`) |
 | `printed_digits.py --mutate=bump:D`, D = 4 … 11 | 6 fire the declared cells, `bump:9` and `bump:11` fire nothing by declaration (D printed nowhere); 9 of 9 on target |
 
 `revert_lowD` is the change not applied (the eight rows back to TS13's rounded values and label): it fires G2 and G3, and G4 does
@@ -233,19 +231,11 @@ not, since TS13's values are within its bar. `ts13_digit:D` is what G4 alone cat
 | `check_growth.py --mutate=…` × 64 | 1 each, on target |
 | `paper_numbers.py` | 0 |
 | `printed_digits.py` (raw) and its 8 mutations | 0; 1 for the six that fire, 0 for `bump:9`, `bump:11` |
-| `ts13_digits.py`, `--selftest` (read-only, not edited) | 1, 1 (C1) |
+| `ts13_digits.py` (retargeted), `--selftest` (18 runs), and its 17 `--mutate=` runs | 0, 0; 1 for each of the 17 mutations, 18 of 18 on target (raw `run_12_*`, `run_13_*`) |
 | `make_figures.fig6_wormhole` into a scratch folder; `w2_highprec.read_csv` | 0, 0 |
 
 ## Recommended tasks
 
-1. **Retarget `ts13_digits.py` C1 and re-declare five targets.** What: apply the diff above, rerun a development run of its 15
-   mutations, declare the new targets, regenerate `ts13_digits_output.txt`. Why: its C1 fails and its `--selftest` fails at the
-   baseline. Accept: `ts13_digits.py` and `--selftest` exit 0, each mutation fires exactly its declared checks. Depends: #221
-   merged.
-2. **Decide and fix Fig. 1(a)'s markers.** What: `make_figures.py` `ts` split by `D <= 11` with the legend and the caption above,
-   or one style; regenerate `fig6_wormhole_largeD.pdf`. Why: all markers are drawn "this work" and the legend names an empty
-   series. Accept: the PDF shows the intended markers and its legend entries each have points. Depends: #221 merged; #210 if
-   Paper III's caption is edited there.
-3. **Make `stability.py:54` and `order4.py:808` read `w2_output.txt` under any source label.** What: match the table by its D and
-   its two number columns, as `check_growth.py` does. Why: both break on the next `w2_highprec.py` run. Accept: each reads both
-   `w2_output.txt` and a relabelled copy (raw `relabel_readers.py`), with a mutation that fires. Depends: #221 merged.
+None open from this issue. By the coordinator's ruling, `make_figures.py` (the marker split above) and every paper or README text
+(the diffs above) go into #210. `stability.py:54` and `order4.py:808` stay as they are; the dependency on `w2_output.txt`'s source
+label is noted under "Reported, not fixed".
