@@ -120,9 +120,15 @@ F(0) = 1 is in this regime (F = 3.0222 and p = 0.1657 at η = 200, started from 
 
 ## 5. Not decided and not covered
 
-- Off the grid: |F_∞| < 0.25 or > 4 (the series is singular as F_∞ → 0: a₆,₀ has 1/F_∞), |C| > 3000, and the continuum between the 187 points. A
-  regular crossing would sit on a curve in (F_∞, C), and the scan cannot exclude a narrow one; the bisections and the smoothness of η*(C) suggest
-  there is none in the range.
+- **Update from #183** ([`conical_offgrid.md`](conical_offgrid.md)). Off the grid: 818 points with |F_∞| ∈ [0.001, 128]
+  outside [0.25, 4] or |C| ∈ [10⁴, 10⁸] (|C| ≤ 10⁸|F_∞| for |F_∞| < 0.25), their mirrors, and five lines of 607 points.
+  There is no regular crossing: `THROUGH` at 0 points; 504 `F->0`, 188 floor ends with p·F_∞ > 0, and 126 κ-curve ends
+  (**numerical evidence**).
+  - Not covered: |C|/|F_∞| above about 10⁹, F_∞ beyond [0.001, 128], continuation past the κ-curve ends, singularities
+    below η = 10⁻⁶, and the continuum between the points.
+  - *Added by the coordinator:* #191's singularity locator (under review), run on 6 of the κ-curve records, reads 2 as
+    complex pairs and 2 with exponent ½ in F. So not every κ-curve end is yet shown to be a log end (F″ ~ ln|Δη|).
+    The 126 are classified in the follow-up to #183.
 - Solutions that are only C¹ or C² at the log points of the curve κ = 0 (F″ ~ ln|Δ|), and those that cross it on the finite branches.
 - Solutions whose approach to η = 0 is not a leading power (H₀), and oscillating approaches at ±∞ (H of #159).
 - The forward grid is 100 points. *Update from #184:* the log-log regime is expanded and, for solutions in D, shown to

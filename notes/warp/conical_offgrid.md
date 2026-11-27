@@ -222,3 +222,28 @@ Raw folder `I183-rpi5` of negative-mass-raw: README with the grid, start rule an
 (including the stopped `dev_07` and `dev_08` and the failed first run of `dev_09`), and the run of record `run_03` in five stages. Stages (stage times in the raw `run_03_times.log`): `run_04a` 876 s (15 checks, full grid), `run_03b` 1001 s (`dd_qd`), `run_03c` 2285 s (8 controls), `run_03d` 2307 s (5), `run_03e` 952 s (3), all exit 0, at nice 10 with 2 threads, one process at a time; the script at 0da94f6
 (`run_03a` and the stages b to e ran at 8b4c5e5, whose script differs by the printed summaries), crate binary sha256 5b608b378a73…; Rust 1.100.0, multishoot 4.2.0, multisolver 0.2.2, multidouble 5.1.0; memory was sampled with `ps` only (the Python process 63 to 70 MB during the scans; the stopped `odefun` attempt of `dev_08` reached 10.7 % of 8 GB).
 No library change, no pull request.
+
+## Coordinator's review
+
+Under review: `wip/i183-conical-offgrid` at 9debda2, raw `I183-rpi5` at 61c89c6. Review folder
+`negative-mass-raw/I183-mac-review`, whose README holds the criteria, committed before the first run of `ind183.py`. The
+changed files are those the brief names.
+
+- **Rerun on the Mac.** Stage a of the run of record gives the same 15 [PASS] lines.
+  - Over 818 points, every class and kind is the same, and every η* is bit-identical to the Pi's.
+  - The other differing fields are in the low words of double-double pairs and in the locator's internals.
+  - `conical_global.py` (#167) and `conical_loglog.py` (#184) pass in their default modes, with every control firing on
+    its target only.
+- **ind183**, run 3, 2 of 2. It integrates four off-grid points independently, with scipy DOP853 in f64 on the explicit
+  system F‴ = −(N_η + N_F F′ + N_F′ F″)/N_F″, from #167's mpmath series at the crate's start radius.
+  - (0.2, −30) and (8, 300) end F->0, at 2.1e-5 and 3.4e-5 from the crate's η*.
+  - (0.05, 100) and (0.01, 3) reach the floor with p·F_∞ > 0.
+  - N stays at |N|/Σ ≤ 9.5e-13.
+  - The mutations `k1-c` and `k2-drift` fail exactly their targets.
+  - *Added by the coordinator:* runs 1 and 2 failed K1 at (0.2, −30) by a defect of the coordinator's check.
+    scipy places its stop event only to its tolerance (F′ = 9.99959624e7, not 1e8), and the classification missed it.
+    Amendments A1 and A2 fix the test with no bar changed. All three runs are kept.
+- *Added by the coordinator:* #191's locator, run on six of the 126 κ-curve records, reads two as complex pairs and two
+  with exponent ½ in F, not as log ends. The description "F″ ~ ln|Δη|, F and F′ finite" is therefore not established
+  for all 126. The follow-up classifies them before any continuation.
+- Follow-ups: the recommended tasks 1, 2 and 3 are filed, with task 1 starting from that classification.
