@@ -20,8 +20,10 @@ Checks (each prints PASS, FAIL or SKIP):
   T2  it equals profiles.py's TS13 dict (which holds -omega^2), read from its source text (an earlier transcription), 11 of 11
   T3  it equals the TeX source's table as strings, 11 of 11 (SKIP if the TeX file is absent)
   R1  README.md's quoted [TS13] values are the printed ones rounded to the digits quoted
-  C1  growth.csv's D = 4..11 rows equal -omega^2 rounded to 12 decimals, and 12 is below the decimals printed: the csv holds no
-      digit beyond the printed ones
+  C1  the old growth.csv's D = 4..11 rows (OLD_ROWS: main's file at 4bced01, before #221) equal -omega^2 rounded to 12 decimals,
+      and 12 is below the decimals printed: those rows held no digit beyond the printed ones. Does not read the current csv.
+  C2  the current growth.csv's D = 4..11 rows equal the crate's value rounded to 12 decimals (check_growth.py's G2 for these rows,
+      with this script's own parser and Decimal rounding)
   K1  the conversion against the crate: relative difference below 1e-8 (the digits README.md quotes at D = 4 and 10) at all 11 rows
   P1  control: the comparator "agrees with the reference to the last printed decimal, half a unit" accepts the crate's own values
       rounded to 15 significant digits, 11 of 11
@@ -29,8 +31,8 @@ Checks (each prints PASS, FAIL or SKIP):
       that log prints, 4 of 4
   W1  TS13's regularized potential (3.18) equals one_mode.py's U exactly, at 4 radii for each of the 11 D
   W2  one_mode.py's source holds that U verbatim; W1 evaluates the text found there
-Reported, not gated: the digits TS13's printed values share with the crate (F1), and what two options for growth.csv's rows
-change (A: as is, B: the crate rounded to 12 decimals).
+Reported, not gated: the digits TS13's printed values share with the crate (F1), and the old rows (OLD_ROWS) and the current rows
+of growth.csv against the crate (#221 took option B of #202: the crate rounded to 12 decimals).
 """
 import argparse
 import ast
@@ -51,6 +53,10 @@ PRINTED = {4: "-1.39705243371511", 5: "-2.98495893027790", 6: "-4.68662054299460
            8: "-8.28975936306259", 9: "-10.1535530451867", 10: "-12.0442650147438", 11: "-13.9552091676647",
            20: "-31.5751101285105", 50: "-91.3457759137153", 100: "-191.283017729717"}
 D_CSV = range(4, 12)
+# growth.csv's D = 4..11 rows on main before #221 (TS13's printed values rounded to 12 decimals, source "TS13 Table I"):
+# git show 4bced01:notes/wormhole_largeD/growth.csv, lines 2-9; byte-identical at 613e866. Kept here for C1; the file now holds the crate's.
+OLD_ROWS = {4: "1.397052433715", 5: "2.984958930278", 6: "4.686620542995", 7: "6.462584141263", 8: "8.289759363063",
+            9: "10.153553045187", 10: "12.044265014744", 11: "13.955209167665"}
 BAR_K1 = Decimal("1e-8")
 U_TEXT = "(n - 2) * (n - 4) / (4 * r ** 2) - 3 * n ** 2 / (4 * r ** (2 * n))"
 
@@ -63,7 +69,9 @@ MUTATIONS = {
     "drop_zero": ("TS13 D = 5: the printed trailing 0 dropped", {"T1", "T3"}),
     "sign": ("conversion W^2 = +omega^2", {"C1", "K1"}),
     "sqrt": ("conversion W = sqrt(-omega^2)", {"C1", "K1"}),
-    "csv": ("growth.csv D = 6: 12th decimal + 1", {"C1"}),
+    "csv": ("growth.csv D = 6: 12th decimal + 1", {"C2"}),
+    "old_rows": ("OLD_ROWS D = 6: 12th decimal + 1", {"C1"}),
+    "crate_lowD": ("crate D = 6: 12th decimal + 1 (2e-12 relative, under K1's bar)", {"C2"}),
     "profiles": ("profiles.py's dict D = 11: last digit + 1", {"T2"}),
     "crate": ("crate D = 20: 6th decimal + 1 (3e-8 relative, over K1's bar)", {"K1", "O1"}),
     "crate_7": ("crate D = 20: 7th decimal + 1 (3e-9 relative, under K1's bar)", {"O1"}),
@@ -147,7 +155,7 @@ def read_tex(path):
 
 
 def load(mut, tex_path):
-    d = dict(printed=dict(PRINTED), csv=read_csv(), crate=read_crate(), prof=read_profiles(), one=read_one_mode(),
+    d = dict(printed=dict(PRINTED), old=dict(OLD_ROWS), csv=read_csv(), crate=read_crate(), prof=read_profiles(), one=read_one_mode(),
              readme=read_readme(), tex=read_tex(tex_path), wcoef=3, half=Decimal("0.5"), convert="neg")
     one_src = open(os.path.join(HERE, "one_mode.py")).read()
     if mut == "upot":
@@ -169,6 +177,10 @@ def load(mut, tex_path):
     elif mut == "csv":
         w, src = d["csv"][6]
         d["csv"][6] = (w[:-1] + str((int(w[-1]) + 1) % 10), src)
+    elif mut == "old_rows":
+        d["old"][6] = d["old"][6][:-1] + str((int(d["old"][6][-1]) + 1) % 10)
+    elif mut == "crate_lowD":
+        d["crate"][6] = bump(d["crate"][6], 12)
     elif mut == "profiles":
         d["prof"][11] = d["prof"][11][:-1] + str((int(d["prof"][11][-1]) + 1) % 10)
     elif mut in ("crate", "crate_7"):
@@ -237,9 +249,12 @@ def run(mut, tex_path, verbose):
         bad_r = [D for D, q in d["readme"].items() if str(rnd(-dec(pr[D]), ndec(q))) != q]
         check("R1", not bad_r, f"{len(d['readme']) - len(bad_r)} of {len(d['readme'])} quoted values (D = {sorted(d['readme'])}) are the printed"
               f" ones rounded to their digits" + (f"; differ at D = {bad_r}" if bad_r else ""))
-    bad_c = [D for D in D_CSV if d["csv"][D][0] != str(rnd(w2[D], 12)) or ndec(pr[D]) <= 12]
-    check("C1", not bad_c, f"{len(D_CSV) - len(bad_c)} of {len(D_CSV)} rows D = 4..11 equal -omega^2 at 12 decimals; TS13 prints "
-          f"{min(ndec(pr[D]) for D in D_CSV)} to {max(ndec(pr[D]) for D in D_CSV)} decimals there" + (f"; NOT MET at D = {bad_c}" if bad_c else ""))
+    bad_c = [D for D in D_CSV if d["old"][D] != str(rnd(w2[D], 12)) or ndec(pr[D]) <= 12]
+    check("C1", not bad_c, f"{len(D_CSV) - len(bad_c)} of {len(D_CSV)} old rows D = 4..11 (growth.csv at 4bced01) equal -omega^2 at 12 decimals; "
+          f"TS13 prints {min(ndec(pr[D]) for D in D_CSV)} to {max(ndec(pr[D]) for D in D_CSV)} decimals there" + (f"; NOT MET at D = {bad_c}" if bad_c else ""))
+    bad_c2 = [D for D in D_CSV if d["csv"][D][0] != str(rnd(crate[D], 12))]
+    check("C2", not bad_c2, f"{len(D_CSV) - len(bad_c2)} of {len(D_CSV)} rows D = 4..11 of growth.csv equal the crate's value at 12 decimals"
+          + (f"; NOT MET at D = {bad_c2}" if bad_c2 else ""))
     rel = {D: abs(w2[D] - crate[D]) / crate[D] for D in Ds}
     bad_k = [D for D in Ds if rel[D] >= BAR_K1]
     check("K1", not bad_k, f"W^2 a^2 = -omega^2 against the crate: relative difference at most {max(rel.values()):.2e} (bar 1e-8); D = 4: "
@@ -266,7 +281,7 @@ def run(mut, tex_path, verbose):
 
 def report(d, w2, crate, rel):
     pr, csvr = d["printed"], d["csv"]
-    print("\n  TS13 Table I as printed (omega^2, a = 1), its conversion, and growth.csv (as in this checkout)")
+    print("\n  TS13 Table I as printed (omega^2, a = 1), its conversion, and growth.csv (as in this checkout; D = 4..11 are the crate's since #221)")
     print("  D    printed omega^2        digits  W^2 a^2 = -omega^2     growth.csv value (source)                  csv - round(-omega^2, 12)")
     for D in PRINTED:
         w, src = csvr[D]
@@ -284,10 +299,10 @@ def report(d, w2, crate, rel):
     print("  D    one_mode -E         crate rounded    TS13 - one_mode    crate - one_mode")
     for D, s in sorted(d["one"].items()):
         print(f"  {D:<4d} {s:<19s} {str(rnd_sig(crate[D], nsig(s))):<16s} {float(w2[D] - Decimal(s)):+.2e}         {float(crate[D] - Decimal(s)):+.2e}")
-    print("\n  two options for growth.csv's D = 4..11 rows: A as is (TS13 printed, rounded), B the crate rounded to 12 decimals")
+    print("\n  growth.csv's D = 4..11 rows: A the old rows (OLD_ROWS: TS13 printed, rounded), B the current rows (the crate rounded to 12 decimals)")
     print("  D    A - crate    B - crate    A = B at 8 decimals   A = B at 10 decimals")
     for D in D_CSV:
-        a, b = Decimal(csvr[D][0]), rnd(crate[D], 12)
+        a, b = Decimal(d["old"][D]), Decimal(csvr[D][0])
         print(f"  {D:<4d} {float(a - crate[D]):+.2e}   {float(b - crate[D]):+.2e}   {'yes' if rnd(a, 8) == rnd(b, 8) else 'NO ':<20s}  {'yes' if rnd(a, 10) == rnd(b, 10) else 'NO'}")
     print()
 
