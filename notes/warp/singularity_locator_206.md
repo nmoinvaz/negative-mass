@@ -23,7 +23,7 @@ Of the eight criteria, six are met and two (1, the D6 cell, and 6, the weak sing
 | 5. entire functions `Unresolved` | met | 9 of 9 (exp(u), exp(-3u), sin(sqrt v) / sqrt v; bars of s 1.5 to 2.8 \|s\|) |
 | 6. weak singularities never confidently wrong | **NOT MET** | 1 of 2700: W3 (alpha 1/2, s = 1) in f64 at 100 times the noise, seed 14: `Real` by the ratio model at first order 6, degree 1, s = 0.874 (error 0.126) with a bar of 0.027; the same cell on #191's grid. The other 2699 are `Unresolved` |
 | 7. the fingerprint is the same on every backend | met | 0x0f1c7236bd56966f on aarch64 NEON and with `--features portable` here; the PR's test jobs at 21b9829 all pass the same assertion: Ubuntu x86_64 SSE2, AVX2 and portable, Ubuntu ARM64 NEON, macOS ARM64 NEON, Windows MSVC |
-| 8. fmt, clippy (both builds), docs, the PR's CI | met | here: `run_08_*` exit 0; CI at 21b9829: all 16 checks pass (Rustfmt, Clippy SSE2, NEON and portable, Docs, MSRV, the six test jobs, Coverage, codecov); CodeRabbit see section 10 |
+| 8. fmt, clippy (both builds), docs, the PR's CI | met | here: `run_08_*` exit 0; CI at 21b9829: all 16 checks pass (Rustfmt, Clippy SSE2, NEON and portable, Docs, MSRV, the six test jobs, Coverage, codecov); CodeRabbit reviewed 21b9829 (one full review requested, after its rate limit): no actionable comments, no thread |
 
 ## 1. What changed
 
