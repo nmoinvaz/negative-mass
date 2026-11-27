@@ -1,0 +1,12 @@
+[PASS] L0: R_VV + (n/r)(r_VV + F_V r_V) at n = 2, 3: [0, 0]
+[PASS] L1: linearized C_VV at U = 0 minus dr_VV: 0
+[PASS] L2: d_V(L_xi r)|_(U=0) + R'(rho(0)) rho'(0) d_V(V xi^U)|_(U=0) = 0; so c2 is invariant for every xi iff R'(rho_h) = 0
+[PASS] L3: A'(rho_h) for A = f(R(rho)) with R'(rho_h) = 0: 0
+  c = -1 black universe: R'(rho_h) = 0.0, kappa = 0.6366197724: c2 physical
+  c = -1.5 black universe: R'(rho_h) = 0.321578, kappa = 0.5516816788: c2 gauge
+  Schwarzschild (r = rho, 2M = 1): R'(rho_h) = 1.0, kappa = 0.5: c2 gauge
+  Simpson-Visser a = 2m: R'(rho_h) = 0.0, kappa = 0.0: extremal, outside the lemma
+[PASS] L4: c = -1: rho_h = 0.0, R'(rho_h) = 0.0, kappa - 2/pi = 0.0; c = -1.5: R'(rho_h) = 0.321578 (#248: 0.3216)
+
+5 checks, 5 pass; failed: []; mutation None
+exit 0
