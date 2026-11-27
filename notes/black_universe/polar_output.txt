@@ -1,0 +1,120 @@
+# polar.py planted (logs/planted.txt)
+PASS  P2 Ellis polar l = 2 quasinormal mode against [ABCKY23] Table 1 (M = 0): omega = 1.737692 -0.305138i (printed 1.74 -0.305i), |dRe| = 2.3e-03, |dIm| = 1.4e-04 (declared <= 0.005, 0.0005), |D| at the root 3.0e-24 (21 s)
+PASS  P2 Ellis polar l = 3 quasinormal mode against [ABCKY23] Table 1 (M = 0): omega = 2.952415 -0.409984i (printed 2.95 -0.410i), |dRe| = 2.4e-03, |dIm| = 1.6e-05 (declared <= 0.005, 0.0005), |D| at the root 2.9e-25 (35 s)
+PASS  P2 Ellis polar l = 4 quasinormal mode against [ABCKY23] Table 1 (M = 0): omega = 4.076253 -0.449105i (printed 4.08 -0.449i), |dRe| = 3.7e-03, |dIm| = 1.1e-04 (declared <= 0.005, 0.0005), |D| at the root 7.4e-25 (52 s)
+PASS  P3a Ellis polar l = 1 quasinormal mode of the derived system against the master equation (52), (53) of [ABCKY23] at L = 2 (1D shooting): derived 0.681367187 -0.617753448i, master 0.681367187 -0.617753448i, |difference| = 1.5e-12 (declared <= 1e-07) (64 s)
+PASS  P3b the same against the complex-scaled eigenvalue problem for the master equation at L = 2 (finite differences, Richardson in h^2): derived 0.681367187 -0.617753448i, eigenvalue code 0.681367187 -0.617753448i, |difference| = 2.8e-11 (declared <= 1e-08)
+PASS  P4 Ellis, L = -1 (unphysical): double roots of the polar determinant against the bound states of the master equation (finite differences): found ['0.421976', '1.473675'], finite differences ['0.421976', '1.473675'], sign changes 0 (declared relative <= 5e-05)
+PASS  P5 M-AdS radial mode as c -> 0+ against the Ellis value 1.39705243433350684047 (stability.py planted value): W^2(c) - W^2_Ellis = ['1.862863e-04', '1.864029e-03', '1.875713e-02'] at c = (0.0001, 0.001, 0.01); quadratic extrapolation to c = 0: 3.07e-10 (declared <= 1e-08) (207 s)
+
+# polar.py report results/ (logs/report.txt)
+Polar l = 2, real W in [0.01, 8] (units 1/b), shooting; n = sign changes + 2 (flagged dips)
+       c      rho_h     kappa | nR1 nR2 | dips  max|dD|/|D|  | min|D| R1, R2            status
+     -10   4.197082  0.116522 | 0   0   | 0     6.44e-11     | 5.88e-04   5.88e-04     ok
+      -3   1.118725  0.351374 | 0   0   | 0     7.26e-12     | 6.71e-03   6.71e-03     ok
+      -2   0.621184  0.470502 | 0   0   | 0     9.91e-12     | 1.22e-02   1.22e-02     ok
+    -1.5   0.339617  0.551682 | 0   0   | 0     1.32e-11     | 1.97e-02   1.97e-02     ok
+    -1.1   0.075763  0.620954 | 0   0   | 0     1.52e-11     | 2.60e-02   2.60e-02     ok
+   -1.01   0.007824  0.635123 | 0   0   | 0     1.15e-11     | 2.74e-02   2.74e-02     ok
+  -1.001   0.000785  0.636471 | 0   0   | 0     1.15e-11     | 2.75e-02   2.75e-02     ok
+ -1.0001   0.000079  0.636605 | 0   0   | 0     1.15e-11     | 2.75e-02   2.75e-02     ok
+      -1   0.000000  0.636620 | 0   0   | 0     1.15e-11     | 2.75e-02   2.75e-02     ok
+ -0.9999  -0.000079  0.636635 | 0   0   | 0     1.15e-11     | 2.75e-02   2.75e-02     ok
+  -0.999  -0.000786  0.636768 | 0   0   | 0     1.15e-11     | 2.75e-02   2.75e-02     ok
+   -0.99  -0.007884  0.638098 | 0   0   | 0     1.15e-11     | 2.77e-02   2.77e-02     ok
+   -0.95  -0.040055  0.643811 | 0   0   | 0     1.14e-11     | 2.83e-02   2.83e-02     ok
+    -0.9  -0.081826  0.650428 | 0   0   | 0     1.19e-11     | 2.91e-02   2.91e-02     ok
+    -0.7  -0.271920  0.668151 | 0   0   | 0     9.78e-12     | 3.22e-02   3.22e-02     ok
+    -0.5  -0.524073  0.660873 | 0   0   | 0     1.37e-11     | 3.53e-02   3.53e-02     ok
+    -0.3  -0.926754  0.601300 | 0   0   | 0     1.85e-11     | 3.84e-02   3.84e-02     ok
+    -0.2  -1.284188  0.532819 | 0   0   | 0     1.82e-11     | 3.99e-02   3.99e-02     ok
+    -0.1  -2.024885  0.409506 | 0   0   | 0     1.61e-11     | 4.14e-02   4.14e-02     ok
+   -0.01  -7.002156  0.140086 | 0   0   | 0     7.24e-12     | 4.28e-02   4.28e-02     ok
+       0          -         - | 0   0   | 0     1.14e-11     | 8.30e-02   8.30e-02     ok
+
+Polar l = 1, real W in [0.01, 8] (units 1/b), shooting; n = sign changes + 2 (flagged dips)
+       c      rho_h     kappa | nR1 nR2 | dips  max|dD|/|D|  | min|D| R1, R2            status
+     -10   4.197082  0.116522 | 0   0   | 0     1.43e-09     | 2.39e-03   2.39e-03     ok
+      -3   1.118725  0.351374 | 0   0   | 0     8.74e-10     | 2.73e-02   2.73e-02     ok
+      -2   0.621184  0.470502 | 0   0   | 0     5.30e-10     | 2.82e-02   2.82e-02     ok
+    -1.5   0.339617  0.551682 | 0   0   | 0     1.27e-09     | 1.62e-02   1.62e-02     ok
+    -1.1   0.075763  0.620954 | 0   0   | 0     7.81e-10     | 1.71e-02   1.71e-02     ok
+   -1.01   0.007824  0.635123 | 0   0   | 0     2.94e-10     | 1.72e-02   1.72e-02     ok
+  -1.001   0.000785  0.636471 | 0   0   | 0     3.32e-10     | 1.72e-02   1.72e-02     ok
+ -1.0001   0.000079  0.636605 | 0   0   | 0     3.34e-10     | 1.72e-02   1.72e-02     ok
+      -1   0.000000  0.636620 | 0   0   | 0     3.34e-10     | 1.72e-02   1.72e-02     ok
+ -0.9999  -0.000079  0.636635 | 0   0   | 0     3.34e-10     | 1.72e-02   1.72e-02     ok
+  -0.999  -0.000786  0.636768 | 0   0   | 0     3.38e-10     | 1.72e-02   1.72e-02     ok
+   -0.99  -0.007884  0.638098 | 0   0   | 0     3.64e-10     | 1.72e-02   1.72e-02     ok
+   -0.95  -0.040055  0.643811 | 0   0   | 0     4.68e-10     | 1.72e-02   1.72e-02     ok
+    -0.9  -0.081826  0.650428 | 0   0   | 0     6.66e-10     | 1.71e-02   1.71e-02     ok
+    -0.7  -0.271920  0.668151 | 0   0   | 0     1.92e-10     | 1.65e-02   1.65e-02     ok
+    -0.5  -0.524073  0.660873 | 0   0   | 0     4.17e-10     | 1.50e-02   1.50e-02     ok
+    -0.3  -0.926754  0.601300 | 0   0   | 0     5.47e-10     | 1.18e-02   1.18e-02     ok
+    -0.2  -1.284188  0.532819 | 0   0   | 0     5.23e-10     | 9.27e-03   9.27e-03     ok
+    -0.1  -2.024885  0.409506 | 0   0   | 0     6.45e-10     | 5.78e-03   5.78e-03     ok
+   -0.01  -7.002156  0.140086 | 0   0   | 0     7.92e-10     | 1.52e-03   1.52e-03     ok
+       0          -         - | 0   0   | 0     5.07e-09     | 2.19e-04   2.19e-04     ok
+
+M-AdS wormholes, radial modes, Dirichlet at the AdS end, W in [0.01, 24]
+       c | nR1 nR2 | W R1               W R2               | R1 v R2    monodromy  status
+  0.0001 | 1   1   | 1.1820485272       1.1820485273       | 8.7e-11    2.0e-09    ok
+   0.001 | 1   1   | 1.1827579902       1.1827579903       | 6.9e-11    2.1e-09    ok
+    0.01 | 1   1   | 1.1898779629       1.1898779630       | 4.0e-11    5.2e-09    ok
+    0.03 | 1   1   | 1.2058666019       1.2058666020       | 4.2e-11    2.4e-09    ok
+     0.1 | 1   1   | 1.2643353454       1.2643353456       | 1.1e-10    4.2e-10    ok
+     0.2 | 1   1   | 1.3590805813       1.3590805814       | 5.3e-11    8.2e-10    ok
+     0.5 | 1   1   | 1.7097870030       1.7097870029       | 5.7e-11    9.5e-10    ok
+       1 | 1   1   | 2.3784104135       2.3784104135       | 1.1e-11    2.8e-10    ok
+       2 | 1   1   | 3.7814586009       3.7814586005       | 1.0e-10    4.0e-10    ok
+       3 | 1   1   | 5.2037281512       5.2037281506       | 1.1e-10    2.0e-09    ok
+       5 | 1   1   | 8.0613088332       8.0613088321       | 1.4e-10    4.9e-10    ok
+      10 | 1   1   | 15.2213845531      15.2213845506      | 1.6e-10    1.1e-10    ok
+
+# polar.py spectral results/ (logs/spectral.txt)
+/home/nathan/Source/negative-mass-i218/notes/black_universe/polar.py:695: IntegrationWarning: The integral is probably divergent, or slowly convergent.
+  rho[j] = brentq(lambda r: quad(lambda q: 1 / fam.A(q), -np.inf, r, epsabs=1e-16, epsrel=1e-12, limit=400)[0] - s, -1e12, -1e-9, xtol=1e-14)
+/home/nathan/Source/negative-mass-i218/notes/black_universe/polar.py:695: IntegrationWarning: The algorithm does not converge.  Roundoff error is detected
+  in the extrapolation table.  It is assumed that the requested tolerance
+  cannot be achieved, and that the returned result (if full_output = 1) is 
+  the best which can be obtained.
+  rho[j] = brentq(lambda r: quad(lambda q: 1 / fam.A(q), -np.inf, r, epsabs=1e-16, epsrel=1e-12, limit=400)[0] - s, -1e12, -1e-9, xtol=1e-14)
+PASS  S6 spectral S-A c = 0.0001: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['6.21e-02'] (declared <= n/a, c < 0.01)
+PASS  S6 spectral S-B c = 0.0001: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['5.87e-02'] (declared <= n/a, c < 0.01)
+PASS  S6 spectral S-A c = 0.001: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['2.41e-02'] (declared <= n/a, c < 0.01)
+PASS  S6 spectral S-B c = 0.001: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['1.01e-02'] (declared <= n/a, c < 0.01)
+PASS  S6 spectral S-A c = 0.01: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['5.74e-04'] (declared <= 0.002)
+PASS  S6 spectral S-B c = 0.01: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['6.77e-05'] (declared <= 0.0002)
+PASS  S6 spectral S-A c = 0.03: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['3.49e-05'] (declared <= 0.002)
+PASS  S6 spectral S-B c = 0.03: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['1.70e-06'] (declared <= 0.0002)
+PASS  S6 spectral S-A c = 0.1: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['5.25e-07'] (declared <= 0.002)
+PASS  S6 spectral S-B c = 0.1: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['9.04e-09'] (declared <= 0.0002)
+PASS  S6 spectral S-A c = 0.2: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['4.51e-07'] (declared <= 0.002)
+PASS  S6 spectral S-B c = 0.2: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['5.48e-10'] (declared <= 0.0002)
+PASS  S6 spectral S-A c = 0.5: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['3.91e-09'] (declared <= 0.002)
+PASS  S6 spectral S-B c = 0.5: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['3.99e-11'] (declared <= 0.0002)
+PASS  S6 spectral S-A c = 1: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['6.25e-11'] (declared <= 0.002)
+PASS  S6 spectral S-B c = 1: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['6.22e-11'] (declared <= 0.0002)
+PASS  S6 spectral S-A c = 2: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['2.29e-08'] (declared <= 0.002)
+PASS  S6 spectral S-B c = 2: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['3.44e-10'] (declared <= 0.0002)
+PASS  S6 spectral S-A c = 3: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['4.86e-07'] (declared <= 0.002)
+PASS  S6 spectral S-B c = 3: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['2.79e-09'] (declared <= 0.0002)
+PASS  S6 spectral S-A c = 5: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['1.30e-06'] (declared <= 0.002)
+PASS  S6 spectral S-B c = 5: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['6.86e-08'] (declared <= 0.0002)
+PASS  S6 spectral S-A c = 10: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['2.86e-04'] (declared <= 0.002)
+/home/nathan/Source/negative-mass-i218/notes/black_universe/polar.py:686: IntegrationWarning: The occurrence of roundoff error is detected, which prevents 
+  the requested tolerance from being achieved.  The error may be 
+  underestimated.
+  fx = lambda r, xj=xj: quad(lambda q: 1 / fam.A(q), 0, r, epsabs=1e-14, epsrel=1e-13)[0] - xj
+FAIL  S6 spectral S-B c = 10: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['5.87e-04'] (declared <= 0.0002)
+
+# polar.py controls (logs/controls.txt)
+fires   --mutate=L_sign (target ('l2', -0.3)): exit 0; l2 c = -0.3: n = 23 against 0 unmutated
+fires   --mutate=hz_out (target ('l2', -1.5)): exit 0; l2 c = -1.5: n = 3 against 0 unmutated
+fires   --mutate=rmax (target ('l1', -0.3)): exit 0; l1 c = -0.3: n = 6 against 0 unmutated
+fires   --mutate=g1_wrong (target ('l1', -1.5)): exit 0; l1 c = -1.5: n = 3 against 0 unmutated
+fires   --mutate=scan_range (target ('mads', 0.5)): exit 0; mads c = 0.5: n = 0 against 1 unmutated
+fires   --mutate=ads_bc (target S6 spectral): exit 1; FAIL  S6 spectral S-A c = 0.5: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['8.48e-02'] (declared <= 0.002); FAIL  S6 spectral S-B c = 0.5: eigenvalues with Re lam > 1e-4: real 1 (shooting 1), complex 0, |dW|/W = ['8.48e-02'] (declared <= 0.0002)
+fires   --mutate=qnm_L (target P2 Ellis polar l = 2): exit 1; FAIL  P2 Ellis polar l = 2 quasinormal mode against [ABCKY23] Table 1 (M = 0): omega = 1.982217 -0.335140i (printed 1.74 -0.305i), |dRe| = 2.4e-01, |d; FAIL  P2 Ellis polar l = 3 quasinormal mode against [ABCKY23] Table 1 (M = 0): omega = 3.113850 -0.417750i (printed 2.95 -0.410i), |dRe| = 1.6e-01, 
+fires   --mutate=l1_pot (target P3a Ellis polar l = 1): exit 1; FAIL  P3a Ellis polar l = 1 quasinormal mode of the derived system against the master equation (52), (53) of [ABCKY23] at L = 2 (1D shooting): derived; FAIL  P3b the same against the complex-scaled eigenvalue problem for the master equation at L = 2 (finite differences, Richardson in h^2): derived 0
+fires   --mutate=spec_sign (target S6 spectral): exit 1; FAIL  S6 spectral S-A c = 0.5: eigenvalues with Re lam > 1e-4: real 0 (shooting 1), complex 0, |dW|/W = [] (declared <= 0.002); FAIL  S6 spectral S-B c = 0.5: eigenvalues with Re lam > 1e-4: real 0 (shooting 1), complex 0, |dW|/W = [] (declared <= 0.0002)
