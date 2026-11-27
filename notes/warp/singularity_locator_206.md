@@ -148,3 +148,20 @@ cargo test --release --test locate weak_sweep -- --ignored --nocapture --test-th
 
 Logs of record in `I206-mac`: `run_01` and `run_01b` (tests, default), `run_02` and `run_02b` (portable), `run_03` (the exploration), `run_04` (the port on its series), `run_05` (the report under both grids),
 `run_06` (D6 under five grids), `run_07` (the sweep), `run_08` (fmt, clippy in both builds, docs). Development runs `dev_01` to `dev_11` and amendment A1 are in the README.
+
+## Coordinator's review
+
+Review of multisolver PR #28 at 21b9829 and raw `I206-mac` at 035fc85, recorded in negative-mass-raw `I206-mac-review`.
+
+- **PR state.** The PR is MERGEABLE, and all 15 CI checks are green.
+- **Rerun.** `cargo test --release --test locate` on the Mac gives 9 passed and 4 ignored, as reported.
+- **Fingerprint.** The disagreement is confirmed: main asserts 0xf3a1_3cba_157d_2e3c, and `singularity_locator.md`
+  quotes 0xa5113e9ccb6776c8.
+- **Independent check.** None was written. The PR changes a default grid and adds tests that record the runner's runs,
+  and CI reproduces them on five targets.
+- **Applied.** `singularity_locator.md` carries an update from #206 and the fingerprint correction. Section 7's line edits
+  wait until the PR is merged, because they describe the merged grid.
+- **The PR.** Merging it and releasing it are the library owner's.
+- **Follow-ups.**
+  - #251: a resolution signal besides the bar's size, for D6 in f64 and the noise floor (task 1).
+  - #252: weak singularities under multiplicative rounding noise (task 2).

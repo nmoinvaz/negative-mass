@@ -28,6 +28,13 @@ window starting near 0.8 K would resolve that regime; it is not implemented.
 | the fit window | a window starting at order 2 fails on the cases with a farther singularity, one of the last 8 orders fails on the noisy ones |
 | #183 | at its stored last steps the locator reproduces eta* to at most 0.5 f64 ulp in 31 records of the O8 regime and alpha to 2e-16 of 2/(eta*^2 + 4); two of six kappa-curve records are complex pairs |
 
+
+**Update from #206** (multisolver PR #28, open, not merged; `singularity_locator_206.md`):
+- With first orders 0.7 K and 0.8 K added to the grid, D6 in f64 is located (error of s 2.1e-4), but its bar of s is 5.3 % of |s|, above the 5 % limit, so it is still `Unresolved`. Criterion 1 is not met; 2, 3 and 4 hold.
+- 300 noise-only series and 9 entire functions are `Unresolved`.
+- Weak singularities at 1, 10 and 100 times the noise are `Unresolved` in 2699 of 2700 series. The other one (W3, f64, 100 × noise, seed 14) is confidently wrong, on #191's grid as well.
+- No cutoff on the bar's size separates D6's right result (5.3 %) from that wrong one (3.1 %).
+- *Added by the coordinator:* the fingerprint quoted on lines 52 and 160 (0xa5113e9ccb6776c8) is not the one multisolver main's test asserts, 0xf3a1_3cba_157d_2e3c (`tests/locate.rs:739` at 63d6e4d). Read the lines below with that correction.
 ## 1. The locator
 
 Near its nearest singularity s a function behaves as A (1 - u/s)^alpha, u the distance from the expansion point, so
