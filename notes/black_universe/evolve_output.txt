@@ -1,0 +1,278 @@
+# evolve_output.txt: the outputs of record of #217, assembled from negative-mass-raw I217-mac/post (code evolve.py at 9428081; additions A1 at 2a00351)
+
+## evolve.py check (run01_check.log)
+[pass] E0: new kernel with the potential flag off and on at c = 0 (V = 0) equals dn.evolve: three grids (static, collapse with excision, expansion), numba and numpy  (max |dG| 0.0e+00; dead masks equal True)
+    (E0: 0.7 s)
+[pass] E1: the kernel's right-hand side equals the equations with V (V and V' of [BF06] written out and differentiated in sympy) at 40 random states, c = -0.3, -1.5, -1, 0  (max relative difference 7.2e-16, tolerance 1e-13)
+    (E1: 0.2 s)
+[pass] E2: numba and numpy kernels agree with V on, three members (c = -0.3, -1.5, -1; one-sided pulse A = 0.02, h = 0.04, N = 250), same dead masks  (max |dG| 0.0e+00, tolerance 1e-12, dead masks equal True)
+    (E2: 0.1 s)
+[pass] E3: the c = 0 member with a one-sided pulse, on the rays, equals dn.ellis_rays (N = 1000, h = 0.02)  (r 1.7e-09 (tolerance 2e-9, #39's I1), phi 5.5e-13 (1e-12), f 0e+00 (0))
+    (E3: 0.0 s)
+[pass] E4: static members c = 0, -0.3, -1.5, -1 stay static to the truncation error for t <= 8 (X = 10, h = 0.04, 0.02, 0.01): second order  (orders within [1.75, 2.25]; c = 0.0: errors 1.61e-01, 3.74e-02, 9.23e-03, orders 2.11, 2.02; c = -0.3: errors 2.13e-02, 5.44e-03, 1.37e-03, orders 1.97, 1.99; c = -1.5: errors 2.04e-03, 5.15e-04, 1.29e-04, orders 1.99, 1.99; c = -1.0: errors 7.56e-03, 1.91e-03, 4.81e-04, orders 1.98, 1.99)
+    (E4: 0.6 s)
+[pass] E5: the growth rate of Y on the diagonal, from the truncation seed of the untuned member over |Y| in [0.0001, 0.001], equals #212's W at c = -0.3 and -1.5, and the error falls from h = 0.01 to 0.005  (tolerance 1.5%; c = -0.3, h = 0.01: 0.9606 against W = 0.97008 (-9.8e-03, 170 rows); c = -0.3, h = 0.005: 0.9668 against W = 0.97008 (-3.4e-03, 337 rows); c = -1.5, h = 0.01: 0.4918 against W = 0.49417 (-4.9e-03, 331 rows); c = -1.5, h = 0.005: 0.4938 against W = 0.49417 (-7.9e-04, 660 rows))
+    (E5: 3.6 s)
+[pass] E6: the 1D master equation in the time domain (no double-null code; shares only #212's V-hat) reproduces #212's W, and decays at c = -1  (rate of ln|u(x = 0)| over t = 45 to 60, tolerance 1e-4: -2.0: 0.39845 (+8e-07); -1.5: 0.49417 (+1e-06); -1.1: 0.60319 (+2e-06); -1.01: 0.63315 (+2e-06); -1.001: 0.63627 (+1e-06); -1: -0.0370 (must be < 0))
+    (E6: 0.9 s)
+[pass] E7: the shape of the code's growing Y(l) (untuned member, h = 0.005, the slice where the diagonal |Y| first reaches 0.001, normalized at l = 1) equals #212's Y(rho(l)) (ingoing from the horizon, matched to the decaying solution; through the throat's arc at c = -0.3)  (max difference over l in [-6, 6] relative to the maximum, bar 0.01: c = -1.5: 4.8e-03; c = -1.01: 2.7e-03; c = -1.1: 2.6e-03; c = -0.3: 5.3e-03)
+    (E7: 7.7 s)
+[pass] PL: planted series (slope 1/W, sigma 0.01 plus the row quantization) through the same bisect, series, fit_set: A* recovered, 1/W inside the fit spread in >= 90 % of 40 seeds  (W = 0.97008: 1/W inside the spread in 40 of 40, A* recovered in 40 of 40, primary error mean -1.2e-04; 1/(sqrt2 W) rejected in 40 of 40; W = 0.49417: 1/W inside the spread in 40 of 40, A* recovered in 40 of 40, primary error mean -6.1e-05; 1/(sqrt2 W) rejected in 40 of 40)
+[pass] PX: a planted series with the time unit scaled by sqrt2 (slope 1/(sqrt2 W)) is rejected by the comparison with 1/W in every seed
+    (PL: 0.1 s)
+
+10 checks, 10 pass, 0 fail: []; mutation None
+rc=0
+
+## mutations of check (mut_check_*.log): the declared and the fired sets
+mutation th_coef: fired ['E0', 'E1', 'E4', 'E5', 'E7'], declared ['E0', 'E1', 'E4', 'E5', 'E7']: equal
+mutation vterm_sign: fired ['E1', 'E4', 'E5', 'E7'], declared ['E1', 'E4', 'E5', 'E7']: equal
+mutation vterm_coef: fired ['E1', 'E4', 'E5', 'E7'], declared ['E1', 'E4', 'E5', 'E7']: equal
+mutation Vp_sign: fired ['E1', 'E4', 'E5', 'E7'], declared ['E1', 'E4', 'E5', 'E7']: equal
+mutation V_sign_f: fired ['E1', 'E4', 'E5', 'E7'], declared ['E1', 'E4', 'E5', 'E7']: equal
+mutation numpy_pert: fired ['E0', 'E2'], declared ['E0', 'E2']: equal
+mutation time_unit: fired ['PL', 'PX'], declared ['PL', 'PX']: equal
+mutation pstar_off: fired ['PL'], declared ['PL']: equal
+
+## evolve.py analyze --raw=runs (analysis.log)
+12 jobs in /Users/nathan/Source/negative-mass-raw/I217-mac/runs
+  c = -0.30, h = 0.02: A*_h = -7.893986e-07 (37 runs, extraction t_s = 6.00, 7 s); primary slope 1.02119 +- 0.02766 (n = 18), 1/W = 1.03084, relative -9.37e-03; side alone: collapse-side 1.12764, other 0.91473; fit spread [0.89018, 1.15279], 1/W inside: True; floor |A - A*|: 5.6e-08, 5.6e-08; T at e = 11.5: 14.30, 15.57
+  c = -0.30, h = 0.01: A*_h = -1.923641e-07 (37 runs, extraction t_s = 7.16, 28 s); primary slope 1.03040 +- 0.00699 (n = 18), 1/W = 1.03084, relative -4.32e-04; side alone: collapse-side 1.05722, other 1.00358; fit spread [0.99928, 1.06438], 1/W inside: True; floor |A - A*|: 1.0e-11, 1.8e-11; T at e = 11.5: 15.39, 16.86
+  c = -0.30, h = 0.005: A*_h = -4.755456e-08 (37 runs, extraction t_s = 8.61, 102 s); primary slope 1.03122 +- 0.00178 (n = 18), 1/W = 1.03084, relative +3.63e-04; side alone: collapse-side 1.03797, other 1.02446; fit spread [1.02099, 1.04029], 1/W inside: True; floor |A - A*|: none, none; T at e = 11.5: 15.98, 16.37
+  c = -0.30, h = 0.0025: A*_h = -1.184963e-08 (37 runs, extraction t_s = 10.03, 449 s); primary slope 1.03101 +- 0.00043 (n = 18), 1/W = 1.03084, relative +1.64e-04; side alone: collapse-side 1.03255, other 1.02948; fit spread [1.02764, 1.03369], 1/W inside: True; floor |A - A*|: none, none; T at e = 11.5: 16.13, 16.17
+  c = -1.00, h = 0.02: A*_h = -3.398728e-06 (37 runs, extraction t_s = 6.45, 12 s); primary slope 1.58460 +- 0.04160 (n = 18), 1/kappa = 1.57080, relative +8.79e-03; side alone: collapse-side 1.74101, other 1.42819; fit spread [1.38153, 1.81361], 1/kappa inside: True; floor |A - A*|: 1.8e-08, 3.2e-08; T at e = 11.5: 12.37, 13.56
+  c = -1.00, h = 0.01: A*_h = -8.294635e-07 (37 runs, extraction t_s = 8.64, 41 s); primary slope 1.57375 +- 0.01020 (n = 18), 1/kappa = 1.57080, relative +1.88e-03; side alone: collapse-side 1.61203, other 1.53546; fit spread [1.52318, 1.62689], 1/kappa inside: True; floor |A - A*|: 1.8e-08, 1.8e-08; T at e = 11.5: 13.84, 15.17
+  c = -1.00, h = 0.005: A*_h = -2.054693e-07 (37 runs, extraction t_s = 10.83, 164 s); primary slope 1.57170 +- 0.00218 (n = 18), 1/kappa = 1.57080, relative +5.75e-04; side alone: collapse-side 1.57948, other 1.56392; fit spread [1.55983, 1.58392], 1/kappa inside: True; floor |A - A*|: 5.6e-09, 1.0e-08; T at e = 11.5: 15.52, 16.95
+  c = -1.00, h = 0.0025: A*_h = -5.125064e-08 (37 runs, extraction t_s = 13.01, 700 s); primary slope 1.57042 +- 0.00045 (n = 18), 1/kappa = 1.57080, relative -2.39e-04; side alone: collapse-side 1.57190, other 1.56894; fit spread [1.56589, 1.57250], 1/kappa inside: True; floor |A - A*|: 1.8e-09, 3.2e-09; T at e = 11.5: 17.30, 18.82
+  c = -1.50, h = 0.02: A*_h = -2.854156e-06 (37 runs, extraction t_s = 8.68, 11 s); primary slope 2.07676 +- 0.03950 (n = 18), 1/W = 2.02359, relative +2.63e-02; side alone: collapse-side 2.04810, other 2.10543; fit spread [1.68234, 2.69352], 1/W inside: True; floor |A - A*|: 5.6e-08, 5.6e-08; T at e = 11.5: 13.31, 14.84
+  c = -1.50, h = 0.01: A*_h = -7.041130e-07 (37 runs, extraction t_s = 11.51, 42 s); primary slope 2.03377 +- 0.01579 (n = 18), 1/W = 2.02359, relative +5.03e-03; side alone: collapse-side 2.00102, other 2.06653; fit spread [1.85799, 2.25398], 1/W inside: True; floor |A - A*|: 5.6e-08, 5.6e-08; T at e = 11.5: 14.96, 16.60
+  c = -1.50, h = 0.005: A*_h = -1.772567e-07 (37 runs, extraction t_s = 14.33, 182 s); primary slope 2.02528 +- 0.00706 (n = 18), 1/W = 2.02359, relative +8.33e-04; side alone: collapse-side 2.00654, other 2.04401; fit spread [1.94590, 2.11056], 1/W inside: True; floor |A - A*|: 3.2e-08, 5.6e-08; T at e = 11.5: 16.80, 18.48
+  c = -1.50, h = 0.0025: A*_h = -4.522879e-08 (37 runs, extraction t_s = 17.14, 819 s); primary slope 2.02338 +- 0.00291 (n = 18), 1/W = 2.02359, relative -1.03e-04; side alone: collapse-side 2.01473, other 2.03203; fit spread [1.99256, 2.05635], 1/W inside: True; floor |A - A*|: 1.8e-08, 1.8e-08; T at e = 11.5: 18.72, 20.44
+[pass] E8[c = -0.3]: A*_h converges at second order in h (successive orders within [1.75, 2.25])  (h [0.02, 0.01, 0.005, 0.0025]: A*_h -7.89399e-07, -1.92364e-07, -4.75546e-08, -1.18496e-08; orders 2.037, 2.016, 2.005; Richardson (order 2) A* = +5.20e-11)
+[SKIP] E8c[c = -1]: A*_h converges at second order in h (successive orders within [1.75, 2.25]) (the control; reported)  (h [0.02, 0.01, 0.005, 0.0025]: A*_h -3.39873e-06, -8.29464e-07, -2.05469e-07, -5.12506e-08; orders 2.035, 2.013, 2.003; Richardson (order 2) A* = +1.56e-10)
+[pass] E8[c = -1.5]: A*_h converges at second order in h (successive orders within [1.75, 2.25])  (h [0.02, 0.01, 0.005, 0.0025]: A*_h -2.85416e-06, -7.04113e-07, -1.77257e-07, -4.52288e-08; orders 2.019, 1.990, 1.971; Richardson (order 2) A* = -1.22e-09)
+[pass] E9[c = -0.3]: the lifetime slope equals 1/W within its fit error at the two finest h, which agree: primary window within 2 OLS SE of 1/W, 1/W inside the fit spread, and the two primary slopes within 2 sqrt(SE1^2 + SE2^2)  (h = 0.005, 0.0025: slopes 1.03122 +- 0.00178, 1.03101 +- 0.00043; 1/W = 1.03084; relative +3.63e-04, +1.64e-04; inside the spread: True, True; agreement +1.99e-04)
+[pass] E9[c = -1.5]: the lifetime slope equals 1/W within its fit error at the two finest h, which agree: primary window within 2 OLS SE of 1/W, 1/W inside the fit spread, and the two primary slopes within 2 sqrt(SE1^2 + SE2^2)  (h = 0.005, 0.0025: slopes 2.02528 +- 0.00706, 2.02338 +- 0.00291; 1/W = 2.02359; relative +8.33e-04, -1.03e-04; inside the spread: True, True; agreement +9.36e-04)
+  family O (pulse on the + ray, collapse side, weighted trapped cell), c = -0.30, h = 0.01: A*_h = -8.873425e-06; primary slope 1.04681 +- 0.00226 (n = 13), 1/W = 1.03084, relative +1.55e-02; fit spread [1.03814, 1.05991]; mode family at the same h: 1.03040, relative difference +1.59e-02
+  family O (pulse on the + ray, collapse side, weighted trapped cell), c = -0.30, h = 0.005: A*_h = -2.217824e-06; primary slope 1.03494 +- 0.00095 (n = 13), 1/W = 1.03084, relative +3.97e-03; fit spread [1.03086, 1.04097]; mode family at the same h: 1.03122, relative difference +3.61e-03
+[pass] XC[c = -0.3]: the one-sided pulse (family O) gives the same slope as the mode family at h = 0.005: within 5 %  (1.03494 against 1.03122)
+  family O (pulse on the - ray, collapse side, weighted trapped cell), c = -1.50, h = 0.01: A*_h = 1.797028e-05; primary slope 1.14137 +- 0.03026 (n = 13), 1/W = 2.02359, relative -4.36e-01; fit spread [1.00982, 1.29313]; mode family at the same h: 2.03377, relative difference -4.39e-01
+  family O (pulse on the - ray, collapse side, weighted trapped cell), c = -1.50, h = 0.005: A*_h = 4.423890e-06; primary slope 1.15004 +- 0.03718 (n = 13), 1/W = 2.02359, relative -4.32e-01; fit spread [0.98053, 1.29361]; mode family at the same h: 2.02528, relative difference -4.32e-01
+[FAIL] XC[c = -1.5]: the one-sided pulse (family O) gives the same slope as the mode family at h = 0.005: within 5 %  (1.15004 against 2.02528)
+[FAIL] E11: control c = -1: #212 has no growing mode, so a family through this member should show no divergent lifetime at A = 0. MET if no lifetime law is found (slope SE > 10 % of the slope, or the two finest slopes disagree, or A*_h not second order); NOT MET if one is found  (law found: True; h = 0.005, 0.0025: slopes 1.57170 +- 0.00218, 1.57042 +- 0.00045; 1/kappa = 1.57080, relative +5.75e-04, -2.39e-04; A*_h orders 2.035, 2.013, 2.003)
+
+8 criteria, 5 met, 2 not met: ['XC[c = -1.5]', 'E11']; mutation None
+rc=1
+
+## mutations of analyze: the criteria that fail (the control E11 and XC[c = -1.5] fail without a mutation)
+--mutate=time_unit: [FAIL] E9[c = -0.3]: the [FAIL] E9[c = -1.5]: the [FAIL] XC[c = -1.5]: the [FAIL] E11: control c =   8 criteria, 3 met, 4 not met: ['E9[c = -0.3]', 'E9[c = -1.5]', 'XC[c = -1.5]', 'E11']; mutation time_unit
+--mutate=pstar_off:  
+(pstar_off raised in E8's order computation, see the README, A2)
+
+## evolve.py name --c=-0.3 --h=0.005 (naming_c-0.3.log)
+naming runs, c = -0.3, h = 0.005, X = 40.0, A*_h = -4.755456e-08; ADM mass of the member m = 0.06366; first trapped (T) and anti-trapped (E) cell: raw = dn.cell_class tolerance 1e-2; weighted = signs and 2 e^f r+ r- >= 0.02
+  A = A* - 1e-4: departure (0.0, -1); raw T: t = 5.11 l = +0.02 r = 0.986; raw E: t = 9.25 l = -1.32 r = 1.080; weighted T: t = 7.10 l = +0.16 r = 0.881; weighted E: t = 9.26 l = -1.34 r = 1.099
+      diagonal: t = 10: excised or outside; t = 20: excised or outside; t = 30: excised or outside; t = 40: excised or outside; t = 50: excised or outside
+  A = A* + 1e-4: departure (0.0, 1); raw T: none; raw E: t = 5.22 l = -0.02 r = 1.015; weighted T: none; weighted E: t = 7.64 l = -0.14 r = 1.127
+      diagonal: t = 10: r 1.609, r+ +3.82e-01, r- +2.88e-02, 2M/r 1.1453, M 0.9215; t = 20: r 5.856, r+ +6.72e-01, r- -6.58e-05, 2M/r 0.6619, M 1.9381; t = 30: r 10.702, r+ +6.93e-01, r- -2.95e-07, 2M/r 0.3475, M 1.8596; t = 40: r 15.626, r+ +6.99e-01, r- -6.67e-10, 2M/r 0.3907, M 3.0530; t = 50: r 20.580, r+ +7.01e-01, r- -4.26e-12, 2M/r -0.6047, M -6.2228
+  A = A* - 1e-5: departure (0.72, -1); raw T: t = 7.47 l = +0.02 r = 0.986; raw E: t = 11.62 l = -1.33 r = 1.077; weighted T: t = 9.47 l = +0.16 r = 0.881; weighted E: t = 11.64 l = -1.34 r = 1.096
+      diagonal: t = 10: r 0.774, r+ -3.52e-01, r- -1.02e-01, 2M/r 1.0517, M 0.4069; t = 20: excised or outside; t = 30: excised or outside; t = 40: excised or outside; t = 50: excised or outside
+  A = A* + 1e-5: departure (0.72, 1); raw T: none; raw E: t = 7.60 l = -0.02 r = 1.015; weighted T: none; weighted E: t = 10.02 l = -0.13 r = 1.128
+      diagonal: t = 10: r 1.133, r+ +1.28e-01, r- +2.28e-02, 2M/r 1.0121, M 0.5732; t = 20: r 4.738, r+ +6.58e-01, r- -1.49e-04, 2M/r 0.8237, M 1.9513; t = 30: r 9.540, r+ +6.91e-01, r- -1.14e-06, 2M/r 0.3960, M 1.8892; t = 40: r 14.454, r+ +6.98e-01, r- -3.39e-09, 2M/r 0.2577, M 1.8622; t = 50: r 19.403, r+ +7.01e-01, r- -1.56e-11, 2M/r -0.4125, M -4.0018
+  A = A* - 1e-6: departure (3.11, -1); raw T: t = 9.84 l = +0.02 r = 0.986; raw E: t = 14.00 l = -1.33 r = 1.076; weighted T: t = 11.84 l = +0.16 r = 0.881; weighted E: t = 14.02 l = -1.35 r = 1.095
+      diagonal: t = 10: r 0.983, r+ -1.92e-02, r- -4.32e-03, 2M/r 1.0002, M 0.4918; t = 20: excised or outside; t = 30: excised or outside; t = 40: excised or outside; t = 50: excised or outside
+  A = A* + 1e-6: departure (3.08, 1); raw T: none; raw E: t = 9.98 l = -0.02 r = 1.015; weighted T: none; weighted E: t = 12.39 l = -0.14 r = 1.127
+      diagonal: t = 10: r 1.016, r+ +1.76e-02, r- +3.70e-03, 2M/r 1.0002, M 0.5080; t = 20: r 3.655, r+ +6.30e-01, r- +1.23e-04, 2M/r 1.0321, M 1.8862; t = 30: r 8.384, r+ +6.87e-01, r- -4.33e-06, 2M/r 0.4557, M 1.9103; t = 40: r 13.283, r+ +6.97e-01, r- -1.37e-08, 2M/r 0.2786, M 1.8505; t = 50: r 18.227, r+ +7.00e-01, r- -9.24e-12, 2M/r 0.7998, M 7.2895
+rc=0
+
+## evolve.py name --c=-1.5 --h=0.005 (naming_c-1.5.log)
+naming runs, c = -1.5, h = 0.005, X = 50.0, A*_h = -1.772567e-07; ADM mass of the member m = 0.31831; first trapped (T) and anti-trapped (E) cell: raw = dn.cell_class tolerance 1e-2; weighted = signs and 2 e^f r+ r- >= 0.02
+  A = A* - 1e-4: departure (0.0, -1); raw T: t = 12.26 l = -0.02 r = 1.037; raw E: t = 13.33 l = +0.59 r = 0.715; weighted T: t = 13.20 l = +0.90 r = 1.005; weighted E: t = 13.31 l = +0.57 r = 0.732
+      diagonal: t = 10: r 1.329, r+ +1.88e-01, r- -2.60e-01, 2M/r 0.8216, M 0.5460; t = 20: excised or outside; t = 30: excised or outside; t = 40: excised or outside; t = 50: excised or outside
+  A = A* + 1e-4: departure (0.0, 1); raw T: none; raw E: none; weighted T: none; weighted E: t = 60.19 l = +6.54 r = 25.666
+      diagonal: t = 10: r 1.489, r+ +2.58e-01, r- -2.02e-01, 2M/r 0.7326, M 0.5453; t = 20: r 3.778, r+ +5.64e-01, r- -8.15e-03, 2M/r 0.2373, M 0.4483; t = 30: r 8.119, r+ +6.46e-01, r- -3.82e-05, 2M/r 0.0947, M 0.3846; t = 40: r 12.784, r+ +6.70e-01, r- -1.59e-07, 2M/r 0.0566, M 0.3618; t = 50: r 17.563, r+ +6.80e-01, r- -5.34e-10, 2M/r 0.2095, M 1.8400
+  A = A* - 1e-5: departure (1.38, -1); raw T: t = 16.68 l = +0.28 r = 1.037; raw E: t = 17.56 l = +0.81 r = 0.753; weighted T: t = 17.87 l = +1.45 r = 0.999; weighted E: t = 17.55 l = +0.78 r = 0.771
+      diagonal: t = 10: r 1.406, r+ +2.24e-01, r- -2.30e-01, 2M/r 0.7770, M 0.5463; t = 20: excised or outside; t = 30: excised or outside; t = 40: excised or outside; t = 50: excised or outside
+  A = A* + 1e-5: departure (1.43, 1); raw T: none; raw E: none; weighted T: none; weighted E: t = 61.99 l = +4.06 r = 23.321
+      diagonal: t = 10: r 1.422, r+ +2.31e-01, r- -2.25e-01, 2M/r 0.7682, M 0.5462; t = 20: r 2.343, r+ +4.54e-01, r- -5.72e-02, 2M/r 0.4270, M 0.5003; t = 30: r 6.253, r+ +6.26e-01, r- -3.65e-04, 2M/r 0.1279, M 0.3998; t = 40: r 10.832, r+ +6.63e-01, r- -1.55e-06, 2M/r 0.0678, M 0.3673; t = 50: r 15.576, r+ +6.77e-01, r- -6.19e-09, 2M/r 0.0708, M 0.5511
+  A = A* - 1e-6: departure (6.06, -1); raw T: t = 20.66 l = +0.27 r = 1.040; raw E: t = 21.69 l = +1.04 r = 0.795; weighted T: t = 21.85 l = +1.45 r = 1.006; weighted E: t = 21.67 l = +1.00 r = 0.814
+      diagonal: t = 10: r 1.413, r+ +2.27e-01, r- -2.28e-01, 2M/r 0.7730, M 0.5463; t = 20: r 1.130, r+ +6.26e-02, r- -3.35e-01, 2M/r 0.9542, M 0.5393; t = 30: excised or outside; t = 40: excised or outside; t = 50: excised or outside
+  A = A* + 1e-6: departure (6.08, 1); raw T: none; raw E: none; weighted T: none; weighted E: t = 64.49 l = +2.03 r = 21.449
+      diagonal: t = 10: r 1.415, r+ +2.28e-01, r- -2.27e-01, 2M/r 0.7722, M 0.5463; t = 20: r 1.577, r+ +2.90e-01, r- -1.78e-01, 2M/r 0.6857, M 0.5407; t = 30: r 4.395, r+ +5.87e-01, r- -3.70e-03, 2M/r 0.1948, M 0.4280; t = 40: r 8.822, r+ +6.52e-01, r- -1.66e-05, 2M/r 0.0854, M 0.3767; t = 50: r 13.514, r+ +6.72e-01, r- -6.87e-08, 2M/r 0.0529, M 0.3575
+rc=0
+
+## evolve.py name --c=-1 --h=0.005 (naming_c-1.log)
+naming runs, c = -1.0, h = 0.005, X = 50.0, A*_h = -2.054693e-07; ADM mass of the member m = 0.21221; first trapped (T) and anti-trapped (E) cell: raw = dn.cell_class tolerance 1e-2; weighted = signs and 2 e^f r+ r- >= 0.02
+  A = A* - 1e-4: departure (0.0, -1); raw T: t = 8.99 l = -1.80 r = 0.983; raw E: t = 11.33 l = -0.59 r = 0.676; weighted T: t = 10.58 l = -0.51 r = 0.919; weighted E: t = 11.33 l = -0.60 r = 0.693
+      diagonal: t = 10: r 1.230, r+ +2.37e-01, r- -4.49e-01, 2M/r 0.7777, M 0.4784; t = 20: excised or outside; t = 30: excised or outside; t = 40: excised or outside; t = 50: excised or outside
+  A = A* + 1e-4: departure (0.0, 1); raw T: none; raw E: none; weighted T: none; weighted E: t = 50.88 l = +3.69 r = 21.196
+      diagonal: t = 10: r 1.549, r+ +3.64e-01, r- -2.50e-01, 2M/r 0.6220, M 0.4817; t = 20: r 4.684, r+ +6.26e-01, r- -2.30e-03, 2M/r 0.1513, M 0.3545; t = 30: r 9.304, r+ +6.71e-01, r- -4.29e-06, 2M/r 0.0628, M 0.2922; t = 40: r 14.100, r+ +6.84e-01, r- -7.40e-09, 2M/r 0.0560, M 0.3948; t = 50: r 18.963, r+ +6.90e-01, r- -2.70e-11, 2M/r -1.0140, M -9.6139
+  A = A* - 1e-5: departure (1.07, -1); raw T: t = 12.47 l = -1.80 r = 0.984; raw E: t = 14.79 l = -0.47 r = 0.694; weighted T: t = 14.14 l = -0.38 r = 0.918; weighted E: t = 14.78 l = -0.49 r = 0.712
+      diagonal: t = 10: r 1.398, r+ +3.12e-01, r- -3.28e-01, 2M/r 0.6892, M 0.4819; t = 20: excised or outside; t = 30: excised or outside; t = 40: excised or outside; t = 50: excised or outside
+  A = A* + 1e-5: departure (1.11, 1); raw T: none; raw E: none; weighted T: none; weighted E: t = 59.23 l = +8.74 r = 26.084
+      diagonal: t = 10: r 1.429, r+ +3.24e-01, r- -3.10e-01, 2M/r 0.6746, M 0.4821; t = 20: r 3.229, r+ +5.79e-01, r- -1.86e-02, 2M/r 0.2449, M 0.3954; t = 30: r 7.681, r+ +6.62e-01, r- -3.82e-05, 2M/r 0.0784, M 0.3011; t = 40: r 12.438, r+ +6.81e-01, r- -6.77e-08, 2M/r 0.0436, M 0.2711; t = 50: r 17.285, r+ +6.89e-01, r- -8.67e-11, 2M/r 0.2832, M 2.4476
+  A = A* - 1e-6: departure (4.72, -1); raw T: t = 16.01 l = -1.67 r = 0.983; raw E: t = 18.20 l = -0.34 r = 0.720; weighted T: t = 17.60 l = -0.31 r = 0.919; weighted E: t = 18.20 l = -0.34 r = 0.731
+      diagonal: t = 10: r 1.413, r+ +3.18e-01, r- -3.19e-01, 2M/r 0.6825, M 0.4820; t = 20: excised or outside; t = 30: excised or outside; t = 40: excised or outside; t = 50: excised or outside
+  A = A* + 1e-6: departure (4.71, 1); raw T: none; raw E: none; weighted T: none; weighted E: t = 61.26 l = +6.80 r = 24.382
+      diagonal: t = 10: r 1.416, r+ +3.19e-01, r- -3.17e-01, 2M/r 0.6810, M 0.4821; t = 20: r 2.036, r+ +4.72e-01, r- -1.14e-01, 2M/r 0.4471, M 0.4551; t = 30: r 6.040, r+ +6.47e-01, r- -3.56e-04, 2M/r 0.1058, M 0.3194; t = 40: r 10.739, r+ +6.76e-01, r- -6.43e-07, 2M/r 0.0516, M 0.2771; t = 50: r 15.563, r+ +6.86e-01, r- -1.05e-09, 2M/r 0.0887, M 0.6900
+rc=0
+
+## evolve.py resp --c=-1.5 (D1, untuned background; resp_c-1.5.log)
+c = -1.5, rho_c = 1.0, h = 0.01, X = 40.0, pulse +-1e-06 on the + ray (centre 3, width 0.5); member: kappa = 0.5517, #212 W = 0.4941711675, ADM mass m = 0.31831
+   odd part of Y per unit A_p, and its ratio to the same at 10 A_p (1 = linear):
+      t =   6.0: Y/A_p -6.684e-01  ratio 1.0000;  dM_diag/A_p -1.851e-01  dM_edge/A_p -3.663e-02 (edge l = +25.3)
+      t =  10.0: Y/A_p -5.748e+00  ratio 1.0000;  dM_diag/A_p -1.513e+00  dM_edge/A_p -3.420e-01 (edge l = +23.3)
+      t =  14.0: Y/A_p -4.187e+01  ratio 1.0000;  dM_diag/A_p -1.100e+01  dM_edge/A_p -2.772e+00 (edge l = +21.3)
+      t =  18.0: Y/A_p -2.870e+02  ratio 1.0001;  dM_diag/A_p -7.972e+01  dM_edge/A_p -2.270e+01 (edge l = +19.3)
+      t =  22.0: Y/A_p -1.250e+03  ratio 1.0039;  dM_diag/A_p -5.397e+02  dM_edge/A_p -1.701e+02 (edge l = +17.3)
+      t =  26.0: Y/A_p +1.298e+02  ratio 0.5238;  dM_diag/A_p -1.704e+03  dM_edge/A_p -5.354e+02 (edge l = +15.3)
+      t =  30.0: Y/A_p +3.890e+03  ratio 0.9818;  dM_diag/A_p -1.810e+03  dM_edge/A_p -6.800e+02 (edge l = +13.3)
+      t =  34.0: Y/A_p +5.980e+03  ratio 0.9916;  dM_diag/A_p -1.471e+03  dM_edge/A_p -7.003e+02 (edge l = +11.3)
+      t =  38.0: Y/A_p +7.045e+03  ratio 0.9949;  dM_diag/A_p -1.206e+03  dM_edge/A_p -7.026e+02 (edge l = +9.3)
+      t =  42.0: Y/A_p +7.659e+03  ratio 0.9964;  dM_diag/A_p -1.026e+03  dM_edge/A_p -7.014e+02 (edge l = +7.3)
+      t =  46.0: Y/A_p +8.054e+03  ratio 0.9973;  dM_diag/A_p -9.022e+02  dM_edge/A_p -7.105e+02 (edge l = +5.3)
+      t =  50.0: Y/A_p +8.325e+03  ratio 0.9979;  dM_diag/A_p -8.172e+02  dM_edge/A_p -6.484e+02 (edge l = +3.3)
+      t =  54.0: Y/A_p +8.522e+03  ratio 0.9983;  dM_diag/A_p -3.912e+01  dM_edge/A_p -5.524e+02 (edge l = +1.3)
+   local rate of ln|Y| (odd part):
+      [10, 16] +0.495; [16, 22] +0.415; [22, 28] -0.096; [28, 34] +0.154; [34, 40] +0.034; [40, 46] +0.014; [46, 52] +0.008
+   late value of Y/A_p (median over the last 8 time units): +8.4580e+03; peak |Y|/A_p 8.622e+03 at t = 56.6; sign changes 2; rate of ln|Y| over the last window +0.008; saturated (rate < 0.05 in magnitude over the last window and within 10 % of the late value from t = 41.61323407282832): True
+   at the last rows (t = 56.3): M at the diagonal cell, A = +A_p: 0.35579 (static 0.54626); at the edge cell (l = +0.1): 0.35507 (static 0.54389); member m = 0.31831; odd dM_diag/A_p -5.923e+03, dM_edge/A_p -5.448e+03; 2M/r at the diagonal 0.0459
+rc=0
+
+## evolve.py resp --c=-1.01 (D1, untuned background; resp_c-1.01.log)
+c = -1.01, rho_c = 1.0, h = 0.01, X = 40.0, pulse +-1e-06 on the + ray (centre 3, width 0.5); member: kappa = 0.6351, #212 W = 0.6331476235, ADM mass m = 0.21433
+   odd part of Y per unit A_p, and its ratio to the same at 10 A_p (1 = linear):
+      t =   6.0: Y/A_p +7.996e-02  ratio 1.0000;  dM_diag/A_p -1.306e-01  dM_edge/A_p -4.575e-04 (edge l = +25.3)
+      t =  10.0: Y/A_p -1.639e-01  ratio 1.0000;  dM_diag/A_p -1.848e+00  dM_edge/A_p -4.220e-02 (edge l = +23.3)
+      t =  14.0: Y/A_p -3.021e+00  ratio 1.0007;  dM_diag/A_p -2.367e+01  dM_edge/A_p -8.447e-01 (edge l = +21.3)
+      t =  18.0: Y/A_p +1.401e+02  ratio 0.9866;  dM_diag/A_p -3.022e+02  dM_edge/A_p -3.462e+01 (edge l = +19.3)
+      t =  22.0: Y/A_p +3.135e+03  ratio 0.9905;  dM_diag/A_p -1.409e+03  dM_edge/A_p -4.319e+02 (edge l = +17.3)
+      t =  26.0: Y/A_p +6.695e+03  ratio 0.9988;  dM_diag/A_p -1.470e+03  dM_edge/A_p -6.512e+02 (edge l = +15.3)
+      t =  30.0: Y/A_p +8.216e+03  ratio 1.0016;  dM_diag/A_p -1.199e+03  dM_edge/A_p -6.746e+02 (edge l = +13.3)
+      t =  34.0: Y/A_p +8.928e+03  ratio 1.0026;  dM_diag/A_p -1.016e+03  dM_edge/A_p -6.750e+02 (edge l = +11.3)
+      t =  38.0: Y/A_p +9.326e+03  ratio 1.0031;  dM_diag/A_p -8.989e+02  dM_edge/A_p -6.810e+02 (edge l = +9.3)
+      t =  42.0: Y/A_p +9.576e+03  ratio 1.0035;  dM_diag/A_p -8.300e+02  dM_edge/A_p -7.750e+02 (edge l = +7.3)
+      t =  46.0: Y/A_p +9.748e+03  ratio 1.0037;  dM_diag/A_p -2.454e+02  dM_edge/A_p -5.364e+02 (edge l = +5.3)
+      t =  50.0: Y/A_p +9.871e+03  ratio 1.0038;  dM_diag/A_p +1.980e+04  dM_edge/A_p +2.283e+04 (edge l = +3.3)
+      t =  54.0: Y/A_p +9.964e+03  ratio 1.0039;  dM_diag/A_p +1.159e+05  dM_edge/A_p +2.631e+04 (edge l = +1.3)
+   local rate of ln|Y| (odd part):
+      [10, 16] +0.405; [16, 22] +1.089; [22, 28] +0.136; [28, 34] +0.026; [34, 40] +0.010; [40, 46] +0.005; [46, 52] +0.003
+   late value of Y/A_p (median over the last 8 time units): +9.9335e+03; peak |Y|/A_p 1.001e+04 at t = 56.6; sign changes 4; rate of ln|Y| over the last window +0.003; saturated (rate < 0.05 in magnitude over the last window and within 10 % of the late value from t = 34.10376005662719): True
+   at the last rows (t = 56.3): M at the diagonal cell, A = +A_p: 0.36620 (static 0.48331); at the edge cell (l = +0.1): 0.01653 (static 0.47590); member m = 0.21433; odd dM_diag/A_p +4.689e+05, dM_edge/A_p +2.321e+05; 2M/r at the diagonal 0.0402
+rc=0
+
+## evolve.py resp --c=-1 (D1, untuned background; resp_c-1.log)
+c = -1.0, rho_c = 1.0, h = 0.01, X = 40.0, pulse +-1e-06 on the + ray (centre 3, width 0.5); member: kappa = 0.6366, #212 W = None, ADM mass m = 0.21221
+   odd part of Y per unit A_p, and its ratio to the same at 10 A_p (1 = linear):
+      t =   6.0: Y/A_p +1.039e-01  ratio 1.0000;  dM_diag/A_p -1.266e-01  dM_edge/A_p +6.143e-04 (edge l = +25.3)
+      t =  10.0: Y/A_p +1.627e-01  ratio 1.0000;  dM_diag/A_p -1.816e+00  dM_edge/A_p -2.819e-02 (edge l = +23.3)
+      t =  14.0: Y/A_p +9.982e-01  ratio 0.9977;  dM_diag/A_p -2.361e+01  dM_edge/A_p -6.573e-01 (edge l = +21.3)
+      t =  18.0: Y/A_p +1.870e+02  ratio 0.9893;  dM_diag/A_p -3.072e+02  dM_edge/A_p -3.386e+01 (edge l = +19.3)
+      t =  22.0: Y/A_p +3.289e+03  ratio 0.9913;  dM_diag/A_p -1.412e+03  dM_edge/A_p -4.371e+02 (edge l = +17.3)
+      t =  26.0: Y/A_p +6.799e+03  ratio 0.9991;  dM_diag/A_p -1.459e+03  dM_edge/A_p -6.529e+02 (edge l = +15.3)
+      t =  30.0: Y/A_p +8.287e+03  ratio 1.0018;  dM_diag/A_p -1.191e+03  dM_edge/A_p -6.757e+02 (edge l = +13.3)
+      t =  34.0: Y/A_p +8.985e+03  ratio 1.0028;  dM_diag/A_p -1.011e+03  dM_edge/A_p -6.781e+02 (edge l = +11.3)
+      t =  38.0: Y/A_p +9.376e+03  ratio 1.0033;  dM_diag/A_p -9.006e+02  dM_edge/A_p -6.942e+02 (edge l = +9.3)
+      t =  42.0: Y/A_p +9.622e+03  ratio 1.0036;  dM_diag/A_p -7.644e+02  dM_edge/A_p -8.340e+02 (edge l = +7.3)
+      t =  46.0: Y/A_p +9.790e+03  ratio 1.0038;  dM_diag/A_p -1.265e+03  dM_edge/A_p -3.908e+02 (edge l = +5.3)
+      t =  50.0: Y/A_p +9.912e+03  ratio 1.0039;  dM_diag/A_p -7.795e+03  dM_edge/A_p -2.010e+04 (edge l = +3.3)
+      t =  54.0: Y/A_p +1.000e+04  ratio 1.0040;  dM_diag/A_p +4.314e+05  dM_edge/A_p +3.348e+05 (edge l = +1.3)
+   local rate of ln|Y| (odd part):
+      [10, 16] +0.787; [16, 22] +0.902; [22, 28] +0.130; [28, 34] +0.025; [34, 40] +0.009; [40, 46] +0.005; [46, 52] +0.003
+   late value of Y/A_p (median over the last 8 time units): +9.9734e+03; peak |Y|/A_p 1.005e+04 at t = 56.6; sign changes 4; rate of ln|Y| over the last window +0.003; saturated (rate < 0.05 in magnitude over the last window and within 10 % of the late value from t = 33.94819656476614): True
+   at the last rows (t = 56.3): M at the diagonal cell, A = +A_p: 0.38058 (static 0.48203); at the edge cell (l = +0.1): 0.38317 (static 0.47449); member m = 0.21221; odd dM_diag/A_p -1.717e+06, dM_edge/A_p -1.515e+06; 2M/r at the diagonal 0.0417
+rc=0
+
+## evolve.py resp --c=-0.99 (D1, untuned background; resp_c-0.99.log)
+c = -0.99, rho_c = 1.0, h = 0.01, X = 40.0, pulse +-1e-06 on the + ray (centre 3, width 0.5); member: kappa = 0.6381, #212 W = 0.6401216241, ADM mass m = 0.21008
+   odd part of Y per unit A_p, and its ratio to the same at 10 A_p (1 = linear):
+      t =   6.0: Y/A_p +1.283e-01  ratio 1.0000;  dM_diag/A_p -1.226e-01  dM_edge/A_p +1.679e-03 (edge l = +25.3)
+      t =  10.0: Y/A_p +5.045e-01  ratio 1.0000;  dM_diag/A_p -1.781e+00  dM_edge/A_p -1.286e-02 (edge l = +23.3)
+      t =  14.0: Y/A_p +5.313e+00  ratio 0.9995;  dM_diag/A_p -2.352e+01  dM_edge/A_p -4.552e-01 (edge l = +21.3)
+      t =  18.0: Y/A_p +2.369e+02  ratio 0.9911;  dM_diag/A_p -3.121e+02  dM_edge/A_p -3.295e+01 (edge l = +19.3)
+      t =  22.0: Y/A_p +3.444e+03  ratio 0.9919;  dM_diag/A_p -1.414e+03  dM_edge/A_p -4.421e+02 (edge l = +17.3)
+      t =  26.0: Y/A_p +6.902e+03  ratio 0.9995;  dM_diag/A_p -1.448e+03  dM_edge/A_p -6.546e+02 (edge l = +15.3)
+      t =  30.0: Y/A_p +8.358e+03  ratio 1.0020;  dM_diag/A_p -1.183e+03  dM_edge/A_p -6.766e+02 (edge l = +13.3)
+      t =  34.0: Y/A_p +9.042e+03  ratio 1.0030;  dM_diag/A_p -1.006e+03  dM_edge/A_p -6.790e+02 (edge l = +11.3)
+      t =  38.0: Y/A_p +9.426e+03  ratio 1.0035;  dM_diag/A_p -8.958e+02  dM_edge/A_p -6.713e+02 (edge l = +9.3)
+      t =  42.0: Y/A_p +9.668e+03  ratio 1.0038;  dM_diag/A_p -7.931e+02  dM_edge/A_p -5.130e+02 (edge l = +7.3)
+      t =  46.0: Y/A_p +9.834e+03  ratio 1.0040;  dM_diag/A_p -4.317e+02  dM_edge/A_p -3.099e+03 (edge l = +5.3)
+      t =  50.0: Y/A_p +9.953e+03  ratio 1.0041;  dM_diag/A_p +2.533e+04  dM_edge/A_p +4.427e+04 (edge l = +3.3)
+      t =  54.0: Y/A_p +1.004e+04  ratio 1.0042;  dM_diag/A_p +6.529e+03  dM_edge/A_p -2.935e+05 (edge l = +1.3)
+   local rate of ln|Y| (odd part):
+      [10, 16] +0.678; [16, 22] +0.812; [22, 28] +0.125; [28, 34] +0.024; [34, 40] +0.009; [40, 46] +0.005; [46, 52] +0.003
+   late value of Y/A_p (median over the last 8 time units): +1.0014e+04; peak |Y|/A_p 1.009e+04 at t = 56.6; sign changes 6; rate of ln|Y| over the last window +0.003; saturated (rate < 0.05 in magnitude over the last window and within 10 % of the late value from t = 33.778490937281376): True
+   at the last rows (t = 56.3): M at the diagonal cell, A = +A_p: 2.07521 (static 0.48074); at the edge cell (l = +0.1): 2.47179 (static 0.47308); member m = 0.21008; odd dM_diag/A_p +1.937e+04, dM_edge/A_p -2.109e+03; 2M/r at the diagonal 0.2267
+rc=0
+
+## evolve.py resp --c=-0.3 (D1, untuned background; resp_c-0.3.log)
+c = -0.3, rho_c = 0.0, h = 0.01, X = 40.0, pulse +-1e-06 on the + ray (centre 3, width 0.5); member: kappa = 0.6013, #212 W = 0.9700800261, ADM mass m = 0.06366
+   odd part of Y per unit A_p, and its ratio to the same at 10 A_p (1 = linear):
+      t =   6.0: Y/A_p +7.292e+00  ratio 1.0000;  dM_diag/A_p +3.646e+00  dM_edge/A_p +8.054e-01 (edge l = +25.3)
+      t =  10.0: Y/A_p +3.472e+02  ratio 1.0000;  dM_diag/A_p +1.744e+02  dM_edge/A_p +4.969e+01 (edge l = +23.3)
+      t =  14.0: Y/A_p +1.165e+04  ratio 1.0428;  dM_diag/A_p +6.912e+03  dM_edge/A_p +8.551e+03 (edge l = +21.3)
+      t =  18.0: Y/A_p +4.275e+04  ratio nan;  dM_diag/A_p +3.014e+04  dM_edge/A_p +3.390e+04 (edge l = +19.3)
+      t =  22.0: Y/A_p +5.236e+04  ratio nan;  dM_diag/A_p +8.330e+03  dM_edge/A_p +7.965e+03 (edge l = +17.3)
+      t =  26.0: Y/A_p +5.524e+04  ratio nan;  dM_diag/A_p +2.906e+03  dM_edge/A_p +3.788e+03 (edge l = +15.3)
+      t =  30.0: Y/A_p +5.635e+04  ratio nan;  dM_diag/A_p +2.559e+03  dM_edge/A_p +3.390e+03 (edge l = +13.3)
+      t =  34.0: Y/A_p +5.689e+04  ratio nan;  dM_diag/A_p +2.751e+03  dM_edge/A_p +3.339e+03 (edge l = +11.3)
+      t =  38.0: Y/A_p +5.720e+04  ratio nan;  dM_diag/A_p +2.980e+03  dM_edge/A_p +3.573e+03 (edge l = +9.3)
+      t =  42.0: Y/A_p +5.740e+04  ratio nan;  dM_diag/A_p +2.361e+03  dM_edge/A_p +2.140e+03 (edge l = +7.3)
+      t =  46.0: Y/A_p +5.753e+04  ratio nan;  dM_diag/A_p -1.720e+04  dM_edge/A_p -1.668e+04 (edge l = +5.3)
+      t =  50.0: Y/A_p +5.763e+04  ratio nan;  dM_diag/A_p -2.529e+04  dM_edge/A_p -1.497e+05 (edge l = +3.3)
+      t =  54.0: Y/A_p +5.770e+04  ratio nan;  dM_diag/A_p +4.153e+06  dM_edge/A_p +7.942e+06 (edge l = +1.3)
+   local rate of ln|Y| (odd part):
+      [10, 16] +0.776; [16, 22] +0.081; [22, 28] +0.010; [28, 34] +0.003; [34, 40] +0.001; [40, 46] +0.001; [46, 52] +0.000
+   late value of Y/A_p (median over the last 8 time units): +5.7678e+04; peak |Y|/A_p 5.774e+04 at t = 56.6; sign changes 4; rate of ln|Y| over the last window +0.000; saturated (rate < 0.05 in magnitude over the last window and within 10 % of the late value from t = 21.64453857212022): True
+   at the last rows (t = 56.3): M at the diagonal cell, A = +A_p: -21.20870 (static 0.50000); at the edge cell (l = +0.1): -18.05407 (static 0.49880); member m = 0.06366; odd dM_diag/A_p -1.231e+07, dM_edge/A_p -9.607e+06; 2M/r at the diagonal -2.0646
+rc=0
+
+## D1b: evolve.py resp --c=-1.5 --tuned=... (post/D1b/resp_tuned_c-1.5.log)
+D1b: background = the mode family at A = A*_h = -7.041130e-07 (tuned). c = -1.5, rho_c = 1.0, h = 0.01, X = 40.0, pulse +-1e-06 on the + ray (centre 3, width 0.5); member: kappa = 0.5517, #212 W = 0.4941711675, ADM mass m = 0.31831
+   odd part of Y per unit A_p, and its ratio to the same at 10 A_p (1 = linear):
+   local rate of ln|Y| (odd part):
+      [6, 10] +0.537; [10, 14] +0.501; [14, 18] +0.517; [18, 22] +0.725; [22, 26] +2.372
+   late value of Y/A_p (median over the last 8 time units): -8.0811e+02; peak |Y|/A_p 3.115e+05 at t = 23.5; sign changes 3; rate of ln|Y| over the last window +2.372; saturated (rate < 0.05 in magnitude over the last window and within 10 % of the late value from t = None): False
+   at the last rows (t = 23.2): M at the diagonal cell, A = +A_p: 0.51520 (static 0.54626); at the edge cell (l = +nan): nan (static nan); member m = 0.31831; odd dM_diag/A_p -3.011e+04, dM_edge/A_p +nan; 2M/r at the diagonal 1.0283
+
+## D1b: evolve.py resp --c=-1.01 --tuned=... (post/D1b/resp_tuned_c-1.01.log)
+D1b: background = the mode family at A = A*_h = -8.302209e-07 (tuned). c = -1.01, rho_c = 1.0, h = 0.01, X = 40.0, pulse +-1e-06 on the + ray (centre 3, width 0.5); member: kappa = 0.6351, #212 W = 0.6331476235, ADM mass m = 0.21433
+   odd part of Y per unit A_p, and its ratio to the same at 10 A_p (1 = linear):
+   local rate of ln|Y| (odd part):
+      [6, 10] -0.201; [10, 14] +0.856; [14, 18] +1.102; [18, 22] +2.168
+   late value of Y/A_p (median over the last 8 time units): -1.4303e+02; peak |Y|/A_p 6.119e+05 at t = 21.0; sign changes 6; rate of ln|Y| over the last window +2.168; saturated (rate < 0.05 in magnitude over the last window and within 10 % of the late value from t = None): False
+   at the last rows (t = 20.8): M at the diagonal cell, A = +A_p: 0.49622 (static 0.48331); at the edge cell (l = +nan): nan (static nan); member m = 0.21433; odd dM_diag/A_p -3.887e+04, dM_edge/A_p +nan; 2M/r at the diagonal 0.9998
+
+## D1b: evolve.py resp --c=-1 --tuned=... (post/D1b/resp_tuned_c-1.log)
+D1b: background = the mode family at A = A*_h = -8.294635e-07 (tuned). c = -1.0, rho_c = 1.0, h = 0.01, X = 40.0, pulse +-1e-06 on the + ray (centre 3, width 0.5); member: kappa = 0.6366, #212 W = None, ADM mass m = 0.21221
+   odd part of Y per unit A_p, and its ratio to the same at 10 A_p (1 = linear):
+   local rate of ln|Y| (odd part):
+      [6, 10] +0.079; [10, 14] +0.706; [14, 18] +1.347; [18, 22] +2.228
+   late value of Y/A_p (median over the last 8 time units): -1.1497e+02; peak |Y|/A_p 6.494e+05 at t = 20.9; sign changes 3; rate of ln|Y| over the last window +2.228; saturated (rate < 0.05 in magnitude over the last window and within 10 % of the late value from t = None): False
+   at the last rows (t = 20.8): M at the diagonal cell, A = +A_p: 0.49655 (static 0.48203); at the edge cell (l = +nan): nan (static nan); member m = 0.21221; odd dM_diag/A_p -4.156e+04, dM_edge/A_p +nan; 2M/r at the diagonal 0.9998
+
+## D1b: evolve.py resp --c=-0.99 --tuned=... (post/D1b/resp_tuned_c-0.99.log)
+D1b: background = the mode family at A = A*_h = -8.286342e-07 (tuned). c = -0.99, rho_c = 1.0, h = 0.01, X = 40.0, pulse +-1e-06 on the + ray (centre 3, width 0.5); member: kappa = 0.6381, #212 W = 0.6401216241, ADM mass m = 0.21008
+   odd part of Y per unit A_p, and its ratio to the same at 10 A_p (1 = linear):
+   local rate of ln|Y| (odd part):
+      [6, 10] +0.314; [10, 14] +0.418; [14, 18] +1.719; [18, 22] +2.288
+   late value of Y/A_p (median over the last 8 time units): -8.5840e+01; peak |Y|/A_p 6.725e+05 at t = 20.9; sign changes 5; rate of ln|Y| over the last window +2.288; saturated (rate < 0.05 in magnitude over the last window and within 10 % of the late value from t = None): False
+   at the last rows (t = 20.7): M at the diagonal cell, A = +A_p: 0.49809 (static 0.48074); at the edge cell (l = +nan): nan (static nan); member m = 0.21008; odd dM_diag/A_p -5.600e+04, dM_edge/A_p +nan; 2M/r at the diagonal 1.0003
+
+## D1b: evolve.py resp --c=-0.3 --tuned=... (post/D1b/resp_tuned_c-0.3.log)
+D1b: background = the mode family at A = A*_h = -1.923641e-07 (tuned). c = -0.3, rho_c = 0.0, h = 0.01, X = 40.0, pulse +-1e-06 on the + ray (centre 3, width 0.5); member: kappa = 0.6013, #212 W = 0.9700800261, ADM mass m = 0.06366
+   odd part of Y per unit A_p, and its ratio to the same at 10 A_p (1 = linear):
+      t =   6.0: Y/A_p +7.294e+00  ratio 1.0000;  dM_diag/A_p +3.647e+00  dM_edge/A_p +8.021e-01 (edge l = +25.3)
+      t =  10.0: Y/A_p +3.504e+02  ratio 1.0000;  dM_diag/A_p +1.751e+02  dM_edge/A_p +4.215e+01 (edge l = +23.3)
+      t =  14.0: Y/A_p +1.676e+04  ratio 1.1082;  dM_diag/A_p +8.343e+03  dM_edge/A_p +2.088e+03 (edge l = +21.3)
+   local rate of ln|Y| (odd part):
+      [6, 10] +0.968; [10, 14] +0.970; [14, 18] +1.055
+   late value of Y/A_p (median over the last 8 time units): +nan; peak |Y|/A_p 4.787e+05 at t = 16.9; sign changes 1; rate of ln|Y| over the last window +1.055; saturated (rate < 0.05 in magnitude over the last window and within 10 % of the late value from t = None): False
+   at the last rows (t = 56.3): M at the diagonal cell, A = +A_p: 12.63923 (static 0.50000); at the edge cell (l = +0.1): 12.87948 (static 0.49880); member m = 0.06366; odd dM_diag/A_p +nan, dM_edge/A_p +nan; 2M/r at the diagonal 1.3044
+
+## evolve.py bgdep (post/D1b/bgdep.log)
+c = -1.5, h = 0.01: the untuned member's |Y| on the diagonal first reaches 2e-05: t = 6.82; 0.001: t = 14.79; 0.01: t = 19.35; 0.1: t = 23.40
+c = -1.01, h = 0.01: the untuned member's |Y| on the diagonal first reaches 2e-05: t = 5.04; 0.001: t = 11.25; 0.01: t = 14.90; 0.1: t = 18.66
+c = -1.0, h = 0.01: the untuned member's |Y| on the diagonal first reaches 2e-05: t = 5.01; 0.001: t = 11.18; 0.01: t = 14.83; 0.1: t = 18.56
+c = -0.99, h = 0.01: the untuned member's |Y| on the diagonal first reaches 2e-05: t = 4.99; 0.001: t = 11.12; 0.01: t = 14.74; 0.1: t = 18.48
+c = -0.3, h = 0.01: the untuned member's |Y| on the diagonal first reaches 2e-05: t = 4.70; 0.001: t = 8.85; 0.01: t = 11.24; 0.1: t = 13.75
