@@ -348,6 +348,15 @@ need(f"$I_0={float(i0[1]):.10f}$", "I0")
 need(f"$\\dd(W/\\kappa)/\\dd c={float(sl[1]):.10f}$ at $c=-1$", "d(W/kappa)/dc at c = -1")
 need(f"a third-order fit of the rates gives ${float(f3[1]):.8f}$", "the third-order fit")
 
+# #260: the count of papers searched (notes/black_universe/horizon_literature.md)
+HL = S.read("horizon_literature.md")
+npap = re.search(r"N = (\d+) papers whose full text was searched", HL)
+check(npap is not None, "#260's paper count in horizon_literature.md")
+need(f"in the {npap[1]} papers we searched", "papers searched (#260)")
+nine = re.search(r"repeated without a new computation in 11 later papers", HL)
+check(nine is not None, "#260: 11 later papers repeat BKZ12's verdict (Bro18, BBS20 and nine further)")
+need("in~\\cite{Bro18,BBS20} and in nine further papers", "two cited and nine further = 11 (#260)")
+
 # ---------------------------------------------------------------------------------------------------- placeholders and marks
 pend = re.findall(r"\\pending\{\\#(\d+)", TEX)
 needs = len(re.findall(r"% NEEDS #260", TEX))

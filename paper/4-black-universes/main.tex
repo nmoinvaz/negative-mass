@@ -43,13 +43,14 @@ and tends to the surface gravity $\kappa=2/(\pi b)$ of the horizon as $c\to-1$ f
 horizon sits at the throat, has no normalizable mode. It has instead a growing solution of rate $\kappa$ carried by the
 horizon: there the perturbation of the areal radius is $\delta r=c_1+c_2e^{\kappa v}$, with $v$ the advanced time, and $c_2$
 is a free number of regular data on a slice through the horizon. We prove that $c_2$ is gauge invariant on every
-non-extremal Killing horizon at an extremum of the areal radius, and that such a horizon needs a metric function that is
-not a function of the areal radius alone. Nonlinear double-null evolutions along each member's growing solution give a
+non-extremal Killing horizon at an extremum of the areal radius, the statement for $\delta r$ of a known property of
+minimal horizon sections, and that such a horizon needs a metric function that is not a function of the areal radius alone. Nonlinear double-null evolutions along each member's growing solution give a
 lifetime law whose slope is $1/W$ at $c=-0.3$ and $-1.5$ and $1/\kappa$ at $c=-1$, to $2.4\times10^{-4}$. Polar
 perturbations with $\ell=1$ and $2$ add no growing mode, and 54 of 55 members with a magnetic field or with the source of the
 Simpson--Visser black bounce have a growing radial mode, the exception being the $c=-1$ member. The counts and rates are numerical evidence; the statement on Killing horizons is
 proved by hand.
-% NEEDS #260: a sentence on what is new, after the literature check.
+Ref.~\cite{BKZ12} concludes that the $c=-1$ member is stable; that holds for the perturbations their gauge and horizon
+condition admit, which have $c_2=0$. We found no statement of the growing direction in the 424 papers we searched.
 \end{abstract}
 
 \tableofcontents
@@ -61,9 +62,14 @@ have their smallest area on the horizon itself, at radius $b$, and grow again in
 expands toward a de Sitter future~\cite{BF06}. Bronnikov, Konoplya and Zhidenko studied the family under spherically symmetric
 perturbations and concluded that ``all configurations under study are unstable under spherically symmetric perturbations,
 except for a special class of black universes where the event horizon coincides with the minimum of the area
-function''~\cite{BKZ12}. That class is this member. % NEEDS #260
+function''~\cite{BKZ12}. That class is this member ($c=-1$, $b=3\pi m/2$ in their Conclusion 2~\cite{BKZ12}; the horizon at the throat for
+$3\pi m=2b$ is already in~\cite{BF06}).
 This paper counts the growing modes of the family, and shows that the $c=-1$ member has a growing solution that a count of
-normalizable modes does not see. % NEEDS #260
+normalizable modes does not see. Their conclusion, stated for polar monopole perturbations (\S V C of~\cite{BKZ12}), is
+contradicted as worded. Their gauge $\delta R=0$ (their Eq.~(35)) and their quasinormal condition on the horizon (their
+Eq.~(43)) admit only $\Psi$ finite there ($u=Y/\rho$ finite, and $u\to0$ for an ingoing mode), which sets $Y=0$ on the
+horizon (Sec.~\ref{sec:cauchy}). The same gauge is called unsuitable at critical points of $r$ for throats
+in~\cite{BFZ11}, and the same reasoning applies at this horizon.
 
 Bronnikov and Fabris constructed the family by choosing the areal radius and the scalar and solving for the
 potential~\cite{BF06}; Bronnikov, Dehnen and Melnikov call such regular black holes, with an expanding region beyond the horizon, black
@@ -143,8 +149,11 @@ u_{xx}=(\hat V+W^2)\,u,\qquad
 Bronnikov, Konoplya and Zhidenko derived this problem in the gauge $\delta R=0$~\cite{BKZ12}. The map
 $\delta\varphi=-\varphi'Y/R'$ takes our equation onto theirs, and $\hat V$ equals their effective potential, their
 Eqs.~(40) and~(41), with their $\Psi=-\sqrt2\,u$ (checked symbolically, and numerically to $1.1\times10^{-29}$ at 30 digits).
-% NEEDS #260: the printed (36)-(38) of [BKZ12] and the printed (8) of [BF06] disagree with the derivation
-% (notes/black_universe/README.md, sections 1 and 2); report after the literature check.
+The printed Eqs.~(36)--(38) of~\cite{BKZ12} differ from the derivation in the sign of the coefficient of
+$\delta\varphi'$, in $\delta\varphi=\Psi e^{\mu_3}$ (we find $\delta\varphi=\Psi/R$) and in two signs of Eq.~(37); Eqs.~(40)
+and~(41) agree. Bronnikov's review~\cite{Bro18} prints its Eqs.~(64)--(68) with the signs we derive, and we found no erratum
+on INSPIRE. Eq.~(8) of~\cite{BF06} gives $A'(h)=(\rho_0-h)/r^2(h)$, half the value its Eq.~(7) gives; no later paper
+that we read repeats it.
 The throat $\rho=0$ is a regular singular point of Eq.~\eqref{eq:master} with exponents $0$ and $3$, and both solutions are
 analytic there; in Eq.~\eqref{eq:schrodinger} it is the wall $2A^2/\rho^2$.
 
@@ -593,10 +602,18 @@ a delay that depends on $A$.
 \item \emph{Prior work.} Ref.~\cite{BKZ12} concludes that the black universes ``are shown to be stable only in the special
   case where the horizon coincides with the minimum of the area function $R(r)$ (the parameters: $c=-1$, $b=3\pi m/2$)''.
   For that member this work finds the growing direction of Sec.~\ref{sec:cauchy}, excited by regular data with $c_2\ne0$, and no
-  growth for data with $c_2=0$, which include waves sent in on an unperturbed horizon. % NEEDS #260
+  growth for data with $c_2=0$, which include waves sent in on an unperturbed horizon. Ref.~\cite{BKZ12} gives no initial
+  data for its time-domain run at $c=-1$ (its Fig.~5), so we make no claim about the data of that run. The verdict is
+  repeated without a new computation in~\cite{Bro18,BBS20} and in nine further papers.
 \item \emph{The mechanism.} Lemma~\ref{lem:horizon} is general: any non-extremal Killing horizon at an extremum of the
-  areal radius carries a gauge-invariant $c_2$. Which other known solutions have such a horizon is not examined here.
-  % NEEDS #260: the literature search for other horizons at an area extremum is part of #260.
+  areal radius carries a gauge-invariant $c_2$. In the papers we read, the minimum of the areal radius lies on a horizon in
+  the $c=-1$ member~\cite{BF06,BKZ12}, in its conformal image in hybrid metric-Palatini gravity~\cite{BBS20}, in the one-way
+  wormholes of~\cite{RJLR25}, in two examples of~\cite{BBS21}, and in the extremal Simpson--Visser black bounce
+  $a=2M$~\cite{SV19,LRSSV21}, which the lemma excludes. None of them is analyzed for the growth of
+  Lemma~\ref{lem:horizon}, and~\cite{BIK26} lists the regularity of perturbations at the $a=2M$ horizon as open. In geometric
+  language the lemma says that the horizon's sections are minimal, so that the stability operator of~\cite{Mars12} has
+  zero principal eigenvalue (its Thm.~1) and the gauge condition $\delta\vartheta=0$ of~\cite{HW13} cannot be imposed. We
+  found no paper that states this for $\delta r$ or draws the growth at $\kappa$.
 \item \emph{What the rates are.} Counts and rates are numerical evidence: a sign-change search on $W\in[0.01, 8]$ with
   node, spectral and Sturm guards, no argument-principle count and no rigorous bound. The error bars are resolution spreads,
   Richardson differences, standard errors and fit spreads, each named where it is quoted.
@@ -732,6 +749,25 @@ Relativ. \textbf{10}, 5 (2007), arXiv:0711.4620.
 \bibitem{Moinvaziri2026c} N. Moinvaziri, ``The instability of ghost-scalar wormholes at large dimension'' (2026), in the
 accompanying repository, \path{paper/3-wormhole-largeD/}.
 
+\bibitem{BFZ11} K. A. Bronnikov, J. C. Fabris and A. Zhidenko, ``On the stability of scalar-vacuum space-times,'' Eur. Phys.
+J. C \textbf{71}, 1791 (2011), arXiv:1109.6576.
+\bibitem{Bro18} K. A. Bronnikov, ``Scalar fields as sources for wormholes and regular black holes,'' Particles \textbf{1}, 56
+(2018), arXiv:1802.00098.
+\bibitem{BBS20} K. A. Bronnikov, S. V. Bolokhov and M. V. Skvortsova, ``Hybrid metric-Palatini gravity: black holes,
+wormholes, singularities and instabilities,'' Grav. Cosmol. \textbf{26}, 212 (2020), arXiv:2006.00559.
+\bibitem{BBS21} K. A. Bronnikov, S. V. Bolokhov and M. V. Skvortsova, ``Spherically symmetric space-times in generalized
+hybrid metric-Palatini gravity,'' Grav. Cosmol. \textbf{27}, 358 (2021), arXiv:2109.01794.
+\bibitem{RJLR25} G. I. Róis, J. T. S. S. Junior, F. S. N. Lobo and M. E. Rodrigues, ``Horizons, throats and bounces in hybrid metric-Palatini gravity with a
+non-zero potential,'' JCAP \textbf{07}, 078 (2025), arXiv:2504.07861.
+\bibitem{LRSSV21} F. S. N. Lobo, M. E. Rodrigues, M. V. de S. Silva, A. Simpson and M. Visser, ``Novel black-bounce
+spacetimes: wormholes, regularity, energy conditions, and causal structure,'' Phys. Rev. D \textbf{103}, 084052 (2021),
+arXiv:2009.12057.
+\bibitem{BIK26} K. A. Bronnikov, R. Ibadov and J. Kunz, ``Instabilities of Simpson--Visser black bounces sourced by a phantom
+scalar and nonlinear electrodynamics,'' arXiv:2611.08322 (2026).
+\bibitem{HW13} S. Hollands and R. M. Wald, ``Stability of black holes and black branes,'' Commun. Math. Phys. \textbf{321},
+629 (2013), arXiv:1201.0463.
+\bibitem{Mars12} M. Mars, ``Stability of MOTS in totally geodesic null horizons,'' Class. Quantum Grav. \textbf{29}, 145019
+(2012), arXiv:1205.1724.
 \end{thebibliography}
 
 \end{document}
