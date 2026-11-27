@@ -54,7 +54,7 @@ dependencies = [
 [[package]]
 name = "multishoot"
 version = "4.2.0"
-source = "git+https://github.com/nmoinvaz/multishoot?rev=ff24b6bc316540d8fc11cd844b6861236ba0eed4#ff24b6bc316540d8fc11cd844b6861236ba0eed4"
+source = "git+https://github.com/nmoinvaz/multishoot?rev=6bfd9b13ee9b5ca24a14267d19d33aa31fa7854f#6bfd9b13ee9b5ca24a14267d19d33aa31fa7854f"
 dependencies = [
  "multidouble",
  "multisolver",
