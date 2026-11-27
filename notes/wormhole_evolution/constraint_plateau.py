@@ -679,7 +679,13 @@ def analyze(raw):
     print(f"constraint_plateau.py analyze: {len([k for k in R if k in jobs()])} of {len(jobs())} jobs found in {raw}" + (f"; mutation {mut}" if mut else ""))
     print("slab = nodes of [0, X]^2 with t = (x+ + x-)/sqrt2 <= Tc; ratios are max|C|(h)/max|C|(h/2) over the same slab; second order is 4, the band is CRIT's order 1.75 to 2.25.\n")
 
+    NEED = dict(R1=4, C1=8, C2=2, D1=6 if mut == "ray_pert" else 4, L1=8, L2=2 if mut == "corner" else 30, M1=4)    # comparisons a check must have evaluated
+    seen = dict.fromkeys(NEED, 0)
+
     def verdict(cid, text, ok, detail=""):
+        if seen[cid] < NEED[cid]:
+            ok = False
+            detail = f"incomplete: {seen[cid]} of {NEED[cid]} comparisons found" + (f"; {detail}" if detail else "")
         if not ok:
             fired.add(cid)
         print(f"[{'pass' if ok else 'FAIL'}] {cid}: {text}" + (f"  ({detail})" if detail else ""))
@@ -691,6 +697,7 @@ def analyze(raw):
         fmt = "stn256_D{D}_k{k}" if mut == "static_noise256" else "st_D{D}_k{k}"
         rs = table(R, "static" + (" with 256 x 2^-52 noise (mutation)" if mut == "static_noise256" else ""), fmt, D, f"t <= {CP['Tc']['static']}, X = {CP['X']['static']}")
         okD = all(in_band(x) for x in rs[: CP["NDECL"] - 1])
+        seen["R1"] += len(rs[: CP["NDECL"] - 1])
         r1_ok = r1_ok and okD
         r1_det.append(f"D = {D}: " + ", ".join(f"{x:.3f}" for x in rs[: CP["NDECL"] - 1]))
     verdict("R1", "static case: max|C| over the fixed slab falls by a second-order ratio at each halving of the three declared h, D = 5 and 6", r1_ok, "; ".join(r1_det))
@@ -724,12 +731,28 @@ def analyze(raw):
             ds = [dd[k]["max"] for k in idx]
             print(f"  {label}, D = {D}: " + "; ".join(f"h = {q[k]['h']:.6f}: float64 {dd[k]['max']:.3e}, binary128 {q[k]['max']:.3e} (x{dd[k]['max'] / q[k]['max']:.3f}) {where(q[k])}" for k in idx))
             qr = ratios(qs[:3])
+            seen["C1"] += 1 if len(qr) == 2 else 0
             ok = all(in_band(x) for x in qr)
             c1_ok = c1_ok and ok
             c1_det.append(f"{label} D={D} " + ", ".join(f"{x:.3f}" for x in qr))
             if len(idx) > 3 or (len(idx) == 4):
                 print(f"    extension halving: binary128 ratio {qs[2] / qs[3]:.3f}, float64 ratio {ds[2] / ds[3]:.3f}")
     verdict("C1", "binary128: second-order ratios at every halving of the declared h, in every set (static, S -, S +, bracket lo), D = 5 and 6", c1_ok, "; ".join(c1_det))
+
+    # profile of the maximum in time at the finest declared h
+    print("\n== P max |C| per time bin of 0.5 (every second bin) at the finest declared h, family S at p* - 1e-8: float64, binary128, and the amplification (t/2)^(n-1) of a unit violation from the ray")
+    for D in (5, 6):
+        a8, a16 = R.get(f"sm_D{D}_k2"), R.get(f"sqm_D{D}_k2")
+        c0 = R.get(f"sm_D{D}_k0")
+        if not (a8 and a16):
+            continue
+        print(f"  D = {D}, h = {a8['h']:.6f}" + (f" (coarsest declared h = {c0['h']:.6f}: max per bin in the last column)" if c0 else ""))
+        for b in range(0, len(a8["bins"]), 2):
+            v8 = max(a8["bins"][b]["pp"][0], a8["bins"][b]["mm"][0])
+            v16 = max(a16["bins"][b]["pp"][0], a16["bins"][b]["mm"][0])
+            v0 = max(c0["bins"][b]["pp"][0], c0["bins"][b]["mm"][0]) if c0 else float("nan")
+            t = a8["bins"][b]["t"]
+            print(f"    t {t:5.2f}  float64 {v8:.3e}  binary128 {v16:.3e}  float64/binary128 {v8 / v16:6.3f}  amplification {(max(t, 2.0) / 2.0) ** (D - 3):6.2f}  coarsest h {v0:.3e}")
 
     # C2: the roundoff mutation
     print("\n== C2 added noise, uniform relative amplitude a x 2^-52 on every node as it is computed (a = 1 doubles the roundoff), family S at p* - 1e-8;")
@@ -746,6 +769,7 @@ def analyze(raw):
         for k in (0, 2):
             line.append(f"h = {base[k]['h']:.6f}: a = 0 {base[k]['max']:.3e}, " + ", ".join(f"a = {a} {nz[(a, k)]['max']:.3e} (x{nz[(a, k)]['max'] / base[k]['max']:.3f})" for a in (1, 16, 256)))
         print(f"  D = {D}: " + "; ".join(line))
+        seen["C2"] += 1
         mov = nz[(256, 2)]["max"] / base[2]["max"]
         crs = nz[(16, 0)]["max"] / base[0]["max"]
         ok = mov >= CP["c2_move"] and crs <= CP["c2_coarse"]
@@ -771,6 +795,7 @@ def analyze(raw):
             if base is None or r is None:
                 continue
             x = r["max"] / base["max"]
+            seen["D1"] += 1
             ok = CP["d1"][0] <= x <= CP["d1"][1]
             d1_ok = d1_ok and ok
             d1_det.append(f"D={D} {nm}: x{x:.3f}")
@@ -791,6 +816,7 @@ def analyze(raw):
             for w in ("pp", "mm"):
                 a = np.abs(np.nan_to_num(z[w]))
                 cnt = int((a >= 0.5 * a.max()).sum())
+                seen["L1"] += 1
                 ok = cnt >= CP["l1_count"]
                 l1_ok = l1_ok and ok
                 l1_det.append(f"{nm} {w}: {cnt}")
@@ -806,6 +832,7 @@ def analyze(raw):
             if r is None:
                 continue
             dist = min(r["xp"], r["xm"])
+            seen["L2"] += 1
             ok = dist >= CP["l2_dist"]
             l2_ok = l2_ok and ok
             if not ok or mut == "corner":
@@ -821,6 +848,7 @@ def analyze(raw):
             r = R.get(f"model_D{D}_k{k}")
             if r is None:
                 continue
+            seen["M1"] += 1
             print(f"  D = {D}, h = {r['h']:.6f}, diagonal t = {r['t']:.3f}: |l| band, nodes, model (a = 1), then observed/model for natural roundoff, a = 16, a = 256, each C_++ / C_--")
             for b in r["bands"]:
                 if b["nodes"] < CP["model_min_nodes"]:
