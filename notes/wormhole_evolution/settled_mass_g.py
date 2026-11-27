@@ -43,7 +43,6 @@ DELTAS = (1e-6, 1e-8)
 NOISE_HS = (0.01, 0.005)                  # h of the ulp-noise runs
 NOISE_RUNS = ((0.0, 1), (1.0, 1), (1.0, 2), (1.0, 3), (64.0, 1))     # (noise in units of 2^-52, seed)
 ULP = 2.0 ** -52
-DELTA_SWAP = 1e-1                         # the delta of the mutation delta_swap (set from the development scan)
 BAR_MACHINE = 2e-5                        # #41's review: the same code on another machine reproduces the settled value to about 2e-5
 S_PLATEAU = 0.2231                        # #41's quoted settled mass of family S
 I40 = os.path.expanduser("~/Source/negative-mass-raw/I40-dh610/runs")
@@ -185,7 +184,7 @@ def get_run(raw, h, delta):
     ps = json.load(open(os.path.join(raw, "runs", f"pstar_G_h{h:g}.json")))["ps"]
     K = 0 if mut("no_zoom") else (12 if mut("short_limit") else None)
     ps = ps + 2e-8 if mut("pstar_off") else ps
-    r = run_real_g(h, DELTA_SWAP if (mut("delta_swap") and delta == 1e-6) else delta, ps, K=K)
+    r = run_real_g(h, delta, ps, K=K)
     return r["ser"], dict(status=r["status"], event=r["event"], point=r["point"], up=r["up"], Nc=r["Nc"], F1=r["F1"], K=r["K"], h=h, delta=delta, ps=ps)
 
 
@@ -264,6 +263,20 @@ def planted_through_driver():
     except Exception as e:
         sm.track = track_g
         check("PL3", "#41's PL3 through this driver", False, "failed: " + repr(e))
+
+
+def flux_planted():
+    """The first-law integrand on planted horizon series with a known integral: a ghost-only flux lowers M, a normal-only flux raises it, equal
+    amounts cancel (r = 0.5, e^-f = 2, r_- = -0.4, phi_+ = 1, over x+ in [0, 1]: (r^2/2) e^f r_- = -0.025)."""
+    x = np.linspace(0.0, 1.0, 11)
+    base = dict(xp=x, r=np.full(11, 0.5), F=np.full(11, 2.0), rm=np.full(11, -0.4))
+    cases = (("ghost only", 1.0, 0.0, -0.025), ("normal only", 0.0, 1.0, +0.025), ("equal", 1.0, 1.0, 0.0))
+    errs = []
+    for name, g, n_, want in cases:
+        s = dict(base, phip=np.full(11, g), phip1=np.full(11, n_))
+        errs.append(abs(flux_integral_g(s, 0, 10) - want))
+    check("FLX", "first-law integrand on planted series: ghost only -0.025, normal only +0.025, equal fluxes 0 (the normal field has the opposite energy sign)",
+          max(errs) <= 1e-12, "errors " + ", ".join(f"{e:.1e}" for e in errs))
 
 
 def level0_identity_g(pdir, h=0.02, delta=1e-6):
@@ -366,6 +379,7 @@ def analyze_cmd(raw):
     xg = th.CRIT["X"][FAM][ND]
     check("CFG", "the chain constants of settled_mass.py and the rectangle of #40's G equal the declared values (#41's)", not bad and xg == DECLARED["X"],
           f"settled_mass.CRIT differs from declared: {bad}; X(G, D = 4) = {xg}" if bad or xg != DECLARED["X"] else f"F1 {sm.CRIT['F1']}, K {sm.CRIT['K']}, W1 {sm.CRIT['W1']}, dxp {sm.CRIT['dxp']}, dm {sm.CRIT['dm']}, X {xg}")
+    flux_planted()
     planted_through_driver()
     try:
         level0_identity_g(os.path.join(raw, "runs"))
@@ -535,8 +549,8 @@ def noise_report(raw, t0, S, S41):
             vals = [window_scatter(N[(h, u, sd)], rfs[h], WINDOWS) for uu, sd in NOISE_RUNS if uu == u]
             sc[(h, u)] = [max(v[w] for v in vals) for w in range(len(WINDOWS))]
             print(f"    h = {h:g}, noise {u:g} x 2^-52, {len(vals)} seed(s): max |M_noisy - M| in windows {WINDOWS}: " + ", ".join(f"{x:.2e}" for x in sc[(h, u)]))
-    resp = [all(sc[(h, 64.0)][w] >= 3.0 * sc[(h, 1.0)][w] for w in range(len(WINDOWS))) for h in NOISE_HS]
-    check("RNR", "the scatter responds to the noise: at 64 x 2^-52 it is at least 3 times that at 2^-52, in every window and h", all(resp),
+    resp = [all(sc[(h, 1.0)][w] > 0.0 and sc[(h, 64.0)][w] >= 3.0 * sc[(h, 1.0)][w] for w in range(len(WINDOWS))) for h in NOISE_HS]
+    check("RNR", "the scatter responds to the noise: it is nonzero at 2^-52 and at 64 x 2^-52 at least 3 times that, in every window and h", all(resp),
           "; ".join(f"h = {h:g}: " + ", ".join(f"{sc[(h, 64.0)][w] / max(sc[(h, 1.0)][w], 1e-300):.1f}" for w in range(len(WINDOWS))) for h in NOISE_HS))
     print("  scatter at 2^-52 against the h-difference E between the h and its coarser neighbour (same windows, delta = 1e-8):")
     rows = sm.band_orders({h: S[(h, 1e-8)] for h in HS}, HS, WINDOWS, 1e-8)
@@ -545,7 +559,63 @@ def noise_report(raw, t0, S, S41):
             ratio = sc[(hf, 1.0)][w] / Ee[k]
             word = "reached" if ratio >= 1.0 else ("approached" if ratio >= 0.1 else "not reached")
             print(f"    h = {hf:g}, x+ - x+_f in [{a_:g}, {b_:g}]: noise scatter {sc[(hf, 1.0)][w]:.2e}, {nm} {Ee[k]:.2e}, ratio {ratio:.3f}: floor {word}")
+    dose_report(raw, S)
+    scan_report(raw)
+    first_law_report(S)
     return finish(t0)
+
+
+DOSE_K = (6, 12, 20, 28, 36)
+
+
+def dose_report(raw, S):
+    """Exploratory (not a declared check): noise of 2^k x 2^-52, h = 0.005, delta = 1e-8, seeds 1 and 2: the scatter against the amplitude."""
+    h = 0.005
+    print("  dose scan (exploratory): max |M_noisy - M| in the three windows, max over the seeds present")
+    for k in (0,) + DOSE_K:
+        sc = []
+        for sd in (1, 2):
+            tag = f"rn_h{h:g}_u1_s{sd}" if k == 0 else f"dose_h{h:g}_k{k}_s{sd}"
+            if os.path.exists(os.path.join(raw, "runs", tag, "series.npz")) and os.path.exists(os.path.join(raw, "runs", tag, "summary.json")):
+                sc.append(window_scatter(load_run(raw, h, 1e-8, tag)[0], S[(h, 1e-8)], WINDOWS))
+        if sc:
+            print(f"    noise 2^{k} x 2^-52 ({2.0 ** (k - 52):.1e}), {len(sc)} seed(s): " + ", ".join(f"{max(v[w] for v in sc):.2e}" for w in range(len(WINDOWS))))
+
+
+def scan_report(raw):
+    """M at the limit against the distance from threshold: G (runs/scan_G_h*.json) against S (I41-rpi5 scan_h0.01.json). A report, no bar."""
+    p41 = os.path.join(I41RAW, "runs", "scan_h0.01.json")
+    s41 = {r["delta"]: r for r in json.load(open(p41))} if os.path.exists(p41) else {}
+    for h in (0.01, 0.005):
+        pj = os.path.join(raw, "runs", f"scan_G_h{h:g}.json")
+        if not os.path.exists(pj):
+            continue
+        rows = json.load(open(pj))
+        print(f"\n== Supplementary: M at the limit against delta (family G, h = {h:g}; family S from I41-rpi5, h = 0.01), A = p*_h - delta")
+        print("  delta      x+_f(G)  M_start(G)  M_end(G)   plateau(G)  r_AH(G)    M_end(S)   G - S")
+        prev = None
+        for r in rows:
+            if "M_end" not in r:
+                print(f"  {r['delta']:8.0e}  {r['status']}")
+                continue
+            q = s41.get(r["delta"], {})
+            ms = q.get("M_end")
+            print(f"  {r['delta']:8.0e}  {r['xpf']:7.3f}  {r['M_start']:9.6f}  {r['M_end']:9.6f}  {r['plat1']:9.6f}  {r['r_end']:8.5f}  " + (f"{ms:9.6f}  {r['M_end'] - ms:+.2e}" if ms is not None else "     -"))
+
+
+def first_law_report(S):
+    """The first law over the whole series (first trapped cell to the limit): M_end - M_start against the integral of the flux, G and S. A report, no bar."""
+    print("\n== First law over the whole series to the limit (a report): M_end - M_start against the integral of the horizon flux")
+    for dl in DELTAS:
+        for h in HS:
+            s = S[(h, dl)]
+            i1 = len(s["xp"]) - 1
+            dMs = s["M"][i1] - s["M"][0]
+            fl = flux_integral_g(s, 0, i1)
+            s4 = load_s41(h, dl)
+            d4 = s4["M"][-1] - s4["M"][0]
+            f4 = sm.flux_integral(s4, 0, len(s4["xp"]) - 1)
+            print(f"  delta {dl:g}, h {h:g}: G dM {dMs:+.5f}, flux {fl:+.5f}, relative {abs(dMs - fl) / abs(dMs):.1e}; S dM {d4:+.5f}, flux {f4:+.5f}, relative {abs(d4 - f4) / abs(d4):.1e}")
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -556,7 +626,7 @@ def scan_cmd(h, out, pdir):
     os.makedirs(out, exist_ok=True)
     rows = []
     print("  delta        A = p*_h - delta     x+_f     M_start   M_end     r_AH(end)   F_end   status")
-    for dl in (1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 3e-2, 1e-1):
+    for dl in (1e-12, 1e-11, 1e-10, 1e-9, 1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2, 3e-2, 1e-1):
         try:
             r = run_real_g(h, dl, ps, need_up=False)
             s = r["ser"]
@@ -572,7 +642,29 @@ def scan_cmd(h, out, pdir):
 # --------------------------------------------------------------------------------------------------------------------
 # mutations: name -> the checks that must fire (computed in the development runs, declared in the raw README before the runs of record)
 # --------------------------------------------------------------------------------------------------------------------
-MUTATIONS = {}
+# RC7 and RNR fail in the analysis of record without any mutation, so they are in every set of a complete analysis.
+MUTATIONS = {
+    "mass_exponent": ["PL1", "RC3", "RC4", "RC7", "RN0", "RNR"],
+    "finder_sign": ["PL1", "PL2", "RC2", "RC3", "RC4", "RC5", "RC6", "RC7", "RC8", "TRK"],
+    "hm_swap": ["PL1", "PL2", "RC4", "RC5", "RC6", "RC7", "RC8", "RN0", "RNR"],
+    "interp_shift": ["PL1", "PL2", "RC6", "RC7", "RC8", "RN0", "RNR"],
+    "flux_sign": ["FLX", "RC4", "RC7", "RNR"],
+    "normal_drop": ["FLX", "RC7", "RNR"],
+    "normal_sign": ["FLX", "RC7", "RNR"],
+    "time_unit": ["RC2", "RC7", "RNR"],
+    "no_zoom": ["PL1", "RC5", "RC6", "RC7", "RC8", "RN0", "RNR"],
+    "short_limit": ["RC5", "RC7", "RC8", "RN0", "RNR"],
+    "pstar_off": ["RC2", "RC3", "RC4", "RC5", "RC6", "RC7", "RC8", "TRK"],
+    "pstar_shift": ["RC1", "RC7", "RNR"],
+    "theta_coef": ["PL1", "PL2", "PL3", "PL3G", "RC1", "RC2", "RC3", "RC4", "RC5", "RC6", "RC7", "RC8", "TRK"],
+    "rcut_off": ["PL3", "PL3G", "RC7", "RNR"],
+    "col_shift": ["PL2", "RC6", "RC7", "RN0", "RNR"],
+    "family_B": ["PL3G", "RC1", "RC2", "RC3", "RC4", "RC5", "RC6", "RC7", "RC8", "TRK"],
+    "crit_dm": ["CFG", "RC7", "RNR"],
+    "trk_shift": ["RC7", "RNR", "TRK"],
+    "rn_ref": ["RC7", "RN0", "RNR"],
+    "cmp_bar0": ["CMPT", "RC7", "RNR"],
+}
 
 
 def main():
