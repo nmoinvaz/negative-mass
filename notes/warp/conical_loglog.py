@@ -9,8 +9,14 @@ precision-generic walker (conical_global/src/hp.rs, binary `loglog`) and decides
   W0 regress, W1 basin, W2 approach, W3 no_limit, W4 invariants_conv, W5 n_floor, W6 dd_qd, W7 independent, W8 recip_check, W9 parity
   P1 plant_167, P2 plant_loglog, P3 plant_shift, P4 plant_limit, P5 plant_scale   planted cases through the same code
 Usage (from the repository root, in the environment of the repository's setup: sympy 1.14.0, mpmath 1.3.0, cargo):
-  python3 notes/warp/conical_loglog.py [--no-controls] [--mutate=NAME] [--only=a,b] [--logdir=DIR] [--nobuild]
-Exit 1 if a check fails or a control does not fire. Status words as in AGENTS.md: everything numerical is numerical evidence."""
+  python3 notes/warp/conical_loglog.py [--no-controls] [--mutate=NAME] [--only=a,b] [--logdir=DIR] [--nobuild] [--raw167=FILE]
+         [--control-checks=targets|all]
+Exit 1 if a check fails or a control does not fire.
+Controls: every option except the harness's own (mutate, only, no-controls, list, control-checks, logdir, nobuild, dry-controls) is forwarded
+to each control's subprocess (#183: --raw167 was not, so a control run outside the standard layout crashed and read as silent). By default
+(--control-checks=targets) a control runs ONLY the checks it names (--only=), so "fails its targets and no others" is not tested;
+--control-checks=all runs every check under each control and reports a failure outside the targets as EXTRA (#183; hours on the Pi, not
+run for the record). --dry-controls prints the control command lines. Status words as in AGENTS.md: everything numerical is numerical evidence."""
 import hashlib
 import json
 import os
@@ -1106,13 +1112,20 @@ if __name__ == "__main__":
             print(n, ",".join(w))
         sys.exit(0)
     os.nice(10)
-    failed = main()
+    failed = [] if "dry-controls" in OPTS else main()
     controls_ok = True
     if MUT is None and "no-controls" not in OPTS and ONLY is None:
         print("\n== Controls: each mutation must make its target checks fail, and no others ==", flush=True)
+        own = {"mutate", "only", "no-controls", "list", "control-checks", "logdir", "nobuild", "dry-controls"}
+        fwd = [a for a in sys.argv[1:] if a.startswith("--") and a[2:].split("=")[0] not in own]
+        all_checks = OPTS.get("control-checks") == "all"
+        print(f"controls run: {'every check under each control' if all_checks else 'the target checks only (--only=), not every check'}; forwarded options: {fwd}")
         for name, (want, what) in MUTATIONS.items():
             t1 = time.time()
-            args = [sys.executable, os.path.abspath(__file__), f"--mutate={name}", "--nobuild", "--only=" + ",".join(want)]
+            args = [sys.executable, os.path.abspath(__file__), f"--mutate={name}", "--nobuild"] + fwd + ([] if all_checks else ["--only=" + ",".join(want)])
+            if "dry-controls" in OPTS:
+                print(" ".join(args))
+                continue
             p_ = subprocess.run(args, capture_output=True, text=True)
             if LOGDIR:
                 with open(os.path.join(LOGDIR, f"ctl_{name}.log"), "w") as fh:

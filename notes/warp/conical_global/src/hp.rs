@@ -12,6 +12,7 @@
 //!   step in it.
 use crate::model::Mutation;
 use crate::tables::N_TERMS;
+use crate::walk::{fit_radius_w, Est};
 use multishoot::lane::BaseLane;
 use multishoot::multidouble::precision::Precision;
 use multishoot::multidouble::simd::Native;
@@ -190,11 +191,22 @@ pub struct HpCfg {
     pub max_steps: usize,
     /// control `n-drift`: F''_k left zero at this order
     pub skip: Option<usize>,
+    /// the singularity locator of `walk.rs` (#183): stop when the radius estimate is real, ahead and below
+    /// rstop * max(1, |x|) over five consecutive steps (relative beyond x = 1); None leaves the walk as in #184
+    pub rstop: Option<f64>,
+    /// false: the locator's bound is the absolute rstop (as `walk.rs`); true: rstop * max(1, |x|)
+    pub rstop_rel: bool,
+    /// the number of last Taylor orders the locator's 1/k fit uses (10 as `walk.rs`)
+    pub fit_window: usize,
+    /// the walk stops (`Stop::TinyStep`) when a step is below tiny * max(|x|, 1e-6); #184's value 1e-13, #183 uses 1e-15
+    pub tiny: f64,
+    /// control `plant-locator`: the locator's side test inverted
+    pub flip_side: bool,
 }
 
 impl HpCfg {
     pub fn new(kt: usize, tol: f64) -> Self {
-        HpCfg { kt, tol, project: true, recip_dd: false, hscale: 1.0, hmax: 1e300, max_steps: 200000, skip: None }
+        HpCfg { kt, tol, project: true, recip_dd: false, hscale: 1.0, hmax: 1e300, max_steps: 200000, skip: None, rstop: None, rstop_rel: true, fit_window: 10, tiny: 1e-13, flip_side: false }
     }
 }
 
@@ -392,6 +404,22 @@ fn finite<P: Precision<Native>>(f: &F1<P>) -> bool {
     (0..P::PARTS).all(|q| P::part(s, q).is_finite())
 }
 
+/// the best radius estimate of `walk::estimate` over the three fields, from the coefficients in the step variable
+/// s = (x - x0)/l; r is returned in x units (times l)
+fn estimate_hp<P: Precision<Native>>(c: &[Vec<F1<P>>; 3], kt: usize, l: f64, window: usize) -> Option<Est> {
+    let mut best: Option<Est> = None;
+    for f in 0..3 {
+        let cf: Vec<f64> = (0..=kt).map(|k| fhi::<P>(&c[f][k])).collect();
+        if let Some(mut e) = fit_radius_w(&cf, kt, f, window) {
+            if e.resid < 1e-3 && best.is_none_or(|b| e.resid < b.resid) {
+                e.r *= l;
+                best = Some(e);
+            }
+        }
+    }
+    best
+}
+
 /// the step: the k-th roots of tol |c0| / |c_k| for the last two orders and each field (absolute for a zero c0)
 fn plan_h<P: Precision<Native>>(c: &[Vec<F1<P>>; 3], cfg: &HpCfg) -> f64 {
     let kt = cfg.kt;
@@ -422,6 +450,19 @@ pub enum Stop {
     NonFinite,
     TinyStep,
     StepLimit,
+    /// the locator found a real singularity ahead (`HpOut::sing`; only with `HpCfg::rstop`)
+    Singular,
+}
+
+/// a singularity found by the locator of an `hp_walk`: x*, the spread of the last five estimates, the estimate (r in x
+/// units), the last step's x and its state in double-double
+#[derive(Clone, Debug)]
+pub struct HpSing {
+    pub xstar: f64,
+    pub bar: f64,
+    pub est: Est,
+    pub x_last: f64,
+    pub s_last: [DD; 3],
 }
 
 #[derive(Clone, Debug)]
@@ -453,6 +494,11 @@ pub struct HpOut<P: Precision<Native>> {
     pub n_rel_max: f64,
     /// project mode: max over the steps of n_rel of the Horner-advanced state before the projection
     pub n_rel_pre_max: f64,
+    /// the singularity the locator found (only with `HpCfg::rstop`)
+    pub sing: Option<HpSing>,
+    /// with `HpCfg::rstop`: the last steps' (x, h, median radius of F'' from the last five Taylor ratios in x units, sign
+    /// changes of the last ten ratios), oldest first (the diagnostic of a `Stop::TinyStep`)
+    pub recent: Vec<(f64, f64, f64, usize)>,
 }
 
 fn n_rel_of<P: Precision<Native>>(ev: &EvalS<P>, s: &[Sc<P>; 3], x: f64) -> (f64, Sc<P>, Sc<P>) {
@@ -505,7 +551,10 @@ pub fn hp_walk<P: Precision<Native>>(
         steps: 0,
         n_rel_max: 0.0,
         n_rel_pre_max: 0.0,
+        sing: None,
+        recent: Vec::new(),
     };
+    let mut hist: Vec<(f64, f64)> = Vec::new(); // (x*, R) of the locator
     let mut first = true;
     loop {
         let rest_total = (x1 - x) * dir;
@@ -538,10 +587,45 @@ pub fn hp_walk<P: Precision<Native>>(
             out.stop = Stop::NonFinite;
             break;
         }
+        if let Some(rstop) = cfg.rstop {
+            let est = estimate_hp::<P>(&c, kt, l, cfg.fit_window);
+            let ahead = |e: &Est| (e.side as f64 == dir) != cfg.flip_side;
+            match est {
+                Some(e) if ahead(&e) => hist.push((x + dir * e.r, e.r)),
+                _ => hist.clear(),
+            }
+            if hist.len() >= 5 {
+                let last5 = &hist[hist.len() - 5..];
+                let (xs, r) = *last5.last().unwrap();
+                if r <= if cfg.rstop_rel { rstop * x.abs().max(1.0) } else { rstop } {
+                    let lo = last5.iter().map(|h| h.0).fold(f64::INFINITY, f64::min);
+                    let hi_ = last5.iter().map(|h| h.0).fold(f64::NEG_INFINITY, f64::max);
+                    out.stop = Stop::Singular;
+                    out.sing = Some(HpSing {
+                        xstar: xs,
+                        bar: hi_ - lo,
+                        est: est.unwrap(),
+                        x_last: x,
+                        s_last: [P::to_dd(s[0]), P::to_dd(s[1]), P::to_dd(s[2])],
+                    });
+                    break;
+                }
+            }
+        }
         let mut h = plan_h::<P>(&c, cfg) * l * cfg.hscale;
         if !(h.is_finite() && h > 0.0) {
             out.stop = Stop::NonFinite;
             break;
+        }
+        if cfg.rstop.is_some() {
+            let cf: Vec<f64> = (0..=kt).map(|k| fhi::<P>(&c[2][k])).collect();
+            let mut rs: Vec<f64> = (kt - 4..=kt).map(|k| l / (cf[k] / cf[k - 1]).abs()).collect();
+            rs.sort_by(|a, b| a.partial_cmp(b).unwrap_or(std::cmp::Ordering::Equal));
+            let sc = (kt - 9..=kt).filter(|&k| k >= 2 && (cf[k] / cf[k - 1]) < 0.0).count();
+            out.recent.push((x, h, rs[2], sc));
+            if out.recent.len() > 8 {
+                out.recent.remove(0);
+            }
         }
         let target = targets[ti];
         let rest = (target - x) * dir;
@@ -551,7 +635,7 @@ pub fn hp_walk<P: Precision<Native>>(
             h = 0.5 * rest;
         }
         let xn = if h == rest { target } else { x + dir * h };
-        if xn == x || h < 1e-13 * x.abs().max(1e-6) {
+        if xn == x || h < cfg.tiny * x.abs().max(1e-6) {
             out.stop = Stop::TinyStep;
             break;
         }

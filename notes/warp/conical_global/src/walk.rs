@@ -110,7 +110,12 @@ fn solve3(mut a: [[f64; 3]; 3], mut b: [f64; 3]) -> Option<[f64; 3]> {
 
 /// the radius estimate of one field's coefficients c[0..=kt], from the orders kt-9..=kt
 pub fn fit_radius(c: &[f64], kt: usize, field: usize) -> Option<Est> {
-    let k0 = kt.saturating_sub(9).max(2);
+    fit_radius_w(c, kt, field, 10)
+}
+
+/// `fit_radius` from the last `window` orders (#183: the quad-double walks fit the last 33 of 60 orders)
+pub fn fit_radius_w(c: &[f64], kt: usize, field: usize, window: usize) -> Option<Est> {
+    let k0 = kt.saturating_sub(window - 1).max(2);
     let mut ks = Vec::new();
     let mut rs = Vec::new();
     let mut sign = 0i32;
