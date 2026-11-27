@@ -783,7 +783,7 @@ def analyze_cmd(raw, an=True):
         s, hf = S[(hs[-1], dl)], hs[-1]
         print(f"  delta = {dl:g}, h = {hf:g}: x+_f = {s['xp'][0]:.4f}, t_f = {t_of(s['xp'][0], s['xm'][0]):.4f}")
         print("    dx+     x+       x-         t       r_AH     M_AH      e^-f       r_-")
-        for dv in (0, 0.25, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6):
+        for dv in (0, 0.25, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8, 8.5, 9, 9.4):
             i = int(np.argmin(np.abs(s["xp"] - (s["xp"][0] + dv))))
             if abs(s["xp"][i] - s["xp"][0] - dv) > 2 * hf:
                 break
@@ -893,7 +893,7 @@ SH02_ROWS = [(-1e-4, 3.0, 4.39e-5, 8.42, 0.296), (-1e-3, 3.0, 4.38e-4, 6.98, 0.3
 def sh02_cmd(h, out):
     """Supplementary: [SH02]'s Table I data (Sec. III.B) through the chain: E0, the final horizon x-_H and M, against their printed values."""
     os.makedirs(out, exist_ok=True)
-    print("  c_a      c_b   E0 here    E0 SH02    x-_H here  x-_H SH02   M_end here  M SH02   x+_f   F_end   status")
+    print("  c_a      c_b   E0 here    E0 SH02    x-_H here  x-_H SH02   M_end here  M SH02   x+_f   F_end   status   F* (our e^-f where M_AH = M SH02)  dx+ since formation")
     rows = []
     for c_a, c_b, E0p, xHp, Mp in SH02_ROWS:
         Np = int(round((xHp + 13.0) / h))
@@ -904,11 +904,46 @@ def sh02_cmd(h, out):
         E0 = float(initial_energy(Sp[:, :n20 + 1], h)[-1] - initial_energy(sh02_rays(0.0, c_b, 3.0, h, n20, h, 4)[0], h)[-1])
         o = chain(CRIT["n"], np.array([-1.0]), h, Sp[:, :Np + 1], Sm, 0.0, 0.0, nm0, None, None, CRIT["F1"], CRIT["F1"] * 2.0 ** CRIT["K"], nc_of(h), tol=CRIT["tol"], rcut=CRIT["rcut"], log=lambda *a: None)
         s = o["ser"]
-        row = dict(c_a=c_a, c_b=c_b, E0=E0, E0_SH02=E0p, xH=float(s["xm"][-1]) if len(s["xm"]) else None, xH_SH02=xHp, M_end=float(s["M"][-1]) if len(s["M"]) else None, M_SH02=Mp,
+        Mser = s["M"]
+        i_ = int(np.argmax(Mser <= Mp)) if len(Mser) and (Mser <= Mp).any() else 0
+        if i_ > 0:
+            Fs = float(np.interp(Mp, Mser[i_ - 1:i_ + 1][::-1], s["F"][i_ - 1:i_ + 1][::-1]))
+            dxs = float(np.interp(Mp, Mser[i_ - 1:i_ + 1][::-1], s["xp"][i_ - 1:i_ + 1][::-1]) - s["xp"][0])
+        else:
+            Fs, dxs = float("nan"), float("nan")
+        row = dict(c_a=c_a, c_b=c_b, E0=E0, E0_SH02=E0p, F_star=Fs, dx_star=dxs, xH=float(s["xm"][-1]) if len(s["xm"]) else None, xH_SH02=xHp, M_end=float(s["M"][-1]) if len(s["M"]) else None, M_SH02=Mp,
                    xpf=float(s["xp"][0]) if len(s["xp"]) else None, F_end=float(s["F"][-1]) if len(s["F"]) else None, status=o["status"])
         rows.append(row)
-        print(f"  {c_a:7g} {c_b:4g}  {E0:.3e}  {E0p:.3e}  {row['xH']:9.4f}  {xHp:9.2f}   {row['M_end']:.5f}   {Mp:.3f}  {row['xpf']:.3f}  {row['F_end']:.0f}  {o['status']}", flush=True)
+        print(f"  {c_a:7g} {c_b:4g}  {E0:.3e}  {E0p:.3e}  {row['xH']:9.4f}  {xHp:9.2f}   {row['M_end']:.5f}   {Mp:.3f}  {row['xpf']:.3f}  {row['F_end']:.0f}  {o['status']}   {Fs:.2f}   {dxs:.2f}", flush=True)
     json.dump(rows, open(os.path.join(out, f"sh02_h{h:g}.json"), "w"), indent=1)
+
+
+def sh02_uniform_cmd(out, N=9600, X=20.0):
+    """Supplementary: [SH02]'s Table I data on one uniform grid of their size (N = 9600 over x+ in [0, 20], h = 2.08e-3), this code's kernel, no zoom and no
+    excision of large e^{-f}: the horizon mass the uniform grid reports at x+ = 12, 16, 20 (where the finder still finds it), against the chain's and theirs."""
+    os.makedirs(out, exist_ok=True)
+    h = X / N
+    print(f"  uniform grid h = {h:.5f}; c_a c_b: M_AH on the uniform grid at x+ = 12, 16, 20 (e^-f there), the chain's M_end, SH02's M")
+    rows = []
+    for c_a, c_b, E0p, xHp, Mp in SH02_ROWS:
+        Nm = int(round((xHp + 1.5) / h))
+        Sp, Sm = sh02_rays(c_a, c_b, 3.0, h, N, h, Nm)
+        G, dead, ev = evolve_box(Sp, Sm, np.zeros(N + 1, np.uint8), np.zeros(Nm + 1, np.uint8), h, h, CRIT["n"], np.array([-1.0]), CRIT["rcut"], detect=CRIT["tol"])
+        row = dict(c_a=c_a, c_b=c_b, M_SH02=Mp, event=ev)
+        if ev is not None:
+            L = Level(0, G, dead, h, h, 0.0, 0.0)
+            rec, stop, exh = track(L, CRIT["n"], ev[1], ev[0] + 0.5, win=400)
+            for xq in (12.0, 16.0, 20.0):
+                if len(rec["xp"]) and rec["xp"][-1] >= xq - h:
+                    i = int(np.argmin(np.abs(rec["xp"] - xq)))
+                    row[f"M{int(xq)}"], row[f"F{int(xq)}"] = float(rec["M"][i]), float(rec["F"][i])
+                else:
+                    row[f"M{int(xq)}"], row[f"F{int(xq)}"] = None, None
+            row["x_last"], row["F_last"], row["M_last"] = (float(rec["xp"][-1]), float(rec["F"][-1]), float(rec["M"][-1])) if len(rec["xp"]) else (None, None, None)
+        rows.append(row)
+        print("  " + json.dumps(row), flush=True)
+        del G, dead
+    json.dump(rows, open(os.path.join(out, f"sh02_uniform_N{N}.json"), "w"), indent=1)
 
 
 def main():
@@ -932,6 +967,8 @@ def main():
         sys.exit(1 if any(ok is False for _, ok in results) else 0)
     elif cmd == "analyze":
         sys.exit(analyze_cmd(opts["raw"], an=not opts.get("noan")))
+    elif cmd == "sh02_uniform":
+        sh02_uniform_cmd(opts["out"])
     elif cmd == "pstar_an":
         pstar_an_cmd(opts["out"])
     elif cmd == "scan":
