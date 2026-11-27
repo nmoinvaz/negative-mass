@@ -137,6 +137,9 @@ the failures are the csv's. `logs_modes_r.txt` was not rerun.
 The tighter run moves toward the crate at all eight rows and does not reach it. The rows D = 5 … 9, 11, 30 are in
 `w2_output.txt`. The rows D = 4 … 11 are labelled TS13 Table I in the csv; README.md quotes TS13's table to 8 to 10 digits, and
 the csv's 12 decimals differ from the crate by up to 6e-10, so the csv's last digits do not all come from TS13's table.
+*Update from #202:* that inference is wrong. TS13's Table I prints 15 digits (arXiv:1309.2058, the TeX source), and the csv's
+D = 4 … 11 rows are those values rounded to 12 decimals. The 9.9e-12 to 6.4e-10 gap to this crate is TS13's own error:
+`one_mode.log`'s independent W(r) agrees with the crate to 12 digits (`ts13_digits.py`, notes/literature.md).
 
 ## W²(D) at the list
 
