@@ -127,6 +127,21 @@ Three remarks.
     bisection.
   - The expanding throat grows exponentially, with e-folding time → 0.85 as ε_c → 0, "in good agreement with perturbation
     theory". No apparent horizon forms there, and the scalar field near the throat grows.
+- **Update from #213** (this repository, `wormhole_evolution/expansion.md`; *numerical evidence* except where marked; two
+  resolutions, and a second code in the coordinator's review):
+  - Run: a symmetric two-sided ghost pulse above threshold, followed along the throat (the diagonal) to t = 283 (D = 4) and
+    141 (D = 5).
+  - Horizons: an anti-trapped region contains the throat from the departure on, and no trapped region forms.
+  - The throat's rate H = d ln r/dτ rises without a plateau: H/W = 1.23, 1.95, 2.75 at r/a = 10, 25, 50 (D = 4).
+  - 1/H is linear in proper time: H = k/(τ_s − τ) with k = 2.0000 at D = 4 and 3.99 at D = 5. r and the curvature
+    scalars R and K scale as (τ_s − τ)⁻² over the range reached. This is growth without a constant H, not a de Sitter rate.
+    τ_s is an extrapolation: the last cell is at τ_s − τ = 0.31.
+  - [SH02]'s H ≈ 1.1/a: the least-squares exponent of ln(r/a − 1) over r/a ≤ 10 is 1.14 to 1.16/a, a window average of a
+    rate that keeps rising.
+  - [GGS09b]'s "no apparent horizon" agrees with no trapped cell. The marginal contours r₊ = 0 and r₋ = 0 bound the
+    anti-trapped region, and the right one leaves the grid.
+  - On the mirror-symmetric throat w̄ = (1 − n)/(1 + n) at every time (*proved*: the gradient is purely radial). A stiff or
+    de Sitter reading of the end state cannot be made at this observer.
 - **[DHNS09]** (zero-mass Armendáriz-Picón wormhole, normal Φ and ghost Ψ shells):
   - A positive-energy pulse gives collapse.
   - The sign of a Ψ pulse decides the outcome.

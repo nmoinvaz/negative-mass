@@ -77,6 +77,13 @@ These two issues cover rank 1 and rank 3. Three points from the reading, for the
   inhomogeneous region, or the reading of the end state as de Sitter fails. This is a reason for #213 to fix its
   observer and its definition of w before reading H(t), as #39's README already says; the statement is a *conjecture*
   for the inhomogeneous region.
+- **Update from #213:**
+  - The slope test is done and not met: d ln r/dτ crosses W near r/a = 6.5 and reaches 2.75 W at r/a = 50 (D = 4, tuned
+    member). #39's probe values (H = 0.75 to 2.9, proper time saturating) are the same behaviour, with 1/H linear in τ.
+  - The conjecture above for the inhomogeneous region is settled for the mirror-symmetric throat. With a purely radial
+    gradient the isotropic average is w̄ = (1 − n)/(1 + n), −1/3 at D = 4 (*proved*). So a de Sitter reading fails there.
+  - The masses at the two ends change by the ghost flux through them and are not conserved, and the anti-trapped region
+    reaches the grid's edge. That bookkeeping supports no statement about a universe (`wormhole_evolution/expansion.md`).
 - **Where the universe would be.** The expanding region of #213 has both ends asymptotically flat. [SH02] call the
   result a universe and say the two trapping horizons "become the cosmological horizons"; the mass bookkeeping in #213's
   acceptance is the test of how that region relates to the ends. #217's evolution covers the interior (T) region too,
