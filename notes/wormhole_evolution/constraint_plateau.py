@@ -65,10 +65,19 @@ def pulses_of(family, A):
     return threshold.family(family, A)
 
 
+def need_binary128(dtype):
+    """np.longdouble is binary128 on aarch64 Linux but float64 on macOS arm64, where a "binary128" run would be float64 without
+    saying so (the coordinator's review of #226): refuse it there."""
+    if dtype is np.longdouble and np.finfo(np.longdouble).nmant < 112:
+        sys.exit(f"np.longdouble has {np.finfo(np.longdouble).nmant} mantissa bits on this machine, not binary128's 112: "
+                 "the higher-precision engine cannot run here")
+
+
 def ellis_rays_x(n, N, h, pulses=(), symmetric=False, eps=(-1.0,), dtype=np.float64, sub=1, dense=False, ray_pert=0.0):
     """dn.ellis_rays with: dtype (np.longdouble is IEEE binary128 on aarch64), sub (RK4 steps per grid step, the solve's own step h/sub),
     dense (r(l) from the dense static solution instead of the RK4; no pulses), ray_pert (a planted relative bump in r on both rays: the
     data-constraint mutation). dtype float64, sub 1, dense False, ray_pert 0 reproduces dn.ellis_rays bit for bit (K2)."""
+    need_binary128(dtype)
     eps = list(eps)
     k = len(eps)
     pulses = [dict(p) for p in pulses]
@@ -289,6 +298,7 @@ def stream_diag(d, dtype=np.float64, Sc=None, slices=(), noise=0.0, seed=0, spik
     with i + j <= Sc. float64 is the same arithmetic as the numba row sweep (K1); np.longdouble is binary128 here. noise: relative uniform
     noise of that amplitude added to every node as it is computed (the roundoff mutation); spike (i, j, rel): one node of r, once.
     Returns time-bin maxima (as Stats.tv, ti, tj) and the C fields on the diagonals `slices`."""
+    need_binary128(dtype)
     N, h, nf, eps, n = d.N, d.h, d.nf, d.eps, d.n
     par = dn.kernel_params(n, eps, 1)
     Sc = 2 * N if Sc is None else min(int(Sc), 2 * N)
