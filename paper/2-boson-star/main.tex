@@ -102,27 +102,29 @@ the real perturbation, a gauge-invariant phase and the perturbed enclosed charge
 and $\varepsilon$ symbolically. Substituting back, all six linearised field equations are satisfied identically. The
 structure is that of Refs.~\cite{GW1989,Kain2021}. Eigenvalues are found by compound-matrix shooting, which keeps the
 two-dimensional space of decaying solutions well conditioned, and are cross-checked by an independent finite-difference
-pencil that also returns complex eigenvalues.
+pencil that also returns complex eigenvalues. The crossings and the phantom family were recomputed in double-double
+precision by a Taylor-series code on the multishoot and multisolver libraries (accompanying repository,
+\texttt{phase2/radial/taylor\_radial.md}); the double-precision fits had placed the crossings within $5\times10^{-8}$.
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.97\textwidth]{fig4_radial.pdf}
 \caption{Radial stability of signed-source boson stars. Left: Noether charge $N$ and $|M|$ along the canonical
 ($\varepsilon=+1$) and phantom ($\varepsilon=-1$) families. Right: fundamental $\sigma_0^2$ near the stability change;
-dotted lines mark $\dd N/\dd\omega=0$, which coincides with $\sigma_0^2=0$ to $2\times10^{-8}$ ($\varepsilon=+1$) and
-$8\times10^{-8}$ ($\varepsilon=-1$) in $\omega$.}
+dotted lines mark $\dd N/\dd\omega=0$, which coincides with $\sigma_0^2=0$ to $2\times10^{-19}$ in $\omega$ for both
+signs of $\varepsilon$ in double-double arithmetic.}
 \label{fig:radial}
 \end{figure}
 
 \paragraph{Results.} For $\varepsilon=+1$ the textbook criterion is reproduced at both turning points of the family: the
-fundamental mode crosses zero at $\omega=0.92584444$ against $\dd M/\dd\omega=\dd N/\dd\omega=0$ at $0.92584446$, and
+fundamental mode crosses zero at $\omega=0.9258444558$, where $\dd M/\dd\omega=\dd N/\dd\omega=0$ to $2\times10^{-19}$, and
 again at the strong-field maximum of $N$ ($\omega\approx0.200$, $N\approx42.73$) within the scan resolution. For
 $\varepsilon=-1$ (Fig.~\ref{fig:radial}):
 \begin{itemize}
 \item The star of Ref.~\cite{Shirokov2026} is radially stable: no real growth rate up to $|\sigma|=2$ and no complex
 eigenvalue with $|\sigma^2|<0.3$, at two resolutions of the finite-difference check.
-\item The family is stable for $\omega<0.92891$ and unstable above. The crossing $\sigma_0^2=0$ at $\omega=0.92890846$
-coincides with $\dd N/\dd\omega=0$ at $0.92890838$.
+\item The family is stable for $\omega<0.92891$ and unstable above. The crossing $\sigma_0^2=0$ at $\omega=0.9289084311$
+coincides with $\dd N/\dd\omega=0$ to $2\times10^{-19}$.
 \item The criterion is therefore invariant when stated in $N$ (stable side $\dd N/\dd\omega<0$) but reverses when
 stated in $M$: on the stable side $\dd M/\dd\omega=-\omega\,\dd N/\dd\omega>0$.
 \item The phantom family has a fold in $\omega$ ($\omega_{\min}\approx0.4223$) at which neither $M$ nor $N$ is
