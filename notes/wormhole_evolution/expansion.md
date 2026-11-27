@@ -99,6 +99,11 @@ H grows without a plateau: d ln H/d ln r → 1/2 (H ∝ r^{1/2}); r H = 460 at r
 | 0.01 | 4 | 0.01 | 1.232, 1.949, 2.756 | 10.0590, 10.0559 | 2.0000 | 5.280 | FT |
 | 0.05 | 4 | 0.05 | 1.280, 2.023, 2.861 | 8.4340, 8.4334 | 2.0000 | 5.302 | FT |
 | 0.2 | 4 | 0.2 | 1.768, 2.777, 3.924 | 6.1692, 6.1690 | 2.0004 | 5.476 | FT |
+
+*Correction (coordinator, 2026-11-27, from Paper V's number check):* in this table the A = 0.05 row of H/W (1.280, 2.023, 2.861) is the
+h = 0.02 output; at h = 0.01 the output prints 1.280, 2.024, 2.862. The A = 0.2 row matches neither resolution; the output prints 1.769, 2.778,
+3.924 at both h. The statement |ρ|/H² = 4.0000 across the four amplitudes holds to the output's 3.9999 (A = 0.05) and 3.9985 (A = 0.2) at
+r = 50a. `expansion_output.txt` is the canonical source; the conclusions do not change.
 | tuned | 5 | p*ₕ + 1e-6 | 0.847, 1.074, 1.279 | 15.0682, 15.0724 | 3.9875 | 4.425 | FT |
 | 0.05 | 5 | 0.05 | 1.023, 1.297, 1.544 | 7.9198, 7.9180 | 3.9897 | 4.486 | FT |
 

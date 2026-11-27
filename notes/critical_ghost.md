@@ -200,7 +200,9 @@ generic family, the lifetime against ln|p − p*|, and comparison with the linea
   - a ghost pulse mirrored on both null rays (S), and on one ray (O);
   - p* by bisection at three h;
   - T against ln(1/|p − p*ₕ|).
-- For S and O the slope is 1/W. Over [1e-9, 1e-4] it is within 7e-6, 3e-5 and 5e-4 at D = 4, 5, 6, falling as h².
+- For S and O the slope is 1/W. Over [1e-9, 1e-4] it is within 7e-6, 3e-5 and 5e-4 at D = 4, 5, 6, the larger of the two codes'
+  deviations (the D = 4 figure is the first code's refit, −6.3e-6; the second code's is −2.6e-6). The deviation falls with each halving of h,
+  by 2.7 to 5.4 per halving in the second code: near second order, not exactly h² (Paper V's check, 2026-11-27).
 - The coordinator's review confirms this with a second code that shares only the field equations (`threshold_check.py`).
 - Over [1e-11, 1e-3] the D = 6 slope is 0.5 % low, because the lifetime is not yet logarithmic above 1e-5 there.
 - p*ₕ ∝ h² and the continuum p* is 0. So these families test the linear rate in a nonlinear code, not that generic data

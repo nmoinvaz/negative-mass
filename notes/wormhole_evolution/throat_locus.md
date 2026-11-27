@@ -10,7 +10,7 @@ member and class below is *numerical evidence*; no sentence says a result is new
 
 **At D = 4 the +6 % of #40 is the observer, not the critical solution.** In the locus's proper time G's lifetime slope is 0.84954, 0.84954, 0.84949 at h = 0.02, 0.01, 0.005 (+4.1e-3 above
 1/W = 0.846045; the two finest h agree to 5.5e-5), while #40's diagonal slope is reproduced bit for bit (0.898291, 0.898043, 0.899089). The near-critical state is a static ghost wormhole of
-the two-parameter family with throat radius r_th = 1.0028, asymmetry γ₁ = 0.048 (end masses m₊ = +0.045, m₋ = −0.052) and no normal charge (|q_n²/q_g²| ≤ 1e-5); its e-folding time
+the two-parameter family with throat radius r_th = 1.0028, asymmetry γ₁ = 0.048 (end masses m₊ = +0.045, m₋ = −0.052; *coordinator, 2026-11-27:* these two masses are not printed in `throat_locus_output.txt`) and no normal charge (|q_n²/q_g²| ≤ 1e-5); its e-folding time
 T(γ₁) r_th = 0.8472 (#151's T) agrees with the growth rate of the unstable mode measured on the locus, 1/λ = 0.8478 at t = 12 (0.04 %), and with the series slope (0.2 %). **At D = 5 there is no
 plateau**: the locus's throat radius drifts from 1.07 to 1.20 between t = 7 and 13, the growth rate of the mode follows the symmetric member's W/r_th(t) to 0.5 % along it, and the slope of the
 series (0.7022, +21 % over 1/W; #40's diagonal +38 %) is an average of r_th(τ)/W over the departures, so it does not equal the e-fold of the member at the stall time (CMP2 fails, +14.6 %).

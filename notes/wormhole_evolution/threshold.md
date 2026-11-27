@@ -287,7 +287,7 @@ Review of branch `wip/i40-ellis-threshold` at 2e97643 (code 13a1301) and raw `I4
   - The two codes agree to 4e-6 at D = 4 and 5 and to 1.4e-4 at D = 6, on the same window. Their p*ₕ agree to 2e-4 relative, so the two schemes'
     truncation seeds are close.
   - The slope in the throat's proper time τ equals the slope in t to 1e-5.
-  - Mutations: `oracle-slope`, `fit-pstar` and `time-unit` fire exactly their targets. `time-unit` gives 0.598243 = 1/(√2W). `sphere-coef` stops at
+  - Mutations: `oracle-slope`, `fit-pstar` and `time-unit` fire exactly their targets. `time-unit` gives 0.598243 against 1/(√2W) = 0.598244 (the fit's own error). `sphere-coef` stops at
     the bracket before any criterion is evaluated, as #40's six JOB mutations do.
 - **What this changes in the answer.**
   - For S and O the slope is 1/W, converging at second order in h at D = 5 and 6 once the window stops at 1e-4. At the finest h it is within 3e-6,
