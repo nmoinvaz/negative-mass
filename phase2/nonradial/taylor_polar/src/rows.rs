@@ -155,6 +155,10 @@ pub fn run<T: Num>(a: &Args) {
                 v.order,
                 ctl.tol
             );
+            if a.u("planes", 0) > 0 {
+                let pl = |m: &[[T; 6]; 3]| -> String { m.iter().map(|c| format!("[{}]", c.iter().map(|x| format!("\"{}\"", x.sci(34))).collect::<Vec<_>>().join(","))).collect::<Vec<_>>().join(",") };
+                println!("{{\"cmd\":\"planes\",\"variant\":\"{}\",\"lane\":\"{}\",\"gamma\":{},\"y\":[{}],\"z\":[{}]}}", v.name, T::NAME, g, pl(&o.y), pl(&o.z));
+            }
             std::io::stdout().flush().unwrap();
         }
     }

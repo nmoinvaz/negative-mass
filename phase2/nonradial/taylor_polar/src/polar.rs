@@ -37,6 +37,9 @@ pub struct DOut<T: Num> {
     pub t_q: f64,
     pub t_s: f64,
     pub lnvol_y: T,
+    /// the orthonormal interior and exterior 3-planes at r_m (columns, 6 components), the matrix D is the determinant of
+    pub y: [[T; 6]; 3],
+    pub z: [[T; 6]; 3],
 }
 
 pub fn det_n<T: Num, const N: usize>(a: &[[T; N]; N]) -> T {
@@ -393,5 +396,5 @@ pub fn d_eval<T: Num>(cfg: &Cfg, table: &JTable<T>, mext: T, gamma: f64) -> DOut
         }
     }
     let d = det_n(&mat);
-    DOut { d, q, q_int, qint_res, r_far, r_s, steps_y, steps_q, steps_s, t_y, t_q, t_s, lnvol_y }
+    DOut { d, q, q_int, qint_res, r_far, r_s, steps_y, steps_q, steps_s, t_y, t_q, t_s, lnvol_y, y, z }
 }

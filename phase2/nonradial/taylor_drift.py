@@ -118,6 +118,8 @@ def make_problem_class():
                      (numpy default_rng(noise_seed)): rounding noise relative to each entry, planted at a stated amplitude
         jtab         J(r; s) read from the crate's tables (`CrateJ`) in place of the generated J_and_h on the star's values (the interior and
                      the exterior scalar plane's J; the vacuum J of r > R is not replaced)
+        chunk_factor the interior plane (the regular plane, from r0) is orthonormalized every 2/gamma divided by chunk_factor: the number of
+                     renormalizations is chunk_factor times PolarProblem's
         riccati_rtol, riccati_atol   the tolerances of the Riccati integration of the exterior Zerilli q (`zerilli_q` hard-codes 1e-11 and 1e-14 and
                      ignores `rtol`)
         q_eps        q is multiplied by 1 + q_eps after the integration (a planted error of the exterior column, for D's sensitivity to it)
@@ -125,8 +127,9 @@ def make_problem_class():
                      the size `jround` measures for the generated J in f64 (rms 1.0 ulp of the row maximum)"""
 
         def __init__(self, star, l, rm=None, atol=1e-14, extra_chunks=0, vac_scalar=False, mext=None, noise_ulp=0.0, noise_seed=0, noise_row=0.0, jtab=None,
-                     riccati_rtol=1e-11, riccati_atol=1e-14, q_eps=0.0, **kw):
+                     riccati_rtol=1e-11, riccati_atol=1e-14, q_eps=0.0, chunk_factor=1.0, **kw):
             super().__init__(star, l, rm=rm, **kw)
+            self.chunk_factor = chunk_factor
             self.riccati_rtol, self.riccati_atol, self.q_eps = riccati_rtol, riccati_atol, q_eps
             self.atol, self.extra_chunks, self.vac_scalar = atol, extra_chunks, vac_scalar
             self.noise_ulp, self.noise_row, self.rng = noise_ulp, noise_row, np.random.default_rng(noise_seed)
@@ -148,6 +151,8 @@ def make_problem_class():
             Jfun = self.J if Jfun is None else Jfun
             if nchunks is None:
                 nchunks = int(max(20, abs(rb - ra) * max(1.0, abs(s)) / 2.0))
+            if self.chunk_factor != 1.0 and ra == self.r0:
+                nchunks = max(1, int(nchunks * self.chunk_factor))
             nchunks += self.extra_chunks
             grid = np.linspace(ra, rb, nchunks + 1)
             Q, ph = self._qr(Y)
@@ -253,6 +258,11 @@ PLANTS = {
     "ext_crate": dict(star="sci",   mext="crate", vac=False),   # scipy's star in the interior, the crate's M_ext
     "crate_j":   dict(star="crate", mext="star",  vac=False, j=True),   # the crate's star, M_ext and J tables: J rounded once from double-double
     "crate_j_r13": dict(star="crate", mext="star", vac=False, j=True, rq=(1e-13, 1e-16)),     # as crate_j, the Riccati of q at rtol 1e-13, atol 1e-16 (A5)
+    "crate_j_cf025": dict(star="crate", mext="star", vac=False, j=True, cf=0.25),            # as crate_j, 1/4, 1/2, 2, 4, 8 times the renormalizations of the interior plane (A6)
+    "crate_j_cf05": dict(star="crate", mext="star", vac=False, j=True, cf=0.5),
+    "crate_j_cf2": dict(star="crate", mext="star", vac=False, j=True, cf=2.0),
+    "crate_j_cf4": dict(star="crate", mext="star", vac=False, j=True, cf=4.0),
+    "crate_j_cf8": dict(star="crate", mext="star", vac=False, j=True, cf=8.0),
     "crate_j_q13": dict(star="crate", mext="star", vac=False, j=True, qeps=1e-13),            # as crate_j, q planted 1e-13 too large (A5)
     "crate_j_q12": dict(star="crate", mext="star", vac=False, j=True, qeps=1e-12),
     "crate_j_vac": dict(star="crate", mext="star", vac=True, j=True),   # as crate_j, the exterior scalar plane in vacuum as the crate integrates it (A4)
@@ -274,6 +284,8 @@ def build(l, variant, plant, rtol, steps_path, atol=1e-14, extra_chunks=0, rm_fr
         kw["riccati_rtol"], kw["riccati_atol"] = pl["rq"]
     if pl.get("qeps"):
         kw["q_eps"] = pl["qeps"]
+    if pl.get("cf"):
+        kw["chunk_factor"] = pl["cf"]
     pp = DP(star, l, rm=rm, **kw)
     if pl["mext"] != "star":
         other = scipy_star() if pl["mext"] == "sci" else crate_star(steps_path)
@@ -448,6 +460,7 @@ CRIT = dict(
 )
 MUTATE = None
 RESULTS = []
+PLANES_FILES = []     # the planes*.jsonl files of the report's folder (set by the report)
 
 
 def report(name, ok, text):
@@ -719,19 +732,38 @@ def verdicts(sc, crate, plc):
     except TypeError:
         st["H6"] = "undecided"
         lines.append("H6 the exterior scalar plane through the star's J against vacuum: not run; undecided")
-    # H7 (A5): the Riccati integration of the exterior q at its hard-coded rtol 1e-11 against rtol 1e-13, at (3000, base), rtol 1e-13, atol 1e-14
+    # H7 (A5, rebased in A6 on CJQ): the Riccati integration of the exterior q (error 6e-14 relative, read from the stored files) times D's measured sensitivity to q
+    # (planted q errors 1e-13 and 1e-12, (3000, base)) against the bias of CJE at (3000, base), rtol 1e-13, atol 1e-14
     try:
-        import mpmath as mp5
-        mp5.mp.dps = 60
-        rf5 = crate_ref(crate, "dd", "base", 3000.0)
-        mr_ = float(np.mean([float(mp5.mpf(sget(sc, 3000.0, "base", 1e-13, "crate_j_r13", extra=e)["D"]) / rf5 - 1) for e in range(CJE_N)]))
-        md_ = cje_stats(sc, crate, 3000.0, "base", 1e-13, 1e-14)[1]
-        q7 = abs(mr_) / abs(md_)
-        st["H7"] = "supported" if q7 <= 0.3 else ("ruled out" if q7 >= 0.7 else "undecided")
-        lines.append(f"H7 the Riccati of the exterior q at rtol 1e-11 against 1e-13, (3000, base) rtol 1e-13: mean signed gap {md_:+.2e} at 1e-11, {mr_:+.2e} at 1e-13, ratio {q7:.2f}; {st['H7']}")
-    except TypeError:
+        d0q = sget(sc, 3000.0, "base", 1e-10, "crate_j", extra=0)["D"]
+        sens = max(abs(sget(sc, 3000.0, "base", 1e-10, pl)["D"] / d0q - 1) / eps for pl, eps in (("crate_j_q13", 1e-13), ("crate_j_q12", 1e-12)))
+        bias = abs(cje_stats(sc, crate, 3000.0, "base", 1e-13, 1e-14)[1])
+        t7 = sens * 6e-14 / bias
+        st["H7"] = "supported" if t7 >= 0.3 else ("ruled out" if t7 <= 0.03 else "undecided")
+        lines.append(f"H7 the Riccati of the exterior q (hard-coded rtol 1e-11): D's sensitivity to q's relative error {sens:.3g}, times q's error 6e-14, over CJE's bias at (3000, base) {bias:.2e}: {t7:.1e}; {st['H7']}")
+    except (TypeError, ZeroDivisionError):
         st["H7"] = "undecided"
         lines.append("H7 the Riccati of the exterior q: not run; undecided")
+    # H8 (A6): roundoff accumulation of the interior plane's renormalizations: median eps_Y against the number of renormalizations (factor 1/4 .. 8) at (1000, base), rtol 1e-13
+    try:
+        med = {}
+        for fn in PLANES_FILES:
+            for x in open(fn):
+                if x.startswith("{"):
+                    o = json.loads(x)
+                    if o["gamma"] == 1000.0 and o["variant"] == "base" and o["rtol"] == 1e-13:
+                        f = {"crate_j": 1.0, "crate_j_cf025": 0.25, "crate_j_cf05": 0.5, "crate_j_cf2": 2.0, "crate_j_cf4": 4.0, "crate_j_cf8": 8.0}.get(o["plant"])
+                        if f is not None:
+                            med.setdefault(f, []).append(o["eps_y"])
+        m = {f: float(np.median(v)) for f, v in med.items()}
+        up = m[8.0] / m[1.0]
+        down = m[0.25] / m[1.0]
+        flat = max(m[0.25], m[1.0], m[8.0]) / min(m[0.25], m[1.0], m[8.0]) < 1.3
+        st["H8"] = "supported" if up >= 2.0 and down <= 0.7 else ("ruled out" if flat else "undecided")
+        lines.append(f"H8 roundoff of the interior renormalizations: median eps_Y at 8x the renormalizations over 1x {up:.2f}, at 1/4x over 1x {down:.2f}; {st['H8']}")
+    except (KeyError, TypeError, FileNotFoundError):
+        st["H8"] = "undecided"
+        lines.append("H8 roundoff of the interior renormalizations: not run; undecided")
     # H4: the BVP star's kinks make the integrator's error erratic: eta falls when the star is smooth
     rr = [eta1[c] / eta0[c] for c in cells]
     nlow = sum(1 for x in rr if x <= CRIT["KINK_REMOVES"])
@@ -806,10 +838,10 @@ def grid_cases():
     out["N0"] = [K(g, v, 1e-10, extra=1) for g in G for v in V]                                  # null control: one extra chunk
     out["N1"] = [K(g, v, 1e-10, "crate", extra=1) for g in G for v in V]
     out["CJE"] = [K(g, v, r, "crate_j", a, extra=e) for (g, v) in CJ_CELLS for (r, a) in CJE_SETTINGS for e in range(CJE_N)]      # A3
-    out["CJN"] = ([K(1000.0, "base", 1e-10, "crate_j", noise=u, seed=sd) for (kind, u) in CJN_NOISE if kind == "noise" for sd in (1, 2, 3, 4)]
-                  + [K(1000.0, "base", 1e-10, "crate_j", row=u, seed=sd) for (kind, u) in CJN_NOISE if kind == "row" for sd in (1, 2, 3, 4)])   # A3
+    out["CJN"] = [K(1000.0, "base", 1e-10, "crate_j", noise=u, seed=sd) for (kind, u) in CJN_NOISE if kind == "noise" for sd in (1, 2, 3, 4)]   # A3, A6: per entry only
+    out["X_CJN_ROW"] = [K(1000.0, "base", 1e-10, "crate_j", row=u, seed=sd) for (kind, u) in CJN_NOISE if kind == "row" for sd in (1, 2, 3, 4)]   # A6: 0.01 ulp took 500 s a case, not core
     out["CJV"] = [K(g, v, 1e-13, "crate_j_vac", extra=e) for (g, v) in CJ_CELLS for e in range(CJE_N)]                                      # A4
-    out["CJR"] = [K(g, v, 1e-13, "crate_j_r13", extra=e) for (g, v) in CJ_CELLS for e in range(CJE_N)]                                       # A5
+    out["X_CJR"] = [K(g, v, 1e-13, "crate_j_r13", extra=e) for (g, v) in CJ_CELLS for e in range(CJE_N)]                                     # A5, A6: not core
     out["CJQ"] = [K(g, "base", 1e-10, pl) for g in (1000.0, 3000.0) for pl in ("crate_j_q13", "crate_j_q12")]                                 # A5
     out["X_P1_13"] = [K(g, v, 1e-13, "crate") for g in G for v in V]
     out["X_ATOL"] = [K(1000.0, v, 1e-13, atol=1e-17) for v in V] + [K(3000.0, "base", 1e-13, atol=1e-17)]
@@ -822,7 +854,7 @@ def grid_cases():
     return out
 
 
-CORE = ["P0", "P1", "N0", "N1", "CJE", "CJN", "CJV", "CJR", "CJQ"]
+CORE = ["P0", "P1", "N0", "N1", "CJE", "CJN", "CJV", "CJQ"]
 
 
 def run_checks(args):
@@ -971,6 +1003,24 @@ def run_report(args):
         if a and b:
             P(f"  gamma {g:g} {v}: gap {gap(a['D'], ref(v, g)):.1e} -> {gap(b['D'], ref(v, g)):.1e}; D moves {abs(b['D'] / a['D'] - 1):.1e}")
 
+    import glob as _glob
+    prs = []
+    PLANES_FILES[:] = sorted(_glob.glob(os.path.join(args.dir, "planes*.jsonl")))
+    for fn in PLANES_FILES:
+        prs += [json.loads(x) for x in open(fn) if x.startswith("{")]
+    if prs:
+        P("\n# the planes: sine of the largest principal angle between scipy's plane and the crate's double-double plane at r_m (interior Y, exterior Z, and Z's metric direction and scalar plane)")
+        P(f"{'gamma':>6s} {'variant':>7s} {'plant':>14s} {'rtol':>6s} {'extra':>5s} {'eps_Y':>9s} {'eps_Z':>9s} {'eps_met':>9s} {'eps_sca':>9s} {'sin min':>9s} {'signed gap':>11s}")
+        for o in prs:
+            rfv = ref(o["variant"], o["gamma"]) if ("dd", o["variant"], o["gamma"]) in crate else None
+            P(f"{o['gamma']:6g} {o['variant']:>7s} {o['plant']:>14s} {o['rtol']:6.0e} {o['extra_chunks']:5d} {o['eps_y']:9.1e} {o['eps_z']:9.1e} {o['eps_metric']:9.1e} {o['eps_scalar']:9.1e} {min(o['sines']):9.1e} "
+              + (f"{float(mp.mpf(o['D']) / rfv - 1):+11.2e}" if rfv is not None else f"{'-':>11s}"))
+        P("# medians of eps_Y per (gamma, variant, plant, rtol)")
+        grp = {}
+        for o in prs:
+            grp.setdefault((o["gamma"], o["variant"], o["plant"], o["rtol"]), []).append(o["eps_y"])
+        for k, v in grp.items():
+            P(f"  {k}: median eps_Y {float(np.median(v)):.2e} over {len(v)} realizations")
     pl = os.path.join(args.dir, "planted.jsonl")
     plc = {}
     if os.path.exists(pl):
@@ -1085,6 +1135,61 @@ def run_jround(args):
         print(json.dumps(rec), flush=True)
 
 
+# ---------------------------------------------------------------------------------------------------------------
+# the planes themselves: scipy's two orthonormal 3-planes at r_m against the crate's (double-double, `rows planes=1`)
+# ---------------------------------------------------------------------------------------------------------------
+def crate_planes(l, gamma, variant):
+    """the crate's orthonormal interior and exterior 3-planes at r_m as float64 (6 x 3 each), from the rows command with planes=1"""
+    import subprocess
+    import taylor_polar as TP
+    args = [TP.BIN, "rows", f"l={l}", "lane=dd", f"variants={variant}", f"gammas={gamma!r}", "planes=1"] + [f"{k}={v}" for k, v in TP.star_kw().items()]
+    p = subprocess.run(["nice", "-n", "10"] + args, capture_output=True, text=True, env=dict(os.environ, RAYON_NUM_THREADS="2"), cwd=HERE)
+    if p.returncode:
+        raise RuntimeError(p.stderr[-400:])
+    for line in p.stdout.splitlines():
+        if line.startswith("{"):
+            o = json.loads(line)
+            if o["cmd"] == "planes":
+                f = lambda m: np.array([[float(x) for x in c] for c in m]).T
+                return f(o["y"]), f(o["z"])
+    raise RuntimeError("no planes line")
+
+
+def sin_max(A, B):
+    """sine of the largest principal angle between the column spaces of A and B (equal dimensions, A orthonormal columns)"""
+    Qa, _ = np.linalg.qr(A)
+    Qb, _ = np.linalg.qr(B)
+    R = Qb - Qa @ (Qa.T @ Qb)
+    return float(np.linalg.svd(R, compute_uv=False)[0])
+
+
+def split_exterior(Z):
+    """the exterior plane = span{(m, 0), (0, S)}: the metric direction (2-vector, from the rank-1 block Z[:2]) and the scalar plane (4 x 2, from Z[2:])"""
+    u, sv, _ = np.linalg.svd(Z[:2, :], full_matrices=False)
+    us, ss, _ = np.linalg.svd(Z[2:, :], full_matrices=False)
+    return u[:, 0], us[:, :2], sv, ss
+
+
+def run_planes(args):
+    DP_plant = args.plant
+    for g in args.gammas:
+        yc, zc = crate_planes(args.l, g, args.variant)
+        mc, Sc, _, _ = split_exterior(zc)
+        for e in args.extra_chunks:
+            t = time.time()
+            pp = build(args.l, args.variant, DP_plant, args.rtol, args.steps, args.atol, e, None, 0.0, 0, 0.0)
+            D = pp.D(g)
+            ys, zs = pp.planes
+            ms, Ss, _, _ = split_exterior(zs)
+            ang_m = float(abs(np.sqrt(max(0.0, 1.0 - (ms @ mc) ** 2))))
+            rec = dict(gamma=g, variant=args.variant, plant=DP_plant, rtol=args.rtol, atol=args.atol, extra_chunks=e, D=float(D),
+                       eps_y=sin_max(ys, yc), eps_z=sin_max(zs, zc), eps_metric=ang_m, eps_scalar=sin_max(Ss, Sc),
+                       sines=pp.sines(), wall=time.time() - t, host=os.uname().nodename)
+            print(json.dumps(rec), flush=True)
+            with open(args.out, "a") as fp:
+                fp.write(json.dumps(rec) + "\n")
+
+
 def case_key(o):
     return (o["l"], o["gamma"], o["variant"], o["rtol"], o["plant"], o.get("atol", 1e-14), o.get("extra_chunks", 0), o.get("rm_from"),
             o.get("noise_ulp", 0.0), o.get("noise_seed", 0), o.get("noise_row", 0.0))
@@ -1136,6 +1241,17 @@ def main():
     k.add_argument("--mutate", default=None)
     k.add_argument("--synthetic", action="store_true")
     k.add_argument("--jtable", default=None)
+    pn = sub.add_parser("planes")
+    pn.add_argument("--out", required=True)
+    pn.add_argument("--steps", required=True)
+    pn.add_argument("--jtable", default=None)
+    pn.add_argument("--l", type=int, default=5)
+    pn.add_argument("--gammas", type=floats, default=[3000.0])
+    pn.add_argument("--variant", default="base")
+    pn.add_argument("--plant", default="crate_j")
+    pn.add_argument("--rtol", type=float, default=1e-13)
+    pn.add_argument("--atol", type=float, default=1e-14)
+    pn.add_argument("--extra-chunks", dest="extra_chunks", type=lambda x: [int(y) for y in x.split(",")], default=[0])
     jr = sub.add_parser("jround")
     jr.add_argument("--gammas", type=floats, default=[1000.0, 3000.0])
     jr.add_argument("--n", type=int, default=40)
@@ -1151,6 +1267,9 @@ def main():
     if a.cmd == "scipy":
         JTABLE_PATH[0] = a.jtable
         run_cases(a)
+    elif a.cmd == "planes":
+        JTABLE_PATH[0] = a.jtable
+        run_planes(a)
     elif a.cmd == "jround":
         run_jround(a)
     elif a.cmd == "report":
