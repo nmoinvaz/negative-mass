@@ -195,3 +195,21 @@ Each can fail. Status words as above; none of them may say that a universe forms
 - `critical_ghost.md`'s summary calls [SH02]'s H ≈ 1.1/a "a Hubble rate" of the expanding branch, and its §1.3 notes
   that it is close to 1/(0.846 a). Section 3 above adds that [SH02]'s H is the exponent of the departure of r/a on the
   diagonal (1.12 against the linear 1.182). Not edited here.
+
+## Coordinator's review
+
+Under review: `wip/i211-universe-lit` at eac1f17, raw `I211-rpi5` at 77cb32e. Review folder
+`negative-mass-raw/I211-mac-review`, whose README holds the criteria, committed before the first run of `ind211.py`.
+
+- **References.** A fixed sample of seven of the section's 25 arXiv ids was checked against arXiv's API: every entry
+  carries arXiv's title and first author (ind211 K1, run 2). Run 1 failed on the review's own handling of "González"
+  (amendment A1).
+- **[SH02]'s H.** Read from [SH02]'s TeX source: the radius "can be expressed with a function r/a = 1 + b₄ exp(H(τ − b₅))",
+  with H = 1.19, 1.13 and 1.12 in its table as the amplitude falls. The note's reading holds, and `critical_ghost.md`
+  §1.2's "Hubble rate" now carries an update saying so (ind211 K2).
+- *Added by the coordinator:* the claim that a homogeneous massless ghost has w = +1 is elementary, ρ = p = εφ̇²/2 for
+  either sign, and stands as *proved*.
+- **The ranked claims (§2) and the tasks (§4).** T1, T2 and T4 are filed as #222, #223 and #224. T3 (the sign rule at
+  large amplitude) is added to #42, which it extends. #213, #217 and #218 already cover claims 1, 3 and 5.
+- **[FMM89] and [FMM90].** These are read from their abstracts only (publisher HTTP 403). The review could not reach
+  the texts either; their entries say so.

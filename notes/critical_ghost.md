@@ -27,6 +27,9 @@ members) [GGS09c]. Shinkai and Hayward's
 2002 evolutions [SH02] already measured scaling at the threshold, although they did not call it type I:
 - the black-hole mass tends to a finite value, M ≈ 0.30 a (a = throat radius);
 - the expanding branch tends to a Hubble rate H ≈ 1.1/a;
+  **Update from #211:** [SH02]'s H is the exponent of a fit r/a = 1 + b₄exp(H(τ − b₅)) to the throat's departure
+  (H = 1.19, 1.13, 1.12 as the amplitude falls; their source, read in #211's review). It approaches the linear rate
+  1/(0.846a) = 1.18/a. It is not shown to be a de Sitter rate; #213 asks what the expansion becomes.
 - the collapse time grows like 0.60 ln(1/E₀) in their null coordinate.
 
 That last number is what type I scaling predicts from the single unstable mode. The mode's e-folding time is 0.846 a
