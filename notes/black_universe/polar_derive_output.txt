@@ -1,0 +1,39 @@
+# polar_derive.py check (negative-mass-raw I218-dh610 logs/derive_check.txt), at the commit named in the note
+PASS  D1 background E_ab = 0, S = 0 on the family, generic A with A'' = 2(A - 1)/R^2 (sympy): residuals all 0
+PASS  D1b V(rho) of the family against stability.py's family_mp (mpmath 40 digits, 3 members): max difference 1.50e-40 (declared <= 1e-30)
+PASS  D2 linearized E_ab, S on a pure-gauge perturbation (Lie derivative of g and phi along xi = (T Y, X Y, S Y'), sympy): 8 residuals all 0
+      elapsed 23 s
+PASS  D3a traceless angular equation of RW gauge: ang_tl = H2 - H0 and the trace part has no Y'
+PASS  D3b tt, rr and trace-angular equations, after the three first-order ones, are one algebraic relation: ratios rr/tt, ang_tr/tt = As**(-2), -2*(rho**2 + 1)/As (functions of rho, A only)
+PASS  D3c constraint propagation: d/drho of F' (from the algebraic relation) equals F'' of the scalar equation on the 4-system: difference 0
+PASS  D3d the second-order equations tt, rr, trace-angular, S on the 4-system (second derivatives from the system): 4 residuals all 0
+PASS  D3e the matrix for (H0, H1/W, K, F) is polynomial in W^2 = lam, no odd power of W: degree in lam 1
+      elapsed 83 s
+PASS  D4a Ellis (c = 0) limit of the 4-system against [ABCKY23] (KC0), (H0C0), (H1C0) with u = F/sqrt2, omega = iW (sympy): differences K': 0, H0': 0, H1': 0
+PASS  D4b (upC0) as printed differs from the derived u' by exactly K (l+2)(l-1)/2, i.e. the sign of its (l+2)(l-1) K term (reported, not corrected; D5 and D4a hold): derived minus printed = K*(L - 2)/2
+PASS  D5a at c = 0 the scalar F decouples: F'' = a F' + b F, no H0, H1, K left: a = -2*rho/(rho**2 + 1), b = (L*rho**2 + L + lam*rho**4 + 2*lam*rho**2 + lam - 4)/(rho**2 + 1)**2
+PASS  D5b Z = R F obeys Z'' = (V + lam) Z with V = L/R^2 - 3/R^4, the master equation of [ABCKY23] (eq_Schr): derived V = (L*rho**2 + L - 3)/(rho**2 + 1)**2
+PASS  D5c with (47) as printed the scalar does not decouple at c = 0 (F'' - a F' keeps H1 and K terms): residuals of the H0, H1, K coefficients: [0, -sqrt(2)*(L**2 - 2*L - 4*lam*rho**2)/(4*(rho**2 + 1)), sqrt(2)*rho*(L - lam*rho**2 - lam - 2)/(rho**2 + 1)]
+      elapsed 85 s
+PASS  D6a l = 1 (h_t rho = 0 gauge): D(F') from the algebraic relation equals F'' of the scalar equation: difference 0
+PASS  D6b l = 1: tt, rr, trace-angular, S on the 3-system: 4 residuals all 0
+PASS  D6c l = 1: the pure-gauge solution xi^theta = sqrt(A)/R (with h_t rho = 0) solves the 3-system: h_t rho of the gauge field 0; residual [0, 0, 0]
+PASS  D6d at c = 0 the gauge-invariant scalar of l = 1 obeys chi'' + (2 rho/R^2) chi' - W^2 chi = 0 (2-system closed, H2 drops out): ode/(R^2 chi'' + 2 rho chi' - W^2 R^2 chi) = -sqrt(2)
+PASS  D6e V(l = 1) = 1/R^4 = w^2 - w' and V(l >= 2 at L = 2) = 2/R^2 - 3/R^4 = w^2 + w', w = -rho/R^2: isospectral partners: w^2 - w' = (rho**2 + 1)**(-2), w^2 + w' = (2*rho**2 - 1)/(rho**2 + 1)**2
+PASS  D6f the Darboux superpotential w = -rho/R^2 is regular on the real line (poles at rho = +-i) and w -> 0 at both ends, so Q = d/drho + w keeps exp(-+W rho): w(+inf) = 0, w(-inf) = 0, poles of w at []
+      elapsed 132 s
+PASS  D7 coefficient code in polar.py (m4_entries, m3_entries, g3_entries) against the derived matrices at 6 random points: max relative difference 2.82e-16 (declared <= 1e-12)
+total 133 s
+
+# polar_derive.py controls (logs/derive_controls.txt)
+fires   --mutate=bg_V (target D1 background): exit 1; FAIL  D1 background E_ab = 0, S = 0 on the family, generic A with A'' = 2(A - 1)/R^2 (sympy): residuals [-rho*; FAIL  D1b V(rho) of the family against stability.py's family_mp (mpmath 40 digits, 3 members): max difference ; FAIL  D2 linearized E_ab, S on a pure-gauge perturbation (Lie derivative of 
+fires   --mutate=lin_sign (target D2 linearized): exit 1; FAIL  D2 linearized E_ab, S on a pure-gauge perturbation (Lie derivative of g and phi along xi = (T Y, X Y, S ; FAIL  D3b tt, rr and trace-angular equations, after the three first-order ones, are one algebraic relation: ra; FAIL  D3c constraint propagation: d/drho of F' (from the algebraic relation)
+fires   --mutate=ang_L (target D4a Ellis): exit 1; FAIL  D4a Ellis (c = 0) limit of the 4-system against [ABCKY23] (KC0), (H0C0), (H1C0) with u = F/sqrt2, omega ; FAIL  D4b (upC0) as printed differs from the derived u' by exactly K (l+2)(l-1)/2, i.e. the sign of its (l+2)(; FAIL  D5b Z = R F obeys Z'' = (V + lam) Z with V = L/R^2 - 3/R^4, the master
+fires   --mutate=alg_coef (target D3c constraint): exit 1; FAIL  D3c constraint propagation: d/drho of F' (from the algebraic relation) equals F'' of the scalar equation; FAIL  D3d the second-order equations tt, rr, trace-angular, S on the 4-system (second derivatives from the sys; FAIL  D4b (upC0) as printed differs from the derived u' by exactly K (l+2)(l
+fires   --mutate=ellis_sign (target D4a Ellis): exit 1; FAIL  D4a Ellis (c = 0) limit of the 4-system against [ABCKY23] (KC0), (H0C0), (H1C0) with u = F/sqrt2, omega 
+fires   --mutate=pot (target D5b Z = R F): exit 1; FAIL  D5b Z = R F obeys Z'' = (V + lam) Z with V = L/R^2 - 3/R^4, the master equation of [ABCKY23] (eq_Schr): 
+fires   --mutate=print47 (target D5c with (47)): exit 1; FAIL  D5c with (47) as printed the scalar does not decouple at c = 0 (F'' - a F' keeps H1 and K terms): residu
+fires   --mutate=l1_gauge (target D6c l = 1): exit 1; FAIL  D6c l = 1: the pure-gauge solution xi^theta = sqrt(A)/R (with h_t rho = 0) solves the 3-system: h_t rho ; FAIL  D6d at c = 0 the gauge-invariant scalar of l = 1 obeys chi'' + (2 rho/R^2) chi' - W^2 chi = 0 (2-system ; FAIL  D7 coefficient code in polar.py (m4_entries, m3_entries, g3_entries) a
+fires   --mutate=susy (target D6e V(l = 1)): exit 1; FAIL  D6e V(l = 1) = 1/R^4 = w^2 - w' and V(l >= 2 at L = 2) = 2/R^2 - 3/R^4 = w^2 + w', w = -rho/R^2: isospec
+fires   --mutate=susy_end (target D6f the Darboux): exit 1; FAIL  D6f the Darboux superpotential w = -rho/R^2 is regular on the real line (poles at rho = +-i) and w -> 0 
+fires   --mutate=code (target D7 coefficient code): exit 1; FAIL  D7 coefficient code in polar.py (m4_entries, m3_entries, g3_entries) against the derived matrices at 6 r
