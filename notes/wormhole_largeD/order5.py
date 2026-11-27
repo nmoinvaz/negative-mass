@@ -11,7 +11,7 @@ Method B (order4.py's PanelB, shared): v = sqrt(l), panels of width w on [0, V],
 spectral integration matrix; Y_k from the left, the tail C_right from the right, L_k = -2 h_k(1) - u C_right, G_k = C_right(0). It uses no
 closed form of Y_k or L_k and no input value of Omega_0 .. Omega_2.
 
-    python3 order5.py [sym] [evals] [pslq] [remainder] [closedform] [--mutate=NAME] [--w2=w2_output.txt] [--w2raw=FILE] [--save=FILE] [--load=FILE] [--no-real]
+    python3 order5.py [sym] [evals] [pslq] [remainder] [closedform] [reduce5] [a5] [--mutate=NAME] [--w2=w2_output.txt] [--w2raw=FILE] [--save=FILE] [--load=FILE] [--no-real]
     python3 order5.py grid --grid=N,w,V,dps [--kmax=5]      (a development run of one grid; no gate)
 
 No argument runs sym, evals, pslq, remainder. The exit status is 1 when a check fails. Status words: sympy residual 0 is "checked
@@ -32,10 +32,11 @@ import sympy as sp
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 _argv, sys.argv = sys.argv, sys.argv[:1]          # order4.py parses sys.argv when it is imported
 from order4 import PanelB  # noqa: E402
+import order4 as o4  # noqa: E402
 sys.argv = _argv
 
 MUTATIONS = ("wrong_h", "wrong_c5", "wrong_Om0", "wrong_Om1", "wrong_Om2", "coarse_B", "short_tail", "pslq_wrong_basis",
-             "wrong_Om3_series", "wrong_closed")
+             "wrong_Om3_series", "wrong_closed", "wrong_E3", "wrong_AD", "wrong_C2", "wrong_reg", "wrong_J4")
 MUTATE = None
 W2FILE = "w2_output.txt"
 SAVE = None
@@ -506,6 +507,270 @@ def check_remainder(ev):
         print(f"  {D:<7d} {nd(xx, 14):<19s} {nd((xx - om4) * s, 8)}")
 
 
+# ---------------------------------------------------------------------------------------------------------------
+# the reduction of G_5 by hand (RD0 .. RD8) and method A at order 5 (A5, RD9)
+# ---------------------------------------------------------------------------------------------------------------
+def e3f():
+    return 2 if MUTATE == "wrong_E3" else 4
+
+
+def sym_pieces():
+    """sympy: the Y_4-free integrand I_5 at Omega0 = -4 q in the generators ell = ln cos, S = sin^2, u = tan, C = Cl2(pi - 2 th),
+    D3 = Cl3(pi - 2 th) + 3 zeta(3)/4, Lc2 = int_0^th ln^2 cos, th; I_5 = rest + cC C + cD D3 + cL Lc2"""
+    lg, S, u, C, D3, Lc, th, q, K = sp.symbols("ell S u C D3 Lc2 th q K")
+    w0, w1, w2, w3, w4 = sp.symbols("w0 w1 w2 w3 w4")
+    R = 1 / (1 - S)
+    l = -2 * lg
+    sc = u * (1 - S)
+    L = [-1, -2 * w0 + 4 * lg, -2 * w1 - 4 * w0 * lg + 16 * lg**2 + 16 * u * C]
+    Y = [1, 2 * lg, 4 * w0 * lg - 6 * lg**2, 4 * w1 * lg - 4 * lg**3 + 32 * lg**2 - 16 * w0 * lg + 32 * u * C - 16 * D3]
+    Om = [w0, w1, w2, w3, w4]
+    h3 = hk(3, Om, l, R, Y + [0], L)
+    B = -32 * (lg + q) * C + 16 * S * C + 32 * Lc + 16 * sc * lg * (lg + 2 * q) - 4 * w1 * th - 2 * w1 * sc
+    LL = L + [-2 * h3 + 2 * u * B]
+    h4 = S * LL[3] + sum(Y[j] * cc(4 - j, Om, l, R) for j in range(4))            # Y_4/2 removed by E3
+    t1 = 8 * lg * h4 / S
+    t2 = 2 * sum(LL[3 - j] * l ** (j + 1) / sp.factorial(j + 1) for j in range(4))
+    o = list(Om)
+    o[4] = 0
+    t3 = 2 * sum(Y[j] * cc(5 - j, o, l, R) for j in range(4)) / S
+    F3 = sum(LL[3 - j] * l**j / sp.factorial(j) for j in range(4))
+    t4 = -e3f() * (lg - w0) * F3
+
+    def red_u(e):
+        p = sp.Poly(sp.expand(e), u)
+        return sp.expand(sum(cf * (S / (1 - S)) ** (k // 2) * u ** (k % 2) for (k,), cf in p.terms()))
+
+    I5 = red_u((t1 + t2 + t3 + t4).subs(w0, -4 * q))
+    d = dict(lg=lg, S=S, u=u, C=C, D3=D3, Lc=Lc, th=th, q=q, K=K, w0=w0, w1=w1, w2=w2, w3=w3, w4=w4, I5=I5, red_u=red_u,
+             cC=sp.together(sp.Poly(I5, C).coeff_monomial(C)), cD=sp.together(sp.Poly(I5, D3).coeff_monomial(D3)),
+             cL=sp.together(sp.Poly(I5, Lc).coeff_monomial(Lc)), rest=sp.expand(sp.together(I5.subs({C: 0, D3: 0, Lc: 0}))))
+    # D3 by parts: cD = 32 (6 ell - 8 q) + cD1/S; A_D = int cD with K = 2 q th - C, K' = -2 ell, F_n = int ell^n/S
+    cD, cot = d["cD"], 1 / u
+    cDe = sp.expand(sp.simplify(cD * S))
+    cD0, cD1 = cDe.coeff(S, 1), cDe.coeff(S, 0)
+    assert sp.simplify(cD - (cD0 + cD1 / S)) == 0 and sp.Poly(cD1, lg).degree() == 2
+    cD1c = [sp.Poly(cD1, lg).coeff_monomial(lg**n) for n in range(3)]
+    F0, F1, F2 = -cot, -lg * cot - th, -lg**2 * cot + K
+    AD = 32 * (-3 * K - 8 * q * th) + cD1c[0] * F0 + cD1c[1] * F1 + (cD1c[2] + (32 if MUTATE == "wrong_AD" else 0)) * F2
+    d.update(AD=AD, cD1c=cD1c)
+    return d
+
+
+def check_reduce5():
+    t0 = time.time()
+    dp = sym_pieces()
+    lg, S, u, C, D3, Lc, th, q, K = (dp[k] for k in ("lg", "S", "u", "C", "D3", "Lc", "th", "q", "K"))
+    w0, w1, w2, w3 = dp["w0"], dp["w1"], dp["w2"], dp["w3"]
+    Su = u**2 / (1 + u**2)
+    qv = sp.log(2)
+    w1v = 2 * sp.pi**2 / 3 + 8 * qv**2
+    w2v = 80 * sp.zeta(3) - sp.Rational(8, 3) * sp.pi**2 * qv - sp.Rational(32, 3) * qv**3
+
+    def Dth(f):                                   # d/dth on the generators: ell' = -u, th' = 1, K' = -2 ell, u' = 1 + u^2, S' = 2 u (1 - S), C' = 2 ell + 2 q
+        return (sp.diff(f, lg) * (-u) + sp.diff(f, th) + sp.diff(f, K) * (-2 * lg) + sp.diff(f, u) * (1 + u**2)
+                + sp.diff(f, S) * 2 * u * (1 - S) + sp.diff(f, C) * (2 * lg + 2 * q))
+
+    # RD0: c_1 = Omega0 - 3 ell - S, (4 ell + 2 c_1)/S = 2 P', P = cot(th)(ell - Omega0)
+    c1 = cc(1, [w0, w1, w2, w3, 0], -2 * lg, 1 / (1 - S))
+    P = (lg - w0) / u
+    r0 = [sp.simplify(c1 - (w0 - 3 * lg - S)), sp.simplify(((4 * lg + 2 * c1) / S - 2 * Dth(P)).subs(S, Su))]
+    report("RD0", all(x == 0 for x in r0), f"c_1 = Omega0 - 3 ell - S and (4 ell + 2 c_1)/S = 2 P', P = cot(th)(ell - Omega0): residuals {[str(x) for x in r0]}")
+    # numbers: Omega0, Omega1, Omega2 closed, generator values from order4.basics
+    mp.mp.dps = 45
+    W0, W1, W2 = -4 * mp.ln2, 2 * mp.pi**2 / 3 + 8 * mp.ln2**2, 80 * mp.zeta(3) - mp.mpf(8) / 3 * mp.pi**2 * mp.ln2 - mp.mpf(32) / 3 * mp.ln2**3
+    Om = [W0, W1, W2, mp.mpf(0), mp.mpf(0)]
+    # RD1: E3 at j = 3 (the same step as for Y_4): int 2 P' Y_3 = -4 int (ell - Omega0) F_2, closed Y_3, L_0 .. L_2
+    def e3_lhs(th_, x, tail):
+        ell, s2, u_, Cn, D3n = o4.basics(th_, x, tail)
+        Y3 = 4 * W1 * ell - 4 * ell**3 + 32 * ell**2 - 16 * W0 * ell + 32 * u_ * Cn - 16 * D3n
+        return 2 * (W0 - ell - s2) / s2 * Y3
+
+    def e3_rhs(th_, x, tail):
+        ell, s2, u_, Cn, D3n = o4.basics(th_, x, tail)
+        l_ = -2 * ell
+        L2 = -2 * W1 - 4 * W0 * ell + 16 * ell**2 + 16 * u_ * Cn
+        F2 = L2 + (-2 * W0 + 4 * ell) * l_ - l_**2 / 2
+        return -e3f() * (ell - W0) * F2
+
+    lhs, rhs = o4.both(o4.guarded(e3_lhs, 30)), o4.both(o4.guarded(e3_rhs, 30))
+    d1 = digits(lhs, rhs)
+    report("RD1", d1 >= 30, f"E3 at j = 3: int 2 P' Y_3 dth = {nd(lhs, 30)} against -{e3f()} int (ell - Omega0) F_2 dth = {nd(rhs, 30)}: {float(d1):.1f} digits")
+    # RD2: the decomposition rest + cC C + cD D3 + cL Lc2 against the numerical integrand of method A (a5_integrand) at four points
+    args = (lg, S, u, C, D3, Lc, th, q, w1, w2, w3)
+    parts_f = sp.lambdify(args, dp["rest"] + dp["cC"] * C + dp["cD"] * D3 + dp["cL"] * Lc, "mpmath")
+    fA = a5_integrand(Om)
+    worst = mp.mpf(99)
+    for t in ("0.2", "0.7", "1.1", "1.4"):
+        th_ = mp.mpf(t)
+        with mp.extradps(40):
+            ell, s2, u_, Cn, D3n = o4.basics(th_, mp.pi / 2 - th_, False)
+            lc2 = o4.Lc2_poly(th_)
+            dec = parts_f(ell, s2, u_, Cn, D3n, lc2, th_, mp.ln2, W1, W2, mp.mpf(0))
+            num = fA(th_, mp.pi / 2 - th_, False)
+        worst = min(worst, digits(num, dec))
+    report("RD2", worst >= 30, f"I_5 = rest + cC C + cD D3 + cL Lc2 (sympy) against method A's integrand with Y_4 removed, th = 0.2, 0.7, 1.1, 1.4: worst {float(worst):.1f} digits")
+    # RD3: A_D' = cD (symbolic), A_D(pi/2) = 0, and int cD D3 = -2 int A_D C (numerical)
+    AD = dp["AD"]
+    r3 = sp.simplify((Dth(AD) - dp["cD"]).subs(S, Su))
+    cD1c = dp["cD1c"]
+    AD_half = 32 * (-3 * sp.pi * q - 4 * sp.pi * q) + cD1c[1] * (-sp.pi / 2) + cD1c[2] * (sp.pi * q) + (32 if MUTATE == "wrong_AD" else 0) * sp.pi * q
+    r3b = sp.simplify(AD_half)
+    ADf = sp.lambdify((lg, S, u, C, th, q, w1), AD.subs(K, 2 * q * th - C), "mpmath")
+    cDf = sp.lambdify((lg, S, u, C, D3, th, q, w1), dp["cD"], "mpmath")
+
+    def lhs3(th_, x, tail):
+        if tail:
+            th_ = mp.pi / 2 - x
+        ell, s2, u_, Cn, D3n = o4.basics(th_, x, tail)
+        return cDf(ell, s2, u_, Cn, D3n, th_, mp.ln2, W1) * D3n
+
+    def rhs3(th_, x, tail):
+        if tail:
+            th_ = mp.pi / 2 - x
+        ell, s2, u_, Cn, D3n = o4.basics(th_, x, tail)
+        return -2 * ADf(ell, s2, u_, Cn, th_, mp.ln2, W1) * Cn
+
+    a3, b3 = o4.both(o4.guarded(lhs3, 30)), o4.both(o4.guarded(rhs3, 30))
+    d3 = digits(a3, b3)
+    report("RD3", r3 == 0 and r3b == 0 and d3 >= 30, f"A_D' - cD = {r3}, A_D(pi/2) = {r3b} (so the boundary term [D3 A_D] vanishes; D3(0) = 0); int cD D3 dth = {nd(a3, 30)} "
+           f"against -2 int A_D C dth = {nd(b3, 30)}: {float(d3):.1f} digits")
+    # RD4: the C terms after the by parts: no 1/u, no th, = u P(ell) + 512 C
+    tot = sp.together((dp["cC"] - 2 * AD).subs(K, 2 * q * th - C).subs(S, Su))
+    expect = u * (64 * (16 * q**2 + 8 * q + w1) + 128 * (8 * q - 3) * lg - 512 * lg**2) + 512 * C
+    r4 = sp.simplify(sp.expand(sp.cancel(tot - expect)))
+    report("RD4", r4 == 0, f"cC - 2 A_D (K = 2 q th - C) = u (64 (16 q^2 + 8 q + w1) + 128 (8 q - 3) ell - 512 ell^2) + 512 C: residual {r4}")
+    # RD5: int u ell^n C = (2 J_{n+2} + 2 q J_{n+1})/(n+1), n = 0 .. 2, and int C^2 = pi^5/360
+    J = o4.moments()
+    if MUTATE == "wrong_J4":
+        J[4] = J[4] + sp.pi * sp.zeta(3) / 8
+    Jn = [mp.mpf(sp.N(j, 60)) for j in J]
+
+    def uC(n):
+        def f(th_, x, tail):
+            ell, s2, u_, Cn, D3n = o4.basics(th_, x, tail)
+            return u_ * ell**n * Cn
+        return f
+
+    dd = [digits(o4.both(o4.guarded(uC(n), 30)), (2 * Jn[n + 2] + 2 * mp.ln2 * Jn[n + 1]) / (n + 1)) for n in range(3)]
+    c2num = o4.both(o4.guarded(lambda th_, x, tail: o4.basics(th_, x, tail)[3] ** 2, 30))
+    c2cl = mp.pi**5 / (180 if MUTATE == "wrong_C2" else 360)
+    dc2 = digits(c2num, c2cl)
+    report("RD5", min(dd) >= 30 and dc2 >= 30, f"int u ell^n C dth, n = 0, 1, 2, against (2 J_(n+2) + 2 q J_(n+1))/(n + 1): worst {float(min(dd)):.1f} digits; "
+           f"int C^2 dth = {nd(c2num, 30)} against {'pi^5/180' if MUTATE == 'wrong_C2' else 'pi^5/360'} (Parseval): {float(dc2):.1f} digits")
+    # RD6: the u (Lc2, th) term: the divergent constants cancel, and the regularized integral
+    k_th = 128 * q * w1                                  # the coefficient of th u in rest (read from sympy below)
+    kth_sym = sp.simplify(sp.Poly(sp.expand(dp["rest"] * S), th).coeff_monomial(th) / (u * S))
+    J2s = sp.pi / 2 * (qv**2 + sp.pi**2 / 12)
+    r6 = sp.simplify(sp.expand_log((dp["cL"].coeff(u, 1) * J2s * 1 + kth_sym * sp.pi / 2).subs({q: qv, w1: w1v}), force=True))
+    regJ = (Jn[2] if MUTATE == "wrong_reg" else Jn[1])
+
+    def regint(th_, x, tail):
+        if tail:
+            th_ = mp.pi / 2 - x
+        ell, s2, u_, Cn, D3n = o4.basics(th_, x, tail)
+        lc2 = o4.Lc2_poly(th_)
+        return u_ * (-1024 * mp.ln2 * (lc2 - Jn[2]) + 128 * mp.ln2 * W1 * (th_ - mp.pi / 2))
+
+    reg_num = o4.both(o4.guarded(regint, 90))
+    reg_cl = -1024 * mp.ln2 * Jn[3] + 128 * mp.ln2 * W1 * regJ
+    d6 = digits(reg_num, reg_cl)
+    report("RD6", sp.simplify(kth_sym - k_th.subs({q: q, w1: w1})) == 0 and r6 == 0 and d6 >= 25,
+           f"coefficient of th u in rest = 128 q w1, (coefficient of u Lc2) J_2 + 128 q w1 pi/2 = {r6} (the divergence at pi/2 cancels); "
+           f"int u [-1024 q (Lc2 - J_2) + 128 q w1 (th - pi/2)] dth = {nd(reg_num, 25)} against -1024 q J_3 + 128 q w1 J_1 = {nd(reg_cl, 25)}: {float(d6):.1f} digits (bar 25)")
+    # RD7: the moments
+    def ellb(b):
+        def f(th_, x, tail):
+            ell, s2, _, _, _ = o4.basics(th_, x, tail)
+            return ell**b / s2
+        return f
+
+    d7a = min(digits(o4.both(o4.guarded(ellb(b), 30)), -b * Jn[b - 1]) for b in range(1, 6))
+    d7b = min(digits(o4.both(o4.guarded(lambda th_, x, tail, n=n: o4.basics(th_, x, tail)[0] ** n, 30)), Jn[n]) for n in range(5))
+    report("RD7", d7a >= 30 and d7b >= 30, f"int ell^b/S dth = -b J_(b-1), b = 1 .. 5: worst {float(d7a):.1f} digits; J_n, n <= 4, from the Beta function (sympy) against quadrature: "
+           f"worst {float(d7b):.1f} digits; J_4 = {sp.simplify(J[4])}")
+    # RD8: assembly (sympy)
+    rest = dp["rest"]
+    rest_S = sp.expand(rest * S)
+    polyS = sp.Poly(dp["red_u"](rest_S.subs(th, 0)), S)
+    A_, B_ = polyS.coeff_monomial(1), polyS.coeff_monomial(S)
+    assert polyS.degree() <= 1
+    tot_int = 0
+    for (b,), cf in sp.Poly(A_, lg).terms():
+        assert b >= 1, "A has a constant term: the integral diverges at the throat"
+        tot_int += -b * cf * J[b - 1]
+    for (b,), cf in sp.Poly(B_, lg).terms():
+        tot_int += cf * J[b]
+    pc = {2: -512, 1: 1024 * q - 384, 0: 1024 * q**2 + 512 * q + 64 * w1}
+    tot_int += sum(p * (2 * J[n + 2] + 2 * q * J[n + 1]) / (n + 1) for n, p in pc.items())
+    tot_int += 512 * (sp.pi**5 / (180 if MUTATE == "wrong_C2" else 360))
+    tot_int += -1024 * q * J[3] + 128 * q * w1 * (J[2] if MUTATE == "wrong_reg" else J[1])
+    G5 = sp.expand_log(sp.expand(tot_int.subs(q, qv).subs(w0, -4 * qv)), force=True).subs({w1: w1v, w2: w2v})
+    sol = sp.solve(sp.expand(G5), w3)
+    om3 = sp.simplify(sp.expand(sol[0]))
+    target = 22 * sp.pi**4 / 45 + 16 * sp.pi**2 * qv**2 / 3 + 32 * qv**4 / 3 - 320 * sp.zeta(3) * qv - 384 * sp.zeta(3)
+    diff8 = sp.simplify(sp.expand(sp.expand_log(om3 - target, force=True)))
+    slope8 = sp.simplify(sp.diff(sp.expand(G5), w3) + 4 * sp.pi)
+    report("RD8", diff8 == 0 and slope8 == 0, f"G_5 = 0 gives Omega3 = {om3}; difference from 22 pi^4/45 + 16 pi^2 ln^2 2/3 + 32 ln^4 2/3 - 320 zeta(3) ln 2 - 384 zeta(3): {diff8}; "
+           f"slope of G_5 in Omega3 + 4 pi = {slope8}")
+    G5_0 = mp.mpf(sp.N(G5.subs(w3, 0), 60))
+    print(f"  derived G_5(Omega3 = 0) = {nd(G5_0, 40)} ({time.time() - t0:.0f} s)")
+    return G5_0
+
+
+def a5_integrand(Om):
+    """integrand of G_5 by method A with Y_4 removed by E3; Om = [w0, w1, w2, w3, 0], closed forms of order4.py"""
+    q = mp.ln2
+
+    def f(th, x, tail):
+        if tail:
+            th = mp.pi / 2 - x                 # at the guarded precision: u ~ 1/x multiplies terms in th
+        c, lc, l, u, R, s2, Y, L, K, T = o4.closed(th, x, tail, Om)
+        Cn = mp.clsin(2, mp.pi - 2 * th)
+        sc = mp.sin(th) * mp.cos(th)
+        B = -32 * (lc + q) * Cn + 16 * s2 * Cn + 32 * o4.Lc2_poly(th) + 16 * sc * lc * (lc + 2 * q) - 4 * Om[1] * th - 2 * Om[1] * sc
+        LL = [L[0], L[1], L[2], -2 * hk(3, Om, l, R, Y, L) + 2 * u * B]
+        h4 = s2 * LL[3] + sum(Y[j] * cc(4 - j, Om, l, R) for j in range(4))
+        o = list(Om)
+        o[4] = 0
+        t3 = 2 * sum(Y[j] * cc(5 - j, o, l, R) for j in range(4)) / s2
+        F3 = sum(LL[3 - j] * l**j / math.factorial(j) for j in range(4))
+        return 8 * lc * h4 / s2 + 2 * sum(LL[3 - j] * l ** (j + 1) / math.factorial(j + 1) for j in range(4)) + t3 - e3f() * (lc - Om[0]) * F3
+
+    return o4.guarded(f, 80)
+
+
+def check_a5(ev=None, derived=None):
+    """A5: G_5 by method A (closed forms of order4.py, E1, E2, E3) at 40 digits: Omega3 from the affine G_5, against the derived closed form and B"""
+    t0 = time.time()
+    dps = 40
+    mp.mp.dps = dps
+    cl = closed_omegas()
+
+    def G(Om):
+        f = a5_integrand(Om)
+        return (mp.quad(lambda t: f(t, mp.pi / 2 - t, False), [0, mp.mpf(1) / 2, 1], method="gauss-legendre")
+                + mp.quad(lambda x: f(mp.pi / 2 - x, x, True), [0, mp.pi / 2 - 1]))
+
+    g0 = G([cl[0], cl[1], cl[2], mp.mpf(0), mp.mpf(0)])
+    g1 = G([cl[0], cl[1], cl[2], mp.mpf(1), mp.mpf(0)])
+    slope, om3 = g1 - g0, -g0 / (g1 - g0)
+    mp.mp.dps = 60
+    cf = closed_omega3()
+    ds, dc = digits(-4 * mp.pi, slope), digits(cf, om3)
+    msg = f"G_5(Omega3 = 0) = {nd(g0, 30)}, slope against -4 pi: {float(ds):.1f} digits; Omega3 = {nd(om3, 38)} against the closed form: {float(dc):.1f} digits"
+    ok = ds >= 30 and dc >= 30
+    if ev is not None:
+        db = digits(ev["B4"]["Om3"], om3)
+        msg += f"; against B4: {float(db):.1f} digits"
+        ok = ok and db >= 30
+    if derived is not None:
+        dg = digits(derived, g0)
+        msg += f"; against the derived G_5(0) = {nd(derived, 30)}: {float(dg):.1f} digits"
+        ok = ok and dg >= 30
+    report("A5", ok, msg + f" (bar 30; {time.time() - t0:.0f} s)")
+
+
 def main():
     parse(sys.argv[1:])
     mp.mp.dps = 60
@@ -519,13 +784,18 @@ def main():
     if "evals" in PARTS:
         ev = check_evals()
         check_values(ev)
-    elif LOAD and any(p in PARTS for p in ("values", "pslq", "remainder", "closedform")):
+    elif LOAD and any(p in PARTS for p in ("values", "pslq", "remainder", "closedform", "a5")):
         mp.mp.dps = 330
         ev = load_ev(LOAD)
         if "values" in PARTS:
             check_values(ev)
     if "closedform" in PARTS:
         check_closedform(ev)
+    derived = None
+    if "reduce5" in PARTS:
+        derived = check_reduce5()
+    if "a5" in PARTS:
+        check_a5(ev, derived)
     if "pslq" in PARTS:
         check_pslq(ev)
     if "remainder" in PARTS:
