@@ -239,3 +239,20 @@ not, since TS13's values are within its bar. `ts13_digit:D` is what G4 alone cat
 None open from this issue. By the coordinator's ruling, `make_figures.py` (the marker split above) and every paper or README text
 (the diffs above) go into #210. `stability.py:54` and `order4.py:808` stay as they are; the dependency on `w2_output.txt`'s source
 label is noted under "Reported, not fixed".
+
+## Coordinator's review
+
+Under review: `wip/i221-growth-lowD` at e13d161, raw `I221-rpi5` at 64e147f. Review folder
+`negative-mass-raw/I221-mac-review`.
+
+- **Rerun on the Mac.**
+  - `profiles.py` writes growth.csv byte-identical.
+  - `check_growth.py` and `paper_numbers.py` print exactly the committed logs.
+  - `ts13_digits.py` and its `--selftest` exit 0, now that C1 is retargeted to `OLD_ROWS` and C2 checks the crate.
+- **ind221:** an independent parse confirms all 16 rows as the crate's values to 12 decimals, with three columns, and
+  its mutation fires.
+- **The fallout the runner reported is handled.**
+  - `ts13_digits.py`'s check was retargeted in this issue.
+  - Paper III's Table 1, its figure markers (`make_figures.py`: open circles for D ≤ 11) and its captions are updated
+    in #210.
+  - `stability.py` and `order4.py` read `w2_output.txt`, not growth.csv, and stay as they are.
