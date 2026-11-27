@@ -312,6 +312,66 @@ fn star_size(info: &bvp::StarInfo) -> (f64, f64) {
     (mx, rs)
 }
 
+/// The row of a star solved at a stated alpha_c, and (alphas in `modes`) the roots of D on the declared grid and a 4 x denser one,
+/// and (alphas in `zvar`) the lowest root under the variants of the method
+fn row_handler(cfg: &bvp::StarCfg, modes: &[f64], zvar: &[f64], r: &cont::FamRow) {
+    let (mx, rs) = star_size(&r.info);
+    println!(
+        "{{\"cmd\":\"row\",\"alpha_c\":{},\"omega\":\"{}\",\"N\":\"{}\",\"M\":\"{}\",\"k\":{:e},\"max2mr\":{:.6},\"rs\":{:.4},\"nodes\":{},\"fnorm\":{:e}}}",
+        r.alpha_c,
+        r.info.omega.sci(30),
+        r.n.sci(30),
+        r.info.mass.sci(30),
+        r.info.k.to_f64(),
+        mx,
+        rs,
+        r.info.nodes,
+        r.info.fnorm.last().unwrap()
+    );
+    let is_mode = modes.iter().any(|&x| (x - r.alpha_c).abs() < 1e-9);
+    let is_z = zvar.iter().any(|&x| (x - r.alpha_c).abs() < 1e-9);
+    if !(is_mode || is_z) {
+        return;
+    }
+    let thr = (1.0 - r.info.omega.to_f64()).powi(2);
+    let t1 = std::time::Instant::now();
+    let prep = match family::prepare(&cfg, clone_info(&r.info), 0.0, 0.995 * thr) {
+        Ok(p) => p,
+        Err(e) => {
+            println!("{{\"cmd\":\"mroots_error\",\"alpha_c\":{},\"err\":\"{}\"}}", r.alpha_c, e);
+            return;
+        }
+    };
+    let t_prep = t1.elapsed().as_secs_f64();
+    let (roots, ch, ng, wall) = family::scan_dd(&prep, 30, 1.232595164407831e-30, 1.0, 24, 32, 0.2);
+    println!("{{\"cmd\":\"mroots\",\"alpha_c\":{},\"grid\":\"base\",\"ngrid\":{},\"sign_changes\":{},\"roots\":{:?},\"thr\":{:e},\"r_far\":{:.1},\"t_prep\":{:.1},\"wall\":{:.1}}}", r.alpha_c, ng, ch, roots, thr, prep.r_far, t_prep, wall);
+    if is_mode {
+        let (roots, ch, ng, wall) = family::scan_dd(&prep, 30, 1.232595164407831e-30, 1.0, 96, 128, 0.2);
+        println!("{{\"cmd\":\"mroots\",\"alpha_c\":{},\"grid\":\"dense\",\"ngrid\":{},\"sign_changes\":{},\"roots\":{:?},\"thr\":{:e},\"wall\":{:.1}}}", r.alpha_c, ng, ch, roots, thr, wall);
+    }
+    if is_z {
+        let mut variant = |name: &str, order: usize, tol: f64, scale: f64, p: &family::Prepared| {
+            let (roots, ch, _ng, wall) = family::scan_dd(p, order, tol, scale, 24, 32, 0.2);
+            println!("{{\"cmd\":\"zvariant\",\"alpha_c\":{},\"variant\":\"{}\",\"sign_changes\":{},\"roots\":{:?},\"wall\":{:.1}}}", r.alpha_c, name, ch, roots, wall);
+        };
+        variant("R x1.5", 30, 1.232595164407831e-30, 1.5, &prep);
+        variant("order 24, tol 1e-22", 24, 1e-22, 1.0, &prep);
+        let mut cfg3 = cfg.clone();
+        cfg3.dmax = 6.0;
+        if let Ok(s3) = bvp::solve_z(&cfg3, &r.info.profile(), r.info.alpha_c, None, false) {
+            let i3 = s3.info();
+            if let Ok(p3) = family::prepare(&cfg3, i3, 0.0, 0.995 * thr) {
+                variant("layout dmax 6", 30, 1.232595164407831e-30, 1.0, &p3);
+            }
+        }
+        // f64 lane
+        let rp = prep.radial::<f64>(30, f64::EPSILON * 50.0);
+        let g = family::grid(0.2, thr, 24, 32);
+        let f = family::scan(&rp, &g, 19.0);
+        println!("{{\"cmd\":\"zvariant\",\"alpha_c\":{},\"variant\":\"f64 lane\",\"roots\":{:?}}}", r.alpha_c, f.roots.iter().map(|x| x.0.sci(17)).collect::<Vec<_>>());
+    }
+}
+
 /// Arclength continuation in alpha_c from the star at omega through the omega fold, in chunks; at each stated alpha_c a row,
 /// and (alphas in `modes`) the roots of D on the declared grid and a 4 x denser one, and (alphas in `zvariants`) the lowest
 /// root under the variants of the method
@@ -343,73 +403,57 @@ fn cmd_arc(a: &Args) {
     let mut logs = vec![];
     let dir_mut = mutate::on("arcfold");
     let cfg2 = cfg.clone();
-    let mut on_row = |r: &cont::FamRow| {
-        let (mx, rs) = star_size(&r.info);
-        println!(
-            "{{\"cmd\":\"row\",\"alpha_c\":{},\"omega\":\"{}\",\"N\":\"{}\",\"M\":\"{}\",\"k\":{:e},\"max2mr\":{:.6},\"rs\":{:.4},\"nodes\":{},\"fnorm\":{:e}}}",
-            r.alpha_c,
-            r.info.omega.sci(30),
-            r.n.sci(30),
-            r.info.mass.sci(30),
-            r.info.k.to_f64(),
-            mx,
-            rs,
-            r.info.nodes,
-            r.info.fnorm.last().unwrap()
-        );
-        let is_mode = modes.iter().any(|&x| (x - r.alpha_c).abs() < 1e-9);
-        let is_z = zvar.iter().any(|&x| (x - r.alpha_c).abs() < 1e-9);
-        if !(is_mode || is_z) {
-            return;
-        }
-        let thr = (1.0 - r.info.omega.to_f64()).powi(2);
-        let t1 = std::time::Instant::now();
-        let prep = match family::prepare(&cfg2, clone_info(&r.info), 0.0, 0.995 * thr) {
-            Ok(p) => p,
-            Err(e) => {
-                println!("{{\"cmd\":\"mroots_error\",\"alpha_c\":{},\"err\":\"{}\"}}", r.alpha_c, e);
-                return;
-            }
-        };
-        let t_prep = t1.elapsed().as_secs_f64();
-        let (roots, ch, ng, wall) = family::scan_dd(&prep, 30, 1.232595164407831e-30, 1.0, 24, 32, 0.2);
-        println!("{{\"cmd\":\"mroots\",\"alpha_c\":{},\"grid\":\"base\",\"ngrid\":{},\"sign_changes\":{},\"roots\":{:?},\"thr\":{:e},\"r_far\":{:.1},\"t_prep\":{:.1},\"wall\":{:.1}}}", r.alpha_c, ng, ch, roots, thr, prep.r_far, t_prep, wall);
-        if is_mode {
-            let (roots, ch, ng, wall) = family::scan_dd(&prep, 30, 1.232595164407831e-30, 1.0, 96, 128, 0.2);
-            println!("{{\"cmd\":\"mroots\",\"alpha_c\":{},\"grid\":\"dense\",\"ngrid\":{},\"sign_changes\":{},\"roots\":{:?},\"thr\":{:e},\"wall\":{:.1}}}", r.alpha_c, ng, ch, roots, thr, wall);
-        }
-        if is_z {
-            let mut variant = |name: &str, order: usize, tol: f64, scale: f64, p: &family::Prepared| {
-                let (roots, ch, _ng, wall) = family::scan_dd(p, order, tol, scale, 24, 32, 0.2);
-                println!("{{\"cmd\":\"zvariant\",\"alpha_c\":{},\"variant\":\"{}\",\"sign_changes\":{},\"roots\":{:?},\"wall\":{:.1}}}", r.alpha_c, name, ch, roots, wall);
-            };
-            variant("R x1.5", 30, 1.232595164407831e-30, 1.5, &prep);
-            variant("order 24, tol 1e-22", 24, 1e-22, 1.0, &prep);
-            let mut cfg3 = cfg2.clone();
-            cfg3.dmax = 6.0;
-            if let Ok(s3) = bvp::solve_z(&cfg3, &r.info.profile(), r.info.alpha_c, None, false) {
-                let i3 = s3.info();
-                if let Ok(p3) = family::prepare(&cfg3, i3, 0.0, 0.995 * thr) {
-                    variant("layout dmax 6", 30, 1.232595164407831e-30, 1.0, &p3);
-                }
-            }
-            // f64 lane
-            let rp = prep.radial::<f64>(30, f64::EPSILON * 50.0);
-            let g = family::grid(0.2, thr, 24, 32);
-            let f = family::scan(&rp, &g, 19.0);
-            println!("{{\"cmd\":\"zvariant\",\"alpha_c\":{},\"variant\":\"f64 lane\",\"roots\":{:?}}}", r.alpha_c, f.roots.iter().map(|x| x.0.sci(17)).collect::<Vec<_>>());
-        }
-    };
+    let mut on_row = |r: &cont::FamRow| row_handler(&cfg2, &modes, &zvar, r);
     let res = cont::follow_family(&cfg, &info, &targets, alpha_stop, a.u("chunk", 10), a.f("ds", 0.05), a.f("ds_max", 5.0), a.u("verbose", 0) > 0, &mut track, &mut logs, dir_mut, &mut on_row);
     for l in &logs {
         println!("{{\"cmd\":\"arc_chunk\",\"chunk\":{},\"points\":{},\"refused\":{},\"stalled\":{},\"alpha_end\":{},\"omega_end\":{:.10},\"folds\":{:?},\"t\":{:.1}}}", l.chunk, l.points, l.refused, l.stalled, l.alpha_end, l.omega_end, l.folds, l.t);
     }
     let wmin = track.iter().cloned().fold((0.0, 9.0), |m, p| if p.1 < m.1 { p } else { m });
     println!("{{\"cmd\":\"arc_track\",\"points\":{},\"omega_min_point\":[{},{}]}}", track.len(), wmin.0, wmin.1);
+    if a.u("dump", 0) > 0 {
+        let pts: Vec<String> = track.iter().map(|p| format!("[{:?},{:?}]", p.0, p.1)).collect();
+        println!("{{\"cmd\":\"arc_points\",\"points\":[{}]}}", pts.join(","));
+    }
     if let Err(e) = res {
         println!("{{\"cmd\":\"arc_error\",\"err\":\"{}\"}}", e);
     }
     println!("{{\"cmd\":\"arc_wall\",\"t\":{:.1}}}", t0.elapsed().as_secs_f64());
+}
+
+/// Rows by Newton at each stated alpha_c, stepping alpha_c with halving (`cont::step_family`), from the same weak-field star as `arc`;
+/// no arclength. The rows, mode scans and variants are those of `arc`.
+fn cmd_step(a: &Args) {
+    use multidouble::dd::DD as D;
+    let eps = a.f("eps", -1.0);
+    let omega0 = D::from_f64(a.f("omega", 0.7603));
+    let mut cfg = bvp::StarCfg::new(eps);
+    cfg.dmax = a.f("dmax", 8.0);
+    let t0 = std::time::Instant::now();
+    let sol = bvp::solve(&cfg, omega0, false).unwrap();
+    let mut info = sol.info();
+    let omega_to = a.f("omega_to", 0.45);
+    let dw = a.f("dw", 0.003);
+    let mut wcur = omega0.to_f64();
+    while (wcur - omega_to).abs() > 1e-12 {
+        let wn = if (wcur - omega_to).abs() <= dw { omega_to } else { wcur - dw * (wcur - omega_to).signum() };
+        let kt = (D::ONE - D::from_f64(wn) * D::from_f64(wn)).sqrt();
+        let s = bvp::solve_k_from_profile(&cfg, &info.profile(), kt, false).unwrap();
+        info = s.info();
+        wcur = wn;
+    }
+    println!("{{\"cmd\":\"step_start\",\"alpha_c\":{},\"omega\":{},\"t\":{:.1}}}", info.alpha_c.to_f64(), info.omega.to_f64(), t0.elapsed().as_secs_f64());
+    let targets = a.list("alphas");
+    let modes = a.list("modes");
+    let zvar = a.list("zvariants");
+    let cfg2 = cfg.clone();
+    let mut on_row = |r: &cont::FamRow| row_handler(&cfg2, &modes, &zvar, r);
+    let mut log = cont::StepLog::default();
+    let res = cont::step_family(&cfg, &info, &targets, a.f("hmax", 0.05), a.f("dlnk", 0.25), a.u("verbose", 0) > 0, &mut log, &mut on_row);
+    println!("{{\"cmd\":\"step_end\",\"solves\":{},\"refused\":{},\"last_alpha\":{}}}", log.solves, log.failures, log.last_alpha);
+    if let Err(e) = res {
+        println!("{{\"cmd\":\"step_error\",\"err\":\"{}\",\"last_alpha\":{}}}", e, log.last_alpha);
+    }
+    println!("{{\"cmd\":\"step_wall\",\"t\":{:.1}}}", t0.elapsed().as_secs_f64());
 }
 
 /// the fold of omega: arclength in k from the star at omega_to through the minimum of omega, located by multisolver
@@ -490,6 +534,7 @@ fn main() {
         }
     }
     let a = Args(m);
+    cont::set_par(a.u("par", 1) != 0);
     if cmd == "star" {
         cmd_star(&a);
         return;
@@ -508,6 +553,10 @@ fn main() {
     }
     if cmd == "arc" {
         cmd_arc(&a);
+        return;
+    }
+    if cmd == "step" {
+        cmd_step(&a);
         return;
     }
     if cmd == "follow" {

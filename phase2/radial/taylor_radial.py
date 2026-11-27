@@ -19,6 +19,7 @@ import math
 import os
 import re
 import subprocess
+import threading
 import sys
 import time
 from decimal import Decimal, ROUND_HALF_EVEN, getcontext
@@ -63,18 +64,45 @@ def build():
     subprocess.check_call(["nice", "-n", "10", "cargo", "build", "--release", "-j", "2"], cwd=CRATE, env=env)
 
 
-def rust(cmd, timeout=3600, **kw):
-    """runs the crate; returns the JSON lines of its stdout"""
+def rust(cmd, timeout=3600, tag=None, **kw):
+    """runs the crate; returns the JSON lines of its stdout. The lines are echoed to the log and appended to RAW/<tag>.jsonl
+    as they arrive, and the child (its own PID) is stopped at `timeout` s of wall time, the 1 h stop condition."""
     args = [BIN, cmd] + [f"{k}={v}" for k, v in kw.items()]
     if MUTATE:
         args.append(f"mutate={MUTATE}")
     env = dict(os.environ, RAYON_NUM_THREADS="2")
     if MUTATE:
         env["TR_MAX_SECONDS"] = "300"
-    p = subprocess.run(["nice", "-n", "10"] + args, capture_output=True, text=True, env=env, timeout=timeout)
+    p = subprocess.Popen(["nice", "-n", "10"] + args, stdout=subprocess.PIPE, text=True, env=env)  # stderr: the driver's own
+    timed_out = []
+
+    def stop():
+        timed_out.append(True)
+        p.terminate()
+
+    timer = threading.Timer(timeout, stop)
+    timer.start()
+    out, fh = [], None
+    if tag and RAW and os.path.isdir(RAW):
+        fh = open(os.path.join(RAW, f"{tag}.jsonl"), "a")
+    try:
+        for line in p.stdout:
+            if line.startswith("{"):
+                out.append(json.loads(line))
+                print("  > " + line.rstrip(), flush=True)
+                if fh:
+                    fh.write(line)
+                    fh.flush()
+        p.wait()
+    finally:
+        timer.cancel()
+        if fh:
+            fh.close()
+    if timed_out:
+        raise RuntimeError(f"{' '.join(args)} stopped at the {timeout} s limit after {len(out)} lines")
     if p.returncode:
-        raise RuntimeError(f"{' '.join(args)} exited {p.returncode}: {p.stderr[-500:]}")
-    return [json.loads(x) for x in p.stdout.splitlines() if x.startswith("{")]
+        raise RuntimeError(f"{' '.join(args)} exited {p.returncode}")
+    return out
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -578,19 +606,48 @@ def check_X1(eps, stored_key):
 FAMILY_TARGETS = [1.10, 1.15, 1.17, 1.20, 1.25, 1.30] + [round(1.4 + 0.1 * i, 2) for i in range(27)] + [4.015, 4.017906]
 MODES_TARGETS = [1.10, 1.20, 1.50, 2.00, 2.50, 3.00, 3.50, 3.90, 4.00, 4.015]
 Z_TARGETS = [2.00, 3.00]
+ARC_MAX = 2.0  # Amendment A2: arclength to here; Newton stepping in alpha_c above
+fmt_list = lambda xs: ",".join(f"{x:g}" for x in xs)
+# each stage is one child run of at most 3600 s: `arc` (multisolver arclength through the fold) or `step` (Newton, alpha_c stepped with halving)
+STAGES = {
+    "arc": dict(cmd="arc", alphas=[x for x in FAMILY_TARGETS if x <= ARC_MAX], modes=[1.10, 1.20, 1.50, 2.00], zvariants=[2.00],
+                extra=dict(alpha_stop=ARC_MAX, chunk=10, ds=0.05, ds_max=5)),
+    "stepA": dict(cmd="step", alphas=[x for x in FAMILY_TARGETS if x > ARC_MAX], modes=[], zvariants=[], extra=dict(hmax=0.05, dlnk=0.25)),
+    "stepB": dict(cmd="step", alphas=[2.50, 3.00], modes=[2.50, 3.00], zvariants=[3.00], extra=dict(hmax=0.05, dlnk=0.25)),
+    "stepC": dict(cmd="step", alphas=[3.50, 3.90, 4.00, 4.015], modes=[3.50, 3.90, 4.00, 4.015], zvariants=[], extra=dict(hmax=0.05, dlnk=0.25)),
+}
 ARC_LINES = None
+TAG = None  # --tag=NAME: the jsonl of a stage is RAW/NAME.jsonl (development runs)
+
+
+def run_stage(name):
+    """one stage: the child's JSON lines (also in RAW/<name>[_MUTATE].jsonl as they arrive)"""
+    st = STAGES[name]
+    kw = dict(eps=-1, omega=0.66, omega_to=0.45, dw=0.003, alphas=fmt_list(st["alphas"]), modes=fmt_list(st["modes"]), verbose=1, **st["extra"])
+    if st["zvariants"]:
+        kw["zvariants"] = fmt_list(st["zvariants"])
+    lines = rust(st["cmd"], timeout=3600, tag=f"{TAG or name}{'_' + MUTATE if MUTATE else ''}", **kw)
+    kind = st["cmd"]
+    for l in lines:
+        l["_kind"] = kind
+    return lines
 
 
 def arc_lines(arc_log=None):
-    """the JSON lines of the `arc` run: from a log file, or by running it"""
+    """the JSON lines of the family runs: from the logs (comma-separated JSONL files of the stages), or by running every stage"""
     global ARC_LINES
     if ARC_LINES is None:
+        ARC_LINES = []
         if arc_log:
-            ARC_LINES = [json.loads(x) for x in open(arc_log) if x.startswith("{")]
+            for f in arc_log.split(","):
+                ls = [json.loads(x) for x in open(f) if x.startswith("{")]
+                kind = "arc" if any(l["cmd"] == "arc_start" for l in ls) else "step"
+                for l in ls:
+                    l["_kind"] = kind
+                ARC_LINES += ls
         else:
-            fmt = lambda xs: ",".join(f"{x:g}" for x in xs)
-            ARC_LINES = rust("arc", timeout=3 * 3600, eps=-1, omega=0.66, omega_to=0.45, dw=0.003, alphas=fmt(FAMILY_TARGETS), alpha_stop=4.017906,
-                             modes=fmt(MODES_TARGETS), zvariants=fmt(Z_TARGETS), chunk=10, ds=0.05, ds_max=5)
+            for name in STAGES:
+                ARC_LINES += run_stage(name)
     return ARC_LINES
 
 
@@ -620,10 +677,18 @@ def check_C(arc_log=None):
     print("\n".join(out), flush=True)
     chunks = [l for l in lines if l["cmd"] == "arc_chunk"]
     tr = [l for l in lines if l["cmd"] == "arc_track"][0]
-    err = [l for l in lines if l["cmd"] == "arc_error"]
-    report("C", nbad == 0 and not err, f"{ntok - nbad} of {ntok} tokens (w, N, M of {len(stored)} stored rows) equal their stored print; largest relative difference {worst_rel:.1e}; "
-           f"arclength in alpha_c in {len(chunks)} chunks, {sum(c['points'] for c in chunks)} points, {sum(c['refused'] for c in chunks)} refused steps; "
+    err = [l for l in lines if l["cmd"] in ("arc_error", "step_error")]
+    n_arc = sum(1 for l in lines if l["cmd"] == "row" and l["_kind"] == "arc")
+    n_step = sum(1 for l in lines if l["cmd"] == "row" and l["_kind"] == "step")
+    ends = [l for l in lines if l["cmd"] == "step_end"]
+    report("C1", nbad == 0 and not err, f"{ntok - nbad} of {ntok} tokens (w, N, M of {len(stored)} stored rows) equal their stored print; largest relative difference {worst_rel:.1e}; "
+           f"{n_arc} rows beside the arclength path (to alpha_c = {max(c['alpha_end'] for c in chunks):.4f} in {len(chunks)} chunks, {sum(c['points'] for c in chunks)} points, "
+           f"{sum(c['refused'] for c in chunks)} refused steps), {n_step} rows by Newton stepping in alpha_c ({sum(e['solves'] for e in ends)} solves, {sum(e['refused'] for e in ends)} refused); "
            f"omega_min on the path {tr['omega_min_point'][1]:.8f} at alpha_c {tr['omega_min_point'][0]:.5f} (path point, not the fold)" + (f"; ERROR {err[0]['err'][:200]}" if err else ""))
+    reached = max(c["alpha_end"] for c in chunks)
+    report("C2", reached >= 4.017906 and not any(l["cmd"] == "arc_error" for l in lines),
+           f"the pseudo-arclength continuation as worded in the README (the weak-field star up to alpha_c = 4.017906): the arclength path reached alpha_c = {reached:.4f}; "
+           f"Amendment A2 ends it at {ARC_MAX} (cost: dev_02, dev_05) and takes the rows above by Newton stepping; as worded: NOT MET")
 
 
 def check_F(arc_log=None):
@@ -746,10 +811,11 @@ CHECKS = ["P1", "P2", "P3", "G1", "G2", "S1", "S2", "S5", "A", "X1", "C", "F", "
 
 
 def main():
-    global MUTATE, RAW
+    global MUTATE, RAW, TAG
     argv = sys.argv[1:]
     only = None
     arc_log = None
+    stage = None
     for a in argv:
         if a.startswith("--mutate="):
             MUTATE = a.split("=", 1)[1]
@@ -759,6 +825,10 @@ def main():
             RAW = a.split("=", 1)[1]
         elif a.startswith("--arc-log="):
             arc_log = a.split("=", 1)[1]
+        elif a.startswith("--stage="):
+            stage = a.split("=", 1)[1]
+        elif a.startswith("--tag="):
+            TAG = a.split("=", 1)[1]
     if "--gen" in argv:
         gen()
         return
@@ -771,6 +841,11 @@ def main():
     if not os.path.exists(BIN):
         build()
     t0 = time.time()
+    if stage:
+        lines = run_stage(stage)
+        bad = [l for l in lines if l["cmd"] in ("arc_error", "step_error")]
+        print(f"stage {stage}: {len(lines)} lines, {sum(1 for l in lines if l['cmd'] == 'row')} rows, {len(bad)} errors; mutation: {MUTATE}; {time.time() - t0:.0f} s")
+        sys.exit(1 if bad else 0)
     table = {
         "P1": check_P1, "P2": check_P2, "P3": check_P3, "G1": check_G1, "G2": check_G2, "S1": check_S1,
         "S2": lambda: report("S2", float([l for l in rust("s2", omega="0.75", eps=1, x0=4.5) if l["cmd"] == "S2"][0]["worst_rel"]) <= CRIT["S2_TOL"],

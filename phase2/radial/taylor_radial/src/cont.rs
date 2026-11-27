@@ -8,6 +8,19 @@ use multishoot::multisolver::arclength::Bordered;
 use multishoot::multisolver::newton::{exact, Exact, NewtonOpts};
 use multishoot::multisolver::prec::parts;
 use multishoot::{Double, Family, Plan, Shooting};
+use std::sync::atomic::{AtomicBool, Ordering};
+
+/// Whether the corrector's Jacobian and LU, and the tangent, run on rayon tasks (multishoot's result does not depend on it).
+/// `par=0` on the command line restores the serial path of the first arclength runs.
+static PAR: AtomicBool = AtomicBool::new(true);
+
+pub fn set_par(b: bool) {
+    PAR.store(b, Ordering::Relaxed);
+}
+
+fn par() -> bool {
+    PAR.load(Ordering::Relaxed)
+}
 
 pub struct PathPoint {
     pub z: Vec<Vec<f64>>,
@@ -23,7 +36,7 @@ pub struct ArcRun {
 }
 
 fn exact_f<Fa: Family<Double> + ?Sized>(b: &Bordered<'_, Double, Fa>, w: &[&[f64]]) -> Result<Exact<Double>, String> {
-    exact::<Double, _>(b, w, false)
+    exact::<Double, _>(b, w, par())
 }
 
 fn opts(ds: f64, ds_max: f64, max_points: usize) -> ArcOpts {
@@ -35,7 +48,7 @@ pub fn follow_z(sol: &StarSolZ, dir: f64, ds: f64, ds_max: f64, max_points: usiz
     let fam = sol.sh.in_global(0, 0)?;
     let (zf, p) = fam.family_z::<Double>(&parts(&sol.z));
     let factor = exact_f;
-    let st = start::<Double, _, _>(&fam, &parts(&zf), p, dir, false, factor)?;
+    let st = start::<Double, _, _>(&fam, &parts(&zf), p, dir, par(), factor)?;
     let path = continuation::<Double, _, _>(&fam, st, &opts(ds, ds_max, max_points), factor, |pt| stop(Double_hi(pt.p)))?;
     Ok(ArcRun {
         points: path
@@ -78,7 +91,7 @@ pub fn follow_k(sol: &StarSol, start_pt: Option<multishoot::multisolver::arcleng
         Some(p) => p,
         None => {
             let (zf, p) = fam.family_z::<Double>(&parts(&sol.z));
-            start::<Double, _, _>(&fam, &parts(&zf), p, dir, false, factor)?
+            start::<Double, _, _>(&fam, &parts(&zf), p, dir, par(), factor)?
         }
     };
     let mut o = opts(ds, ds_max, max_points);
@@ -199,6 +212,83 @@ pub fn follow_family(
         }
         if run.points.len() < 2 {
             return Err(format!("chunk {chunk_no}: no progress at alpha_c {}", cur.to_f64()));
+        }
+    }
+    Ok(())
+}
+
+/// What `step_family` did: solves attempted, those refused (halved), the last alpha_c reached
+#[derive(Default)]
+pub struct StepLog {
+    pub solves: usize,
+    pub failures: usize,
+    pub last_alpha: f64,
+}
+
+/// Newton at each stated alpha_c on the alpha_c-pinned layout (`solve_z`), alpha_c stepped up from `start` by at most `hmax`.
+/// A step is taken when Newton converges to fnorm <= 1e-24 and k changes by at most `max_dlnk` in ln k; otherwise the step is
+/// halved, and it grows by 1.3 after each success. The step lands on every target. The stepping stops with an error when the
+/// step falls below 1e-7 (no other method is tried), and `log.last_alpha` is then the last alpha_c reached.
+pub fn step_family(
+    cfg: &StarCfg,
+    start: &StarInfo,
+    targets: &[f64],
+    hmax: f64,
+    max_dlnk: f64,
+    verbose: bool,
+    log: &mut StepLog,
+    on_row: &mut dyn FnMut(&FamRow),
+) -> Result<(), String> {
+    let mut info = StarInfo { eps: start.eps, cfg: start.cfg.clone(), steps: start.steps.clone(), k: start.k, omega: start.omega, pc: start.pc, zc: start.zc, alpha_c: start.alpha_c, mass: start.mass, r_t: start.r_t, nodes: start.nodes, fnorm: start.fnorm.clone(), converged: true };
+    let mut cur = start.alpha_c;
+    log.last_alpha = cur.to_f64();
+    let mut h = hmax.min(0.01);
+    let t0 = std::time::Instant::now();
+    for &tg in targets {
+        if tg <= cur.to_f64() {
+            return Err(format!("target {tg} is not above the alpha_c reached, {}", cur.to_f64()));
+        }
+        let tgd = DD::from_f64(tg);
+        loop {
+            let last = tg - cur.to_f64() <= h;
+            let next = if last { tgd } else { cur + DD::from_f64(h) };
+            log.solves += 1;
+            let ok = match solve_z(cfg, &info.profile(), next, None, false) {
+                Ok(sz) => {
+                    let ni = sz.info();
+                    let dlnk = (ni.k.to_f64() / info.k.to_f64()).ln().abs();
+                    if ni.converged && *ni.fnorm.last().unwrap() <= 1e-24 && dlnk <= max_dlnk {
+                        Some(ni)
+                    } else {
+                        None
+                    }
+                }
+                Err(_) => None,
+            };
+            match ok {
+                Some(ni) => {
+                    if verbose {
+                        eprintln!("step alpha_c {:.6} h {:.2e} k {:.5} omega {:.8} solves {} refused {} t {:.1}s", next.to_f64(), h, ni.k.to_f64(), ni.omega.to_f64(), log.solves, log.failures, t0.elapsed().as_secs_f64());
+                    }
+                    info = ni;
+                    cur = next;
+                    log.last_alpha = cur.to_f64();
+                    if last {
+                        let n = crate::family::noether(&info.steps, info.omega, cfg.rs, info.pc, info.zc);
+                        let row = FamRow { alpha_c: tg, info: StarInfo { eps: info.eps, cfg: info.cfg.clone(), steps: info.steps.clone(), k: info.k, omega: info.omega, pc: info.pc, zc: info.zc, alpha_c: info.alpha_c, mass: info.mass, r_t: info.r_t, nodes: info.nodes, fnorm: info.fnorm.clone(), converged: info.converged }, n };
+                        on_row(&row);
+                        break;
+                    }
+                    h = (h * 1.3).min(hmax);
+                }
+                None => {
+                    log.failures += 1;
+                    h /= 2.0;
+                    if h < 1e-7 {
+                        return Err(format!("alpha_c stepping stalled: the step fell below 1e-7 at alpha_c {} (target {tg}, {} refused of {} solves)", cur.to_f64(), log.failures, log.solves));
+                    }
+                }
+            }
         }
     }
     Ok(())
