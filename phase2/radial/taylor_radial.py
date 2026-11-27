@@ -140,7 +140,7 @@ def stored_crossing():
     text = open(RESULTS).read()
     out = {}
     for eps, head in ((1, "Fine scan with 17 stars"), (-1, "Fine scan (`crossing_m.txt`):")):
-        sec = text.split(head)[1].split("\n\n")[1] if eps == 1 else text.split(head)[1].split("\n\n")[0]
+        sec = text.split(head)[1].split("\n\n")[1]
         vals = re.findall(r"\|\s*(dM/dω = 0|dN/dω = 0|σ² = 0)\s*\|\s*\**([0-9.]+)\**\s*\|", sec)
         out[eps] = {k: v for k, v in vals}
     return out
@@ -254,7 +254,9 @@ def mp_J_entries(r, alpha, a, phi0, u, omega, eps, s2, lam, mu, pi_mp=None, dps=
     import mpmath as mp
     mp.mp.dps = dps
     src = open(os.path.join(HERE, "radial_rhs_generated.py")).read()
-    src = src.replace("from numpy import pi, exp, sqrt, log", "from mpmath import pi, exp, sqrt, log")
+    src = src.replace("from numpy import pi, exp, sqrt, log", "from mpmath import pi, exp, sqrt, log, mpf")
+    # the generated source writes rational constants as float divisions (8/3): exact rationals here
+    src = re.sub(r"(?<![\w.])(\d+)/(\d+)(?![\w.])", r"(mpf(\1)/\2)", src)
     ns = {}
     exec(compile(src, "radial_rhs_generated_mp", "exec"), ns)
     if pi_mp is not None:
@@ -273,6 +275,8 @@ def mp_J_entries(r, alpha, a, phi0, u, omega, eps, s2, lam, mu, pi_mp=None, dps=
 
 
 def poly_extremum(ws, vals, deg=None):
+    if MUTATE == "fit_deg":
+        deg = 3
     """the extremum of the interpolating polynomial through (ws, vals): mpmath, to the digits of the inputs. ws, vals are
     mpf lists; returns the root of the derivative nearest the middle of the window"""
     import mpmath as mp
@@ -557,11 +561,15 @@ def check_X1(eps, stored_key):
     e1 = abs(res["E1: window 2e-3, degree 10"][0] - wN)
     d_sn, d_nm = abs(w0 - wN), abs(wN - wM)
     ok1 = d_sn <= CRIT["X1_TOL"] and d_nm <= CRIT["X1_TOL"]
-    st_ok = all(abs(v - m) <= mp.mpf(CRIT["X1_STORED"]) for v, m in ((w0, w_stored["σ² = 0"]), (wN, w_stored["dN/dω = 0"]), (wM, w_stored["dM/dω = 0"])))
-    report(f"X1_eps{eps:+d}", ok1 and st_ok,
+    devs = {k: abs(v - m) for k, (v, m) in {"sigma^2 = 0": (w0, w_stored["σ² = 0"]), "dN/dw = 0": (wN, w_stored["dN/dω = 0"]), "dM/dw = 0": (wM, w_stored["dM/dω = 0"])}.items()}
+    st_ok = all(d <= mp.mpf(CRIT["X1_STORED"]) for d in devs.values())
+    report(f"X1a_eps{eps:+d}", ok1,
            f"sigma^2 = 0 at w = {mp.nstr(w0, 22)}; dN/dw = 0 at {mp.nstr(wN, 22)}; dM/dw = 0 at {mp.nstr(wM, 22)}; "
-           f"|w0 - wN| = {float(d_sn):.1e}, |wN - wM| = {float(d_nm):.1e} (limit {CRIT['X1_TOL']:g}); stored {stored['σ² = 0']}, {stored['dN/dω = 0']}, {stored['dM/dω = 0']} "
-           f"(within {CRIT['X1_STORED']:g}: {st_ok}); error bars: E1 (fit window and degree) {float(e1):.1e}, E3 shift of w0 from R x1.5 {float(var['R x1.5']):.1e}, from order 24 tol 1e-22 {float(var['order 24, tol 1e-22']):.1e}")
+           f"|w0 - wN| = {float(d_sn):.1e}, |wN - wM| = {float(d_nm):.1e} (limit {CRIT['X1_TOL']:g}); "
+           f"error bars: E1 (fit window and degree) {float(e1):.1e}, E3 shift of w0 from R x1.5 {float(var['R x1.5']):.1e}, from order 24 tol 1e-22 {float(var['order 24, tol 1e-22']):.1e}")
+    report(f"X1b_eps{eps:+d}", st_ok,
+           f"against the stored table ({stored['σ² = 0']}, {stored['dN/dω = 0']}, {stored['dM/dω = 0']}) within {CRIT['X1_STORED']:g}: "
+           + ", ".join(f"{k} off by {float(d):.2e}" for k, d in devs.items()))
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -706,14 +714,32 @@ def check_Z(arc_log=None):
 
 
 def check_fold():
-    lines = rust("fold", timeout=3600, eps=-1, omega=0.7603, omega_to=0.45, dw=0.003)
+    import mpmath as mp
+    mp.mp.dps = 50
+    lines = rust("fold", timeout=3600, eps=-1, omega=0.7603, omega_to=0.45, dw=0.003, ds=0.01, ds_max=0.04, chunk=40, max_chunks=8)
     f = [l for l in lines if l["cmd"] == "fold"]
     if not f:
-        report("FOLD", False, str([l for l in lines if l['cmd'] == 'fold_error']))
+        report("FOLD", False, str([l for l in lines if l["cmd"] == "fold_error"]))
         return
     f = f[0]
-    st = 0.42226358
-    report("FOLD", abs(float(f["omega_min"]) - st) < 5e-8, f"locate_fold on the k-pinned family: omega_min = {f['omega_min'][:22]} at alpha_c = {f['alpha_c']:.6f} ({f['points']} path points, {f['locate_corrections']} corrections); stored omega_min = 0.42226358 at alpha_c = 1.172 (phantom_checks.py C4)")
+    det = f["detected_between_k"]
+    # omega_min and its alpha_c from the family in alpha_c: the extremum of the interpolating polynomial of omega(alpha_c)
+    res = {}
+    for name, h, n in (("window 1.6e-2, degree 8", mp.mpf("2e-3"), 9), ("window 3e-2, degree 10", mp.mpf("3e-3"), 11)):
+        alphas = [mp.mpf("1.172") + (i - n // 2) * h for i in range(n)]
+        al_f = [float(a) for a in alphas]
+        rows = rust("follow", timeout=3600, eps=-1, omega=0.66, omega_to=0.45, dw=0.003, h=0.01, alphas=",".join(repr(a) for a in al_f))
+        got = {round(r["alpha_c"], 12): r for r in rows if r["cmd"] == "row"}
+        xs = [mp.mpf(repr(a)) for a in al_f]
+        ys = [mp.mpf(got[round(a, 12)]["omega"]) for a in al_f]
+        astar, c, mid = poly_extremum(xs, ys)
+        wmin = sum(c[j] * (astar - mid) ** j for j in range(len(c)))
+        res[name] = (astar, wmin)
+    (a1, w1), (a2, w2) = res["window 1.6e-2, degree 8"], res["window 3e-2, degree 10"]
+    ok = det is not None and abs(float(w1) - 0.42226) < 1e-5 and abs(float(a1) - 1.172) < 1e-3
+    loc = f["omega_min"] if f["omega_min"] else f"not located: {f['locate_error']}"
+    report("FOLD", ok, f"multisolver's arclength in k detects the fold of k (minimum of omega) between k = {det[0]:.10f} and {det[1]:.10f} ({f['points']} path points); locate_fold: {loc}; "
+           f"omega(alpha_c) polynomial: omega_min = {mp.nstr(w1, 20)} at alpha_c = {mp.nstr(a1, 14)} (window 1.6e-2, degree 8), spread to the 3e-2 window, degree 10: omega_min {float(abs(w1 - w2)):.1e}, alpha_c {float(abs(a1 - a2)):.1e}; stored: omega_min = 0.42226 at alpha_0 = 1.172 (phantom_checks.py C4)")
 
 
 CHECKS = ["P1", "P2", "P3", "G1", "G2", "S1", "S2", "S5", "A", "X1", "C", "F", "Z", "FOLD"]

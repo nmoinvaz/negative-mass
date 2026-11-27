@@ -33,7 +33,9 @@ pub struct Model {
 }
 
 pub fn pars<T: Num>(m: &Model, s2: T) -> Pars<T> {
-    Pars { omega: T::from_dd(m.omega), epsilon: T::from_f64(m.epsilon), s2, lambda: crate::model::lam::<T>(), mu: crate::model::mu::<T>(), pi: crate::model::pi::<T>() }
+    let omega = if crate::mutate::on("jomega") { T::from_dd(m.omega) * T::from_f64(1.0 + 1e-6) } else { T::from_dd(m.omega) };
+    let mu = if crate::mutate::on("jmu") { crate::model::mu::<T>() * T::from_f64(1.0 + 1e-6) } else { crate::model::mu::<T>() };
+    Pars { omega, epsilon: T::from_f64(m.epsilon), s2, lambda: crate::model::lam::<T>(), mu, pi: crate::model::pi::<T>() }
 }
 
 /// series of (r, alpha, a, phi0, u) about b from the star's series about its center

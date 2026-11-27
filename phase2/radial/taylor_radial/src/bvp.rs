@@ -147,13 +147,14 @@ impl Equations<1> for StarK {
         let one = c::<T>(1.0);
         let inv_r = one / r;
         let u = if mutate::on("tailk") { -k + inv_r } else { -k - inv_r };
-        let zr = one / (one - c::<T>(2.0) * mr * inv_r);
+        let zr = if mutate::on("znorm") { one } else { one / (one - c::<T>(2.0) * mr * inv_r) };
         vec![pr, u, mr, zr]
     }
 }
 
 /// The layout with its nodes and the pin of k, no steps planned yet
 pub fn layout(eps: f64, nodes: Vec<f64>, kt: usize, k_target: DD) -> Shooting<StarK, 1> {
+    let eps = if mutate::on("eps") { -eps } else { eps };
     let mut sh = Shooting::new(StarK { eps }, nodes, kt);
     let og = sh.off_global();
     sh.extra.push(ExtraRow { terms: vec![(og, DD::ONE)], rhs: k_target });
@@ -179,7 +180,7 @@ pub fn zget(z: &[Vec<f64>], idx: usize) -> DD {
 // ------------------------------------------------------------------------------------------------------------
 use crate::num::Num;
 use crate::star_ref::{march, solve_central, SolveCfg, StarPars};
-use multishoot::multisolver::newton::{NewtonOpts, NewtonReport};
+use multishoot::multisolver::newton::{NewtonOpts, NewtonReport, Scaling};
 use multishoot::{Double, Plan};
 
 #[derive(Clone, Debug)]
@@ -357,6 +358,11 @@ pub fn set_row_scale(sh: &mut Shooting<StarK, 1>, z: &[Vec<f64>]) {
 
 /// Newton, and when it stops short of the tolerance a second pass with the P rows scaled by the iterate rather than by the guess
 fn newton_twice<E: Equations<1>>(sh: &mut Shooting<E, 1>, z: &mut Vec<Vec<f64>>, opts: &NewtonOpts) -> Result<NewtonReport, String> {
+    let mut o2 = *opts;
+    if mutate::on("nonewton") {
+        o2.max_iter = 1;
+    }
+    let opts = &o2;
     let mut rep = sh.newton::<Double>(z, opts)?;
     if !rep.converged {
         let mut rs2 = vec![1.0; sh.rows()];
@@ -386,7 +392,7 @@ pub fn solve(cfg: &StarCfg, omega: DD, verbose: bool) -> Result<StarSol, String>
     let plan = Plan { kt: cfg.kt, tol: cfg.plan_tol, hmax: 4.0 };
     sh.plan_segments(&z[0], &z[1], &plan);
     set_row_scale(&mut sh, &z);
-    let opts = NewtonOpts { tol: 1e-27, max_iter: 25, ..Default::default() };
+    let opts = NewtonOpts { tol: 1e-28, max_iter: 25, scaling: Scaling::Iterates { floor: 1e-250 }, ..Default::default() };
     if std::env::var("TR_VERBOSE").is_ok() {
         eprintln!("solve: K {} nodes, len {}, planned segments steps {:?}", sh.k(), sh.len(), sh.segs.iter().map(|s| s.len() - 1).collect::<Vec<_>>());
     }
@@ -486,12 +492,13 @@ impl Equations<1> for StarZ {
         let one = c::<T>(1.0);
         let inv_r = one / c::<T>(x);
         let u = if mutate::on("tailk") { -kr + inv_r } else { -kr - inv_r };
-        let zr = one / (one - c::<T>(2.0) * mr * inv_r);
+        let zr = if mutate::on("znorm") { one } else { one / (one - c::<T>(2.0) * mr * inv_r) };
         vec![pr, u, mr, zr, kr]
     }
 }
 
 pub fn layout_z(eps: f64, nodes: Vec<f64>, kt: usize, alpha_target: DD) -> Shooting<StarZ, 1> {
+    let eps = if mutate::on("eps") { -eps } else { eps };
     let mut sh = Shooting::new(StarZ { eps }, nodes, kt);
     let og = sh.off_global();
     sh.extra.push(ExtraRow { terms: vec![(og, DD::ONE)], rhs: alpha_target });
@@ -614,12 +621,16 @@ pub fn solve_z(cfg: &StarCfg, prof: &Profile, alpha_target: DD, nodes_in: Option
         }
     }
     sh.row_scale = rs;
-    let opts = NewtonOpts { tol: 1e-27, max_iter: 25, ..Default::default() };
+    let opts = NewtonOpts { tol: 1e-28, max_iter: 25, scaling: Scaling::Iterates { floor: 1e-250 }, ..Default::default() };
     let rep = newton_twice(&mut sh, &mut z, &opts)?;
     if verbose {
         eprintln!("newton_z: converged {} fnorm {:?}", rep.converged, rep.fnorm.iter().map(|v| format!("{v:.1e}")).collect::<Vec<_>>());
     }
-    Ok(StarSolZ { cfg: cfg.clone(), sh, z, x_node, report: Some(rep) })
+    let sol = StarSolZ { cfg: cfg.clone(), sh, z, x_node, report: Some(rep) };
+    if std::env::var("TR_VERBOSE").is_ok() && !sol.report.as_ref().unwrap().converged {
+        eprintln!("solve_z not converged at alpha {}: worst rows {:?} nodes {:?}", alpha_target.to_f64(), worst_rows_z(&sol, 4), sol.sh.nodes);
+    }
+    Ok(sol)
 }
 
 impl StarSolZ {
@@ -664,18 +675,25 @@ pub struct StarInfo {
 
 impl StarSol {
     pub fn info(&self) -> StarInfo {
-        let g = [multishoot::lane::DV::splat(self.k())];
+        self.info_at(&self.z)
+    }
+
+    /// the info of another state z of the same layout (a point of an arclength path in k)
+    pub fn info_at(&self, z: &[Vec<f64>]) -> StarInfo {
+        let k = zget(z, self.sh.off_global());
+        let g = [multishoot::lane::DV::splat(k)];
         let rep = self.report.as_ref().unwrap();
+        let zc = zget(z, 8);
         StarInfo {
             eps: self.cfg.eps,
             cfg: self.cfg.clone(),
-            steps: crate::table::steps_layout(&self.sh, &self.z, &g),
-            k: self.k(),
-            omega: self.omega(),
-            pc: self.pc(),
-            zc: self.zc(),
-            alpha_c: self.zc().recip().sqrt(),
-            mass: self.mass(),
+            steps: crate::table::steps_layout(&self.sh, z, &g),
+            k,
+            omega: (DD::ONE - k * k).sqrt(),
+            pc: zget(z, 0),
+            zc,
+            alpha_c: zc.recip().sqrt(),
+            mass: zget(z, self.sh.off_right() + 8),
             r_t: *self.sh.nodes.last().unwrap(),
             nodes: self.sh.k(),
             fnorm: rep.fnorm.clone(),
@@ -745,7 +763,7 @@ pub fn solve_k_from_profile(cfg: &StarCfg, prof: &Profile, k_target: DD, verbose
     let plan = Plan { kt: cfg.kt, tol: cfg.plan_tol, hmax: 4.0 };
     sh.plan_segments(&z[0], &z[1], &plan);
     set_row_scale(&mut sh, &z);
-    let opts = NewtonOpts { tol: 1e-27, max_iter: 25, ..Default::default() };
+    let opts = NewtonOpts { tol: 1e-28, max_iter: 25, scaling: Scaling::Iterates { floor: 1e-250 }, ..Default::default() };
     let rep = newton_twice(&mut sh, &mut z, &opts)?;
     if verbose {
         eprintln!("newton_k: converged {} fnorm {:?}", rep.converged, rep.fnorm.iter().map(|v| format!("{v:.1e}")).collect::<Vec<_>>());

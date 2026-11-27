@@ -1,6 +1,7 @@
 //! taylor_radial: the radial boson-star modes and the phantom family by Taylor integration (negative-mass #194).
 //! Usage: taylor_radial <cmd> key=value ...   (see ../../taylor_radial.py for the calls it makes)
 mod bvp;
+mod checks;
 mod cont;
 mod family;
 mod linalg;
@@ -43,6 +44,9 @@ impl Args {
 /// Far-field distance in units of 1/kappa_min: the contamination of the decaying plane is e^{-2 kappa (R - r_m)},
 /// below the lane's roundoff.
 pub fn far_factor<T: Num>() -> f64 {
+    if mutate::on("shortR") {
+        return 3.0;
+    }
     match T::NAME {
         "f64" => 19.0,
         "dd" => 40.0,
@@ -155,7 +159,7 @@ fn cmd_star(a: &Args) {
 fn cmd_row(a: &Args) {
     use multidouble::dd::DD as D;
     let eps = a.f("eps", 1.0);
-    let omega = D::from_f64(a.f("omega", 0.94));
+    let omega = <D as Num>::parse(a.s("omega", "0.94"));
     let mut cfg = bvp::StarCfg::new(eps);
     cfg.dmax = a.f("dmax", 8.0);
     let thr = (1.0 - omega.to_f64()).powi(2);
@@ -196,8 +200,8 @@ fn report_scan<T: Num>(a: &Args, prep: &family::Prepared, g: &[f64], order: usiz
     let rp = prep.radial::<T>(order, a.f("tol", T::EPS * 100.0));
     let found = family::scan(&rp, g, far_factor::<T>() * a.f("rfar_scale", 1.0));
     if a.u("dump", 0) > 0 {
-        for (s, v) in &found.vals {
-            println!("{{\"cmd\":\"D\",\"s2\":{:e},\"D\":{:e}}}", s, v);
+        for ((s, _), v) in found.vals.iter().zip(&found.val_str) {
+            println!("{{\"cmd\":\"D\",\"s2\":{:e},\"D\":\"{}\"}}", s, v);
         }
     }
     let signs: Vec<i32> = found.vals.iter().map(|v| if v.1 < 0.0 { -1 } else { 1 }).collect();
@@ -290,7 +294,27 @@ fn cmd_follow(a: &Args) {
     }
 }
 
-/// Arclength continuation in alpha_c from the star at omega through the omega fold, in chunks, rows at the targets
+/// the radius where P falls to 1e-6 P_c (radial_modes' r_m rule on an exact star) and max |2m/r|
+fn star_size(info: &bvp::StarInfo) -> (f64, f64) {
+    let prof = info.profile();
+    let pc = prof.state(info.cfg.rs)[0].to_f64();
+    let mut rs = f64::NAN;
+    let mut mx = 0.0f64;
+    let mut r = 0.25;
+    while r < prof.r_t {
+        let s = prof.state(r);
+        mx = mx.max((2.0 * s[2].to_f64() / r).abs());
+        if rs.is_nan() && s[0].to_f64() < 1e-6 * pc {
+            rs = r;
+        }
+        r += 0.25;
+    }
+    (mx, rs)
+}
+
+/// Arclength continuation in alpha_c from the star at omega through the omega fold, in chunks; at each stated alpha_c a row,
+/// and (alphas in `modes`) the roots of D on the declared grid and a 4 x denser one, and (alphas in `zvariants`) the lowest
+/// root under the variants of the method
 fn cmd_arc(a: &Args) {
     use multidouble::dd::DD as D;
     let eps = a.f("eps", -1.0);
@@ -312,34 +336,145 @@ fn cmd_arc(a: &Args) {
     }
     println!("{{\"cmd\":\"arc_start\",\"alpha_c\":{},\"omega\":{},\"t\":{:.1}}}", info.alpha_c.to_f64(), info.omega.to_f64(), t0.elapsed().as_secs_f64());
     let targets = a.list("alphas");
+    let modes = a.list("modes");
+    let zvar = a.list("zvariants");
     let alpha_stop = a.f("alpha_stop", *targets.last().unwrap_or(&1.3));
     let mut track = vec![];
     let mut logs = vec![];
-    let res = cont::follow_family(&cfg, &info, &targets, alpha_stop, a.u("chunk", 6), a.f("ds", 0.05), a.f("ds_max", 2.0), a.u("verbose", 0) > 0, &mut track, &mut logs);
+    let dir_mut = mutate::on("arcfold");
+    let cfg2 = cfg.clone();
+    let mut on_row = |r: &cont::FamRow| {
+        let (mx, rs) = star_size(&r.info);
+        println!(
+            "{{\"cmd\":\"row\",\"alpha_c\":{},\"omega\":\"{}\",\"N\":\"{}\",\"M\":\"{}\",\"k\":{:e},\"max2mr\":{:.6},\"rs\":{:.4},\"nodes\":{},\"fnorm\":{:e}}}",
+            r.alpha_c,
+            r.info.omega.sci(30),
+            r.n.sci(30),
+            r.info.mass.sci(30),
+            r.info.k.to_f64(),
+            mx,
+            rs,
+            r.info.nodes,
+            r.info.fnorm.last().unwrap()
+        );
+        let is_mode = modes.iter().any(|&x| (x - r.alpha_c).abs() < 1e-9);
+        let is_z = zvar.iter().any(|&x| (x - r.alpha_c).abs() < 1e-9);
+        if !(is_mode || is_z) {
+            return;
+        }
+        let thr = (1.0 - r.info.omega.to_f64()).powi(2);
+        let t1 = std::time::Instant::now();
+        let prep = match family::prepare(&cfg2, clone_info(&r.info), 0.0, 0.995 * thr) {
+            Ok(p) => p,
+            Err(e) => {
+                println!("{{\"cmd\":\"mroots_error\",\"alpha_c\":{},\"err\":\"{}\"}}", r.alpha_c, e);
+                return;
+            }
+        };
+        let t_prep = t1.elapsed().as_secs_f64();
+        let (roots, ch, ng, wall) = family::scan_dd(&prep, 30, 1.232595164407831e-30, 1.0, 24, 32, 0.2);
+        println!("{{\"cmd\":\"mroots\",\"alpha_c\":{},\"grid\":\"base\",\"ngrid\":{},\"sign_changes\":{},\"roots\":{:?},\"thr\":{:e},\"r_far\":{:.1},\"t_prep\":{:.1},\"wall\":{:.1}}}", r.alpha_c, ng, ch, roots, thr, prep.r_far, t_prep, wall);
+        if is_mode {
+            let (roots, ch, ng, wall) = family::scan_dd(&prep, 30, 1.232595164407831e-30, 1.0, 96, 128, 0.2);
+            println!("{{\"cmd\":\"mroots\",\"alpha_c\":{},\"grid\":\"dense\",\"ngrid\":{},\"sign_changes\":{},\"roots\":{:?},\"thr\":{:e},\"wall\":{:.1}}}", r.alpha_c, ng, ch, roots, thr, wall);
+        }
+        if is_z {
+            let mut variant = |name: &str, order: usize, tol: f64, scale: f64, p: &family::Prepared| {
+                let (roots, ch, _ng, wall) = family::scan_dd(p, order, tol, scale, 24, 32, 0.2);
+                println!("{{\"cmd\":\"zvariant\",\"alpha_c\":{},\"variant\":\"{}\",\"sign_changes\":{},\"roots\":{:?},\"wall\":{:.1}}}", r.alpha_c, name, ch, roots, wall);
+            };
+            variant("R x1.5", 30, 1.232595164407831e-30, 1.5, &prep);
+            variant("order 24, tol 1e-22", 24, 1e-22, 1.0, &prep);
+            let mut cfg3 = cfg2.clone();
+            cfg3.dmax = 6.0;
+            if let Ok(s3) = bvp::solve_z(&cfg3, &r.info.profile(), r.info.alpha_c, None, false) {
+                let i3 = s3.info();
+                if let Ok(p3) = family::prepare(&cfg3, i3, 0.0, 0.995 * thr) {
+                    variant("layout dmax 6", 30, 1.232595164407831e-30, 1.0, &p3);
+                }
+            }
+            // f64 lane
+            let rp = prep.radial::<f64>(30, f64::EPSILON * 50.0);
+            let g = family::grid(0.2, thr, 24, 32);
+            let f = family::scan(&rp, &g, 19.0);
+            println!("{{\"cmd\":\"zvariant\",\"alpha_c\":{},\"variant\":\"f64 lane\",\"roots\":{:?}}}", r.alpha_c, f.roots.iter().map(|x| x.0.sci(17)).collect::<Vec<_>>());
+        }
+    };
+    let res = cont::follow_family(&cfg, &info, &targets, alpha_stop, a.u("chunk", 10), a.f("ds", 0.05), a.f("ds_max", 5.0), a.u("verbose", 0) > 0, &mut track, &mut logs, dir_mut, &mut on_row);
     for l in &logs {
         println!("{{\"cmd\":\"arc_chunk\",\"chunk\":{},\"points\":{},\"refused\":{},\"stalled\":{},\"alpha_end\":{},\"omega_end\":{:.10},\"folds\":{:?},\"t\":{:.1}}}", l.chunk, l.points, l.refused, l.stalled, l.alpha_end, l.omega_end, l.folds, l.t);
     }
-    // the omega minimum along the path
     let wmin = track.iter().cloned().fold((0.0, 9.0), |m, p| if p.1 < m.1 { p } else { m });
     println!("{{\"cmd\":\"arc_track\",\"points\":{},\"omega_min_point\":[{},{}]}}", track.len(), wmin.0, wmin.1);
-    match res {
-        Ok(rows) => {
-            for r in rows {
-                println!(
-                    "{{\"cmd\":\"row\",\"alpha_c\":{},\"omega\":\"{}\",\"N\":\"{}\",\"M\":\"{}\",\"k\":{:e},\"nodes\":{},\"fnorm\":{:e}}}",
-                    r.alpha_c,
-                    r.info.omega.sci(30),
-                    r.n.sci(30),
-                    r.info.mass.sci(30),
-                    r.info.k.to_f64(),
-                    r.info.nodes,
-                    r.info.fnorm.last().unwrap()
-                );
-            }
-        }
-        Err(e) => println!("{{\"cmd\":\"arc_error\",\"err\":\"{}\"}}", e),
+    if let Err(e) = res {
+        println!("{{\"cmd\":\"arc_error\",\"err\":\"{}\"}}", e);
     }
     println!("{{\"cmd\":\"arc_wall\",\"t\":{:.1}}}", t0.elapsed().as_secs_f64());
+}
+
+/// the fold of omega: arclength in k from the star at omega_to through the minimum of omega, located by multisolver
+fn cmd_fold(a: &Args) {
+    use multidouble::dd::DD as D;
+    let eps = a.f("eps", -1.0);
+    let omega0 = D::from_f64(a.f("omega", 0.7603));
+    let mut cfg = bvp::StarCfg::new(eps);
+    cfg.dmax = a.f("dmax", 8.0);
+    let t0 = std::time::Instant::now();
+    let sol = bvp::solve(&cfg, omega0, false).unwrap();
+    let mut info = sol.info();
+    let omega_to = a.f("omega_to", 0.45);
+    let dw = a.f("dw", 0.003);
+    let mut wcur = omega0.to_f64();
+    while (wcur - omega_to).abs() > 1e-12 {
+        let wn = if (wcur - omega_to).abs() <= dw { omega_to } else { wcur - dw * (wcur - omega_to).signum() };
+        let kt = (D::ONE - D::from_f64(wn) * D::from_f64(wn)).sqrt();
+        let s = bvp::solve_k_from_profile(&cfg, &info.profile(), kt, false).unwrap();
+        info = s.info();
+        wcur = wn;
+    }
+    // plain steps in alpha_c to just before the fold (pinning k is ill-posed beside its maximum)
+    let a_to = a.f("alpha_to", 1.15);
+    let mut ac = info.alpha_c;
+    let mut hcur = 0.01f64;
+    while ac.to_f64() < a_to - 1e-12 {
+        let next = if a_to - ac.to_f64() <= hcur { D::from_f64(a_to) } else { ac + D::from_f64(hcur) };
+        match bvp::solve_z(&cfg, &info.profile(), next, None, false) {
+            Ok(sz) if sz.info().converged => {
+                info = sz.info();
+                ac = next;
+                hcur = (hcur * 1.3).min(0.01);
+            }
+            _ => {
+                hcur /= 2.0;
+                assert!(hcur > 1e-7, "alpha_c steps failed near {}", ac.to_f64());
+            }
+        }
+    }
+    match cont::fold_search(&cfg, &info, a.u("chunk", 40), a.f("ds", 0.01), a.f("ds_max", 0.04), a.u("max_chunks", 8), a.u("verbose", 0) > 0) {
+        Ok(f) => {
+            let det = f.detected.map(|(x, y)| format!("[{},{}]", x.sci(20), y.sci(20))).unwrap_or("null".into());
+            let (om, k) = match f.k_fold {
+                Some(fk) => (format!("\"{}\"", (D::ONE - fk * fk).sqrt().sci(25)), format!("\"{}\"", fk.sci(25))),
+                None => ("null".to_string(), "null".to_string()),
+            };
+            println!(
+                "{{\"cmd\":\"fold\",\"detected_between_k\":{},\"k\":{},\"omega_min\":{},\"alpha_c\":{},\"points\":{},\"locate_corrections\":{},\"locate_error\":{},\"t\":{:.1}}}",
+                det,
+                k,
+                om,
+                f.alpha_c.map(|x| x.to_string()).unwrap_or("null".into()),
+                f.points,
+                f.iters,
+                f.locate_err.map(|e| format!("\"{}\"", e)).unwrap_or("null".into()),
+                t0.elapsed().as_secs_f64()
+            );
+        }
+        Err(e) => println!("{{\"cmd\":\"fold_error\",\"err\":\"{}\"}}", e),
+    }
+}
+
+fn clone_info(i: &bvp::StarInfo) -> bvp::StarInfo {
+    bvp::StarInfo { eps: i.eps, cfg: i.cfg.clone(), steps: i.steps.clone(), k: i.k, omega: i.omega, pc: i.pc, zc: i.zc, alpha_c: i.alpha_c, mass: i.mass, r_t: i.r_t, nodes: i.nodes, fnorm: i.fnorm.clone(), converged: i.converged }
 }
 
 fn main() {
@@ -357,6 +492,18 @@ fn main() {
     let a = Args(m);
     if cmd == "star" {
         cmd_star(&a);
+        return;
+    }
+    match cmd.as_str() {
+        "jeval" => return checks::cmd_jeval(&a),
+        "gcheck" => return checks::cmd_gcheck(&a),
+        "starcheck" => return checks::cmd_starcheck(&a),
+        "s2" => return checks::cmd_s2(&a),
+        "pd" => return checks::cmd_pd(&a),
+        _ => {}
+    }
+    if cmd == "fold" {
+        cmd_fold(&a);
         return;
     }
     if cmd == "arc" {

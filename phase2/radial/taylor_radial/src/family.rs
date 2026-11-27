@@ -125,6 +125,7 @@ pub fn grid(neg_lo: f64, thr: f64, nneg: usize, npos: usize) -> Vec<f64> {
 pub struct Found<T: Num> {
     pub roots: Vec<(T, usize, f64)>,
     pub vals: Vec<(f64, f64)>,
+    pub val_str: Vec<String>,
     pub evals: usize,
 }
 
@@ -132,7 +133,7 @@ pub fn scan<T: Num>(rp: &Radial<T>, grid: &[f64], factor: f64) -> Found<T> {
     let mut f = |s: T| rp.d(s, rp.rfar(s.to_f64(), factor));
     let gt: Vec<T> = grid.iter().map(|&s| T::from_f64(s)).collect();
     let vals: Vec<T> = gt.iter().map(|&s| f(s)).collect();
-    let mut found = Found { roots: vec![], vals: grid.iter().cloned().zip(vals.iter().map(|v| v.to_f64())).collect(), evals: grid.len() };
+    let mut found = Found { roots: vec![], vals: grid.iter().cloned().zip(vals.iter().map(|v| v.to_f64())).collect(), val_str: vals.iter().map(|v| v.sci(34)).collect(), evals: grid.len() };
     for i in 0..grid.len() - 1 {
         if (vals[i].to_f64() < 0.0) != (vals[i + 1].to_f64() < 0.0) {
             let r = roots::find::<T>(&mut f, gt[i], gt[i + 1], vals[i], vals[i + 1]);
@@ -141,4 +142,16 @@ pub fn scan<T: Num>(rp: &Radial<T>, grid: &[f64], factor: f64) -> Found<T> {
         }
     }
     found
+}
+
+/// the roots of D on the declared grid in double-double, as 30-digit strings, with the number of sign changes
+pub fn scan_dd(prep: &Prepared, order: usize, tol: f64, rfar_scale: f64, nneg: usize, npos: usize, neg_lo: f64) -> (Vec<String>, usize, usize, f64) {
+    let thr = (1.0 - prep.omega.to_f64()).powi(2);
+    let g = grid(neg_lo, thr, nneg, npos);
+    let rp = prep.radial::<DD>(order, tol);
+    let t0 = std::time::Instant::now();
+    let found = scan(&rp, &g, 40.0 * rfar_scale);
+    let signs: Vec<bool> = found.vals.iter().map(|v| v.1 < 0.0).collect();
+    let changes = signs.windows(2).filter(|w| w[0] != w[1]).count();
+    (found.roots.iter().map(|r| r.0.sci(30)).collect(), changes, g.len(), t0.elapsed().as_secs_f64())
 }
