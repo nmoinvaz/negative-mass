@@ -1,0 +1,163 @@
+== planted checks of tests/implicit.rs, final library run (run_20_default.log; multishoot 6bfd9b1's src, rebased as eaf55a8: digests equal, run_36 and run_37) ==
+| lane | check | met (gated) | not met (gated) | met (recorded) | NOT MET (recorded) |
+|---|---|---|---|---|---|
+| f64 | closed_form | 15 | 0 | 0 | 3 |
+| f64 | coeffs | 0 | 0 | 0 | 2 |
+| f64 | crossings | 12 | 0 | 0 | 2 |
+| f64 | fold | 3 | 0 | 0 | 1 |
+| f64 | planner | 1 | 0 | 0 | 0 |
+| f64 | step_sum | 11 | 0 | 0 | 0 |
+| f64 | zero_pivot | 1 | 0 | 0 | 0 |
+| dd | closed_form | 15 | 0 | 0 | 3 |
+| dd | coeffs | 0 | 0 | 0 | 2 |
+| dd | crossings | 12 | 0 | 0 | 2 |
+| dd | fold | 4 | 0 | 0 | 0 |
+| dd | planner | 1 | 0 | 0 | 0 |
+| dd | step_sum | 11 | 0 | 0 | 0 |
+| dd | zero_pivot | 1 | 0 | 0 | 0 |
+| qd | closed_form | 15 | 0 | 0 | 3 |
+| qd | coeffs | 0 | 0 | 0 | 2 |
+| qd | crossings | 12 | 0 | 0 | 2 |
+| qd | fold | 4 | 0 | 0 | 0 |
+| qd | planner | 1 | 0 | 0 | 0 |
+| qd | step_sum | 11 | 0 | 0 | 0 |
+| qd | zero_pivot | 1 | 0 | 0 | 0 |
+| od | closed_form | 3 | 0 | 0 | 0 |
+| od | crossings | 1 | 0 | 0 | 0 |
+| od | fold | 1 | 0 | 0 | 0 |
+| od | step_sum | 1 | 0 | 0 | 0 |
+
+worst gated values:
+- f64: closed_form err 3.50e-14; crossings position error 7.84e-14; step_sum ratio 2.93e+04
+- dd: closed_form err 4.13e-30; crossings position error 4.45e-30; step_sum ratio 7.10e+03
+- qd: closed_form err 3.41e-62; crossings position error 2.82e-62; step_sum ratio 1.81e+04
+- od: closed_form err 6.42e-127; crossings position error 1.87e-129; step_sum ratio 1.54e+03
+digest dd 92ec461781147d77
+digest f64 b124d44e9758f1a1
+digest qd 75902b0bf76ced2a
+
+== planted values that moved between dev_04 (plain Cauchy sums) and run_20 (accumulators): cells that changed by more than a factor 3 ==
+| check | cell | old | new | new / old |
+|---|---|---|---|---|
+| closed_form | dd KB Project None | 8.67e-32 | 4.49e-31 | 5.2 |
+| closed_form | qd RB Project None | 5.04e-64 | 3.53e-63 | 7 |
+| coeffs | qd Q-A l = 0.25 None | 1.51e-14 | 2.94e-15 | 0.19 |
+| coeffs | qd Q-A l = 1 None | 1.51e-14 | 2.94e-15 | 0.19 |
+| crossings | dd KC Conserve None | 1.00e-29 | 2.81e-30 | 0.28 |
+| crossings | dd RA Conserve None | 1.17e-30 | 2.09e-31 | 0.18 |
+| crossings | dd RA Project None | 8.00e-31 | 6.77e-32 | 0.085 |
+| crossings | dd RB Conserve None | 6.77e-31 | 6.56e-32 | 0.097 |
+| crossings | dd RC Project None | 4.13e-31 | 2.14e-30 | 5.2 |
+| crossings | qd KA Conserve None | 4.14e-63 | 2.01e-62 | 4.9 |
+| crossings | qd QB Conserve None | 3.09e-63 | 8.81e-64 | 0.29 |
+| step_sum | dd B(KB) None | 3.59e+03 | 8.77e+02 | 0.24 |
+| step_sum | dd B(KC) None | 7.03e+03 | 2.01e+03 | 0.29 |
+| step_sum | dd B(RA) None | 3.02e+03 | 5.49e+02 | 0.18 |
+| step_sum | dd B(RC) None | 1.29e+03 | 7.10e+03 | 5.5 |
+| step_sum | dd B(RD) None | 2.22e+04 | 2.72e+03 | 0.12 |
+| step_sum | qd B(KA) None | 6.67e+02 | 6.21e+03 | 9.3 |
+| step_sum | qd B(KB) None | 7.63e+02 | 1.20e+04 | 16 |
+| step_sum | qd B(KC) None | 3.53e+02 | 4.66e+03 | 13 |
+| step_sum | qd B(RB) None | 1.79e+03 | 1.81e+04 | 10 |
+| step_sum | qd B(RD) None | 1.51e+04 | 1.33e+03 | 0.088 |
+
+cells compared: 147; cells whose value moved by more than a factor 3: 21
+- closed_form f64 (Project/gated-like cells): worst old 4.35e-15, worst new 4.35e-15
+- closed_form dd (Project/gated-like cells): worst old 4.71e-31, worst new 5.57e-31
+- closed_form qd (Project/gated-like cells): worst old 2.21e-63, worst new 3.53e-63
+- crossings f64 (Project/gated-like cells): worst old 7.84e-14, worst new 7.84e-14
+- crossings dd (Project/gated-like cells): worst old 3.25e-30, worst new 4.25e-30
+- crossings qd (Project/gated-like cells): worst old 1.78e-62, worst new 2.33e-62
+- step_sum f64 (Project/gated-like cells): worst old 2.93e+04, worst new 2.93e+04
+- step_sum dd (Project/gated-like cells): worst old 2.22e+04, worst new 7.10e+03
+- step_sum qd (Project/gated-like cells): worst old 1.51e+04, worst new 1.81e+04
+- fold f64 (Project/gated-like cells): worst old 2.05e-16, worst new 2.05e-16
+- fold dd (Project/gated-like cells): worst old 1.23e-32, worst new 1.23e-32
+- fold qd (Project/gated-like cells): worst old 3.86e-65, worst new 3.87e-65
+- coeffs f64 (Project/gated-like cells): worst old 4.86e-08, worst new 4.86e-08
+- coeffs dd (Project/gated-like cells): worst old 1.48e-11, worst new 2.00e-11
+- coeffs qd (Project/gated-like cells): worst old 1.51e-14, worst new 2.94e-15
+
+== the rebased branch, default and portable (run_36, run_37): result and digest lines ==
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+digest dd 92ec461781147d77
+digest f64 b124d44e9758f1a1
+digest qd 75902b0bf76ced2a
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 50.60s
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 20.04s
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.90s
+-- portable
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s
+digest dd 92ec461781147d77
+digest f64 b124d44e9758f1a1
+digest qd 75902b0bf76ced2a
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 51.08s
+test result: ok. 23 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 20.04s
+test result: ok. 21 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.93s
+
+== the feature switch: the runs of record (arm_table.md) ==
+| script | arm | exit | checks | controls | wall (s) | max rss (MB) | load at start |
+|---|---|---|---|---|---|---|---|
+| conical_global.py (checks and controls) | base | 0 | 17 passed, 0 failed | all fired on target only | 1814 | 181 | 1.08 1.06 1.07 |
+| conical_global.py (checks and controls) | on | 0 | 17 passed, 0 failed | all fired on target only | 1856 | 181 | 1.01 1.04 1.07 |
+| conical_loglog.py (checks and controls) | base | 0 | 20 passed, 0 failed | all fired on target only | 1534 | 98 | 1.09 1.08 1.12 |
+| conical_loglog.py (checks and controls) | on | 0 | 20 passed, 0 failed | all fired on target only | 1201 | 98 | 1.09 1.12 1.14 |
+| conical_offgrid.py --grid=ctl --no-controls | base | 0 | 16 passed, 0 failed | - | 680 | 99 | 0.95 1.54 1.28 |
+| conical_offgrid.py --grid=ctl --no-controls | off | 0 | 16 passed, 0 failed | - | 317 | 72 | 1.03 1.03 1.03 |
+| conical_offgrid.py --grid=ctl --no-controls | on | 0 | 16 passed, 0 failed | - | 162 | 72 | 1.03 1.05 1.08 |
+| conical_offgrid.py --grid=ctl --no-controls | on (rebased head) | 0 | 16 passed, 0 failed | - | 162 | 72 | 1.69 1.69 1.37 |
+| conical_offgrid.py --grid=ctl --controls-only n-drift,recip-dd | base | 0 | - | all fired on target only | 1370 | 72 | 1.04 1.07 1.12 |
+| conical_offgrid.py --grid=ctl --controls-only n-drift,recip-dd | on | 0 | - | all fired on target only | 626 | 72 | 1.17 1.10 1.08 |
+
+== comparator (sys/compare_outputs.py), base against on ==
+-- run_11_base_global.log run_32_on_global.log
+log lines compared: 126; gated differences: 0
+-- run_09_base_loglog.log run_30_on_loglog.log
+log lines compared: 124; gated differences: 0
+-- offgrid ctl base against on (run_06, run_31), against on at the rebased head (run_42), against off (run_35)
+log lines compared: 68; gated differences: 0
+dump: 79 files, 685 records, 2300 string fields, 537 eta* values compared; files missing in on: 0; eta* differing in the 10 printed digits: 0, largest relative difference of any eta* 2.45e-15 (of the differing ones 0.00e+00); records whose step count differs: 10
+log lines compared: 68; gated differences: 0
+dump: 79 files, 685 records, 2300 string fields, 537 eta* values compared; files missing in on: 0; eta* differing in the 10 printed digits: 0, largest relative difference of any eta* 2.45e-15 (of the differing ones 0.00e+00); records whose step count differs: 10
+log lines compared: 68; gated differences: 0
+dump: 79 files, 685 records, 2300 string fields, 537 eta* values compared; files missing in on: 0; eta* differing in the 10 printed digits: 0, largest relative difference of any eta* 0.00e+00 (of the differing ones 0.00e+00); records whose step count differs: 0
+
+== the superseded feature-on runs, kept: run_07 (offgrid ctl) and run_10 (loglog) at multishoot ff24b6b ==
+[FAIL] plant_scale: N = p^4 (q + 3p), F' = eta^-4, p falls by 2.7e7 and the scale of N by 7e-38 from eta = 10 to 3000; relative error of F' at 3000: dd conserve: 9.9e-01 (predicted fail, bar 1e-03: as predicted); qd conserve: 3.8e-28 (predicted pass, bar 1e-20: as predicted); dd project: 2.5e-32 (pr
+checks: 19 passed, 1 failed ['plant_scale']. 496 s
+
+== the plant_scale diagnosis (dev_08, dev_09) ==
+# dev_08: plant_scale in the feature-on loglog run (run_10) failed; diagnosis by sys/diag_scale.py and sys/diag_scale2.py
+# (outputs as printed at the time, 2026-11-27 ~02:10 UTC; baseline = target-crate-base, on = target-crate-on at multishoot ff24b6b)
+# diag_scale.py: pl5 from x = 10 to 3000, checkpoints 30 100 300 1000
+base dd conserve stop End steps 132 x 3000.0 err_last 10.994814044201656
+base qd conserve stop End steps 92 x 3000.0 err_last 1.0567909498960738e-28
+base dd project stop End steps 109 x 3000.0 err_last 1.0309099359457636e-31
+base qd project stop End steps 92 x 3000.0 err_last 2.325612640492689e-64
+on dd conserve stop TinyStep steps 397 x 1429.758572795958 err_last 0.9929315849256893
+on qd conserve stop End steps 92 x 3000.0 err_last 3.7932654862912355e-28
+on dd project stop End steps 109 x 3000.0 err_last 2.4602328967022595e-32
+on qd project stop End steps 92 x 3000.0 err_last 2.4297280397954146e-65
+# diag_scale2.py: dd conserve with --hscale
+base hscale 1 stop End steps 132 x 3000.0 err 10.994814044201656
+base hscale 0.999999999 stop End steps 131 x 3000.0 err 9.794380171063969
+base hscale 0.999999 stop End steps 132 x 3000.0 err 12.087754484999282
+base hscale 0.9999 stop End steps 131 x 3000.0 err 7.042608635668005
+base hscale 0.99 stop End steps 132 x 3000.0 err 11.201586515863372
+base hscale 0.9 stop End steps 146 x 3000.0 err 11.464913415241456
+on hscale 1 stop TinyStep steps 397 x 1429.758572795958 err 0.9929315849256893
+on hscale 0.999999999 stop TinyStep steps 397 x 1365.4283596055948 err 0.9929580649704954
+on hscale 0.999999 stop TinyStep steps 398 x 1512.854118178836 err 0.9929021830178425
+on hscale 0.9999 stop TinyStep steps 402 x 1819.7970851897317 err 0.9929609711104215
+on hscale 0.99 stop TinyStep steps 399 x 1316.7047410814018 err 0.9929461649252491
+on hscale 0.9 stop End steps 146 x 3000.0 err 7.261445442080748
+base dd conserve stop End steps 132 x 3000.0 err_last 10.994814044201656
+base qd conserve stop End steps 92 x 3000.0 err_last 1.0567909498960738e-28
+base dd project stop End steps 109 x 3000.0 err_last 1.0309099359457636e-31
+base qd project stop End steps 92 x 3000.0 err_last 2.325612640492689e-64
+on dd conserve stop End steps 132 x 3000.0 err_last 10.994814044201656
+on qd conserve stop End steps 92 x 3000.0 err_last 1.0567611140842554e-28
+on dd project stop End steps 109 x 3000.0 err_last 2.814936570484479e-32
+on qd project stop End steps 92 x 3000.0 err_last 3.637230739797658e-64

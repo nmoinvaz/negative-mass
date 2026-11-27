@@ -501,14 +501,14 @@ pub struct HpOut<P: Precision<Native>> {
     pub recent: Vec<(f64, f64, f64, usize)>,
 }
 
-fn n_rel_of<P: Precision<Native>>(ev: &EvalS<P>, s: &[Sc<P>; 3], x: f64) -> (f64, Sc<P>, Sc<P>) {
+pub(crate) fn n_rel_of<P: Precision<Native>>(ev: &EvalS<P>, s: &[Sc<P>; 3], x: f64) -> (f64, Sc<P>, Sc<P>) {
     let (v, sm, d) = ev.eval(s, P::new(&[x]));
     let r = if hi::<P>(sm) == 0.0 { 0.0 } else { hi::<P>(abs_s::<P>(v)) / hi::<P>(sm) };
     (r, v, d)
 }
 
 /// (q + p^2)/p^2 with p = x F', q = x^2 F'' + x F', in the scalar
-fn w_rel_of<P: Precision<Native>>(s: &[Sc<P>; 3], x: f64) -> f64 {
+pub(crate) fn w_rel_of<P: Precision<Native>>(s: &[Sc<P>; 3], x: f64) -> f64 {
     let xs = P::new(&[x]);
     let p = xs * s[1];
     let q = xs * xs * s[2] + p;
@@ -522,6 +522,7 @@ fn w_rel_of<P: Precision<Native>>(s: &[Sc<P>; 3], x: f64) -> f64 {
 }
 
 /// Walk from x0 with the state s0 to x1, recording the state at each checkpoint (steps are cut to land on them).
+#[cfg(not(feature = "implicit_lib"))]
 pub fn hp_walk<P: Precision<Native>>(
     poly: &PolyQ,
     s0: [Sc<P>; 3],
@@ -682,3 +683,6 @@ pub fn scalar_of_parts<P: Precision<Native>>(parts: &[f64]) -> Sc<P> {
 pub fn dd_to_sc<P: Precision<Native>>(d: DD) -> Sc<P> {
     P::from_dd(d)
 }
+
+#[cfg(feature = "implicit_lib")]
+pub use crate::hp_lib::hp_walk;

@@ -258,6 +258,7 @@ impl<'a, T: Lane> Cx<'a, T> {
 
 /// Taylor coefficients 1..=kt of (F, F', F'') about x0 from the order-0 values in `w.c`, solving order k of N = 0 for
 /// F''_k. `skip` leaves F''_k = 0 at that order (a control: N then drifts).
+#[cfg(not(feature = "implicit_lib"))]
 pub fn implicit_taylor<T: Lane>(p: &PolyN, x0: f64, w: &mut Work<T, 1>, skip: Option<usize>) {
     let kt = w.kt;
     let mut cx = Cx::new(p, x0, kt, [w.c[0][0], w.c[1][0], w.c[2][0]]);
@@ -294,3 +295,6 @@ fn base_of<'a, T: Lane>(
         (a, b) => &pairs[&(a, b)],
     }
 }
+
+#[cfg(feature = "implicit_lib")]
+pub use crate::poly_lib::implicit_taylor;
