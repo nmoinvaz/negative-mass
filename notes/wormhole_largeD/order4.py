@@ -10,8 +10,14 @@ G_k is affine in Omega_{k-2} with slope -4 pi: G2 = 0 gives Omega0, G3 = 0 Omega
 Method A: closed forms in th (K = 2 th ln 2 - Cl2(pi - 2 th), T = int_0^th p ln cos p dp with Cl2, Cl3; Y1..Y3, L0..L2) and
 two integrations by parts (E1, E2 of the raw README) that leave G_k as one integral of closed forms.
 Method B: the hierarchy from its definitions on Chebyshev panels in v = sqrt(l); no closed form, no exchange.
+Reduction by hand (part `reduce`, H0 .. H8): at Omega0 = -4 ln 2, with ell = ln cos, u = tan, C = Cl2(pi - 2 th),
+D3 = Cl3(pi - 2 th) + 3 zeta(3)/4, the integrand of G_k is A(ell)/S + B(ell) + gamma C + delta D3, S = sin^2; the C and D3 terms
+integrate to 64 (Omega0 - 1) int tan C = 64 (Omega0 - 1) pi^3/12, the rest to the moments int ell^n, so that G3 = 0 gives
+Omega1 = 2 pi^2/3 + 8 ln^2 2 and G4 = 0 gives Omega2 = 80 zeta(3) - (8/3) pi^2 ln 2 - (32/3) ln^3 2.
+L3 = -2 h3 + 2 u B(th), B closed in ell, u, th, C and Lc2 = int_0^th ln^2 cos (S4, N5).
 
-    python3 order4.py [sym] [closed] [n4b] [n4bg] [evals] [remainder] [--mutate=NAME] [--w2=w2_output.txt] [--w2raw=FILE]
+    python3 order4.py [sym] [closed] [reduce] [n4b] [n4bg] [evals] [remainder] [--mutate=NAME] [--w2=w2_output.txt] [--w2raw=FILE]
+(the parts run in this order; evals and remainder together give R1, R2; the nested quadratures n4b, n4bg take 30 to 70 min)
 
 No argument runs everything. The exit status is 1 when a check fails. Status words: sympy residual 0 is "checked symbolically",
 an agreement of integrals "numerical evidence", a PSLQ relation an "identification".
@@ -24,7 +30,7 @@ import mpmath as mp
 import sympy as sp
 
 MUTATIONS = ("wrong_h", "wrong_Om0", "wrong_Om1", "T_const", "K_sign", "bad_exchange", "coarse_B", "short_tail",
-             "pslq_wrong_basis", "wrong_Om2_series")
+             "pslq_wrong_basis", "wrong_Om2_series", "wrong_J3", "wrong_tanC", "wrong_Y3", "wrong_B", "wrong_P", "wrong_L3")
 MUTATE = None
 W2FILE = "w2_output.txt"
 W2RAW = None
@@ -39,7 +45,7 @@ for a in sys.argv[1:]:
         W2RAW = a.split("=", 1)[1]
     else:
         parts.append(a)
-PARTS = parts or ["sym", "closed", "n4b", "n4bg", "evals", "remainder"]
+PARTS = parts or ["sym", "closed", "reduce", "n4b", "n4bg", "evals", "remainder"]
 
 RESULTS = []
 
@@ -128,7 +134,7 @@ def check_sym():
 
     Om3 = [O0, O1, O2, 0]
     Yc = [1, -lg, -2 * O0 * lg - sp.Rational(3, 2) * lg**2,
-          -2 * O1 * lg + lg**3 / 2 + 8 * lg**2 + 8 * O0 * lg + 8 * O0 * th**2 - 16 * O0 * u * th - 32 * u * K + 32 * K * th
+          -2 * O1 * lg + lg**3 / 2 + 8 * lg**2 + 8 * O0 * lg + 8 * O0 * th**2 - 16 * O0 * u * th - 32 * u * K + (16 if MUTATE == "wrong_Y3" else 32) * K * th
           + 64 * T]
     Lc = [-1, -2 * O0 - 2 * lg, -2 * O1 + 2 * O0 * lg + 4 * lg**2 - 8 * O0 * u * th - 16 * u * K]
     dldu = 2 * u / Rr
@@ -142,13 +148,35 @@ def check_sym():
     # S3: L_3 = -2 h_3 + 2 u B with dB/du = h_3,u / u
     h3 = hk(3, Om3, lg, Rr, Yc, Lc)
     L3 = -2 * h3 + 2 * u * B
-    DB = D(h3) / u
+    DB = D(h3) / (2 * u if MUTATE == "wrong_B" else u)
 
     def D2(f):
         return D(f) + sp.diff(f, B) * DB
 
     s3 = sp.simplify(sp.together((u * D2(L3) - L3) / 2 - h3))
     report("S3", s3 == 0, f"L_3 = -2 h_3 + 2 u B, B' = h_3,u/u: (R-1)L_3' - L_3/2 - h_3 = {s3}")
+    # S4: the closed form of B in ell, u, th, C = Cl2(pi - 2 th), Lc2 = int_0^th ln^2 cos (derivation in th, d/dR = D/(2u(1 + u^2)))
+    q, Cs, D3s, Lc = sp.symbols("q C D3 Lc2")
+    w0q = -4 * q
+    Rr2 = 1 + u**2
+    S_, sc, c2 = u**2 / Rr2, u / Rr2, 1 / Rr2
+    Om_q = [w0q, O1, O2, 0]
+    L2q = -2 * O1 - 4 * w0q * lg + 16 * lg**2 + 16 * u * Cs
+    Y3q = 4 * O1 * lg - 4 * lg**3 + 32 * lg**2 - 16 * w0q * lg + 32 * u * Cs - 16 * D3s
+    Lq = [-1, -2 * w0q + 4 * lg, L2q]
+    Yq = [1, 2 * lg, 4 * w0q * lg - 6 * lg**2, Y3q]
+    h3q = hk(3, Om_q, -2 * lg, Rr2, Yq, Lq)
+
+    def Dth(f):
+        return (sp.diff(f, u) * Rr2 - sp.diff(f, lg) * u + sp.diff(f, Cs) * (2 * lg + 2 * q) + sp.diff(f, D3s) * 2 * Cs
+                + sp.diff(f, th) + sp.diff(f, Lc) * lg**2)
+
+    kc = 16 if MUTATE == "wrong_L3" else 32
+    Bc = -32 * (lg + q) * Cs + 16 * S_ * Cs + kc * Lc + 16 * sc * lg * (lg + 2 * q) - 4 * O1 * th - 2 * O1 * sc
+    L3c = -2 * h3q + 2 * u * Bc
+    s4 = sp.simplify(sp.together(u * Dth(L3c) / (2 * Rr2) - L3c / 2 - h3q))
+    report("S4", s4 == 0, f"L_3 = -2 h_3 + 2 u B with B = -32(ell + ln 2)C + 16 S C + 32 Lc2 + 16 sin cos ell (ell + 2 ln 2) - 4 Omega1 th - 2 Omega1 sin cos "
+           f"(Lc2 = int_0^th ln^2 cos, C = Cl2(pi - 2 th)): (R-1)L_3' - L_3/2 - h_3 = {s4}")
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -414,6 +442,30 @@ def check_closed():
     d2 = digits(lhs, rhs)
     report("N4a", d2 >= 30, f"(E2) at k - 1 = 2: int L_2 dth = {nd(lhs, 30)} against 2 int h_2 ln cos/sin^2 = {nd(rhs, 30)}: "
            f"{float(d2):.1f} digits ({time.time() - t0:.0f} s)")
+    # N5: the closed form of L_3 (with Lc2 by quadrature) against -2 Omega2 + u C_3 by quadrature, Omega2 = 0, 30 guard digits
+    kc = 16 if MUTATE == "wrong_L3" else 32
+    q = mp.ln2
+    worst5 = mp.mpf(99)
+    for th in (mp.mpf("0.4"), mp.mpf("1.0"), mp.mpf("1.4")):
+        def h3f(p):
+            c, lc, l, u, R, s2, Y, L, K, T = closed(p, mp.pi / 2 - p, False, Om)
+            return hk(3, Om, l, R, Y, L), s2, u, lc
+
+        def src(p):
+            h, s2, u, lc = h3f(p)
+            return 2 * h / s2
+
+        with mp.extradps(30):
+            c, lc, l, u, R, s2, Y, L, K, T = closed(th, mp.pi / 2 - th, False, Om)
+            Cn = mp.clsin(2, mp.pi - 2 * th)
+            Lc2 = mp.quad(lambda p: mp.log(mp.cos(p)) ** 2, [0, th])
+            sc = mp.sin(th) * mp.cos(th)
+            B = (-32 * (lc + q) * Cn + 16 * s2 * Cn + kc * Lc2 + 16 * sc * lc * (lc + 2 * q) - 4 * Om[1] * th - 2 * Om[1] * sc)
+            L3c = -2 * hk(3, Om, l, R, Y, L) + 2 * u * B
+            L3q = u * mp.quad(guarded(src, 30), [0, th])
+        worst5 = min(worst5, digits(L3c, L3q))
+    report("N5", worst5 >= 30, f"L_3 closed form (with Lc2 = int_0^th ln^2 cos by quadrature) against -2 h_3(1) + u C_3 by quadrature at th = 0.4, 1.0, 1.4, "
+           f"Omega2 = 0: worst {float(worst5):.1f} digits")
 
 
 def check_n4b(cid, g):
@@ -446,6 +498,173 @@ def check_n4b(cid, g):
     d3 = digits(lhs, rhs)
     report(cid, d3 >= 25, f"(E2) at k - 1 = 3, {g} guard digits: int L_3 dth = {nd(lhs, 25)} (L_3 by nested quadrature, dps 30) against "
            f"2 int h_3 ln cos/sin^2 = {nd(rhs, 25)}: {float(d3):.1f} digits ({time.time() - t0:.0f} s)")
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# the reduction of G_k to log-cosine moments, by hand (H0 .. H8)
+# ---------------------------------------------------------------------------------------------------------------
+def reduced_pieces(k):
+    """At Omega0 = -4 ln 2 (w0) the closed forms need only ell = ln cos, u = tan, C = Cl2(pi - 2 th), D3 = Cl3(pi - 2 th) - Cl3(pi):
+         L2 = -2 w1 - 4 w0 ell + 16 ell^2 + 16 u C,   Y3 = 4 w1 ell - 4 ell^3 + 32 ell^2 - 16 w0 ell + 32 u C - 16 D3.
+       The integrand of G_k (E1 with E2, Omega_{k-1} = 0) is A(ell)/S + B(ell) + gamma C + delta D3, S = sin^2 th."""
+    lg, S, u, C, D3, w0, w1, w2 = sp.symbols("ell S u C D3 w0 w1 w2")
+    c2s = 1 - S
+    L = [-1, -2 * w0 + 4 * lg, -2 * w1 - 4 * w0 * lg + 16 * lg**2 + 16 * u * C]
+    Y = [1, 2 * lg, 4 * w0 * lg - 6 * lg**2, 4 * w1 * lg - 4 * lg**3 + 32 * lg**2 - 16 * w0 * lg + 32 * u * C - 16 * D3]
+    o = [w0, w1, w2, 0]
+    ell_c2 = c2s
+    c = {1: w0 - 3 * lg - 1 + ell_c2,
+         2: -2 * w0 * lg + w1 + lg**2 - 2 * lg + 2 * lg * ell_c2,
+         3: 2 * w0 * lg**2 - 2 * w1 * lg + w2 - 2 * lg**3 - 2 * lg**2 + 2 * lg**2 * ell_c2,
+         4: -sp.Rational(4, 3) * w0 * lg**3 + 2 * w1 * lg**2 - 2 * w2 * lg + lg**4 / 3 - sp.Rational(4, 3) * lg**3
+         + sp.Rational(4, 3) * lg**3 * ell_c2}
+    h = S * L[k - 2] + sum(Y[j] * c[k - 1 - j] for j in range(1, k - 1)) + c[k - 1] + Y[k - 1] / 2
+    I = 8 * lg * h / S + 2 * sum(L[k - 1 - j] * (-2 * lg) ** j / sp.factorial(j) for j in range(1, k)) \
+        + 2 * (sum(Y[j] * c[k - j] for j in range(1, k)) + c[k]) / S
+    I = sp.expand(I)
+    if k == 3:
+        I = sp.expand(I.subs(w2, 0))
+    ell_part = sp.expand(I.subs({C: 0, D3: 0}) * S)
+    return dict(I=I, A=ell_part.coeff(S, 0), B=ell_part.coeff(S, 1), extra=ell_part.coeff(S, 2), gamma=I.coeff(C, 1),
+                delta=I.coeff(D3, 1), syms=(lg, S, u, C, D3, w0, w1, w2))
+
+
+def moments():
+    """J_n = int_0^{pi/2} ln^n cos, n <= 4, from sqrt(pi)/2 Gamma((a+1)/2)/Gamma(a/2+1) = sum J_n a^n/n!"""
+    a = sp.Symbol("a")
+    ser = sp.series(sp.sqrt(sp.pi) / 2 * sp.gamma((a + 1) / 2) / sp.gamma(a / 2 + 1), a, 0, 5).removeO()
+    J = [sp.simplify(sp.expand_func(sp.factorial(n) * ser.coeff(a, n))) for n in range(5)]
+    if MUTATE == "wrong_J3":
+        J[3] = J[3] + sp.pi * sp.zeta(3) / 8
+    return J
+
+
+def moment_integral(A, B, J, lg):
+    """int_0^{pi/2} (A(ell)/sin^2 + B(ell)) dth with A(0) = 0, from int ell^b/sin^2 = -b J_{b-1} (H5)"""
+    PA, PB = sp.Poly(A, lg), sp.Poly(B, lg)
+    tot = 0
+    for (b,), cf in PA.terms():
+        assert b >= 1, "A has a constant term: the integral diverges at the throat"
+        tot += -b * cf * J[b - 1]
+    for (b,), cf in PB.terms():
+        tot += cf * J[b]
+    return tot
+
+
+def basics(th, x, tail):
+    a, c, s2, u = cl_args(th, x, tail)
+    return mp.log(c), s2, u, mp.clsin(2, a), mp.clcos(3, a) + 3 * mp.zeta(3) / 4
+
+
+def check_reduce():
+    t0 = time.time()
+    q = sp.log(2)
+    lg, S, u, C, D3, w0, w1, w2 = sp.symbols("ell S u C D3 w0 w1 w2")
+    # H0: the closed forms of the raw README with K = 2 th ln 2 - C, T = th C/2 - D3/4 - (ln 2/2) th^2, l = -2 ell, w0 = -4 ln 2
+    th, qq = sp.symbols("th q")
+    Ks, Ts, ls = 2 * th * qq - C, th * C / 2 - D3 / 4 - qq * th**2 / 2, -2 * lg
+    W0 = -4 * qq
+    L2r = -2 * w1 + 2 * W0 * ls + 4 * ls**2 - 8 * W0 * u * th - 16 * u * Ks
+    Y3r = (-2 * w1 * ls + ls**3 / 2 + 8 * ls**2 + 8 * W0 * ls + 8 * W0 * th**2 - 16 * W0 * u * th - 32 * u * Ks + (16 if MUTATE == "wrong_Y3" else 32) * Ks * th
+           + 64 * Ts)
+    L2s = -2 * w1 - 4 * W0 * lg + 16 * lg**2 + 16 * u * C
+    Y3s = 4 * w1 * lg - 4 * lg**3 + 32 * lg**2 - 16 * W0 * lg + 32 * u * C - 16 * D3
+    r = [sp.expand(L2r - L2s), sp.expand(Y3r - Y3s)]
+    report("H0", all(x == 0 for x in r), f"L_2 and Y_3 of the raw README against their forms in ell, u, C, D3 at Omega0 = -4 ln 2: residuals {[str(x) for x in r]}")
+    P = {k: reduced_pieces(k) for k in (3, 4)}
+    mp.mp.dps = 45
+    W0n, W1n = -4 * mp.ln2, 2 * mp.pi**2 / 3 + 8 * mp.ln2**2
+    Om = [W0n, W1n, mp.mpf(0), mp.mpf(0)]
+    # H1: the decomposition against the integrand of A at four points
+    worst = mp.mpf(99)
+    for k in (3, 4):
+        pc = P[k]
+        fn = sp.lambdify(pc["syms"], pc["A"] / S + pc["B"] + pc["gamma"] * C + pc["delta"] * D3, "mpmath")
+        fA = A_integrand(k, Om)
+        for t in ("0.2", "0.7", "1.1", "1.4"):
+            th_ = mp.mpf(t)
+            ell, s2, u_, Cn, D3n = basics(th_, mp.pi / 2 - th_, False)
+            worst = min(worst, digits(fA(th_, mp.pi / 2 - th_, False), fn(ell, s2, u_, Cn, D3n, W0n, W1n, mp.mpf(0))))
+    report("H1", worst >= 30, f"A(ell)/S + B(ell) + gamma C + delta D3 against the integrand of method A, k = 3, 4, four points: worst {float(worst):.1f} digits")
+    # H2: the D3 term by parts: delta = -32 P', P = cot (ell - w0): int delta D3 = 64 int C P
+    g4 = P[4]["gamma"]
+    d4 = P[4]["delta"]
+    sg = -1 if MUTATE == "wrong_P" else 1
+    rd = sp.simplify(sp.together(d4 - (-32) * (sg * w0 - S - lg) / S))
+    report("H2a", rd == 0, f"delta = -32 (w0 - S - ell)/S = -32 dP/dth for P = cot th (ell - w0): residual {rd}")
+
+    def fD(th_, x, tail):
+        ell, s2, u_, Cn, D3n = basics(th_, x, tail)
+        return (-32 * (W0n - s2 - ell) / s2) * D3n
+
+    def fP(th_, x, tail):
+        ell, s2, u_, Cn, D3n = basics(th_, x, tail)
+        return 64 * Cn * (ell - (-W0n if MUTATE == "wrong_P" else W0n)) / u_
+
+    lhs, rhs = both(guarded(fD, 30)), both(guarded(fP, 30))
+    report("H2b", digits(lhs, rhs) >= 30, f"int delta D3 dth = {nd(lhs, 30)} against 64 int C cot(th) (ell - w0) dth = {nd(rhs, 30)} (boundary terms vanish): {float(digits(lhs, rhs)):.1f} digits")
+    # H3: C (gamma + 64 P) = 64 (w0 - 1) u C
+    t_ = sp.Symbol("t", positive=True)
+    gam = g4.subs(S, t_**2 / (1 + t_**2)).subs(u, t_)
+    r3 = sp.simplify(sp.together(gam + 64 * (lg - sg * w0) / t_ - 64 * (w0 - 1) * t_))
+    report("H3", r3 == 0, f"gamma + 64 cot(th)(ell - w0) - 64 (w0 - 1) u = {r3} (sympy, S = u^2/(1 + u^2))")
+    # H4: int tan C = pi^3/12
+    J = moments()
+    Jn = [mp.mpf(sp.N(j, 50)) for j in J]
+    th0 = mp.mpf("0.7")
+    dC = mp.diff(lambda t: mp.clsin(2, mp.pi - 2 * t), th0)
+    c_ok = digits(dC, 2 * mp.log(mp.cos(th0)) + 2 * mp.ln2)
+    xs = mp.mpf("1e-25")
+    end = abs(mp.log(mp.sin(xs)) * mp.clsin(2, 2 * xs))
+    tanC = mp.pi**3 / 6 if MUTATE == "wrong_tanC" else mp.pi**3 / 12
+    def utimesC(th_, x, tail):
+        b = basics(th_, x, tail)
+        return b[2] * b[3]
+
+    num = both(utimesC)
+    byparts = 2 * Jn[2] + 2 * mp.ln2 * Jn[1]
+    report("H4", c_ok >= 30 and end < mp.mpf("1e-20") and digits(num, tanC) >= 30 and digits(byparts, tanC) >= 30,
+           f"int tan th Cl2(pi - 2 th) dth = {nd(num, 30)}; C' = 2 ell + 2 ln 2 to {float(c_ok):.1f} digits; boundary |ell C| = {nd(end, 2)} at x = 1e-25; "
+           f"by parts 2 J_2 + 2 ln 2 J_1 = {nd(byparts, 30)} against pi^3/12 (as coded {nd(tanC, 12)})")
+    # H5, H6: moments
+    def ellb(b):
+        def f(th_, x, tail):
+            ell, s2, _, _, _ = basics(th_, x, tail)
+            return ell**b / s2
+
+        return f
+
+    d5 = min(digits(both(guarded(ellb(b), 30)), -b * Jn[b - 1]) for b in range(1, 5))
+    report("H5", d5 >= 30, f"int ell^b/sin^2 dth = -b J_(b-1), b = 1 .. 4, by quadrature: worst {float(d5):.1f} digits")
+    def ellp(n):
+        return lambda th_, x, tail: basics(th_, x, tail)[0] ** n
+
+    d6 = min(digits(both(guarded(ellp(n), 30)), Jn[n]) for n in range(5))
+    report("H6", d6 >= 30, f"J_n = int ell^n dth, n <= 4, from the Beta function series (sympy) against quadrature: worst {float(d6):.1f} digits; "
+           f"J_3 = {sp.simplify(J[3])}")
+    # H7: assembly
+    W0s = -4 * q + (sp.Rational(1, 100) if MUTATE == "wrong_Om0" else 0)
+    G3 = moment_integral(P[3]["A"], P[3]["B"], J, lg)
+    sol = sp.solve(G3.subs(w0, W0s), w1)
+    Om1 = sp.simplify(sol[0])
+    G4 = moment_integral(P[4]["A"].subs(w2, 0), P[4]["B"], J, lg) + 64 * (w0 - 1) * (sp.pi**3 / 6 if MUTATE == "wrong_tanC" else sp.pi**3 / 12)
+    G4 = G4.subs(w0, W0s)
+    Om2 = sp.simplify(sp.expand((G4 / (4 * sp.pi)).subs(w1, Om1)))
+    t1 = sp.simplify(Om1 - (2 * sp.pi**2 / 3 + 8 * q**2))
+    t2 = sp.simplify(sp.expand(Om2 - (80 * sp.zeta(3) - sp.Rational(8, 3) * sp.pi**2 * q - sp.Rational(32, 3) * q**3)))
+    report("H7", t1 == 0 and t2 == 0, f"G_3 = 0 gives Omega1 = {Om1}; G_4(Omega2 = 0)/(4 pi) with that Omega1 gives Omega2 = {Om2}; "
+           f"against 2 pi^2/3 + 8 ln^2 2 and 80 zeta(3) - (8/3) pi^2 ln 2 - (32/3) ln^3 2: differences {t1} and {t2}")
+    # H8: the derived G_3(0), G_4(0) against method A at 40 digits
+    with mp.workdps(40 + GUARD):
+        Oms = [W0n, mp.mpf(0), mp.mpf(0), mp.mpf(0)]
+        gA3 = A_G(3, Oms)
+        Oms4 = [W0n, W1n, mp.mpf(0), mp.mpf(0)]
+        gA4 = A_G(4, Oms4)
+        gd3 = mp.mpf(sp.N(G3.subs({w0: -4 * q, w1: 0}), 60))
+        gd4 = mp.mpf(sp.N(G4.subs({w1: 2 * sp.pi**2 / 3 + 8 * q**2}), 60))
+        e3, e4 = digits(gA3, gd3), digits(gA4, gd4)
+    report("H8", min(e3, e4) >= 30, f"derived G_3(0) = {nd(gd3, 30)}, G_4(0) = {nd(gd4, 30)} against method A's: {float(e3):.1f} and {float(e4):.1f} digits "
+           f"({time.time() - t0:.0f} s)")
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -521,7 +740,7 @@ def check_evals():
     # Q1, Q2
     agree = min(60, int(digits(ev["A70"]["Om2"], ev["B2"]["Om2"])))
     pert = mp.mpf(1) / 1000
-    with mp.workdps(agree):
+    with mp.workdps(max(agree, 30)):     # a value that agrees with B in fewer digits is still given to PSLQ, which then fails
         om = +ev["A70"]["Om2"]
         z3 = mp.zeta(3) + (pert if MUTATE == "pslq_wrong_basis" else 0)
         b1 = [om, z3, mp.pi**2 * mp.ln2, mp.ln2**3]
@@ -603,6 +822,8 @@ def main():
         check_sym()
     if "closed" in PARTS:
         check_closed()
+    if "reduce" in PARTS:
+        check_reduce()
     if "n4b" in PARTS:
         check_n4b("N4b", 0)
     if "n4bg" in PARTS:
