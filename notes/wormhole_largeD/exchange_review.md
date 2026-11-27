@@ -33,7 +33,9 @@ and checked.
 - **Third grid** (N = 64, w = 1/3, V = 24): Ω₂ against #26's A70 to 50.3 digits (A70 prints 48), Ω₃ against #208's B4 to 87.8 digits
   (bar 40 each).
 - **Controls.** 27 of 27 on target (§9); the silences are listed there.
-- **Comparison with omega2.md and omega3.md** (§8): TBD
+- **Comparison with omega2.md and omega3.md** (§8): no difference in a sign, constant or result. Differences in route and in what is
+  stated: E2's route; boundary terms of E1, E2 and E3 at j = 4 stated and checked here; one incomplete boundary argument in
+  omega2.md step 1 (the θ = 0 end of [D₃P]); E3 valid at every k; slope −4π derived.
 
 ## 1. Setting
 
@@ -323,7 +325,42 @@ GR1's 50.3 digits are set by A70's 48 printed digits.
 
 ## 8. Comparison with omega2.md and omega3.md
 
-Written after the note above was committed (branch commit before the reading). TBD
+Made after §1 to §7 and the output were committed (branch commit a2e647e). I read `omega2.md` and `omega3.md` for the first
+time then. The list below covers every step, boundary term, sign and constant of E1, E2, E3 and the Clausen steps in both notes.
+
+**No difference in a sign, a constant or a result.** The two notes and this one agree on: E1 and its three integrals; E2's
+statement and its hypothesis G_{k−1} = 0; c₁ = Ω₀ − 3ℓ − S; P = cot θ (ℓ − Ω₀) and P′ = (Ω₀ − ℓ − S)/S; the Y₄ terms
+(4ℓ + 2c₁)Y₄/S = 2P′Y₄ (omega3.md step 2); the by-parts result −4∫(ℓ − Ω₀)F₃dθ; the factor 4 and the coefficient −32 of P′ for the
+D₃ term of Y₃ (omega2.md step 1: δ = −32P′, equal to my 2P′ times Y₃'s −16D₃); C′ = 2ℓ + 2ln 2; ∫ℓ = −(π/2)ln 2 and
+∫ℓ² = (π/2)(ln²2 + π²/12); ∫tan θ C = π³/12; ∫C² = π⁵/360; and the slope −4π.
+
+**Differences in route or in what is stated** (none changes a result):
+
+1. **E2's route.** omega2.md writes L = −2h + 2 tan θ B, B = ∫₀^θ h_φ cot φ dφ (one integration by parts inside C), then
+   exchanges ∫tan θ B against ℓ. Here one integration by parts acts on C_m itself, with ∫ℓ/sin²θ = −π/2 closing the constants.
+   Both need G_{k−1} = 0 at the same place: in omega2.md's route B(π/2) = G/2 must vanish for the term [−2ℓB] to go, here
+   [−ℓC_m] goes only if G_m = 0.
+2. **Boundary terms.** omega2.md states none for E1 or E2 and checks E2's numerically (N4a at k − 1 = 2, N4bg at 3); omega3.md
+   says so as well ("not derived here: E2's boundary terms"). §2 and §3 derive them: E1's [−cot θ Y_k]; E2's [−ℓC_m] (O(θ³)
+   at 0, O(x l^{q+1}) at π/2, which needs G_m = 0) and [−cot θ ℓ − θ]. omega3.md's remaining gap, "the boundary argument of E3
+   at j = 4 (analytic, not checked at j = 4 numerically)", is checked here: [Y₄P] is O(θ) with coefficient 2Ω₀Ω₂ = −412.39 at
+   the throat and ~x l⁶ at the outer end (BND), and E3_5 and E3G_5 agree to 44.9 and 40.4 digits.
+3. **omega2.md step 1, the boundary term at θ = 0.** It reads "D₃(0) = 0, P(π/2) = 0, so the boundary terms vanish". P has a pole
+   at 0 (P = −Ω₀/θ + O(θ)), so D₃(0) = 0 does not suffice: it needs D₃ = O(θ²), which holds since D₃′ = 2C and C = 2 ln 2 · θ +
+   O(θ³) give D₃ = 2 ln 2 · θ² + O(θ⁴), and then D₃P = −2 ln 2 Ω₀ θ → 0. The conclusion stands (H2b, 45 digits). This is the one
+   place where a written argument is incomplete; it is not an error.
+4. **E3's scope.** omega3.md states E3 for Y₄ at k = 5. The argument holds for Y_{k−1} at every k ≥ 2 (§4), and E3_3, E3_4, E3_5 and
+   E3G_3, E3G_4, E3G_5 check it at k = 3, 4, 5. #26's step 1 is the same by-parts step applied only to the D₃ part of Y₃; applying
+   it to all of Y₃ would give another, equivalent, integrand.
+5. **The slope −4π.** Both notes quote "G_k is affine in Ω_{k−2} with slope −4π" as a fact checked numerically. §2 derives it from
+   E1 (and §4 from the boxed form: 8∫(Y₀Ω_{k−2})ℓ/S = −4πΩ_{k−2}, the other Ω_{k−2} terms cancelling since Y₁ = −l).
+6. **∫C² = π⁵/360.** omega3.md uses Parseval's identity on [0, π], ½∫₀^π Cl₂² = (π/4)ζ(4). Here the substitution x = π − 2θ is
+   not made: C = Σ(−1)^{n+1}sin(2nθ)/n² is integrated against itself on [0, π/2], which needs only orthogonality and uniform
+   convergence, not completeness. The value is the same.
+7. **Growth at π/2.** omega3.md has Y₄ = O(ℓ⁴). The induction of §1 proves only O(l^{k+1}). The grid shows Y_k/l^k bounded
+   (Y₄/l⁴ = 1.6 at l = 256), so omega3.md's order is the right one; the boundary term is O(x l⁵) there instead of my O(x l⁶).
+
+Nothing here disagrees with the repository's text or with another computation.
 
 ## 9. Controls
 
