@@ -11,7 +11,7 @@ Method B (order4.py's PanelB, shared): v = sqrt(l), panels of width w on [0, V],
 spectral integration matrix; Y_k from the left, the tail C_right from the right, L_k = -2 h_k(1) - u C_right, G_k = C_right(0). It uses no
 closed form of Y_k or L_k and no input value of Omega_0 .. Omega_2.
 
-    python3 order5.py [sym] [evals] [pslq] [remainder] [--mutate=NAME] [--w2=w2_output.txt] [--w2raw=FILE] [--save=FILE] [--load=FILE] [--no-real]
+    python3 order5.py [sym] [evals] [pslq] [remainder] [closedform] [--mutate=NAME] [--w2=w2_output.txt] [--w2raw=FILE] [--save=FILE] [--load=FILE] [--no-real]
     python3 order5.py grid --grid=N,w,V,dps [--kmax=5]      (a development run of one grid; no gate)
 
 No argument runs sym, evals, pslq, remainder. The exit status is 1 when a check fails. Status words: sympy residual 0 is "checked
@@ -35,7 +35,7 @@ from order4 import PanelB  # noqa: E402
 sys.argv = _argv
 
 MUTATIONS = ("wrong_h", "wrong_c5", "wrong_Om0", "wrong_Om1", "wrong_Om2", "coarse_B", "short_tail", "pslq_wrong_basis",
-             "wrong_Om3_series")
+             "wrong_Om3_series", "wrong_closed")
 MUTATE = None
 W2FILE = "w2_output.txt"
 SAVE = None
@@ -435,6 +435,24 @@ def check_pslq(ev):
 # ---------------------------------------------------------------------------------------------------------------
 # the remainder against #195's W^2
 # ---------------------------------------------------------------------------------------------------------------
+def closed_omega3():
+    """the P2 relation of run_02 (A2): 45 Omega3 - 22 pi^4 - 240 pi^2 ln^2 2 - 480 ln^4 2 + 14400 zeta(3) ln 2 + 17280 zeta(3) = 0"""
+    pi, ln2, z3 = mp.pi, mp.ln2, mp.zeta(3)
+    return ((23 if MUTATE == "wrong_closed" else 22) * pi**4 + 240 * pi**2 * ln2**2 + 480 * ln2**4 - 14400 * z3 * ln2 - 17280 * z3) / 45
+
+
+def check_closedform(ev):
+    """X3 (A2): Omega3 of B3 and B4 against 22 pi^4/45 + 16 pi^2 ln^2 2/3 + 32 ln^4 2/3 - 320 zeta(3) ln 2 - 384 zeta(3)"""
+    mp.mp.dps = 330
+    cf = closed_omega3()
+    rows = {n: digits(cf, ev[n]["Om3"]) for n in ev}
+    fit40 = mp.mpf(OM3_FIT40)
+    report("X3", all(rows[n] >= 100 for n in GRIDS),
+           f"Omega3 against 22 pi^4/45 + 16 pi^2 ln^2 2/3 + 32 ln^4 2/3 - 320 zeta(3) ln 2 - 384 zeta(3) = {nd(cf, 50)}, digits: "
+           + ", ".join(f"{n} {float(d):.1f}" for n, d in rows.items()) + " (bar 100 on B3, B4; B1, B2 reported); against #195's 40-digit median: "
+           f"{nd(abs(cf - fit40), 3)} (its range 2.74e-35)")
+
+
 def read_w2(path):
     """{D: W2 string} of the 64-value list of w2_output.txt (qd values, 60 digits)"""
     lst = {}
@@ -501,11 +519,13 @@ def main():
     if "evals" in PARTS:
         ev = check_evals()
         check_values(ev)
-    elif LOAD and any(p in PARTS for p in ("values", "pslq", "remainder")):
+    elif LOAD and any(p in PARTS for p in ("values", "pslq", "remainder", "closedform")):
         mp.mp.dps = 330
         ev = load_ev(LOAD)
         if "values" in PARTS:
             check_values(ev)
+    if "closedform" in PARTS:
+        check_closedform(ev)
     if "pslq" in PARTS:
         check_pslq(ev)
     if "remainder" in PARTS:
