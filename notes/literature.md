@@ -326,7 +326,8 @@ its reference list.
   (INSPIRE and arXiv checked). Abstract only. Claim: "specific regular black holes where the 'area radius' always
   remains non-zero, thereby leading to a 'throat' that is either timelike ..., spacelike (corresponding to a 'bounce'
   into a future universe), or null". It analyzes regularity, energy conditions and causal structure of metrics from a
-  mass function.
+  mass function. The abstract names no matter source, formation by collapse or stability analysis; the text was not read
+  beyond a search for stability, which finds only a citation of [BKZ12].
 - **[BW22] Bronnikov & Walia 2022**, "Field sources for Simpson–Visser spacetimes", PRD 105, 044039, arXiv:2112.13198
   v1, doi:10.1103/PhysRevD.105.044039 (INSPIRE checked; the arXiv page prints "Phys. Rev. D 15", an apparent typo).
   Read: abstract, §I, the NEC statement, concluding remarks.
