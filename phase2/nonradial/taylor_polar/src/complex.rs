@@ -135,6 +135,10 @@ impl<T: Num> Num for Cx<T> {
         Cx { re: self.re.exp(), im: T::zero() }
     }
     fn ln(self) -> Self {
+        // mutation bilinear: the "norm" sqrt(sum y y) is complex; the control takes ln |z| so that it runs and its target reads a number
+        if BILINEAR.load(Relaxed) {
+            return Cx { re: (self.re * self.re + self.im * self.im).ln() * T::from_f64(0.5), im: T::zero() };
+        }
         assert!(self.is_real() && self.re.to_f64() > 0.0, "Cx::ln only of a positive real number (the R diagonal)");
         Cx { re: self.re.ln(), im: T::zero() }
     }

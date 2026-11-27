@@ -9,6 +9,7 @@
     python taylor_polar.py --scipy-timing OUT run the scipy path (convergence.py's base variant) at the timing points,
                                               appending one JSON line per evaluation to OUT (long: about 30 min)
     python taylor_polar.py --list             the checks and the controls
+    python taylor_polar.py --complex ...      #188: the crate over complex s (see the block "the crate over complex s" below; --complex --list)
     python taylor_polar.py --rows [--l=2,4,5,6] [--only=QP,RA2,CAP5] [--jsonl-dir=DIR] [--mutate=NAME] [--raw=DIR]
                                               #187: convergence.py's rows (every variant, q_int, q_ext) from the crate, printed in
                                               the stored format and checked against convergence_l{2,4,5,6}_output.txt, with the
@@ -1223,6 +1224,768 @@ ROW_CONTROLS = {
 
 
 # ---------------------------------------------------------------------------------------------------------------
+# #188: the crate over complex s (python taylor_polar.py --complex)
+#
+#   python taylor_polar.py --complex [--only=R1,P1C] [--mutate=NAME] [--raw=DIR] [--bins=DIR] [--jsonl-dir=DIR] [--ref-dir=DIR] [--lane=dd]
+#   python taylor_polar.py --complex --build                  cargo build --release --features complex --target-dir target/complex
+#   python taylor_polar.py --complex --list                   the checks and the controls
+#   python taylor_polar.py --complex --scipy-ref-make=BOX --rtol=1e-13 [--points=tc] --out=FILE
+#                                                             winding2's D (its normalization) by the scipy path at stored points of BOX
+#                                                             (b1: 147 points of the box l = 2, Re s in [0.1, 2]; b6: l = 6, Re s in [0.03, 0.1]),
+#                                                             one JSON line per point, resumable (long: about 40 min for b1 at 1e-13)
+#
+# The counter is a copy of winding2.py's count() and --plant check (commit 0d1d376), taking F(s) from a cache of stored values
+# (check W0, which shares nothing with the crate) or from the crate's `dserve` (checks CX2 and CXZ).
+# ---------------------------------------------------------------------------------------------------------------
+CBIN = os.path.join(CRATE, "target", "complex", "release", "taylor_polar")
+BINS = os.path.join(CRATE, "target", "bins")        # old_default, new_default, old_libplane, new_libplane (R1; the raw README says how they are made)
+REFDIR = None
+LANE_EPS = {"f64": 1.1102230246251565e-16, "dd": 1.232595164407831e-32, "qd": 1.504632769052528e-64}
+CCRIT = dict(
+    P1C_PLANE=1e4, P1C_LOGVOL=1e4, P1C_ORTH=1e2,        # in units of the lane's epsilon, as multishoot's plane tests
+    P1C_F=[7.0, -3.0, 5.0, -11.0], P1C_X=12.0,
+    X1_BAR=1e-9, XR_BAR=1e-9,
+    XR_RS=[200.0, 300.0, 600.0],
+    CX2_WIND=0.05, CX2_STEP=0.45,
+    CXZ_BAR=1e4,
+    R1_D=[("f64", 2, [0.001, 1.0, 40.0]), ("dd", 2, [0.001, 1.0, 40.0]), ("qd", 2, [0.001, 1.0]),
+          ("f64", 6, [0.001, 1.0, 40.0]), ("dd", 6, [0.001, 1.0, 40.0]), ("qd", 6, [0.001, 1.0])],
+    CXZ_L=2.0, CXZ_LZ=2.0, CXZ_S0=(0.75, 0.5),
+)
+TIMEKEYS = {"t_y", "t_q", "t_s", "wall", "t_star", "t_table", "seconds"}
+CRAWDIR = None   # set in complex_main
+CBOXES = {
+    # the box of RESULTS.md section 5, l = 2 (#126's w_p7603_l2): winding 0, planted pair 0.3 + 1.76i
+    "b1": dict(l=2, x0=0.1, x1=2.0, y1=2.5, y0=0.0, plant=(0.3, 1.76), guard="all", expect=(0.0, 2.0, 0.39, 0.40),
+               cache="I126-rpi5/cache/winding2_cache_eps-1_w0.7603_l2_0.1_2.0_2.5.pkl",
+               tc=["0.1+0.24j", "0.1+1.76j", "0.1+2.5j", "2+0j", "2+2.5j", "1+1j", "0.1+0j", "0.5+0.5j"]),
+    # #117's box b25_l2, Re s in [2, 5], |Im s| <= 10 (large |s|, small R_s): winding 0, planted 2.5 + 1i
+    "b2": dict(l=2, x0=2.0, x1=5.0, y1=10.0, y0=0.0, plant=(2.5, 1.0), guard="all", expect=(0.0, 2.0, 0.39, 0.40),
+               cache="I117-rpi5/cache/winding2_cache_eps-1_w0.7603_l2_2.0_5.0_10.0.pkl", tc=[]),
+    # #115's strip at l = 6, Re s in [0.03, 0.1] (R_s = 1293): values only (X1b)
+    "b6": dict(l=6, x0=0.03, x1=0.1, y1=2.5, y0=0.0, plant=(0.04, 0.25), guard=1, expect=None,
+               cache="I115-rpi5/cache/winding2_cache_eps-1_w0.7603_l6_0.03_0.1_2.5.pkl",
+               tc=["0.03+0.24j", "0.03+1.76j", "0.03+2.5j", "0.1+0j", "0.1+2.5j", "0.05+1j", "0.03+0j", "0.07+0.5j"]),
+}
+
+
+def cbox_cache(name):
+    import pickle
+    return pickle.load(open(os.path.join(CRAWDIR, CBOXES[name]["cache"]), "rb"))
+
+
+def cbox_kmin(bx):
+    """min Re k over the contour, as winding2.py computes it (200 points per edge, the edges of the box)"""
+    import numpy as np
+    ks = lambda s: (np.sqrt(1 + (s - 1j * OMEGA) ** 2), np.sqrt(1 + (s + 1j * OMEGA) ** 2))
+    x0, x1, y0, y1 = bx["x0"], bx["x1"], bx["y0"], bx["y1"]
+    cands = [x0 + 1j * y for y in np.linspace(y0, y1, 200)] + [x + 1j * y1 for x in np.linspace(x0, x1, 200)]
+    if y0 != 0.0:
+        cands += [x1 + 1j * y for y in np.linspace(y0, y1, 200)] + [x + 1j * y0 for x in np.linspace(x0, x1, 200)]
+    return float(min(min(k.real for k in ks(c)) for c in cands))
+
+
+def cbox_rs(name, rsmult=40.0):
+    return R_M["base"] + rsmult / cbox_kmin(CBOXES[name])
+
+
+def cstrip(s, rs):
+    """winding2.py's removal of the trivial phases: exp(-i Im[(k+ + k-)(R_s - r_m) + (k+ + k- + s) r_m])"""
+    import numpy as np
+    kp, km = np.sqrt(1 + (s - 1j * OMEGA) ** 2), np.sqrt(1 + (s + 1j * OMEGA) ** 2)
+    f = -1.0 if MUTATE == "strip_sign" else 1.0
+    return complex(np.exp(-1j * f * ((kp + km) * (rs - R_M["base"]) + (kp + km + s) * R_M["base"]).imag))
+
+
+def ckey(s):
+    return complex(round(s.real, 12), round(s.imag, 12))
+
+
+def tc_keys(name, cache):
+    ks = []
+    for t in CBOXES[name]["tc"]:
+        k = min(cache, key=lambda c: abs(c - complex(t)))
+        if k not in ks:
+            ks.append(k)
+    return ks
+
+
+class Server:
+    """a crate process that reads `re im` lines and answers one JSON line each (dserve, czserve); evaluations are kept in memory and,
+    with a jsonl file, on disk so that a stopped run resumes"""
+
+    def __init__(self, cmd, jsonl=None, binpath=None, **kw):
+        args = [binpath or CBIN, cmd] + [f"{k}={v}" for k, v in kw.items()]
+        if MUTATE:
+            args.append(f"mutate={MUTATE}")
+        env = dict(os.environ, RAYON_NUM_THREADS="2")
+        if MUTATE:
+            env["TP_MAX_SECONDS"] = "120"
+        self.p = subprocess.Popen(["nice", "-n", "10"] + args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True, env=env, cwd=HERE)
+        self.setup = json.loads(self.p.stdout.readline())
+        self.mem, self.jsonl, self.n = {}, jsonl, 0
+        if jsonl and os.path.exists(jsonl):
+            for line in open(jsonl):
+                o = json.loads(line)
+                self.mem[(o["re"], o["im"])] = o
+
+    def eval(self, s):
+        k = (s.real, s.imag)
+        if k not in self.mem:
+            self.p.stdin.write(f"{s.real!r} {s.imag!r}\n")
+            self.p.stdin.flush()
+            line = self.p.stdout.readline()
+            if not line:
+                raise RuntimeError("the crate process ended")
+            o = json.loads(line)
+            self.mem[k] = o
+            self.n += 1
+            if self.jsonl:
+                with open(self.jsonl, "a") as fp:
+                    fp.write(line)
+        return self.mem[k]
+
+    def close(self):
+        try:
+            self.p.stdin.close()
+            self.p.wait(timeout=30)
+        except Exception:
+            self.p.kill()
+
+
+def cjsonl(tag):
+    if not JDIR:
+        return None
+    # the counter's own mutations leave the crate's values as they are, so they reuse the unmutated file
+    return os.path.join(JDIR, tag + (f"__{MUTATE}" if MUTATE and MUTATE not in COUNTER_MUTS else "") + ".jsonl")
+
+
+def count_winding(F, x0, x1, y1, y0=0.0, nseg=10, guard=1, plant=None, mutate=None):
+    """winding2.py's count() and its --plant check as a function of F: returns the winding, the largest phase step, min |D|,
+    and with a plant the count with the factor, the difference and the verdict"""
+    import numpy as np
+    sym = (y0 == 0.0)
+    guard = np.inf if guard == "all" else int(guard)
+    if sym:
+        corners = [complex(x1, 0), complex(x1, y1), complex(x0, y1), complex(x0, 0)]
+    else:
+        corners = [complex(x1, y0), complex(x1, y1), complex(x0, y1), complex(x0, y0), complex(x1, y0)]
+    if mutate == "reverse":
+        corners = corners[::-1]
+
+    margin = [np.inf]   # the smallest distance of any quantity the counter compares with a threshold (0.4, 0.4, 0.1) from that threshold
+
+    def count(Fn):
+        total, maxstep, nmin = 0.0, 0.0, np.inf
+        for a, b in zip(corners[:-1], corners[1:]):
+            def step(t0, t1, depth):
+                nonlocal maxstep, nmin
+                da, db = Fn(a + (b - a) * t0), Fn(a + (b - a) * t1)
+                dph = np.angle(db / da)
+                fine = t1 - t0 <= 1e-5
+                if not fine:
+                    margin[0] = min(margin[0], abs(abs(dph) - 0.4))
+                if abs(dph) <= 0.4 and depth <= guard and not fine:
+                    dm = Fn(a + (b - a) * 0.5 * (t0 + t1))
+                    h1, h2 = np.angle(dm / da), np.angle(db / dm)
+                    margin[0] = min(margin[0], abs(max(abs(h1), abs(h2)) - 0.4), abs(abs(h1 + h2 - dph) - 0.1))
+                    if max(abs(h1), abs(h2)) > 0.4 or abs(h1 + h2 - dph) > 0.1:
+                        return step(t0, 0.5 * (t0 + t1), depth + 1) + step(0.5 * (t0 + t1), t1, depth + 1)
+                if abs(dph) > 0.4 and not fine:
+                    return step(t0, 0.5 * (t0 + t1), depth + 1) + step(0.5 * (t0 + t1), t1, depth + 1)
+                maxstep = max(maxstep, abs(dph))
+                nmin = min(nmin, abs(da))
+                return dph
+            for t0, t1 in zip(np.linspace(0, 1, nseg + 1)[:-1], np.linspace(0, 1, nseg + 1)[1:]):
+                total += step(t0, t1, 0)
+        doubled = sym != (mutate == "wrongdouble")
+        return (2 if doubled else 1) * total / (2 * np.pi), maxstep, nmin
+
+    N, maxstep, nmin = count(F)
+    out = dict(winding=float(N), maxstep=float(maxstep), nmin=float(nmin), margin=float(margin[0]))
+    if plant is not None:
+        s0 = complex(*plant)
+        inside = x0 < s0.real < x1 and ((0 < abs(s0.imag) < y1) if sym else (y0 < s0.imag < y1))
+        expected = (2 if sym else 1) * inside
+        s0a = s0 + (10 * (x1 - x0) if mutate == "misplant" else 0)
+        pf = (lambda s: (s - s0a) * (s - np.conj(s0a))) if (sym and mutate != "onesided") else (lambda s: (s - s0a))
+        Np, maxstep_p, _ = count(lambda s: F(s) * pf(s))
+        out.update(plant_count=float(Np), plant_diff=float(Np - N), plant_expected=expected, plant_maxstep=float(maxstep_p), plant_margin=float(margin[0]),
+                   plant_ok=bool(abs((Np - N) - expected) < 0.05 and maxstep_p < 0.45))
+    return out
+
+
+COUNTER_MUTS = ("reverse", "wrongdouble", "misplant", "onesided")
+
+
+def _stored_F(cache, asked, missing):
+    def F(s):
+        s = ckey(s)
+        asked.add(s)
+        if s not in cache:
+            missing.add(s)
+            return complex(1.0)
+        return cache[s]
+    return F
+
+
+def check_W0():
+    """the counter port on the stored values alone: it must give each stored box's result and ask for no point the cache lacks"""
+    parts, ok = [], True
+    for name in ("b1", "b2"):
+        bx = CBOXES[name]
+        cache = cbox_cache(name)
+        asked, missing = set(), set()
+        r = count_winding(_stored_F(cache, asked, missing), bx["x0"], bx["x1"], bx["y1"], bx["y0"], guard=bx["guard"], plant=bx["plant"],
+                          mutate=MUTATE if MUTATE in COUNTER_MUTS else None)
+        w_exp, p_exp, ms_exp, msp_exp = bx["expect"]
+        good = (abs(r["winding"] - w_exp) < CCRIT["CX2_WIND"] and r["plant_ok"] and not missing
+                and round(r["maxstep"], 2) == ms_exp and round(r["plant_maxstep"], 2) == msp_exp)
+        ok &= good
+        parts.append(f"{name}: winding {r['winding']:+.4f} (stored {w_exp:+.4f}), max step {r['maxstep']:.2f} (stored {ms_exp}), plant difference {r['plant_diff']:+.4f} "
+                     f"(expected {r['plant_expected']}, step {r['plant_maxstep']:.2f}, stored {msp_exp}), asked {len(asked)} of {len(cache)} stored points, {len(missing)} missing; "
+                     f"smallest distance of a compared quantity from its threshold (0.4, 0.4, 0.1 rad): {r['margin']:.2e} without the plant, {r['plant_margin']:.2e} with it, "
+                     f"and the plant's largest step is {CCRIT['CX2_STEP'] - r['plant_maxstep']:.2f} rad under 0.45")
+    report("W0", ok, "winding2's counter ported, on the stored values alone: " + "; ".join(parts))
+
+
+def _crate_F(name, lane, jsonl=None, rsmult=40.0):
+    """F(s) = winding2's D at s from the crate (dserve, one star and one J table), with the phase strip; F.walls has the wall time of each"""
+    bx = CBOXES[name]
+    rs = cbox_rs(name, rsmult)
+    rs_int = rs + (1.0 if MUTATE == "rs_shift" else 0.0)    # mutation rs_shift: the scalar plane started at R_s + 1, the strip at R_s
+    srv = Server("dserve", jsonl, lane=lane, l=bx["l"], rsfix=repr(rs_int), **star_kw())
+    walls = {}
+
+    def F(s):
+        s = ckey(s)
+        o = srv.eval(s.conjugate() if MUTATE == "conj_s" else s)    # mutation conj_s: D evaluated at conj(s)
+        walls[s] = o["wall"]
+        d = complex(o["d_f64"][0], o["d_f64"][1])
+        return d * (1.0 if MUTATE == "strip_off" else cstrip(s, rs))   # mutation strip_off: winding2's phase strip left out
+    F.walls = walls
+    return F, srv
+
+
+def check_CX2():
+    """the counter on the crate's values: the stored boxes' counts, with the planted pair, as winding2 gave them"""
+    lane = LANE_C
+    parts, ok = [], True
+    for name in ("b1", "b2"):
+        bx = CBOXES[name]
+        F, srv = _crate_F(name, lane, cjsonl(f"cx2_{name}_{lane}"))
+        t = time.time()
+        try:
+            stored = cbox_cache(name)
+            asked = set()
+            Fa = lambda s, F=F, asked=asked: (asked.add(ckey(s)), F(s))[1]
+            r = count_winding(Fa, bx["x0"], bx["x1"], bx["y1"], bx["y0"], guard=bx["guard"], plant=bx["plant"],
+                              mutate=MUTATE if MUTATE in COUNTER_MUTS else None)
+        finally:
+            srv.close()
+        w_exp = bx["expect"][0]
+        good = abs(r["winding"] - w_exp) < CCRIT["CX2_WIND"] and r["plant_ok"] and r["maxstep"] < CCRIT["CX2_STEP"] and r["plant_maxstep"] < CCRIT["CX2_STEP"]
+        ok &= good
+        parts.append(f"{name} ({lane}): winding {r['winding']:+.4f} (stored {w_exp:+.4f}), max step {r['maxstep']:.2f} rad, min|D| {r['nmin']:.2e}, plant difference "
+                     f"{r['plant_diff']:+.4f} (expected {r['plant_expected']}, step {r['plant_maxstep']:.2f}); {len(asked)} points asked, {len(asked - set(stored))} not in the "
+                     f"stored cache, {len(set(stored) - asked)} stored points not asked; {srv.n} evaluated now, {time.time() - t:.0f} s")
+    report("CX2", ok, "winding2's counter with the crate as the evaluator: " + "; ".join(parts))
+
+
+def _x1_points(name, cache):
+    if MUTATE:   # a control runs on the stratified points only
+        return tc_keys(name, cache)
+    return sorted(cache, key=lambda c: (c.real, c.imag))
+
+
+def _load_ref(name, rtol):
+    path = os.path.join(REFDIR or "", f"scipy_{name}_rtol{rtol:g}.jsonl")
+    if not os.path.exists(path):
+        return None
+    d = {}
+    for line in open(path):
+        o = json.loads(line)
+        d[complex(o["key"][0], o["key"][1])] = o
+    return d
+
+
+def _check_X(label, name, lane):
+    import numpy as np
+    bx = CBOXES[name]
+    cache = cbox_cache(name)
+    ref = _load_ref(name, 1e-13)
+    if ref is None:
+        report(label, None, f"no scipy reference file scipy_{name}_rtol1e-13.jsonl in --ref-dir")
+        return
+    keys = [k for k in _x1_points(name, cache) if k in ref]
+    F, srv = _crate_F(name, lane, cjsonl(f"{label.lower()}_{name}_{lane}"))
+    try:
+        rows = []
+        for k in keys:
+            d = F(k)
+            r = complex(ref[k]["d"][0], ref[k]["d"][1])
+            st = cache[k]
+            rows.append((k, abs(abs(d) / abs(r) - 1), abs(np.angle(d / r)), abs(abs(d) / abs(st) - 1), abs(np.angle(d / st)),
+                         abs(abs(r) / abs(st) - 1), abs(np.angle(r / st)), F.walls[ckey(k)]))
+    finally:
+        srv.close()
+    bar = CCRIT["X1_BAR"]
+    mod, ph = max(r[1] for r in rows), max(r[2] for r in rows)
+    nbad = sum(1 for r in rows if r[1] > bar or r[2] > bar)
+    ok = nbad == 0
+    wall = sorted(r[7] for r in rows)
+    report(label, ok, f"box {name} (l = {bx['l']}, Re s in [{bx['x0']}, {bx['x1']}], |Im s| <= {bx['y1']}, R_s {cbox_rs(name):.4f}), crate {lane} against winding2's D by the scipy path at rtol 1e-13 "
+                      f"at {len(rows)} stored points: worst modulus ratio {mod:.1e}, worst phase {ph:.1e} rad (bar {bar:g} each), {nbad} points over the bar. Reported without a bar: crate against the stored values "
+                      f"(rtol 1e-8) modulus {max(r[3] for r in rows):.1e}, phase {max(r[4] for r in rows):.1e}; the stored values against scipy at 1e-13 modulus {max(r[5] for r in rows):.1e}, phase {max(r[6] for r in rows):.1e}; "
+                      f"crate wall per D: median {wall[len(wall) // 2]:.2f} s, max {wall[-1]:.2f} s")
+    return rows
+
+
+def check_X1():
+    _check_X("X1", "b1", LANE_C)
+    if not MUTATE:
+        try:
+            rows = _check_X("X1-f64", "b1", "f64")   # the f64 lane against the same reference, reported: counts as a check of its own
+        except Exception as e:
+            report("X1-f64", False, f"raised {type(e).__name__}: {str(e)[:200]}")
+
+
+def check_X1B():
+    _check_X("X1b", "b6", LANE_C)
+
+
+def check_XR():
+    """winding2's D with the phase strip is independent of the scalar plane's start radius: the crate at four R_s, eight points"""
+    import numpy as np
+    name = "b1"
+    cache = cbox_cache(name)
+    keys = tc_keys(name, cache)
+    rs0 = cbox_rs(name)
+    rss = [rs0] + CCRIT["XR_RS"]
+    vals = {}
+    for rs in rss:
+        srv = Server("dserve", None, lane=LANE_C, l=CBOXES[name]["l"], rsfix=repr(rs), **star_kw())
+        try:
+            vals[rs] = [complex(*srv.eval(ckey(k))["d_f64"]) * cstrip(ckey(k), rs) for k in keys]
+        finally:
+            srv.close()
+    worst_m = worst_p = 0.0
+    for rs in rss[1:]:
+        for a, b in zip(vals[rs], vals[rs0]):
+            worst_m = max(worst_m, abs(abs(a) / abs(b) - 1))
+            worst_p = max(worst_p, abs(np.angle(a / b)))
+    ok = worst_m <= CCRIT["XR_BAR"] and worst_p <= CCRIT["XR_BAR"]
+    report("XR", ok, f"stripped D at R_s = {', '.join(f'{r:.2f}' for r in CCRIT['XR_RS'])} against R_s = {rs0:.2f} ({LANE_C}, {len(keys)} points of b1): worst modulus ratio {worst_m:.1e}, "
+                     f"worst phase {worst_p:.1e} rad (bar {CCRIT['XR_BAR']:g} each)"
+                     + ("" if ok else "; the premise is false: the phase carries tails of the exterior solution that winding2's strip does not remove (1/R_s from the "
+                        "start vectors and the angular term, ln R_s from the mass); they are holomorphic and zero-free at a fixed R_s, so a count is unaffected (XRc)"))
+
+
+def check_XRC():
+    """the counts do not depend on R_s: b1 counted with the scalar plane started at R_s for rsmult 40 and 80 (winding2's --rsmult), winding 0, planted pair 2"""
+    bx = CBOXES["b1"]
+    parts, ok = [], True
+    for rsm in (40.0, 80.0):
+        F, srv = _crate_F("b1", LANE_C, cjsonl(f"xrc_b1_{LANE_C}_rsm{rsm:g}"), rsmult=rsm)
+        try:
+            r = count_winding(F, bx["x0"], bx["x1"], bx["y1"], bx["y0"], guard=bx["guard"], plant=bx["plant"], mutate=MUTATE if MUTATE in COUNTER_MUTS else None)
+        finally:
+            srv.close()
+        good = abs(r["winding"]) < CCRIT["CX2_WIND"] and r["plant_ok"] and r["maxstep"] < CCRIT["CX2_STEP"] and r["plant_maxstep"] < CCRIT["CX2_STEP"]
+        ok &= good
+        parts.append(f"rsmult {rsm:g} (R_s {cbox_rs('b1', rsm):.1f}): winding {r['winding']:+.4f}, max step {r['maxstep']:.2f}, plant difference {r['plant_diff']:+.4f} (step {r['plant_maxstep']:.2f})")
+    report("XRc", ok, f"b1 counted with the scalar plane started at two outer radii ({LANE_C}): " + "; ".join(parts))
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# R1, R2: the real lanes
+# ---------------------------------------------------------------------------------------------------------------
+def _collect_real(binpath, star):
+    out = []
+    for lane, l, gs in CCRIT["R1_D"]:
+        out += crun("d", binpath, False, lane=lane, l=l, gammas=",".join(repr(g) for g in gs), **star)
+    for case in ("const", "linear"):
+        for lane in ("f64", "dd", "qd"):
+            out += crun("planted", binpath, False, case=case, lane=lane, gamma=10.0, L=1.0, Lz=1.0)
+    out += crun("star", binpath, False, **MODEL)
+    return out
+
+
+def crun(cmd, binpath=None, mutate=True, stdin=None, **kw):
+    args = [binpath or CBIN, cmd] + [f"{k}={v}" for k, v in kw.items()]
+    if MUTATE and mutate:
+        args.append(f"mutate={MUTATE}")
+    env = dict(os.environ, RAYON_NUM_THREADS="2")
+    if MUTATE:
+        env["TP_MAX_SECONDS"] = "120"
+    p = subprocess.run(["nice", "-n", "10"] + args, capture_output=True, text=True, env=env, cwd=HERE, input=stdin)
+    if p.returncode:
+        raise RuntimeError(f"{' '.join(args)[:200]} exited {p.returncode}: {p.stderr[-400:]}")
+    return [json.loads(x) for x in p.stdout.splitlines() if x.startswith("{")]
+
+
+def check_R1():
+    """the real lanes are unchanged: the binary of main 0d1d376 against the new build, default and lib_plane, every field but the times"""
+    star = star_kw()
+    parts, ok = [], True
+    for old, new in (("old_default", "new_default"), ("old_libplane", "new_libplane")):
+        bo, bn = os.path.join(BINS, old), os.path.join(BINS, new)
+        if not (os.path.exists(bo) and os.path.exists(bn)):
+            report("R1", None, f"{old} or {new} is missing in {BINS}")
+            return
+        lo, ln = _collect_real(bo, star), _collect_real(bn, star)
+        if MUTATE == "r1_ulp":   # the last digit of one D in the new log changed
+            d = next(o for o in ln if o["cmd"] == "d")
+            d["d"] = d["d"][:-1] + ("1" if d["d"][-1] != "1" else "2")
+        diff = [i for i, (a, b) in enumerate(zip(lo, ln)) if {k: v for k, v in a.items() if k not in TIMEKEYS} != {k: v for k, v in b.items() if k not in TIMEKEYS}]
+        same = len(lo) == len(ln) and not diff
+        ok &= same
+        parts.append(f"{old} against {new}: {len(lo)} records, {len(diff)} differ" + ("" if same else f" (first: {lo[diff[0]]['cmd'] if diff else 'length'})"))
+    report("R1", ok, "real lanes, every field except times as strings (d at l = 2, 6, gamma = 0.001, 1, 40 in f64, dd, qd; planted const and linear; star): " + "; ".join(parts))
+
+
+def check_R2():
+    """the complex lane at Im s = 0 is the real lane: D (re as a string, im = 0), steps, q, r_s, r_far; and P1c with f = 0"""
+    star = star_kw()
+    bo = os.path.join(BINS, "old_default")
+    if not os.path.exists(bo):
+        report("R2", None, f"{bo} is missing")
+        return
+    n, bad = 0, []
+    for lane, l, gs in CCRIT["R1_D"]:
+        real = [o for o in crun("d", bo, False, lane=lane, l=l, gammas=",".join(repr(g) for g in gs), **star) if o["cmd"] == "d"]
+        cplx = [o for o in crun("dc", CBIN, True, lane=lane, l=l, re=",".join(repr(g) for g in gs), im=",".join("0.0" for _ in gs), **star) if o["cmd"] == "dc"]
+        for a, b in zip(real, cplx):
+            n += 1
+            same = (a["d"] == b["d_re"] and float(b["d_im"]) == 0.0 and (a["steps_y"], a["steps_q"], a["steps_s"]) == (b["steps_y"], b["steps_q"], b["steps_s"])
+                    and a["q"] == b["q_f64"][0] and b["q_f64"][1] == 0.0 and a["r_s"] == b["r_s"] and a["r_far"] == b["r_far"])
+            if not same:
+                bad.append(f"{lane} l={l} g={a['gamma']:g}")
+    for lane in ("f64", "dd", "qd"):
+        r = crun("cp1", CBIN, True, lane=lane, cx=0, f="0,0,0,0")
+        c = crun("cp1", CBIN, True, lane=lane, cx=1, f="0,0,0,0")
+        n += 1
+        same = (r[0]["lnvol_re"] == c[0]["lnvol_re"] and float(c[0]["lnvol_im"]) == 0.0 and r[0]["steps"] == c[0]["steps"]
+                and all(a["re"] == b["re"] and all(float(x) == 0.0 for x in b["im"]) for a, b in zip(r[1:], c[1:])))
+        if not same:
+            bad.append(f"P1c f = 0 {lane}")
+    report("R2", not bad, f"complex lane at real s against the real lane, {n} cases (the d list of R1 against `dc`, and P1c with f = 0 on cx = 0 and 1): "
+                          + ("all equal as strings, Im D = 0" if not bad else f"{len(bad)} differ: " + ", ".join(bad[:6])))
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# P1c: the planted complex plane
+# ---------------------------------------------------------------------------------------------------------------
+def check_P1C():
+    import mpmath as mp
+    mp.mp.dps = 140
+    P = [[1, 1, 0, 1], [1, 2, 1, 1], [0, 1, 2, 1], [1, 1, 1, 3]]
+    G = [24, 8, -8, -24]
+    f_true = CCRIT["P1C_F"]
+    x = mp.mpf(CCRIT["P1C_X"])
+    cols = [[mp.mpf(P[i][c]) for i in range(4)] for c in range(2)]
+    q0, lnr = [], mp.mpf(0)
+    for c in cols:   # positive-diagonal Gram-Schmidt of P[:, :2] at 140 digits (twice, as the stepper does)
+        v = mp.matrix(c)
+        for _ in range(2):
+            for q in q0:
+                v = v - mp.fsum(q[i] * v[i] for i in range(4)) * q
+        nrm = mp.sqrt(mp.fsum(t * t for t in v))
+        q0.append(v / nrm)
+        lnr += mp.log(nrm)
+    lam_re = G[0] + G[1]
+    lam_im = f_true[0] + f_true[1]
+    lam_exact = mp.mpc(lam_re * x + lnr, lam_im * x)   # Lambda = (g1 + g2) x + ln det R0 + i (f1 + f2) x
+    f_run = list(f_true)
+    if MUTATE == "f_scaled":
+        f_run[1] = f_run[1] * (1 + 1e-6)
+    msgs, ok = [], True
+    for lane in ("f64", "dd", "qd"):
+        eps = LANE_EPS[lane]
+        out = crun("cp1", CBIN, True, lane=lane, cx=1, x=repr(CCRIT["P1C_X"]), f=",".join(repr(t) for t in f_run))
+        head, qs = out[0], out[1:]
+        Y = [[mp.mpc(mp.mpf(a), mp.mpf(b)) for a, b in zip(o["re"], o["im"])] for o in qs]
+        # plane: ||(I - Pi) Y||_F with Pi the projector on span P[:, :2] (exact, from the 140-digit basis)
+        err = mp.mpf(0)
+        for y in Y:
+            proj = [mp.mpc(0)] * 4
+            for q in q0:
+                cq = mp.fsum(q[i] * y[i] for i in range(4))
+                proj = [proj[i] + cq * q[i] for i in range(4)]
+            err += mp.fsum(abs(y[i] - proj[i]) ** 2 for i in range(4))
+        plane = mp.sqrt(err)
+        orth = max(abs(mp.fsum(mp.conj(Y[a][i]) * Y[b][i] for i in range(4)) - (1 if a == b else 0)) for a in range(2) for b in range(2))
+        # Lambda = ln_vol + ln det(Q0^T Q)
+        m = mp.matrix(2, 2)
+        for a in range(2):
+            for b in range(2):
+                m[a, b] = mp.fsum(q0[a][i] * Y[b][i] for i in range(4))
+        lam_got = mp.mpf(head["lnvol_re"]) + mp.log(mp.det(m))
+        dre = abs(lam_got.real - lam_exact.real)
+        dim = abs(mp.mpf((lam_got.imag - lam_exact.imag + mp.pi) % (2 * mp.pi) - mp.pi))
+        dlam = max(dre, dim)
+        bars = (CCRIT["P1C_PLANE"] * eps, CCRIT["P1C_LOGVOL"] * eps * max(1.0, float(abs(lam_exact))), CCRIT["P1C_ORTH"] * eps)
+        good = float(plane) <= bars[0] and float(dlam) <= bars[1] and float(orth) <= bars[2]
+        ok &= good
+        msgs.append(f"{lane}: plane {fmt(plane)} (bar {fmt(bars[0])}), Lambda {fmt(dlam)} (re {fmt(dre)}, im {fmt(dim)}; bar {fmt(bars[1])}), orthonormality {fmt(orth)} (bar {fmt(bars[2])}), {head['steps']} steps")
+    report("P1C", ok, f"J = P diag(24 + 7i, 8 - 3i, -8 + 5i, -24 - 11i) P^-1, plane P[:, :2], x = 12; exact Lambda = ln_vol + ln det(Q0^T Q) = {mp.nstr(lam_exact, 12)} at 140 digits; " + "; ".join(msgs))
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# CXZ: a planted determinant with zeros
+# ---------------------------------------------------------------------------------------------------------------
+def _cz_J(mp):
+    C = [2.0, -3.0, 1.0, 4.0, -2.0, 3.0]
+    J = mp.matrix(6, 6)
+    for i in range(6):
+        for j in range(6):
+            re = (((7 * i + 3 * j + 1) % 11) - 5.0) / 8.0
+            im = (((3 * i + 5 * j + 2) % 9) - 4.0) / 4.0
+            if i == j:
+                im += C[i]
+            J[i, j] = mp.mpc(re, im)
+    return J
+
+
+def check_CXZ():
+    """a planted determinant: D(s) = c p(s), p(s) = (s - s0)(s - conj s0), through the complex stepper; D against mpmath's expm at 20 contour points
+    and the count of the box Re s in [0.2, 1.2], |Im s| <= 1 (2 zeros) and of Re s in [1.3, 2.0] (none)"""
+    import mpmath as mp
+    import numpy as np
+    mp.mp.dps = 140
+    L, Lz, s0 = CCRIT["CXZ_L"], CCRIT["CXZ_LZ"], CCRIT["CXZ_S0"]
+    J = _cz_J(mp)
+    z0 = mp.matrix([mp.mpf(v) for v in Z0[0]])
+    zt = mp.expm(-J * mp.mpf(L + Lz)) * z0
+    lane = LANE_C
+    eps = LANE_EPS[lane]
+    srv = Server("czserve", None, lane=lane, L=L, Lz=Lz, s0re=s0[0], s0im=s0[1],
+                 zt_re=",".join(mp.nstr(zt[i].real, 135, strip_zeros=False) for i in range(6)), zt_im=",".join(mp.nstr(zt[i].imag, 135, strip_zeros=False) for i in range(6)))
+    try:
+        # J as the crate has it
+        jr = srv.setup["j_re"]
+        jm = srv.setup["j_im"]
+        same_j = all(abs(J[i, j].real - jr[6 * i + j]) == 0 and abs(J[i, j].imag - jm[6 * i + j]) == 0 for i in range(6) for j in range(6))
+        eL, eZ = mp.expm(J * mp.mpf(L)), mp.expm(-J * mp.mpf(Lz))
+        s0c = mp.mpc(*s0)
+
+        def exact(s):
+            sc = mp.mpc(s.real, s.imag)
+            p = (sc - s0c) * (sc - mp.conj(s0c))
+            Y = mp.matrix(6, 3)
+            for c in range(2):
+                for i in range(6):
+                    Y[i, c] = mp.mpf(Y0[c][i])
+            for i in range(6):
+                Y[i, 2] = zt[i] + p * mp.mpf(Y0[2][i])
+            Zc = mp.matrix(6, 3)
+            for c in range(3):
+                for i in range(6):
+                    Zc[i, c] = mp.mpf(Z0[c][i])
+            YL, ZL = eL * Y, eZ * Zc
+            M = mp.matrix(6, 6)
+            for c in range(3):
+                for i in range(6):
+                    M[i, c], M[i, 3 + c] = YL[i, c], ZL[i, c]
+            return mp.det(M)
+
+        worst = 0.0
+        pts = [complex(1.2, 0), complex(1.2, 0.5), complex(1.2, 1.0)] + [complex(1.2 - 1.0 * t, 1.0) for t in np.linspace(0.05, 1.0, 10)] + [complex(0.2, 1.0 - t) for t in np.linspace(0.1, 1.0, 7)]
+        for s in pts:
+            o = srv.eval(s)
+            d_got = mp.mpc(mp.mpf(o["d_re"]), mp.mpf(o["d_im"])) * mp.exp(mp.mpf(o["ln_y"]) + mp.mpf(o["ln_z"]))
+            d_ex = exact(s)
+            scale = max(1.0, float(abs(mp.mpf(o["ln_y"])) + abs(mp.mpf(o["ln_z"]))))
+            worst = max(worst, float(abs(d_got / d_ex - 1)) / (eps * scale))
+        # the count
+        res = []
+        for (x0, x1, expect) in ((0.2, 1.2, 2.0), (1.3, 2.0, 0.0)):
+            F = lambda s: complex(*srv.eval(ckey(s))["d_f64"])
+            r = count_winding(F, x0, x1, 1.0, 0.0, mutate=MUTATE if MUTATE in COUNTER_MUTS else None)
+            res.append((x0, x1, expect, r))
+    finally:
+        srv.close()
+    bar = CCRIT["CXZ_BAR"]
+    ok = same_j and worst <= bar and all(abs(r["winding"] - e) < CCRIT["CX2_WIND"] and r["maxstep"] < CCRIT["CX2_STEP"] for (_, _, e, r) in res)
+    report("CXZ", ok, f"planted determinant, {lane}, L = {L}, Lz = {Lz}, zeros at {s0[0]} +- {s0[1]}i; J equal to the crate's: {same_j}; D against mpmath expm at {len(pts)} contour points: "
+                      f"worst |D/D_exact - 1| / (eps max(1, ln growth)) = {worst:.2e} (bar {bar:g}); " + "; ".join(
+                          f"box Re s in [{x0}, {x1}]: winding {r['winding']:+.4f} (planted {e:.0f}), max step {r['maxstep']:.2f}" for (x0, x1, e, r) in res))
+
+
+def check_L1C():
+    """the lane: the crate's D at three points of b1 in qd against dd (bar 1e-20 in modulus ratio and phase, as #186's L1), f64 against dd reported"""
+    import numpy as np
+    name = "b1"
+    cache = cbox_cache(name)
+    keys = [min(cache, key=lambda c, t=t: abs(c - complex(t))) for t in ("0.1+1.76j", "2+2.5j", "0.5+0.5j")]
+    rs = cbox_rs(name)
+    star = star_kw()
+    vals = {}
+    for lane in ("f64", "dd", "qd"):
+        out = crun("dc", CBIN, True, lane=lane, l=CBOXES[name]["l"], rsfix=repr(rs), re=",".join(repr(k.real) for k in keys), im=",".join(repr(k.imag) for k in keys), **star)
+        vals[lane] = [o for o in out if o["cmd"] == "dc"]
+    import mpmath as mp
+    mp.mp.dps = 80
+    def dm(a, b):
+        za, zb = mp.mpc(mp.mpf(a["d_re"]), mp.mpf(a["d_im"])), mp.mpc(mp.mpf(b["d_re"]), mp.mpf(b["d_im"]))
+        return float(abs(abs(za) / abs(zb) - 1)), float(abs(mp.arg(za / zb)))
+    q = [dm(a, b) for a, b in zip(vals["qd"], vals["dd"])]
+    f = [dm(a, b) for a, b in zip(vals["f64"], vals["dd"])]
+    bar = 1e-20
+    ok = all(m <= bar and p <= bar for m, p in q)
+    report("L1C", ok, f"crate D at {len(keys)} points of b1: qd against dd worst modulus ratio {max(m for m, _ in q):.1e}, phase {max(p for _, p in q):.1e} (bar {bar:g}); "
+                      f"f64 against dd (reported) {max(m for m, _ in f):.1e}, {max(p for _, p in f):.1e}; wall per D dd {sum(o['wall'] for o in vals['dd']) / 3:.2f} s, qd {sum(o['wall'] for o in vals['qd']) / 3:.1f} s")
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# TC: time per D
+# ---------------------------------------------------------------------------------------------------------------
+def check_TC():
+    parts = []
+    for name in ("b1", "b6"):
+        bx = CBOXES[name]
+        ref8 = _load_ref(name, 1e-8)
+        ref13 = _load_ref(name, 1e-13)
+        if ref8 is None:
+            continue
+        keys = [k for k in tc_keys(name, cbox_cache(name)) if k in ref8]
+        for lane in ("f64", LANE_C) if LANE_C != "f64" else ("f64",):
+            srv = Server("dserve", None, lane=lane, l=bx["l"], rsfix=repr(cbox_rs(name)), **star_kw())
+            try:
+                w = [srv.eval(ckey(k))["wall"] for k in keys]
+            finally:
+                srv.close()
+            ts8 = [ref8[k]["t"] for k in keys]
+            ts13 = [ref13[k]["t"] for k in keys] if ref13 else []
+            parts.append(f"{name} (l = {bx['l']}, R_s {cbox_rs(name):.1f}, {len(keys)} points) crate {lane}: {sum(w) / len(w):.3f} s per D (range {min(w):.3f} to {max(w):.3f}); scipy rtol 1e-8: "
+                         f"{sum(ts8) / len(ts8):.2f} s (range {min(ts8):.2f} to {max(ts8):.2f})" + (f", rtol 1e-13: {sum(ts13) / len(ts13):.2f} s" if ts13 else "")
+                         + f"; speed-up over rtol 1e-8 x{sum(ts8) / sum(w):.0f}")
+    report("TC", True if parts else None, "time per D, one process each, nice 10, load " + f"{os.getloadavg()[0]:.1f}: " + ("; ".join(parts) if parts else "no scipy rtol 1e-8 files in --ref-dir"))
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# the scipy reference
+# ---------------------------------------------------------------------------------------------------------------
+def scipy_ref_make(name, out_path, rtol, which):
+    import pickle
+    import numpy as np
+    import background as B
+    from polar_solver import PolarProblem
+    bx = CBOXES[name]
+    cache = cbox_cache(name)
+    keys = tc_keys(name, cache) if which == "tc" else sorted(cache, key=lambda c: (c.real, c.imag))
+    st = B.solve_star(OMEGA, EPS)
+    P = PolarProblem(st, bx["l"], rtol=rtol)
+    assert float(P.rm) == R_M["base"], (P.rm, R_M["base"])
+    rs = cbox_rs(name)
+    P.Rs_fixed = rs
+    ks = lambda s: (np.sqrt(1 + (s - 1j * OMEGA) ** 2), np.sqrt(1 + (s + 1j * OMEGA) ** 2))
+    done = set()
+    if os.path.exists(out_path):
+        for line in open(out_path):
+            o = json.loads(line)
+            done.add(complex(o["key"][0], o["key"][1]))
+    print(f"# scipy path, box {name}, l = {bx['l']}, rtol {rtol:g}, R_s fixed {rs!r}, {len(keys)} points ({len(done)} done), load {os.getloadavg()[0]:.2f}", flush=True)
+    for k in keys:
+        if k in done:
+            continue
+        kp, km = ks(k)
+        t0, c0 = time.time(), time.process_time()
+        d = P.D(k) * np.exp(-1j * ((kp + km) * (P.Rs_fixed - P.rm) + (kp + km + k) * P.rm).imag)
+        rec = dict(key=[k.real, k.imag], d=[float(d.real), float(d.imag)], t=time.time() - t0, cpu=time.process_time() - c0, load1=os.getloadavg()[0], rtol=rtol, rs=rs, box=name)
+        with open(out_path, "a") as fp:
+            fp.write(json.dumps(rec) + "\n")
+        print(f"{k} {d} {rec['t']:.1f} s", flush=True)
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# the mode
+# ---------------------------------------------------------------------------------------------------------------
+LANE_C = "dd"
+C_CHECKS = {"R1": check_R1, "R2": check_R2, "P1C": check_P1C, "XR": check_XR, "XRc": check_XRC, "L1C": check_L1C, "X1": check_X1, "X1b": check_X1B, "W0": check_W0, "CX2": check_CX2, "CXZ": check_CXZ, "TC": check_TC}
+C_CONTROLS = {
+    "r1_ulp": ["R1"],                   # the last digit of one D of the new build's log changed
+    "cx_recip_general": ["R2"],         # Cx's reciprocal and quotient by the general formula at im = 0 (the real lanes' bits lost)
+    "bilinear": ["P1C"],                # Gram-Schmidt without the conjugate (and the squared norm without |.|^2)
+    "redot": ["P1C"],                   # the imaginary part of the projector dropped from the inner product
+    "f_scaled": ["P1C"],                # f2 scaled by 1 + 1e-6 in the system, not in the reference
+    "cx_mul_sign": ["P1C", "X1"],       # re = ac + bd in the complex product
+    "strip_off": ["X1", "X1b"],                # winding2's phase strip left out
+    "conj_s": ["X1", "X1b", "CXZ"],            # D evaluated at conj(s)
+    "rs_shift": ["X1", "X1b"],                 # the scalar plane started at R_s + 1, the strip at R_s
+    "lowsum": ["L1C"],                  # #186's: the Taylor sum cut at order 8 (the two lanes err differently)
+    "strip_sign": ["X1"],               # exp(+i ...) in the strip (XR cannot serve: it fails on the unmutated crate)
+    "jsign": ["X1"], "moncrief": ["X1"], "swapcols": ["X1"], "mext0": ["X1"], "star_eps": ["X1"], "shift_off": ["X1"],   # #186's controls on D
+    "reverse": ["W0", "CX2", "XRc", "CXZ"], "wrongdouble": ["W0", "CX2", "XRc", "CXZ"],     # the counter's own (winding2's)
+    "misplant": ["W0", "CX2", "XRc"], "onesided": ["W0", "CX2", "XRc"],
+}
+
+
+def complex_main(args):
+    global MUTATE, JDIR, RAW, CRAWDIR, REFDIR, BINS, LANE_C, SCIPY_FILE
+    if "--build" in args:
+        env = dict(os.environ, CARGO_NET_GIT_FETCH_WITH_CLI="true")
+        return subprocess.check_call(["nice", "-n", "10", "cargo", "build", "--release", "-j", "2", "--features", "complex", "--target-dir", "target/complex"], cwd=CRATE, env=env)
+    if "--list" in args:
+        print("--complex checks:", " ".join(C_CHECKS))
+        print("--complex controls:", " ".join(C_CONTROLS))
+        return
+    only, ref_make, out, rtol, which = None, None, None, 1e-13, "all"
+    CRAWDIR = RAW
+    for a in args:
+        if a.startswith("--mutate="):
+            MUTATE = a.split("=", 1)[1]
+        if a.startswith("--only="):
+            only = [x for x in a.split("=", 1)[1].split(",") if x]
+        if a.startswith("--raw="):
+            CRAWDIR = a.split("=", 1)[1]
+        if a.startswith("--bins="):
+            BINS = a.split("=", 1)[1]
+        if a.startswith("--jsonl-dir="):
+            JDIR = a.split("=", 1)[1]
+        if a.startswith("--ref-dir="):
+            REFDIR = a.split("=", 1)[1]
+        if a.startswith("--lane="):
+            LANE_C = a.split("=", 1)[1]
+        if a.startswith("--scipy-ref-make="):
+            ref_make = a.split("=", 1)[1]
+        if a.startswith("--out="):
+            out = a.split("=", 1)[1]
+        if a.startswith("--rtol="):
+            rtol = float(a.split("=", 1)[1])
+        if a.startswith("--points="):
+            which = a.split("=", 1)[1]
+    if ref_make:
+        return scipy_ref_make(ref_make, out, rtol, which)
+    if not os.path.exists(CBIN):
+        sys.exit("build first: python taylor_polar.py --complex --build")
+    if not os.path.exists(BIN):
+        build()
+    if MUTATE and MUTATE not in C_CONTROLS:
+        sys.exit(f"unknown control {MUTATE}; known: {' '.join(C_CONTROLS)}")
+    names = only if only is not None else (C_CONTROLS[MUTATE] if MUTATE else list(C_CHECKS))
+    names = list(dict.fromkeys(names))
+    if JDIR:
+        os.makedirs(JDIR, exist_ok=True)
+    t0 = time.time()
+    print(f"# taylor_polar.py --complex: start {time.strftime('%Y-%m-%d %H:%M:%S')}, load average {os.getloadavg()[0]:.2f}, one process, nice 10; lane {LANE_C}; mutate = {MUTATE}", flush=True)
+    for n in names:
+        try:
+            C_CHECKS[n]()
+        except Exception as e:
+            report(n, False, f"raised {type(e).__name__}: {str(e)[:300]}")
+    passed = [n for n, s in RESULTS if s is True]
+    failed = [n for n, s in RESULTS if s is False]
+    skipped = [n for n, s in RESULTS if s is None]
+    print(f"SUMMARY: {len(passed)} passed, {len(failed)} failed, {len(skipped)} skipped" + (f" ({', '.join(skipped)}: not run)" if skipped else "")
+          + f" of {len(RESULTS)} checks" + (f"; failed: {', '.join(failed)}" if failed else "") + f"; mutate = {MUTATE}; {time.time() - t0:.0f} s")
+    if MUTATE:
+        not_fired = [n for n in C_CONTROLS[MUTATE] if not any(r.startswith(n) and s is False for r, s in RESULTS)]
+        print(f"CONTROL {MUTATE}: " + ("every targeted check failed, as it must" if not not_fired else f"NOT FIRED on {', '.join(not_fired)}"))
+    sys.exit(1 if failed else 0)
+
+
+# ---------------------------------------------------------------------------------------------------------------
 # main
 # ---------------------------------------------------------------------------------------------------------------
 CHECKS = {
@@ -1259,6 +2022,8 @@ CONTROLS = {
 def main():
     global MUTATE, JDIR, RAW
     args = sys.argv[1:]
+    if "--complex" in args:
+        return complex_main(args)
     if "--gen" in args:
         return gen()
     if "--build" in args:

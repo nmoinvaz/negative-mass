@@ -115,7 +115,8 @@ fn cp1_go<T: Embed>(a: &Args) {
     let wall = t.elapsed().as_secs_f64();
     let (lre, lim) = lnvol.parts(130);
     println!(
-        "{{\"cmd\":\"cp1\",\"lane\":\"{}\",\"x\":{},\"f\":{:?},\"lnvol_re\":\"{}\",\"lnvol_im\":\"{}\",\"steps\":{},\"hmin\":{:e},\"order\":{},\"tol\":{:e},\"wall\":{:.4}}}",
+        "{{\"cmd\":\"cp1\",\"lane\":\"{}\",\"repr\":\"{}\",\"x\":{},\"f\":{:?},\"lnvol_re\":\"{}\",\"lnvol_im\":\"{}\",\"steps\":{},\"hmin\":{:e},\"order\":{},\"tol\":{:e},\"wall\":{:.4}}}",
+        a.s("lane", "dd"),
         T::NAME,
         x,
         f,
