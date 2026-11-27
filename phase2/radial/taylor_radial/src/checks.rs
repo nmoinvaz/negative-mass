@@ -162,3 +162,47 @@ fn pd<T: Num>(a: &Args) {
 pub fn cmd_pd(a: &Args) {
     lane_run(a, |a| pd::<f64>(a), |a| pd::<DD>(a), |a| pd::<multidouble::qd::QD>(a));
 }
+
+/// S3: the star's central data (P_c, Z_c) and its mass M in the quad-double lane (the crate's own Taylor shooting, `star_ref.rs`,
+/// normalizing alpha = 1 at `rnorm`) against the double-double boundary-value solution (multishoot)
+pub fn cmd_s3(a: &Args) {
+    use crate::star_ref::{shoot, solve_central, SolveCfg, StarPars};
+    use multidouble::qd::QD;
+    let eps = a.f("eps", 1.0);
+    let omega = DD::parse(a.s("omega", "0.75"));
+    let mut cfg = crate::bvp::StarCfg::new(eps);
+    cfg.dmax = a.f("dmax", 8.0);
+    let t0 = std::time::Instant::now();
+    let info = crate::bvp::solve(&cfg, omega, false).unwrap().info();
+    let t_dd = t0.elapsed().as_secs_f64();
+    let p = StarPars::<QD> { w: QD::from_dd(omega), eps: QD::from_f64(eps), lam: QD::from_f64(crate::model::LAM), mu: crate::model::mu::<QD>(), pi: crate::model::pi::<QD>() };
+    let r_norm = a.f("rnorm", 60.0);
+    let scfg = SolveCfg { rs: cfg.rs, tol: a.f("tol", 1e-62), r_norm, r_class: a.f("rclass", r_norm + 30.0), verbose: a.u("verbose", 0) > 0 };
+    let t1 = std::time::Instant::now();
+    let (pc, zc, it) = solve_central::<QD>(&p, 1.0 - 0.02 * eps, &scfg);
+    let run = shoot::<QD>(pc, zc, &p, cfg.rs, r_norm, false, scfg.tol, false);
+    let m_qd = run.state_end[2];
+    let t_qd = t1.elapsed().as_secs_f64();
+    let rel = |q: QD, d: DD| ((q - QD::from_dd(d)) / q).abs().to_f64();
+    let (e_pc, e_zc, e_m) = (rel(pc, info.pc), rel(zc, info.zc), rel(m_qd, info.mass));
+    println!(
+        "{{\"cmd\":\"S3\",\"eps\":{},\"omega\":\"{}\",\"rnorm\":{},\"tol\":{:e},\"secant_iters\":{},\"pc_qd\":\"{}\",\"pc_dd\":\"{}\",\"zc_qd\":\"{}\",\"zc_dd\":\"{}\",\"M_qd\":\"{}\",\"M_dd\":\"{}\",\"rel_pc\":{:e},\"rel_zc\":{:e},\"rel_M\":{:e},\"worst\":{:e},\"t_dd\":{:.1},\"t_qd\":{:.1}}}",
+        eps,
+        omega.sci(20),
+        r_norm,
+        scfg.tol,
+        it,
+        pc.sci(40),
+        info.pc.sci(40),
+        zc.sci(40),
+        info.zc.sci(40),
+        m_qd.sci(40),
+        info.mass.sci(40),
+        e_pc,
+        e_zc,
+        e_m,
+        e_pc.max(e_zc).max(e_m),
+        t_dd,
+        t_qd
+    );
+}

@@ -358,6 +358,14 @@ def check_G1(lane="dd"):
         ("3.5", "0.9921875", "1.0078125", "0.0078125", "-0.4375", "0.75", "1", "0.0625"),
         ("12.25", "0.9990234375", "1.0009765625", "0.0001220703125", "-0.65625", "0.9375", "1", "-0.00390625"),
         ("40.0", "1.0", "1.0004882813", "1.5e-9", "-0.375", "0.9375", "-1", "0.0009765625"),
+        ("1.0", "0.984375", "1.015625", "0.03125", "-0.125", "0.8125", "1", "-0.0625"),
+        ("2.25", "0.9921875", "1.0234375", "0.015625", "-0.28125", "0.875", "1", "0.015625"),
+        ("6.5", "0.99609375", "1.00390625", "0.00390625", "-0.5", "0.90625", "1", "0.00390625"),
+        ("9.0", "0.998046875", "1.001953125", "0.001953125", "-0.59375", "0.9375", "1", "-0.0078125"),
+        ("20.0", "0.9990234375", "1.0009765625", "3.0517578125e-05", "-0.71875", "0.75", "-1", "0.03125"),
+        ("0.75", "0.9453125", "1.0078125", "0.0625", "-0.0625", "0.625", "-1", "0.0078125"),
+        ("30.0", "1.0", "1.0009765625", "1.9073486328125e-06", "-0.3125", "0.9375", "1", "0.0009765625"),
+        ("4.75", "0.99609375", "1.0126953125", "0.0107421875", "-0.40625", "0.84375", "-1", "-0.03125"),
     ]
     worst, nent = 0.0, 0
     for (r, al, a, ph, u, om, eps, s2) in pts:
@@ -560,6 +568,66 @@ def secant_root(f, x0, x1, tol, maxit=30):
     return x1, (x0, f0, f1)
 
 
+def check_S3():
+    """the star's central data and M: the dd boundary-value solution against the crate's own quad-double Taylor shooting (star_ref.rs)"""
+    parts, worst = [], 0.0
+    for eps, om in ((1, "0.75"), (-1, "0.7603")):
+        l = [x for x in rust("s3", eps=eps, omega=om, rnorm=60, tol="1e-62") if x["cmd"] == "S3"][0]
+        worst = max(worst, l["worst"])
+        parts.append(f"eps={eps:+d} w={om}: P_c {l['rel_pc']:.1e}, Z_c {l['rel_zc']:.1e}, M {l['rel_M']:.1e} (qd shooting {l['t_qd']:.0f} s)")
+    report("S3", worst <= CRIT["S3_TOL"], "the dd boundary-value star against the qd Taylor shooting (alpha = 1 at r = 60, tol 1e-62; not a qd boundary-value solution), worst relative difference "
+           f"{worst:.1e} (limit {CRIT['S3_TOL']:g}): " + "; ".join(parts))
+
+
+def check_E2(arc_log=None):
+    """the lane spread, dd against qd, of D on the same dd star: omega_0 of X1 (both eps) and sigma_0^2 of Z (alpha_0 = 2.0, 3.0)"""
+    import mpmath as mp
+    mp.mp.dps = 50
+    parts, worst = [], mp.mpf(0)
+    for eps in (1, -1):
+        x0 = mp.mpf(stored_crossing()[eps]["σ² = 0"])
+
+        def d0(w, lane):
+            ls = rust("row", omega=mp.nstr(w, 40), eps=eps, s2list="0", dump=1, lane=lane)
+            return mp.mpf([l for l in ls if l["cmd"] == "D"][0]["D"])
+
+        w_dd, _ = secant_root(lambda w: d0(w, "dd"), x0, x0 + mp.mpf("1e-6"), mp.mpf("1e-30"))
+        w_qd, _ = secant_root(lambda w: d0(w, "qd"), x0, x0 + mp.mpf("1e-6"), mp.mpf("1e-30"))
+        sp = abs(w_dd - w_qd)
+        worst = max(worst, sp)
+        parts.append(f"omega_0(eps={eps:+d}) dd {mp.nstr(w_dd, 24)}, qd {mp.nstr(w_qd, 24)}, difference {float(sp):.1e}")
+    lines = arc_lines(arc_log)
+    for al in Z_TARGETS:
+        key = round(al, 6)
+        base = [l for l in lines if l["cmd"] == "mroots" and l["grid"] == "base" and round(l["alpha_c"], 6) == key]
+        var = [l for l in lines if l["cmd"] == "zvariant" and l.get("variant") == "qd lane" and round(l["alpha_c"], 6) == key]
+        if not base or not var or not var[0].get("roots"):
+            worst = mp.mpf(1)
+            parts.append(f"sigma_0^2(alpha_0={al}): not computed in the qd lane")
+            continue
+        r_dd, r_qd = mp.mpf(base[0]["roots"][0]), mp.mpf(var[0]["roots"][0])
+        sp = abs(r_qd / r_dd - 1)
+        worst = max(worst, sp)
+        parts.append(f"sigma_0^2(alpha_0={al}) dd {mp.nstr(r_dd, 24)}, qd {mp.nstr(r_qd, 24)}, relative difference {float(sp):.1e}")
+    report("E2", worst <= mp.mpf(str(CRIT["Z_QD"])), "lane spread, dd against qd, of D on the same dd star (the qd lane of the integrator only; omega_N and omega_M in qd need qd stars at each omega: not done), worst "
+           f"{float(worst):.1e} (limit {CRIT['Z_QD']:g}); " + "; ".join(parts))
+
+
+def check_supplement(supp_log):
+    """Amendment A3: the scans at alpha_0 = 3.5 and 3.9 on the stars as Newton converged them, outside A1.8's gate; enters no verdict"""
+    ls = [json.loads(x) for x in open(supp_log) if x.startswith("{")]
+    out = []
+    for l in ls:
+        if l["cmd"] == "mroots" and l["grid"] == "base":
+            out.append(f"alpha_0={l['alpha_c']}: star residual {l['star_fnorm']:.1e} (A1.8 gate 1e-28), {l['sign_changes']} sign change(s) of D on the grid, roots {[x[:14] for x in l['roots']] or 'none'}")
+        if l["cmd"] == "mroots" and l["grid"] == "dense":
+            out.append(f"  4x denser grid: {l['sign_changes']} sign change(s), roots {[x[:14] for x in l['roots']] or 'none'}")
+        if l["cmd"] == "mroots_error":
+            out.append(f"alpha_0={l['alpha_c']}: error {l['err'][:120]}")
+    print("\n".join(out), flush=True)
+    report("F_supp", None, "supplementary, outside A1.8's gate (Amendment A3); no verdict, F at 3.5 and 3.9 stays NOT COMPUTED; " + " | ".join(out))
+
+
 def check_X1(eps, stored_key):
     import mpmath as mp
     mp.mp.dps = 50
@@ -614,6 +682,7 @@ STAGES = {
                 extra=dict(alpha_stop=ARC_MAX, chunk=10, ds=0.05, ds_max=5)),
     "stepA": dict(cmd="step", alphas=[x for x in FAMILY_TARGETS if x > ARC_MAX], modes=[], zvariants=[], extra=dict(hmax=0.05, dlnk=0.25)),
     "stepB": dict(cmd="step", alphas=[2.50, 3.00], modes=[2.50, 3.00], zvariants=[3.00], extra=dict(hmax=0.05, dlnk=0.25)),
+    "stepS": dict(cmd="step", alphas=[3.50, 3.90], modes=[3.50, 3.90], zvariants=[], extra=dict(hmax=0.05, dlnk=0.25, ungated=1)),  # A3, supplementary
     "stepC": dict(cmd="step", alphas=[3.50, 3.90], modes=[3.50, 3.90], zvariants=[], extra=dict(hmax=0.05, dlnk=0.25)),  # 4.0, 4.015: not computed (A2, S1)
 }
 ARC_LINES = None
@@ -646,10 +715,10 @@ def arc_lines(arc_log=None):
                 kind = "arc" if any(l["cmd"] == "arc_start" for l in ls) else "step"
                 for l in ls:
                     l["_kind"] = kind
-                ARC_LINES += ls
+                ARC_LINES += [l for l in ls if not l.get("ungated")]
         else:
             for name in STAGES:
-                ARC_LINES += run_stage(name)
+                ARC_LINES += [l for l in run_stage(name) if not l.get("ungated")]
     return ARC_LINES
 
 
@@ -809,7 +878,7 @@ def check_fold():
            f"omega(alpha_c) polynomial: omega_min = {mp.nstr(w1, 20)} at alpha_c = {mp.nstr(a1, 14)} (window 1.6e-2, degree 8), spread to the 3e-2 window, degree 10: omega_min {float(abs(w1 - w2)):.1e}, alpha_c {float(abs(a1 - a2)):.1e}; stored: omega_min = 0.42226 at alpha_0 = 1.172 (phantom_checks.py C4)")
 
 
-CHECKS = ["P1", "P2", "P3", "G1", "G2", "S1", "S2", "S5", "A", "X1", "C", "F", "Z", "FOLD"]
+CHECKS = ["P1", "P2", "P3", "G1", "G2", "S1", "S2", "S3", "S5", "A", "X1", "C", "F", "Z", "E2", "FOLD"]
 
 
 def main():
@@ -818,6 +887,7 @@ def main():
     only = None
     arc_log = None
     stage = None
+    supp_log = None
     for a in argv:
         if a.startswith("--mutate="):
             MUTATE = a.split("=", 1)[1]
@@ -827,6 +897,8 @@ def main():
             RAW = a.split("=", 1)[1]
         elif a.startswith("--arc-log="):
             arc_log = a.split("=", 1)[1]
+        elif a.startswith("--supp-log="):
+            supp_log = a.split("=", 1)[1]
         elif a.startswith("--stage="):
             stage = a.split("=", 1)[1]
         elif a.startswith("--tag="):
@@ -852,7 +924,7 @@ def main():
         "P1": check_P1, "P2": check_P2, "P3": check_P3, "G1": check_G1, "G2": check_G2, "S1": check_S1,
         "S2": lambda: report("S2", float([l for l in rust("s2", omega="0.75", eps=1, x0=4.5) if l["cmd"] == "S2"][0]["worst_rel"]) <= CRIT["S2_TOL"],
                              "multishoot's recursion against the crate's own Num-lane recursion (star_ref.rs) at the node r = 4.5 of the canonical star"),
-        "S5": check_S5, "A": check_A,
+        "S3": check_S3, "S5": check_S5, "A": check_A, "E2": lambda: check_E2(arc_log),
         "X1": lambda: (check_X1(1, "p"), check_X1(-1, "m")),
         "C": lambda: check_C(arc_log), "F": lambda: check_F(arc_log), "Z": lambda: check_Z(arc_log), "FOLD": check_fold,
     }
@@ -866,6 +938,9 @@ def main():
             import traceback
             traceback.print_exc()
             report(name, False, f"did not run: {e}")
+    if supp_log:
+        print("--- supplement (A3)", flush=True)
+        check_supplement(supp_log)
     n_ok = sum(1 for _, ok in OUT_RESULTS if ok is True)
     n_bad = sum(1 for _, ok in OUT_RESULTS if ok is False)
     n_skip = sum(1 for _, ok in OUT_RESULTS if ok is None)

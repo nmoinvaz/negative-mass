@@ -191,6 +191,7 @@ fn cmd_row(a: &Args) {
     match lane {
         "dd" => report_scan::<D>(a, &prep, &g, order),
         "f64" => report_scan::<f64>(a, &prep, &g, order),
+        "qd" => report_scan::<multidouble::qd::QD>(a, &prep, &g, order.min(table::NB)),
         _ => panic!("lane"),
     }
 }
@@ -314,7 +315,7 @@ fn star_size(info: &bvp::StarInfo) -> (f64, f64) {
 
 /// The row of a star solved at a stated alpha_c, and (alphas in `modes`) the roots of D on the declared grid and a 4 x denser one,
 /// and (alphas in `zvar`) the lowest root under the variants of the method
-fn row_handler(cfg: &bvp::StarCfg, modes: &[f64], zvar: &[f64], r: &cont::FamRow) {
+fn row_handler(cfg: &bvp::StarCfg, modes: &[f64], zvar: &[f64], ungated: bool, r: &cont::FamRow) {
     let (mx, rs) = star_size(&r.info);
     println!(
         "{{\"cmd\":\"row\",\"alpha_c\":{},\"omega\":\"{}\",\"N\":\"{}\",\"M\":\"{}\",\"k\":{:e},\"max2mr\":{:.6},\"rs\":{:.4},\"nodes\":{},\"r_t\":{:.2},\"fnorm\":{:e}}}",
@@ -336,7 +337,13 @@ fn row_handler(cfg: &bvp::StarCfg, modes: &[f64], zvar: &[f64], r: &cont::FamRow
     }
     let thr = (1.0 - r.info.omega.to_f64()).powi(2);
     let t1 = std::time::Instant::now();
-    let prep = match family::prepare(&cfg, clone_info(&r.info), 0.0, 0.995 * thr) {
+    // `ungated`: the supplementary run of Amendment A3, on the star as converged, outside A1.8's gate (its lines say so)
+    let mut star = clone_info(&r.info);
+    if ungated {
+        star.converged = true;
+    }
+    let sf = *r.info.fnorm.last().unwrap();
+    let prep = match family::prepare(&cfg, star, 0.0, 0.995 * thr) {
         Ok(p) => p,
         Err(e) => {
             println!("{{\"cmd\":\"mroots_error\",\"alpha_c\":{},\"err\":\"{}\"}}", r.alpha_c, e);
@@ -345,10 +352,10 @@ fn row_handler(cfg: &bvp::StarCfg, modes: &[f64], zvar: &[f64], r: &cont::FamRow
     };
     let t_prep = t1.elapsed().as_secs_f64();
     let (roots, ch, ng, wall) = family::scan_dd(&prep, 30, 1.232595164407831e-30, 1.0, 24, 32, 0.2);
-    println!("{{\"cmd\":\"mroots\",\"alpha_c\":{},\"grid\":\"base\",\"ngrid\":{},\"sign_changes\":{},\"roots\":{:?},\"thr\":{:e},\"r_far\":{:.1},\"t_prep\":{:.1},\"wall\":{:.1}}}", r.alpha_c, ng, ch, roots, thr, prep.r_far, t_prep, wall);
+    println!("{{\"cmd\":\"mroots\",\"alpha_c\":{},\"grid\":\"base\",\"ngrid\":{},\"sign_changes\":{},\"roots\":{:?},\"thr\":{:e},\"r_far\":{:.1},\"t_prep\":{:.1},\"wall\":{:.1},\"ungated\":{},\"star_fnorm\":{:e}}}", r.alpha_c, ng, ch, roots, thr, prep.r_far, t_prep, wall, ungated, sf);
     if is_mode {
         let (roots, ch, ng, wall) = family::scan_dd(&prep, 30, 1.232595164407831e-30, 1.0, 96, 128, 0.2);
-        println!("{{\"cmd\":\"mroots\",\"alpha_c\":{},\"grid\":\"dense\",\"ngrid\":{},\"sign_changes\":{},\"roots\":{:?},\"thr\":{:e},\"wall\":{:.1}}}", r.alpha_c, ng, ch, roots, thr, wall);
+        println!("{{\"cmd\":\"mroots\",\"alpha_c\":{},\"grid\":\"dense\",\"ngrid\":{},\"sign_changes\":{},\"roots\":{:?},\"thr\":{:e},\"wall\":{:.1},\"ungated\":{},\"star_fnorm\":{:e}}}", r.alpha_c, ng, ch, roots, thr, wall, ungated, sf);
     }
     if is_z {
         let mut variant = |name: &str, order: usize, tol: f64, scale: f64, p: &family::Prepared| {
@@ -370,6 +377,22 @@ fn row_handler(cfg: &bvp::StarCfg, modes: &[f64], zvar: &[f64], r: &cont::FamRow
         let g = family::grid(0.2, thr, 24, 32);
         let f = family::scan(&rp, &g, 19.0);
         println!("{{\"cmd\":\"zvariant\",\"alpha_c\":{},\"variant\":\"f64 lane\",\"roots\":{:?}}}", r.alpha_c, f.roots.iter().map(|x| x.0.sci(17)).collect::<Vec<_>>());
+        // qd lane (E2): D in quad-double on the same dd star, the lowest root polished from the dd root in a bracket of +-1e-6
+        if let Some(r0) = roots.first() {
+            use multidouble::qd::QD;
+            let t2 = std::time::Instant::now();
+            let x0 = <DD as Num>::parse(r0);
+            let rq = prep.radial::<QD>(table::NB, QD::EPS * 100.0); // the J table carries NB = 30 coefficients
+            let mut fq = |s: QD| rq.d(s, rq.rfar(s.to_f64(), far_factor::<QD>()));
+            let (lo, hi) = (QD::from_dd(x0 * DD::from_f64(1.0 - 1e-6)), QD::from_dd(x0 * DD::from_f64(1.0 + 1e-6)));
+            let (flo, fhi) = (fq(lo), fq(hi));
+            if (flo.to_f64() < 0.0) != (fhi.to_f64() < 0.0) {
+                let rt = roots::find::<QD>(&mut fq, lo, hi, flo, fhi);
+                println!("{{\"cmd\":\"zvariant\",\"alpha_c\":{},\"variant\":\"qd lane\",\"roots\":[\"{}\"],\"evals\":{},\"wall\":{:.1}}}", r.alpha_c, rt.x.sci(40), rt.evals + 2, t2.elapsed().as_secs_f64());
+            } else {
+                println!("{{\"cmd\":\"zvariant\",\"alpha_c\":{},\"variant\":\"qd lane\",\"error\":\"no sign change of D in +-1e-6 around the dd root\"}}", r.alpha_c);
+            }
+        }
     }
 }
 
@@ -404,7 +427,8 @@ fn cmd_arc(a: &Args) {
     let mut logs = vec![];
     let dir_mut = mutate::on("arcfold");
     let cfg2 = cfg.clone();
-    let mut on_row = |r: &cont::FamRow| row_handler(&cfg2, &modes, &zvar, r);
+    let ungated = a.u("ungated", 0) > 0;
+    let mut on_row = |r: &cont::FamRow| row_handler(&cfg2, &modes, &zvar, ungated, r);
     let res = cont::follow_family(&cfg, &info, &targets, alpha_stop, a.u("chunk", 10), a.f("ds", 0.05), a.f("ds_max", 5.0), a.u("verbose", 0) > 0, &mut track, &mut logs, dir_mut, &mut on_row);
     for l in &logs {
         println!("{{\"cmd\":\"arc_chunk\",\"chunk\":{},\"points\":{},\"refused\":{},\"stalled\":{},\"alpha_end\":{},\"omega_end\":{:.10},\"folds\":{:?},\"t\":{:.1}}}", l.chunk, l.points, l.refused, l.stalled, l.alpha_end, l.omega_end, l.folds, l.t);
@@ -447,7 +471,8 @@ fn cmd_step(a: &Args) {
     }
     println!("{{\"cmd\":\"step_start\",\"alpha_c\":{},\"omega\":{},\"t\":{:.1}}}", info.alpha_c.to_f64(), info.omega.to_f64(), t0.elapsed().as_secs_f64());
     let cfg2 = cfg.clone();
-    let mut on_row = |r: &cont::FamRow| row_handler(&cfg2, &modes, &zvar, r);
+    let ungated = a.u("ungated", 0) > 0;
+    let mut on_row = |r: &cont::FamRow| row_handler(&cfg2, &modes, &zvar, ungated, r);
     let mut log = cont::StepLog::default();
     let res = cont::step_family(&cfg, &info, &targets, a.f("hmax", 0.05), a.f("dlnk", 0.25), a.u("verbose", 0) > 0, &mut log, &mut on_row);
     println!("{{\"cmd\":\"step_end\",\"solves\":{},\"refused\":{},\"last_alpha\":{}}}", log.solves, log.failures, log.last_alpha);
@@ -546,6 +571,7 @@ fn main() {
         "starcheck" => return checks::cmd_starcheck(&a),
         "s2" => return checks::cmd_s2(&a),
         "pd" => return checks::cmd_pd(&a),
+        "s3" => return checks::cmd_s3(&a),
         _ => {}
     }
     if cmd == "fold" {
