@@ -255,7 +255,7 @@ def run_crate(args):
     plan = list(CRATE_PLAN) + ([("qd", ["base", "phi"], "")] if args.qd else [])
     for lane, variants, tag in plan:
         t = time.time()
-        TP.get_rows(args.l, args.gammas, lane, variants, tag=tag)
+        TP.get_rows(args.l, args.qd_gammas if lane == "qd" else args.gammas, lane, variants, tag=tag)
         print(f"crate {lane} {variants}{tag}: {time.time() - t:.1f} s", flush=True)
 
 
@@ -820,7 +820,8 @@ def main():
     c.add_argument("--out-dir", dest="out_dir", required=True)
     c.add_argument("--l", type=int, default=5)
     c.add_argument("--gammas", type=floats, default=[1000.0, 2000.0, 3000.0])
-    c.add_argument("--qd", action="store_true")
+    c.add_argument("--qd", action="store_true", help="also the quad-double lane, at --qd-gammas only")
+    c.add_argument("--qd-gammas", dest="qd_gammas", type=floats, default=[1000.0])
     q = sub.add_parser("planted")
     q.add_argument("--out", required=True)
     q.add_argument("--gammas", type=floats, default=[1000.0, 2000.0, 3000.0])
