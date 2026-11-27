@@ -8,6 +8,7 @@
 use crate::hp::{lane_rat, n_rel_of, sc_of, w_rel_of, Cp, EvalS, HpCfg, HpOut, HpSing, PolyQ, Stop, TraceRow};
 use crate::walk::{fit_radius_w, Est};
 use multishoot::implicit::{taylor_shift, Coefficients, ImplicitControl, Jets, Mono, Real, Scalar, Stop as WStop, WalkOpts, Walker};
+use multishoot::lane::BaseLane;
 use multishoot::multidouble::precision::Precision;
 use multishoot::multidouble::simd::Native;
 use multishoot::{Fl, DD};
@@ -80,6 +81,14 @@ impl<P: Precision<Native>> Scalar for W<P> {
     }
     fn round_dd(self) -> Self {
         W(P::from_dd(P::to_dd(self.0)))
+    }
+    /// the Cauchy sum in the lane's dot accumulator, as `field::cs` (which `hp.rs` used) forms it
+    fn cauchy(a: &[Self], b: &[Self], k: usize) -> Self {
+        let mut acc = <P::V as BaseLane>::acc0();
+        for j in 0..=k {
+            acc = <P::V as BaseLane>::acc(acc, P::splat(a[j].0), P::splat(b[k - j].0));
+        }
+        W(P::field_get(&Fl([<P::V as BaseLane>::fin(acc)]), 0))
     }
 }
 
