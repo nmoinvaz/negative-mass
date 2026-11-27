@@ -1021,6 +1021,39 @@ def run_report(args):
             grp.setdefault((o["gamma"], o["variant"], o["plant"], o["rtol"]), []).append(o["eps_y"])
         for k, v in grp.items():
             P(f"  {k}: median eps_Y {float(np.median(v)):.2e} over {len(v)} realizations")
+    # the gamma^2 reading: eps_Y ~ gamma, sin theta_min ~ 1/gamma, so gap ~ eps_Y / sin theta_min ~ A (gamma / 1000)^2 with A measured at gamma = 1000
+    try:
+        A = {}
+        for v, (plant, rt) in (("base", ("crate_j", 1e-13)), ("phi", ("crate_j", 1e-13))):
+            eps = [o["eps_y"] for o in prs if o["gamma"] == 1000.0 and o["variant"] == v and o["plant"] == plant and o["rtol"] == rt]
+            smin = [min(o["sines"]) for o in prs if o["gamma"] == 1000.0 and o["variant"] == v and o["plant"] == plant and o["rtol"] == rt]
+            A[v] = float(np.median(eps)) / smin[0]
+        P(f"\n# the gamma^2 reading: A = median eps_Y / sin theta_min at gamma = 1000 (planes, rtol 1e-13): base {A['base']:.2e}, phi {A['phi']:.2e}; predicted gap A (gamma/1000)^2 "
+          f"against the stored comparisons of #187 (the crate's dd against the win laptop's stored scipy D at rtol 1e-10, one realization each; l = 5 is the star's l, l = 6 has other angles)")
+        P(f"{'l':>2s} {'gamma':>7s} {'column':>6s} {'stored gap':>11s} {'predicted':>10s} {'ratio':>6s}")
+        for l_ in (5, 6):
+            rows = {}
+            for line in open(os.path.join(args.raw, "I187-mac", "jsonl", f"rows_l{l_}_dd.jsonl")):
+                o = json.loads(line)
+                if o["cmd"] == "row":
+                    rows[(o["gamma"], o["variant"])] = float(o["d_f64"])
+            sf = {}
+            for folder in ("I4-win", "I114-win"):
+                fn = os.path.join(args.raw, folder, f"convergence_l{l_}_w0.7603.partial.csv")
+                if os.path.exists(fn):
+                    for line in open(fn):
+                        if line.startswith("["):
+                            k, g_, v_, _ = json.loads(line)
+                            sf[(k, g_)] = v_
+            for g_ in (137.0, 300.0, 1000.0, 3000.0, 6000.0, 12000.0):
+                for col, vv in (("base", "base"), ("phi", "phi")):
+                    name = STORED["base"][0] if col == "base" else STORED["phi"][0]
+                    if (g_, vv) in rows and (name, g_) in sf:
+                        gp = abs(rows[(g_, vv)] / sf[(name, g_)] - 1)
+                        pr = A[col] * (g_ / 1000.0) ** 2
+                        P(f"{l_:2d} {g_:7g} {col:>6s} {gp:11.1e} {pr:10.1e} {gp / pr:6.2f}")
+    except (KeyError, IndexError, FileNotFoundError, ZeroDivisionError) as e:
+        P(f"\n# the gamma^2 reading: not computed ({type(e).__name__}: {e})")
     pl = os.path.join(args.dir, "planted.jsonl")
     plc = {}
     if os.path.exists(pl):
@@ -1258,6 +1291,7 @@ def main():
     rp = sub.add_parser("report")
     rp.add_argument("--dir", required=True)
     rp.add_argument("--crate-dir", dest="crate_dir", default=None)
+    rp.add_argument("--raw", default=os.path.normpath(os.path.join(HERE, "..", "..", "..", "negative-mass-raw")))
     t = sub.add_parser("star-steps")
     t.add_argument("out")
     jt = sub.add_parser("j-table")
