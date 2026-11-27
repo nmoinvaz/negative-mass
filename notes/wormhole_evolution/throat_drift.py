@@ -7,7 +7,7 @@ Uses dn.py, checks.py, threshold.py, expansion.py of #39, #40, #213 and throat_l
     python3 throat_drift.py bisect_stall ...                                  both
     python3 throat_drift.py expand  --hk=0 --X=160 --out=DIR                 G, D = 5, A = 0.05 (throat_locus.job_expand)
     python3 throat_drift.py analyze --raw=DIR/runs [--mutate=NAME]            every check and table from the stored runs
-    python3 throat_drift.py dev | mutate --mutate=NAME                        the development suite (stored #225 pairs, planted cases)
+    python3 throat_drift.py dev | mutate --mutate=NAME [--raw=DIR/runs]       the development suite (stored #225 pairs, planted cases), or with --raw the stored record, with and without the mutation
 
 The criteria are CRIT and MUTATIONS below, as declared in negative-mass-raw I255-dh610/README.md before the runs of record.
 Conventions as throat_locus.py: a = 1, 8 pi G = 1, t = (x+ + x-)/sqrt2, the throat locus is the minimum of r on each slice t = const, tau its proper time.
@@ -361,14 +361,15 @@ def eval_predictions(T, P, hks, tag="", out=print):
     okS, okR, okV = True, True, True
     rows = []
     fits = {}
+    nanfit = dict(inf=float("nan"), c=float("nan"), kappa=float("nan"), se_inf=float("nan"), se_kappa=float("nan"), rms=float("nan"), n=0, t0=float("nan"), t1=float("nan"))
     for hk in hks:
         for B in Bs:
-            S = T[(B, hk)]
-            fits[(B, hk)] = fit_rdot(S["t"], S["tau"], S["r"], S["odd"])
-        Pk = {b: P[(Bs[i if not lmut("pstar_swap") else (2 - i if i != 1 else 1)], hk)] for i, b in enumerate(Bs)}       # pstar_swap: p*_h of B = 0.04 and 0.2 exchanged
+            S = T.get((B, hk))
+            fits[(B, hk)] = fit_rdot(S["t"], S["tau"], S["r"], S["odd"]) if S is not None else nanfit
+        Pk = {b: P.get((Bs[i if not lmut("pstar_swap") else (2 - i if i != 1 else 1)], hk), float("nan")) for i, b in enumerate(Bs)}       # pstar_swap: p*_h of B = 0.04 and 0.2 exchanged
         a_p1 = expo(Pk[Bs[1]], Pk[Bs[0]], B2, B1)
         a_p2 = expo(Pk[Bs[2]], Pk[Bs[1]], B3, B2)
-        R = {B: Rt(T[(B, hk)]) for B in Bs}
+        R = {B: (Rt(T[(B, hk)]) if (B, hk) in T else [float("nan")] * len(CRIT["ts"])) for B in Bs}
         a_R1 = [expo(R[Bs[1]][i], R[Bs[0]][i], B2, B1) for i in range(len(CRIT["ts"]))]
         a_R2 = [expo(R[Bs[2]][i], R[Bs[1]][i], B3, B2) for i in range(len(CRIT["ts"]))]
         f1, f2, f3 = (fits[(B, hk)] for B in Bs)
@@ -381,7 +382,7 @@ def eval_predictions(T, P, hks, tag="", out=print):
         okR &= all(lo <= a <= hi for a in a_R1)
         okV &= (lo <= a_v1 <= hi) and (CRIT["kap"]["lo"] <= kr <= CRIT["kap"]["hi"])
         rows.append((hk, a_p1, a_p2, a_R1, a_R2, a_v1, a_v2, kr, f1, f2, f3))
-        out(f"    {tag} h index {hk}: p*_h {P[(Bs[0], hk)]:.6e}, {P[(Bs[1], hk)]:.6e}, {P[(Bs[2], hk)]:.6e}; exponent of p*_h {a_p1:.3f} (0.04 to 0.1), {a_p2:.3f} (0.1 to 0.2)")
+        out(f"    {tag} h index {hk}: p*_h {Pk[Bs[0]]:.6e}, {Pk[Bs[1]]:.6e}, {Pk[Bs[2]]:.6e}; exponent of p*_h {a_p1:.3f} (0.04 to 0.1), {a_p2:.3f} (0.1 to 0.2)")
         out(f"       r_th - 1 at t = {CRIT['ts']}: B=0.04 {fmt(R[Bs[0]], '{:.5f}')}, B=0.1 {fmt(R[Bs[1]], '{:.5f}')}, B=0.2 {fmt(R[Bs[2]], '{:.5f}')}; exponents {fmt(a_R1, '{:.3f}')} (0.04 to 0.1), {fmt(a_R2, '{:.3f}')} (0.1 to 0.2)")
         out(f"       rdot_inf {f1['inf']:+.5f} +- {f1['se_inf']:.1e}, {f2['inf']:+.5f} +- {f2['se_inf']:.1e}, {f3['inf']:+.5f} +- {f3['se_inf']:.1e} (rms residual {f1['rms']:.1e}, {f2['rms']:.1e}, {f3['rms']:.1e}; n {f1['n']}, {f2['n']}, {f3['n']}); "
             f"exponents {a_v1:.3f}, {a_v2:.3f}; kappa {f1['kappa']:.4f}, {f2['kappa']:.4f}, {f3['kappa']:.4f} (ratio 0.04 / 0.1 = {kr:.3f})")
@@ -390,6 +391,9 @@ def eval_predictions(T, P, hks, tag="", out=print):
 
 def eval_convergence(T, B, hks, out=print, tag=""):
     """r_th(10) - 1 at the three h: observed order and the two finest within CRIT['cv']['two_h']."""
+    if any((B, hk) not in T for hk in hks):
+        out(f"    {tag} B = {B:g}: the series at some h is not available (the job was stopped)")
+        return False, float("nan"), float("nan")
     R = [Rt(T[(B, hk)], (10.0,))[0] for hk in (hks[::-1] if lmut("cv_swap") else hks)]       # cv_swap: the h in the wrong order
     if not all(np.isfinite(R)) or len(R) < 3:
         return False, float("nan"), float("nan")
@@ -584,7 +588,7 @@ def pair_entry(D, B, hk, La, Lb, ps):
 
 def load_record(raw):
     """raw = .../I255-dh610/runs. Pairs at delta = 1e-10 (D = 5: the three B and h; D = 4: CRIT['D4']), the bisections, #225's stored pairs (B = 0.1, delta = 1e-9), the expansions."""
-    rec = dict(mode="record", T5={}, bis={}, T4={}, ref225={}, ctl=os.path.join(raw, "ctl"))
+    rec = dict(mode="record", T5={}, bis={}, T4={}, ref225={}, ctl=os.path.join(raw, "ctl"), raw=raw)
     for D, Bs, hks, store in ((5, CRIT["Bs"], CRIT["hks"], "T5"), (4, CRIT["D4"]["Bs"], CRIT["D4"]["hks"], "T4")):
         for B in Bs:
             for hk in hks:
@@ -695,6 +699,98 @@ def chk_exp(E, E225, full):
 
 
 # --------------------------------------------------------------------------------------------------------------------
+# post hoc (report only, gates nothing): the supplementary B scan, the growth form of r_th - 1, the charge of the fitted member
+# --------------------------------------------------------------------------------------------------------------------
+EXTRA_B = (0.02, 0.07)           # the supplementary scan the coordinator approved after the declared runs (runs/extra)
+
+
+def load_extra(raw):
+    out = {}
+    for B in EXTRA_B:
+        for hk in (0, 1):
+            h = threshold.CRIT["H"][3][hk]
+            pr = load_pair(lambda sd: os.path.join(raw, "extra", "stall", stall_name(5, B, h, CRIT["delta"], sd)))
+            sp = os.path.join(raw, "extra", "bisect", f"D5_B{B:g}_h{h:g}", "summary.json")
+            if pr and os.path.exists(sp):
+                out[(B, hk)] = pair_entry(5, B, hk, pr[0], pr[1], json.load(open(sp))["pstar"])
+    return out
+
+
+def member_charge(n, rth, sth):
+    """Q / q_0 of the static member (r_th, s_th) with the + end's time normalized to 1: r_th^(n-1) / N(+inf) (static_member has N_th = 1, q = sqrt(n(n-1)) r_th^(n-1)), q_0 = sqrt(n(n-1))."""
+    l, r, p, N = tl.static_member(n, rth, sth, rmax=60.0)(1)
+    return rth ** (n - 1) / N[-1]
+
+
+def growth_forms(S, win=(8.0, 12.0)):
+    """Over t in win: R = r_th - 1 against tau fitted as a + b tau (linear) and R0 exp(kappa tau); relative rms residuals and the parameters."""
+    m = (S["t"] >= win[0]) & (S["t"] <= win[1]) & (np.abs(S["odd"]) <= CRIT["odd_max"])
+    if m.sum() < 20:
+        return None
+    tau, R = S["tau"][m], S["r"][m] - 1.0
+    b, a = np.polyfit(tau, R, 1)
+    rl = float(np.sqrt(np.mean((a + b * tau - R) ** 2)) / np.mean(R))
+    k, lr0 = np.polyfit(tau, np.log(R), 1)
+    re = float(np.sqrt(np.mean((np.exp(lr0 + k * tau) - R) ** 2)) / np.mean(R))
+    return dict(lin_slope=float(b), lin_rel=rl, kappa=float(k), exp_rel=re)
+
+
+def posthoc(rec, out=print):
+    n5 = 3
+    raw = rec["raw"]
+    ex = load_extra(raw)
+    T5 = rec["T5"]
+    out("\n==== post hoc (reported, gates nothing): the supplementary B scan, D = 5, B = 0.02 and 0.07 added by the coordinator's ruling after the declared runs ====")
+    for hk in (0, 1):
+        h = threshold.CRIT["H"][3][hk]
+        rows = {}
+        for B in (0.02, 0.04, 0.07, 0.1, 0.2):
+            e = ex.get((B, hk)) or T5.get((B, hk))
+            if e is not None:
+                rows[B] = e
+        out(f"  h = {h:g}: p*_h, r_th - 1 at t = 8, 10, 12, rdot_inf and kappa of the fit, d ln(r_th - 1)/d tau at t = 10 (+-1), the growth form over t in [8, 12]")
+        prev = None
+        for B in sorted(rows):
+            e = rows[B]
+            S = e["S"]
+            R = Rt(S)
+            f = fit_rdot(S["t"], S["tau"], S["r"], S["odd"])
+            gf = growth_forms(S)
+            kl = float("nan")
+            w = (S["t"] >= 9.0) & (S["t"] <= 11.0)
+            if w.sum() > 5:
+                kl = float(np.polyfit(S["tau"][w], np.log(S["r"][w] - 1.0), 1)[0])
+            txt = f"    B = {B:5.3f}: p* {e['pstar']:.6e}; R {fmt(R, '{:.5f}')}; rdot_inf {f['inf']:+.5f} (kappa {f['kappa']:.3f}, n {f['n']}); dlnR/dtau {kl:.3f}"
+            if gf:
+                txt += f"; linear rms {gf['lin_rel']:.1e}, exponential rms {gf['exp_rel']:.1e} (kappa {gf['kappa']:.3f})"
+            if prev is not None:
+                Bp, ep = prev
+                Rp = Rt(ep["S"])
+                fp = fit_rdot(ep["S"]["t"], ep["S"]["tau"], ep["S"]["r"], ep["S"]["odd"])
+                txt += f"\n        exponents against B = {Bp:g}: p* {expo(e['pstar'], ep['pstar'], B, Bp):.2f}, R(t = 8, 10, 12) {fmt([expo(R[i], Rp[i], B, Bp) for i in range(3)], '{:.2f}')}, rdot_inf {expo(f['inf'], fp['inf'], B, Bp):.2f}"
+            out(txt)
+            prev = (B, e)
+    out("\n  the fitted static member on the collapse side's profile slices (finest h): t, r_th, s_th (fit rms), Q/q_0 = r_th^(n-1)/N(+inf) of the member (1 if it has the data's ghost charge, + end time),")
+    out("  and the charge flux per unit proper time of the locus q_t/N_th over sqrt(n(n-1)) r_th^(n-1) (1 by the identity of QS):")
+    hk = CRIT["hks"][-1]
+    for B in CRIT["Bs"]:
+        e = T5.get((B, hk)) or T5.get((B, CRIT["hks"][-2]))
+        if e is None:
+            continue
+        try:
+            rows = tl.member_table(e["La"], e["Lb"], 5)
+        except Exception as exc:
+            out(f"    B = {B:g}: member table failed: {exc!r}")
+            continue
+        sel = [r for r in rows if r["t"] in (6.0, 8.0, 10.0, 12.0) or abs(r["t"] - round(r["t"])) < 1e-6 and round(r["t"]) in (6, 8, 10, 12)]
+        txt = []
+        for r in sel:
+            if np.isfinite(r["sth"]):
+                txt.append(f"t {r['t']:.0f}: r_th {r['r_th']:.4f}, s_th {r['sth']:+.3f} ({r['sth_rms']:.0e}), Q/q_0 {member_charge(n5, r['r_th'], r['sth']):.4f}")
+        out(f"    B = {B:g} h = {e['h']:g}: " + "; ".join(txt))
+
+
+# --------------------------------------------------------------------------------------------------------------------
 # the analysis
 # --------------------------------------------------------------------------------------------------------------------
 def report_pair(e, n):
@@ -752,7 +848,15 @@ def analyze_suite(rec):
         T5 = rec["T5"]
         for (B, hk), e in sorted(T5.items()):
             report_pair(e, n5)
-        miss = [(B, hk) for B in CRIT["Bs"] for hk in CRIT["hks"] if (B, hk) not in T5]
+        miss = [(B, hk) for B in CRIT["Bs"][:2] for hk in CRIT["hks"] if (B, hk) not in T5]       # the gates need B = 0.04 and 0.1 at every h; B = 0.2 is reported
+        for B in CRIT["Bs"]:
+            for hk in CRIT["hks"]:
+                if (B, hk) not in T5:
+                    h = threshold.CRIT["H"][3][hk]
+                    pts = os.path.join(rec["raw"], "bisect", f"D5_B{B:g}_h{h:g}", "points.jsonl")
+                    npts = sum(1 for _ in open(pts)) if os.path.exists(pts) else 0
+                    check(f"JOB[D=5 B={B:g} h={h:g}]", "the pair p*_h -/+ delta exists and the bisection finished to the declared tolerance", False,
+                          f"not run to completion: the job was stopped by its 2 h timeout (rc 124) after {npts} recorded points; no pair")
         for (B, hk), e in sorted(T5.items()):
             ok = e["fate"] == (-1, 1) and e["fate_loc"] == (-1, 1)
             bis = rec["bis"].get((5, B, hk))
@@ -770,6 +874,10 @@ def analyze_suite(rec):
         if not miss:
             T = {(B, hk): T5[(B, hk)]["S"] for (B, hk) in T5}
             P = {(B, hk): T5[(B, hk)]["pstar"] for (B, hk) in T5}
+            for B in CRIT["Bs"]:
+                for hk in CRIT["hks"]:
+                    if (B, hk) not in T5:
+                        P[(B, hk)] = float("nan")
             hk_fin = CRIT["hks"][-CRIT["fin"]:]
             ev = eval_predictions(T, P, CRIT["hks"], tag="D=5")
             # gates on the finest h only
@@ -798,9 +906,10 @@ def analyze_suite(rec):
                 continue
             La = e["La"]
             for tt in (8.0, 10.0, 12.0):
-                sk = min(La["prof"], key=lambda s: abs(La["t"][np.searchsorted(La["s"], s)] - tt)) if La["prof"] else None
-                if sk is None:
+                cand = [s_ for s_ in La["prof"] if s_ in set(La["s"].tolist())]
+                if not cand:
                     continue
+                sk = min(cand, key=lambda s_: abs(La["t"][np.searchsorted(La["s"], s_)] - tt))
                 Mp, Mm, rn_, ic, M = tl.slice_masses(La, sk, n5, np.array([2.0, 3.0, 4.0]))
                 print(f"    B = {B:g} t = {tt:g}: M_+(R = 2, 3, 4) {fmt(Mp, '{:+.4f}')}, M_-(R = 2, 3, 4) {fmt(Mm, '{:+.4f}')}")
         # D = 4, reported
@@ -835,6 +944,13 @@ def analyze_suite(rec):
             wq = (S["t"] >= CRIT["qs"]["win"][0]) & (S["t"] <= CRIT["qs"]["win"][1])
             dq = float(np.max(np.abs(qs[wq] - 1)))
             check(f"QS[h index {hk}]", "quasi-static diagnosis on the stored pair", dq <= CRIT["qs"]["bar"], f"max {dq:.1e}")
+    if full:
+        try:
+            posthoc(rec)
+        except Exception as exc:
+            import traceback
+            traceback.print_exc()
+            print(f"post hoc section failed: {exc!r}")
     chk_DL(rec)
     if (CRIT["B_ref"], CRIT["hks"][-1]) in rec["T5"]:
         chk_RV(rec["T5"][(CRIT["B_ref"], CRIT["hks"][-1])]["S"], "delta = 1e-10")
@@ -889,7 +1005,7 @@ def main():
             global LMUT
             results.clear()
             LMUT = m
-            suite = load_record(a["raw"]) if cmd == "analyze" else dev_suite()
+            suite = load_record(a["raw"]) if (cmd == "analyze" or "raw" in a) else dev_suite()
             if "ctl" in a and m:                       # the mutated run reads the control directory made under the mutation
                 suite["ctl"] = a["ctl"]
             return analyze_suite(suite)
