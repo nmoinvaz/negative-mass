@@ -4,7 +4,7 @@ Design note, written before the build. Equations: [evolve_derive.py](evolve_deri
 member: [evolve_potential.py](evolve_potential.py). Prototype, not the build: [evolve_dev.py](evolve_dev.py); its runs [evolve_dev_runs.py](evolve_dev_runs.py) and
 [evolve_dev_runs2.py](evolve_dev_runs2.py); the linear master equation in the time domain [evolve_master1d.py](evolve_master1d.py). Logs: negative-mass-raw `I217-mac/dev`
 (`dev_NN`). Status words as in AGENTS.md. Every number from a development run is *numerical evidence*. No criterion is declared yet; no run of record exists.
-**After the coordinator's rulings (c89cb61):** Sec. 12 reports the diagnosis of rulings 4 and 5. It supersedes the c = −1.5 numbers and the departure threshold of Secs 5 to 7 (the old values stay in the logs `dev_40` to `dev_49`).
+**Built and run: see [evolution.md](evolution.md).** **After the coordinator's rulings (c89cb61):** Sec. 12 reports the diagnosis of rulings 4 and 5. It supersedes the c = −1.5 numbers and the departure threshold of Secs 5 to 7 (the old values stay in the logs `dev_40` to `dev_49`).
 
 ## Rulings requested (answered by the coordinator; the findings are in Sec. 12)
 
