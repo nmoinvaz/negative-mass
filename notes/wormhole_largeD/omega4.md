@@ -178,3 +178,27 @@ and reports only under `wrong_Om*`. **All pass** (exit statuses 0, 0, 0, 0, 0, 0
   this note. It imports `PanelB`, the closed forms and `Lc2_poly` from `order4.py`, which is unchanged.
 - Raw: `negative-mass-raw/I220-rpi5` (README with the criteria, controls and amendment A1; `dev_*` the development runs; `run_01` … `run_06` the runs of record; `ctl_*` the controls of record; `G1.json`, `G2.json`, `B.json` the saved Ω's;
   `declared_*.json`; `scratch_prototypes/` the sympy and mpmath prototypes of the reduction and of X2; `assemble_output.py`).
+
+## Coordinator's review
+
+Review of branch `wip/i220-omega4` at 0e26546 and raw `I220-rpi5` at 8a49e76, recorded in negative-mass-raw
+`I220-mac-review` (criteria 8ca54d24; amendment A1). On the Mac, nice 10.
+
+- **Scope.** The branch adds `order6.py`, its output and this note, nothing else.
+- **Rerun.** `sym exch6` gives 7 of 7. `values pslq remainder` over the runner's stored G1, G2 and B evaluations gives
+  14 of 14, with PSLQ finding the relation again. `reduce6` gives 8 of 8.
+- **Independent check** (`ind220.py`). The coordinator's Taylor-jet hierarchy of the reviews of #26, #208 and #209,
+  carried to order 6, shares no code with method B.
+  - Its order equations equal `order6.py`'s, residual 0.
+  - Ω₀ … Ω₃ come out to 7e-45 … 6e-38.
+  - **Ω₄ = −12794.49986002319463279201242038108593386, the closed form to 1.1e-39 relative.**
+  - Its K3 failed on the review's own slip, a 13-digit copy of #195's fit. With the 14-digit fit −12794.499860023 the
+    difference is 1.95e-10 (amendment A1).
+- **Applied.**
+  - README.md (Result and Limits).
+  - Paper III: abstract and result to sixth order with c₄ = Ω₄/16, the "Orders 3 to 6" paragraph with Ω₄ and E4, the
+    weight sentence, Ω₅ ≈ 4 × 10⁴ as an estimate, and the method bullet.
+  - `paper_numbers.py`: Ω₄ is derived and checked against `order6_output.txt` and the fit; it has a new Ω₅ check; 0
+    failures, and a one-figure mutation of Ω₅ fails it.
+  - `omega_graph.py` and `omega_coeffs.svg`: Ω₄ marked as derived.
+- **Open.** E3 alone does not finish at k = 6, as this note flags; E4 does. Ω₅ is an estimate.

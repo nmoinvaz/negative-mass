@@ -62,7 +62,13 @@ W^2a^2 = 2(D-3) - 4\ln 2 + \frac{\pi^2/3 + 4\ln^2 2}{D-3} + O(D^{-2}) .
   G₅ = 0 reduces by hand to Clausen integrals and log-cosine moments, using #26's E1 and E2 and one new identity, E3,
   which removes Y₄. Two evaluations from the hierarchy's definitions agree on Ω₃ to 112 digits, and #195's fit agrees to
   4e-38. In the form above, the next term is (Ω₃/8)/(D − 3)³ = −81.60501344625701568…/(D − 3)³. The remainder after it is
-  Ω₄/(2(D − 3))⁴, with Ω₄ = −12794.49986 a fit (#195).
+  Ω₄/(2(D − 3))⁴. **Update from #220** ([omega4.md](omega4.md)): the sixth term is **derived** too:
+  Ω₄ = −10432ζ(5) − 160π²ζ(3) + 640ζ(3) ln²2 − (64/9)π² ln³2 − (88/45)π⁴ ln 2 − (128/15) ln⁵2 − (2432/45)π⁴
+  + 1536ζ(3) ln 2 + 3072ζ(3) = −12794.49986002319463…, so (Ω₄/16)/(D − 3)⁴ = −799.6562412514…/(D − 3)⁴.
+  It comes from G₆ = 0 by E1, E2, E3 and a new step E4. Two method-B grids agree to 209 digits, and #195's fit agrees
+  to its 14. *Added by the coordinator:* the review's own Taylor hierarchy, sharing no code with method B, gives it
+  to 1.1e-39. Ω₄ is not of uniform weight either: its terms have weights 5, 4 and 3. The remainder after six terms is
+  Ω₅/(2(D − 3))⁵, with Ω₅ ≈ 4 × 10⁴ an estimate.
 
 **What it means.**
 - **Faster in higher D.** The e-folding time is a/√(2(D − 3)) at large D. The exact values are 0.846 a (D = 4),
@@ -177,7 +183,7 @@ comes only from the absence of the growing term.
   and E2, which are derived in omega2.md and checked numerically, but not yet re-derived independently (#209). Ω₃ is a
   fit, not identified (#195; #208 computes it from the order-5 integral).
   **Update from #208:** Ω₃ is now derived too, resting on E1, E2 and a third identity, E3, which #209 should also
-  re-derive. Ω₄ is a fit (#195), not computed from the matching integral or identified.
+  re-derive. Ω₄ is derived (#220); Ω₅ is an estimate (≈ 4 × 10⁴), not computed.
   **Update from #209:** E1, E2, E3 and the two Clausen integrals are re-derived independently, without the notes
   ([exchange_review.md](exchange_review.md)), with every boundary term stated. No sign, constant or result differs.
   So Ω₁, Ω₂ and Ω₃ are **derived**, and #25 is closed. *Added by the coordinator:* the review checked E1 to E3 on a

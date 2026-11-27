@@ -59,7 +59,11 @@ mp.mp.dps = 60
 q, z3, PI = mp.log(2), mp.zeta(3), mp.pi
 OMS = [-4 * q, 2 * PI**2 / 3 + 8 * q**2, 80 * z3 - mp.mpf(8) / 3 * PI**2 * q - mp.mpf(32) / 3 * q**3,
        22 * PI**4 / 45 + mp.mpf(16) / 3 * PI**2 * q**2 + mp.mpf(32) / 3 * q**4 - 320 * z3 * q - 384 * z3]
-OM4_FIT = mp.mpf("-12794.49986002")               # #195's fit (w2_output.txt), not derived
+z5 = mp.zeta(5)
+OM4 = (-10432 * z5 - 160 * PI**2 * z3 + 640 * q**2 * z3 - mp.mpf(64) / 9 * PI**2 * q**3 - mp.mpf(88) / 45 * PI**4 * q
+       - mp.mpf(128) / 15 * q**5 - mp.mpf(2432) / 45 * PI**4 + 1536 * q * z3 + 3072 * z3)   # derived (#220, omega4.md)
+OMS.append(OM4)
+OM4_FIT = mp.mpf("-12794.499860023")              # #195's fit (w2_output.txt), 14 digits
 o4 = open(os.path.join(HERE, "order4_output.txt")).read()
 o5 = open(os.path.join(HERE, "order5_output.txt")).read()
 a70 = mp.mpf(re.search(r"X1: Omega2 \(A70\) = ([0-9.]+)", o4).group(1))
@@ -69,12 +73,17 @@ check(m5 is not None and abs(mp.mpf(m5.group(1)) - OMS[3]) < mp.mpf("1e-38"), "O
 TEX = open(os.path.join(HERE, "..", "..", "paper", "3-wormhole-largeD", "main.tex")).read()
 quoted = {"Omega1": mp.nstr(OMS[1], 12), "Omega2": mp.nstr(OMS[2], 12), "Omega3": mp.nstr(OMS[3], 12),
           "Omega1/2": mp.nstr(OMS[1] / 2, 10), "Omega2/4": mp.nstr(OMS[2] / 4, 10), "Omega3/8": mp.nstr(OMS[3] / 8, 10),
-          "Omega4 fit": mp.nstr(OM4_FIT, 7)}
-ratios = [f"{abs(float(OMS[k + 1] / OMS[k])):.1f}" for k in range(3)] + [f"{abs(float(OM4_FIT / OMS[3])):.1f}"]
+          "Omega4": mp.nstr(OM4, 10), "Omega4/16": mp.nstr(OM4 / 16, 10)}
+ratios = [f"{abs(float(OMS[k + 1] / OMS[k])):.1f}" for k in range(4)]
+o6 = open(os.path.join(HERE, "order6_output.txt")).read()
+m6 = re.search(r"Omega4 = (-12794\.[0-9]{60,})", o6)
+check(m6 is not None and abs(mp.mpf(m6.group(1)) - OM4) < mp.mpf("1e-55"), "Omega4 closed form against order6_output.txt")
+check(abs(OM4 - OM4_FIT) <= mp.mpf("5e-10"), "Omega4 closed form against #195's 14-digit fit")
 quoted["ratios"] = ", ".join(ratios[:3]) + " and " + ratios[3]
 dB = float(re.search(r"M3: Omega2 of A70 against B2: ([0-9.]+) digits", o4).group(1))
 dC = re.search(r"X3: Omega3 against.*?digits: B3 ([0-9.]+), B4", o5)
-quoted["Chebyshev digits"] = f"{int(dB)} and {int(float(dC.group(1)))}" if dC else "?"
+d6 = re.search(r"M4: Omega4 of G1 against G2.*?: ([0-9.]+) digits", o6)
+quoted["Chebyshev digits"] = f"{int(dB)}, {int(float(dC.group(1)))} and {int(float(d6.group(1)))}" if dC and d6 else "?"
 crate_rows = {int(m.group(1)): (mp.mpf(m.group(3)), mp.mpf(m.group(4))) for m in re.finditer(
     r"^\s+(\d+)\s+(TS13 Table I|modes_r\.py)\s+([0-9.]+)\s+([0-9.]+)", open(os.path.join(HERE, "w2_output.txt")).read(), re.M)}
 low = max(crate_rows[D][1] - crate_rows[D][0] for D in (20, 30, 50, 100, 200, 500, 1000))
@@ -120,7 +129,12 @@ for D in (20, 30, 50, 100, 200, 500, 1000, 2000):                  # the five-te
     check(prev is None or e5 < prev, f"five-term error falls at D = {D}")
     prev = e5
 print("  (data - 3 terms) s^2 tends to Omega2 + Omega3/s: at D = 1000 that is "
-      f"{float(OMS[2] + OMS[3] / 1994):.2f}; (data - 5 terms) s^4 tends to Omega4 ~ {float(OM4_FIT):.0f} (#195's fit)")
+      f"{float(OMS[2] + OMS[3] / 1994):.2f}; (data - 5 terms) s^4 tends to Omega4 = {float(OM4):.5f} (derived)")
+s_ = mp.mpf(2 * (2000 - 3))
+O5est = (full[2000] - (s_ + sum(OMS[k] / s_**k for k in range(5)))) * s_**5
+o5txt = f"{float(O5est):.0e}".replace("e+04", "\\times10^4")      # one figure: an estimate
+print(f"  (data - 6 terms) s^5 at D = 2000: {float(O5est):.4g}, an estimate of Omega5; printed as {o5txt}")
+check(f"$\\Omega_5\\approx{o5txt}$" in TEX, f"the Omega5 estimate {o5txt} printed in main.tex")
 
 # the ghost sector of Choptuik's solution (notes/wormhole_next, #30): mu(D), as quoted in Sec. 7
 import json

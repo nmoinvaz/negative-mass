@@ -20,7 +20,7 @@ J = 17.4206887224287 (direct), 17.4206887224288 (u form);  8 pi ln 2 = 17.420688
  1000     1991.2326572613    1991.23263864   9.35e-09          74.04       w2_crate qd (#195)
  2000     3991.2300256843    3991.23002103   1.17e-09          74.21       w2_crate qd (#195)
 
-  quoted coefficients: {'Omega1': '10.4233603787', 'Omega2': '74.3693867279', 'Omega3': '-652.84010757', 'Omega1/2': '5.211680189', 'Omega2/4': '18.59234668', 'Omega3/8': '-81.60501345', 'Omega4 fit': '-12794.5', 'ratios': '3.8, 7.1, 8.8 and 19.6', 'Chebyshev digits': '64 and 112', 'r-integration low by': '1.9\\times10^{-6}'}
+  quoted coefficients: {'Omega1': '10.4233603787', 'Omega2': '74.3693867279', 'Omega3': '-652.84010757', 'Omega1/2': '5.211680189', 'Omega2/4': '18.59234668', 'Omega3/8': '-81.60501345', 'Omega4': '-12794.49986', 'Omega4/16': '-799.6562413', 'ratios': '3.8, 7.1, 8.8 and 19.6', 'Chebyshev digits': '64, 112 and 209', 'r-integration low by': '1.9\\times10^{-6}'}
 
   Table 1 rows (as printed in main.tex)
     4 & 1.3970524343 & $2.2$ & $43$ & $-12.17$ & -- \\
@@ -36,7 +36,8 @@ J = 17.4206887224287 (direct), 17.4206887224288 (u form);  8 pi ln 2 = 17.420688
     500 & 991.2379721479 & $7.5\times10^{-8}$ & $1.3\times10^{-11}$ & $73.70$ & $-12750$ \\
     1000 & 1991.2326572613 & $9.4\times10^{-9}$ & $4.1\times10^{-13}$ & $74.04$ & $-12773$ \\
     2000 & 3991.2300256843 & $1.2\times10^{-9}$ & $1.3\times10^{-14}$ & $74.21$ & $-12784$ \\
-  (data - 3 terms) s^2 tends to Omega2 + Omega3/s: at D = 1000 that is 74.04; (data - 5 terms) s^4 tends to Omega4 ~ -12794 (#195's fit)
+  (data - 3 terms) s^2 tends to Omega2 + Omega3/s: at D = 1000 that is 74.04; (data - 5 terms) s^4 tends to Omega4 = -12794.49986 (derived)
+  (data - 6 terms) s^5 at D = 2000: 4.178e+04, an estimate of Omega5; printed as 4\times10^4
 
   mu(D) as quoted: {4.0: '-0.3651', 5.0: '-0.4430', 70.5: '-0.9906'}
 

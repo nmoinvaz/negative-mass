@@ -4,8 +4,8 @@ each truncation against #195's quad-double W^2 at 64 values of D.
 
     python3 omega_graph.py            (writes omega_coeffs.svg beside this file, prints the numbers)
 
-Omega0 .. Omega3 are the closed forms (README.md, omega2.md, omega3.md); Omega4 is #195's fit (w2_output.txt), as are
-the W^2 values. Standard library only: decimal at 70 digits for the differences, which fall to about 1e-17 of W^2.
+Omega0 .. Omega4 are the closed forms (README.md, omega2.md, omega3.md, omega4.md); Omega4's 60-digit value is read from
+order6_output.txt (#220). The W^2 values are #195's (w2_output.txt). Standard library only: decimal at 70 digits for the differences, which fall to about 1e-17 of W^2.
 """
 import math
 import os
@@ -50,10 +50,11 @@ PI, Q, Z3 = pi_dec(), D_(2).ln(), zeta3_dec()
 out = open(os.path.join(HERE, "w2_output.txt")).read()
 OM = [-4 * Q, 2 * PI**2 / 3 + 8 * Q**2, 80 * Z3 - D_(8) / 3 * PI**2 * Q - D_(32) / 3 * Q**3,
       22 * PI**4 / 45 + D_(16) / 3 * PI**2 * Q**2 + D_(32) / 3 * Q**4 - 320 * Z3 * Q - 384 * Z3,
-      D_(re.search(r"Omega4 = (-?[0-9.]+)", out).group(1))]
+      D_(re.search(r"Omega4 = (-12794\.[0-9]{60,})", open(os.path.join(HERE, "order6_output.txt")).read()).group(1))]
 FORM = ["−4 ln 2", "2π²/3 + 8 ln²2", "80ζ(3) − (8/3)π² ln 2 − (32/3) ln³2",
-        "22π⁴/45 + (16/3)π² ln²2 + (32/3) ln⁴2 − 320ζ(3) ln 2 − 384ζ(3)", "fit (#195)"]
-CLOSED = [True, True, True, True, False]
+        "22π⁴/45 + (16/3)π² ln²2 + (32/3) ln⁴2 − 320ζ(3) ln 2 − 384ζ(3)",
+        "−10432ζ(5) − 160π²ζ(3) + 640ζ(3) ln²2 − (64/9)π² ln³2 − (88/45)π⁴ ln 2 − (128/15) ln⁵2 − (2432/45)π⁴ + 1536ζ(3) ln 2 + 3072ζ(3)"]
+CLOSED = [True, True, True, True, True]
 ROWS = [(int(m.group(1)), D_(m.group(2)))
         for m in re.finditer(r"^\s+D=(\d+)\s+([0-9.]+)\s+digits qd/od", out, re.M)]
 assert len(ROWS) == 64, len(ROWS)
@@ -101,7 +102,7 @@ for k, o in enumerate(OM):
            f"Ω{k} = {float(o):.15g} ({FORM[k]})")
 lab = [f"Ω₀ = −4 ln 2 = {float(OM[0]):.6f}", f"Ω₁ = 2π²/3 + 8 ln²2 = {float(OM[1]):.6f}",
        f"Ω₂ = 80ζ(3) − (8/3)π² ln 2 − (32/3) ln³2 = {float(OM[2]):.6f}", f"Ω₃ = {float(OM[3]):.6f}",
-       f"Ω₄ = {float(OM[4]):.1f} (fit)"]
+       f"Ω₄ = {float(OM[4]):.1f} (derived, #220)"]
 for k in range(4):
     svg.text(pts[k][0] + 16, pts[k][1] + 4, lab[k], size=11, fill=INK)
 svg.text(pts[4][0] - 12, pts[4][1] + 4, lab[4], size=11, fill=INK, anchor="end")
@@ -132,7 +133,7 @@ xe, ye = xm2(ROWS[-1][0]), ym2(math.log10(ERR[4][-1][1]))
 callout(svg, xe, ye, "≈ Ω₅/s⁵, with Ω₅ ≈ 4.1 × 10⁴ (estimate)", dx=-150, dy=-34)
 
 h = footnote(svg, ["closed forms: README.md, omega2.md (#26), omega3.md (#208)",
-                   "Ω₄ and W² (quad-double, dh610-fedora): w2_output.txt (#195)"],
+                   "Ω₄: omega4.md (#220); W² (quad-double, dh610-fedora): w2_output.txt (#195)"],
              "", [], py2 + ph2 + 44, "https://github.com/nmoinvaz/negative-mass")
 path = os.path.join(HERE, "omega_coeffs.svg")
 open(path, "w").write(svg.finish(h))
