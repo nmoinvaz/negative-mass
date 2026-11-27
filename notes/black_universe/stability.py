@@ -290,6 +290,10 @@ def check_command():
     line("S7 Poeschl-Teller limit c -> -1 (sympy)", resid == 0, f"limit of Vhat = {lim}; residual of u = sech(A1 x/2), W = A1/2: {resid}")
     err = check_pt_numeric(MUT)
     line("S7b Vhat of the member c = -1.0001 against the Poeschl-Teller well", err < 3e-3, f"max |Vhat - V_PT|/(A1^2/2) over the well = {err:.3e} (declared <= 3e-3)")
+    lim, resid = check_pt_limit_plus(MUT)
+    line("S7c c -> -1 from above (sympy)", resid == 0, f"limit of Vhat = {lim}; residual of u = 1/sinh(A1 x/2), W = A1/2: {resid}")
+    err = check_pt_numeric_plus(MUT)
+    line("S7d Vhat of the member c = -0.9999 against (A1^2/2)/sinh^2(A1 x/2)", err < 3e-3, f"max relative difference, -6 <= A1 x <= 3, |A1 x| >= 0.5 = {err:.3e} (declared <= 3e-3)")
     printed_vs_derived()
     return ok_all
 
@@ -337,6 +341,37 @@ def check_pt_limit(mut=()):
     u = 1 / sp.cosh(A1 * x / 2)                                      # l = 1 ground state
     resid = sp.simplify(sp.expand((sp.diff(u, x, 2) - V * u - (A1 / 2)**2 * u).rewrite(sp.exp)))   # u_xx - V u = W^2 u, W = kappa
     return lim, resid
+
+
+def check_pt_limit_plus(mut=()):
+    """c -> -1 from above (rho_h = -s < 0): rho = s t, the wall 2A^2/rho^2 of the throat now sits at t = 0, one horizon-throat distance
+    from the horizon at t = -1. In x, Vhat tends to (A1^2/2)/sinh^2(A1 x/2) and u = 1/sinh(A1 x/2), with a pole at the throat
+    (Y = rho u regular), solves u_xx - Vhat u = kappa^2 u and decays at both ends. Checked in sympy."""
+    import sympy as sp
+    s_, t, A1, x = sp.symbols("s t A1 x", positive=True)
+    rho = s_ * t
+    A = A1 * s_ * (t + 1); Ap = A1
+    R2 = 1 + rho**2
+    two = 3 if "pt_ell" in mut else 2
+    Vh = two * A**2 / rho**2 - (1 + 1 / R2) * A * Ap / rho + A**2 / R2**2 - 2 * A / R2
+    lim = sp.simplify(sp.limit(Vh, s_, 0))
+    V = lim.subs(t, sp.exp(A1 * x) - 1)                              # dx = d rho / A = dt / (A1 (t + 1))
+    u = 1 / sp.sinh(A1 * x / 2)
+    resid = sp.simplify(sp.expand((sp.diff(u, x, 2) - V * u - (A1 / 2)**2 * u).rewrite(sp.exp)))
+    return lim, resid
+
+
+def check_pt_numeric_plus(mut=()):
+    """c = -0.9999: Vhat(rho) against (A1^2/2)/sinh^2(A1 x/2), relative difference over -6 <= y <= 3, |y| >= 0.5, y = A1 x
+    (beyond y = 4 the O(rho) corrections to the limit exceed 0.3 %, at y = 6 they are 10 %)"""
+    fam = Fam(-0.9999, "R2")
+    s_ = -fam.rh
+    err = 0.0
+    for yv in list(np.linspace(-6, -0.5, 12)) + list(np.linspace(0.5, 3, 12)):
+        r = s_ * (math.exp(yv) - 1)
+        pt = fam.A1**2 / 2 / math.sinh(yv / 2)**2
+        err = max(err, abs(fam.Vhat(r) - pt) / pt)
+    return err
 
 
 def check_pt_numeric(mut=()):
