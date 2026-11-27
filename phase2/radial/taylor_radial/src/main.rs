@@ -317,7 +317,7 @@ fn star_size(info: &bvp::StarInfo) -> (f64, f64) {
 fn row_handler(cfg: &bvp::StarCfg, modes: &[f64], zvar: &[f64], r: &cont::FamRow) {
     let (mx, rs) = star_size(&r.info);
     println!(
-        "{{\"cmd\":\"row\",\"alpha_c\":{},\"omega\":\"{}\",\"N\":\"{}\",\"M\":\"{}\",\"k\":{:e},\"max2mr\":{:.6},\"rs\":{:.4},\"nodes\":{},\"fnorm\":{:e}}}",
+        "{{\"cmd\":\"row\",\"alpha_c\":{},\"omega\":\"{}\",\"N\":\"{}\",\"M\":\"{}\",\"k\":{:e},\"max2mr\":{:.6},\"rs\":{:.4},\"nodes\":{},\"r_t\":{:.2},\"fnorm\":{:e}}}",
         r.alpha_c,
         r.info.omega.sci(30),
         r.n.sci(30),
@@ -326,6 +326,7 @@ fn row_handler(cfg: &bvp::StarCfg, modes: &[f64], zvar: &[f64], r: &cont::FamRow
         mx,
         rs,
         r.info.nodes,
+        r.info.r_t,
         r.info.fnorm.last().unwrap()
     );
     let is_mode = modes.iter().any(|&x| (x - r.alpha_c).abs() < 1e-9);

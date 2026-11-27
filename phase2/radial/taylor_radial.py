@@ -614,7 +614,7 @@ STAGES = {
                 extra=dict(alpha_stop=ARC_MAX, chunk=10, ds=0.05, ds_max=5)),
     "stepA": dict(cmd="step", alphas=[x for x in FAMILY_TARGETS if x > ARC_MAX], modes=[], zvariants=[], extra=dict(hmax=0.05, dlnk=0.25)),
     "stepB": dict(cmd="step", alphas=[2.50, 3.00], modes=[2.50, 3.00], zvariants=[3.00], extra=dict(hmax=0.05, dlnk=0.25)),
-    "stepC": dict(cmd="step", alphas=[3.50, 3.90, 4.00, 4.015], modes=[3.50, 3.90, 4.00, 4.015], zvariants=[], extra=dict(hmax=0.05, dlnk=0.25)),
+    "stepC": dict(cmd="step", alphas=[3.50, 3.90], modes=[3.50, 3.90], zvariants=[], extra=dict(hmax=0.05, dlnk=0.25)),  # 4.0, 4.015: not computed (A2, S1)
 }
 ARC_LINES = None
 TAG = None  # --tag=NAME: the jsonl of a stage is RAW/NAME.jsonl (development runs)
