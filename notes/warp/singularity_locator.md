@@ -13,14 +13,12 @@ the output file or in the logs named. No claim is made that the method is new; t
 ## Answer
 
 The library routine exists, is tested on planted series in f64, double-double and quad-double, and its error bar covers the
-planted error in every cell. **68 of the 69 gated cells meet all four criteria; one does not: D6 in f64.** There the locator
-says `Unresolved` with a bar of 1.1 |s| (criterion 3, that the bar covers the error, holds): it gives no confident wrong answer. A
-window starting near 0.8 K would resolve that regime; it is not implemented.
+planted error in every cell. **68 of the 69 gated cells meet all four criteria; one does not: D6 in f64.** With the first orders 0.7 K and 0.8 K added (#206) the locator locates it (error of s 2.1e-4, of alpha 1.0e-2) but its bar of s, 5.3% of |s|, is above the resolution limit of 5%, so it says `Unresolved`: it gives no confident wrong answer. A series of pure noise (300) or an entire function (9) is `Unresolved` too. A weak singularity in noise (1, 10, 100 times the noise's size) is `Unresolved` but for one result of 2700, which is wrong with a bar that does not cover it: the bar is an estimator range, not a bound, and near the amplitude where a weak singularity is first resolved it is not safe to read it as one.
 
 | question | answer |
 |---|---|
 | which library | multisolver, module `locate`: `singularity` already holds the estimators it generalizes, and multishoot depends on multisolver |
-| method for a real singularity | the ratio method of Domb and Sykes, c_k/c_(k-1) as a polynomial in 1/k, fitted over a grid of windows and degrees (degree 1 to 9, first order 0.2 K to 0.6 K) |
+| method for a real singularity | the ratio method of Domb and Sykes, c_k/c_(k-1) as a polynomial in 1/k, fitted over a grid of windows and degrees (degree 1 to 9, first order 0.2 K to 0.8 K) |
 | method for a pair | **a three-term recurrence with terms in 1/k** (not Mercer and Roberts), exact for a conjugate pair or two real singularities of one exponent; the exponent comes from the first-order terms |
 | the error bar | **an estimator range over the fit choices** (2 times the largest disagreement of the eight neighboring cells), floored at a few roundings; **not a bound** |
 | does it cover the planted error | yes in 69 of 69 gated cells and 72 of 72 rows, for s and for alpha; the bar is 20, 85 and 200 times the error at the median in f64, double-double and quad-double (smallest 1.7) |
@@ -29,17 +27,17 @@ window starting near 0.8 K would resolve that regime; it is not implemented.
 | #183 | at its stored last steps the locator reproduces eta* to at most 0.5 f64 ulp in 31 records of the O8 regime and alpha to 2e-16 of 2/(eta*^2 + 4); two of six kappa-curve records are complex pairs |
 
 
-**Update from #206** (multisolver PR #28, open, not merged; `singularity_locator_206.md`):
+**Update from #206** (multisolver PR #28, merged and released in multisolver 0.3.0; `singularity_locator_206.md`):
 - With first orders 0.7 K and 0.8 K added to the grid, D6 in f64 is located (error of s 2.1e-4), but its bar of s is 5.3 % of |s|, above the 5 % limit, so it is still `Unresolved`. Criterion 1 is not met; 2, 3 and 4 hold.
 - 300 noise-only series and 9 entire functions are `Unresolved`.
 - Weak singularities at 1, 10 and 100 times the noise are `Unresolved` in 2699 of 2700 series. The other one (W3, f64, 100 × noise, seed 14) is confidently wrong, on #191's grid as well.
 - No cutoff on the bar's size separates D6's right result (5.3 %) from that wrong one (3.1 %).
-- *Added by the coordinator:* the fingerprint quoted on lines 52 and 160 (0xa5113e9ccb6776c8) is not the one multisolver main's test asserts, 0xf3a1_3cba_157d_2e3c (`tests/locate.rs:739` at 63d6e4d). Read the lines below with that correction.
+- *Added by the coordinator:* multisolver 0.3.0 (aac5741), with #206's grid, asserts the fingerprint 0x0f1c_7236_bd56_966f (`tests/locate.rs:788`). The value 0xa5113e9ccb6776c8 quoted in the review below was that of an earlier state of #191's suite; #191's merged test asserted 0xf3a1_3cba_157d_2e3c (`tests/locate.rs:739` at 63d6e4d).
 ## 1. The locator
 
 Near its nearest singularity s a function behaves as A (1 - u/s)^alpha, u the distance from the expansion point, so
 c_k = A binom(alpha, k) (-1/s)^k ~ s^-k k^(-alpha-1). `locate(c, opts)` takes c_0 ... c_K (K at least 12; in a variable scaled so
-that the radius is of order one) and fits two models over a grid of cells (first order of the window 0.2, 0.3, 0.4, 0.5, 0.6 K;
+that the radius is of order one) and fits two models over a grid of cells (first order of the window 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8 K;
 degree in 1/k 1 to 9 for the ratio model, 2 to 9 for the three-term model), by least squares in the precision of the coefficients
 (Householder QR; a rank-deficient fit gives no cell).
 
@@ -56,7 +54,7 @@ degree in 1/k 1 to 9 for the ratio model, 2 to 9 for the three-term model), by l
   two models the smaller difference wins. A bar above 5% of |s| is `Kind::Unresolved`. The bar is a range of the estimator over fit
   choices. It would miss where all neighbors share an error that the windows do not reveal: that is what the planted suite measures.
 - The code is generic over `Real` (f64, `DD`, `QD`, `OD`), uses IEEE operations only (no libm), and gives bitwise the same results on the
-  default build and with `--features portable` (fingerprint 0xa5113e9ccb6776c8 on aarch64 NEON and on portable; the PR's CI passes it on x86 SSE2, AVX2 and portable, Windows and macOS).
+  default build and with `--features portable` (fingerprint 0x0f1c7236bd56966f in multisolver 0.3.0 on aarch64 NEON and on portable; the PR's CI passes it on x86 SSE2, AVX2 and portable, Windows and macOS).
 
 Compared with `choptuik-large-d/hp/branch_radius.py` (read, not run): that script fits ln |c_k| over the orders above a noise floor
 for Chebyshev coefficients and reads the Bernstein ellipse (a radius, no exponent, no kind, no bar); the locator reads the algebraic
@@ -96,19 +94,18 @@ truncation in 1/k of the poles at 4|s|):
 **D6 in f64 is NOT MET.** alpha = 1e-8, s = 2, dressed by poles at +-8i, K = 30: kind `Unresolved`, error of s 0.41, error of alpha 12, bar of s 1.1 |s|, so
 criteria 1, 2 and 4 fail and criterion 3 holds. The dressing's own coefficients (1/64)^(k/2) are larger than the singular ones (1e-8 2^-k/k)
 up to order about 16 and the contamination decays like 4^-k, so a clean window would start near order 24 of 30 (0.8 K, 7 rows, degree at most 3); the default
-starts (0.2 to 0.6 K) are all contaminated. A window starting near 0.8 K would resolve this regime; it was not implemented, the coordinator having decided to leave the cell as it is.
+starts (0.2 to 0.6 K) are all contaminated. With the windows at 0.7 K and 0.8 K (#206) the chosen cell is the ratio model at 0.8 K, degree 1: error of s 2.1e-4, bar 5.3% of |s|, `Unresolved` (criterion 1 fails; 2, 3 and 4 hold). Without 0.8 K it is 2.9e-3 and 22%.
 D6 in double-double and quad-double meet all four criteria. The test `d6_f64_is_not_met` records what the locator does there; it does not pass the cell.
 
 **The noise question** (choptuik-large-d #634: a singularity or noise in low orders). With coefficient noise delta in every order, the error of s was at most
 0.14 delta and of alpha 6.6 delta for a single real singularity, 2.5 delta and 127 delta for a pair (dev_03b, other cases); the suite's noisy cells (N1, N2, O8) have errors well within their tolerances (no cell of the table has an error above 0.15 of its tolerance). With a dressing the error is the truncation of the dressing, not the noise (dev_03: 5e-21 in quad-double against delta = 1e-38, the same for three seeds), and cell N3 shows it (reported, not gated).
-Not tested: a series with noise and **no** singularity; the entire function exp(u) of the exploration (`dev_00_probe.log`) gives a bar of 1 (`Unresolved`).
+Tested (#206): 300 series of additive noise only and the entire functions exp(u), exp(-3u) and sin(sqrt v) / sqrt v are all `Unresolved`; real singularities whose coefficients are 1, 10 and 100 times the noise are `Unresolved` in 2699 of 2700 series, and the other is confidently wrong (W3 in f64, m = 100). The amplitude at which they are first resolved is 100 to 300 times the noise in f64 and from 300 to beyond 1e9 in double- and quad-double, by singularity; there the locator is wrong in up to 43% of its resolved results (section 6 of `singularity_locator_206.md`).
 
 ## 3. The controls
 
 Each check has a control that must fail it; their targets were declared after their development run (`dev_11_controls.log`, amendment A3) and are asserted by `controls_fire`:
 `wrong-sigma` and `wrong-alpha` (the nearest singularity planted off by 10 tolerances) fail the tolerance in 72 of 72 cells; `pair-by-ratio` fails the kind and the tolerance in 18 of 18 pair cells (the locator
-says `Unresolved`, s off by 0.7 to 2.6); `bar-shrunk` (bars times 1e-3) fails coverage in 62 of 72 cells and **is silent in 10** (P1 in f64 and double-double, where the error is 0, and eight cells whose
-error is at least a thousand times below the bar); the fingerprint control (one ulp of one coefficient) was silent as first coded (coefficient 10 of P1) and fires at coefficient 20 of D3 (A5).
+says `Unresolved`, s off by 0.7 to 2.6); `bar-shrunk` (bars times 1e-3) fails coverage in 64 of 72 cells and **is silent in 8** (P1 in f64 and double-double, where the error is 0, and six cells whose error is at least a thousand times below the bar: D1 and D2 in double-double and quad-double, C4 and T1 in quad-double); the fingerprint control (one ulp of one coefficient) was silent as first coded (coefficient 10 of P1) and fires at coefficient 20 of D3 (A5).
 **The fit window:** the ratio model with the first order 2 (degree 2) fails the tolerance on T1, T2 and T3 in all three lanes (a window too early: contamination by the farther singularity), and with
 the last 8 orders (degree 2) on N1, N2 and T3 in all three lanes (a window too short: the noise). Both are silent on the pure cases, where the model is exact; that is
 declared, not repaired.
@@ -137,8 +134,8 @@ eta* by 12 and 9 bars of the locator (17 and 7 of #183's). The others at the kap
 ## 5. What was not done
 
 - The `+avx2,+fma` build was not run on the Pi (aarch64); the pull request's CI jobs (x86 SSE2, AVX2, portable, NEON on Linux and macOS, Windows MSVC) all pass, and the fingerprint test is asserted in each.
-- A window starting near 0.8 K, the cure of D6 in f64.
-- A series with noise and no singularity, and series in which c_(k-1) = 0 for half the orders (an even function: use u^2).
+- Series in which c_(k-1) = 0 for half the orders (an even function: use u^2).
+- A rule for a weak singularity near the noise floor, where the bar is not safe (#206, section 6).
 - A fit that takes the state's own error into account (the O8 comparison is limited by the double-double state).
 - octo-double: the type is supported (`Real` for `OD`) and has no planted case.
 - `singularity::domb_sykes` and `recurrence` stay; the locator supersedes them for series in the lanes' precisions, and they are not removed.

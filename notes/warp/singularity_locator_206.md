@@ -165,3 +165,5 @@ Review of multisolver PR #28 at 21b9829 and raw `I206-mac` at 035fc85, recorded 
 - **Follow-ups.**
   - #251: a resolution signal besides the bar's size, for D6 in f64 and the noise floor (task 1).
   - #252: weak singularities under multiplicative rounding noise (task 2).
+- **Section 7 applied** after multisolver 0.3.0 (aac5741) shipped the grid, with one amendment: `bar-shrunk` now fires
+  in 64 of 72 cells, not 62, since it is silent in 8 (the proposed text kept 62).
