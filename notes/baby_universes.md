@@ -119,6 +119,8 @@ Each can fail. Status words as above; none of them may say that a universe forms
 
 ### T2. Radial stability of the black bounce with its source, and of the magnetic black universes
 
+**Update from #223:** done. The black bounce with the source of [BW22] and the magnetic black universes of [BBS12] are linearly unstable under radial perturbations at every member tested but one (c = −1, q = 0); a magnetic field adds no radial degree of freedom (*checked symbolically*). Nothing is shown about non-radial modes, the region beyond the horizon, other sources of the same metric, or formation from collapse (`black_universe/README.md`, #223).
+
 - **What.** Linearize about the static solution as #212 did, with a phantom scalar with V(φ) plus a magnetic field: the
   nonlinear electrodynamics L(F) of [BW22] for the Simpson–Visser family (a/m from the wormhole through the one-way
   wormhole a = 2m to the black bounce, at least 10 values), and a Maxwell field for the solutions of [BBS12] (at least
