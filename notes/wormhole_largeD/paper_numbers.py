@@ -228,5 +228,24 @@ print("\n  settled mass (Richardson, finest triple):", rich, " r_AH at the limit
 check(len(rich) == 2 and all(f"${x:.4f}a$" in TEX for x in rich), f"the settled mass {rich} printed in main.tex as 0.2231a")
 check(len(rah) >= 1 and f"radius ${rah[0]:.3f}a$" in TEX, f"r_AH {rah} printed in main.tex")
 check("falls from $0.494a$ at formation" in TEX and "0.49424" in SM, "the formation value 0.494 a printed and in the output")
+# family G (#253): settled mass, gap to S, and the per-decade rise for p* - p < 1e-6 (notes/wormhole_evolution/settled_mass_g_output.txt)
+SG = open(os.path.join(EV, "settled_mass_g_output.txt")).read()
+plg = [float(x) for x in re.findall(r"G: plateau mean over the last 1\.0 of x\+ at h = 0\.005, delta = 1e-8: ([0-9.]+)", SG)]
+gap = re.findall(r"delta = 1e-08, h = \(0\.02, 0\.01, 0\.005\):[^\n]*\n\s+S plateau[^\n]*G - S at the same h: [^,]*, [^,]*, \+([0-9.e-]+)", SG)
+tab = SG.split("family G, h = 0.005")[1].split("\n\n")[0]
+pl = {r[0]: float(r[1]) for r in re.findall(r"^\s+(1e-\d\d)\s+\S+\s+\S+\s+\S+\s+([0-9.]+)", tab, re.M)}
+inc = [pl[f"1e-{k + 1:02d}"] - pl[f"1e-{k:02d}"] for k in range(6, 12)]
+print("\n  family G: plateau", plg, " G - S at h = 0.005:", gap, " per-decade rise 1e-6 .. 1e-12:", [f"{x:.2e}" for x in inc])
+check(len(plg) == 1 and f"${plg[0]:.4f}a$ at $p=p_*-10^{{-8}}$" in TEX, f"G's settled mass {plg} printed in main.tex")
+check(len(gap) == 1 and f"${float(gap[0]):.4f}a$ above the mirrored family" in TEX, f"G - S {gap} printed in main.tex")
+check(len(inc) == 6 and f"{min(inc):.0e}" == "2e-04" and f"{max(inc):.0e}" == "6e-04" and "$2\\times10^{-4}$ to $6\\times10^{-4}$ per decade" in TEX,
+      f"the per-decade rise {min(inc):.1e} .. {max(inc):.1e} printed as 2e-4 to 6e-4")
+# the one-sided family's locus slope and the stall member's e-fold at D = 4 (#225, throat_locus_output.txt)
+TL = open(os.path.join(EV, "throat_locus_output.txt")).read()
+ra = re.findall(r"RA\[D=4 G\]: [^(]*\(([0-9.]+) \(h = 0\.01\), ([0-9.]+) \(h = 0\.005\)", TL)
+mem = re.findall(r"CMP1\[D=4 G h=0\.005\][^\n]*?\(t = 12\.0: 1/lambda [0-9.]+, member ([0-9.]+)", TL)
+print("  locus slope at D = 4 (h = 0.01, 0.005):", ra, " member e-fold at t = 12:", mem)
+check(len(ra) == 1 and all(f"{float(x):.4f}" == "0.8495" for x in ra[0]) and "slope in $D=4$ is $0.8495$" in TEX, "the locus slope 0.8495 printed in main.tex")
+check(len(mem) == 1 and f"{float(mem[0]):.3f}" == "0.847" and "e-folding time $0.847$" in TEX, "the stall member's e-fold 0.847 printed in main.tex")
 print("\nchecks failed:", bad)
 sys.exit(1 if bad else 0)

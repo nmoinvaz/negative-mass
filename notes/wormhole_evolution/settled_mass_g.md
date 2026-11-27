@@ -169,3 +169,32 @@ mirrored family, and the value rises by $2\times10^{-4}$ to $6\times10^{-4}$ per
 
 `settled_mass_g.py` (commands `pstar`, `job`, `planted`, `analyze`, `scan`; `--mutate=`), `settled_mass_g_output.txt`, this note; raw `negative-mass-raw/I253-rpi5` (`README.md` with the criteria and the declared mutation sets;
 `runs/`: p*ₕ, the six series, the ten noise runs, the dose runs, the scans; `mut/`: the 20 mutated analyses of record; `dev/`: development runs and logs; `plot_settled_mass_g.py`, `settled_mass_g.svg`).
+
+## Coordinator's review
+
+Review of branch `wip/i253-g-settled-mass` at 9579bcf and raw `I253-rpi5` at a31d31d, recorded in negative-mass-raw `I253-mac-review`
+(criteria before the first run). On the Mac, nice 10.
+
+- **Scope.** The branch adds the driver, its output and this note, nothing else.
+- **Rerun.** `analyze` gives the 19 verdicts of record (17 pass; RC7 and RNR fail as declared). The coordinator's first rerun pointed
+  `--raw` at the wrong folder; the log is kept.
+- **Jobs.** The h = 0.005 jobs at δ = 1e-8 and 1e-6, rerun on the Mac, give G's plateau to 1.9e-7 and 8.1e-7 of rpi5's values. The δ
+  dependence M(1e-8) − M(1e-6) = +5.670e-4 against +5.664e-4 (ratio 1.0011) survives the change of machine. So it is not roundoff.
+- **No independent code.** The coordinator's own march is the symmetric half domain and cannot run the one-sided family G, and a
+  uniform grid cannot reach the settled value (#41's review). The result rests on #41's chain, its planted cases (PL1–PL3 unchanged)
+  and the second-order convergence at three h.
+- **δ at the floor.** δ = 1e-12 lies at #40's roundoff floor of p*ₕ. The trend does not rest on it: the rise per decade grows smoothly
+  from 2.2e-4 (1e-6 to 1e-7) to 5.5e-4 (1e-10 to 1e-11).
+- **The error bar.** The declared bar adds a physical δ dependence to error terms, as the note says. The verdict that G differs from S
+  holds by a factor of 20 whatever the reading.
+- **Applied.**
+  - `settled_mass.md` (Limits), `critical_ghost.md` §1.3 (the "fixed fraction" sentence corrected, an update from #253) and §4 are
+    updated.
+  - Paper III's threshold section now has G's settled mass and its δ dependence. It also has #225's locus slope at D = 4 (0.8495, the
+    stall member's e-fold 0.847), in place of "the cause of the difference is not established", which #225 had made stale.
+  - `paper_numbers.py` checks the five new numbers (0 failures).
+- **Follow-ups.**
+  - Task 1 (the settled mass against B, with B = 0 reproducing S) is #266.
+  - Task 2 (G's plateau against the member at departure, as δ → 0) is #267.
+  - Task 3 is added to #246.
+  - Task 4 (the late-window scatter) is not filed: it is below the h-difference, and #266 and #267 will show whether it matters.

@@ -153,7 +153,7 @@ and in §4 item 1 and the Summary, "0.30 a [SH02] against 0.22 a [GGS09b]" becom
 
 ## Limits
 
-- D = 4 and family S (plus SH02's data) only. The asymmetric static members that one-sided families may approach (#42, #225) are not run, and the settled mass of family G is not measured.
+- D = 4 and family S (plus SH02's data) only. The asymmetric static members that one-sided families may approach (#42, #225) are not run. Family G is measured in #253 ([settled_mass_g.md](settled_mass_g.md)): 0.2355 a at δ = 1e-8, 0.0125 a above S's, and it depends on δ.
 - "Settled" means to e^{−f} = 1.57e6 (9.4 time units after formation). The mass is not followed to the event horizon or to I⁺.
 - The AN control uses one h (0.02) and bar 3e-4, set above the observed 2.0e-4 after the development run. The RC6 band [1.5, 2.5] is wider than #39's, as the raw README explains.
 - The tail of the SH02 explanation (their grid's resolution) is a conjecture. The uniform-grid test uses this code's kernel and not theirs.

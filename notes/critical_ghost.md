@@ -278,13 +278,20 @@ apparent-horizon mass with a second code to 1.2e-4 up to e^{−f} ≈ 12):
   *conjecture*, not shown.
 - *Added by the coordinator:* the same code on another machine reproduces the settled value to about 2e-5, so quote it as
   0.2231 a.
+- *Update from #253* (`wormhole_evolution/settled_mass_g.md`; *numerical evidence*). In the one-sided family G (a ghost pulse tuned to
+  p*ₕ plus a fixed normal pulse B = 0.1 on the same ray, #40) the same chain settles, to e^{−f} = 1.6e6 on the horizon, at 0.2355 a
+  (r_AH = 0.4711 a) for δ = 1e-8, second order from h = 0.02 to 0.005: 0.0125 a (5.6 %) above S's. Unlike S it depends on δ: 0.2350 a
+  at 1e-6, 0.2376 a at 1e-12, rising by 2e-4 to 6e-4 per decade below 1e-6. The normal field carries no flux through the horizon after
+  formation; the gap is 0.0013 a at formation and 0.0112 a less ghost flux afterwards. So the settled mass is not the same for every
+  family that approaches a static wormhole, and for G it is not one number. That it follows the member's parameters (γ₁, r_th at
+  departure) is a *conjecture*. The coordinator's rerun on another machine gives G's plateau to 8e-7 and the δ dependence to 0.1 %.
 
 **Type II?** Nobody reports a power law, and none is expected: the critical solution is static and has a scale.
 
 **A difference from textbook type I (argued).** In type I the scale usually comes from a mass scale in the field equations
 [GHMG25, Sec. II D]. The massless ghost model has none. The wormhole's scale is the throat, a property of the initial data
-and its topology, and the static family has a scaling zero mode. So the threshold mass is non-universal. It is a fixed
-fraction of the throat radius of whichever static wormhole the data approach. Which member generic two-ended data select,
+and its topology, and the static family has a scaling zero mode. So the threshold mass is non-universal. It is of the
+order of a fraction of the throat radius (0.22 a for S, 0.236 a for G at δ = 1e-8, with r_th = 1.0028 a), but not a fixed one: it depends on the family and, for G, on δ (#253). Which member generic two-ended data select,
 and whether [GGS09b]'s second threshold at ε_c ≈ −0.05 is the stable manifold of a *different* (rescaled or asymmetric)
 member, has not been studied (**conjecture**).
 
@@ -465,7 +472,7 @@ Beyond `notes/literature.md` and the repo's phase 2 and phase 5 results:
 1. **Precision type I scaling at the Ellis threshold.**
    - No bisection to p* in a generic family. The lifetime exponent is known to two digits [SH02] and has never been compared
      with 1/λ₀ in print.
-   - The threshold mass is 0.30 a [SH02] or 0.22 a [GGS09b], unresolved. *Update from #40 and #41:* the bisection and the lifetime law are done for families through the static wormhole (#40), and the settled mass is 0.2231 a ([GGS09b]'s value; [SH02]'s not reproduced, #41). Open: generic families (#225). *Update from #225:* at D = 4 the generic family G approaches the member γ₁ = 0.048, r_th = 1.0028 a, with that member's e-fold; at D = 5 the member's radius drifts.
+   - The threshold mass is 0.30 a [SH02] or 0.22 a [GGS09b], unresolved. *Update from #40 and #41:* the bisection and the lifetime law are done for families through the static wormhole (#40), and the settled mass is 0.2231 a ([GGS09b]'s value; [SH02]'s not reproduced, #41). Open: generic families (#225). *Update from #225:* at D = 4 the generic family G approaches the member γ₁ = 0.048, r_th = 1.0028 a, with that member's e-fold; at D = 5 the member's radius drifts. *Update from #253:* family G settles at 0.2355 a (δ = 1e-8), and its value depends on δ.
    - One accurate 1+1 run along the unstable manifold of the massless symmetric wormhole would settle the mass. A bisection
      with the lifetime fitted against ln|p − p*| would test the type I law.
 2. **Universality on the two-ended side.**
