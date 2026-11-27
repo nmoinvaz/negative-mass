@@ -179,6 +179,19 @@ Three remarks.
 Yes, by [SH02], and partly by [GGS09b], [ST17] and [SN26]. Nobody did it with the standard protocol: bisection to p* in a
 generic family, the lifetime against ln|p − p*|, and comparison with the linear growth rate.
 
+**Update from #40:** the protocol has now been run in this repository, for families that pass through the static wormhole.
+- What was run (`wormhole_evolution/threshold.md`):
+  - a ghost pulse mirrored on both null rays (S), and on one ray (O);
+  - p* by bisection at three h;
+  - T against ln(1/|p − p*ₕ|).
+- For S and O the slope is 1/W. Over [1e-9, 1e-4] it is within 7e-6, 3e-5 and 5e-4 at D = 4, 5, 6, falling as h².
+- The coordinator's review confirms this with a second code that shares only the field equations (`threshold_check.py`).
+- Over [1e-11, 1e-3] the D = 6 slope is 0.5 % low, because the lifetime is not yet logarithmic above 1e-5 there.
+- p*ₕ ∝ h² and the continuum p* is 0. So these families test the linear rate in a nonlinear code, not that generic data
+  approach the wormhole.
+- A generic one-sided family (G, with a fixed normal pulse added) gives slopes 6 %, 38 % and 115 % above 1/W at D = 4, 5, 6.
+  Its throat drifts off the line where the lifetime is read, and the cause is open (#225, #42). All *numerical evidence*.
+
 **What [SH02] measured** (their eq. 3.5, Tables I–II):
 - Ghost pulses: e^{x_H⁻ − 3} ∝ E₀^{−0.60}. Normal pulses: E₀^{−0.61}. Here x_H⁻ is the null coordinate where the final
   horizon forms.
@@ -221,6 +234,10 @@ Two more details fit the same picture:
   initial throat radius;
 - [ST17]: the final mass is independent of the injected energy in n = 4, 5, 6 (their normalization of the mass is not
   reconciled here with SH's).
+
+*Added by the coordinator (from #40):* the Misner–Sharp mass at the first trapped cell, at p*ₕ − 1e-8, is
+0.494, 0.492 and 0.490 a^{D−3} at D = 4, 5, 6 in S and O, with r ≈ 0.99 a there. This is a formation value in a grid
+that stretches after the horizon forms. It is not a settled mass, and it does not settle #41.
 
 The **0.30 a against 0.22 a discrepancy is unresolved.** For a single static critical solution, type I predicts one value:
 the black hole at the end of the unstable manifold. Different perturbation families plus late accretion of field that has
