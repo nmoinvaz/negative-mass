@@ -1,0 +1,100 @@
+# linear_output.txt: outputs of record of linear.py (negative-mass-raw I232-mac/runs; run.sh), assembled in this order
+# derivation: linear_derive_output.txt (linear_derive.py, 12 of 12; its eleven mutations equal the declared sets, runs/derive_mut_*.log)
+
+######## linear.py check
+[pass] C1: coef() equals the sympy-derived matrices B0, Bp, Bm at 40 random points of the chart (c = -1.5, -1, -0.3, 0; interior and horizon included)  (max relative difference 6.4e-17)
+    (C1: 0 s)
+[pass] C2: the member in the chart solves the three evolution equations and both constraints, across the horizon (interior nodes included): c = -1.5, -1, -0.3, 27 points each  (max residual 5.6e-10)
+[pass] C2h: on the horizon node r_p = phi_p = 0 and f_p = -sqrt2 kappa of the member (the Raychaudhuri equation there is dr_pp - b dr_p = 0)  (max 0.0e+00)
+    (C2: 0 s)
+[pass] C3: the scheme on exact pure-gauge solutions (xi(p), eta(sigma) smooth) is second order: errors at h = 0.04, 0.02, 0.01, ratios in [3.5, 4.5], error at 0.01 below 3e-4  (c = -1.5: 1.49e-06, 3.72e-07, 9.31e-08 (ratios 4.00, 4.00); c = -1.0: 4.16e-06, 1.04e-06, 2.60e-07 (ratios 4.00, 4.00); c = -0.3: 1.54e-04, 3.84e-05, 9.60e-06 (ratios 4.00, 4.00); c = 0.0: 4.63e-04, 1.16e-04, 2.89e-05 (ratios 4.00, 4.00))
+    (C3: 4 s)
+[pass] C5: the linearized constraints C_pp, C_ss on the solution (pulses on both rays) shrink by a factor in [3.3, 4.7] from h = 0.02 to 0.01, and are below 5e-3 of the largest term at 0.01  (c = -1.5: C_pp 7.9e-07 -> 2.0e-07, C_ss 1.1e-07 -> 2.8e-08 (ratios 3.99, 4.00; relative to the largest term 2.7e-05, 3.8e-06); c = -1.0: C_pp 1.1e-06 -> 2.8e-07, C_ss 2.0e-07 -> 4.9e-08 (ratios 4.00, 4.00; relative to the largest term 8.8e-06, 1.5e-06))
+    (C5: 2 s)
+[pass] P1a: c = 0: the linear double-null solver, rate of Y(x = 0) over t in [10, 14], Richardson of h = 0.01, 0.005: W^2 a^2 within 1e-4 of 1.39705243433350684  (W^2 = 1.39704126, relative difference 8.0e-06; raw rates 1.181977, 1.181968)
+[pass] P1b: c = 0: the master equation of #212 (Y'' = (2/rho) Y' + (1/R^4 - 2/R^2 + W^2) Y, even solution shot to rho = 14): one growing mode in W in [0.3, 3], W^2 a^2 within 1e-8  (roots ['1.1819697264'], W^2 1.3970524340, relative difference 2.1e-10)
+[pass] P1c: c = 0: #39's kernel (evolve.py) on member +- the same data: the odd response's rate over [6, 10] minus the linear solver's, Richardson of h = 0.01, 0.005, moves W^2 a^2 by less than 1e-4  (differences -1.12e-03, -2.87e-04, extrapolated -8.19e-06, W^2 shift 1.4e-05)
+    (P1: 5 s)
+[pass] R1: linear double-null solver, Y(x = 0) rate over t in [16, 20], Richardson of h = 0.01, 0.005, equals #212's W to 1e-3 at c = -1.5 and -0.3 (the issue's criterion) and at -1.01, -0.99  (c = -1.5: 0.494217 against W = 0.494171 (relative 9.2e-05; h = 0.01: 0.494217, h = 0.005: 0.494217); c = -0.3: 0.970080 against W = 0.970080 (relative 2.0e-07; h = 0.01: 0.970088, h = 0.005: 0.970082); c = -1.01: 0.633156 against W = 0.633148 (relative 1.3e-05; h = 0.01: 0.633158, h = 0.005: 0.633156); c = -0.99: 0.640129 against W = 0.640122 (relative 1.1e-05; h = 0.01: 0.640131, h = 0.005: 0.640129))
+    (R1: 27 s)
+[pass] R3: c = -1, data G (pulses on both rays): the rate of Y(x = 0) over [16, 20] (Richardson) equals kappa = 2/pi to 1e-3 (it grows; #212 has no mode)  (0.636627 against kappa = 0.636620 (relative 1.2e-05; raw 0.636630, 0.636628))
+    (R3: 7 s)
+[pass] Q1: the slopes of #217's lifetime law quoted below (1.03101 at c = -0.3, 2.02338 at c = -1.5, 1.57042 at c = -1; h = 0.0025) occur in evolve_output.txt
+    (Q1: 0 s)
+[pass] L1: #217's nonlinear kernel (evolve.py) on member +- eps data (eps = 1e-6): the odd part of Y on the diagonal equals the linear solver's to 3e-3 from t = 3 until the even part (the untuned member's drift) reaches 5e-4; c = -1.5, -1; data G and a0  (c = -1.5 G: |ratio - 1| <= 2.3e-03 for t in [3, 13.4] (drift 5.0e-04 there); c = -1.5 A0: |ratio - 1| <= 6.9e-04 for t in [3, 13.4] (drift 5.0e-04 there); c = -1.0 G: |ratio - 1| <= 1.4e-03 for t in [3, 10.1] (drift 5.0e-04 there); c = -1.0 A0: |ratio - 1| <= 1.5e-03 for t in [3, 10.1] (drift 5.0e-04 there))
+    (L1: 7 s)
+[pass] L2: the 1D master equation of #212 in characteristic form (u = Y/rho on the two rays of the same data, marched on the tortoise grid) reproduces the double-null Y(x = 0) to 2e-3 of its running maximum for pulse data R, L, G at c = -1.5, -1.01, -1 (R at c = -1 to t = 10; its later values are the seed)  (max |difference| / running maximum: c = -1.5 R: 1.2e-05; c = -1.5 L: 1.6e-05; c = -1.5 G: 1.3e-05; c = -1.01 R: 8.8e-04; c = -1.01 L: 5.2e-05; c = -1.01 G: 3.0e-05; c = -1.0 R: 3.7e-05; c = -1.0 L: 5.3e-05; c = -1.0 G: 3.0e-05)
+    (L2: 19 s)
+[pass] L3a: c = -1: the horizon values of Y for three left-ray pulses (sigma0 = 2.5, 3.5, 4.5) obey Y_h(p) = c1 + c2 exp(b p), b = sqrt2 kappa: the least-squares residual over p in [1, 16] is 5e-4 or less at h = 0.005 and falls by 4 (+-0.5) from h = 0.01, and the late exponent of |Y_h| (Richardson) equals b to 1e-5  (residual 1.2e-03 (h = 0.01), 3.0e-04 (h = 0.005), ratio 3.99; late exponent 0.900316, 0.900316, 0.900316 against b = 0.900316 (relative 7.4e-08))
+[pass] L3b: c = -1: the combination of the three pulses with c1 = c2 = 0 (from Y_h at p = 0 and p = 2) has |Y(x = 0, t = 14)| smaller by a factor of at least 1e3 than one pulse, and does not grow at kappa (rate over [10, 14] below 0.25 kappa)  (reduction 2.44e+04, rate of the combination -0.1768, of one pulse 0.6359, kappa 0.6366; max |Y_h| of the combination 1.9e-02 against 3.6e+02 for one pulse)
+[pass] L3c: control, c = -1.5: the same operation (the form of Y_h at c = -1 with b of c = -1.5) reduces |Y(x = 0, t = 14)| by less than 100 and the rate stays within 15% of W (the horizon sector is specific to c = -1)  (reduction 4.03e+01, rate of the combination 0.4777, W = 0.4942)
+    (L3: 30 s)
+[pass] L4: late-time profile near the horizon, Y e^{-W t} against delta = rho - rho_h at the row p = 8, delta in [2e-4, 2e-3]: c = -1 has exponent 1/2 (the branch 1 - W/(2 kappa), W = kappa) and not 3/2 (the branch u -> 0, #212's); control c = -1.5 has W/A'(rho_h)  (c = -1: 0.4995 (51 nodes), expected 0.5, ingoing would be 1.5; c = -1.5: 0.4475 (49 nodes), expected 0.4479)
+    (L4: 3 s)
+[pass] L5: c = -1, data R (right-ray pulse, left ray zero, c2 = 0 in the continuum): the horizon value Y_h(p = 14) of the linear solver and the nonlinear kernel's drift of the untuned member at t = 10 both fall by 4 (+-0.3) per halving of h: the growth from truncation seeds is the h^2 content of c2  (linear Y_h: 3.30e-03, 8.26e-04, 2.06e-04 (ratios 4.00, 4.00); nonlinear drift: 1.89e-03, 4.76e-04, 1.19e-04 (ratios 3.97, 4.01))
+    (L5: 8 s)
+
+18 checks, 18 pass; failed: []; mutation None; 111 s
+rc=0 wall=111 s
+
+######## linear.py table
+== Comparison of the growth rates of Y on the diagonal (x = 0), units b = 1 ==
+   linear: the linear double-null solver, data G (Gaussian pulses of amplitude 1e-3, centre 3, width 0.5, on both rays), rate over t in [16, 20], Richardson of h = 0.01 and 0.005
+   1D char: #212's master equation in characteristic form, u = Y/rho of the same data (c <= -1 only: no throat in the static region)
+   1D time: evolve_master1d.py (compact data on a t = 0 slice), rate over [45, 60]
+   nl slope: #217's lifetime law, 1/slope at h = 0.0025 (evolve_output.txt); nl seed: the untuned member's own growth of Y, rate over t in [8, 14], h = 0.01
+   nl same: #217's kernel on member +- the same data (eps = 1e-6): odd part, rate over [6, 10] at h = 0.01 minus the linear solver's over the same window (not asymptotic)
+      c     kappa     #212 W   1D time   1D char    linear   lin/W-1  nl slope   nl seed  nl same - lin
+  -1.50  0.551682   0.494171   0.49417  0.494217  0.494217   9.2e-05   0.49422   0.49053      -5.77e-05
+  -1.01  0.635123   0.633148   0.63315  0.633156  0.633156   1.3e-05       nan   0.62996      -3.10e-04
+  -1.00  0.636620       none  -0.03702  0.636627  0.636627  1.2e-05k   0.63677   0.63339      -3.20e-04
+  -0.99  0.638098   0.640122       nan       nan  0.640129   1.1e-05       nan   0.63685      -3.30e-04
+  -0.30  0.601300   0.970080       nan       nan  0.970080  -2.0e-07   0.96992   0.93403      -2.84e-03
+   (c = -1: 'lin/W-1' is the relative difference from kappa, marked k; c = -0.99 and -0.3 have a throat in the static region, where u = Y/rho is singular: no 1D rate is computed there)
+rc=0 wall=63 s
+
+######## linear.py c1
+== c = -1: data classes (linear solver, h = 0.01 and 0.005, rate of Y(x = 0) over [16, 20], Richardson) ==
+   kappa = 0.636620; Y_h(0) is the value of Y at the horizon node on the left ray, 'late exponent' that of |Y_h(p)| over p in [8, 16]; 1D/DN: the 1D master equation's Y over the double-null Y at t = 14
+                     class      Y_h(0)  rate Y(x=0)  late exponent Y_h  rate 1D char  1D/DN at t=14
+       R  right pulse only   0.000e+00      0.01154            1.35764      -0.00859         0.9857
+        L  left pulse only  -1.474e-04      0.63661            0.90032       0.63661         1.0000
+            G  both pulses  -1.474e-04      0.63663            0.90032       0.63663         1.0000
+       A0 corner dr = 1e-3   1.262e-03      0.63662            0.90030       0.63662         1.3163
+   A1R dr_p(corner) = 1e-3   0.000e+00      0.63662            0.90037       0.00472         0.0004
+   A1L dr_s(corner) = 1e-3   2.467e-03      0.63660            0.90022       0.63662         2.7506
+   (the pulse classes R, L, G have the static term M = 0 and the 1D equation reproduces them; the corner constants carry M != 0 (linear_derive.py C2))
+   b = sqrt2 kappa = 0.900316: a growing Y_h(p) = c2 exp(b p) is the horizon sector
+== c = -1: projection of the horizon sector (three left pulses at sigma0 = 2.5, 3.5, 4.5; c1, c2 of Y_h = c1 + c2 exp(b p) cancelled from Y_h at p = 0, 2) ==
+   c1, c2 of the three: (+2.447e-11, -1.988e-04); (+3.804e-10, -1.040e-04); (+2.899e-10, -4.723e-05)
+   t =  6.00: |Y(x = 0)| one pulse 3.578e-03, combination 5.001e-04; Y_h one pulse -9.042e-03, combination -7.416e-10
+   t = 10.00: |Y(x = 0)| one pulse 4.382e-02, combination 4.679e-05; Y_h one pulse -1.156e-01, combination +2.620e-08
+   t = 14.00: |Y(x = 0)| one pulse 5.584e-01, combination 2.292e-05; Y_h one pulse -1.477e+00, combination +1.028e-06
+   t = 18.00: |Y(x = 0)| one pulse 7.135e+00, combination 5.764e-06; Y_h one pulse -1.888e+01, combination +2.480e-05
+   rate over [10, 14]: one pulse 0.6359, combination -0.1768; the combination's Y is also the 1D master equation's (u -> 0 at the horizon): it decays
+== late-time profile near the horizon (row p = 8, delta = rho - rho_h in [2e-4, 2e-3]): d ln|Y e^(-W t)| / d ln delta = 0.4995 at c = -1 (W = kappa) ==
+   the branches of the Y equation there: 1 - W/(2 kappa) = 0.5 (regular, Y_h != 0) and 1 + W/(2 kappa) = 1.5 (u -> 0, #212)
+rc=0 wall=81 s
+
+######## linear.py mutations RAW/runs mut
+== Mutations: fired sets in mut_<name>.log against the declared ones ==
+  V_sign          fired ['C1', 'C3', 'C5', 'R1', 'R3', 'L1', 'L2', 'L3a', 'L3b', 'L3c', 'L5']  declared ['C1', 'C3', 'C5', 'R1', 'R3', 'L1', 'L2', 'L3a', 'L3b', 'L5', 'L3c']  equal
+  Vp_sign         fired ['C1', 'C3', 'C5', 'R1', 'R3', 'L1', 'L2', 'L3a', 'L3b', 'L3c', 'L5']  declared ['C1', 'C3', 'C5', 'R1', 'R3', 'L1', 'L2', 'L3a', 'L3b', 'L5', 'L3c']  equal
+  Vpp_zero        fired ['C1', 'C3', 'C5', 'R1', 'R3', 'L1', 'L2', 'L3a', 'L3b', 'L5']  declared ['C1', 'C3', 'C5', 'R1', 'R3', 'L1', 'L2', 'L3a', 'L3b', 'L5']  equal
+  eps_sign        fired ['C1', 'C3', 'C5', 'P1a', 'P1c', 'R1', 'R3', 'L1', 'L2', 'L3a', 'L3b', 'L3c', 'L5']  declared ['C1', 'C3', 'C5', 'P1a', 'P1c', 'R1', 'R3', 'L1', 'L2', 'L3a', 'L3b', 'L5', 'L3c']  equal
+  cross_sign      fired ['C1', 'C3', 'C5', 'P1a', 'P1c', 'R1', 'R3', 'L1', 'L2', 'L3a', 'L3b', 'L5']  declared ['C1', 'C3', 'C5', 'P1a', 'P1c', 'R1', 'R3', 'L1', 'L2', 'L3a', 'L3b', 'L5']  equal
+  df_zero         fired ['C1', 'C3', 'C5', 'P1a', 'P1c', 'R1', 'R3', 'L1', 'L2', 'L3a', 'L3b', 'L5']  declared ['C1', 'C3', 'C5', 'P1a', 'P1c', 'R1', 'R3', 'L1', 'L2', 'L3a', 'L3b', 'L5']  equal
+  rm_sign         fired ['C1', 'C3', 'C5', 'P1a', 'P1c', 'R1', 'R3', 'L1', 'L2', 'L3a', 'L3b', 'L5']  declared ['C1', 'C3', 'C5', 'P1a', 'P1c', 'R1', 'R3', 'L1', 'L2', 'L3a', 'L3b', 'L5']  equal
+  bg_b            fired ['C2', 'C2h', 'C3', 'C5', 'R1', 'R3', 'L1', 'L2', 'L3a', 'L3b', 'L5']  declared ['C2', 'C2h', 'C3', 'C5', 'R1', 'R3', 'L1', 'L2', 'L3a', 'L3b', 'L5']  equal
+  mirror          fired ['C2', 'C3', 'C5']  declared ['C2', 'C3', 'C5']  equal
+  interior_scale  fired ['C2', 'C3', 'C5']  declared ['C2', 'C3', 'C5']  equal
+  con_sign        fired ['C5', 'R1', 'R3', 'L2', 'L3a', 'L4', 'L5']  declared ['C5', 'R1', 'R3', 'L2', 'L3a', 'L4', 'L5']  equal
+  vhat_sign       fired ['L2']  declared ['L2']  equal
+  data_shift      fired ['L1']  declared ['L1']  equal
+  seed_h          fired ['L5']  declared ['L5']  equal
+  proj_node       fired ['L3a']  declared ['L3a']  equal
+  freq_V          fired ['P1b']  declared ['P1b']  equal
+  quote           fired ['Q1']  declared ['Q1']  equal
+  prof_rate       fired ['L4']  declared ['L4']  equal
+18 of 18 equal
+rc=0
