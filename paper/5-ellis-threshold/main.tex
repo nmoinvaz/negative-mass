@@ -64,8 +64,8 @@ The wormhole is the static, spherically symmetric solution of Einstein gravity w
 term has the wrong sign (a ghost), found by Ellis and by Bronnikov~\cite{Ellis1973,Bronnikov1973}. Gonz\'alez,
 Guzm\'an and Sarbach showed that its spherical perturbations have exactly one growing mode, for the symmetric member and
 for the asymmetric members whose two asymptotic masses differ~\cite{GGS2009a}, and Torii and Shinkai found one growing
-mode in every dimension they computed~\cite{TS2013}. Its growth rate $W$ is known to many digits in $D=4$--$2000$ and in
-closed form at large $D$~\cite{P3}.
+mode in every dimension they computed~\cite{TS2013}. Its growth rate $W$ is known to many digits for $D=4$ to $2000$, with an
+expansion in $1/D$~\cite{P3}.
 
 Shinkai and Hayward evolved the four-dimensional wormhole in double-null coordinates through both universes and found
 the two fates, collapse and expansion, separated by a sharp boundary that they called ``a new kind of critical behaviour
@@ -75,8 +75,7 @@ throat with a fitted rate $1.1/a$. Gonz\'alez, Guzm\'an and Sarbach repeated the
 final apparent-horizon radius $0.45a$ as the perturbation vanishes, an expanding branch whose e-folding time tends to
 $0.85a$, and a second collapse window on the expanding side~\cite{GGS2009b}. Shinkai and Torii extended the runs to
 $D=5$ and $6$ and to Einstein--Gauss--Bonnet gravity, and found a final mass that does not depend on the injected
-energy~\cite{ST2017}. Recent evolutions show the same two fates in double-null~\cite{XCY2025} and in other
-codes~\cite{Kain2026}, and a $3+1$ study of a massive Ellis--Bronnikov throat describes the static throat as
+energy~\cite{ST2017}. Recent double-null evolutions show the same two fates~\cite{XCY2025,Kain2026}, and a $3+1$ study of a massive Ellis--Bronnikov throat describes the static throat as
 ``consistent with a type-I critical solution'' while its two amplitudes ``do not establish the scaling''~\cite{SN2026}.
 
 These are the signatures of type~I critical collapse~\cite{CCB1996,GMG2007,GHMG2025}: a static critical solution with
@@ -84,10 +83,10 @@ one unstable mode, a lifetime $T\simeq(1/W)\ln(1/|p-p_*|)$ and a finite black-ho
 converted Shinkai and Hayward's exponent to proper time and found $0.60\sqrt2\,a=0.85a$ against $1/W=0.846a$, and
 compared two-run slopes of Shinkai and Torii with $1/W$ in $D=5$ and $6$.
 % NOVELTY: check literature.md
-None of the runs above bisects to the threshold: \cite{SH2002} fits two decades of $E_0$, \cite{ST2017} gives two
-amplitudes per dimension, and \cite{SN2026} two amplitudes. The two published threshold masses, $0.30a$~\cite{SH2002}
+None of the runs above bisects to the threshold: Ref.~\cite{SH2002} fits its exponent to runs at fixed amplitudes,
+and Refs.~\cite{ST2017,SN2026} give two amplitudes each. The two published threshold masses, $0.30a$~\cite{SH2002}
 and $0.22a$~\cite{GGS2009b}, disagree, and the expanding branch has been read as inflationary~\cite{SH2002} or as an
-exponential expansion~\cite{GGS2009b} from runs that stop a few e-folds after the departure.
+exponential expansion~\cite{GGS2009b}.
 
 This paper gives the full account of a bisection study in a double-null code that passes the throat. Reference~\cite{P3}
 summarizes part of it in its threshold section. The contributions are:
@@ -144,7 +143,7 @@ amplitude $B=0.1$, of the same shape on the same ray.
 The parameter $p$ is tuned; $p_*$ denotes its threshold value and $\pst$ the value found at grid spacing $h$. The
 reflection $l\to-l$, $\phi\to-\phi$ maps the static wormhole to itself. The unstable mode is even under it and the
 asymmetric zero mode (the move to $\gamma_1\ne0$) is odd. The even part of the O data of amplitude $p$ is the S data of
-amplitude $p/2$, so O's threshold is twice S's, and O also excites the zero mode. G is the only family whose threshold
+amplitude $p/2$, so to linear order O's threshold is twice S's, and O also excites the zero mode. G is the only family whose threshold
 data are not the static wormhole.
 
 \subsection{The double-null scheme}\label{sec:scheme}
@@ -191,7 +190,7 @@ $x^-=3a$.}
 
 \subsection{Events, lifetimes and fits}\label{sec:events}
 
-The x$^-$ sweep stops at the first event:
+The grid is filled row by row in $x^-$ (a row is a line of constant $x^-$), and the run stops at the first event:
 \begin{itemize}
 \item \emph{collapse}, the first row with a trapped cell, $r_+<-10^{-2}$ and $r_-<-10^{-2}$;
 \item \emph{expansion}, the first row whose cell on the line $x^+=x^-$ has $r_\pm>10^{-2}$ and $r\ge2a$.
@@ -337,7 +336,8 @@ $\dd\tau=e^{-f/2}\sqrt{1-v^2}\,\dd t$; the lifetime is $\tau$ where $r$ on the l
 
 In $D=4$ the locus slope is $0.849542$, $0.849536$ and $0.849489$ at the three $h$, the two finest agreeing to
 $5.52\times10^{-5}$, while the line slope of the same runs is reproduced to the last digit. Reading $t$ instead of $\tau$
-on the locus gives $0.870859$: the lapse at the locus accounts for part of the excess, the drift for the rest. A
+on the locus gives $0.870859$: the lapse at the locus accounts for part of the excess, and reading the events away
+from the throat for the rest. A
 planted test separates the observer from the physics: family S in coordinates rescaled so that the static throat drifts
 at $v=0.1$ reads $0.846052$ on the locus ($+8.44\times10^{-6}$ against $1/W$) and $0.912185$ on the line ($+7.82\%$).
 
@@ -394,8 +394,9 @@ $M_\AH=0.2231a$ ($r_\AH=0.4462a$). It is the same, $0.2231a$, for every $\delta$
 \begin{table}[tbp]
 \centering
 \caption{Mass on the apparent horizon in $D=4$, in units of $a$, at $h=0.005$ unless stated. ``Settled'' is the mean
-over the last unit of $x^+$, ending at $e^{-f}=1.57\times10^6$ on the horizon. The rows below the line are different
-kinds of error bar and are not to be added: a resolution difference, an extrapolation and a physical dependence.}
+over the last unit of $x^+$, ending at $e^{-f}=1.57\times10^6$ on the horizon. The rows below the line are of different
+kinds and are not to be added: a resolution difference, the extrapolation to $h=0$, and the value at another $\delta$,
+which is a physical dependence and not an error.}
 \label{tab:mass}
 \small
 \begin{tabular}{lll}
@@ -507,9 +508,9 @@ this observer whatever the dynamics. Second, the Misner--Sharp mass and its flux
 \begin{equation}
 \frac{\dd H}{\dd\tau}=-\frac{n+1}{2}H^2-\frac{n-1}{2r^2}-\frac{\rho}{n},\label{eq:hdot}
 \end{equation}
-and with $H=k/(\tau_s-\tau)$ and $\rho=-cH^2$ it requires $c=n(1/k+(n+1)/2)$ once $r\to\infty$. That is $c=4$ for
-$(n,k)=(2,2)$ and $27/4$ for $(3,4)$, against the measured $|\rho|/H^2=4.0000$ and $6.7525$. The data give $k$; this
-relation does not.
+and with $H=k/(\tau_s-\tau)$ and $\rho=-cH^2$ it requires $c=n(1/k+(n+1)/2)$ once $r\to\infty$. With the measured $k$ that is
+$c=4.0000$ in $D=4$ and $6.7524$ in $D=5$, against the measured $|\rho|/H^2=4.0000$ and $6.7525$. The data give $k$;
+this relation does not.
 
 Shinkai and Hayward's rate $1.1/a$ is the exponent of a fit $r/a=1+b_4e^{H(\tau-b_5)}$ to the early departure. The same
 fit to our tuned member over $r/a\le r_{\max}$ gives $1.14$ to $1.16/a$ for $r_{\max}$ from $1.5$ to $10$: a window
@@ -550,10 +551,10 @@ member at departure is open (\#266, \#267). Masses were measured in $D=4$ only (
 \item \emph{``Settled'' means to $e^{-f}=1.57\times10^6$ on the apparent horizon}, $9.4a$ of $x^+$ after formation, not
 to the event horizon or to null infinity; the horizon flux had returned once before it died, so a later change is not
 excluded by the data.
-\item \emph{Shinkai and Hayward's $0.30a$ remains unexplained.} Their reading two time units after formation would give
-it, and their uniform grid may not resolve the horizon at the times they read; that is a \emph{conjecture}. A uniform
-grid of their size run with this code's kernel loses the horizon before their reading time and reads high, by less
-than the difference.
+\item \emph{Shinkai and Hayward's $0.30a$ remains unexplained.} A reading soon after formation would give it, and they
+report reading later. That their uniform grid does not resolve the horizon at the times they read is a
+\emph{conjecture}: a uniform grid of their size, run with this code's kernel, loses the horizon before their reading
+time and reads high, but by less than the difference.
 \item \emph{The expanding throat diverges in finite proper time on the fitted law}, with $k=2.0000$ and $3.99$; whether
 it reaches $\tau_s$ is not measured, the observer is the symmetric throat only, and $k=2(n-1)$ is a \emph{conjecture}
 (\#230 pending).
@@ -587,7 +588,7 @@ the slope $1/(\sqrt2W)$, the null-coordinate time unit, is rejected in 40 of 40.
 before any bisection, $2.160530$ and $2.162551$ against $W=2.164860$. The criteria and the mutations were written down
 before the runs of record, in the raw-output repository.
 
-\paragraph{The second code.} The reviewer wrote \texttt{threshold\_check.py} for family S. It integrates the
+\paragraph{The second code.} The reviewer wrote \texttt{threshold\_check.py} (review check ind40) for family S. It integrates the
 background and the ray constraint itself, uses its own diamond scheme on the half $x^+\ge x^-$, and places its events at
 $r=a/2$ and $2a$ on the throat, interpolated in $t$. It shares no code with \texttt{dn.py}; it shares the field
 equations, the family's definition and $W$. Its $\pst$ agrees with the first code's to a relative $1.9\times10^{-4}$, so
@@ -600,7 +601,6 @@ code under test except as stated.
 \begin{itemize}
 \item \emph{ind39} derives the equations from its own Ricci tensor (sympy residual 0) and runs the tuned growth rate in
 $D=6$: $2.160443$ and $2.162520$ against $2.164860$.
-\item \emph{ind40} is the second code above.
 \item \emph{ind41}, a half-domain march on a uniform grid, gives $M_\AH=0.30315a$ at $e^{-f}=4.074$ on the horizon, and
 agrees with the chain to $1.2\times10^{-4}$ up to $e^{-f}=11.96$. A uniform grid cannot reach the plateau, so the
 settled value rests on the chain, its planted Schwarzschild horizon (mass error $1.684\times10^{-6}$ at $h=0.0025$,
@@ -608,7 +608,6 @@ second order) and its convergence at four $h$.
 \item \emph{ind213}, the second code run without stopping, gives $k=2.00001$ to $2.00040$ for the eight $D=4$ runs.
 \item \emph{ind225} interpolates $T(\gamma_1)$ from three published values and gives the e-fold $0.847466a$ at the
 stall member, against the measured $0.8475a$.
-\item \emph{ind226} is below.
 \end{itemize}
 G's settled mass has no independent code: the second code is the symmetric half domain. It rests on the chain's
 planted cases, unchanged, and on its convergence at three $h$; a rerun on another machine gave the plateau to
@@ -620,15 +619,17 @@ $C_{\pm\pm}$ carries the roundoff of each node as $\epsilon/h^2$, and $r^{n-1}C_
 (Appendix~\ref{app:equations}), so a violation made where $r$ is large is amplified on its way to the throat. On a
 fixed slab of the static wormhole in $D=6$ the ratios per halving are $4.204$, $3.758$ and $1.337$; in binary128
 arithmetic the same slabs fall by $4.0$ to $4.2$ at every halving of every set; and added relative noise
-$256\cdot2^{-52}$ per node raises the finest-$h$ maximum by a factor $113$ ($D=6$) and $57$ ($D=5$). The reviewer's own march gives $4.197$,
+$256\cdot2^{-52}$ per node raises the finest-$h$ maximum by a factor $113$ ($D=6$) and $57$ ($D=5$). The reviewer's own march (ind226) gives $4.197$,
 $3.833$ and $1.356$. The roundoff error of $r$ itself is $1.4\times10^{-11}$ against a truncation error of
 $4.1\times10^{-4}$ ($D=6$, $h=0.00125$), so the plateau does not bear on $\pst$ or on the slopes.
 
-\paragraph{Numbers and figures.} Every number in this paper is read from the output files in
-\path{notes/wormhole_evolution/} (and, for the checks of the code and the reviews, from the raw-output repository) by
-\path{paper/5-ellis-threshold/paper_numbers.py}, which checks that this text prints it and exits non-zero otherwise; a
-mutation of a source number makes it fail. The figures are drawn by \path{paper/5-ellis-threshold/make_figures.py} from
-the runs of record.
+\paragraph{Numbers, figures and data.} \path{paper/5-ellis-threshold/paper_numbers.py} reads every number in this
+paper from the output files in \path{notes/wormhole_evolution/} of \url{https://github.com/nmoinvaz/negative-mass} (and,
+for the checks of the code and the reviews, from \url{https://github.com/nmoinvaz/negative-mass-raw}), checks that this
+text prints it, and exits non-zero otherwise; a mutation of a source number makes it fail.
+\path{paper/5-ellis-threshold/make_figures.py} draws the figures from the runs of record. The raw output, with the
+criteria written before each run of record, is in the folders \texttt{I39}, \texttt{I40}, \texttt{I41}, \texttt{I213},
+\texttt{I225}, \texttt{I226} and \texttt{I253} of the second repository.
 
 \section*{How this work was done}
 
@@ -637,11 +638,7 @@ drafted the evolution code, the analysis scripts and this text. A separate revie
 on another machine with code it wrote independently: the second double-null code \texttt{threshold\_check.py} and the
 review checks ind39, ind41, ind213, ind225 and ind226 of Sec.~\ref{sec:computations}.
 
-\paragraph{Reproducibility.} The repository is \url{https://github.com/nmoinvaz/negative-mass}: the code and notes are in
-\path{notes/wormhole_evolution/}, and the raw output, with the criteria written before each run of record, is in
-\url{https://github.com/nmoinvaz/negative-mass-raw} (folders \texttt{I39}, \texttt{I40}, \texttt{I41}, \texttt{I213},
-\texttt{I225}, \texttt{I226}, \texttt{I253}).
-
+\clearpage
 \appendix
 
 \section{The equations}\label{app:equations}
