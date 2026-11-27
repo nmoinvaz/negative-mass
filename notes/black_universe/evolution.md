@@ -202,3 +202,35 @@ python evolve.py resp --c=-1.5 [--tuned=I217-mac/runs/c-1.5_h0.01]
 ```
 
 The runs of record took about 25 minutes per lane on two processes (the post-processing 8 minutes).
+
+## Coordinator's review
+
+Review of branch `wip/i217-black-universe-evolution` at 45c261d (code 9428081) and raw `I217-mac` at 059c235, recorded in
+negative-mass-raw `I217-mac-review` (criteria 3b764fe, runs 419b254). On the Mac, nice 10. Rulings on the design and the
+diagnosis are on the issue (rulings 1 and 2).
+
+- **Scope.** The branch adds `evolve*.py`, `evolve_derive_output.txt`, `evolve_output.txt`, `evolution_design.md` and this
+  note under `notes/black_universe/`. `dn.py` is unchanged.
+- **Rerun.**
+  - `check` gives 10 of 10.
+  - `analyze` prints the analyze section of `evolve_output.txt` again.
+  - The job c = −1.5, h = 0.005 gives A*ₕ = −1.7725670186337087e-07, the runner's bit for bit, and the same T at all 18
+    series points. This is on the same machine.
+- **Independent check** (`ind217.py`).
+  - The coordinator's brute-force Ricci tensor with a generic V gives the three evolution equations printed in
+    `evolution_design.md` §1, with sympy residual 0. `evolve.F_np` agrees with them to 1.1e-15 at 60 states for c = −0.3,
+    −1.5 and −1.
+  - The closed-form member satisfies the three equations and both null constraints to 8.4e-31 at 30 points (30 digits).
+  - Both mutations fire.
+  - Only the potential's formula is shared.
+- **What it changes.**
+  - Nothing in the answer. The lifetime slope equals 1/W at c = −0.3 and −1.5 in a nonlinear code with the potential, for
+    a family through the member (*numerical evidence*).
+  - The control at c = −1 disagrees with #212's count. #232 now runs on it, with its late-time clause withdrawn as this
+    note says.
+- **Applied.** `critical_ghost.md` §1.1's black-universe row and `README.md` carry the result, as updates from #217.
+- **Follow-ups.**
+  - Task 1 is #232.
+  - Task 2 is #239, the c = −1.5 floor.
+  - Tasks 3 and 4 are #240, family independence and the analytic mode.
+  - Task 5 is #241, the state on the A > A* side.
