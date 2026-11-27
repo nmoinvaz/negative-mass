@@ -310,3 +310,26 @@ final code), none silent. Shared by the checker and `profiles.py`: the input `w2
 parsers and the roundings (exact rationals against `Decimal`) are separate. Rerun: `python3 profiles.py
 --growth-only`, `python3 check_growth.py > logs_check_growth.txt`, `python3 paper_numbers.py >
 logs_paper_numbers.txt`, from `notes/wormhole_largeD`.
+
+## Coordinator's review
+
+Under review: `wip/i200-growth-csv` at 799b22a, raw `I200-rpi5` at ae77cef. Review folder
+`negative-mass-raw/I200-mac-review`, whose README holds the criteria, committed before the first run of `ind200.py`.
+
+- **Scope.** As briefed, plus `check_growth.py` and its log, which the brief allowed as "a checker script beside them".
+- **Rerun on the Mac.** `check_growth.py` and `paper_numbers.py` print exactly the committed logs. A full `profiles.py`
+  run rewrites `profiles.csv` with relative differences up to 1.9e-9, the same platform-dependent scatter the runner
+  found. The committed `profiles.csv` is kept; it feeds only the figure, where the difference is invisible.
+- **ind200**, run 2, 2 of 2. It uses its own parse of `w2_output.txt` and its own arithmetic in mpmath.
+  - The eight D ≥ 20 rows equal the crate's qd values rounded to 12 decimals, as strings, with the comma-free source.
+  - The eight TS13 rows equal main's byte for byte.
+  - The remainder column 72.63, 73.70, 74.04 and 74.21 reproduces.
+  - Its mutations `row` and `omega1` each fail exactly their target. Run 1 crashed on the review's own regex, and A1
+    fixed it.
+- **Applied:** README.md's table, its Result line and its note on the r-integration's error, from this note's proposals
+  (as "Update from #200").
+- **Left for #210:** Paper III's numbers and `paper_numbers.py`'s stale text.
+- **Left for #202:** the eight TS13 rows, which are still 9.5e-12 to 6.2e-10 from the crate. #200's first acceptance line
+  is not met for them, as the runner reports.
+- **Noted:** `order4.py`'s regex at line 808 expects the labels now in `w2_output.txt`. Nothing changes that file, so it
+  stays as is.

@@ -27,8 +27,10 @@ W^2a^2 = 2(D-3) - 4\ln 2 + \frac{\pi^2/3 + 4\ln^2 2}{D-3} + O(D^{-2}) .
 - The first two terms are **derived**.
 - The third is **computed** to ten digits from the third-order matching integral, Ω₁ = 10.4233603788. It is
   **identified** as 2π²/3 + 8 ln²2 = 10.42336037874, with 3Ω₁ − 2π² − 24 ln²2 = 0 found by PSLQ at tolerance 10⁻⁹.
-- Against the full numerics the three terms leave about 73/(2(D − 3))² at D = 200 and 500, as an O(1/D²) remainder
-  should. D = 1000 gives 66 ± 6, within that value's numerical error (table below).
+- **Update from #200:** against #195's values (growth.csv, regenerated in #200), the remainder of the three terms, times
+  s² = (2(D − 3))², is 72.63, 73.70, 74.04 and 74.21 at D = 200, 500, 1000 and 2000. It tends to Ω₂ + Ω₃/s + …, as an
+  O(1/D²) remainder should: at D = 1000, 74.04 = 74.37 − 0.33 − 0.003 (`logs_paper_numbers.txt`). The earlier "about
+  73" and "66 ± 6" came from growth.csv's low `modes_r.py` rows.
 - **Update from #195** ([w2_highprec.md](w2_highprec.md), W² in quad-double at 64 D from 50 to 10⁴; quad- against
   octo-double to at least 60 digits). Ω₁ = 10.42336037873851714322648088 by a fit, equal to 2π²/3 + 8 ln²2 to 8e-50.
   The fourth term is Ω₂ = 74.3693867279333175953847, not "about 73". It is **identified** as
@@ -103,21 +105,23 @@ Two independent integrations:
 Both find exactly one growing mode, and they agree with [TS13]'s Table I. TS13 used a different master variable, a
 gauge-invariant combination regularized at the throat.
 
-| D | W²a² here | [TS13] | 2(D − 3) − 4 ln 2 + Ω₁/(2(D − 3)) |
+| D | W²a² here (D ≤ 10: the l-integration; D ≥ 20: #195's crate, by #200) | [TS13] | 2(D − 3) − 4 ln 2 + Ω₁/(2(D − 3)) |
 |---|---|---|---|
 | 4 | 1.39708 | 1.39705243 | (not asymptotic) |
 | 10 | 12.0455 | 12.0442650 | 11.972 |
-| 20 | 31.5751101276 | 31.5751101285 | 31.53398 |
-| 50 | 91.3457759034 | 91.3457759137 | 91.33830 |
-| 100 | 191.2830176842 | 191.2830177297 | 191.28114 |
-| 200 | 391.2543342170 | | 391.25387 |
-| 500 | 991.2379714266 | | 991.23790 |
-| 1000 | 1991.2326553188 | | 1991.23264 |
+| 20 | 31.5751101284 | 31.5751101285 | 31.53398 |
+| 50 | 91.3457759136 | 91.3457759137 | 91.33830 |
+| 100 | 191.2830177304 | 191.2830177297 | 191.28114 |
+| 200 | 391.2543343808 | | 391.25387 |
+| 500 | 991.2379721479 | | 991.23790 |
+| 1000 | 1991.2326572613 | | 1991.23264 |
 
 - The l-integration is accurate to about 10⁻³ at D ≤ 10. At large D its start near the throat drifts, which is why the
   r-integration exists.
 - The r-integration's values move by 4×10⁻¹⁰ to 1.5×10⁻⁶ from D = 20 to 1000 when its numerical parameters are changed
   (`logs_modes_r.txt`).
+  **Update from #200:** that spread understates the r-integration's error. Its values were low by 8×10⁻¹⁰ (D = 20) to
+  1.9×10⁻⁶ (D = 1000) against #195's crate (`w2_highprec.md`). The table above now holds the crate's values.
 - A fit of the r-integration values in 1/D gives W²a² − 2(D − 2) = −4.77259 ± 10⁻⁵, against −2 − 4 ln 2 = −4.7725887.
 
 ### 3. Large D: matched asymptotics
