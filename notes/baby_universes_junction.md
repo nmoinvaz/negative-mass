@@ -293,3 +293,23 @@ distribution; "the NEC" is the statement on its δ coefficient. [FMM90] and arXi
 
 References checked: [BHR21] arXiv:2105.07166 v1 (read, eqs (1)–(5) on the rendered page); [Isr66] INSPIRE record 50008 (bibliographic
 data only); [FMM90] INSPIRE and OSTI abstracts only.
+
+## Coordinator's review
+
+Review of branch `wip/i224-junction` at 42a76a3 and raw `I224-rpi5` at 2517fef, recorded in negative-mass-raw `I224-mac-review`.
+
+- **Scope.** The branch adds this note, the script and its output, nothing else.
+- **Rerun.** On the Mac: 28 checks, 0 failed. The output is the same apart from the Python version and the timing.
+- **Independent check.** The coordinator derived the Schwarzschild–de Sitter gluing by hand and coded it in sympy without
+  this script (`ind224.py`).
+  - Past side: the Schwarzschild interior, K^x = (F+1)/(2r₀√F) and K^θ = −√F/r₀.
+  - Future side: de Sitter beyond its horizon, K^x = H²r₀/√G and K^θ = √G/r₀, with G = H²r₀² − 1.
+  - Results:
+    - κp_x = −2(√G + √F)/r₀ < 0 always, so no shell-free match exists;
+    - the isotropic shell sits at H r₀ = √((F+1)(9F+1))/(3F+1), with maximum 2/√3 at F = 1/3;
+    - its tension is positive.
+  - These are section 7's results. The mutation that flips the de Sitter normal fires both checks.
+- **Applied.** `baby_universes.md` (§1 table, §2 row 7, T4, §6) and `literature.md` ([BHR21], [FMM89]/[FMM90]) carry
+  section 9's text, marked as from #224. The [Isr66] reference stays in this note only.
+- **Open.** [FMM90]'s own text. The coordinator cannot reach it either, so the part on it stays open until the paper is
+  supplied. [BHR21]'s companion arXiv:2103.02842 may settle the factor 2 and the symbol g. Neither is filed as a task.

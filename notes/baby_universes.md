@@ -29,7 +29,7 @@ collapse, Stab its stability.
 | [BKZ12] | all unstable radially except c = −1 | the [BF06] family | Stab (linear, radial and axial) | done in #212 |
 | [SV19], [BW22] | a "bounce into a future incarnation of the universe" | a metric; source found by [BW22]: phantom scalar plus magnetic nonlinear electrodynamics; NEC fails everywhere except horizons | S; no F, no Stab | #212 method, extended |
 | [PPS25], [CK21] | collapse through a bounce, thin shell or imperfect fluid | no matter model; the shell or fluid is read off the geometry | F by a matching or an ansatz, not from a field theory | none |
-| [FMM89], [FMM90], [EB01], [BHR21] | interior glued to de Sitter at a spacelike surface; a new universe | limiting curvature; S-brane with tension, "violates the usual energy conditions" | matching only; no F, no Stab | junction algebra (T4) |
+| [FMM89], [FMM90], [EB01], [BHR21] | interior glued to de Sitter at a spacelike surface; a new universe | limiting curvature; S-brane with tension, "violates the usual energy conditions" | matching only; no F, no Stab | junction algebra, done: #224 |
 | [Smo92], [Smo06] | "Black hole singularities bounce and evolve to initial states of expanding universes" | none stated | none; an ensemble hypothesis with observational predictions | none |
 | [Pop10], [Pop16] | each black hole contains a new universe | Einstein–Cartan spin–torsion repulsion | S in the cosmological stage; no F computed | none |
 | [MSOF23], [BCHM25] | collapse gives an expanding baby universe or a bounce into a new universe | Palatini f(R) boson stars; higher-curvature gravity with dust | F, numerical or analytic, in other theories | none |
@@ -47,7 +47,7 @@ cost with the tools here, and whether an issue already covers it. Cost: S under 
 | 4 | the black bounce and the magnetic black universes are radially stable or not | [SV19], [BW22], [BBS12] | medium | M | none: T2 |
 | 5 | non-radial and M-AdS modes of the black universes | [BKZ12] (not computed there) | medium | M | #218 (open) |
 | 6 | SH02's sign rule (E₀ < 0 expands), its M ≈ 0.30a and H ≈ 1.1/a, and the second window of [GGS09b] | [SH02], [GGS09b] | medium | M | #40, #41, #42, #150 (open); T3 extends #42 |
-| 7 | the junction algebra: positive tension is needed for expansion, and the shell violates the NEC | [BHR21], [FMM90] | low | S | none: T4 |
+| 7 | the junction algebra: positive tension is needed for the S² radius to expand, and the shell violates the NEC and WEC | [BHR21], [FMM90] | low | S | done: #224, `baby_universes_junction.md` (printed (4)–(5) hold with √g = √(−f(r₀)) and a right-hand side S/2 for the action (1); any shell that reverses the contraction of the S² radius has p_x < 0) |
 | – | the family of [BF06] solves its equations | [BF06] | – | – | done: #212 S1, S2 |
 | – | the exact black universe is asymptotically isotropic | [BF06], [BKZ12] | – | – | proved (by hand), below |
 | – | the unstable-mode rates and the one stable member | [BKZ12] | – | – | done: #212, 20 of 20 agree |
@@ -174,7 +174,7 @@ Each can fail. Status words as above; none of them may say that a universe forms
   - A mutation that flips the sign of the jump of K fails the check.
   - [FMM90]'s text is not available here (publisher HTTP 403); the part on it needs the coordinator to supply the paper.
 - **Depends.** None.
-- **Covered by.** None.
+- **Covered by.** None. **Update from #224: done.** (4)–(5) reproduced up to the notation of g and a factor 2 in the normalization of S; the NEC and WEC are violated for σ > 0; the Schwarzschild to de Sitter shell has p_x < 0 for every r₀, r_s and H. [FMM90]'s text was not reached; the part on it stays open (`baby_universes_junction.md`).
 
 ## 5. What these tools cannot test
 
@@ -196,7 +196,7 @@ Each can fail. Status words as above; none of them may say that a universe forms
   and the citers of [BKZ12], [BW22] and [GGS09b] were not listed. Titles only for Lobo et al. (arXiv:2003.09419) and
   Franzin et al. (arXiv:2201.01650, 2207.08864, 2310.11990), which bear on dynamic black bounces and on perturbations of
   regular black holes and wormholes; T2 should read them first.
-- Not read: [FMM89], [FMM90] and [Smo92] full texts (abstracts only); [BKZ12] §III and its quasinormal-mode computation;
+- Not read: [FMM89], [FMM90] and [Smo92] full texts (abstracts only); [BHR21]'s companion arXiv:2103.02842, which may settle the factor 2 and the symbol g (#224); [BKZ12] §III and its quasinormal-mode computation;
   [Smo06] §4; [BHR21]'s companion arXiv:2103.02842.
 - Bibliographic discrepancies, none changing an entry: [BW22]'s arXiv page prints "Phys. Rev. D 15" (INSPIRE: 105);
   [Hay06]'s arXiv title says "non-singular", the journal's "regular"; [Smo92] ends on page 192 on INSPIRE, 191 in

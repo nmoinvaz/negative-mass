@@ -421,6 +421,10 @@ its reference list.
     (but based on the limiting curvature conjecture)".
   - Not determinable from the abstracts: formation from collapse, stability, the shell's energy conditions. Full text
     not read.
+  - Reach (#224): INSPIRE gives IC/88/91 and KEK scan 2000-33-351; the KEK server rejected plain requests, the ICTP and CERN
+    addresses tried failed, OSTI has the abstract only. A Schwarzschild interior glued to the expanding de Sitter wedge at
+    r = r₀ needs a shell with p_x < 0 for every r₀, r_s and H (`baby_universes_junction.md` §7, *checked symbolically*, and
+    rederived by the coordinator); whether [FMM90] state this is not known.
 - **[Smo92] Smolin 1992**, "Did the universe evolve?", CQG 9, 173–192 (INSPIRE; [Smo06] prints 173–191),
   doi:10.1088/0264-9381/9/1/016, and **[Smo06]**, "The status of cosmological natural selection", arXiv:hep-th/0612185
   v1 (preprint, no journal reference). Read [Smo06] §1–3 in full and the INSPIRE abstract of [Smo92].
@@ -457,6 +461,7 @@ its reference list.
     difficult to obtain" from string theory in effective field theory.
   - Does not contain: a collapse that forms the brane ("We assume that there is no matter present to the past of the
     S-brane"), stability, details (deferred to arXiv:2103.02842, not read).
+  - Junction check (#224, `baby_universes_junction.md`): (4)–(5) are the Israel conditions of the Schwarzschild interior and a Kantowski–Sachs cosmology with √g read as √(−f(r₀)); the printed right-hand side S is twice the one that the action (1) gives at κ = 1. Positive tension is needed for ḃ/b > 0 at every r₀ < r_s and for the volume at r₀ < 3r_s/4; the brane violates the NEC and WEC for σ > 0.
 - **[Pop10] Popławski 2010**, "Radial motion into an Einstein–Rosen bridge", PLB 687, 110, arXiv:0902.1994 v3,
   doi:10.1016/j.physletb.2010.03.029, and **[Pop16] Popławski 2016**, "Universe in a black hole in Einstein–Cartan
   gravity", ApJ 832, 96, arXiv:1410.3881 v2, doi:10.3847/0004-637X/832/2/96 (INSPIRE and arXiv checked). Read:
