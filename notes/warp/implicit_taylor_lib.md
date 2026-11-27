@@ -131,3 +131,38 @@ python3 notes/warp/conical_global.py --nobuild
 python3 notes/warp/conical_loglog.py --nobuild
 python3 notes/warp/conical_offgrid.py --grid=ctl --no-controls --nobuild --dump=DIR
 ```
+
+## Coordinator's review
+
+Under review: multishoot pull request #73 (`feat/implicit-taylor-r2` at eaf55a8, on main 70fea18, not merged; its review
+and release are the user's), `wip/i190-implicit-taylor` at 550800c, raw `I190-rpi5` at 5f2ac0f. Review folder
+`negative-mass-raw/I190-mac-review` (at ddf8e6f), whose README holds the criteria, committed before the first run of
+`ind190`. The changed files are those the brief names. The baseline files `hp.rs` and `poly.rs` only gain `cfg` gates
+and wider visibility.
+
+- **Rerun on the Mac**, also aarch64 NEON.
+  - The library suite at eaf55a8, default and `portable`: everything passes, with the Pi's digests (dd
+    92ec461781147d77, f64 b124d44e9758f1a1, qd 75902b0bf76ced2a).
+  - The crate at 550800c with `implicit_lib`: offgrid `ctl` passes 16 of 16, with all 537 η* equal to the Pi's baseline
+    in the 10 printed digits. loglog passes 20 of 20 with every control on target, and nothing differs in its 124
+    compared lines. The review's first loglog run crashed on a path of the review's own setup, and is kept.
+- **ind190**, run 1, 3 of 3. It uses three implicit equations of the coordinator's choosing, none of them in the PR's
+  tests, through `Walker` in f64, dd and qd:
+  - E1: a fold of exponent ½ at x = 1;
+  - E2: two roots that cross at x = π/2 on the cos branch;
+  - E3: a cubic in y″ with three real roots, walked on the middle and the top root.
+
+  Every closed form holds at the end point to 2.6e-16, 1.3e-32 and 4.0e-65. The crossing is located at π/2 to
+  roundoff. The fold walk stops `Tiny` within 5e-13 of x = 1. The mutations `wrong-root`, `cross-at` and `fold-at`
+  each fail exactly their target.
+- **Not met, as ruled:** `coeffs` as worded; `Conserve` on K-B, R-B and R-D; the f64 F1 `Conserve` fold. The `plant_scale`
+  failure was fixed in the library and the crate, and the check is unchanged.
+- *Added by the coordinator:* **the PR's CI fails**, in `tests/slaved.rs`
+  (`slaved_residual_returns_the_factorization_error`), on every platform. multishoot main at 70fea18 fails the same
+  test, so the defect is on main and does not come from this PR; the runner's report did not mention the red CI. The
+  CI does not assert the implicit digests, so the AVX2 build's bitwise equality is still open (#214).
+- *Added by the coordinator:* `Cargo.toml` takes multishoot from the PR commit eaf55a8 for every build, the feature
+  off included. The runner checked that the feature-off output equals the baseline exactly. If the PR is
+  squash-merged, the commit leaves every branch, as #70's a880903 did; #216 moves the crate to a release.
+- **Follow-ups:** #214 (AVX2 digests), #215 (one scalar trait and `Branch::Auto`, after #73 merges) and #216
+  (`implicit_lib` as the only path, after a release).
