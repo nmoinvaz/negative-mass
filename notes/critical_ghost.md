@@ -207,6 +207,14 @@ generic family, the lifetime against ln|p − p*|, and comparison with the linea
   approach the wormhole.
 - A generic one-sided family (G, with a fixed normal pulse added) gives slopes 6 %, 38 % and 115 % above 1/W at D = 4, 5, 6.
   Its throat drifts off the line where the lifetime is read, and the cause is open (#225, #42). All *numerical evidence*.
+- **Update from #225** (`wormhole_evolution/throat_locus.md`; *numerical evidence*; the coordinator's review reproduced
+  the analysis and the stall member's e-fold):
+  - At D = 4 the cause is the observer. In the proper time of the minimum-r locus, G's slope is 0.8495 (+0.4 % over 1/W).
+    That is the e-fold of the static member at the stall: γ₁ = 0.048, r_th = 1.0028 a, no normal charge,
+    T(γ₁) r_th = 0.847.
+  - A planted drift of 0.1 makes the diagonal read +7.8 %.
+  - At D = 5 the throat radius grows during the stall (1.07 to 1.20 a). The mode's rate follows W/r_th(t), so the
+    series' slope (+21 %) averages over a drifting member.
 
 **What [SH02] measured** (their eq. 3.5, Tables I–II):
 - Ghost pulses: e^{x_H⁻ − 3} ∝ E₀^{−0.60}. Normal pulses: E₀^{−0.61}. Here x_H⁻ is the null coordinate where the final
@@ -457,7 +465,7 @@ Beyond `notes/literature.md` and the repo's phase 2 and phase 5 results:
 1. **Precision type I scaling at the Ellis threshold.**
    - No bisection to p* in a generic family. The lifetime exponent is known to two digits [SH02] and has never been compared
      with 1/λ₀ in print.
-   - The threshold mass is 0.30 a [SH02] or 0.22 a [GGS09b], unresolved. *Update from #40 and #41:* the bisection and the lifetime law are done for families through the static wormhole (#40), and the settled mass is 0.2231 a ([GGS09b]'s value; [SH02]'s not reproduced, #41). Open: generic families (#225).
+   - The threshold mass is 0.30 a [SH02] or 0.22 a [GGS09b], unresolved. *Update from #40 and #41:* the bisection and the lifetime law are done for families through the static wormhole (#40), and the settled mass is 0.2231 a ([GGS09b]'s value; [SH02]'s not reproduced, #41). Open: generic families (#225). *Update from #225:* at D = 4 the generic family G approaches the member γ₁ = 0.048, r_th = 1.0028 a, with that member's e-fold; at D = 5 the member's radius drifts.
    - One accurate 1+1 run along the unstable manifold of the massless symmetric wormhole would settle the mass. A bisection
      with the lifetime fitted against ln|p − p*| would test the type I law.
 2. **Universality on the two-ended side.**

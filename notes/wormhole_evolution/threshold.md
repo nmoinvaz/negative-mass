@@ -143,6 +143,15 @@ as a property of the critical solution; it is not separated here. The same G slo
 ED for G fails at D = 4: with the alternative events (trapped tolerance 0.1, and rexp = 3) the slopes are 0.9193 ± 0.0145 and 0.8614 ± 0.0075, 6 % apart, and the second lies
 just below the primary spread [0.8633, 0.9577]; for S and O the alternatives lie inside the spread at every D, and for G at D = 5 and 6.
 
+**Update from #225** ([throat_locus.md](throat_locus.md)):
+- In the stall table above, `l` and `dl/dt` are the locus's position and its drift. The drift speeds are +0.0735 and
+  +0.127 at D = 4 and 5, not the +0.58 and +0.25 of the position column.
+- In the locus's proper time, G's slope at D = 4 is 0.8495, +0.4 % over 1/W, with the two finest h agreeing to 5.5e-5.
+  That is the e-fold of the stall's static member: γ₁ = 0.048, r_th = 1.0028, T(γ₁) r_th = 0.847.
+- So the +6 % above is the diagonal observer: a planted drift of 0.1 reads +7.8 %.
+- At D = 5 the member's radius drifts (1.07 to 1.20). The rate follows W/r_th(t), and the slope is not a single
+  e-fold.
+
 ## Constraint diagnostic (reported; no bar)
 
 Max |C₊₊|, |C₋₋| over the nodes of the event cell's past, along the two runs that bracket p*ₕ (last collapse, last expansion), and the same divided by the largest sum of the

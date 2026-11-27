@@ -178,3 +178,27 @@ t = 11 to 15; the h = 0.02, 0.01, 0.005 pairs agree to 3 digits) with the e-fold
 ## Files
 
 `throat_locus.py`, `throat_locus_output.txt`, this note; raw `negative-mass-raw/I225-dh610` (README with the criteria and the development runs, `dev/`, `runs/` with the series, stall pairs, expanding runs and planted series, `scripts/`).
+
+## Coordinator's review
+
+Review of branch `wip/i225-throat-locus` at ed26e65 and raw `I225-dh610` at 982783a, recorded in negative-mass-raw
+`I225-mac-review`. On the Mac, nice 10.
+
+- **Scope.** The branch adds `throat_locus.py`, its output and this note, nothing else.
+- **Rerun.** `analyze` over the runner's stored runs gives 55 of 59: CMP2 at D = 5 three times, and KX. Every line of the
+  output is reproduced apart from the header.
+- **Independent check** (`ind225.py`). T(γ₁) is even in γ₁. An even quartic through three published values gives
+  T(0.048) = 0.84510 and e-fold 0.84747 at r_th = 1.0028: 2.7e-4 from this note's 0.8472, and 3.4e-5 from the measured
+  1/λ. The three values are T(0) = 1/W (#195), T(1/2) = 0.758357 and T(1) = 0.675, and none of them is #151's code at
+  γ₁ = 0.048.
+- **The brief's error.** The brief quoted the stall's positions as drift speeds. This note's section "An error of the brief"
+  is right; the correction is now in `threshold.md`.
+- **Applied.**
+  - `threshold.md` carries an update from #225 under the stall table.
+  - `critical_ghost.md` §1.3 has the D = 4 cause and the D = 5 drift.
+  - #42 has the member G approaches at D = 4.
+- **Follow-ups.**
+  - #253: the settled mass of G (task 1).
+  - #254: the asymmetric member as data, with its e-fold at D = 4 and 5 (task 2).
+  - #255: the scale drift at D = 5, and the class bound of the expanding side (tasks 3 and 5).
+  - Task 4 is added to #228.
