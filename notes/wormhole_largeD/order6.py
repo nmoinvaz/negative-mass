@@ -31,7 +31,8 @@ import order4 as o4  # noqa: E402
 sys.argv = _argv
 
 MUTATIONS = ("wrong_h", "wrong_c6", "wrong_Om0", "wrong_Om1", "wrong_Om2", "wrong_Om3", "coarse_B", "short_tail", "pslq_wrong_basis",
-             "wrong_Om4_series", "wrong_closed3", "pslq_wrong_target", "e1_sign", "e2_weight", "e3_factor", "e4_g", "e4_noC")
+             "wrong_Om4_series", "wrong_closed3", "pslq_wrong_target", "e1_sign", "e2_weight", "e3_factor", "e4_g", "e4_noC",
+             "rd_w4", "rd_M1", "rd_M3", "rd_master", "rd_J5", "rd_kit", "rd_kit2", "rd_Dstep")
 MUTATE = None
 W2FILE = "w2_output.txt"
 SAVE = None
@@ -684,6 +685,390 @@ def check_remainder(ev):
         print(f"  {D:<7d} {nd(x(D)[1], 14)}")
 
 
+# ---------------------------------------------------------------------------------------------------------------
+# the reduction of G_6 by hand (RD0 .. RD7) and method A at order 6 (A6)
+# ---------------------------------------------------------------------------------------------------------------
+# Generators on theta in (0, pi/2): ell = ln cos th, u = tan th, th, C = Cl_2(pi - 2 th), D3 = Cl_3(pi - 2 th) + 3 zeta(3)/4, Lc = int_0^th ell^2.
+# Their derivatives close: ell' = -u, u' = 1 + u^2, th' = 1, C' = 2 ell + 2 q, D3' = 2 C, Lc' = ell^2 (q = ln 2).
+# Integrals are finite parts at theta -> pi/2 (cutoff x = pi/2 - th = eps: the constant term of the expansion in eps and ln eps) and at theta -> 0;
+# every integration by parts holds for them, with the boundary terms the finite parts of F(pi/2) - F(0); the integral of the integrable total is the sum.
+R6_LG, R6_U, R6_UI, R6_TH, R6_C, R6_D3, R6_LC = sp.symbols("ell u ui th C D3 Lc2")
+R6_Q = sp.Symbol("q", positive=True)
+R6_W = sp.symbols("w0:6")
+R6_X, R6_L, R6_T, R6_S, R6_R = sp.symbols("x L t s r", positive=True)
+R6_Z3, R6_J2 = sp.Symbol("z3"), sp.Symbol("J2")
+R6_ORD, R6_SHIFT = 9, 8
+
+
+def r6_dth(e):
+    """d/dtheta on the generators"""
+    L_, U_, T_, C_, D_, K_ = R6_LG, R6_U, R6_TH, R6_C, R6_D3, R6_LC
+    return (sp.diff(e, L_) * (-U_) + sp.diff(e, U_) * (1 + U_**2) + sp.diff(e, T_) + sp.diff(e, C_) * (2 * L_ + 2 * R6_Q) + sp.diff(e, D_) * 2 * C_
+            + sp.diff(e, K_) * L_**2 + sp.diff(e, R6_UI) * (-(1 + R6_UI**2)))
+
+
+def r6_kit():
+    """asymptotic series of the generators at theta -> pi/2 (x = pi/2 - th, L = ln x) and theta -> 0, for the finite parts"""
+    x, L, t, s, r, q, ORD = R6_X, R6_L, R6_T, R6_S, R6_R, R6_Q, R6_ORD
+    logs = lambda e: sp.expand(e).subs(sp.log(x), L)  # noqa: E731
+    ell1 = sp.series(sp.log(sp.sin(s) / s), s, 0, ORD).removeO()
+    sgn = -1 if MUTATE == "rd_kit" else 1
+    ell_s = sp.log(s) + ell1
+    C_s = sp.expand(-sp.integrate(sp.expand(2 * (sp.log(s) + ell1) + 2 * sgn * q), (s, 0, s)))
+    D3_s = sp.expand(sp.Rational(7, 4) * R6_Z3 - 2 * sp.integrate(C_s.subs(s, r), (r, 0, s)))
+    Lc_s = sp.expand((sp.Rational(101, 100) if MUTATE == "rd_kit2" else 1) * R6_J2 - sp.integrate(sp.expand(ell_s.subs(s, r) ** 2), (r, 0, s)))
+    pi2 = {"ell": L + ell1.subs(s, x), "u": sp.series(sp.cot(x), x, 0, ORD).removeO(), "ui": sp.series(sp.tan(x), x, 0, ORD).removeO(),
+           "th": sp.pi / 2 - x, "C": logs(C_s.subs(s, x)), "D3": logs(D3_s.subs(s, x)), "Lc": logs(Lc_s.subs(s, x))}
+    ell_t = sp.series(sp.log(sp.cos(t)), t, 0, ORD).removeO()
+    C_t = sp.expand(sp.integrate(sp.expand(2 * ell_t + 2 * q), (t, 0, t)))
+    D3_t = sp.expand(sp.integrate(sp.expand(2 * C_t.subs(t, r)), (r, 0, t)))
+    Lc_t = sp.expand(sp.integrate(sp.expand(ell_t.subs(t, r) ** 2), (r, 0, t)))
+    zero = {"ell": ell_t, "u": sp.series(sp.tan(t), t, 0, ORD).removeO(), "ui": sp.series(sp.cot(t), t, 0, ORD).removeO(), "th": t, "C": C_t,
+            "D3": D3_t, "Lc": Lc_t}
+    return pi2, zero
+
+
+_KIT = {}
+
+
+def r6_const_term(e, v, logsym=None):
+    e = sp.expand(e * v**R6_SHIFT)
+    gens = (v, logsym) if logsym is not None else (v,)
+    P = sp.Poly(e, *gens)
+    return P.coeff_monomial((R6_SHIFT,) + ((0,) if logsym is not None else ()))
+
+
+def r6_bnd(expr):
+    """B[F] = FP_{pi/2} F - FP_0 F"""
+    if not _KIT:
+        _KIT["pi2"], _KIT["zero"] = r6_kit()
+    pi2, zero = _KIT["pi2"], _KIT["zero"]
+    expr = sp.expand(expr).replace(lambda e: e.is_Pow and e.base == R6_U and e.exp < 0, lambda e: R6_UI ** (-e.exp))
+    names = {"ell": R6_LG, "u": R6_U, "ui": R6_UI, "th": R6_TH, "C": R6_C, "D3": R6_D3, "Lc": R6_LC}
+    syms = {k: v for k, v in names.items() if expr.has(v)}
+    a = r6_const_term(expr.subs({syms[k]: pi2[k] for k in syms}), R6_X, R6_L)
+    b = r6_const_term(expr.subs({syms[k]: zero[k] for k in syms}), R6_T)
+    return sp.expand(a - b)
+
+
+def r6_moments():
+    """J_n = int_0^{pi/2} ln^n cos, n <= 6, from the Beta function (as a sympy expression in q = ln 2, pi, zeta)"""
+    a = sp.Symbol("a")
+    ser = sp.series(sp.sqrt(sp.pi) / 2 * sp.gamma((a + 1) / 2) / sp.gamma(a / 2 + 1), a, 0, 7).removeO()
+    out = []
+    for n in range(7):
+        j = sp.expand_log(sp.simplify(sp.expand_func(sp.factorial(n) * ser.coeff(a, n))), force=True)
+        out.append(sp.expand(j.subs(sp.log(2), R6_Q)))
+    if MUTATE == "rd_J5":
+        out[5] = out[5].subs(sp.zeta(5), sp.Rational(1000, 1080) * sp.zeta(5))
+    return out
+
+
+def r6_parts():
+    """the integrand of G_6 after E1, E2, E3, E4 (Y_0 .. Y_3, L_0 .. L_3 only), at Omega_0 = -4 ln 2, as coefficients of the generators C, D3, Lc2
+    (u-Laurent polynomials in ell, th, q, w1 .. w4): parts[(a, b, c)] is the coefficient of C^a D3^b Lc2^c"""
+    lg, u, th, q = R6_LG, R6_U, R6_TH, R6_Q
+    C, D3, Lc, S = R6_C, R6_D3, R6_LC, sp.Symbol("S")
+    w = R6_W
+    R = 1 / (1 - S)
+    l = -2 * lg
+    Om = list(w)
+    Y = [sp.Integer(1), 2 * lg, 4 * w[0] * lg - 6 * lg**2, 4 * w[1] * lg - 4 * lg**3 + 32 * lg**2 - 16 * w[0] * lg + 32 * u * C - 16 * D3]
+    L = [sp.Integer(-1), -2 * w[0] + 4 * lg, -2 * w[1] - 4 * w[0] * lg + 16 * lg**2 + 16 * u * C]
+    h3 = hk(3, Om, l, R, Y, L)
+    sc = u * (1 - S)
+    B = -32 * (lg + q) * C + 16 * S * C + 32 * Lc + 16 * sc * lg * (lg + 2 * q) - 4 * w[1] * th - 2 * w[1] * sc
+    L = L + [-2 * h3 + 2 * u * B]
+    cx = lambda m, o=Om: cc(m, o, l, R)  # noqa: E731
+    o5z = list(Om)
+    o5z[5] = 0
+    fa = sp.factorial
+    T1 = 8 * lg * sum(Y[j] * cx(5 - j) for j in range(4)) / S
+    T2 = 2 * sum(L[5 - j] * l**j / fa(j) for j in range(2, 6))
+    T3 = 2 * sum(Y[j] * cx(6 - j, o5z) for j in range(4)) / S
+    T4 = -4 * (lg - w[0]) * sum(L[4 - j] * l**j / fa(j) for j in range(1, 5))
+    T5 = 8 * w[0] * lg * (S * L[3] + sum(Y[j] * cx(4 - j) for j in range(4))) / S
+    g = (20 if MUTATE == "rd_w4" else 22) * lg**2 - 8 * w[0] * lg - 2 * w[1]
+    F3 = sum(L[3 - j] * l**j / fa(j) for j in range(4))
+    T6 = -2 * (g + 16 * u * C) * F3
+    tot = (T1 + T2 + T3 + T4 + T5 + T6).subs(w[0], -4 * q)
+    tot = sp.expand(sp.cancel(sp.expand(tot).subs(S, u**2 / (1 + u**2))))
+    P = sp.Poly(tot, C, D3, Lc)
+    return {mon: sp.expand(sp.cancel(cf)) for mon, cf in P.terms()}
+
+
+R6_RES = {}
+
+
+def r6_reduce(parts, Jv):
+    """the steps Q (three quadratic terms), D (D3 coefficient), C, L and the rest; returns the sum of the finite parts (G_6 at Omega_4 = w4)"""
+    lg, u, th, q = R6_LG, R6_U, R6_TH, R6_Q
+    C, D3, Lc = R6_C, R6_D3, R6_LC
+    z3, z5 = sp.zeta(3), sp.zeta(5)
+    pi = sp.pi
+    fix = lambda e: sp.expand(e).subs({R6_J2: Jv[2], R6_Z3: z3})  # noqa: E731
+    cCC, cCD, cCL = parts[(2, 0, 0)], parts[(1, 1, 0)], parts[(1, 0, 1)]
+    cC, cD, cL, cR = parts[(1, 0, 0)], parts[(0, 1, 0)], parts[(0, 0, 1)], parts[(0, 0, 0)]
+    z2, z4 = pi**2 / 6, pi**4 / 90
+    M_C2, M_lC2, M_thC = pi**5 / 360, -q * pi**5 / 360, pi / 4 * z3
+    M_uC = [sp.expand((2 * Jv[b + 2] + 2 * q * Jv[b + 1]) / (b + 1)) for b in range(4)]
+    M_l2D3 = sp.Rational(3, 4) * z3 * Jv[2] + pi / 4 * (2 * q * z4 + (4 if MUTATE == "rd_master" else 5) * z5 - 2 * z2 * z3)
+    M_CLc = sp.Rational(7, 8) * z3 * Jv[2] - M_l2D3 / 2
+    res = R6_RES
+    const = sp.Integer(0)
+    Ct, Dt, Lt, Rt = sp.expand(cC), sp.expand(cD), sp.expand(cL), sp.expand(cR)
+    # Q: M1  <u^2 (f - f_ell) C^2> = B[u f C^2] - <f C^2> - 4 <u f (ell + q) C>
+    f = 3072 * lg + 2048 * q + (4095 if MUTATE == "rd_M1" else 4096)
+    res["M1 coefficient"] = sp.expand(cCC - u**2 * (f - sp.diff(f, lg)))
+    res["M1 derivative"] = sp.expand(r6_dth(u * f * C**2) - (u**2 * (f - sp.diff(f, lg)) * C**2 + f * C**2 + 4 * u * f * (lg + q) * C))
+    const += fix(r6_bnd(u * f * C**2)) - (3072 * M_lC2 + (2048 * q + 4096) * M_C2)
+    Ct += -4 * u * f * (lg + q)
+    # M2  <u C D3> = B[-ell C D3] + <ell (2 ell + 2 q) D3> + 2 <ell C^2>
+    res["M2 coefficient"] = sp.expand(cCD + 512 * u)
+    res["M2 derivative"] = sp.expand(r6_dth(-lg * C * D3) - (u * C * D3 - lg * (2 * lg + 2 * q) * D3 - 2 * lg * C**2))
+    const += -512 * fix(r6_bnd(-lg * C * D3)) - 1024 * M_lC2
+    Dt += -512 * lg * (2 * lg + 2 * q)
+    # M3  <u^2 C Lc> = B[u C Lc] - <C Lc> - 2 <u (ell + q) Lc> - <u ell^2 C>
+    res["M3 coefficient"] = sp.expand(cCL + 2048 * u**2)
+    res["M3 derivative"] = sp.expand(r6_dth(u * C * Lc) - (u**2 * C * Lc + C * Lc + 2 * u * (lg + q) * Lc + u * lg**2 * C))
+    const += (2048 if MUTATE == "rd_M3" else -2048) * fix(r6_bnd(u * C * Lc)) + 2048 * M_CLc
+    Ct += 2048 * u * lg**2
+    Lt += 4096 * u * (lg + q)
+    # D: <c D3> = B[A D3] - 2 <A C>, A' = c (c0 + c1/sin^2; F_b = int ell^b/sin^2 = -ell^b cot - b P_{b-1}, P_0 = th, P_1 = (C - 2 q th)/2, P_2 = Lc)
+    pu = sp.collect(sp.expand(Dt), u, evaluate=False)
+    assert set(pu) <= {u**-2, sp.Integer(1)}, list(pu)
+    Eq, P0 = pu.get(u**-2, sp.Integer(0)), pu.get(sp.Integer(1), sp.Integer(0))
+    c1, c0 = Eq, sp.expand(P0 - Eq)
+    a_b = [sp.Poly(c0, lg).coeff_monomial(lg**b) for b in range(3)]
+    beta = [sp.Poly(c1, lg).coeff_monomial(lg**b) for b in range(4)]
+    assert sp.Poly(c0, lg).degree() <= 2 and sp.Poly(c1, lg).degree() <= 3
+    Pf = [th, (C - 2 * q * th) / 2, Lc]
+    sg = 1 if MUTATE == "rd_Dstep" else -1
+    Fb = lambda b: -lg**b / u + sg * (b * Pf[b - 1] if b else 0)  # noqa: E731
+    A = sp.expand(sum(a_b[b] * Pf[b] for b in range(3)) + sum(beta[b] * Fb(b) for b in range(4)))
+    res["D derivative"] = sp.expand(r6_dth(A) - (c0 + c1 * (1 + u**-2)))
+    const += fix(r6_bnd(A * D3))
+    AC = sp.expand(-2 * A * C)
+    lin = sum(t_ for t_ in sp.Add.make_args(AC) if t_.has(C) and not t_.has(C**2) and not t_.has(Lc))
+    Ct += sp.expand(lin / C)
+    rest_AC = sp.expand(AC - lin)
+    cC2 = rest_AC.coeff(C, 2)
+    cCLc = sp.expand(rest_AC - cC2 * C**2).coeff(Lc, 1).coeff(C, 1)
+    assert sp.expand(rest_AC - cC2 * C**2 - cCLc * C * Lc) == 0
+    const += cC2 * M_C2 + cCLc * M_CLc
+    # C
+    pc = sp.collect(sp.expand(Ct), u, evaluate=False)
+    assert set(pc) <= {u**-1, u, u**2, sp.Integer(1)}, list(pc)
+    res["C: u^-1 part"] = sp.expand(pc.get(u**-1, sp.Integer(0)))
+    c1u, c2u, c0u = sp.expand(pc.get(u, 0)), sp.expand(pc.get(u**2, 0)), sp.expand(pc.get(sp.Integer(1), 0))
+    assert sp.Poly(c1u, lg).degree() <= 3
+    const += sum(sp.Poly(c1u, lg).coeff_monomial(lg**b) * M_uC[b] for b in range(4))
+    c2th = sp.Poly(c2u, th).coeff_monomial(th)
+    assert sp.expand(c2u - c2th * th) == 0
+    res["C: u th derivative"] = sp.expand(r6_dth(u * th * C) - (u**2 * th * C + th * C + u * C + 2 * u * th * (lg + q)))
+    res["C: u th (ell + q) derivative"] = sp.expand(r6_dth(-th * (lg + q) ** 2 / 2) - (u * th * (lg + q) - (lg + q) ** 2 / 2))
+    uth = fix(r6_bnd(-th * (lg + q) ** 2 / 2)) + sp.Rational(1, 2) * (Jv[2] + 2 * q * Jv[1] + q**2 * Jv[0])
+    const += c2th * (fix(r6_bnd(u * th * C)) - M_thC - M_uC[0] - 2 * uth)
+    c0t = sp.Poly(c0u, th)
+    assert c0t.degree() <= 1 and sp.expand(c0t.coeff_monomial(1)) == 0
+    const += c0t.coeff_monomial(th) * M_thC
+    # L: <u g(ell) Lc> = B[-G Lc] + <G ell^2>, G = int g d ell, G(0) = 0
+    pl = sp.collect(sp.expand(Lt), u, evaluate=False)
+    assert list(pl) == [u], list(pl)
+    g = pl[u]
+    G = sp.integrate(g, lg)
+    assert G.subs(lg, 0) == 0
+    res["L derivative"] = sp.expand(r6_dth(-G * Lc) - (u * g * Lc - G * lg**2))
+    const += fix(r6_bnd(-G * Lc)) + sum(sp.Poly(G, lg).coeff_monomial(lg**b) * Jv[b + 2] for b in range(4))
+    # the rest: <l^b / sin^2> = -b J_{b-1}; <u th l^b> = B[-th l^{b+1}/(b+1)] + J_{b+1}/(b+1)
+    for term in sp.Add.make_args(sp.expand(Rt)):
+        c_, rest_ = term.as_independent(u, th, lg)
+        d = rest_.as_powers_dict()
+        a, k, b = d.get(u, 0), d.get(th, 0), d.get(lg, 0)
+        if a == -2 and k == 0:
+            assert b >= 1
+            const += c_ * (-b * Jv[b - 1] - Jv[b])
+        elif a == 0 and k == 0:
+            const += c_ * Jv[b]
+        elif a == 1 and k == 1:
+            res.setdefault("rest: u th derivative", sp.Integer(0))
+            res["rest: u th derivative"] += sp.expand(r6_dth(-th * lg ** (b + 1) / (b + 1)) - (u * th * lg**b - lg ** (b + 1) / (b + 1))) * c_
+            const += c_ * (fix(r6_bnd(-th * lg ** (b + 1) / (b + 1))) + Jv[b + 1] / (b + 1))
+        else:
+            raise ValueError(("unhandled term of the rest", term))
+    return sp.expand(const)
+
+
+def r6_closed_symbolic(const):
+    """G_6 at Omega_4 = 0 and Omega_4's closed form from the sum of the finite parts"""
+    q, pi = R6_Q, sp.pi
+    z3 = sp.zeta(3)
+    w = R6_W
+    wsub = {w[1]: 2 * pi**2 / 3 + 8 * q**2, w[2]: 80 * z3 - sp.Rational(8, 3) * pi**2 * q - sp.Rational(32, 3) * q**3,
+            w[3]: 22 * pi**4 / 45 + sp.Rational(16, 3) * pi**2 * q**2 + sp.Rational(32, 3) * q**4 - 320 * z3 * q - 384 * z3}
+    slope = sp.simplify(sp.diff(const, w[4]))
+    g0 = sp.expand(const.subs(w[4], 0).subs(wsub))
+    return slope, g0, sp.expand(g0 / (4 * pi))
+
+
+def r6_numeric_integrand(Om):
+    """the integrand of G_6 after E1 .. E4, from the closed forms of Y_0 .. Y_3, L_0 .. L_3 (order4.py, order5.py's L_3), Om = [w0 .. w4, 0]"""
+    q = mp.ln2
+
+    def f(th, x, tail):
+        if tail:
+            th = mp.pi / 2 - x
+        c, lc, l, u, R, s2, Y, L, K, T = o4.closed(th, x, tail, Om)
+        Cn = mp.clsin(2, mp.pi - 2 * th)
+        sc = mp.sin(th) * mp.cos(th)
+        B = -32 * (lc + q) * Cn + 16 * s2 * Cn + 32 * o4.Lc2_poly(th) + 16 * sc * lc * (lc + 2 * q) - 4 * Om[1] * th - 2 * Om[1] * sc
+        LL = [L[0], L[1], L[2], -2 * hk(3, Om, l, R, Y, L) + 2 * u * B]
+        o = list(Om)
+        o[5] = 0
+        fa = math.factorial
+        t1 = 8 * lc * sum(Y[j] * cc(5 - j, Om, l, R) for j in range(4)) / s2
+        t2 = 2 * sum(LL[5 - j] * l**j / fa(j) for j in range(2, 6))
+        t3 = 2 * sum(Y[j] * cc(6 - j, o, l, R) for j in range(4)) / s2
+        t4 = -4 * (lc - Om[0]) * sum(LL[4 - j] * l**j / fa(j) for j in range(1, 5))
+        t5 = 8 * Om[0] * lc * (s2 * LL[3] + sum(Y[j] * cc(4 - j, Om, l, R) for j in range(4))) / s2
+        F3 = sum(LL[3 - j] * l**j / fa(j) for j in range(4))
+        t6 = -2 * (22 * lc**2 - 8 * Om[0] * lc - 2 * Om[1] + 16 * u * Cn) * F3
+        return t1 + t2 + t3 + t4 + t5 + t6
+
+    return o4.guarded(f, 80)
+
+
+def check_reduce6(ev=None):
+    t0 = time.time()
+    lg, u, th, q = R6_LG, R6_U, R6_TH, R6_Q
+    C, D3, Lc = R6_C, R6_D3, R6_LC
+    mp.mp.dps = 45
+    # RD0: the derivative rules of the generators, numerically
+    t_ = mp.mpf("0.7")
+    ell_f = lambda a: mp.log(mp.cos(a))  # noqa: E731
+    C_f = lambda a: mp.clsin(2, mp.pi - 2 * a)  # noqa: E731
+    D3_f = lambda a: mp.clcos(3, mp.pi - 2 * a) + 3 * mp.zeta(3) / 4  # noqa: E731
+    Lc_f = o4.Lc2_poly
+    errs = [abs(mp.diff(ell_f, t_) + mp.tan(t_)), abs(mp.diff(mp.tan, t_) - (1 + mp.tan(t_) ** 2)),
+            abs(mp.diff(C_f, t_) - (2 * ell_f(t_) + 2 * mp.ln2)), abs(mp.diff(D3_f, t_) - 2 * C_f(t_)), abs(mp.diff(Lc_f, t_) - ell_f(t_) ** 2)]
+    report("RD0", max(errs) <= mp.mpf("1e-30"), "derivative rules ell' = -u, u' = 1 + u^2, C' = 2 ell + 2 ln 2, D3' = 2 C, Lc2' = ell^2 at theta = 0.7 (numerical "
+           f"derivatives): worst difference {nd(max(errs), 3)} (bar 1e-30)")
+    Jv = r6_moments()
+    parts = r6_parts()
+    # RD1: the decomposition against the numeric integrand of closed forms at four points
+    w1v, w2v, w3v = closed_omegas()[1], closed_omegas()[2], closed_omegas()[3]
+    w4v = mp.mpf("0.3")
+    Om = [-4 * mp.ln2, w1v, w2v, w3v, w4v, mp.mpf(0)]
+    gens = (lg, u, th, C, D3, Lc, q) + tuple(R6_W[1:5])
+    tot = sum(cf * C**a * D3**b * Lc**c for (a, b, c), cf in parts.items())
+    tot_f = sp.lambdify(gens, tot, "mpmath")
+    fn = r6_numeric_integrand(Om)
+    worst = mp.mpf(99)
+    for tv in ("0.2", "0.7", "1.1", "1.4"):
+        tv = mp.mpf(tv)
+        with mp.extradps(40):
+            ell, s2, u_, Cn, D3n = o4.basics(tv, mp.pi / 2 - tv, False)
+            dec = tot_f(ell, u_, tv, Cn, D3n, o4.Lc2_poly(tv), mp.ln2, w1v, w2v, w3v, w4v)
+            num = fn(tv, mp.pi / 2 - tv, False)
+        worst = min(worst, digits(num, dec))
+    report("RD1", worst >= 30, f"the decomposition (sympy; coefficients of C^a D3^b Lc2^c in u, ell, theta: {sorted(parts)}) against the numeric integrand of closed forms "
+           f"at theta = 0.2, 0.7, 1.1, 1.4: worst {float(worst):.1f} digits (bar 30)")
+    # the reduction (finite parts)
+    R6_RES.clear()
+    const = r6_reduce(parts, Jv)
+    bad = {k: v for k, v in R6_RES.items() if sp.simplify(v) != 0}
+    report("RD2", not bad, f"the by-parts identities, symbolically ({len(R6_RES)}: " + "; ".join(sorted(R6_RES)) + f"): nonzero residuals {sorted(bad) or 'none'}")
+    slope, g0, om4c = r6_closed_symbolic(const)
+    z3sq = sp.expand(const).coeff(sp.zeta(3), 2)
+    report("RD3", sp.simplify(slope + 4 * sp.pi) == 0 and sp.simplify(z3sq) == 0 and not bad.get("C: u^-1 part"),
+           f"cancellations: slope of G_6 in Omega_4 = {slope} (= -4 pi); the 1/u terms of the C coefficient cancel ({sp.simplify(R6_RES['C: u^-1 part'])}); "
+           f"J_6 drops out (the zeta(3)^2 coefficient is {sp.simplify(z3sq)})")
+    expr = sp.expand(om4c)
+    print("  Omega4 (derived) = " + str(expr))
+    cl = sp.lambdify((q,), expr, "mpmath")
+    mp.mp.dps = 330
+    om4num = cl(mp.ln2)
+    print(f"  Omega4 (derived) = {nd(om4num, 60)}")
+    # RD4: the series of the finite-part kit against the functions
+    kit_pi2, kit_zero = (_KIT["pi2"], _KIT["zero"]) if _KIT else r6_kit()
+    mp.mp.dps = 60
+    xv = mp.mpf(1) / 1000
+    subs = {R6_X: xv, R6_L: mp.log(xv), R6_Q: mp.ln2, R6_Z3: mp.zeta(3), R6_J2: mp.pi * (12 * mp.ln2**2 + mp.pi**2) / 24}
+    th_v = mp.pi / 2 - xv
+    ref = {"ell": ell_f(th_v), "u": mp.tan(th_v), "ui": 1 / mp.tan(th_v), "C": C_f(th_v), "D3": D3_f(th_v), "Lc": Lc_f(th_v)}
+    e1 = max(abs(mp.mpf(sp.N(kit_pi2[k].subs(subs), 70)) - ref[k]) / max(abs(ref[k]), mp.mpf(1)) for k in ref)
+    tv0 = mp.mpf(1) / 1000
+    subs0 = {R6_T: tv0, R6_Q: mp.ln2}
+    ref0 = {"ell": ell_f(tv0), "u": mp.tan(tv0), "ui": 1 / mp.tan(tv0), "C": C_f(tv0), "D3": D3_f(tv0), "Lc": Lc_f(tv0)}
+    e2 = max(abs(mp.mpf(sp.N(kit_zero[k].subs(subs0), 70)) - ref0[k]) / max(abs(ref0[k]), mp.mpf(1e-30)) for k in ref0)
+    report("RD4", max(e1, e2) <= mp.mpf("1e-24"), f"the asymptotic series of the generators (order {R6_ORD}) against the functions at x = pi/2 - theta = 1e-3 (worst relative "
+           f"difference {nd(e1, 3)}) and at theta = 1e-3 ({nd(e2, 3)}) (bar 1e-24)")
+    # RD5: the masters, numerically
+    mp.mp.dps = 40
+    pi_, q_, z3_, z5_ = mp.pi, mp.ln2, mp.zeta(3), mp.zeta(5)
+
+    def integ(fn_):
+        return o4.both(o4.guarded(fn_, 40))
+
+    def bs(th_, x, tail):
+        if tail:
+            th_ = mp.pi / 2 - x
+        ell, s2, u_, Cn, D3n = o4.basics(th_, x, tail)
+        return th_, ell, u_, Cn, D3n
+
+    Jn = [mp.mpf(sp.N(j.subs({R6_Q: sp.log(2)}), 50)) for j in Jv]
+    masters = {
+        "C^2 = pi^5/360": (integ(lambda a, x, t: bs(a, x, t)[3] ** 2), pi_**5 / 360),
+        "ell C^2 = -ln 2 pi^5/360": (integ(lambda a, x, t: bs(a, x, t)[1] * bs(a, x, t)[3] ** 2), -q_ * pi_**5 / 360),
+        "theta C = pi zeta(3)/4": (integ(lambda a, x, t: bs(a, x, t)[0] * bs(a, x, t)[3]), pi_ / 4 * z3_),
+        "ell^2 D3": (integ(lambda a, x, t: bs(a, x, t)[1] ** 2 * bs(a, x, t)[4]),
+                     mp.mpf(3) / 4 * z3_ * Jn[2] + pi_ / 4 * (2 * q_ * pi_**4 / 90 + (4 if MUTATE == "rd_master" else 5) * z5_ - 2 * pi_**2 / 6 * z3_)),
+        "C Lc2": (integ(lambda a, x, t: bs(a, x, t)[3] * o4.Lc2_poly(bs(a, x, t)[0])), mp.mpf(7) / 8 * z3_ * Jn[2]
+                  - (mp.mpf(3) / 4 * z3_ * Jn[2] + pi_ / 4 * (2 * q_ * pi_**4 / 90 + (4 if MUTATE == "rd_master" else 5) * z5_ - 2 * pi_**2 / 6 * z3_)) / 2)}
+    for b in range(4):
+        masters[f"u ell^{b} C = (2 J_{b + 2} + 2 ln2 J_{b + 1})/{b + 1}"] = (integ(lambda a, x, t, b=b: bs(a, x, t)[2] * bs(a, x, t)[1] ** b * bs(a, x, t)[3]),
+                                                                              (2 * Jn[b + 2] + 2 * q_ * Jn[b + 1]) / (b + 1))
+    for n in range(7):
+        masters[f"J_{n}"] = (integ(lambda a, x, t, n=n: bs(a, x, t)[1] ** n), Jn[n])
+    dm = {k: digits(a, b) for k, (a, b) in masters.items()}
+    report("RD5", min(dm.values()) >= 30, "the master integrals against their closed forms (quadrature at 40 digits), digits: "
+           + ", ".join(f"{k}: {float(v):.1f}" for k, v in dm.items()) + " (bar 30)")
+    # RD6: method A at order 6, the numeric integrand of closed forms, Omega_4 from the affine G_6, against the derived closed form
+    cl = closed_omegas()
+    w_ = [cl[0], cl[1], cl[2], cl[3]]
+
+    def G(o4v):
+        f = r6_numeric_integrand(w_ + [o4v, mp.mpf(0)])
+        return (mp.quad(lambda t: f(t, mp.pi / 2 - t, False), [0, mp.mpf(1) / 2, 1], method="gauss-legendre")
+                + mp.quad(lambda x: f(mp.pi / 2 - x, x, True), [0, mp.pi / 2 - 1]))
+
+    t1 = time.time()
+    g0n, g1n = G(mp.mpf(0)), G(mp.mpf(1))
+    slope_n, om4_a = g1n - g0n, -g0n / (g1n - g0n)
+    mp.mp.dps = 60
+    ds, dc = digits(-4 * mp.pi, slope_n), digits(om4num, om4_a)
+    report("RD6", ds >= 30 and dc >= 30, f"method A at order 6 (closed forms, E1 .. E4, quadrature at 40 digits, {time.time() - t1:.0f} s): G_6(Omega_4 = 0) = {nd(g0n, 30)}, "
+           f"slope against -4 pi {float(ds):.1f} digits; Omega_4 = {nd(om4_a, 38)} against the derived closed form {float(dc):.1f} digits (bar 30)")
+    # RD7: the derived closed form against the grids of record
+    if ev is not None:
+        mp.mp.dps = 330
+        rows = {n: digits(om4num, ev[n]["Om4"]) for n in ev}
+        report("RD7", all(rows[n] >= 100 for n in ("G1", "G2") if n in rows), "Omega_4 of the derived closed form against the grids' Omega_4, digits: "
+               + ", ".join(f"{n} {float(d):.1f}" for n, d in rows.items()) + " (bar 100 on G1, G2; the others reported)")
+    # RD8: the integer relation PSLQ found in run_05 (raw I220-rpi5, P2 and P3, residual 6.4e-196) is 45 x the derived closed form
+    ps, zs3, zs5, qs_ = sp.symbols("ps zs3 zs5 qs_", positive=True)
+    poly = sp.Poly(sp.expand(45 * expr.subs({sp.pi: ps, sp.zeta(3): zs3, sp.zeta(5): zs5, R6_Q: qs_})), qs_, ps, zs3, zs5)
+    monos = [(1, 4, 0, 0), (3, 2, 0, 0), (5, 0, 0, 0), (0, 2, 1, 0), (2, 0, 1, 0), (0, 0, 0, 1), (0, 4, 0, 0), (2, 2, 0, 0), (4, 0, 0, 0), (1, 0, 1, 0), (0, 0, 1, 0),
+             (1, 2, 0, 0), (3, 0, 0, 0), (0, 2, 0, 0), (2, 0, 0, 0), (1, 0, 0, 0), (0, 0, 0, 0)]       # q^a pi^b zeta(3)^c zeta(5)^d of P2's constants
+    pslq_rel = [-45, -88, -320, -384, -7200, 28800, -469440, -2432, 0, 0, 69120, 138240, 0, 0, 0, 0, 0, 0]    # run_05, P2: [Omega4, constants...]
+    mine = [-45] + [poly.coeff_monomial(m) for m in monos]
+    report("RD8", [int(v) for v in mine] == pslq_rel and set(poly.monoms()) <= set(monos),
+           f"the integer relation of run_05 (PSLQ, P2 and P3) {pslq_rel} against -45 followed by 45 x the derived closed form's coefficients {[int(v) for v in mine]} "
+           f"(every term of the closed form is a constant of P2)")
+    print(f"  ({time.time() - t0:.0f} s)")
+    return expr
+
+
 def main():
     parse(sys.argv[1:])
     mp.mp.dps = 60
@@ -698,13 +1083,15 @@ def main():
         ev = check_evals()
         if "values" in PARTS or not GRIDSEL:
             check_values(ev)
-    elif LOAD and any(p in PARTS for p in ("values", "pslq", "remainder")):
+    elif LOAD and any(p in PARTS for p in ("values", "pslq", "remainder", "reduce6")):
         mp.mp.dps = 430
         ev = load_ev(LOAD)
         if "values" in PARTS:
             check_values(ev)
     if "exch6" in PARTS:
         check_exch6()
+    if "reduce6" in PARTS:
+        check_reduce6(ev)
     if "pslq" in PARTS:
         check_pslq(ev)
     if "remainder" in PARTS:
