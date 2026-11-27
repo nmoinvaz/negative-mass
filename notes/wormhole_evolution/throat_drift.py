@@ -770,6 +770,24 @@ def posthoc(rec, out=print):
                 txt += f"\n        exponents against B = {Bp:g}: p* {expo(e['pstar'], ep['pstar'], B, Bp):.2f}, R(t = 8, 10, 12) {fmt([expo(R[i], Rp[i], B, Bp) for i in range(3)], '{:.2f}')}, rdot_inf {expo(f['inf'], fp['inf'], B, Bp):.2f}"
             out(txt)
             prev = (B, e)
+
+    out("\n  energies and the speed the radius approaches (post hoc): E_net = (B^2 - A*^2) I_2, rdot_inf, rdot_inf / E_net, rdot_inf / E_net^(3/2), and the normal field's stress on the locus at t = 10 against the ghost's:")
+    I2, _I1 = pulse_integrals(n5)
+    for hk in (1, 2):
+        h = threshold.CRIT["H"][3][hk]
+        for B in (0.02, 0.04, 0.07, 0.1):
+            e = ex.get((B, hk)) or T5.get((B, hk))
+            if e is None:
+                continue
+            S = e["S"]
+            f = fit_rdot(S["t"], S["tau"], S["r"], S["odd"])
+            En = (B ** 2 - e["pstar"] ** 2) * I2
+            k = int(np.argmin(np.abs(S["t"] - 10.0)))
+            v_, ef_ = S["v"][k], np.exp(S["f"][k])
+            Tpp, Tmm = S["php"][k, 1] ** 2, S["phm"][k, 1] ** 2
+            rho_n = ((1 + v_ ** 2) * ef_ * (Tpp + Tmm) / 2 + 2 * v_ * ef_ * (Tpp - Tmm) / 2) / (1 - v_ ** 2)
+            rho_g = locus_diag(S, n5)
+            out(f"    h = {h:g} B = {B:5.3f}: E_net {En:.5f}, rdot_inf {f['inf']:+.5f} (se {f['se_inf']:.1e}), /E_net {f['inf'] / En:.5f}, /E_net^1.5 {f['inf'] / En ** 1.5:.5f}; rho_n / |rho_g| at t = 10: {rho_n / (rho_g['ratio'][k] * (-3 * 2 / (2 * S['r'][k] ** 2))):+.1e}")
     out("\n  the fitted static member on the collapse side's profile slices (finest h): t, r_th, s_th (fit rms), Q/q_0 = r_th^(n-1)/N(+inf) of the member (1 if it has the data's ghost charge, + end time),")
     out("  and the charge flux per unit proper time of the locus q_t/N_th over sqrt(n(n-1)) r_th^(n-1) (1 by the identity of QS):")
     hk = CRIT["hks"][-1]
