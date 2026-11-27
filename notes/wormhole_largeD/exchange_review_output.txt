@@ -1,0 +1,86 @@
+exchange_review.py  mutate=None  parts=['sym', 'exact', 'clausen', 'exch', 'grid', 'ctlsum']  mpmath 1.3.0  sympy 1.14.0
+PASS    S1: R - 1 = tan^2 and (R - 1)^(-3/2) dR/dth = 2/sin^2: residuals 0 (sympy)
+PASS    S2: 1 - 1/R = sin^2, ln R = -2 ln cos, d(ln R)/dth = 2 tan: residuals 0 (sympy)
+PASS    S3: c_1/sin^2 = (Omega0 - 3 ell)/sin^2 - 1 with c_1 = Omega0 + 3l/2 - 1 + 1/R, l = -2 ell: residual 0 (sympy)
+PASS    S4: P' = -[(ell - Omega0)/sin^2 + 1] and P dl/dth = 2 (ell - Omega0), P = cot (ell - Omega0): residuals 0 (sympy)
+PASS    S5: 4 ell/sin^2 (from E2) + 2 c_1/sin^2 (from h_k) = -2[(ell - Omega0)/sin^2 + 1] = 2 P': residual 0 (sympy)
+PASS    S6: d/dth(-cot ell - th) = ell/sin^2; boundary values 0 at 0 and -pi/2 at pi/2, so int ell/sin^2 = -pi/2 (sympy)
+PASS    S7: boundary limits cot ell at 0 = 0, cot ell at pi/2 = 0, ell th^-1 ...: ell * th at 0 (C = O(th)) = 0, x ln^6 x at 0 (Y_4 P, Y_4 = O(l^5), P ~ x (ln x - Omega0)) = 0, x ln^2 x at 0 (ell C_Cl, C ~ x(1 - ln x)) = 0; ell = -theta**4/12 - theta**2/2 + O(th^6) (sympy)
+PASS    S8: moments from B(a): int ell = -pi*log(2)/2, int ell^2 = pi*(12*log(2)**2 + pi**2)/24 (sympy)
+PASS    S9: C' = 2 ln(2 cos th); 2 (int ell^2 + ln2 int ell) = pi**3/12 = pi^3/12 (sympy)
+PASS    S10: int sin(2n)sin(2m) = (pi/4) delta_nm; tan [sin 2(n+1)th - sin 2(n-1)th] = 2 cos 2n th - cos 2(n+1)th - cos 2(n-1)th (residual 0), whose integral gives I_(n+1) = I_(n-1) for n >= 2 with I_1 = pi/2, I_2 = -pi/2, I_n = int tan sin(2n th) = (-1)^(n+1) pi/2 (sympy)
+PASS    S11: sum_n (pi/2)/n^2 = pi**3/12 and sum_n (pi/4)/n^4 = pi**5/360 (sympy)
+  sym: 2 s
+PASS    P0b: K(u) = int_0^u ln(1 + t^2)/(1 + t^2) dt against 2 th ln 2 - Cl2(pi - 2 th), th = 0.3, 0.9, 1.4: worst 49.5 digits (bar 40)
+PASS    P0c: h_1, h_2 from the table (cc, hk) against README's h_1 = Omega0 + l - 2(1 - 1/R), h_2 = Omega1 - 2 Omega0 (1 - 1/R) - Omega0 l - 2 l^2, th = 0.2, 0.8, 1.3: worst 48.2 digits (bar 40)
+PASS    P1: E1 at k = 2, Omega0 = 3/10: G_2 from the definition -38.611288629165385974166194431737227, E1's right side -38.611288629165385974166194431737227, against -4 pi Omega0 - 16 pi ln 2 = -38.611288629165385974166194431737227: 50.0 and 50.0 digits (bar 40; quadrature error estimates 1.0e-95, 1.0e-94)
+PASS    P2_1: E2 at m = 1: int L_1 dth = 4.3551721806072042610013777964752279 against 2 int h_1 ln cos/sin^2 dth = 4.3551721806072042610013777964752279: 50.0 digits (bar 40); closed form -pi Omega0 - 2 pi ln 2 = 4.35517218060720426100137779648: 50.0 digits
+PASS    P2_2: E2 at m = 2: int L_2 dth = 60.965355809403042604798415673109623 against 2 int h_2 ln cos/sin^2 dth = 60.965355809403042604798415673109623: 50.0 digits (bar 40)
+  exact: 35 s
+PASS    CM: int_0^(pi/2) ln cos = -1.08879304515180106525034444912, int ln^2 cos = 2.04662202447274064616964100818 against -(pi/2) ln 2 and (pi/2)(ln^2 2 + pi^2/12): 60.0 and 60.0 digits (bar 40)
+PASS    CL1: int_0^(pi/2) tan th Cl2(pi - 2 th) dth = 2.583856390024985014623026255591782933519 against pi^3/12 = 2.583856390024985014623026255591782933519: 60.0 digits (bar 40; quadrature error estimate 1.0e-99)
+PASS    CL1a: the by-parts step: int tan C dth = 2.58385639002498501462302625559 against 2 int ln cos ln(2 cos) dth = 2.58385639002498501462302625559: 60.0 digits (bar 40)
+PASS    CL2: int_0^(pi/2) Cl2(pi - 2 th)^2 dth = 0.8500546799591151479520591945650989068897 against pi^5/360 = 0.8500546799591151479520591945650989068897: 60.0 digits (bar 40; quadrature error estimate 1.0e-100)
+  clausen: 16 s
+  E-grid: N = 36, w = 1/2, V = 16, dps = 80, panels = 32; chain 12 s; Omega_0..2 against closed forms 44.2, 43.8, 43.7 digits; Omega_3 = -652.8401075700561254352393037996473610805
+PASS    P0: hierarchy on the E-grid against README's Y_1, L_1, Y_2, L_2 at the 576 of 1152 nodes with l <= V^2/4: worst |difference|/(1 + |value|) Y1 4.8e-81, L1 8.4e-42, Y2 3.6e-43, L2 9.9e-34 (bar 1e-30; the closed L_2 needs Cl2 and K)
+PASS    E1_3: G_3 against E1's right side: at the root 1.67e-75 against 6.47e-43 (terms of size 117.0); Omega_1 + 1/2: -6.28318530717958647692528676656 against -6.28318530717958647692528676656: 43.0 digits (bar 30)
+PASS    E1_4: G_4 against E1's right side: at the root 3.01e-74 against -4.27e-42 (terms of size 1.39e+3); Omega_2 + 1/2: -6.28318530717958647692528676656 against -6.28318530717958647692528676656: 42.2 digits (bar 30)
+PASS    E1_5: G_5 against E1's right side: at the root 2.28e-75 against -5.69e-42 (terms of size 1.07e+4); Omega_3 + 1/2: -6.28318530717958647692528676656 against -6.28318530717958647692528676656: 42.0 digits (bar 30)
+PASS    E2_2: int L_2 dth = 29.2666009690357900122383740034 against 2 int h_2 ln cos/sin^2 dth = 29.2666009690357900122383740034: 45.0, 45.1, 45.2 digits at Omega_1 = solved, 0, 1/2 (bar 30)
+PASS    E2_3: int L_3 dth = -346.761806024998400912231951204 against 2 int h_3 ln cos/sin^2 dth = -346.761806024998400912231951204: 43.8, 43.3, 43.3 digits at Omega_2 = solved, 0, 1/2 (bar 30)
+PASS    E2_4: int L_4 dth = -2683.45836508968259679087157491 against 2 int h_4 ln cos/sin^2 dth = -2683.45836508968259679087157491: 43.7, 43.9, 43.9 digits at Omega_3 = solved, 0, 1/2 (bar 30)
+PASS    E3_3: int Y_2 [(ell - Omega0)/sin^2 + 1] dth = 24.5594642936728877540356920981 against 2 int (ell - Omega0) F_1 dth = 24.5594642936728877540356920981: 43.9 digits (bar 30)
+PASS    E3G_3: G_3 (Omega_1 + 1/2) = -6.28318530717958647692528676656 against the reduced form with no Y_2, no Y_3: -6.28318530717958647692528676656: 42.7 digits (bar 30); its four terms 60.027243, -16.782238, -0.40926175, -49.118929
+PASS    E3_4: int Y_3 [(ell - Omega0)/sin^2 + 1] dth = -59.2935378252118510174000835512 against 2 int (ell - Omega0) F_2 dth = -59.2935378252118510174000835512: 43.6 digits (bar 30)
+PASS    E3G_4: G_4 (Omega_2 + 1/2) = -6.28318530717958647692528676656 against the reduced form with no Y_3, no Y_4: -6.28318530717958647692528676656: 41.6 digits (bar 30); its four terms -469.16858, 433.60155, -89.303234, 118.58708
+PASS    E3_5: int Y_4 [(ell - Omega0)/sin^2 + 1] dth = -2125.55635776350351455510733329 against 2 int (ell - Omega0) F_3 dth = -2125.55635776350351455510733329: 44.9 digits (bar 30)
+PASS    E3G_5: G_5 (Omega_3 + 1/2) = -6.28318530717958647692528676656 against the reduced form with no Y_4, no Y_5: -6.28318530717958647692528676656: 40.4 digits (bar 30); its four terms -5489.5031, 1292.1853, -60.078104, 4251.1127
+PASS    BND: boundary terms: throat end b/th^p at the first two nodes th = 0.000238, 0.00214 (constant to 1%, and = the leading coefficient -2 Omega_(k-2) th where known), pi/2 end at the last node x = pi/2 - th = 2.58e-56 (bar |b| < 1e-30, and b/(x l^q) bounded along the grid): Y_3 cot: /th^1 -20.8467, -20.8467; outer 2.2e-49, b/(x l^4) at l = 30, 60, 100: 0.0251, 0.0105, 0.00579; Y_4 cot: /th^1 -148.739, -148.739; outer 1.8e-46, b/(x l^5) at l = 30, 60, 100: 0.0531, 0.0278, 0.0168; Y_5 cot: /th^1 1305.68, 1305.68; outer 1.8e-44, b/(x l^6) at l = 30, 60, 100: 0.00353, 0.00719, 0.00553; ell C_2: /th^3 8.31777, 8.31777; outer 3.2e-51, b/(x l^3) at l = 30, 60, 100: 2.18, 2.09, 2.05; ell C_3: /th^3 -46.6446, -46.6446; outer 8.1e-49, b/(x l^4) at l = 30, 60, 100: 1.64, 1.83, 1.9; ell C_4: /th^3 -107.509, -107.51; outer -1.1e-46, b/(x l^5) at l = 30, 60, 100: -1.95, -1.46, -1.27; cot ell: /th^1 -0.5, -0.5; outer -3.3e-54, b/(x l^1) at l = 30, 60, 100: -0.5, -0.5, -0.5; Y_4 P: /th^1 -412.391, -412.392; outer -2.3e-44, b/(x l^6) at l = 30, 60, 100: -0.0217, -0.0126, -0.00795
+PASS    GROW: growth (reported, no bar): local exponents between l = 30.04 and 59.89: Y_1 1.0, Y_2 2.1, Y_3 2.74, Y_4 4.06, Y_5 7.03, L_1 1.07, L_2 1.94, L_3 3.16, L_4 3.58; at the last node l = 255.99: Y_1/l^1 = -1.0, Y_2/l^2 = -1.463, Y_3/l^3 = 0.5148, Y_4/l^4 = 1.645, Y_5/l^5 = 0.6337
+  exch: 49 s
+    k = 2: Omega_0 = -2.77258872223978123766892848583  slope -12.566370614359172954  (13 s)
+    k = 3: Omega_1 = 10.4233603787385171432264808772  slope -12.566370614359172954  (19 s)
+    k = 4: Omega_2 = 74.3693867279333175953846702958  slope -12.566370614359172954  (27 s)
+    k = 5: Omega_3 = -652.8401075700561254352393038  slope -12.566370614359172954  (34 s)
+  N=64 w=0.333333 V=24 dps=130 panels=72  96 s
+    Omega0 = -2.7725887222397812376689284858327062723020005374410210164827200379735744878787788624234537465823404396406554197
+    Omega1 = 10.423360378738517143226480877197420530720223217583558445877145986469352939691479272934107001307357142809376029
+    Omega2 = 74.369386727933317595384670295846617266734143415020336877011113172380316896667573022563962938718880125390484875
+    Omega3 = -652.8401075700561254352393037996473610804617475455782573645447454198495701098138568844651544623383771734452148
+PASS    GR1: Omega_2 on the third grid 74.36938672793331759538467029584661726673414341502 against #26's A70 74.36938672793331759538467029584661726673414341502 (order4_output.txt, 48 printed digits): 50.3 digits (bar 40)
+PASS    GR2: Omega_3 on the third grid -652.84010757005612543523930379964736108046174754558 against #208's B4 -652.84010757005612543523930379964736108046174754558 (order5_output.txt, 113 printed digits): 87.8 digits (bar 40)
+PASS    GR3: planted: Omega_0, Omega_1 against -4 ln 2 and 2 pi^2/3 + 8 ln^2 2: 87.8 and 87.3 digits (bar 40)
+PASS    GR4: slope of G_k in Omega_(k-2), k = 2..5, against -4 pi: 88.8, 88.8, 88.8, 88.8 digits (bar 40)
+  reported: Omega_2 against 80 zeta(3) - (8/3) pi^2 ln 2 - (32/3) ln^3 2: 87.2 digits; Omega_3 against #208's closed form: 87.8 digits
+  grid: 96 s
+PASS    CT_sym_S1: fired ['S1'] of 11 checks; declared targets ['S1']
+PASS    CT_sym_S2: fired ['S2'] of 11 checks; declared targets ['S2']
+PASS    CT_sym_c1: fired ['S3', 'S5'] of 11 checks; declared targets ['S3', 'S5']
+PASS    CT_sym_P: fired ['S4'] of 11 checks; declared targets ['S4']
+PASS    CT_sym_S6: fired ['S6'] of 11 checks; declared targets ['S6']
+PASS    CT_sym_S7: fired ['S7'] of 11 checks; declared targets ['S7']
+PASS    CT_sym_S8: fired ['S8'] of 11 checks; declared targets ['S8']; declared silent and silent ['S9']
+PASS    CT_sym_S9: fired ['S9'] of 11 checks; declared targets ['S9']
+PASS    CT_sym_S10: fired ['S10'] of 11 checks; declared targets ['S10']
+PASS    CT_sym_S11: fired ['S11'] of 11 checks; declared targets ['S11']
+PASS    CT_exact_K: fired ['P0b', 'P2_2'] of 5 checks; declared targets ['P0b', 'P2_2']; declared silent and silent ['P0c', 'P1', 'P2_1']
+PASS    CT_exact_L1: fired ['P0c', 'P1', 'P2_1', 'P2_2'] of 5 checks; declared targets ['P0c', 'P1', 'P2_1', 'P2_2']; declared silent and silent ['P0b']
+PASS    CT_exact_h2: fired ['P0c'] of 5 checks; declared targets ['P0c']; declared silent and silent ['P1', 'P2_1', 'P2_2']
+PASS    CT_e1_sign: fired ['E1_3', 'E1_4', 'E1_5', 'P1'] of 20 checks; declared targets ['E1_3', 'E1_4', 'E1_5', 'P1']; declared silent and silent ['E2_2', 'E2_3', 'E2_4', 'E3G_3', 'E3G_4', 'E3G_5']
+PASS    CT_e1_factor: fired ['E1_3', 'E1_4', 'E1_5', 'P1'] of 20 checks; declared targets ['E1_3', 'E1_4', 'E1_5', 'P1']; declared silent and silent ['E2_2', 'E2_3', 'E2_4', 'E3G_3', 'E3G_4', 'E3G_5']
+PASS    CT_e2_weight: fired ['E2_2', 'E2_3', 'E2_4', 'P2_1', 'P2_2'] of 20 checks; declared targets ['E2_2', 'E2_3', 'E2_4', 'P2_1', 'P2_2']; declared silent and silent ['E1_3', 'E1_4', 'E1_5', 'E3G_3', 'E3G_4', 'E3G_5']
+PASS    CT_bnd_G: fired ['BND', 'P0'] of 15 checks; declared targets ['BND', 'P0']; declared silent and silent ['E1_3', 'E1_4', 'E1_5', 'E2_2', 'E2_3', 'E2_4', 'E3G_3', 'E3G_4', 'E3G_5', 'E3_3', 'E3_4', 'E3_5']
+PASS    CT_bnd_Y0: fired ['BND', 'E1_3', 'E1_4', 'E1_5', 'E2_2', 'E2_3', 'E2_4', 'E3G_3', 'E3G_4', 'E3G_5', 'E3_3', 'E3_4', 'E3_5', 'P0'] of 15 checks; declared targets ['BND', 'E1_3', 'E1_4', 'E1_5', 'E2_2', 'E2_3', 'E2_4', 'E3G_3', 'E3G_4', 'E3G_5', 'E3_3', 'E3_4', 'E3_5', 'P0']
+PASS    CT_e3_Om0: fired ['E3G_3', 'E3G_4', 'E3G_5'] of 15 checks; declared targets ['E3G_3', 'E3G_4', 'E3G_5']; declared silent and silent ['E1_3', 'E1_4', 'E1_5', 'E2_2', 'E2_3', 'E2_4', 'E3_3', 'E3_4', 'E3_5']
+PASS    CT_e3_factor: fired ['E3G_3', 'E3G_4', 'E3G_5'] of 15 checks; declared targets ['E3G_3', 'E3G_4', 'E3G_5']; declared silent and silent ['E1_3', 'E1_4', 'E1_5', 'E2_2', 'E2_3', 'E2_4', 'E3_3', 'E3_4', 'E3_5']
+PASS    CT_cl_moment: fired ['CM'] of 4 checks; declared targets ['CM']; declared silent and silent ['CL1', 'CL1a', 'CL2']
+PASS    CT_cl_arg: fired ['CL1', 'CL1a', 'CL2'] of 4 checks; declared targets ['CL1', 'CL1a', 'CL2']; declared silent and silent ['CM']
+PASS    CT_cl_arg2: fired ['CL1', 'CL1a'] of 4 checks; declared targets ['CL1', 'CL1a']; declared silent and silent ['CL2', 'CM']
+PASS    CT_grid_coarse: fired ['GR1', 'GR2', 'GR3', 'GR4'] of 4 checks; declared targets ['GR1', 'GR2', 'GR3', 'GR4']
+PASS    CT_grid_short: fired ['GR1', 'GR2', 'GR3', 'GR4'] of 4 checks; declared targets ['GR1', 'GR2', 'GR3', 'GR4']
+PASS    CT_grid_wrongh: fired ['GR1', 'GR2', 'GR3'] of 4 checks; declared targets ['GR1', 'GR2', 'GR3']; declared silent and silent ['GR4']
+PASS    CT_grid_wrongOm1: fired ['GR1', 'GR2'] of 4 checks; declared targets ['GR1', 'GR2']; declared silent and silent ['GR3', 'GR4']
+  controls on target: 27 of 27
+
+66 passed, 0 failed of 66 checks; 198 s

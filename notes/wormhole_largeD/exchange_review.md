@@ -12,7 +12,28 @@ It is not an error bar.
 
 ## Result
 
-TBD
+E1, E2, E3 and the two Clausen integrals are **derived** as stated, each integration by parts with its boundary terms (§2 to §5),
+and checked.
+
+| step | by parts on | boundary terms (both ends vanish) | where the hypothesis enters |
+|---|---|---|---|
+| E1 | ∫Y_k/sin²θ | [−cot θ Y_k]: O(θ) at 0, O(x l^p) at π/2 | Y_k = O(θ²), Y_k polynomial in l |
+| E2 | ∫tan θ C_m; then ∫ℓ/sin²θ = −π/2 | [−ℓ C_m]: O(θ³) at 0, O(x l^{q+1}) at π/2; [−cot θ ℓ − θ]: 0 and −π/2 | G_m = 0 at π/2 |
+| E3 | ∫Y_m P′, P = cot θ (ℓ − Ω₀) | [Y_m P]: 2Ω₀Ω_{m−2}θ at 0, O(x l^{m+2}) at π/2; m = 4 at k = 5 | the same two |
+
+- **Hypotheses.** G_j = 0 for j < k and Y_k = 0 at l = 0. Ω_{k−2} stays free, and all three identities hold for any value of it.
+  The slope of G_k in Ω_{k−2} is −4π, from E1 alone.
+- **E3 at every order.** It removes Y_{k−1} for any k ≥ 2, not only Y₄ at k = 5. It collects two Y_{k−1} terms: ½Y_{k−1} inside E2's
+  h_{k−1}, and the j = k − 1 term Y_{k−1}c₁ of h_k.
+- **Checks.** Sympy residual 0 for every algebraic step (S1 … S11). The integrals agree to 40 to 45 digits on a panel hierarchy
+  (E1 at k = 3, 4, 5; E2 at m = 2, 3, 4; E3 at k = 3, 4, 5; G₃, G₄, G₅ without Y_{k−1}), and to 50 digits from closed forms at
+  k = 2 (E1) and m = 1, 2 (E2). The boundary terms decay or scale as predicted (table in §6).
+- **Clausen.** ∫tan θ Cl₂(π − 2θ) = π³/12 from the moments of ln cos, and again from the sine series (two routes);
+  ∫Cl₂(π − 2θ)² = π⁵/360 from orthogonality and uniform convergence, without completeness. Quadrature agrees to 60 digits (bar 40).
+- **Third grid** (N = 64, w = 1/3, V = 24): Ω₂ against #26's A70 to 50.3 digits (A70 prints 48), Ω₃ against #208's B4 to 87.8 digits
+  (bar 40 each).
+- **Controls.** 27 of 27 on target (§9); the silences are listed there.
+- **Comparison with omega2.md and omega3.md** (§8): TBD
 
 ## 1. Setting
 
@@ -217,4 +238,151 @@ The series for C converges uniformly, so C² integrates termwise:
 This is Parseval's identity for the orthogonal system sin 2nθ, but only orthogonality and uniform convergence are used, not
 completeness.
 
-TBD (checks, third grid, controls, comparison, limits, files)
+## 6. Checks
+
+All from `exchange_review.py`; the declared run is raw `I209-rpi5/run_01_sym_exact_clausen_exch_grid.log` (39 of 39 pass, 203 s on
+rpi5, code 886f764). "Digits" is −log₁₀ of the relative difference of two evaluations.
+
+**Symbolic** (sympy, residual 0, *checked symbolically*): S1 the substitution and (R − 1)^{−3/2}dR = 2dθ/sin²θ; S2 1 − 1/R = sin²θ,
+ln R = −2ℓ, dl/dθ = 2 tan θ; S3 c₁/sin²θ = (Ω₀ − 3ℓ)/sin²θ − 1; S4 P′ and P · dl/dθ; S5 the Y_{k−1} coefficient 4ℓ/S + 2c₁/S =
+2P′; S6 the antiderivative of ℓ/sin²θ and its end values; S7 the boundary limits (cot θ ℓ at both ends, ℓθ, x ln⁶x, x ln²x);
+S8 the Beta moments; S9 C′ = 2 ln(2 cos θ) and 2(∫ℓ² + ln 2 ∫ℓ) = π³/12; S10 orthogonality and I_n; S11 the two series sums.
+
+**Closed forms, no panel code** (*numerical evidence*, mpmath at 50 digits, integrands at 150 digits):
+
+| id | check | digits | bar |
+|---|---|---|---|
+| P0b | K(u) = ∫₀^u ln(1 + t²)/(1 + t²)dt against 2θ ln 2 − Cl₂(π − 2θ) at three θ | 49.5 | 40 |
+| P0c | the table's h₁, h₂ against README's closed forms | 48.2 | 40 |
+| P1 | E1 at k = 2, Ω₀ = 3/10: G₂ from the definition and E1's right side against −4πΩ₀ − 16π ln 2 | 50.0, 50.0 | 40 |
+| P2_1 | E2 at m = 1: ∫L₁ = 2∫h₁ℓ/sin² (and against −πΩ₀ − 2π ln 2) | 50.0 (50.0) | 40 |
+| P2_2 | E2 at m = 2 with the closed L₂ (Cl₂ in K) | 50.0 | 40 |
+
+**The Clausen integrals and the moments** (mpmath at 60 digits, tanh-sinh, error estimates 1e-99):
+
+| id | check | digits | bar |
+|---|---|---|---|
+| CM | ∫ℓ, ∫ℓ² against −(π/2) ln 2 and (π/2)(ln²2 + π²/12) | 60.0, 60.0 | 40 |
+| CL1 | ∫₀^{π/2} tan θ Cl₂(π − 2θ)dθ = 2.583856390024985014623026255591782933519… against π³/12 | 60.0 | 40 |
+| CL1a | the by-parts step: ∫tan C = 2∫ℓ ln(2 cos θ) | 60.0 | 40 |
+| CL2 | ∫C² = 0.85005467995911514795205919456509890689… against π⁵/360 | 60.0 | 40 |
+
+**E1, E2, E3 on the hierarchy** (method B's `PanelK`, E-grid N = 36, w = 1/2, V = 16, dps 80, 32 panels; its Ω₀ … Ω₂ meet the
+closed forms to 44.2, 43.8, 43.7 digits; *numerical evidence*). Each identity is tested with the free constant at its root, at 0
+and at 1/2, because at the root G_k = 0 and a relative digit count is empty:
+
+| id | identity | at the root | shifted | bar |
+|---|---|---|---|---|
+| P0 | Y₁, L₁, Y₂, L₂ against README's closed forms, 576 nodes with l ≤ V²/4 | worst difference 8e-42 (L₁), 4e-43 (Y₂), 1e-33 (L₂) | | 1e-30 |
+| E1_3 | G₃ = E1 (k = 3) | right side 6.5e-43 against terms of size 117 | 43.0 digits | 30 |
+| E1_4 | G₄ = E1 (k = 4) | 4.3e-42 against 1.4e3 | 42.2 | 30 |
+| E1_5 | G₅ = E1 (k = 5) | 5.7e-42 against 1.1e4 | 42.0 | 30 |
+| E2_2 | ∫L₂ = 2∫h₂ℓ/sin² | 45.0 | 45.1, 45.2 (Ω₁ = 0, 1/2) | 30 |
+| E2_3 | ∫L₃ = 2∫h₃ℓ/sin² | 43.8 | 43.3, 43.3 | 30 |
+| E2_4 | ∫L₄ = 2∫h₄ℓ/sin² | 43.7 | 43.9, 43.9 | 30 |
+| E3_3, E3_4, E3_5 | ∫Y_m[(ℓ − Ω₀)/sin² + 1] = 2∫(ℓ − Ω₀)F_{m−1}, m = 2, 3, 4 | | 43.9, 43.6, 44.9 | 30 |
+| E3G_3, E3G_4, E3G_5 | G_k against the boxed form of §4 with no Y_{k−1}, no Y_k | | 42.7, 41.6, 40.4 | 30 |
+
+The four terms of E3G_5 at Ω₃ + 1/2 are −5489.5031, 1292.1853, −60.078104 and 4251.1127; they sum to G₅ = −2π.
+
+**Boundary terms** (BND, at the E-grid's first two nodes θ = 2.4e-4 and 2.1e-3, and at three nodes along l and the last node
+x = π/2 − θ = 2.6e-56):
+
+| term b | throat end, b/θᵖ at the two nodes | prediction | outer end, last node | b/(x l^q), l = 30, 60, 100 |
+|---|---|---|---|---|
+| Y₃ cot θ | −20.8467, −20.8467 (p = 1) | −2Ω₁ = −20.8467 | 2.2e-49 | 0.025, 0.011, 0.006 (q = 4) |
+| Y₄ cot θ | −148.739, −148.739 | −2Ω₂ | 1.8e-46 | 0.053, 0.028, 0.017 (q = 5) |
+| Y₅ cot θ | 1305.68, 1305.68 | −2Ω₃ | 1.8e-44 | 0.004, 0.007, 0.006 (q = 6) |
+| ℓ C₂ | 8.31777, 8.31777 (p = 3) | O(θ³) | 3.2e-51 | 2.18, 2.09, 2.05 (q = 3) |
+| ℓ C₃ | −46.6446, −46.6446 | O(θ³) | 8.1e-49 | 1.64, 1.83, 1.90 (q = 4) |
+| ℓ C₄ | −107.509, −107.510 | O(θ³) | −1.1e-46 | −1.95, −1.46, −1.27 (q = 5) |
+| cot θ ℓ | −0.5, −0.5 (p = 1) | −θ/2 | −3.3e-54 | −0.5, −0.5, −0.5 (q = 1) |
+| Y₄ P | −412.391, −412.392 (p = 1) | 2Ω₀Ω₂ = −412.39 | −2.3e-44 | −0.022, −0.013, −0.008 (q = 6) |
+
+The outer-end values of ℓC_m come from L_m at the last node, where the grid's L_m is not exact (§10, limit 2); the ratios at
+l ≤ 100, where it is, carry the evidence. GROW (reported, no bar): Y_k/l^k at l = 256 is −1.0, −1.46, 0.51, 1.65, 0.63 for
+k = 1 … 5, so Y_k grows no faster than l^k; the proof's bound l^{k+1} is not sharp.
+
+**Remark.** The slope of G_k in Ω_{k−2} is −4π at every k (E1 alone gives it, §2). It is also the coefficient of Ω_{k−2} in
+the boxed form of §4, where it comes from 8∫(Y₀Ω_{k−2})ℓ/S = −4πΩ_{k−2}. GR4 below finds it to 88.8 digits.
+
+## 7. The third grid
+
+Declared before the run (raw README): N = 64, w = 1/3, V = 24, dps 130, 72 panels. #26's grids are (40, 1/2, 18) and
+(50, 2/5, 20), #208's (80, 3/10, 28) and (90, 1/4, 30). Run 98 s on rpi5, peak 100 MB, through the unchanged `order5.run_B`.
+
+| check | against | digits | bar |
+|---|---|---|---|
+| GR1 Ω₂ = 74.369386727933317595384670295846617266734143415020337… | #26's A70 (`order4_output.txt`, 48 printed digits) | 50.3 | 40 |
+| GR2 Ω₃ = −652.84010757005612543523930379964736108046174754557825736… | #208's B4 (`order5_output.txt`, 113 printed digits) | 87.8 | 40 |
+| GR3 Ω₀, Ω₁ | −4 ln 2, 2π²/3 + 8 ln²2 | 87.8, 87.3 | 40 |
+| GR4 slope of G_k in Ω_{k−2}, k = 2 … 5 | −4π | 88.8 (each) | 40 |
+| reported: Ω₂, Ω₃ | 80ζ(3) − (8/3)π² ln 2 − (32/3) ln³2, #208's closed form | 87.2, 87.8 | |
+
+GR1's 50.3 digits are set by A70's 48 printed digits.
+
+## 8. Comparison with omega2.md and omega3.md
+
+Written after the note above was committed (branch commit before the reading). TBD
+
+## 9. Controls
+
+Every check has a `--mutate=` control (27 of them, `exchange_review.py --mutate=NAME`). Their targets were computed in
+development runs (raw `dev_ctl_*`, `dev2_ctl_*`, `dev3_ctl_cl_moment.log`), declared in the raw README and in `TARGETS`, and
+then run (`ctl_*`, serial, exit 1 each). The summary (`CT_*` in the output) reads the logs: **27 of 27 on target**, meaning every
+declared target fired and no declared-silent check fired.
+
+| control | breaks | fires | declared silent, and silent |
+|---|---|---|---|
+| sym_S1, sym_S2, sym_S6 … sym_S11, sym_P | one sympy claim each | the check named (S1, S2, S6, S7, S8, S9, S10, S11, S4) | S9 for sym_S8 |
+| sym_c1 | c₁'s 3l/2 taken as l | S3, S5 | |
+| exact_K | K = θ ln 2 − Cl₂ | P0b, P2_2 | P0c, P1, P2_1 |
+| exact_L1 | L₁ = −2Ω₀ − l | P0c, P1, P2_1, P2_2 | P0b |
+| exact_h2 | README's h₂ with l/10 | P0c | P1, P2_1, P2_2 |
+| e1_sign, e1_factor | E1's sign, E1's 4 as 2 | P1, E1_3, E1_4, E1_5 | E2_*, E3G_* |
+| e2_weight | E2's ℓ as ℓ + ln 2 | P2_1, P2_2, E2_2, E2_3, E2_4 | E1_*, E3G_* |
+| bnd_G | Ω₀ + 1/100 | P0, BND | E1_*, E2_*, E3_*, E3G_* |
+| bnd_Y0 | Y_k + 1e-3 | P0, BND, E1_*, E2_*, E3_*, E3G_* | |
+| e3_Om0, e3_factor | P without Ω₀; the 4 as 2 | E3G_3, E3G_4, E3G_5 | E3_*, E1_*, E2_* |
+| cl_moment | ℓ + ln 2 in the moments | CM | CL1, CL1a, CL2 |
+| cl_arg | Cl₂(π − θ) | CL1, CL1a, CL2 | CM |
+| cl_arg2 | Cl₂(2θ) | CL1, CL1a | CM, CL2 |
+| grid_coarse, grid_short | N = 10; V = 6 | GR1 … GR4 | |
+| grid_wrongh | the sign of −l/R in c₂ | GR1, GR2, GR3 | GR4 |
+| grid_wrongOm1 | Ω₁ + 1/100 in the G₄ step | GR1, GR2 | GR3, GR4 |
+
+Silences that are results:
+
+- **bnd_G.** The shifted Ω₀ leaves E1, E2, E3 true: the grid's L_m has no growing term at any Ω₀ (§10, limit 2). Only the closed
+  forms (P0) and the throat boundary test (BND: C₂(0) = −G₂) see it.
+- **e3_Om0, e3_factor.** The by-parts identity E3_k holds with any constant in place of Ω₀ in P. Only the combination with c₁ in
+  G_k fixes it to Ω₀, and E3G_k sees that.
+- **cl_arg2.** ∫C² is blind to the sign pattern (−1)^{n+1}, because the orthogonality of sin 2nθ does not use it. The first
+  integral sees it. `cl_arg` (the task's example, Cl₂(π − θ)) makes ∫tan θ Cl₂(π − θ) diverge at π/2, where Cl₂(π/2) = G ≠ 0
+  (Catalan's constant); the quadrature returns a large number and CL1, CL1a fire.
+- **grid_wrongh** leaves the slope of G_k at −4π (GR4): the slope comes from c_k's constant and Y₁ = −l, not from c₂'s l/R term.
+
+## 10. Limits
+
+1. The hierarchy of the E checks, and of the third grid, is method B's code, shared with #26 and #208. The grid changes the
+   discretization, not the method. The closed-form checks P0, P1, P2 and the derivations of §2 to §5 do not use it.
+2. `PanelK` builds L_m = −2Ω − u·(tail from the node to V). That is the solution without the growing term for any Ω, and it is
+   the throat-analytic solution only when G_m = 0. E1, E2, E3 are therefore tested for that solution at every Ω₀, and the grid
+   cannot test that G_m = 0 is needed. The hypothesis shows at the throat: with Ω₀ shifted by 1/100 (control bnd_G), C₂(0) =
+   −G₂ ≠ 0 and ℓC₂/θ³ is no longer constant (272 and 38 at the first two nodes). L_m is also inexact at the nodes with
+   e^{(l − V²)/2} not small (l > V²/4 = 64), because the tail beyond V is cut and u = e^{l/2} amplifies rounding. The θ-integrals
+   carry the weight e^{−l/2} and are not affected.
+3. F2 and F3 are asymptotic arguments (F3 an induction, sketched in §1), checked by the boundary table, not computer-assisted
+   proofs.
+4. Agreement of 40 to 45 digits is that of two evaluations on one grid, limited by the grid (the E-grid's Ω₀ … Ω₂ meet the closed
+   forms to 44 digits). It is not an error bar.
+5. The hypotheses of E1 to E3 are G_j = 0 for j < k (Ω₀ … Ω_{k−3} at their values) and Y_k = 0 at l = 0. The checks use the
+   solved values of Ω₀ … Ω₂ from the same grid, not the closed forms, so they do not rely on #26's or #208's results.
+
+## Files
+
+- `exchange_review.py`, `exchange_review_output.txt`: the checks and the declared run with the controls' summary (66 checks, 198 s
+  on rpi5; run `python3 exchange_review.py sym exact clausen exch grid ctlsum --ctldir=<raw folder> --ctlprefix=ctl` from this
+  directory after the controls, `run_controls.sh` of the raw folder, have run).
+- Raw `I209-rpi5` (negative-mass-raw): README with the declarations, development logs `dev*`, declared runs `run_*`, control runs
+  `ctl_*`, `units.txt`.
