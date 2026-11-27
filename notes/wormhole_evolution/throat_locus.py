@@ -585,7 +585,7 @@ def points40(D, fam, hk):
     """#40's recorded points of that job keyed by the exact amplitude."""
     h = threshold.CRIT["H"][D - 2][hk]
     pts = [json.loads(l) for l in open(os.path.join(RAW40, f"D{D}_{fam}_h{h:g}", "points.jsonl"))]
-    return {p["A"]: p for p in pts}
+    return {p["A"]: p for p in pts if p["phase"] in ("bisect", "series")}      # not the "ed:" points (other events at the same amplitudes)
 
 
 class Sink:
@@ -872,7 +872,28 @@ CRIT.update(
     xc=dict(D=4, hk=0, A=0.05, X=200.0, k_bar=1e-3, ts_bar=1e-4, H_bar=1e-3),
 )
 
-MUTATIONS = {}      # name: the checks that must fire; filled from the development runs (dev_NN in the raw folder) before the runs of record
+MUTATIONS = {   # name: dict(mini=[checks that must fire exactly, in the reduced suite (`mutate`)], rec=[... on a stored record (`analyze --mutate=`)]); computed in dev/mut and dev/rec/mut
+    "time_unit": dict(mini=["CMP1", "CMP2", "CMP3", "PB", "PG", "PS"], rec=["PB", "PG"]),                  # tau scaled by sqrt2
+    "tau_diag": dict(mini=["PB", "PG", "PS"], rec=["PB", "PG"]),                                           # tau of the diagonal (v = 0) instead of the locus's
+    "tau_nolapse": dict(mini=["CMP1", "CMP2", "CMP3", "KX", "PG", "RES"], rec=["PG"]),                     # the lapse e^{-f/2} dropped from d tau
+    "rho_diag": dict(mini=["PO"], rec=["PO"]),                                                             # rho in the grid's frame, not the locus's
+    "w_sign": dict(mini=["KX", "PO"], rec=["KX", "PO", "XC"]),                                             # p_perp with the wrong sign
+    "asym_sign": dict(mini=["PM"], rec=["PM"]),                                                            # the asymmetry fit with the sides swapped
+    "pstar_off": dict(mini=["CMP2", "PS"], rec=["CMP2", "CTL", "PS"]),                                     # p*_h shifted by 1e-9 in the fits
+    "class_loose": dict(mini=["KX", "PL"], rec=["KX", "PL"]),                                              # the classification's tolerances widened (expansion.py's)
+    "theta_coef": dict(mini=["BUILD", "CMP1", "CTL", "FA", "KX", "PB", "PG", "PM", "RES"], rec=["PB", "PG", "PM"]),         # dn.py's input mutations
+    "scalar_coef": dict(mini=["BUILD", "CMP1", "CTL", "FA", "KX", "PB", "PG", "PM", "RES"], rec=["PB", "PG", "PM"]),
+    "ghost_sign": dict(mini=["BUILD", "CMP1", "CTL", "FA", "KX", "PB", "PG", "PM", "RES"], rec=["PB", "PG", "PM"]),
+    "no_corrector": dict(mini=["CMP1", "CMP2", "CMP3", "CTL", "FA", "PB", "PG", "PS", "RES"], rec=["PB", "PG"]),
+    "data_constraint_sign": dict(mini=["BUILD", "CMP1", "CTL", "FA", "KX", "PB", "PM", "RES"], rec=["PB", "PM"]),
+    "ellis_charge": dict(mini=["BUILD", "CMP1", "CMP2", "CMP3", "CTL", "ED", "FA", "PB", "PM"], rec=["PB", "PM"]),
+    "finder_sign": dict(mini=["CTL", "FA"], rec=[]),                                                       # silent on a stored record by design: it acts on the events of a run
+    "drop_bracket": dict(rec=["JOB"]),                                                                     # record only: the bracket ends are not read
+    "ed_t": dict(rec=["ED"]),                                                                              # record only: the alternative level read in t
+    "ra_scale": dict(rec=["RA"]),                                                                          # record only: the finer h's slope scaled by 1.01
+    "xc_tau": dict(rec=["XC"]),                                                                            # record only: the control's tau_s scaled by 1.01
+    "locus_diag": dict(rec=["CMP1", "CMP2", "CMP3", "DR"]),                                                # record only: the diagonal's radius in the member table
+}
 
 results = []
 
@@ -915,20 +936,19 @@ def chk_PB_PG(cases=None):
     c = CRIT["pb"]
     bars, lo, hi = c["bar"], c["order"][0], c["order"][1]
     for cid, kind, pars in (("PB", "boost", c["vs"]), ("PG", "gauge", (None,))):
-        ok, rows = True, []
-        for n, hs, tc in (cases or c["cases"]):
-            for par in pars:
-                errs = pb_errors(kind, n, hs, tc, par)
-                fin = errs[-1]
-                good = all(fin[k] <= bars[k] for k in bars)
-                ords = {k: order_of([e[k] for e in errs]) for k in (("l", "r", "f", "tau", "v") if kind == "boost" else ("l", "r", "f"))}
-                good &= all(lo <= x <= hi for v in ords.values() for x in v)
-                ok &= good
-                rows.append(f"D = {n + 2}, {'v = ' + format(par, 'g') if kind == 'boost' else 'F(x) = x (1 - c (1 - e^(-x/b))), c = %g, b = %g' % (GAUGE['c'], GAUGE['b'])}, "
-                            f"h = {hs[-1]:g}, t in [{c['t_lo']}, {tc}]: " + ", ".join(f"{k} {fin[k]:.1e}" for k in ("l", "r", "f", "tau", "v")) + "; orders " +
-                            ", ".join(f"{k} {fmt(v, '{:.2f}')}" for k, v in ords.items()))
-        for x in rows:
-            print(f"    {cid} {x}")
+        try:
+            runs = [(n, hs, tc, par, pb_errors(kind, n, hs, tc, par)) for n, hs, tc in (cases or c["cases"]) for par in pars]
+        except Exception as exc:         # an exception inside a check (a mutated evolution leaves no locus) is that check's failure
+            check(cid, "planted static wormhole: the locus code raised an exception", False, repr(exc))
+            continue
+        ok = True
+        for n, hs, tc, par, errs in runs:
+            fin = errs[-1]
+            ords = {k: order_of([e[k] for e in errs]) for k in (("l", "r", "f", "tau", "v") if kind == "boost" else ("l", "r", "f"))}
+            ok &= all(fin[k] <= bars[k] for k in bars) and all(lo <= x <= hi for v in ords.values() for x in v)
+            what = f"v = {par:g}" if kind == "boost" else f"F(x) = x (1 - c (1 - e^(-x/b))), c = {GAUGE['c']:g}, b = {GAUGE['b']:g}"
+            print(f"    {cid} D = {n + 2}, {what}, h = {hs[-1]:g}, t in [{c['t_lo']}, {tc}]: " + ", ".join(f"{k} {fin[k]:.1e}" for k in ("l", "r", "f", "tau", "v")) + "; orders "
+                  + ", ".join(f"{k} {fmt(v, '{:.2f}')}" for k, v in ords.items()))
         check(cid, "planted static wormhole " + ("in the pair-rescaled coordinates (drift v)" if kind == "boost" else "in another double-null gauge (f != 0, drifting throat)") +
               ": the locus's l, r_min, f, tau" + (", v" if kind == "boost" else "") + " against the exact ones, second order in h (PG: orders of l, r, f; tau and v carry the drift window's smoothing floor)", ok,
               f"bars {bars}, orders in [{lo}, {hi}]")
@@ -1064,8 +1084,9 @@ def analyze_series(S, full=True):
             check(f"JOB[{tag}]", "all series points and both bracket ends are present and each ran to #40's event", len(ser) == nexp[0] and len(brk) == nexp[1]
                   and all(r["fate40"] != 0 for r in recs), f"{len(ser)} of {nexp[0]} series, {len(brk)} of {nexp[1]} bracket")
         # control: the same runs give #40's events bit for bit
-        both = [r for r in recs if r.get("old_T") is not None]
-        bad = [r for r in both if r["T40"] != r["old_T"] or r["fate40"] != r["old_fate"] or (r["cell40"] != r["old_cell"] and r["old_cell"] is not None)]
+        old40 = points40(D, "G", hk)       # #40's recorded points, read here (not the copy a job stored)
+        both = [r for r in recs if r["A"] in old40]
+        bad = [r for r in both if r["T40"] != old40[r["A"]]["T"] or r["fate40"] != old40[r["A"]]["fate"] or r["cell40"] != [old40[r["A"]]["j"], old40[r["A"]]["i"]]]
         rows40 = series_rows(recs, lambda r: r["T40"])
         s40 = fit_summary(rows40, ps, W)
         ref = CRIT["ctl"].get((D, hk))
@@ -1447,12 +1468,17 @@ def main():
         job_planted(int(a["D"]), int(a["hk"]), float(a["v"]), a["out"])
     elif cmd == "analyze":
         bad = analyze_suite(load_record(a["raw"]))
+        if mut:
+            want = set(MUTATIONS.get(mut, {}).get("rec", []))
+            fired = {c.split("[")[0] for c in bad}
+            print(f"mutation {mut}: declared target {sorted(want)}; fired {sorted(fired)}; " + ("targets all fired" if want <= fired else f"SILENT: {sorted(want - fired)}")
+                  + ("" if fired <= want else f"; extra: {sorted(fired - want)}"))
         print(f"{time.time() - t0:.1f} s")
         sys.exit(1 if bad else 0)
     elif cmd in ("mutate", "dev"):
         bad = analyze_suite(mini_suite())
         if cmd == "mutate":
-            want = set(MUTATIONS.get(mut, []))
+            want = set(MUTATIONS.get(mut, {}).get("mini", []))
             fired = {c.split("[")[0] for c in bad}
             print(f"mutation {mut}: declared target {sorted(want)}; fired {sorted(fired)}; " + ("targets all fired" if want <= fired else f"SILENT: {sorted(want - fired)}")
                   + ("" if fired <= want else f"; extra: {sorted(fired - want)}"))
