@@ -79,6 +79,9 @@ model they sit in disjoint sets of initial data. Saved to investigate later:
   normal and ghost scalars in any D, with both ends of the wormhole on the grid. It reproduces the static wormhole at
   second order, the exact Tangherlini and Roberts-ghost solutions, and the unstable mode's rate W at D = 4 and 5 to
   better than 1e-4. A bisection to |p − p*| = 1e-10 costs minutes. #40 now runs on it.
+  **Update from #40:** the bisection gives the lifetime slope 1/W at D = 4, 5, 6 for the families through the static
+  wormhole, confirmed by a second code (`notes/wormhole_evolution/threshold.md`). Next: the generic one-sided family's
+  departure from 1/W (#225, #42) and the expanding branch (#213).
 
 ## Out of scope
 Quantum vacuum instability of the phantom sector.
