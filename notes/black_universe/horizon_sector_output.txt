@@ -1,0 +1,83 @@
+# horizon_sector_output.txt: outputs of record of horizon_sector.py (negative-mass-raw I248-dh610/runs, code commit 69de2ea), assembled in this order
+# derive, check, table: run01_derive.log, run01_check.log, run01_table.log; mutations: the 16 logs run01_mut_<name>.log, summarized by 'horizon_sector.py mutations DIR run01_mut_'
+
+######## horizon_sector.py derive
+[pass] D1: the Kruskal-chart member (r = R(rho), phi = sqrt2 arctan rho, e^{-F} = G/kappa, rho_V = -U G, rho_U = -V G, G = A/(2 kappa Pi)) solves the three evolution equations and both constraints, residual identically zero (sympy, symbolic kappa): c = -1, -3/2, -3/10  (0 of 15 residuals nonzero)
+    (D1: 50 s)
+[pass] D2: on the future horizon U = 0 of the c = -1 member (rho = 0) the linearized constraint C_VV is a_VV = 0: dr_h = c1 + c2 V; and g = rho R/sqrt2 = 0 there, so Y_h = dr_h (sympy)
+[pass] D4: the linearized constraints propagate: d_U C_VV = -(r_U/r) C_VV and d_V C_UU = -(r_V/r) C_UU on solutions of the evolution equations, for any background solving the field equations (generic jets, sympy, zero residual): the first-order jet at a point is not restricted  (residuals 0, 0 at 4 random rational points each (exact))
+    (D2: 1 s)
+[pass] D3a: Y = dr - (rho R/sqrt2) dphi is invariant under every linear diffeomorphism: L_xi r = xi^mu d_mu(rho) R', L_xi phi = xi^mu d_mu(rho) Phi', and R' - (rho R/sqrt2) Phi' = 0 identically (sympy)  (R' - g Phi' = 0)
+[pass] D3b: r_U on the future horizon is -R'(rho_h) G(rho_h) V: zero at c = -1 (R'(0) = 0, the horizon is the area minimum, so no residual gauge shifts dr_h) and nonzero at c = -1.5 (R'(rho_h) = 0.3216), where dr_h = c2 V is the horizon-position gauge
+    (D3: 0 s)
+[pass] D6: formal series of the Y equation at the bifurcation surface (c = -1, M = 0, degree <= 7): with the 13 coefficients y_mn, m = 1 or n = 1, as free parameters every other coefficient is determined and the system is consistent; y_00 and every y_0n, y_m0 (n, m != 1) vanish, so Y|_(U=0) = y_10 V and Y|_(V=0) = y_01 U exactly (sympy)  (32 equations, 23 determined unknowns, 13 forced to zero)
+    (D6: 25 s)
+[pass] D7: c = -1, W = kappa: the Frobenius series of Y with exponent 1/2 has no logarithm (every order solvable, the order-1 equation consistent), so Y_ref = rho^{1/2}(1 + g2 rho^2 + ...) and Y_ref e^{-kappa x}, e^{kappa x} = rho^{1/2}(1 + O(rho)), is analytic in rho and in Pi = -VU (sympy, orders <= 5)  (g2 = pi**2/128 + 5/12)
+    (D7: 7 s)
+[pass] D8: the Y equation at c = -1, W = kappa has no singular point on rho in [-200, 0) or (0, 200] (A < 0 for rho < 0, A > 0 for rho > 0, R >= 1): the solution with Y ~ rho^{1/2} integrates from rho = +-0.05 to +-40 with finite values (the interior is reached by the same analytic function)  (A<0 on rho<0 and A>0 on rho>0: True; integration status 0, 0; max |Y| 6.34e+12 (static), 56.6 (interior))
+    (D8: 1 s)
+
+8 checks, 8 pass; failed: []; mutation None; 85 s
+
+######## horizon_sector.py check
+[pass] N1: the Kruskal-chart jets (rho, e^{-F}, r_V, r_U, F_V, F_U) reproduce linear.bg through V = e^{b p}, U = -Q(sigma) at 8 points each of c = -1 and -1.5 (static region, horizon, interior)  (max relative difference 5.8e-16)
+    (N1: 1 s)
+[pass] N2: exact pure-gauge solutions L_xi(member), xi(V), eta(U) smooth, reproduced by the Kruskal-chart scheme at second order through S and the interior (h = 0.02, 0.01, 0.005; the last ratio in [3.7, 4.3], error below 5e-4 of the largest field at 0.005): c = -1, -1.5, Schwarzschild  (c=-1: 8.94e-04, 1.74e-04, 4.38e-05 (ratios 5.13, 3.98; relative to the largest field 1.2e-04); c=-1.5: 4.79e-05, 1.11e-05, 2.78e-06 (ratios 4.32, 4.00; relative to the largest field 2.0e-05); Schwarzschild: 4.63e-06, 1.10e-06, 2.76e-07 (ratios 4.20, 4.00; relative to the largest field 5.8e-06))
+    (N2: 3 s)
+[pass] N3: c = -1, data through S: the horizon values dr_h(V) = Y_h(V) are linear in V on the whole horizon V in [-0.05, 3] (least-squares residual relative to max |dr_h| at h = 0.005, 0.0025, 0.00125 below 2e-5 at the finest, falling by 4 +- 0.5 per halving): classes L, G, A0, A1R, A1L  (L: 7.5e-06, 1.9e-06, 4.7e-07 (4.00, 4.00); G: 5.5e-05, 1.4e-05, 3.4e-06 (3.99, 4.00); A0: 6.8e-05, 1.7e-05, 4.3e-06 (3.99, 4.00); A1R: 6.6e-05, 1.6e-05, 4.1e-06 (3.99, 4.00); A1L: 3.4e-05, 8.6e-06, 2.2e-06 (3.99, 4.00))
+    (N3: 35 s)
+[pass] N4: c = -1: c2 from the data of the spacelike slice V + U = const crossing the future horizon at V = 0 (through S), 0.5, 1.0 (4th-order d_V of dr from the slice values and its normal derivative) equals c2 of the horizon fit to 1e-6, Richardson in h (0.005, 0.0025, 0.00125)  (L: c2 = -9.61086221e-04, slices V = 0, 0.5, 1: 4.9e-10, 7.9e-10, 8.3e-09; G: c2 = -9.61086221e-04, slices V = 0, 0.5, 1: 1.0e-09, 1.4e-09, 4.2e-08; A0: c2 = 1.22704327e-02, slices V = 0, 0.5, 1: 1.1e-09, 4.9e-09, 6.8e-08; A1R: c2 = 1.04735366e-03, slices V = 0, 0.5, 1: 4.1e-10, 3.6e-09, 5.6e-08; A1L: c2 = 1.00715651e-02, slices V = 0, 0.5, 1: 7.1e-10, 3.7e-09, 4.9e-08)
+    (N4: 0 s)
+[pass] N5: #232's own linear solutions at c = -1 (linear.py, L3a's three left-ray pulses, h = 0.005, 0.0025 Richardson): c2 from the data of the spacelike slices p + sigma = const crossing the horizon at p = 1, 2, 4, 6 equals c2 of the horizon fit and #232's two-point c2 to 1e-6  (s0 = 2.5: c2 = -1.987994719e-04; slices at p = 1, 2, 4, 6 deviate by 3.3e-10, 3.4e-10, 3.4e-10, 3.5e-10 (raw at h = 0.005: 2.2e-06); #232's two-point c2 3.4e-10; 718 MB; s0 = 3.5: c2 = -1.040481039e-04; slices at p = 1, 2, 4, 6 deviate by 3.1e-10, 3.2e-10, 3.2e-10, 3.3e-10 (raw at h = 0.005: 3.0e-06); #232's two-point c2 3.2e-10; 718 MB; s0 = 4.5: c2 = -4.723353344e-05; slices at p = 1, 2, 4, 6 deviate by 3.0e-10, 3.1e-10, 3.1e-10, 3.1e-10 (raw at h = 0.005: 3.5e-06); #232's two-point c2 3.0e-10; 718 MB)
+    (N5: 221 s)
+[pass] N6: planted: pure-gauge data have a known horizon coefficient: dr_h = -eta(0) R'(rho_h) G(rho_h) V (c = -1.5; G from an mpmath quadrature) and -eta(0) e^{-1} V (Schwarzschild); the functional gives it to 1e-8 on exact data and 1e-6 on the marched solution, and the Y-version gives zero. A Schwarzschild test field leaves dr = 0 and has no linear horizon law (fit residual above 0.1 of the maximum at h = 0.01 and 0.005, not falling)  (c=-1.5: known dr_h coefficient -1.12925016e-02; exact data 3.6e-09, marched (Richardson) 1.4e-08; Y-version 5.0e-09, 2.0e-08 of it; Schwarzschild: known dr_h coefficient -1.10363832e-02; exact data 1.2e-10, marched (Richardson) 4.8e-10; Y-version 0.0e+00, 0.0e+00 of it; Schwarzschild test field (right-ray pulse): max |dr| = 0.0e+00 (decoupled); the horizon values of dphi have a linear-fit residual 0.79, 0.79 of their maximum at h = 0.01, 0.005 (no linear law))
+    (N6: 7 s)
+[pass] N7: control, c2 = 0 by construction: exact pure gauge at c = -1 gives |c2| / max |dr| below 1e-5 at h = 0.005, falling by 16 (10 to 22) from h = 0.01 (the stencil's h^4); the right-ray class R gives |c2| below 1e-5 of class L's at h = 0.00125 with the seed falling by 4 (3 to 5) per halving; the superposition L + lambda A1R with lambda from the horizon fits gives |c2| below 1e-5 of class L's on the slices V = 0, 0.5, 1  (exact pure gauge at c = -1: |c2| / max |dr| = 4.4e-05, 2.7e-06 at h = 0.01, 0.005 (ratio 16.1); class R: |c2| at h = 0.01 ... 0.00125 = 1.2e-07, 2.9e-08, 7.3e-09, 1.8e-09 (ratios 3.96, 3.99, 4.00); the finest is 1.9e-06 of class L's c2; tuned L + 0.917633 A1R: |c2| / |c2 of L| = 1.5e-13 (fit), 9.0e-10, 2.8e-09, 4.8e-08 (slices V = 0, 0.5, 1))
+    (N7: 15 s)
+[pass] N8: c = -1, classes G and A0: dr, dF, dphi and Y at S, two points in the interior (-Pi = V U = 0.04, 0.12), the static region and the left side converge at second order (Cauchy ratios over h = 0.01 ... 0.00125: 3.0 to 5.5 for the coarse pair, 3.5 to 4.5 for the fine pair)  (G interior1 Y: ratios 4.00, 4.00; G interior2 Y: ratios 3.99, 4.00; G exterior Y: ratios 4.00, 4.00; G left Y: ratios 4.00, 4.00)
+    (N8: 0 s)
+[pass] N9: the Kruskal-chart solver and linear.py's solver, on the same corner-constant data at (V, U) = (1, -1) = (p, sigma) = (0, 0), give the same c2 (Richardson of three resolutions each) to 1e-5, p in [0, 3]  (A0: c2 = 9.58974320e-04 (linear.py), 9.58975606e-04 (Kruskal), relative 1.3e-06; A1R: c2 = 1.57079633e-03 (linear.py), 1.57079912e-03 (Kruskal), relative 1.8e-06; A1L: c2 = 8.96604773e-04 (linear.py), 8.96605189e-04 (Kruskal), relative 4.6e-07)
+    (N9: 140 s)
+[pass] N10: the data are physical: the linearized constraints C_VV, C_UU of the evolved Kruskal-chart solution (classes G and A0, through S and the interior) shrink by a factor in [3.3, 4.7] from h = 0.01 to 0.005 and are below 5e-3 of the largest term at 0.005  (G: C_VV 2.9e-06 -> 7.3e-07, C_UU 3.0e-03 -> 7.6e-04 (ratios 4.00, 4.01; relative to the largest term 7.5e-04); A0: C_VV 2.5e-05 -> 6.3e-06, C_UU 9.5e-03 -> 2.3e-03 (ratios 3.95, 4.14; relative to the largest term 2.1e-04))
+    (N10: 1 s)
+[pass] N11: generic data: for 20 random smooth data (random corner constants dr, dr_V, dr_U and random Gaussian pulses of dphi on both rays, amplitudes up to 1e-3) c2 from the slices V = 0 and 0.5 equals the horizon fit to 1e-6 of max(|c2|, 1e-3), and no draw has |c2| below 1e-5  (worst slice-fit deviation 1.4e-08; |c2| from 3.40e-04 to 2.10e-02; median 7.74e-03)
+    (N11: 139 s)
+
+11 checks, 11 pass; failed: []; mutation None; 562 s
+
+######## horizon_sector.py table
+c = -1 black universe, Kruskal chart, rectangle V in [-0.05, 3], U in [-2, 0.06]; Richardson of h = 0.0025, 0.00125 (c2 of the horizon fit; of the slices crossing at V = 0, 0.5, 1)
+class            c1       c2 (fit)   c2 slice V=0          V=0.5            V=1   fit residual h=0.00125
+L     -9.307319e-13  -9.610862e-04  -9.610862e-04  -9.610862e-04  -9.610862e-04   4.7e-07
+G     -4.791066e-12  -9.610862e-04  -9.610862e-04  -9.610862e-04  -9.610863e-04   3.4e-06
+A0     1.658047e-03   1.227043e-02   1.227043e-02   1.227043e-02   1.227043e-02   4.3e-06
+A1R    5.236768e-05   1.047354e-03   1.047354e-03   1.047354e-03   1.047354e-03   4.1e-06
+A1L    2.094707e-03   1.007157e-02   1.007157e-02   1.007157e-02   1.007156e-02   2.2e-06
+R     -3.860170e-12   5.355126e-13   1.058474e-15  -1.531715e-12  -4.763594e-11   2.9e-01
+
+samples of the converged fields (class G, h = 0.00125): dr, dF, dphi, Y
+  S          (V, U) = (  0.00,   0.00)   1.06930e-11  -4.97098e-05   1.05264e-03   1.06930e-11
+  interior1  (V, U) = (  1.00,   0.04)  -1.36411e-03   1.41633e-03   4.42714e-03  -1.02586e-03
+  interior2  (V, U) = (  2.00,   0.06)  -4.65313e-03  -1.23847e-03   4.92984e-03  -3.16913e-03
+  exterior   (V, U) = (  1.00,  -0.50)   1.90953e-04   7.03675e-04   1.64328e-03  -7.68053e-04
+  left       (V, U) = ( -0.03,   0.05)   3.41362e-05  -1.94282e-05   9.98200e-04   3.15260e-05
+
+######## horizon_sector.py mutations RAW/runs run01_mut_
+== Mutations: fired sets in run01_mut_<name>.log against the declared ones ==
+  d_emF       fired ['D1']  declared ['D1']  equal
+  d_Gode      fired ['D1']  declared ['D1']  equal
+  d_hz        fired ['D2']  declared ['D2']  equal
+  d_prop      fired ['D4']  declared ['D4']  equal
+  d_gauge     fired ['D3a']  declared ['D3a']  equal
+  d_res       fired ['D6']  declared ['D6']  equal
+  d_log       fired ['D7']  declared ['D7']  equal
+  k_emF       fired ['N1', 'N2', 'N3', 'N4', 'N6', 'N7', 'N9', 'N10', 'N11']  declared ['N1', 'N2', 'N3', 'N4', 'N6', 'N7', 'N9', 'N10', 'N11']  equal
+  k_FV        fired ['N1', 'N2', 'N3', 'N4', 'N6', 'N7', 'N9', 'N10', 'N11']  declared ['N1', 'N2', 'N3', 'N4', 'N6', 'N7', 'N9', 'N10', 'N11']  equal
+  k_cross     fired ['N2', 'N3', 'N4', 'N6', 'N7', 'N9', 'N10', 'N11']  declared ['N2', 'N3', 'N4', 'N6', 'N7', 'N9', 'N10', 'N11']  equal
+  k_con       fired ['N3', 'N4', 'N7', 'N11']  declared ['N3', 'N4', 'N7', 'N11']  equal
+  fn_aT       fired ['N4', 'N5', 'N6', 'N7', 'N11']  declared ['N4', 'N5', 'N6', 'N7', 'N11']  equal
+  fn_dirU     fired ['N4', 'N5', 'N6', 'N7', 'N11']  declared ['N4', 'N5', 'N6', 'N7', 'N11']  equal
+  fn_b        fired ['N5']  declared ['N5']  equal
+  plant_sign  fired ['N6']  declared ['N6']  equal
+  ctl_lambda  fired ['N7']  declared ['N7']  equal
+16 of 16 equal

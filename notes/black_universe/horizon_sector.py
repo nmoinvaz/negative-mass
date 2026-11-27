@@ -7,6 +7,7 @@ is free in regular data on a spacelike slice through the horizon, in the Kruskal
     horizon_sector.py derive [--mutate=NAME]        sympy / mpmath checks of the formulation (D-series)
     horizon_sector.py check  [--only=..] [--mutate=NAME]   numerical checks, planted case and control (N-series); exit 1 when one fails
     horizon_sector.py table                         the c2 table of the classes through S and across the horizon
+    horizon_sector.py mutations DIR PREFIX          fired sets of the stored logs DIR/PREFIX<name>.log against the declared ones
 
 Chart. Kruskal null coordinates x+ = V = e^{b p}, x- = U = -Q(sigma) (b = sqrt2 kappa), Pi = -V U = e^{2 kappa x} (static region V > 0 > U), the metric
 -2 e^{-F} dV dU + r^2 dOmega^2 with e^{-F} = G(rho)/kappa, G = d rho/d Pi = A/(2 kappa Pi), r = R(rho), phi = sqrt2 arctan rho, rho = rho(Pi) analytic through
@@ -1066,6 +1067,26 @@ def table():
         print(f"  {k:10s} (V, U) = ({Vp:6.2f}, {Up:6.2f})  " + "  ".join(f"{v:12.5e}" for v in run["samples"][k]))
 
 
+def report_mutations(raw, prefix):
+    """Fired sets of stored mutation logs (the 'failed: [...]' line of each) against the declared ones."""
+    import ast
+    import re
+    print("== Mutations: fired sets in %s<name>.log against the declared ones ==" % prefix)
+    n_eq = 0
+    for name, declared in MUTATIONS.items():
+        fn = os.path.join(raw, f"{prefix}{name}.log")
+        if not os.path.exists(fn):
+            print(f"  {name:11s} NO LOG")
+            continue
+        m = re.findall(r"failed: (\[.*?\]); mutation", open(fn).read())
+        fired = ast.literal_eval(m[-1]) if m else None
+        eq = fired is not None and sorted(fired) == sorted(declared)
+        n_eq += eq
+        print(f"  {name:11s} fired {fired}  declared {declared}  {'equal' if eq else 'DIFFERENT'}")
+    print(f"{n_eq} of {len(MUTATIONS)} equal")
+    return n_eq == len(MUTATIONS)
+
+
 def main():
     sub = next((a for a in sys.argv[1:] if not a.startswith("--")), "check")
     if sub == "derive":
@@ -1075,6 +1096,9 @@ def main():
     elif sub == "table":
         table()
         return
+    elif sub == "mutations":
+        args = [a for a in sys.argv[2:] if not a.startswith("--")]
+        sys.exit(0 if report_mutations(args[0], args[1] if len(args) > 1 else "") else 1)
     else:
         sys.exit(f"unknown command {sub}")
     sys.exit(1 if bad else 0)
