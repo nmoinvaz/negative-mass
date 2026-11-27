@@ -239,3 +239,48 @@ critical_ghost.md §1.3 ("Has the boundary been treated as a critical phenomenon
 
 `threshold.py` (this driver), `threshold_output.txt` (its analysis of the runs of record), this note; raw `negative-mass-raw/I40-dh610` (README with the criteria, `dev/`, `runs/`, `scripts/`).
 `python3 threshold.py job|g6|planted|analyze` as in its docstring, from this directory with numba available; `--kernel` is not an option: the production kernel is numba, as in #39.
+
+## Coordinator's review
+
+Review of branch `wip/i40-ellis-threshold` at 2e97643 (code 13a1301) and raw `I40-dh610` at 99423f6, recorded in negative-mass-raw `I40-mac-review`
+(criteria committed at e7e61a8 before the first run; runs at 2376dd2). On the Mac (Apple M5), Python 3.14.7, numba 0.68.1, nice 10, two processes.
+
+- **Scope.** The branch adds this note, `threshold.py` and `threshold_output.txt`, nothing else. `dn.py` and `checks.py` are unchanged.
+- **Rerun.**
+  - The analysis of record over the runner's 26 jobs prints every line of `threshold_output.txt` again. The only differences are one relative
+    difference of two equal slopes (1.52e-12 against 1.51e-12) and the timing. The tally is the same: 100 of 111 checks, the same 11 failures.
+  - 13 of the 26 jobs were rerun: D = 4 S, O and G at three h; D = 5 S at the two coarse h; D = 6 S at the two coarse h.
+  - In each job p*ₕ equals the runner's within 2.9e-12, and every series point with e ≤ 9 has the runner's fate and event cell.
+  - Points with e ≥ 9.5 to 10 differ between the two machines in 10 of the 13 jobs. The rerun's slopes over [1e-11, 1e-3] move by up to 1.4e-4 through
+    them (D = 4 S, h = 0.005).
+  - The review's first command rounded h at D = 5 to six figures. That moved p*ₕ by 1.8e-10, which is p*ₕ ∝ h² at the rounded h. The error is the
+    review's; rerun 2 used the runner's h and agrees (amendment A1 there).
+- **Independent check** (`threshold_check.py`, a copy of the review's `ind40.py`; output `threshold_check_output.txt`).
+  - The coordinator wrote a second double-null code for family S. It integrates the background and the ray constraint itself. It uses its own diamond
+    scheme on the half x⁺ ≥ x⁻, which the symmetry allows. Its events are r = 0.5 and r = 2 on the throat (the diagonal), interpolated in t.
+  - It shares no code with `dn.py` or `threshold.py`. What it shares: the field equations (derived again in the review of #39), the family's
+    definition, and W from #195.
+  - 5 of 5 criteria pass:
+
+    | D | slope against 1/W at h₁, h₂, h₃ ([1e-9, 1e-4]) | #40's S points at its finest h, refit over [1e-9, 1e-4] | p*ₕ order |
+    |---|---|---|---|
+    | 4 | −3.3e-5, −6.9e-6, −2.6e-6 | 0.846040 (−5.9e-6) | 2.000 |
+    | 5 | −4.9e-4, −1.35e-4, −2.5e-5 | 0.578786 (−2.9e-5) | 2.001 |
+    | 6 | −6.3e-3, −1.56e-3, −4.7e-4 | 0.461770 (−3.3e-4) | 2.007 |
+
+  - The two codes agree to 4e-6 at D = 4 and 5 and to 1.4e-4 at D = 6, on the same window. Their p*ₕ agree to 2e-4 relative, so the two schemes'
+    truncation seeds are close.
+  - The slope in the throat's proper time τ equals the slope in t to 1e-5.
+  - Mutations: `oracle-slope`, `fit-pstar` and `time-unit` fire exactly their targets. `time-unit` gives 0.598243 = 1/(√2W). `sphere-coef` stops at
+    the bracket before any criterion is evaluated, as #40's six JOB mutations do.
+- **What this changes in the answer.**
+  - For S and O the slope is 1/W, converging at second order in h at D = 5 and 6 once the window stops at 1e-4. At the finest h it is within 3e-6,
+    3e-5 and 5e-4 of 1/W at D = 4, 5, 6 (*numerical evidence*, two codes).
+  - **Update from the review:** #40's D = 6 offset (−3.6e-3 and −5.0e-3, "does not tighten") comes from the decade 1e-4 to 1e-3 of its primary
+    window. Its own points over [1e-9, 1e-4] give −3.3e-4. This confirms the runner's conjecture that the collapse side is not linear above 1e-5
+    there.
+  - #40's +5.6e-4 at D = 4 is the event-row quantization this note describes. With interpolated events and the same data window it is −5.9e-6.
+  - G's departure from 1/W stands as reported, with its cause open.
+- **Follow-ups.** The four recommended tasks are filed as #225 to #228 (see the issues). Task 1 carries the review's remark that the asymmetric
+  static members have *shorter* e-folding times per throat radius (critical_ghost.md §1.1), so a different static member alone does not explain
+  G's larger slope.
