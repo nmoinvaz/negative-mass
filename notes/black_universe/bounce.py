@@ -5,11 +5,13 @@ See README.md in this directory, section "Sourced black bounce and magnetic blac
 
     bounce.py check    [--mutate=M]     background, linearization with the NED/Maxwell term, family coefficients
     bounce.py planted  [--res=R] [--mutate=M]   P1: Ellis wormhole through the S family; W^2 a^2 against w2_output.txt
+    bounce.py planted_complex [--res=R] [--mutate=M]   P4: a complex bound state of a known potential through the complex-plane shooting
+    bounce.py complex ID [ID ...] [--out=FILE.json]   C1: complex eigenvalues of the spectral check refined by shooting at complex W (R1, R2)
     bounce.py planted_low [--res=R] [--mutate=M]   P3: a weakly bound state (W = 3e-5) of a known potential through the low-W stage's machinery
     bounce.py count ID [--res=R1|R2] [--stage=main|low] [--out=FILE.json] [--mutate=M]    growing modes of one member (ID as listed by `members`);
                                        main: W in [1e-3, 8]; low: W in [1e-5, 1e-3]; the Sturm count (x_h >= 0) is included
     bounce.py members                      the declared members
-    bounce.py report DIR                   table, P2 (zero charge against #212), R1 v R2, low stage, Sturm, from DIR/*.json
+    bounce.py report DIR [--complex=FILE]  table, P2 (zero charge against #212), R1 v R2, low stage, Sturm, from DIR/*.json
     bounce.py spectral DIR                 independent Chebyshev check of the counts in DIR/*_R2.json
     bounce.py controls [--base=DIR] [--only=M1,M2]   runs every --mutate=M and asserts that its target fires (DIR: finished R2 results to reuse)
 
@@ -47,6 +49,10 @@ W_LOW_LO, W_LOW_HI = 1e-5, 1e-3
 LOW = {"R1": dict(nW=40, rmaxL=20.0), "R2": dict(nW=100, rmaxL=20.0)}
 ROOT_AGREE_LOW = 1e-4                                      # relative, low stage R1 against R2
 PT_TOL = {"R1": 1e-3, "R2": 1e-4}                          # relative on W, planted Poeschl-Teller weak bound state
+C_AGREE = 1e-6                                             # relative on W, complex shooting R1 against R2
+C_TOL_SPEC = 1e-3                                          # relative on lambda, complex shooting against the S-B spectral eigenvalue
+CPT_TOL = {"R1": 1e-6, "R2": 1e-8}                         # relative on W, planted complex bound state (Poeschl-Teller, complex depth)
+CPT_NU = 0.3 + 0.2j                                        # V = -nu (nu + 1) kappa^2 sech^2(kappa x), bound state W = nu kappa (kappa = 1)
 PT_KAPPA, PT_NU = 1.0, 3e-5                                # V = -nu (nu + 1) kappa^2 sech^2(kappa x): one bound state, W = nu kappa
 LAM_MIN = W_LO**2                                          # counted real eigenvalues of the spectral check: lambda > W_LO^2
 SPEC = {"S-A": dict(N=401, X0=45.0, kX=12.0, tol_nothroat=1e-2, tol_throat=1e-2),
@@ -135,7 +141,7 @@ class Bg:
             self.res.update(rmax0=4.0, rmaxW=0.0)
         if mutating("hz_start"):
             self.res.update(z0=0.05)
-        self.ned = 0.0 if mutating("ned_off") else 1.0
+        self.ned = 0.0 if (mutating("ned_off") or mutating("cplx_ned")) else 1.0
         self.xh = self.A1 = None
         self.taylor = None
         self.series = None
@@ -511,6 +517,200 @@ def planted_low_command(res_list=("R1", "R2")):
         print(("PASS  " if ok else "FAIL  ") + f"P3 planted weak bound state {res}: roots {len(roots)} (declared 1), W = "
               f"{roots[0] if roots else float('nan'):.10e}, reference {ref:.10e}, relative difference "
               f"{abs(roots[0] - ref) / ref if roots else float('nan'):.3e} (declared <= {PT_TOL[res]:g}); range [{lo:g}, {W_LOW_HI:g}], {nW} points", flush=True)
+    return ok_all
+
+
+# ------------------------------------------------------------------------------------------------ complex-plane shooting (amendment A8)
+NORM_C = 0.37 + 0.61j                                      # fixed complex functional: normalizing by Y + NORM_C Y_x keeps the mismatch analytic in W
+
+
+def normc(s):
+    """divide (Y, Y_x) by the analytic scalar Y + NORM_C Y_x (the real hypot normalization of the real code is not analytic in W)"""
+    s[1:] /= (s[1] + NORM_C * s[2])
+    return s
+
+
+def make_ev_c(target, direction):
+    def ev(x, s):
+        return s[0].real - target
+    ev.terminal = True; ev.direction = direction
+    return ev
+
+
+def run_chunks_c(f, s, direction, W, rtol, atol, ev):
+    """as stability.run_chunks, complex state (s[0] is a real position stored as complex), no node counting"""
+    x = 0.0
+    L = 6.0 / max(abs(W), 1e-3)
+    while True:
+        sol = solve_ivp(f, [x, x + direction * L], s, method="DOP853", rtol=rtol, atol=atol, events=[ev])
+        s = sol.y[:, -1].copy(); x = sol.t[-1]
+        s = normc(s)
+        if sol.status == 1:
+            return s
+        if abs(x) > 1e7:
+            raise RuntimeError("integration did not reach the stop event")
+
+
+def rhs_x_c(bg, W):
+    W2 = W * W
+
+    def f(x, s):
+        r = s[0].real; Y, Yx = s[1], s[2]
+        A = bg.A(r); Ap = bg.Ap(r)
+        Cx, Dx = coef_x(bg, r, A, A / r, Ap)
+        return [A, Yx, Cx * Yx + Dx * Y + W2 * Y]
+    return f
+
+
+def rhs_zeta_c(bg, W):
+    W2 = W * W
+
+    def f(x, s):
+        zeta = s[0].real; Y, Yx = s[1], s[2]
+        z = math.exp(zeta); r = bg.xh + z
+        at = bg.a_over_z(z); A = z * at
+        Ar = at if bg.xh == 0.0 else A / r
+        Cx, Dx = coef_x(bg, r, A, Ar, bg.Ap(r))
+        return [at, Yx, Cx * Yx + Dx * Y + W2 * Y]
+    return f
+
+
+def left_solution_c(bg, W, rm):
+    """as left_solution for complex W (Re W > 0), kinds 'twoend' and 'simple' with x_h < 0 (throat in the static region)"""
+    p = bg.res; rtol = p["rtol"]; atol = [1e-12, 1e-30, 1e-30]
+    Wl = W.conjugate() if mutating("cplx_conj") else W                    # control: the wrong branch of W in the start vector
+    if bg.kind == "twoend":
+        r0 = -max(p["rmax0"], p["rmaxW"] / W.real)
+        lg = Wl + bg.Vhat(r0) / (2 * Wl)
+        s = np.array([r0, 1.0, bg.A(r0) / r0 + lg], dtype=complex); s = normc(s)
+        s = run_chunks_c(rhs_x_c(bg, W), s, +1, W, rtol, atol, make_ev_c(-p["delta"], 1))
+    elif bg.kind == "simple" and bg.xh < 0:
+        s = np.array([math.log(p["z0"]), 1.0, Wl], dtype=complex); s = normc(s)
+        rstop = -min(p["delta"], 0.5 * abs(bg.xh))
+
+        def ev(x, ss):
+            return bg.xh + math.exp(ss[0].real) - rstop
+        ev.terminal = True; ev.direction = 1
+        s = run_chunks_c(rhs_zeta_c(bg, W), s, +1, W, rtol, atol, ev)
+        s = np.array([bg.xh + math.exp(s[0].real), s[1], s[2]], dtype=complex)
+    else:
+        raise ValueError("complex shooting is implemented for members with the throat in the static region")
+    rstart = s[0].real
+    d = -rstart
+    sol = solve_ivp(lambda th, y: rhs_arc(bg, W, d)(th, y), [np.pi, 0.0], [s[1], s[2] / bg.A(rstart)], method="DOP853", rtol=rtol, atol=1e-30)
+    Yc, Yrc = sol.y[:, -1]
+    s = np.array([d, Yc, Yrc * bg.A(d)], dtype=complex); s = normc(s)
+    return run_chunks_c(rhs_x_c(bg, W), s, +1, W, rtol, atol, make_ev_c(rm, 1))
+
+
+def right_solution_c(bg, W, rm):
+    p = bg.res; rtol = p["rtol"]
+    r0 = max(p["rmax0"], p["rmaxW"] / W.real)
+    lg = -W - bg.Vhat(r0) / (2 * W)
+    s = np.array([r0, 1.0, bg.A(r0) / r0 + lg], dtype=complex); s = normc(s)
+    return run_chunks_c(rhs_x_c(bg, W), s, -1, W, rtol, [1e-12, 1e-30, 1e-30], make_ev_c(rm, -1))
+
+
+def mismatch_c(bg, W):
+    rm = match_point(bg)
+    Lv = left_solution_c(bg, W, rm); Rv = right_solution_c(bg, W, rm)
+    return Lv[1] * Rv[2] - Lv[2] * Rv[1]
+
+
+def secant_c(fun, w0, w1, tol=1e-13, maxit=60):
+    """root of the complex Wronskian mismatch in W: a 2-D real root (Re, Im) of (Re D, Im D) from w0 (hybrid Powell, finite-difference Jacobian);
+    the mismatch is analytic in W only up to the real positive normalization of each solution, so a complex secant is not used. w1 only sets the scale."""
+    from scipy.optimize import root
+    sc = abs(fun(w0 * 1.01))                                          # scale: the mismatch 1 % away from the start (the start may already be at the root)
+
+    def F(v):
+        d = fun(complex(v[0], v[1])) / sc
+        return [d.real, d.imag]
+    r = root(F, [w0.real, w0.imag], method="hybr", tol=tol)
+    w = complex(r.x[0], r.x[1])
+    if np.hypot(*F(r.x)) > 1e-5:
+        return complex("nan"), -1
+    return w, int(r.nfev)
+
+
+def spectral_complex(spec, W_ref=0.03):
+    """complex eigenvalues lambda = W^2 (Im > 0, Re > 1e-3) of the S-B spectral problem"""
+    form, ev, X, bg = spectral_member(spec, "S-B", W_ref)
+    return [e for e in ev if abs(e.imag) >= 1e-6 * abs(e) and e.real > 1e-3 and e.imag > 0]
+
+
+def complex_command(mids, res_list=("R1", "R2"), out=None):
+    """C1: every complex eigenvalue the spectral check finds (Re lambda > 1e-3) is refined by shooting at complex W (secant on the
+    Wronskian mismatch from sqrt(lambda_spectral)): agreement with the spectral lambda to C_TOL_SPEC and of R1 with R2 to C_AGREE"""
+    ok_all = True
+    found = []
+    for mid in mids:
+        spec = member_spec(mid)
+        lams = spectral_complex(spec)
+        if not lams:
+            print(f"FAIL  C1 {mid}: no complex eigenvalue with Re lambda > 1e-3 in the S-B spectral problem", flush=True)
+            ok_all = False
+            continue
+        for lam in lams:
+            W0 = np.sqrt(complex(lam))
+            if W0.real < 0:
+                W0 = -W0
+            Ws = {}
+            for res in res_list:
+                bg = Bg(spec["fam"], spec["m"], spec["q"], res, spec["at_throat"])
+                try:
+                    W, it = secant_c(lambda w: mismatch_c(bg, w), W0, None)
+                    Ws[res] = (W, it)
+                except Exception as e:                       # a control that breaks the start can fail to converge
+                    Ws[res] = (complex("nan"), -1)
+            agree = len(Ws) == 2 and abs(Ws["R1"][0] - Ws["R2"][0]) / abs(Ws["R2"][0]) <= C_AGREE
+            W2 = Ws[res_list[-1]][0]
+            dl = abs(W2 * W2 - lam) / abs(lam)
+            ok = bool(agree and dl <= C_TOL_SPEC)
+            ok_all &= ok
+            found.append(dict(id=mid, W=[W2.real, W2.imag], lam=[(W2 * W2).real, (W2 * W2).imag], lam_spectral=[lam.real, lam.imag], confirmed=ok))
+            print(("PASS  " if ok else "FAIL  ") + f"C1 complex shooting {mid}: W = {W2.real:.10f} {W2.imag:+.10f}i (R2; R1 {Ws['R1'][0].real:.10f} {Ws['R1'][0].imag:+.10f}i), "
+                  f"lambda = {(W2*W2).real:.8f} {(W2*W2).imag:+.8f}i, spectral S-B lambda = {lam.real:.8f} {lam.imag:+.8f}i, |dlambda|/|lambda| = {dl:.2e} (declared <= {C_TOL_SPEC:g}), "
+                  f"R1 v R2 |dW|/|W| = {abs(Ws['R1'][0] - Ws['R2'][0]) / abs(Ws['R2'][0]):.2e} (declared <= {C_AGREE:g}); secant iterations {Ws['R1'][1]}, {Ws['R2'][1]}", flush=True)
+    if out:
+        json.dump(found, open(out, "w"), indent=1)
+    return ok_all
+
+
+def planted_complex_command(res_list=("R1", "R2")):
+    """P4: a complex eigenvalue of a known problem through the complex machinery (run_chunks_c, secant): u'' = (V + W^2) u,
+    V = -nu (nu + 1) kappa^2 sech^2(kappa x), nu = 0.3 + 0.2i; for Re nu > 0 and |nu| < 1 the single bound state u = sech^nu is W = nu kappa."""
+    ok_all = True
+    nu = CPT_NU * (1.3 if mutating("cplx_V") else 1.0)                    # control: wrong potential depth
+    kap = 1.0
+    ref = CPT_NU * kap
+    V = lambda x: -nu * (nu + 1) * kap**2 / np.cosh(np.clip(kap * x, -300, 300))**2
+    xw = 60.0                                                            # the well is |x| < 20 (V < 1e-17 beyond); chunks of 6/|W| = 16 cannot straddle it from |x| = 60
+    for res in res_list:
+        p = dict(RES[res]); rtol = p["rtol"]
+
+        def mism(W):
+            if W.real < 1e-3:
+                raise ValueError("Re W too small")
+            r0 = max(p["rmax0"], 20.0 / W.real, xw + 60.0)
+            Wl = W.conjugate() if mutating("cplx_conj") else W
+            f = lambda x, s: [1.0, s[2], (V(s[0].real) + W * W) * s[1]]
+            sl = np.array([-r0, 1.0, Wl], dtype=complex); sl = normc(sl)
+            sl = run_chunks_c(f, sl, +1, W, rtol, [1e-12, 1e-30, 1e-30], make_ev_c(-xw, 1))
+            sol = solve_ivp(f, [sl[0].real, 0.0], sl, method="DOP853", rtol=rtol, atol=[1e-12, 1e-30, 1e-30], max_step=0.5); sl = sol.y[:, -1].copy(); sl = normc(sl)
+            sr = np.array([r0, 1.0, -W], dtype=complex); sr = normc(sr)
+            sr = run_chunks_c(f, sr, -1, W, rtol, [1e-12, 1e-30, 1e-30], make_ev_c(xw, -1))
+            sol = solve_ivp(f, [sr[0].real, 0.0], sr, method="DOP853", rtol=rtol, atol=[1e-12, 1e-30, 1e-30], max_step=0.5); sr = sol.y[:, -1].copy(); sr = normc(sr)
+            return sl[1] * sr[2] - sl[2] * sr[1]
+        try:
+            W, it = secant_c(mism, ref * 1.15 + 0.03j, None)
+        except Exception:
+            W, it = complex("nan"), -1
+        rel = abs(W - ref) / abs(ref)
+        ok = bool(rel <= CPT_TOL[res])
+        ok_all &= ok
+        print(("PASS  " if ok else "FAIL  ") + f"P4 planted complex bound state {res}: W = {W.real:.10f} {W.imag:+.10f}i, reference {ref.real:.10f} {ref.imag:+.10f}i, "
+              f"relative difference {rel:.3e} (declared <= {CPT_TOL[res]:g}); secant iterations {it}", flush=True)
     return ok_all
 
 
@@ -1055,12 +1255,13 @@ def spectral_command(d):
             form, ev, X, bg = spectral_member(spec, which, min(ref) if ref else None)               # box from the smallest rate
             realpos = [e.real for e in ev if abs(e.imag) < 1e-6 * abs(e)]
             cplx = [e for e in ev if abs(e.imag) >= 1e-6 * abs(e) and e.real > 1e-3]
+            cplx_txt = "".join(f" {e.real:.8f}{e.imag:+.8f}i" for e in cplx if e.imag > 0)
             tol = SPEC[which]["tol_throat" if has_throat(bg) else "tol_nothroat"]
             ok = len(realpos) == len(ref) and not cplx and all(abs(math.sqrt(a) - b) / b <= tol for a, b in zip(sorted(realpos), sorted(ref)))
             ok_all &= ok
             rel = [abs(math.sqrt(a) - b) / b for a, b in zip(sorted(realpos), sorted(ref))]
             print(("PASS  " if ok else "FAIL  ") + f"S6 spectral {which} ({form}-form, X = {X:.0f}) {mid}: positive real eigenvalues {len(realpos)} "
-                  f"(shooting {len(ref)}), complex with Re > 1e-3: {len(cplx)}, W = {[round(math.sqrt(a), 9) for a in sorted(realpos)]}, "
+                  f"(shooting {len(ref)}), complex with Re > 1e-3: {len(cplx)}{(' (lambda,' + cplx_txt + ' and conjugates)') if cplx else ''}, W = {[round(math.sqrt(a), 9) for a in sorted(realpos)]}, "
                   f"|dW|/W = {['%.2e' % r for r in rel]} (declared <= {tol:g})", flush=True)
     return ok_all
 
@@ -1082,10 +1283,14 @@ def agree_resolutions(o1, o2):
     return same and rel <= ROOT_AGREE, rel
 
 
-def report_command(d):
+def report_command(d, cfile=None):
     rows = load_results(d)
     ok_all = True
     tab = table_212()
+    cplx = {}
+    for c in (json.load(open(cfile)) if cfile else []):
+        if c["confirmed"]:
+            cplx.setdefault(c["id"], []).append(c)
     print("Radial modes, b = 1 (W in units 1/b). Main stage: W in [%g, %g], R1 and R2; low stage: W in [%g, %g], R1 and R2; Sturm: nodes of the zero-energy "
           "solution (x_h >= 0, no range)" % (W_LO, W_HI, W_LOW_LO, W_LOW_HI))
     print("%-10s %7s %8s %9s %9s %7s | %-3s %-3s | %-34s | %-3s %-3s | %-6s | %-5s | %s" % (
@@ -1137,6 +1342,8 @@ def report_command(d):
                 dW = "-" if W212 is None else "%.1e" % (abs(o["roots"][0]["W"] - W212) / W212)
                 notes.append(f"P2 {rr} vs #212 c = {c212:g} (n {n212}, W {W212}): dW/W {dW} " + ("ok" if good else "FAIL"))
         Ws = "; ".join(f"{x['W']:.10f}" for x in ref["roots"]) or "none"
+        for c in cplx.get(mid, []):
+            notes.append(f"complex pair W = {c['W'][0]:.6f} {c['W'][1]:+.6f}i and conjugate (C1, spectral and shooting)")
         Wl = "; ".join(f"{x['W']:.6e}" for x in (l2 or l1 or {"roots": []})["roots"])
         if Wl:
             Ws += "  | low " + Wl
@@ -1145,8 +1352,8 @@ def report_command(d):
             label, ref["m"], ref["q"], "-" if ref["xh"] is None else "%.5f" % ref["xh"], "-" if ref["kappa"] is None else "%.5f" % ref["kappa"],
             "-" if ref["p"] is None else "%.4f" % ref["p"], r1["n_roots"] if r1 else "-", r2["n_roots"] if r2 else "-", Ws[:34] if len(Ws) <= 34 else Ws,
             l1["n_roots"] if l1 else "-", l2["n_roots"] if l2 else "-", "-" if st is None else st, "-" if count is None else count, "; ".join(notes)))
-    print("members with at least one growing mode (count, else main stage): %d of %d" % (
-        sum(1 for m in rows if (total[m] if total.get(m) is not None else (rows[m].get("R2") or rows[m].get("R1"))["n_roots"]) > 0), len(rows)))
+    print("members with at least one growing mode (real roots by shooting and Sturm, or a confirmed complex pair): %d of %d" % (
+        sum(1 for m in rows if m in cplx or (total[m] if total.get(m) is not None else (rows[m].get("R2") or rows[m].get("R1"))["n_roots"]) > 0), len(rows)))
     return ok_all
 
 
@@ -1161,12 +1368,14 @@ CONTROLS = {
     "bg_kappa": ("check", "S3 horizons"), "az_series": ("check", "S2 float64"), "ser_coef": ("check", "S2 float64"),
     "eps": ("planted", "P1 planted"), "throat_wall": ("planted", "P1 planted"), "rmax": ("planted", "P1 planted"),
     "hz_start": ("agree", "R1 v R2"), "ned_off": ("agree", "R1 v R2"),
+    "cplx_conj": ("plantedcomplex", "P4 planted"), "cplx_V": ("plantedcomplex", "P4 planted"), "cplx_ned": ("complex", "C1 complex"),
     "lowW_V": ("plantedlow", "P3 planted"), "lowW_range": ("plantedlow", "P3 planted"), "rmax_low": ("agreelow", "low R1 v R2"),
     "scan_range": ("sturm", "S9 Sturm"), "sturm_sign": ("sturm", "S9 Sturm"), "spec_sign": ("spectral", "S6 spectral"),
 }
 CONTROL_MEMBER = "B3_q0.15"
 CONTROL_MEMBER_STURM = "B1_q0.3"
 CONTROL_MEMBER_LOW = "S_m1"
+CONTROL_MEMBER_COMPLEX = "S_m0.3"
 
 
 def run_count(mid, res, mut=None, out=None):
@@ -1198,6 +1407,18 @@ def controls_command(basedir=None, only=None):
             good, rel = agree_resolutions(o, base)
             fired = not good
             detail = f"{CONTROL_MEMBER}: n_roots {o['n_roots']} against {base['n_roots']}; max |dW|/W = {rel:.3e} (declared <= {ROOT_AGREE:g})"
+        elif kind == "plantedcomplex":
+            r = subprocess.run([sys.executable, __file__, "planted_complex", "--res=R1", "--mutate=" + m], capture_output=True, text=True)
+            txt = r.stdout + r.stderr
+            fired = r.returncode == 1 and any(target in l and l.startswith("FAIL") for l in txt.splitlines())
+            detail = "; ".join(l[:160] for l in txt.splitlines() if l.startswith("FAIL"))[:300]
+            ret = r.returncode
+        elif kind == "complex":
+            r = subprocess.run([sys.executable, __file__, "complex", CONTROL_MEMBER_COMPLEX, "--mutate=" + m], capture_output=True, text=True)
+            txt = r.stdout + r.stderr
+            fired = r.returncode == 1 and any(target in l and l.startswith("FAIL") for l in txt.splitlines())
+            detail = "; ".join(l[:200] for l in txt.splitlines() if l.startswith("FAIL"))[:300]
+            ret = r.returncode
         elif kind == "plantedlow":
             r = subprocess.run([sys.executable, __file__, "planted_low", "--res=R1", "--mutate=" + m], capture_output=True, text=True)
             txt = r.stdout + r.stderr
@@ -1246,6 +1467,10 @@ def main():
         sys.exit(0 if check_command() else 1)
     if cmd == "planted":
         sys.exit(0 if planted_command((opts["--res"],) if "--res" in opts else ("R1", "R2")) else 1)
+    if cmd == "planted_complex":
+        sys.exit(0 if planted_complex_command((opts["--res"],) if "--res" in opts else ("R1", "R2")) else 1)
+    if cmd == "complex":
+        sys.exit(0 if complex_command(pos[1:], out=opts.get("--out")) else 1)
     if cmd == "planted_low":
         sys.exit(0 if planted_low_command((opts["--res"],) if "--res" in opts else ("R1", "R2")) else 1)
     if cmd == "count":
@@ -1260,7 +1485,7 @@ def main():
         print("\n".join(member_ids()))
         sys.exit(0)
     if cmd == "report":
-        sys.exit(0 if report_command(pos[1]) else 1)
+        sys.exit(0 if report_command(pos[1], opts.get("--complex")) else 1)
     if cmd == "spectral":
         sys.exit(0 if spectral_command(pos[1]) else 1)
     if cmd == "controls":
