@@ -9,7 +9,7 @@ Status words as in AGENTS.md. Every count below is *numerical evidence* (a conve
 ## Result
 
 - Nineteen of the twenty black universes tested (c from −10 to −0.01 in units b = 1, c ≠ −1) have **exactly one growing radial mode**; the
-  member c = −1, whose horizon sits at the area minimum, has **none**. **Update from #232:** none under the condition used here, u = Y/ρ → 0 at the horizon, which sets Y = 0 on it. For perturbations with Y regular and nonzero on the horizon, the linear double-null response grows at κ (Y_h ∝ e^{κv}; numerical evidence, and the horizon exponents 1 ± W/A₁ checked symbolically in #232's review). Whether such perturbations are free in physical Cauchy data is #248. R1 and R2 agree to 1.2e-8 or better at every member, and an
+  member c = −1, whose horizon sits at the area minimum, has **none**. **Update from #232:** none under the condition used here, u = Y/ρ → 0 at the horizon, which sets Y = 0 on it. For perturbations with Y regular and nonzero on the horizon, the linear double-null response grows at κ (Y_h ∝ e^{κv}; numerical evidence, and the horizon exponents 1 ± W/A₁ checked symbolically in #232's review). Whether such perturbations are free in physical Cauchy data is #248. R1 and R2 agree to 1.2e-8 or better at every member, and an **Update from #248** ([horizon_sector.md](horizon_sector.md)): such perturbations are physical. The coefficient c₂ = ∂_V δr of the growing sector on the horizon is a free number of regular Cauchy data on a slice through the horizon; the solution Y = c₂ V G(Π) is smooth across the bifurcation surface and into the interior; 20 of 20 random regular data have c₂ ≠ 0. So the linear problem at c = −1 has one growing direction of rate κ, like the other 19 members, and #212's count of none is the count for c₁ = c₂ = 0 (u = Y/ρ → 0), which data supported away from the horizon crossing satisfy (checked symbolically and numerical evidence; the coordinator's transport along the data ray reproduces c₂ of a pulse to 2e-8).
   independent spectral solver gives the same counts.
 - This is the verdict of [BKZ12] member by member: no disagreement at the 20 members, eight of which they test in the time domain.
 - The stable member is isolated. For c → −1 from either side the growth rate tends to the surface gravity κ = A′(ρ_h)/2 = 2/π ≈ 0.6366
@@ -135,6 +135,10 @@ W is in units 1/b. The bracket column is W in [BKZ12]'s units (m = 1/3), i.e. ti
 
 ## 5. Why c = −1 is alone
 
+**Update from #248:** c = −1 is alone only in this section's sense, the L² count with u = Y/ρ → 0. With Y regular on the horizon it has a growing
+direction of rate κ, whose coefficient is free in regular Cauchy data ([horizon_sector.md](horizon_sector.md)). What follows explains why the bound state of
+the count disappears at c = −1, not why the member is stable.
+
 Near the horizon, with the scaling ρ = ρ_h t at fixed t and ρ_h → 0, V̂ in x tends to a fixed well (sympy, S7, S7c; the members c = −1.0001 and
 −0.9999 follow it to 1.5e-3 and 1.3e-3, S7b, S7d):
 
@@ -216,7 +220,7 @@ special class of black universes where the event horizon coincides with the mini
 need adding for it to be read correctly:
 - the "class" is one member of a one-parameter family (c = −1, 3πm = 2b), not an open set;
 - it is a knife edge: members at c = −1 ± 10⁻⁴ have a growing mode of rate κ to 3e-5, not a small one.
-  **Update from #232:** the rate is κ at c = −1 as well, for perturbations with Y_h ≠ 0; the member is stable only against perturbations with Y_h = 0, such as waves incident on an unperturbed horizon (`linear.md`).
+  **Update from #232:** the rate is κ at c = −1 as well, for perturbations with Y_h ≠ 0; the member is stable only against perturbations with Y_h = 0, such as waves incident on an unperturbed horizon (`linear.md`). **Update from #248:** those perturbations are free in regular Cauchy data, so the member decays only for data with c₂ = 0, a single condition at the horizon crossing, which includes data supported away from the horizon.
 
 [BKZ12] show the instability of the M-AdS wormholes by regularized potentials (Fig 1) and time-domain runs (Fig 2); this work did not recompute them.
 

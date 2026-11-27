@@ -188,3 +188,33 @@ horizon_sector.py mutations DIR PREFIX            # fired sets of stored logs DI
 ```
 
 `horizon_sector_output.txt` is `derive`, `check`, `table` and `mutations` of the runs of record (`I248-dh610/runs`, code commit 69de2ea), in that order. Memory 718 MB at most (N5, h = 0.0025).
+
+## Coordinator's review
+
+Review of branch `wip/i248-horizon-sector` at 0dd8c98 and raw `I248-dh610` at 88ac882, recorded in negative-mass-raw `I248-mac-review`
+(criteria committed before the first run; results 120e0775). On the Mac, nice 10.
+
+- **Scope.** The branch adds the script, its output and this note, nothing else.
+- **Rerun.** `derive` gives 8 of 8 and `check` 11 of 11. `table` gives class L's c₂ = −9.610862e-04 at the fit and on the three slices.
+  The verdict lines equal dh610's, apart from roundoff-level digits (N5's slice deviations of 3.3e-10 against 3.4e-10).
+- **Independent check** (`ind248.py`). It computes c₂ of class L by transport along the data ray V = −0.05, which runs inside the horizon
+  (Π from −0.1 to 0). It uses no 2D solver and none of this note's or #232's code.
+  - The transverse derivatives (δr_V, δF_V, δφ_V) obey the linearized evolution equations along the ray, in the coordinator's forms
+    verified in `ind217.py`, with the background in mpmath at 30 digits. c₂ = δr_V at U = 0.
+  - Result: c₂ = −9.61086221626e-04, which agrees with the 2D Kruskal solver to 2.3e-8, the note's printed digits.
+  - The same transport reproduces an exact pure-gauge solution along the whole ray to 3.3e-14, and gives c₂ = 0 for it, since r_UV = 0
+    on U = 0 at c = −1.
+  - Mutations fire as declared: the scalar's sign (K1, K2), the potential dropped (K1, K2), and the pulse centred at U = 0.01 (K1 alone).
+  - Shared with the code under test: the member, the chart's normalization Π(ρ = 1) = 1, class L's definition and the gauge δF = 0 on the
+    data rays.
+- **What this settles, and what not.** That c₂ is set by data at and before the horizon crossing, and is nonzero for a generic pulse
+  there, now rests on two methods. The free-data argument (constraint propagation, D4) and the regularity at S (D6, D7) are *checked
+  symbolically* here and were not redone. The open gap is the note's own: no compactly supported datum on a full slice to spatial
+  infinity, with δM_ADM = 0, was built. That is recommended task 1, filed below. The nonlinear fate is not addressed.
+- **Applied.** The black-universe README (Result, §5, §8) and `critical_ghost.md` §1.1 carry the update. The row's lead no longer calls
+  c = −1 an exception.
+- **Follow-ups.**
+  - Task 1 is #258.
+  - Task 2 is added to #249.
+  - Task 3 is #259.
+  - Task 4 is added to #250.
