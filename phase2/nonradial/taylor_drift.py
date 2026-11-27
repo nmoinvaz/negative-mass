@@ -67,6 +67,39 @@ class CrateStar:
         return float(self.state(r)[2][0])
 
 
+class CrateJ:
+    """J(r; s) = J0(r) + s^2 J1(r) from the crate's tables (`jtable`): per table step the Taylor coefficients 0..29 of each nonzero entry about the
+    step's x0, double-double rounded to 20 digits, summed in f64. The generated J_and_h of polar_matrix_generated.py (the same symbolic source)
+    evaluated in double-double on the crate's star, rounded once per coefficient."""
+
+    def __init__(self, path):
+        x0, x1, c0, c1 = [], [], [], []
+        for line in open(path):
+            o = json.loads(line)
+            if o["cmd"] == "jtable_head":
+                self.pattern = [tuple(p) for p in o["pattern"]]
+                self.nb = o["nb"]
+            elif o["cmd"] == "jstep":
+                x0.append(o["x0"]); x1.append(o["x1"])
+                c0.append([[float(c) for c in e] for e in o["c0"]])
+                c1.append([[float(c) for c in e] for e in o["c1"]])
+        self.x0, self.x1, self.c0, self.c1 = np.array(x0), np.array(x1), np.array(c0), np.array(c1)
+        self.k = np.arange(self.nb)
+        self.ii = np.array([p[0] for p in self.pattern]); self.jj = np.array([p[1] for p in self.pattern])
+        self._s = {}
+        self.shift_end = False       # the control `cj_shift`: h measured from the step's end
+
+    def J(self, r, s):
+        key = float(s)
+        if key not in self._s:
+            self._s[key] = self.c0 + (key * key) * self.c1
+        i = max(int(np.searchsorted(self.x0, r, side="right")) - 1, 0)
+        h = r - (self.x1[i] if self.shift_end else self.x0[i])
+        Jm = np.zeros((6, 6))
+        Jm[self.ii, self.jj] = self._s[key][i] @ (h ** self.k)
+        return Jm
+
+
 # ---------------------------------------------------------------------------------------------------------------
 # PolarProblem with the named changes
 # ---------------------------------------------------------------------------------------------------------------
@@ -83,18 +116,21 @@ def make_problem_class():
         mext         M_ext replaced after construction (alpha_m and the lapse ratio stay the star's)
         noise_ulp    every entry of every J the integrator evaluates is multiplied by 1 + noise_ulp 2^-53 xi, xi standard normal
                      (numpy default_rng(noise_seed)): rounding noise relative to each entry, planted at a stated amplitude
+        jtab         J(r; s) read from the crate's tables (`CrateJ`) in place of the generated J_and_h on the star's values (the interior and
+                     the exterior scalar plane's J; the vacuum J of r > R is not replaced)
         noise_row    every nonzero entry J_ij gets the absolute noise noise_row 2^-53 xi max_j |J_ij| (xi standard normal, the row's largest entry):
                      the size `jround` measures for the generated J in f64 (rms 1.0 ulp of the row maximum)"""
 
-        def __init__(self, star, l, rm=None, atol=1e-14, extra_chunks=0, vac_scalar=False, mext=None, noise_ulp=0.0, noise_seed=0, noise_row=0.0, **kw):
+        def __init__(self, star, l, rm=None, atol=1e-14, extra_chunks=0, vac_scalar=False, mext=None, noise_ulp=0.0, noise_seed=0, noise_row=0.0, jtab=None, **kw):
             super().__init__(star, l, rm=rm, **kw)
             self.atol, self.extra_chunks, self.vac_scalar = atol, extra_chunks, vac_scalar
             self.noise_ulp, self.noise_row, self.rng = noise_ulp, noise_row, np.random.default_rng(noise_seed)
+            self.jtab = jtab
             if mext is not None:
                 self.Mext = float(mext)
 
         def J(self, r, s):
-            Jm = super().J(r, s)
+            Jm = self.jtab.J(r, s) if self.jtab is not None else super().J(r, s)
             if self.noise_ulp:
                 Jm = Jm * (1.0 + self.noise_ulp * 2.0 ** -53 * self.rng.standard_normal(Jm.shape))
             if self.noise_row:
@@ -168,6 +204,12 @@ def scipy_star():
     return _cache["sci"]
 
 
+def crate_j(path):
+    if ("j", path) not in _cache:
+        _cache[("j", path)] = CrateJ(path)
+    return _cache[("j", path)]
+
+
 def crate_star(path):
     if path not in _cache:
         _cache[path] = CrateStar(path)
@@ -182,7 +224,9 @@ PLANTS = {
     "crate_vac": dict(star="crate", mext="star",  vac=True),
     "int_crate": dict(star="crate", mext="sci",   vac=False),   # crate's star in the interior, scipy's M_ext
     "ext_crate": dict(star="sci",   mext="crate", vac=False),   # scipy's star in the interior, the crate's M_ext
+    "crate_j":   dict(star="crate", mext="star",  vac=False, j=True),   # the crate's star, M_ext and J tables: J rounded once from double-double
 }
+JTABLE_PATH = [None]
 
 
 def build(l, variant, plant, rtol, steps_path, atol=1e-14, extra_chunks=0, rm_from=None, noise_ulp=0.0, noise_seed=0, noise_row=0.0):
@@ -193,6 +237,8 @@ def build(l, variant, plant, rtol, steps_path, atol=1e-14, extra_chunks=0, rm_fr
     kw = dict(rtol=rtol, phi_cut=VARIANTS[variant]["phi_cut"], atol=atol, extra_chunks=extra_chunks, vac_scalar=pl["vac"],
               noise_ulp=noise_ulp, noise_seed=noise_seed, noise_row=noise_row)
     rm = RM[variant] if rm_from == "crate" else None
+    if pl.get("j"):
+        kw["jtab"] = crate_j(JTABLE_PATH[0])
     pp = DP(star, l, rm=rm, **kw)
     if pl["mext"] != "star":
         other = scipy_star() if pl["mext"] == "sci" else crate_star(steps_path)
@@ -224,8 +270,9 @@ def run_cases(args):
             for v in args.variants:
                 for pl in args.plants:
                     for sd in args.noise_seeds:
-                        cases.append(dict(l=args.l, gamma=g, variant=v, rtol=rtol, plant=pl, atol=args.atol, extra_chunks=args.extra_chunks,
-                                          rm_from=args.rm_from, noise_ulp=args.noise_ulp, noise_seed=sd, noise_row=args.noise_row))
+                        for ex in args.extra_chunks:
+                            cases.append(dict(l=args.l, gamma=g, variant=v, rtol=rtol, plant=pl, atol=args.atol, extra_chunks=ex,
+                                              rm_from=args.rm_from, noise_ulp=args.noise_ulp, noise_seed=sd, noise_row=args.noise_row))
     signal.signal(signal.SIGALRM, _alarm)
     for c in cases:
         if case_key(c) in done:
@@ -351,6 +398,7 @@ def run_planted(args):
 CRIT = dict(
     L=5, GAMMAS=[1000.0, 2000.0, 3000.0], RTOLS=[1e-10, 1e-11, 1e-12, 1e-13], VARIANTS=["base", "phi"],
     IDENT_POINT=(2, 10.0),                      # DriftProblem with no knob set is PolarProblem, bit for bit, here
+    CJ_RMS_ULP=10.0, CJ_MAX_ULP=100.0,         # the crate's J tables in f64 against the generated J at 60 digits on the exact star, per entry, in ulps
     CS_BAR=1e-14, CS_RADII=[0.002, 0.05, 0.5, 2.0, 5.0, 8.0, 12.0, 16.0, 20.0, 24.10980364018201, 30.0, 34.20514015700785],
     REP_BAR=1e-8,                               # this Mac's scipy D against the win laptop's stored one at (5, 1000)
     REF_BAR=1e-20,                              # the crate's dd D against order 24 at 1e-22 and against quad-double
@@ -479,6 +527,44 @@ def check_CS(steps):
            f"worst relative {fmt(worst)} at (r, f) = {at} (bar {CRIT['CS_BAR']:.0e})")
 
 
+def check_CJ(steps, jt):
+    """the crate's J tables (CrateJ) against the generated J_and_h at 60 digits on the crate's star at 12 radii and gamma = 1000, 3000, per entry
+    in units of 2^-53; J_and_h in f64 (scipy's) against the same at its own f64 inputs is printed beside it"""
+    import mpmath as mp
+    import taylor_polar as TP
+    import background as B
+    from polar_matrix_generated import J_and_h
+    mp.mp.dps = 60
+    f = TP.mp_J()
+    cj = CrateJ(jt)
+    cj.shift_end = MUTATE == "cj_shift"
+    radii = CRIT["CS_RADII"]
+    sv = TP.star_values(TP.star_kw(), radii)
+    cs = crate_star(steps)
+    l, LL = 5, 30
+    e_tab, e_gen = [], []
+    for g in (1000.0, 3000.0):
+        for r in radii:
+            o = sv[r]
+            Jm, _ = f(mp.mpf(r), mp.mpf(o["alpha"]), mp.mpf(o["a"]), mp.mpf(o["phi0"]), mp.mpf(o["u"]), mp.mpf(OMEGA), mp.mpf(EPS), mp.mpf(g), mp.mpf(LL), mp.mpf(B.LAM), mp.mpf(B.MU))
+            Jt = cj.J(r, g)
+            al, a, ph, u = (float(x[0]) for x in cs.bg(np.array([r])))
+            Jg, _ = J_and_h(r, al, a, ph, u, OMEGA, EPS, g, LL, B.LAM, B.MU)
+            Jm2, _ = f(mp.mpf(r), mp.mpf(al), mp.mpf(a), mp.mpf(ph), mp.mpf(u), mp.mpf(OMEGA), mp.mpf(EPS), mp.mpf(g), mp.mpf(LL), mp.mpf(B.LAM), mp.mpf(B.MU))
+            for i in range(6):
+                for j in range(6):
+                    if Jm[i, j] != 0:
+                        e_tab.append(float(abs(mp.mpf(float(Jt[i, j])) - Jm[i, j]) / abs(Jm[i, j])) / 2.0 ** -53)
+                    if Jm2[i, j] != 0:
+                        e_gen.append(float(abs(mp.mpf(float(Jg[i, j])) - Jm2[i, j]) / abs(Jm2[i, j])) / 2.0 ** -53)
+    e_tab, e_gen = np.array(e_tab), np.array(e_gen)
+    rms, mx = float(np.sqrt(np.mean(e_tab ** 2))), float(e_tab.max())
+    report("CJ", rms <= CRIT["CJ_RMS_ULP"] and mx <= CRIT["CJ_MAX_ULP"],
+           f"the crate's J tables in f64 against the generated J at 60 digits on the exact star, {e_tab.size} entries (12 radii, gamma 1000 and 3000): "
+           f"rms {rms:.2f} ulp, max {mx:.1f} ulp (bars {CRIT['CJ_RMS_ULP']:g}, {CRIT['CJ_MAX_ULP']:g}); the generated J in f64 on its own inputs, same entries: "
+           f"rms {float(np.sqrt(np.mean(e_gen ** 2))):.0f} ulp, max {float(e_gen.max()):.0f} ulp")
+
+
 def check_RMX(steps):
     from polar_solver import PolarProblem
     st, cs = scipy_star(), crate_star(steps)
@@ -540,52 +626,55 @@ def name_cause(st):
     return "not established"
 
 
+def cje_stats(sc, crate, g, v, rtol, atol):
+    """signed gaps D / D_crate - 1 of the CJE_N realizations (extra chunks 0 .. CJE_N - 1) of one cell and setting: (list, mean, std ddof 1)"""
+    import mpmath as mp
+    mp.mp.dps = 60
+    ref = crate_ref(crate, "dd", v, g)
+    xs = [float(mp.mpf(sget(sc, g, v, rtol, "crate_j", atol, extra=e)["D"]) / ref - 1) for e in range(CJE_N)]
+    return xs, float(np.mean(xs)), float(np.std(xs, ddof=1))
+
+
 def verdicts(sc, crate, plc):
-    """the four hypotheses against the numbers, by the declared rules. plc: {(gamma, rtol): planted-system error}. Returns (statuses, lines)"""
+    """the five hypotheses against the numbers, by the declared rules (README, A3 for H1, H3, H5). Returns (statuses, lines)"""
     G, V = CRIT["GAMMAS"], CRIT["VARIANTS"]
     ref = lambda v, g: crate_ref(crate, "dd", v, g)
     cells = [(g, v) for g in G for v in V]
     lines, st = [], {}
-    # H1: truncation of scipy's DOP853
-    lab = [classify_rtol(gap(sget(sc, g, v, 1e-10)["D"], ref(v, g)), gap(sget(sc, g, v, 1e-13)["D"], ref(v, g))) for g, v in cells]
-    pln = [classify_pln(plc[(g, 1e-10)], gap(sget(sc, g, v, 1e-10)["D"], ref(v, g))) for g, v in cells]
-    nfm = sum(1 for x in lab if x != "truncation")
-    st["H1"] = "supported" if all(x == "truncation" for x in lab) else ("ruled out" if all(x == "not" for x in pln) and nfm >= 4 else "undecided")
-    lines.append(f"H1 truncation of scipy's integrator: rtol curve labels {lab}; planted-system error against the gap {pln}; {st['H1']}")
-    # H2: the star and M_ext move D beyond the null scatter
     eta0 = {c: abs(sget(sc, c[0], c[1], 1e-10, extra=1)["D"] / sget(sc, c[0], c[1], 1e-10)["D"] - 1) for c in cells}
-    mv = [abs(sget(sc, g, v, 1e-10, "crate")["D"] / sget(sc, g, v, 1e-10)["D"] - 1) > max(CRIT["NULL_FACTOR"] * eta0[(g, v)], CRIT["MOVE_FLOOR"]) for g, v in cells]
-    pl13 = [classify_plant(gap(sget(sc, g, v, 1e-13)["D"], ref(v, g)), gap(sget(sc, g, v, 1e-13, "crate")["D"], ref(v, g))) for g, v in cells]
-    st["H2"] = "supported" if all(mv) and all(x == "removes" for x in pl13) else ("ruled out" if sum(mv) <= 1 else "undecided")
-    lines.append(f"H2 the star and M_ext as inputs: the crate's star moves D beyond 3 eta in {sum(mv)} of 6 cells; the gap at rtol 1e-13 with the plant {pl13}; {st['H2']}")
-    # H3: rounding noise in J, amplified by D's conditioning: planted at the measured amplitude (1 ulp of the row maximum, `jround`)
-    nz = {}
-    for g in (1000.0, 3000.0):
-        d0 = sget(sc, g, "base", 1e-10)["D"]
-        for u in (1.0, 0.1):
-            xs = [abs(r["D"] / d0 - 1) for (l_, g_, v_, rt, pl_, at, ex, rf, nu, sd, nr), r in sc.items()
-                  if (g_, v_, rt, pl_, at, ex, nu, nr) == (g, "base", 1e-10, "sci", 1e-14, 0, 0.0, u) and sd > 0]
-            nz[(g, u)] = float(np.sqrt(np.mean(np.square(xs)))) if xs else None
-    r1 = [nz[(g, 1.0)] / eta0[(g, "base")] for g in (1000.0, 3000.0) if nz.get((g, 1.0))]
-    lin = nz.get((1000.0, 0.1)) is not None and nz.get((1000.0, 1.0)) is not None and nz[(1000.0, 0.1)] <= CRIT["NOISE_LINEAR"] * nz[(1000.0, 1.0)]
-    st["H3"] = ("supported" if len(r1) == 2 and all(x >= CRIT["NOISE_ACCOUNTS"] for x in r1) and lin else
-                "ruled out" if len(r1) == 2 and all(x <= CRIT["NOISE_NOT"] for x in r1) else "undecided")
-    lines.append(f"H3 rounding noise in J (1 ulp of the row maximum): rms |D(noise)/D - 1| over eta {['%.2f' % x for x in r1]}, 0.1 ulp scatter {nz.get((1000.0, 0.1))} against 1 ulp {nz.get((1000.0, 1.0))} (linear: {lin}); {st['H3']}")
-    # H4: the BVP star's kinks make the integrator's error erratic: eta falls when the star is smooth
     eta1 = {c: abs(sget(sc, c[0], c[1], 1e-10, "crate", extra=1)["D"] / sget(sc, c[0], c[1], 1e-10, "crate")["D"] - 1) for c in cells}
+    # H1 (A3): truncation controlled by rtol, in the system whose J is correctly rounded (CJE): sigma(rtol 1e-13) / sigma(rtol 1e-10) at atol 1e-14
+    try:
+        sg = {c: [cje_stats(sc, crate, c[0], c[1], r, a)[2] for (r, a) in CJE_SETTINGS] for c in CJ_CELLS}
+        r1 = [sg[c][1] / sg[c][0] for c in CJ_CELLS]
+        r5 = [sg[c][2] / sg[c][1] for c in CJ_CELLS]
+        st["H1"] = "supported" if all(x <= CRIT["TRUNC_RATIO"] for x in r1) else ("ruled out" if all(x >= CRIT["FLOOR_RATIO"] for x in r1) else "undecided")
+        st["H5"] = "supported" if all(x <= CRIT["TRUNC_RATIO"] for x in r5) else ("ruled out" if all(x >= CRIT["FLOOR_RATIO"] for x in r5) else "undecided")
+    except TypeError:
+        r1 = r5 = "not run"
+        st["H1"] = st["H5"] = "undecided"
+    f2 = lambda x: ["%.2f" % y for y in x] if x != "not run" else x
+    lines.append(f"H1 truncation by rtol (exact-J system, 8 realizations per cell): std(rtol 1e-13) / std(rtol 1e-10) per cell {f2(r1)}; {st['H1']}")
+    lines.append(f"H5 truncation by atol: std(atol 1e-17) / std(atol 1e-14) at rtol 1e-13 per cell {f2(r5)}; {st['H5']}")
+    # H2: the crate's star and M_ext move D beyond 3 eta, and remove the gap, in the issue's grid (rtol 1e-10)
+    mv = [abs(sget(sc, g, v, 1e-10, "crate")["D"] / sget(sc, g, v, 1e-10)["D"] - 1) > max(CRIT["NULL_FACTOR"] * eta0[(g, v)], CRIT["MOVE_FLOOR"]) for g, v in cells]
+    pl = [classify_plant(gap(sget(sc, g, v, 1e-10)["D"], ref(v, g)), gap(sget(sc, g, v, 1e-10, "crate")["D"], ref(v, g))) for g, v in cells]
+    st["H2"] = "supported" if all(mv) and all(x == "removes" for x in pl) else ("ruled out" if sum(mv) <= 1 else "undecided")
+    lines.append(f"H2 the star and M_ext as inputs: the crate's star moves D beyond 3 eta in {sum(mv)} of 6 cells; the gap at rtol 1e-10 with the plant {pl}; {st['H2']}")
+    # H3 (A3): rounding in the generated J_and_h: the crate's J tables against J_and_h on the crate's star, the realization scatter eta of the same cells
+    try:
+        etaj = {c: abs(sget(sc, c[0], c[1], 1e-10, "crate_j", extra=1)["D"] / sget(sc, c[0], c[1], 1e-10, "crate_j")["D"] - 1) for c in CJ_CELLS}
+        rj = [etaj[c] / eta1[c] for c in CJ_CELLS]
+        st["H3"] = "supported" if all(x <= CRIT["KINK_REMOVES"] for x in rj) else ("ruled out" if all(x >= CRIT["KINK_NONE"] for x in rj) else "undecided")
+    except TypeError:
+        rj, st["H3"] = "not run", "undecided"
+    lines.append(f"H3 rounding in the generated J_and_h: eta(crate J tables) / eta(J_and_h), both on the crate's star (cells 1000 base, 1000 phi, 3000 base) {f2(rj)}; {st['H3']}")
+    # H4: the BVP star's kinks make the integrator's error erratic: eta falls when the star is smooth
     rr = [eta1[c] / eta0[c] for c in cells]
     nlow = sum(1 for x in rr if x <= CRIT["KINK_REMOVES"])
     nhigh = sum(1 for x in rr if x >= CRIT["KINK_NONE"])
     st["H4"] = "supported" if nlow >= 5 else ("ruled out" if nhigh >= 5 else "undecided")
-    lines.append(f"H4 the BVP star's kinks: eta(crate star) / eta(scipy star) per cell {['%.2f' % x for x in rr]}; {st['H4']}")
-    # H5: scipy's absolute tolerance (atol 1e-14) sets the plane error: atol 1e-17 at rtol 1e-13 against atol 1e-14 at rtol 1e-13, three cells
-    try:
-        lab5 = [classify_plant(gap(sget(sc, g, v, 1e-13)["D"], ref(v, g)), gap(sget(sc, g, v, 1e-13, atol=1e-17)["D"], ref(v, g)))
-                for g, v in ((1000.0, "base"), (1000.0, "phi"), (3000.0, "base"))]
-        st["H5"] = "supported" if all(x == "removes" for x in lab5) else ("ruled out" if all(x == "none" for x in lab5) else "undecided")
-    except TypeError:
-        lab5, st["H5"] = "not run", "undecided"
-    lines.append(f"H5 scipy's atol: the gap with atol 1e-17 against atol 1e-14 at rtol 1e-13, per cell {lab5}; {st['H5']}")
+    lines.append(f"H4 the BVP star's kinks: eta(crate star) / eta(scipy star) per cell {f2(rr)}; {st['H4']}")
     return st, lines
 
 
@@ -637,28 +726,37 @@ def K(g, v, rtol, plant="sci", atol=1e-14, extra=0, noise=0.0, seed=0, row=0.0):
     return (5, g, v, rtol, plant, atol, extra, None, noise, seed, row)
 
 
-CORE = ["P0", "P1", "N0", "N1", "NOISE", "NOISEROW"]
+CJ_CELLS = [(1000.0, "base"), (1000.0, "phi"), (3000.0, "base")]
+CJE_SETTINGS = [(1e-10, 1e-14), (1e-13, 1e-14), (1e-13, 1e-17)]     # (rtol, atol)
+CJE_N = 8                                                           # realizations: extra_chunks 0 .. 7
+CJN_NOISE = [("noise", u) for u in (1.0, 10.0, 100.0)] + [("row", u) for u in (0.01, 0.1)]
 
 
 def grid_cases():
     """every scipy case the issue and this note's additions declare: {name: [case_key, ...]}. CORE is what COMPLETE requires; the others
-    (X...) are run after it, in the order of this table, and reported whatever they show"""
+    (X...) are run after it, in the order of this table, and reported whatever they show. A3 moved NOISE and NOISEROW out of the core
+    (not run) and added CJE and CJN."""
     G, V, R = CRIT["GAMMAS"], CRIT["VARIANTS"], CRIT["RTOLS"]
     out = {}
     out["P0"] = [K(g, v, r) for r in R for g in G for v in V]                                    # the issue: scipy's star, 4 rtol, 3 gamma, 2 variants
-    out["P1"] = [K(g, v, r, "crate") for r in (1e-10, 1e-13) for g in G for v in V]              # the issue: the crate's star and M_ext, at the two ends of the rtol range
+    out["P1"] = [K(g, v, 1e-10, "crate") for g in G for v in V]                                  # the issue: the crate's star and M_ext (A3: rtol 1e-10 only in the core)
     out["N0"] = [K(g, v, 1e-10, extra=1) for g in G for v in V]                                  # null control: one extra chunk
     out["N1"] = [K(g, v, 1e-10, "crate", extra=1) for g in G for v in V]
-    out["NOISE"] = ([K(1000.0, "base", 1e-10, noise=1.0, seed=s) for s in (1, 2, 3)] + [K(1000.0, "base", 1e-10, noise=0.1, seed=s) for s in (1, 2)]
-                    + [K(3000.0, "base", 1e-10, noise=1.0, seed=s) for s in (1, 2)])
-    out["NOISEROW"] = ([K(1000.0, "base", 1e-10, row=1.0, seed=s) for s in (1, 2, 3)] + [K(1000.0, "base", 1e-10, row=0.1, seed=s) for s in (1, 2)]
-                       + [K(3000.0, "base", 1e-10, row=1.0, seed=s) for s in (1, 2)])
+    out["CJE"] = [K(g, v, r, "crate_j", a, extra=e) for (g, v) in CJ_CELLS for (r, a) in CJE_SETTINGS for e in range(CJE_N)]      # A3
+    out["CJN"] = ([K(1000.0, "base", 1e-10, "crate_j", noise=u, seed=sd) for (kind, u) in CJN_NOISE if kind == "noise" for sd in (1, 2, 3, 4)]
+                  + [K(1000.0, "base", 1e-10, "crate_j", row=u, seed=sd) for (kind, u) in CJN_NOISE if kind == "row" for sd in (1, 2, 3, 4)])   # A3
+    out["X_P1_13"] = [K(g, v, 1e-13, "crate") for g in G for v in V]
+    out["X_ATOL"] = [K(1000.0, v, 1e-13, atol=1e-17) for v in V] + [K(3000.0, "base", 1e-13, atol=1e-17)]
     out["X_N0R13"] = [K(1000.0, v, 1e-13, extra=1) for v in V] + [K(3000.0, "base", 1e-13, extra=1)]
     out["X_P2"] = [K(g, v, 1e-10, "sci_vac") for g in (1000.0, 3000.0) for v in V]
-    out["X_ATOL"] = [K(1000.0, v, 1e-13, atol=1e-17) for v in V] + [K(3000.0, "base", 1e-13, atol=1e-17)]
     out["X_P3"] = [K(3000.0, "base", 1e-10, pl) for pl in ("int_crate", "ext_crate")]
     out["X_P1R"] = [K(g, v, r, "crate") for r in (1e-11, 1e-12) for g in G for v in V]
+    out["X_NOISE"] = ([K(1000.0, "base", 1e-10, noise=1.0, seed=s) for s in (1, 2, 3)] + [K(1000.0, "base", 1e-10, noise=0.1, seed=s) for s in (1, 2)]
+                      + [K(3000.0, "base", 1e-10, noise=1.0, seed=s) for s in (1, 2)])
     return out
+
+
+CORE = ["P0", "P1", "N0", "N1", "CJE", "CJN"]
 
 
 def run_checks(args):
@@ -676,6 +774,8 @@ def run_checks(args):
         check_CS(steps)
     if want("RMX"):
         check_RMX(steps)
+    if want("CJ"):
+        check_CJ(steps, args.jtable)
     if want("REP"):
         check_REP(sc, args.raw)
     if want("REF"):
@@ -736,6 +836,9 @@ def run_report(args):
     block("P0: scipy's gap |D_scipy / D_crate(dd) - 1| against rtol (scipy's star, atol 1e-14, one realization per cell)", "sci", R)
     block("P1: the same with the crate's star and its M_ext in PolarProblem (r_m the same grid point)", "crate", [1e-10, 1e-13])
     block("NULL: P0 with one extra chunk (the same problem on another chunk grid), rtol 1e-10", "sci", [1e-10], extra=1)
+    block("N1: P1 with one extra chunk, rtol 1e-10", "crate", [1e-10], extra=1)
+    block("CJ: the crate's star, M_ext and J tables (J rounded once from double-double), rtol 1e-10", "crate_j", [1e-10])
+    block("CJ null: the same with one extra chunk", "crate_j", [1e-10], extra=1)
     block("P2: scipy's star, the exterior scalar plane in vacuum as the crate integrates it, rtol 1e-10", "sci_vac", [1e-10])
 
     P("\n# every realization per cell, signed D/D_crate - 1 (atol 1e-14, no planted noise): scipy's star (P0 at each rtol, N0, X_N0R13) and the crate's star (P1, N1, X_P1R)."
@@ -773,7 +876,7 @@ def run_report(args):
                 P(f"  gamma {g:g} {v}: eta {eta[(g, v)]:.1e}, gap {gap(a['D'], ref(v, g)):.1e}, gap with the extra chunk {gap(n['D'], ref(v, g)):.1e}")
 
     P("\n# planted inputs: D_plant / D_scipy - 1 against 3 eta (and 1e-12), and the gap with the plant against the gap without")
-    for plant, rtols in (("crate", (1e-10, 1e-13)), ("sci_vac", (1e-10,)), ("int_crate", (1e-10,)), ("ext_crate", (1e-10,))):
+    for plant, rtols in (("crate", (1e-10, 1e-13)), ("crate_j", (1e-10,)), ("sci_vac", (1e-10,)), ("int_crate", (1e-10,)), ("ext_crate", (1e-10,))):
         for r in rtols:
             for g in G:
                 for v in V:
@@ -816,18 +919,30 @@ def run_report(args):
             if not nz:
                 plc[(o["gamma"], o["rtol"])] = o["err"]
 
-    P("\n# planted rounding noise in J (scipy's star, base, rtol 1e-10): |D / D(no noise) - 1|; `row` is the amplitude in ulps of the row maximum (the size `jround` measures), `entry` in ulps of each entry")
-    for g in (1000.0, 3000.0):
-        d0 = sget(sc, g, "base", 1e-10)
-        for kind in ("row", "entry"):
-            for u in (1.0, 0.1):
-                xs = []
-                for (l_, g_, v_, rt, pl_, at, ex, rf, nu, sd, nr), r in sorted(sc.items(), key=lambda kv: kv[0][-2]):
-                    if (g_, v_, rt, pl_, at, ex) == (g, "base", 1e-10, "sci", 1e-14, 0) and sd > 0 and d0 and ((nr == u and nu == 0.0) if kind == "row" else (nu == u and nr == 0.0)):
-                        xs.append(abs(r["D"] / d0["D"] - 1))
-                        P(f"  gamma {g:g} {kind} {u:g} ulp seed {sd}: {xs[-1]:.1e}  (gap {gap(r['D'], ref('base', g)):.1e})")
-                if xs:
-                    P(f"  gamma {g:g} {kind} {u:g} ulp: rms {float(np.sqrt(np.mean(np.square(xs)))):.1e} over {len(xs)} seeds")
+    P("\n# CJE: the exact-J system (crate's star, M_ext, J tables), 8 realizations (extra chunks 0 .. 7) per cell and setting: signed D/D_crate - 1")
+    P(f"{'cell':>14s} {'rtol':>7s} {'atol':>7s} {'mean':>10s} {'std':>10s} {'t=mean/(std/sqrt n)':>20s}   realizations")
+    for (g, v) in CJ_CELLS:
+        for (r, a) in CJE_SETTINGS:
+            try:
+                xs, m, sd = cje_stats(sc, crate, g, v, r, a)
+                P(f"{'%g %s' % (g, v):>14s} {r:7.0e} {a:7.0e} {m:+10.2e} {sd:10.2e} {m / (sd / np.sqrt(len(xs))):+20.1f}   " + " ".join(f"{x:+.1e}" for x in xs))
+            except TypeError:
+                P(f"{'%g %s' % (g, v):>14s} {r:7.0e} {a:7.0e}   not run")
+    P("\n# CJN: planted noise on the exact-J system (1000 base, rtol 1e-10, atol 1e-14): std of the signed gap over seeds 1 .. 4 (noise 0: the 8 realizations of CJE)")
+    try:
+        xs0, m0, s0 = cje_stats(sc, crate, 1000.0, "base", 1e-10, 1e-14)
+        P(f"  amplitude 0: std {s0:.2e} (mean {m0:+.2e})")
+    except TypeError:
+        pass
+    import mpmath as mp2
+    for kind, u in CJN_NOISE:
+        xs = []
+        for sd in (1, 2, 3, 4):
+            rec = sget(sc, 1000.0, "base", 1e-10, "crate_j", noise=(u if kind == "noise" else 0.0), seed=sd, row=(u if kind == "row" else 0.0))
+            if rec:
+                xs.append(float(mp2.mpf(rec["D"]) / ref("base", 1000.0) - 1))
+        if len(xs) >= 2:
+            P(f"  {'per-entry' if kind == 'noise' else 'row-max'} {u:g} ulp: std {float(np.std(xs, ddof=1)):.2e}, mean {float(np.mean(xs)):+.2e}, n {len(xs)}: " + " ".join(f"{x:+.1e}" for x in xs))
     try:
         st, lines = verdicts(sc, crate, plc)
         P("\n# verdicts by the declared rules")
@@ -896,8 +1011,9 @@ def main():
     s.add_argument("--rtols", type=floats, default=[1e-10])
     s.add_argument("--plants", type=lambda x: x.split(","), default=["sci"])
     s.add_argument("--atol", type=float, default=1e-14)
-    s.add_argument("--extra-chunks", dest="extra_chunks", type=int, default=0)
+    s.add_argument("--extra-chunks", dest="extra_chunks", type=lambda x: [int(y) for y in x.split(",")], default=[0], help="a list: one case per value")
     s.add_argument("--rm-from", dest="rm_from", default=None)
+    s.add_argument("--jtable", default=None, help="crate J tables (j-table), for the plant crate_j")
     s.add_argument("--noise-ulp", dest="noise_ulp", type=float, default=0.0)
     s.add_argument("--noise-row", dest="noise_row", type=float, default=0.0)
     s.add_argument("--noise-seeds", dest="noise_seeds", type=lambda x: [int(y) for y in x.split(",")], default=[0])
@@ -924,6 +1040,7 @@ def main():
     k.add_argument("--only", default=None)
     k.add_argument("--mutate", default=None)
     k.add_argument("--synthetic", action="store_true")
+    k.add_argument("--jtable", default=None)
     jr = sub.add_parser("jround")
     jr.add_argument("--gammas", type=floats, default=[1000.0, 3000.0])
     jr.add_argument("--n", type=int, default=40)
@@ -932,8 +1049,12 @@ def main():
     rp.add_argument("--crate-dir", dest="crate_dir", default=None)
     t = sub.add_parser("star-steps")
     t.add_argument("out")
+    jt = sub.add_parser("j-table")
+    jt.add_argument("out")
+    jt.add_argument("--l", type=int, default=5)
     a = ap.parse_args()
     if a.cmd == "scipy":
+        JTABLE_PATH[0] = a.jtable
         run_cases(a)
     elif a.cmd == "jround":
         run_jround(a)
@@ -945,6 +1066,13 @@ def main():
         run_crate(a)
     elif a.cmd == "planted":
         run_planted(a)
+    elif a.cmd == "j-table":
+        import taylor_polar as TP
+        res = TP.rust("jtable", l=a.l, rmin=5e-4, rmax=34.7, **TP.star_kw())
+        with open(a.out, "w") as fp:
+            for o in res:
+                fp.write(json.dumps(o) + "\n")
+        print(f"wrote {a.out}: {res[0]['steps']} table steps, {len(res[0]['pattern'])} entries, linear defect {res[0]['linear_defect']:.1e}")
     elif a.cmd == "star-steps":
         import taylor_polar as TP
         kw = TP.star_kw()
