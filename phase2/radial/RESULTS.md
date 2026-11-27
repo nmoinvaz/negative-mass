@@ -93,6 +93,13 @@ extremum is a minimum of M. The stable side is ω < 0.9258, where dM/dω < 0 and
 The first law dM = ω dN holds to ~5×10⁻⁵ by finite differences, which independently checks the background
 and the M/N extraction.
 
+**Update from #194** (`taylor_radial.md`, `taylor_radial_output.txt`):
+- The crate's double-double stars put σ² = 0 at ω = 0.92584445575959772786, dN/dω = 0 at ...802 and dM/dω = 0 at ...803.
+  These are equal to 1.6×10⁻¹⁹. The fits above are off by 1.6×10⁻⁸, 4.2×10⁻⁹ and 4.2×10⁻⁹, so "coincides to 2×10⁻⁸"
+  describes the stored fits, not the stars.
+- *Added by the coordinator:* the review's own shooting code (negative-mass-raw `I194-mac-review`, K1b) puts dM/dω = 0
+  at 0.9258444559, 1.9×10⁻¹⁰ from the crate.
+
 Convergence (`convergence.py`, `convergence_output.txt`). The eigenvalue changes by ≤ 2×10⁻¹⁰ (relative
 ≤ 3×10⁻⁷) under each of the following:
 - integrator rtol 1e-10 → 1e-12;
@@ -102,7 +109,7 @@ Convergence (`convergence.py`, `convergence_output.txt`). The eigenvalue changes
 - background R + 30.
 
 For example, ω = 0.94 gives σ² = −5.4314738e-3 in every variant. The FD check gives σ² = −5.449e-3 at
-n = 300, consistent with O(h²) (more resolutions are in `fd_check_output.txt`, see §6). FD finds no complex
+n = 300, consistent with O(h²) (more resolutions are in `fd_check_output.txt`, see §6). **Update from #194:** the crate gives σ² = −5.43147383546923512697530554200×10⁻³ at ω = 0.94, equal to every stored digit; the FD value is off by 3.2×10⁻³ relative, its discretization. FD finds no complex
 eigenvalue with |σ²| < 0.3 at ω = 0.75 or 0.94 (n = 300 and 600).
 
 Canonical low-ω / strong-field part (`lowscan.py`, `strongfield.py`; `low_p.txt`, `strong_p.txt`,
@@ -166,6 +173,11 @@ Fine scan (`crossing_m.txt`):
 The crossing coincides with the extremum to 8×10⁻⁸. The phantom first law is **dM = εω dN = −ω dN**, which
 holds to ~8×10⁻⁵. The extremum is a maximum of M, i.e. a minimum of |M|. Because dM = εω dN, M and N always
 have their extrema at the same ω, for either sign of ε.
+
+**Update from #194:**
+- The crate puts σ² = 0 at ω = 0.92890843105816652504, dN/dω = 0 at ...522 and dM/dω = 0 at ...524, equal to 1.8×10⁻¹⁹.
+- The stored dN/dω = 0 and dM/dω = 0 (0.92890838) are off by 5.1×10⁻⁸, so "coincides to 8×10⁻⁸" is the stored fit's error.
+- *Added by the coordinator:* the review's shooting code gives dM/dω = 0 at 0.9289084310, 3.6×10⁻¹¹ from the crate.
 
 For the campaign star there is no sign change of D on σ² ∈ [−4, (1−ω)²) at two tolerances
 (`deep_negative_output.txt`, `convergence_output.txt`). That excludes real growth rates up to |σ| = 2 in code
@@ -296,7 +308,7 @@ R − rs = 6.7 at α₀ = 1.5 and none beyond. Every star has BVP tolerance 1×1
 | 4.015 | 0.999304 | 800.6119 | −609.1458 | 7.488 | 177.0 | 678 |
 | 4.0179 (last) | 0.999941 | 801.9588 | −610.4921 | 7.499 | 177.1 | 1919 |
 
-(`phantom_family.txt` has every tenth star.) ω has the one fold, ω_min = 0.42226 at α₀ = 1.172 (`phantom_checks.py` C4),
+(`phantom_family.txt` has every tenth star.) ω has the one fold, ω_min = 0.42226 at α₀ = 1.172 (`phantom_checks.py` C4), [**Update from #194:** the polynomial of the crate's arclength path gives ω_min = 0.42225985865266326181 at α_c = 1.1718557760503; the stored 0.42226358 is a fit. The crate reproduces the stored rows to 9×10⁻⁹ in ω and 5×10⁻⁸ in N and M (10 of 105 printed tokens differ in the last digit, by 1.03 to 1.45 half-units); its Newton stepping in α_c stalls at 3.9935489, so rows 4.0, 4.015, 4.017906 and the scans at 3.5 to 4.015 were not reproduced, and the stop at α₀* = 4.0181766 stands as the stored solver's.]
 and then rises monotonically to 1, with dω/dα₀ ≈ 0.22 throughout the last stretch. dN/dα₀ rises from 40 (α₀ = 1.1) to
 464 and is positive on every step (C2). dM = −ω dN holds on every step to 1.1×10⁻⁵ of |dM| (C3, limit 1×10⁻⁴).
 
@@ -370,11 +382,13 @@ Checks on this scan:
   = 2.0, 1.09 at α₀ = 3.0), so the
   extrapolation is not reliable to 1%: extrapolating with the fitted order gives 2.0% and 4.2% below shooting, so the
   shooting root lies between the two extrapolations at both stars. The FD check supports "no instability" and cannot
-  confirm σ₀² better than a few percent at α₀ ≥ 2.
+  confirm σ₀² better than a few percent at α₀ ≥ 2. **Update from #194:** the crate's σ₀² is 1.28430640508399647929969563322×10⁻² (α₀ = 2.0) and 1.86850874779842754263187486000×10⁻² (α₀ = 3.0); the stored shooting doubles are off by 6.1×10⁻¹⁰ and 3.6×10⁻⁹. The crate's spread over five method choices is 0 to 2×10⁻¹⁴ (an estimator range, not an enclosure); an eigenvalue solver independent of its planes is not yet built.
 - Background convergence (`phantom_converge.py`, raw `converge.log`): at α₀ = 1.5, 2.5, 3.5, 4.0, 4.015 the same star
   on R × 1.5 differs by at most 5×10⁻¹⁰ in ω, N and M, and at tolerance 1×10⁻⁹ and 1×10⁻¹⁰ by at most 1.8×10⁻⁸
   (the BVP's own tolerance), against a limit of 1×10⁻⁷ set before the run. The mutation (the ν(R) matching dropped)
   does not converge and fails the check, and the planted star at α₀ = 1.3 passes it.
+
+**Update from #194:** the root lists above stop at three roots. The crate finds a fourth root at α₀ = 1.20 (0.3097), 1.50 (0.1647, 0.2574) and 2.00 (0.1370), all positive; the stored roots agree with the crate's to 2×10⁻⁸ or better (`taylor_radial_output.txt`, F).
 
 ### Discrepancies and changes to checks
 
