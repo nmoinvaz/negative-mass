@@ -190,5 +190,20 @@ check(f"lowers the $D=6$ slope by ${abs(low):.1f}\\%$" in TEX, f"D = 6 window ef
 GH = {4: 0.005, 5: 0.00176777, 6: 0.0025}
 gp = [f"${round(100 * sl[(D, 'G', GH[D])][1])}\\%$" for D in (4, 5, 6)]
 check(f"{gp[0]}, {gp[1]} and {gp[2]} above $1/W$" in TEX, f"G family departures {gp} printed in main.tex")
+
+# the expanding side (notes/wormhole_evolution/expansion_output.txt, #213): k of H = k/(tau_s - tau) for the tuned members
+blk, kk = None, {}
+for line in open(os.path.join(EV, "expansion_output.txt")):
+    m = re.match(r"\s+--- D(\d), h = ([0-9.]+), member (\S+)", line)
+    if m:
+        blk = (int(m[1]), float(m[2]), m[3])
+    m = re.search(r"1/H linear in tau: k = ([0-9.]+)", line)
+    if m and blk and blk[2] == "tuned":
+        kk[blk[:2]] = m[1]
+print("\n  k of the tuned members (D, h): ", kk)
+k4 = {v for (D, _), v in kk.items() if D == 4}
+k5 = {f"{float(v):.2f}" for (D, _), v in kk.items() if D == 5}
+check(k4 == {"2.0000"} and "$k=2.0000$ in $D=4$" in TEX, f"k at D = 4 is {k4} and is printed in main.tex")
+check(len(k5) == 1 and f"$k\\approx{k5.pop()}$ in $D=5$" in TEX, "k at D = 5 printed in main.tex")
 print("\nchecks failed:", bad)
 sys.exit(1 if bad else 0)
