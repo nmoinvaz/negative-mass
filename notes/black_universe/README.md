@@ -139,6 +139,13 @@ W is in units 1/b. The bracket column is W in [BKZ12]'s units (m = 1/3), i.e. ti
 direction of rate κ, whose coefficient is free in regular Cauchy data ([horizon_sector.md](horizon_sector.md)). What follows explains why the bound state of
 the count disappears at c = −1, not why the member is stable.
 
+**Update from #262** ([cminus1_mode.md](cminus1_mode.md)): at c = −1 the growing mode is Y = c₂ V R(ρ(Π)), that is
+Y_ref = R e^{κx} with x the tortoise coordinate. It is an exact solution for every member at W = K = −2c/π (checked symbolically, and by the
+coordinator's derivation from the linearized field equations in the static gauge, `I262-mac-review/ind262c.py`). The solution regular on the
+horizon and decaying at infinity is Y_∞ = Y_ref − Y_b/I₀, I₀ = 1.01490361. The rate is smooth through c = −1:
+W(c) = K(c) + (c + 1)/I₀ + O((c + 1)²), d(W/κ)/dc = 0.31402902 (numerical evidence; the third-order fit of the rates gives 0.31402903). The two-sided
+0.31 of the table is this slope.
+
 Near the horizon, with the scaling ρ = ρ_h t at fixed t and ρ_h → 0, V̂ in x tends to a fixed well (sympy, S7, S7c; the members c = −1.0001 and
 −0.9999 follow it to 1.5e-3 and 1.3e-3, S7b, S7d):
 

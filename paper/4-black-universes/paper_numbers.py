@@ -338,11 +338,21 @@ m = re.search(r"`evolve\.F_np` agrees with them to ([\d.e+-]+) at 60 states", ev
 check(m is not None, "ind217 in the evolution.md review")
 need(f"brute-force Ricci tensor to ${sci(m[1])}$", "ind217")
 
+# #262: the slope through c = -1 and I0 (notes/black_universe/cminus1_mode_output.txt)
+CM = S.read("cminus1_mode_output.txt")
+i0 = re.search(r"^\s+I0\s+= ([0-9.]+)", CM, re.M)
+sl = re.search(r"d\(W/kappa\)/dc = -\(pi/2\) beta\*\s+= ([0-9.]+)", CM)
+f3 = re.search(r"R2: s1 = [0-9.]+, s2 = [0-9.]+ \(second order\); s1 = ([0-9.]+),", CM)
+check(i0 and sl and f3, "#262's I0, slope and third-order fit in cminus1_mode_output.txt")
+need(f"$I_0={float(i0[1]):.10f}$", "I0")
+need(f"$\\dd(W/\\kappa)/\\dd c={float(sl[1]):.10f}$ at $c=-1$", "d(W/kappa)/dc at c = -1")
+need(f"a third-order fit of the rates gives ${float(f3[1]):.8f}$", "the third-order fit")
+
 # ---------------------------------------------------------------------------------------------------- placeholders and marks
 pend = re.findall(r"\\pending\{\\#(\d+)", TEX)
 needs = len(re.findall(r"% NEEDS #260", TEX))
 print(f"\nplaceholders in the text: {', '.join('#' + p for p in pend)}; sentences marked NEEDS #260: {needs}")
-check("262" in pend and "258" in pend, "placeholders for #262 and #258")
+check("258" in pend and "262" not in pend, "the placeholder for #258 remains; #262's are filled")
 
 # ---------------------------------------------------------------------------------------------------- coverage
 body = TEX.split("\\begin{abstract}")[1].split("\\begin{thebibliography}")[0]

@@ -233,8 +233,10 @@ $(1/A_1)\ln|\rho_h|$, so the bound state keeps $W=\kappa$. At $c=-1$ exactly the
 horizon cancel, $\hat V\to0$ at the horizon, and there is no bound state. So the count is 0 at one point and 1 at points
 arbitrarily close to it, with a rate near $\kappa$, not near zero.
 
-\pending{\#262: $\dd(W/\kappa)/\dd c$ at $c=-1$ from either side, and its closed form, from the $c=-1$ solution of
-Sec.~\ref{sec:cm1}.}
+The rate itself is smooth through $c=-1$. With $K=-2c/\pi$ and $I_0=1.0149036099$, an integral of the $c=-1$ solution of
+Sec.~\ref{sec:cm1}, first-order perturbation theory gives $W(c)=K(c)+(c+1)/I_0+O((c+1)^2)$, so
+$\dd(W/\kappa)/\dd c=0.3140290189$ at $c=-1$ (numerical evidence); a third-order fit of the rates gives $0.31402903$. The
+count jumps at $c=-1$; the rate does not.
 
 \begin{figure}[t]
 \centering
@@ -385,7 +387,7 @@ gauge $\delta\varphi=0$; on $\Hp$ at $c=-1$, $\rho=0$ and $Y=\delta r$.
   free.
 \item \emph{Gauge invariant.} At the area minimum $r_U=r_V=0$ on $\Hp$, so no shift of the horizon's position changes
   $\delta r$ there (Lemma~\ref{lem:horizon}).
-\item \emph{Regular.} The growing solution is $Y=c_2VG(\Pi)$, with $G$ analytic in $\Pi$: smooth across $S$ and into the
+\item \emph{Regular.} The growing solution is $Y=c_2VR(\rho(\Pi))$, with $R$ the areal radius, analytic in $\Pi$: smooth across $S$ and into the
   interior. A formal series at $S$ shows that the smooth solutions contain the two branches $Y\propto V$ and $Y\propto U$ and
   otherwise only solutions with smooth $u$ (checked symbolically); the series at $W=\kappa$ has no logarithm.
 \end{itemize}
@@ -432,7 +434,10 @@ infinity with zero change of the mass has not been built.
 
 \pending{\#258: a compactly supported datum on a full slice to spatial infinity, its constraint solution, and its $c_2$.}
 
-\pending{\#262: the closed form of the $c=-1$ solution $Y=VG(\Pi)$.}
+In static coordinates the growing solution is $Y=R\,e^{K(t+x)}$, with $x=\int\dd\rho/A$ the tortoise coordinate. At the
+rate $W=K=-2c/\pi$ it solves the linear radial problem exactly for every member (checked symbolically, and again from the
+linearized field equations in the static gauge by an independent derivation). Only at $c=-1$ is $K=\kappa$, and there
+$Y=c_2VR$ equals $c_2V$ on the future horizon. Why such a solution exists for every member is open.
 \nopagebreak
 \begin{figure}[H]
 \centering

@@ -9,7 +9,7 @@ the algebra of the D checks is *checked symbolically*, the solver results are *n
 
 **c₂ is free in regular Cauchy data on a slice through the horizon.** It is the number `∂_V δr` at the point where the slice crosses the future horizon, the same
 number at every point of the horizon down to the bifurcation surface S; no constraint restricts it, 20 of 20 random regular data have c₂ ≠ 0, and the growing solution
-`Y = c₂ V G(Π)` is smooth across S and through the interior (ρ < 0). So #232's horizon sector belongs to physical initial data: at c = −1 the linear problem has a
+`Y = c₂ V G(Π)` (*update from #262:* in closed form `Y = c₂ V R(ρ(Π))`, R the areal radius; this note's `G(Π)` there is not dρ/dΠ) is smooth across S and through the interior (ρ < 0). So #232's horizon sector belongs to physical initial data: at c = −1 the linear problem has a
 growing solution of rate κ, regular on the whole slice, excited by regular data that change δr at the horizon crossing, and not excited by data supported away from it.
 The count of #212 (none) stands for the class `u = Y/ρ → 0`, which has c₁ = c₂ = 0. Status: the horizon law, the constraint propagation, the series at S and the gauge
 statements are *checked symbolically*; the solver results (functional against #232's solutions to 3e-10 after Richardson, planted case, control, regularity, random data) are *numerical evidence*.
@@ -80,7 +80,7 @@ The bar of 1e-6 is met after Richardson by three orders; the raw value at h = 0.
 | N8 | δr, δF, δφ and Y at S, two interior points (−Π = 0.04, 0.12), the static region and the left side, classes G and A0 | Cauchy ratios 4.00, 4.00 |
 
 D6 says that the smooth solutions of the Y equation near S contain the two non-smooth-`u` branches `Y = y₁₀V` and `Y = y₀₁U` (u = Y/ρ with a simple pole at U = 0 or V = 0) and nothing else
-outside the smooth-u class `Y = O(UV)`. `Y = V G(Π)` is the W = κ branch: smooth at S, equal to V on H⁺ exactly, continued analytically into Π < 0. In the exterior it grows as `e^{κt}` at fixed ρ
+outside the smooth-u class `Y = O(UV)`. `Y = V G(Π)` (= V R(ρ(Π)), #262) is the W = κ branch: smooth at S, equal to V on H⁺ exactly, continued analytically into Π < 0. In the exterior it grows as `e^{κt}` at fixed ρ
 (`V = e^{κ(t+x)}`) and toward large ρ, so it is not an L² bound state in the tortoise coordinate: that is why #212's count misses it.
 
 ## The data are free, and physical
@@ -218,3 +218,7 @@ Review of branch `wip/i248-horizon-sector` at 0dd8c98 and raw `I248-dh610` at 88
   - Task 2 is added to #249.
   - Task 3 is #259.
   - Task 4 is added to #250.
+- *Update from #262 (coordinator):* the Frobenius solution of D7 with g₁ = 0 is Y_ref − (π/8) Y_b. Y_ref = R e^{κx} itself has g₁ = π/8 and
+  g₂ = 5/12 + 3π²/128. The Kruskal-regular solutions at W = κ form a two-dimensional space {Y_ref + βY_b} with the same c₂, and the condition at
+  spatial infinity fixes β (`cminus1_mode.md`). #262's normalization has e^{2κx} = ρ(1 + …) at 0, and this note's has Π(ρ = 1) = 1, so they differ by
+  Π(1) = 2.4725459594.

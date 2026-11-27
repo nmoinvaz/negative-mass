@@ -205,3 +205,30 @@ cminus1_mode.py mutations DIR PREFIX                                            
 ```
 
 `cminus1_mode_output.txt` is `derive`, `check`, `table` and `mutations` of the runs of record (`I262-mac/runs`), in that order.
+
+## Coordinator's review
+
+Review of branch `wip/i262-cminus1-mode` at 43d0d08 and raw `I262-mac` at 06b4cb04, recorded in negative-mass-raw `I262-mac-review`
+(criteria cf128a87, amendments A1–A4, results ccd981d9). On the Mac, nice 10.
+
+- **Scope.** The branch adds the script, its output and this note, nothing else.
+- **Rerun.** `derive` gives 4 of 4, `check` 9 of 9, and `table` the same lines.
+- **Independent check** (`ind262c.py`).
+  - Method: the linearized Einstein–scalar equations, from a brute-force Ricci tensor in the static gauge δg_tρ = 0 and δφ = 0, with
+    Y = R e^{K(t+x)} and H₀, H₂ unknown. It shares no code with this note's script, `stability.py` or the master equation.
+  - Result: at W = K the remaining equations no longer involve H₀'s amplitude, and every residual vanishes: 4e-36 (c = −1), 4e-38 (−0.3),
+    4e-37 (−1.5) and 1e-32 (−10), relative, at 40 digits. A rate off by 1e-3, R replaced by ρ, or K replaced by κ (at c ≠ −1) each fail.
+  - The closed form is confirmed for every member tested.
+  - Four amendments came before that result: an over-determined gauge in the first form, a run stopped for speed, a solve-order crash, and
+    W taken from float(c) at c = −0.3. Each is recorded, and no bar moved.
+- **Status.** The exact solution is *checked symbolically*, twice and independently. The slope and I₀ are *numerical evidence*. The
+  monodromy formula has its two exact consequences and the fit behind it, not a proof.
+- **Applied.**
+  - The README's §5 and `horizon_sector.md` (the closed form, the two-dimensional regular space, the normalization) are updated.
+  - Paper IV's two #262 placeholders are filled. `paper_numbers.py` checks I₀, the slope and the fit (131 of 131), and a new control
+    `slope262` fires.
+- **Follow-ups.**
+  - Task 3 (why the solution is exact for every c) is #269.
+  - Task 4 (the bound W < K for c < −1) is #270.
+  - Task 2 is added to #249.
+  - Task 1 (the second-order coefficient) is not filed. The third-order fit gives it to the precision any statement needs.
