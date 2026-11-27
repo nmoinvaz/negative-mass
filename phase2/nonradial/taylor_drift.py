@@ -225,6 +225,7 @@ PLANTS = {
     "int_crate": dict(star="crate", mext="sci",   vac=False),   # crate's star in the interior, scipy's M_ext
     "ext_crate": dict(star="sci",   mext="crate", vac=False),   # scipy's star in the interior, the crate's M_ext
     "crate_j":   dict(star="crate", mext="star",  vac=False, j=True),   # the crate's star, M_ext and J tables: J rounded once from double-double
+    "crate_j_vac": dict(star="crate", mext="star", vac=True, j=True),   # as crate_j, the exterior scalar plane in vacuum as the crate integrates it (A4)
 }
 JTABLE_PATH = [None]
 
@@ -669,6 +670,19 @@ def verdicts(sc, crate, plc):
     except TypeError:
         rj, st["H3"] = "not run", "undecided"
     lines.append(f"H3 rounding in the generated J_and_h: eta(crate J tables) / eta(J_and_h), both on the crate's star (cells 1000 base, 1000 phi, 3000 base) {f2(rj)}; {st['H3']}")
+    # H6 (A4): the exterior scalar plane through the star's J (couplings proportional to phi0 kept) against vacuum, at (3000, base), rtol 1e-13, atol 1e-14
+    try:
+        import mpmath as mp3
+        mp3.mp.dps = 60
+        rf = crate_ref(crate, "dd", "base", 3000.0)
+        mv_ = float(np.mean([float(mp3.mpf(sget(sc, 3000.0, "base", 1e-13, "crate_j_vac", extra=e)["D"]) / rf - 1) for e in range(CJE_N)]))
+        mn_ = cje_stats(sc, crate, 3000.0, "base", 1e-13, 1e-14)[1]
+        q6 = abs(mv_) / abs(mn_)
+        st["H6"] = "supported" if q6 <= 0.3 else ("ruled out" if q6 >= 0.7 else "undecided")
+        lines.append(f"H6 the exterior scalar plane through the star's J against vacuum, (3000, base) rtol 1e-13: mean signed gap {mn_:+.2e} through the star's J, {mv_:+.2e} in vacuum, ratio {q6:.2f}; {st['H6']}")
+    except TypeError:
+        st["H6"] = "undecided"
+        lines.append("H6 the exterior scalar plane through the star's J against vacuum: not run; undecided")
     # H4: the BVP star's kinks make the integrator's error erratic: eta falls when the star is smooth
     rr = [eta1[c] / eta0[c] for c in cells]
     nlow = sum(1 for x in rr if x <= CRIT["KINK_REMOVES"])
@@ -745,6 +759,7 @@ def grid_cases():
     out["CJE"] = [K(g, v, r, "crate_j", a, extra=e) for (g, v) in CJ_CELLS for (r, a) in CJE_SETTINGS for e in range(CJE_N)]      # A3
     out["CJN"] = ([K(1000.0, "base", 1e-10, "crate_j", noise=u, seed=sd) for (kind, u) in CJN_NOISE if kind == "noise" for sd in (1, 2, 3, 4)]
                   + [K(1000.0, "base", 1e-10, "crate_j", row=u, seed=sd) for (kind, u) in CJN_NOISE if kind == "row" for sd in (1, 2, 3, 4)])   # A3
+    out["CJV"] = [K(g, v, 1e-13, "crate_j_vac", extra=e) for (g, v) in CJ_CELLS for e in range(CJE_N)]                                      # A4
     out["X_P1_13"] = [K(g, v, 1e-13, "crate") for g in G for v in V]
     out["X_ATOL"] = [K(1000.0, v, 1e-13, atol=1e-17) for v in V] + [K(3000.0, "base", 1e-13, atol=1e-17)]
     out["X_N0R13"] = [K(1000.0, v, 1e-13, extra=1) for v in V] + [K(3000.0, "base", 1e-13, extra=1)]
@@ -756,7 +771,7 @@ def grid_cases():
     return out
 
 
-CORE = ["P0", "P1", "N0", "N1", "CJE", "CJN"]
+CORE = ["P0", "P1", "N0", "N1", "CJE", "CJN", "CJV"]
 
 
 def run_checks(args):
@@ -928,6 +943,17 @@ def run_report(args):
                 P(f"{'%g %s' % (g, v):>14s} {r:7.0e} {a:7.0e} {m:+10.2e} {sd:10.2e} {m / (sd / np.sqrt(len(xs))):+20.1f}   " + " ".join(f"{x:+.1e}" for x in xs))
             except TypeError:
                 P(f"{'%g %s' % (g, v):>14s} {r:7.0e} {a:7.0e}   not run")
+    P("\n# CJV: as CJE with the exterior scalar plane in vacuum (crate_j_vac), rtol 1e-13, atol 1e-14")
+    import mpmath as mp4
+    for (g, v) in CJ_CELLS:
+        xs = []
+        for e in range(CJE_N):
+            rec = sget(sc, g, v, 1e-13, "crate_j_vac", extra=e)
+            if rec:
+                xs.append(float(mp4.mpf(rec["D"]) / ref(v, g) - 1))
+        if len(xs) >= 2:
+            m, sd = float(np.mean(xs)), float(np.std(xs, ddof=1))
+            P(f"  {'%g %s' % (g, v):>14s}: n {len(xs)} mean {m:+.2e} std {sd:.2e} t {m / (sd / np.sqrt(len(xs))):+.1f}   " + " ".join(f"{x:+.1e}" for x in xs))
     P("\n# CJN: planted noise on the exact-J system (1000 base, rtol 1e-10, atol 1e-14): std of the signed gap over seeds 1 .. 4 (noise 0: the 8 realizations of CJE)")
     try:
         xs0, m0, s0 = cje_stats(sc, crate, 1000.0, "base", 1e-10, 1e-14)
