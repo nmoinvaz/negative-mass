@@ -1,10 +1,10 @@
 """Data for Paper III's figure: the growing mode's profile delta r(r) / delta r(a) at several D, and the table of growth
-rates (D >= 20: the quad-double values of #195's crate, from w2_output.txt, rounded to 12 decimals; D <= 11: Torii &
-Shinkai's Table I).
+rates (all 16 rows: the quad-double values of #195's crate, from w2_output.txt, rounded to 12 decimals; Torii & Shinkai's
+Table I for D <= 11 is ts13_digits.py's cross-check).
 
     python3 profiles.py                -> profiles.csv, growth.csv
     python3 profiles.py --growth-only  -> growth.csv
-    python3 check_growth.py            checks growth.csv against w2_output.txt (G1-G5, R0-R2; --mutate=NAME)
+    python3 check_growth.py            checks growth.csv against w2_output.txt (G1-G6, R0-R2; --mutate=NAME)
 
 The regular solution is integrated from the throat to r_m = a e^{X/s} (F = 1 - e^{-X}), and continued beyond with the
 exact decaying far solution r^{(n+1)/2} K_nu(W r), nu = (n - 1)/2, scaled to match Y at r_m (mpmath for the Bessel
@@ -26,16 +26,16 @@ import modes_r as m
 HERE = os.path.dirname(os.path.abspath(__file__))
 mp.mp.dps = 30
 
-# Torii & Shinkai, PRD 88, 064027 (2013), Table I: -omega^2 a^2 (their n is the spacetime dimension D)
+# Torii & Shinkai, PRD 88, 064027 (2013), Table I: -omega^2 a^2 (their n is the spacetime dimension D). Only write_profiles
+# reads it (the D = 10 profile); growth.csv does not. ts13_digits.py and check_growth.py read this text.
 TS13 = {4: 1.39705243371511, 5: 2.98495893027790, 6: 4.68662054299460, 7: 6.46258414126318, 8: 8.28975936306259,
         9: 10.1535530451867, 10: 12.0442650147438, 11: 13.9552091676647, 20: 31.5751101285105,
         50: 91.3457759137153, 100: 191.283017729717}
 
 
 W2_OUTPUT = os.path.join(HERE, "w2_output.txt")
-SRC_TS13 = "TS13 Table I"
 SRC_CRATE = "w2_crate qd (#195)"
-D_CRATE = (20, 30, 50, 100, 200, 500, 1000, 2000)
+D_ROWS = tuple(range(4, 12)) + (20, 30, 50, 100, 200, 500, 1000, 2000)
 
 
 def crate_w2(path=W2_OUTPUT):
@@ -61,8 +61,7 @@ def round12(text):
 
 def write_growth():
     crate = crate_w2()
-    rows = [(D, f"{TS13[D]:.12f}", SRC_TS13) for D in range(4, 12)]
-    rows += [(D, round12(crate[D]), SRC_CRATE) for D in D_CRATE]
+    rows = [(D, round12(crate[D]), SRC_CRATE) for D in D_ROWS]
     with open(os.path.join(HERE, "growth.csv"), "w", newline="") as fh:
         w = csv.writer(fh)
         w.writerow(["D", "W2a2", "source"])

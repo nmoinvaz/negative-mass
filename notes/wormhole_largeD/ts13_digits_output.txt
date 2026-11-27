@@ -1,4 +1,4 @@
-# Output of ts13_digits.py and ts13_digits.py --selftest (script blob 84c704e3eb47035cd80d02e4ce8afb3972b3b3ec, checkout 1839211 plus this branch); each mutation's output is in negative-mass-raw/I202-rpi5/mutations/. Run from this directory with the raw clone beside the checkout.
+# Output of ts13_digits.py and ts13_digits.py --selftest (script blob c3f47f9be903712188f157a83da5ba493f0afbb0, checkout 4bced01 plus this branch, #221); each mutation's output is in negative-mass-raw/I221-rpi5/run_13_ts13_mutations/. Run from this directory with the raw clone beside the checkout.
 # $ python3 ts13_digits.py
 ts13_digits.py  mutate=None  tex=found
 
@@ -6,26 +6,27 @@ PASS    T1: 11 of 11 rows hold 15 significant digits
 PASS    T2: 11 of 11 rows equal -(profiles.py's TS13 dict), which holds -omega^2
 PASS    T3: 11 of 11 rows equal the TeX source's table
 PASS    R1: 5 of 5 quoted values (D = [4, 10, 20, 50, 100]) are the printed ones rounded to their digits
-PASS    C1: 8 of 8 rows D = 4..11 equal -omega^2 at 12 decimals; TS13 prints 13 to 14 decimals there
+PASS    C1: 8 of 8 old rows D = 4..11 (growth.csv at 4bced01) equal -omega^2 at 12 decimals; TS13 prints 13 to 14 decimals there
+PASS    C2: 8 of 8 rows D = 4..11 of growth.csv equal the crate's value at 12 decimals
 PASS    K1: W^2 a^2 = -omega^2 against the crate: relative difference at most 4.43e-10 (bar 1e-8); D = 4: 1.39705243371511 against 1.397052434333506, 4.43e-10
 PASS    P1: the comparator accepts the crate's own values at 15 significant digits: 11 of 11
 PASS    O1: 4 of 4 one_mode.log values (D = [4, 10, 20, 50]) equal the crate rounded to their 12 digits
 PASS    W1: (3.18) equals one_mode.py's U at 4 radii for 11 of 11 D
 PASS    W2: one_mode.py's source line 'U = Ufun or (lambda r: ...)' holds U: (n - 2) * (n - 4) / (4 * r ** 2) - 3 * n ** 2 / (4 * r ** (2 * n))
 
-  TS13 Table I as printed (omega^2, a = 1), its conversion, and growth.csv (as in this checkout)
+  TS13 Table I as printed (omega^2, a = 1), its conversion, and growth.csv (as in this checkout; D = 4..11 are the crate's since #221)
   D    printed omega^2        digits  W^2 a^2 = -omega^2     growth.csv value (source)                  csv - round(-omega^2, 12)
-  4    -1.39705243371511       15    1.39705243371511       1.397052433715 (TS13 Table I)              +0.0e+00
-  5    -2.98495893027790       15    2.98495893027790       2.984958930278 (TS13 Table I)              +0.0e+00
-  6    -4.68662054299460       15    4.68662054299460       4.686620542995 (TS13 Table I)              +0.0e+00
-  7    -6.46258414126318       15    6.46258414126318       6.462584141263 (TS13 Table I)              +0.0e+00
-  8    -8.28975936306259       15    8.28975936306259       8.289759363063 (TS13 Table I)              +0.0e+00
-  9    -10.1535530451867       15    10.1535530451867       10.153553045187 (TS13 Table I)             +0.0e+00
-  10   -12.0442650147438       15    12.0442650147438       12.044265014744 (TS13 Table I)             +0.0e+00
-  11   -13.9552091676647       15    13.9552091676647       13.955209167665 (TS13 Table I)             +0.0e+00
-  20   -31.5751101285105       15    31.5751101285105       31.575110127562 (modes_r.py)               -9.5e-10
-  50   -91.3457759137153       15    91.3457759137153       91.345775903365 (modes_r.py)               -1.0e-08
-  100  -191.283017729717       15    191.283017729717       191.283017684226 (modes_r.py)              -4.5e-08
+  4    -1.39705243371511       15    1.39705243371511       1.397052434334 (w2_crate qd (#195))        +6.2e-10
+  5    -2.98495893027790       15    2.98495893027790       2.984958930352 (w2_crate qd (#195))        +7.4e-11
+  6    -4.68662054299460       15    4.68662054299460       4.686620543119 (w2_crate qd (#195))        +1.2e-10
+  7    -6.46258414126318       15    6.46258414126318       6.462584141370 (w2_crate qd (#195))        +1.1e-10
+  8    -8.28975936306259       15    8.28975936306259       8.289759363072 (w2_crate qd (#195))        +9.0e-12
+  9    -10.1535530451867       15    10.1535530451867       10.153553044946 (w2_crate qd (#195))       -2.4e-10
+  10   -12.0442650147438       15    12.0442650147438       12.044265014498 (w2_crate qd (#195))       -2.5e-10
+  11   -13.9552091676647       15    13.9552091676647       13.955209167496 (w2_crate qd (#195))       -1.7e-10
+  20   -31.5751101285105       15    31.5751101285105       31.575110128358 (w2_crate qd (#195))       -1.5e-10
+  50   -91.3457759137153       15    91.3457759137153       91.345775913630 (w2_crate qd (#195))       -8.5e-11
+  100  -191.283017729717       15    191.283017729717       191.283017730359 (w2_crate qd (#195))      +6.4e-10
 
   against the crate (qd, w2_output.txt), and F1: the digits TS13's printed values share with it
   D    crate (qd)                       crate - TS13    relative    agreeing digits   last printed decimal
@@ -49,7 +50,7 @@ PASS    W2: one_mode.py's source line 'U = Ufun or (lambda r: ...)' holds U: (n 
   20   31.5751101284       31.5751101284    +1.11e-10         -4.15e-11
   50   91.3457759136       91.3457759136    +1.15e-10         +2.96e-11
 
-  two options for growth.csv's D = 4..11 rows: A as is (TS13 printed, rounded), B the crate rounded to 12 decimals
+  growth.csv's D = 4..11 rows: A the old rows (OLD_ROWS: TS13 printed, rounded), B the current rows (the crate rounded to 12 decimals)
   D    A - crate    B - crate    A = B at 8 decimals   A = B at 10 decimals
   4    -6.19e-10   +4.93e-13   yes                   NO
   5    -7.38e-11   +2.40e-13   yes                   NO
@@ -72,7 +73,9 @@ PASS    --mutate=digit_6: TS13 D = 7: 6th decimal 4 -> 5; fires ['C1', 'K1', 'T2
 PASS    --mutate=drop_zero: TS13 D = 5: the printed trailing 0 dropped; fires ['T1', 'T3'], declared ['T1', 'T3']
 PASS    --mutate=sign: conversion W^2 = +omega^2; fires ['C1', 'K1'], declared ['C1', 'K1']
 PASS    --mutate=sqrt: conversion W = sqrt(-omega^2); fires ['C1', 'K1'], declared ['C1', 'K1']
-PASS    --mutate=csv: growth.csv D = 6: 12th decimal + 1; fires ['C1'], declared ['C1']
+PASS    --mutate=csv: growth.csv D = 6: 12th decimal + 1; fires ['C2'], declared ['C2']
+PASS    --mutate=old_rows: OLD_ROWS D = 6: 12th decimal + 1; fires ['C1'], declared ['C1']
+PASS    --mutate=crate_lowD: crate D = 6: 12th decimal + 1 (2e-12 relative, under K1's bar); fires ['C2'], declared ['C2']
 PASS    --mutate=profiles: profiles.py's dict D = 11: last digit + 1; fires ['T2'], declared ['T2']
 PASS    --mutate=crate: crate D = 20: 6th decimal + 1 (3e-8 relative, over K1's bar); fires ['K1', 'O1'], declared ['K1', 'O1']
 PASS    --mutate=crate_7: crate D = 20: 7th decimal + 1 (3e-9 relative, under K1's bar); fires ['O1'], declared ['O1']

@@ -1,20 +1,23 @@
-"""Checks growth.csv against w2_output.txt (#200), and recomputes the remainder of the large-D series from its rows.
+"""Checks growth.csv against w2_output.txt (#200, #221), and recomputes the remainder of the large-D series from its rows.
 
     python3 check_growth.py [--mutate=NAME] [--old-rev=REV]       (exit 1 if a gated check fails)
 
-Rows (G1-G6): the file's rows against the crate's quad-double table in w2_output.txt (D >= 20, rounded to 12 decimals), against
-profiles.py's TS13 values (D <= 11, read from its source text), and against REV's csv for D <= 11 (default 613e866).
+Rows (G1-G6): all 16 rows against the crate's quad-double table in w2_output.txt (rounded to 12 decimals, G2, G3); the D <= 11 rows
+against profiles.py's TS13 values, read from its source text, within relative 1e-8 (G4: the cross-check that shares nothing with the
+crate; the bar is ts13_digits.py's K1); the D >= 20 rows against REV's csv (G6, default 4bced01: #221 leaves them as they were).
 Remainder (R0-R2): W^2 a^2 minus the series through Omega_k, times s^(k+1), s = 2(D - 3), from the csv rows; Omega_0 ... Omega_3 are
 the closed forms of #26 and #208, Omega_4 is #195's fit. An enclosure is the rounding of the 12th decimal given the crate's value
-(5e-13 s^(k+1) for D >= 20); it is not the crate's own error and not a fit spread.
+(5e-13 s^(k+1)); it is not the crate's own error and not a fit spread.
 
 Shares with profiles.py: the input file w2_output.txt and TS13's values (the dict is the only record of its 15 digits). It has its
 own parser and its own rounding (exact rationals, not Decimal). --mutate=NAME breaks the data as read, in memory:
   last_digit:D   last digit of row D's W2a2 + 1 unit of the 12th decimal      drop_row:D   row D removed
-  source:D       row D's source replaced by modes_r.py                         ts13_swap    W2a2 of rows 4 and 5 swapped
-  crate_scale    every crate value times 1 + 1e-12                              round_trunc  the reference truncates, not rounds
-  list50         the 64-value list's D = 50 value + 2e-18                       wrong_om2    Omega_2's pi^2 ln 2 term flipped
-  wrong_om3      Omega_3's 384 zeta(3) term flipped                             s_off        s = 2(D - 2)
+  source:D       row D's source replaced by its old label (TS13 Table I for D <= 11, modes_r.py for D >= 20)
+  revert_lowD    rows 4 ... 11 put back to TS13's rounded values and label     ts13_swap    W2a2 of rows 4 and 5 swapped
+  ts13_digit:D   profiles.py's TS13 value for D <= 11, 6th decimal + 1         crate_scale  every crate value times 1 + 1e-12
+  round_trunc    the reference truncates, not rounds                           list50       the 64-value list's D = 50 value + 2e-18
+  wrong_om2      Omega_2's pi^2 ln 2 term flipped                              wrong_om3    Omega_3's 384 zeta(3) term flipped
+  s_off          s = 2(D - 2)
 The last line prints the gated checks that failed.
 """
 import ast
@@ -32,7 +35,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 W2_OUT = os.path.join(HERE, "w2_output.txt")
 O5_OUT = os.path.join(HERE, "order5_output.txt")
 D_ORDER = [4, 5, 6, 7, 8, 9, 10, 11, 20, 30, 50, 100, 200, 500, 1000, 2000]
-SRC_CRATE, SRC_TS13 = "w2_crate qd (#195)", "TS13 Table I"
+SRC_CRATE, SRC_TS13 = "w2_crate qd (#195)", "TS13 Table I"      # SRC_TS13: the label the D <= 11 rows had before #221
+BAR_G4 = Fraction(1, 10**8)             # relative; ts13_digits.py K1's bar
 R_DS = (200, 500, 1000, 2000)
 HALF = Fraction(1, 2 * 10**12)          # half a unit of the 12th decimal
 failed = []
@@ -151,7 +155,7 @@ def read_o5_omegas(path):
 # main
 # ---------------------------------------------------------------------------------------------------------------
 def main(argv):
-    mut, old_rev = None, "613e866"
+    mut, old_rev = None, "4bced01"
     for a in argv:
         if a.startswith("--mutate="):
             mut = a.split("=", 1)[1]
@@ -181,9 +185,14 @@ def main(argv):
         order.remove(marg)
         del csvrows[marg]
     elif mname == "source":
-        csvrows[marg][2] = "modes_r.py"
+        csvrows[marg][2] = SRC_TS13 if marg <= 11 else "modes_r.py"
+    elif mname == "revert_lowD":
+        for D in range(4, 12):
+            csvrows[D][1], csvrows[D][2] = fix(Fraction(ts13[D]), 12), SRC_TS13
     elif mname == "ts13_swap":
         csvrows[4][1], csvrows[5][1] = csvrows[5][1], csvrows[4][1]
+    elif mname == "ts13_digit":
+        ts13[marg] = fix(Fraction(ts13[marg]) + Fraction(1, 10**6), ndec(ts13[marg]))
     elif mname == "crate_scale":
         crate = {D: fix(Fraction(v) * (1 + Fraction(1, 10**12)), 25) for D, v in crate.items()}
     elif mname == "list50":
@@ -196,23 +205,17 @@ def main(argv):
           f"header {header}, D = {order}")
     bad2 = []
     for D in D_ORDER:
-        if D >= 20:
-            r = csvrows.get(D)
-            if r is None or r[1] != rnd(Fraction(crate[D]), 12):
-                bad2.append(D)
-    check("G2", not bad2, f"{8 - len(bad2)} of 8 rows D >= 20 equal the crate's qd value rounded to 12 decimals" +
-          (f"; NOT MET at D = {bad2}" if bad2 else ""))
-    bad3 = [D for D in D_ORDER if D in csvrows and csvrows[D][2] != (SRC_CRATE if D >= 20 else SRC_TS13)] \
-        + [D for D in D_ORDER if D not in csvrows]
-    check("G3", not bad3, f"sources: `{SRC_CRATE}` for D >= 20, `{SRC_TS13}` for D <= 11" +
-          (f"; NOT MET at D = {bad3}" if bad3 else ""))
-    bad4 = []
-    for D in range(4, 12):
         r = csvrows.get(D)
-        if r is None or r[1] != rnd(Fraction(ts13[D]), 12):
-            bad4.append(D)
-    check("G4", not bad4, f"{8 - len(bad4)} of 8 rows D <= 11 equal profiles.py's TS13 value at 12 decimals" +
-          (f"; NOT MET at D = {bad4}" if bad4 else ""))
+        if r is None or r[1] != rnd(Fraction(crate[D]), 12):
+            bad2.append(D)
+    check("G2", not bad2, f"{16 - len(bad2)} of 16 rows equal the crate's qd value rounded to 12 decimals" +
+          (f"; NOT MET at D = {bad2}" if bad2 else ""))
+    bad3 = [D for D in D_ORDER if D in csvrows and csvrows[D][2] != SRC_CRATE] + [D for D in D_ORDER if D not in csvrows]
+    check("G3", not bad3, f"source `{SRC_CRATE}` for all 16 rows" + (f"; NOT MET at D = {bad3}" if bad3 else ""))
+    rel4 = {D: abs(Fraction(csvrows[D][1]) - Fraction(ts13[D])) / Fraction(ts13[D]) for D in range(4, 12) if D in csvrows}
+    bad4 = [D for D in range(4, 12) if D not in rel4 or rel4[D] > BAR_G4]
+    check("G4", not bad4, f"{8 - len(bad4)} of 8 rows D <= 11 within relative {float(BAR_G4):.0e} of profiles.py's TS13 value "
+          f"(worst {float(max(rel4.values(), default=0)):.2e})" + (f"; NOT MET at D = {bad4}" if bad4 else ""))
     nd = ndec(crate[50])
     check("G5", fix(Fraction(lst[50]), nd) == crate[50],
           f"the table's D = 50 value {crate[50]} and the list's {lst[50][:nd + 6]}... rounded to {nd} decimals "
@@ -223,8 +226,8 @@ def main(argv):
                              text=True, check=True).stdout
         _, orows = read_csv_text(old)
         oldrows = {int(r[0]): r for r in orows}
-        bad6 = [D for D in range(4, 12) if csvrows.get(D) != oldrows[D]]
-        check("G6", not bad6, f"{8 - len(bad6)} of 8 rows D <= 11 equal {old_rev}'s rows" +
+        bad6 = [D for D in D_ORDER if D >= 20 and csvrows.get(D) != oldrows[D]]
+        check("G6", not bad6, f"{8 - len(bad6)} of 8 rows D >= 20 equal {old_rev}'s rows" +
               (f"; NOT MET at D = {bad6}" if bad6 else ""))
     except (subprocess.CalledProcessError, FileNotFoundError, KeyError) as exc:
         print(f"SKIP    G6: git show {old_rev} failed ({exc}); the old column below is absent")
@@ -277,8 +280,7 @@ def main(argv):
 
     def enc(D, k):
         s = sdef(D)
-        e = mp.mpf("5e-13") if D >= 20 else abs(mp.mpf(crate[D]) - mp.mpf(csvrows[D][1]))
-        return e * s**(k + 1)
+        return mp.mpf("5e-13") * s**(k + 1)
 
     p4, p5 = read_w2_remainder_table(W2_OUT), read_o5_rem4(O5_OUT)
     miss = [D for D in R_DS if D not in p4 or D not in p5 or D not in csvrows]
@@ -298,7 +300,7 @@ def main(argv):
     print("\n  reported, not gated. s = 2(D - 3); k-term remainder = W^2 a^2 - [s + Om0 + Om1/s + ...]; columns are remainder x s^2 "
           "(3 terms, through Om1; tends to Om2 + Om3/s),")
     print("  x s^3 (4 terms, through Om2; tends to Om3), x s^4 (5 terms, through Om3; tends to Om4). +- is the enclosure "
-          "(5e-13 s^p for D >= 20; |crate - csv| s^p for D <= 11).")
+          "(5e-13 s^p: the rounding of the 12th decimal given the crate's value).")
     print(f"  Omega0 = {mp.nstr(om[0], 15)}, Omega1 = {mp.nstr(om[1], 15)}, Omega2 = {mp.nstr(om[2], 15)}, "
           f"Omega3 = {mp.nstr(om[3], 15)}, Omega4 = {mp.nstr(om4, 14)} (fit, #195)")
     print("\n  D      s     W2a2 (csv)           rel. diff    3 terms x s^2 (old csv)   (new csv) +-        4 terms x s^3  +-         "
