@@ -1,0 +1,84 @@
+# Output of ts13_digits.py and ts13_digits.py --selftest (script blob 84c704e3eb47035cd80d02e4ce8afb3972b3b3ec, checkout 1839211 plus this branch); each mutation's output is in negative-mass-raw/I202-rpi5/mutations/. Run from this directory with the raw clone beside the checkout.
+# $ python3 ts13_digits.py
+ts13_digits.py  mutate=None  tex=found
+
+PASS    T1: 11 of 11 rows hold 15 significant digits
+PASS    T2: 11 of 11 rows equal -(profiles.py's TS13 dict), which holds -omega^2
+PASS    T3: 11 of 11 rows equal the TeX source's table
+PASS    R1: 5 of 5 quoted values (D = [4, 10, 20, 50, 100]) are the printed ones rounded to their digits
+PASS    C1: 8 of 8 rows D = 4..11 equal -omega^2 at 12 decimals; TS13 prints 13 to 14 decimals there
+PASS    K1: W^2 a^2 = -omega^2 against the crate: relative difference at most 4.43e-10 (bar 1e-8); D = 4: 1.39705243371511 against 1.397052434333506, 4.43e-10
+PASS    P1: the comparator accepts the crate's own values at 15 significant digits: 11 of 11
+PASS    O1: 4 of 4 one_mode.log values (D = [4, 10, 20, 50]) equal the crate rounded to their 12 digits
+PASS    W1: (3.18) equals one_mode.py's U at 4 radii for 11 of 11 D
+PASS    W2: one_mode.py's source line 'U = Ufun or (lambda r: ...)' holds U: (n - 2) * (n - 4) / (4 * r ** 2) - 3 * n ** 2 / (4 * r ** (2 * n))
+
+  TS13 Table I as printed (omega^2, a = 1), its conversion, and growth.csv (as in this checkout)
+  D    printed omega^2        digits  W^2 a^2 = -omega^2     growth.csv value (source)                  csv - round(-omega^2, 12)
+  4    -1.39705243371511       15    1.39705243371511       1.397052433715 (TS13 Table I)              +0.0e+00
+  5    -2.98495893027790       15    2.98495893027790       2.984958930278 (TS13 Table I)              +0.0e+00
+  6    -4.68662054299460       15    4.68662054299460       4.686620542995 (TS13 Table I)              +0.0e+00
+  7    -6.46258414126318       15    6.46258414126318       6.462584141263 (TS13 Table I)              +0.0e+00
+  8    -8.28975936306259       15    8.28975936306259       8.289759363063 (TS13 Table I)              +0.0e+00
+  9    -10.1535530451867       15    10.1535530451867       10.153553045187 (TS13 Table I)             +0.0e+00
+  10   -12.0442650147438       15    12.0442650147438       12.044265014744 (TS13 Table I)             +0.0e+00
+  11   -13.9552091676647       15    13.9552091676647       13.955209167665 (TS13 Table I)             +0.0e+00
+  20   -31.5751101285105       15    31.5751101285105       31.575110127562 (modes_r.py)               -9.5e-10
+  50   -91.3457759137153       15    91.3457759137153       91.345775903365 (modes_r.py)               -1.0e-08
+  100  -191.283017729717       15    191.283017729717       191.283017684226 (modes_r.py)              -4.5e-08
+
+  against the crate (qd, w2_output.txt), and F1: the digits TS13's printed values share with it
+  D    crate (qd)                       crate - TS13    relative    agreeing digits   last printed decimal
+  4    1.39705243433350684047           +6.18e-10    4.4e-10       9.35            14th: differs by 6.18e+04 units
+  5    2.98495893035176025288           +7.39e-11    2.5e-11      10.61            14th: differs by 7.39e+03 units
+  6    4.68662054311946478597           +1.25e-10    2.7e-11      10.57            14th: differs by 1.25e+04 units
+  7    6.46258414136979192072           +1.07e-10    1.6e-11      10.78            14th: differs by 1.07e+04 units
+  8    8.28975936307247807905           +9.89e-12    1.2e-12      11.92            14th: differs by 989 units
+  9    10.1535530449455332068           -2.41e-10    2.4e-11      10.62            13th: differs by 2.41e+03 units
+  10   12.044265014497883034            -2.46e-10    2.0e-11      10.69            13th: differs by 2.46e+03 units
+  11   13.9552091674964118962           -1.68e-10    1.2e-11      10.92            13th: differs by 1.68e+03 units
+  20   31.5751101283584884014           -1.52e-10    4.8e-12      11.32            13th: differs by 1.52e+03 units
+  50   91.345775913629637607            -8.57e-11    9.4e-13      12.03            13th: differs by 857 units
+  100  191.283017730358956057           +6.42e-10    3.4e-12      11.47            12th: differs by 642 units
+  F1: TS13's printed digits agree with the crate to the last printed decimal at 0 of 11 rows; they agree to 9.35 .. 12.03 significant digits
+
+  one_mode.log N4 (TS13's own W(r), shooting; shares no code with the crate) against TS13 and the crate
+  D    one_mode -E         crate rounded    TS13 - one_mode    crate - one_mode
+  4    1.39705243433       1.39705243433    -6.15e-10         +3.51e-12
+  10   12.0442650145       12.0442650145    +2.44e-10         -2.12e-12
+  20   31.5751101284       31.5751101284    +1.11e-10         -4.15e-11
+  50   91.3457759136       91.3457759136    +1.15e-10         +2.96e-11
+
+  two options for growth.csv's D = 4..11 rows: A as is (TS13 printed, rounded), B the crate rounded to 12 decimals
+  D    A - crate    B - crate    A = B at 8 decimals   A = B at 10 decimals
+  4    -6.19e-10   +4.93e-13   yes                   NO
+  5    -7.38e-11   +2.40e-13   yes                   NO
+  6    -1.24e-10   -4.65e-13   yes                   NO
+  7    -1.07e-10   +2.08e-13   yes                   NO
+  8    -9.48e-12   -4.78e-13   yes                   yes
+  9    +2.41e-10   +4.67e-13   NO                    NO
+  10   +2.46e-10   +1.17e-13   yes                   NO
+  11   +1.69e-10   -4.12e-13   yes                   NO
+
+all checks pass
+# exit status 0
+
+# $ python3 ts13_digits.py --selftest
+PASS    baseline: failing checks none; skipped none
+PASS    --mutate=digit_last: TS13 D = 4: 14th decimal 1 -> 2; fires ['T2', 'T3'], declared ['T2', 'T3']
+PASS    --mutate=digit_8: TS13 D = 4: 8th decimal 3 -> 4; fires ['C1', 'R1', 'T2', 'T3'], declared ['C1', 'R1', 'T2', 'T3']
+PASS    --mutate=digit_12: TS13 D = 9: 12th decimal 6 -> 7; fires ['C1', 'T2', 'T3'], declared ['C1', 'T2', 'T3']
+PASS    --mutate=digit_6: TS13 D = 7: 6th decimal 4 -> 5; fires ['C1', 'K1', 'T2', 'T3'], declared ['C1', 'K1', 'T2', 'T3']
+PASS    --mutate=drop_zero: TS13 D = 5: the printed trailing 0 dropped; fires ['T1', 'T3'], declared ['T1', 'T3']
+PASS    --mutate=sign: conversion W^2 = +omega^2; fires ['C1', 'K1'], declared ['C1', 'K1']
+PASS    --mutate=sqrt: conversion W = sqrt(-omega^2); fires ['C1', 'K1'], declared ['C1', 'K1']
+PASS    --mutate=csv: growth.csv D = 6: 12th decimal + 1; fires ['C1'], declared ['C1']
+PASS    --mutate=profiles: profiles.py's dict D = 11: last digit + 1; fires ['T2'], declared ['T2']
+PASS    --mutate=crate: crate D = 20: 6th decimal + 1 (3e-8 relative, over K1's bar); fires ['K1', 'O1'], declared ['K1', 'O1']
+PASS    --mutate=crate_7: crate D = 20: 7th decimal + 1 (3e-9 relative, under K1's bar); fires ['O1'], declared ['O1']
+PASS    --mutate=onemode: one_mode.log D = 4: last digit + 1; fires ['O1'], declared ['O1']
+PASS    --mutate=wformula: W(r) with 3 (n-2)^2 -> 4 (n-2)^2; fires ['W1'], declared ['W1']
+PASS    --mutate=upot: one_mode.py's U text: n ** 2 -> n ** 3; fires ['W1', 'W2'], declared ['W1', 'W2']
+PASS    --mutate=halfunit: the comparator's tolerance 0.5 -> 0.1 unit; fires ['P1'], declared ['P1']
+selftest passed: every mutation fires its declared checks and no others
+# exit status 0
