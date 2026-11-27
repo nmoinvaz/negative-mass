@@ -8,6 +8,7 @@ separate and uses the same script (`python figures/make_figures.py fig6` makes o
 | I | *The instability of negative-mass Schwarzschild is a point-mass effect: exact thresholds for finite stars* | `1-thresholds/main.tex` | [`1-thresholds/main.pdf`](1-thresholds/main.pdf) |
 | II | *Stability of a negative-mass boson star* | `2-boson-star/main.tex` | [`2-boson-star/main.pdf`](2-boson-star/main.pdf) |
 | III | *The instability of ghost-scalar wormholes at large dimension* | `3-wormhole-largeD/main.tex` | [`3-wormhole-largeD/main.pdf`](3-wormhole-largeD/main.pdf) |
+| V (draft) | *Near-critical evolution of the Ellis wormhole: the type I lifetime law, the settled black-hole mass and the expanding throat* | `5-ellis-threshold/main.tex` | [`5-ellis-threshold/main.pdf`](5-ellis-threshold/main.pdf) |
 
 Paper I is the mathematical result (Theorems 1–2, thresholds). Paper II applies it to Shirokov's phantom boson star and
 cites Paper I for κ_c. The pre-split single draft is in git history (commit 2995273).
