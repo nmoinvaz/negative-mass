@@ -289,3 +289,36 @@ X1b for eps = -1 fails unmutated, so it is not read as an effect. 16 of the 19 c
 
 `taylor_radial/` (crate), `taylor_radial.py` (driver), `taylor_radial_gen.py` (J generator), `taylor_radial_output.txt` (run_13_final), this note. Raw logs, stage logs
 (`*.jsonl`), the amendments A1 to A4 and the index of runs: `negative-mass-raw/I194-mac/README.md`.
+
+## Coordinator's review
+
+Review of branch `wip/i194-radial-crate` at 2ed755e and raw `I194-mac` at e7336a6, recorded in negative-mass-raw
+`I194-mac-review` (criteria 849e2b7; amendments A1 and A2 before runs 2 and 3). On the Mac, nice 10.
+
+- **Scope.** The branch adds the crate, the driver, the generator, the output and this note under `phase2/radial/`, nothing
+  else. No library change.
+- **Rerun.** `taylor_radial.py` over the stage logs of record (run_13_final) gives rc 1 with 17 passed, 4 failed and 1
+  skipped. **All 820 lines equal `taylor_radial_output.txt`** once wall times and loads are removed.
+- **Independent check** (`ind194.py` in the raw folder). The coordinator's own shooting code, in float64 with DOP853 and a
+  numba right-hand side, shares only the field equations of `boson_star.py`'s docstring.
+  - **The crossing.** Over a ±4 % window (K1) its dM/dω = 0 lay 4.7e-9 above the crate's at both signs of ε. K1 is not met:
+    the cause was the window's fifth-order content. Over ±0.5 % (K1b) at rtol 1e-11 it gives 0.9258444559483 and
+    0.9289084310226, **+1.9e-10 and −3.6e-11 from the crate**.
+  - K1b is not met as worded, because its two tolerances differ by about 2e-9: the narrow window amplifies the rtol 1e-10
+    error. So the crate's crossing is confirmed to 2e-10, and the stored fits' 4.2e-9 and 5.1e-8 are the stored fits' errors.
+  - **The first law.** dM = εω dN along the canonical family holds to 1.3e-12 at ω = 0.95 (K0). The points at ω = 0.90
+    and for ε = −1 were not computed before the 2 h stop, so K0 is not met as worded.
+  - **Not computed.** The strong-field phantom rows, thin-walled stars of radius 80 to 170, cannot be held by shooting
+    from the centre in float64 (A1). So C1's ten last-digit differences are not arbitrated by the review. The crate's own
+    S3 check, dd BVP against qd shooting at 9e-32, is the evidence for the crate there.
+- **Applied.**
+  - RESULTS.md carries updates from #194: the crossings, ω = 0.94, σ₀² at α₀ = 2.0 and 3.0, ω_min, the fourth roots, and
+    the rows and the stall.
+  - Paper II quotes the crossings as 0.9258444558 and 0.9289084311, coinciding with the extrema to 2×10⁻¹⁹, and names
+    this code in its method.
+  - The note's proposal to delete RESULTS.md's sentence on the finite-difference check was not taken. The sentence
+    describes what that check can show, and it stays beside the crate's values.
+- **Follow-ups.**
+  - #233: the end of the phantom family, the stall and the star gate (tasks 1 and 2).
+  - #234: an eigenvalue solver independent of the planes, and a qd star (tasks 3 and 4).
+  - #235: the arclength step norm (task 5).
