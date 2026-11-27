@@ -1,0 +1,45 @@
+probe_expansion.py: numba present, 2026-11-26 21:49:29
+D=4 h=0.02000 N=1500 (3.1 s): fate by events none; last live diagonal cell j = 1499 of 1499 (t = 42.41); dead cells 0; max e^-f over live cells 1.000 at x+ = 1.46, x- = 2.04
+    t =   7.99  tau =   6.64  r_diag =     2.3490  e-folds ln r =  0.854  H =  +0.7523  (1/H =   1.329)
+    t =  12.01  tau =   7.43  r_diag =     5.0183  e-folds ln r =  1.613  H =  +1.2104  (1/H =   0.826)
+    t =  15.99  tau =   7.76  r_diag =     7.8321  e-folds ln r =  2.058  H =  +1.5434  (1/H =   0.648)
+    t =  20.01  tau =   7.94  r_diag =    10.6952  e-folds ln r =  2.370  H =  +1.8256  (1/H =   0.548)
+    t =  24.00  tau =   8.06  r_diag =    13.5471  e-folds ln r =  2.606  H =  +2.0730  (1/H =   0.482)
+    t =  27.99  tau =   8.15  r_diag =    16.4024  e-folds ln r =  2.797  H =  +2.2974  (1/H =   0.435)
+    t =  32.00  tau =   8.22  r_diag =    19.2797  e-folds ln r =  2.959  H =  +2.5058  (1/H =   0.399)
+    t =  35.99  tau =   8.27  r_diag =    22.1377  e-folds ln r =  3.097  H =  +2.6989  (1/H =   0.371)
+    t =  40.01  tau =   8.32  r_diag =    25.0164  e-folds ln r =  3.220  H =  +2.8821  (1/H =   0.347)
+D=4 h=0.01000 N=3000 (8.4 s): fate by events none; last live diagonal cell j = 2999 of 2999 (t = 42.42); dead cells 0; max e^-f over live cells 1.000 at x+ = 1.31, x- = 1.77
+    t =   8.00  tau =   6.64  r_diag =     2.3542  e-folds ln r =  0.856  H =  +0.7536  (1/H =   1.327)
+    t =  12.00  tau =   7.43  r_diag =     5.0145  e-folds ln r =  1.612  H =  +1.2098  (1/H =   0.827)
+    t =  16.00  tau =   7.75  r_diag =     7.8383  e-folds ln r =  2.059  H =  +1.5440  (1/H =   0.648)
+    t =  20.00  tau =   7.94  r_diag =    10.6913  e-folds ln r =  2.369  H =  +1.8252  (1/H =   0.548)
+    t =  24.01  tau =   8.06  r_diag =    13.5533  e-folds ln r =  2.607  H =  +2.0734  (1/H =   0.482)
+    t =  27.99  tau =   8.15  r_diag =    16.4086  e-folds ln r =  2.798  H =  +2.2978  (1/H =   0.435)
+    t =  32.00  tau =   8.22  r_diag =    19.2758  e-folds ln r =  2.959  H =  +2.5054  (1/H =   0.399)
+    t =  36.00  tau =   8.27  r_diag =    22.1439  e-folds ln r =  3.098  H =  +2.6993  (1/H =   0.370)
+    t =  40.00  tau =   8.31  r_diag =    25.0125  e-folds ln r =  3.219  H =  +2.8818  (1/H =   0.347)
+D=5 h=0.01414 N=2121 (3.7 s): fate by events none; last live diagonal cell j = 2120 of 2120 (t = 42.41); dead cells 0; max e^-f over live cells 1.004 at x+ = 1.92, x- = 30.00
+    t =   8.01  tau =   5.77  r_diag =     2.9662  e-folds ln r =  1.087  H =  +1.2576  (1/H =   0.795)
+    t =  12.01  tau =   6.20  r_diag =     5.4968  e-folds ln r =  1.704  H =  +1.6324  (1/H =   0.613)
+    t =  16.01  tau =   6.42  r_diag =     8.0329  e-folds ln r =  2.084  H =  +1.8585  (1/H =   0.538)
+    t =  20.01  tau =   6.56  r_diag =    10.5682  e-folds ln r =  2.358  H =  +2.0293  (1/H =   0.493)
+    t =  24.01  tau =   6.66  r_diag =    13.1027  e-folds ln r =  2.573  H =  +2.1700  (1/H =   0.461)
+    t =  28.01  tau =   6.74  r_diag =    15.6369  e-folds ln r =  2.750  H =  +2.2912  (1/H =   0.436)
+    t =  32.01  tau =   6.81  r_diag =    18.1709  e-folds ln r =  2.900  H =  +2.3985  (1/H =   0.417)
+    t =  36.01  tau =   6.86  r_diag =    20.7048  e-folds ln r =  3.030  H =  +2.4953  (1/H =   0.401)
+    t =  40.01  tau =   6.91  r_diag =    23.2386  e-folds ln r =  3.146  H =  +2.5838  (1/H =   0.387)
+D=5 h=0.00707 N=4243 (15.1 s): fate by events none; last live diagonal cell j = 4242 of 4242 (t = 42.42); dead cells 0; max e^-f over live cells 1.001 at x+ = 1.68, x- = 30.00
+    t =   8.00  tau =   5.74  r_diag =     2.9906  e-folds ln r =  1.095  H =  +1.2573  (1/H =   0.795)
+    t =  12.00  tau =   6.17  r_diag =     5.5213  e-folds ln r =  1.709  H =  +1.6281  (1/H =   0.614)
+    t =  16.00  tau =   6.38  r_diag =     8.0574  e-folds ln r =  2.087  H =  +1.8525  (1/H =   0.540)
+    t =  20.00  tau =   6.53  r_diag =    10.5927  e-folds ln r =  2.360  H =  +2.0223  (1/H =   0.494)
+    t =  24.00  tau =   6.63  r_diag =    13.1272  e-folds ln r =  2.575  H =  +2.1622  (1/H =   0.463)
+    t =  28.00  tau =   6.71  r_diag =    15.6614  e-folds ln r =  2.751  H =  +2.2827  (1/H =   0.438)
+    t =  32.00  tau =   6.77  r_diag =    18.1954  e-folds ln r =  2.901  H =  +2.3894  (1/H =   0.419)
+    t =  36.00  tau =   6.83  r_diag =    20.7293  e-folds ln r =  3.032  H =  +2.4857  (1/H =   0.402)
+    t =  40.00  tau =   6.87  r_diag =    23.2631  e-folds ln r =  3.147  H =  +2.5738  (1/H =   0.389)
+
+real	0m31.874s
+user	0m29.670s
+sys	0m2.130s

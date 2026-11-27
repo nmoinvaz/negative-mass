@@ -1,0 +1,19 @@
+per-cell cost (ns): numba 61.7, rust 79.6, numpy 192.3
+|p - p*| = 1e-10, x_c = 3.0, margin = 3.0 a, 45 runs per bisection (no early exit)
+
+ D     1/W   T_run      X        h      cells   numba s   rust s   numpy s  bisect numba  bisect numpy
+ 4   0.846    26.7   18.9  0.02000   8.93e+05      0.06     0.07      0.17         0.0 m         0.1 m
+ 4   0.846    26.7   18.9  0.01000   3.57e+06      0.22     0.28      0.69         0.2 m         0.5 m
+ 4   0.846    26.7   18.9  0.00500   1.43e+07      0.88     1.14      2.75         0.7 m         2.1 m
+ 4   0.846    26.7   18.9  0.00250   5.71e+07      3.53     4.55     10.99         2.6 m         8.2 m
+ 5   0.579    20.6   14.5  0.01414   1.06e+06      0.07     0.08      0.20         0.0 m         0.2 m
+ 5   0.579    20.6   14.5  0.00707   4.23e+06      0.26     0.34      0.81         0.2 m         0.6 m
+ 5   0.579    20.6   14.5  0.00354   1.69e+07      1.04     1.35      3.25         0.8 m         2.4 m
+ 5   0.579    20.6   14.5  0.00177   6.77e+07      4.18     5.39     13.02         3.1 m         9.8 m
+ 6   0.462    17.9   12.6  0.01155    1.2e+06      0.07     0.10      0.23         0.1 m         0.2 m
+ 6   0.462    17.9   12.6  0.00577   4.79e+06      0.30     0.38      0.92         0.2 m         0.7 m
+ 6   0.462    17.9   12.6  0.00289   1.92e+07      1.18     1.53      3.69         0.9 m         2.8 m
+ 6   0.462    17.9   12.6  0.00144   7.67e+07      4.73     6.11     14.75         3.6 m        11.1 m
+
+campaign of one bisection per (D, h) in the table, 12 bisections, ghost family: numba 0.21 h, rust 0.27 h, numpy 0.64 h of one thread
+the same for the normal family: double it; at 4 threads (independent bisections): divide by 4
