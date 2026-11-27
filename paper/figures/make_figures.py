@@ -235,8 +235,8 @@ def fig5_evolution():
 
 
 def fig6_wormhole():
-    """Paper III. (a) W^2 a^2 - 2(D - 3) against 1/(D - 3): Torii-Shinkai's Table I (D <= 11) and the r-integration
-    (D >= 20), with the two- and three-term large-D results. (b) The growing mode's profile delta r / delta r(a) at
+    """Paper III. (a) W^2 a^2 - 2(D - 3) against 1/(D - 3): the quad-double eigenvalues of growth.csv (#195; open for
+    D <= 11, which Torii and Shinkai also computed), with the two- and three-term large-D results. (b) The growing mode's profile delta r / delta r(a) at
     D = 10, 20, 100, 1000 against the large-D limit (r/a) e^{1 - r^2/a^2}. Data: notes/wormhole_largeD/growth.csv,
     profiles.csv (written by notes/wormhole_largeD/profiles.py)."""
     import csv
@@ -244,7 +244,7 @@ def fig6_wormhole():
     rows = list(csv.DictReader(open(os.path.join(d, "growth.csv"))))
     D = np.array([int(r["D"]) for r in rows], float)
     W2 = np.array([float(r["W2a2"]) for r in rows])
-    ts = np.array([r["source"].startswith("TS13") for r in rows])
+    ts = D <= 11                                       # open circles: the dimensions Torii and Shinkai also computed
     x, y = 1 / (D - 3), W2 - 2 * (D - 3)
     c0 = -4 * np.log(2)
     c1 = np.pi**2 / 3 + 4 * np.log(2) ** 2
@@ -254,8 +254,8 @@ def fig6_wormhole():
     xx = np.linspace(0, 0.62, 200)
     ax.axhline(c0, color=INK2, ls="--", lw=1.0)
     ax.plot(xx, c0 + c1 * xx, color=AQUA, lw=1.4)
-    ax.plot(x[ts], y[ts], "o", ms=4.5, mfc="white", mec=ORANGE, mew=1.2, label="Torii & Shinkai (2013)")
-    ax.plot(x[~ts], y[~ts], "o", ms=3.5, color=BLUE, label="this work")
+    ax.plot(x[ts], y[ts], "o", ms=4.5, mfc="white", mec=ORANGE, mew=1.2, label=r"$D\leq11$ (also Torii & Shinkai 2013)")
+    ax.plot(x[~ts], y[~ts], "o", ms=3.5, color=BLUE, label=r"$D\geq20$")
     for Dl in (4, 5, 6, 8, 11, 20):
         i = int(np.where(D == Dl)[0][0])
         ax.annotate(f"$D={Dl}$", (x[i], y[i]), xytext=(4, -9 if Dl > 5 else 3), textcoords="offset points",

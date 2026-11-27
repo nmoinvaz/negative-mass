@@ -2,7 +2,7 @@
 
     python3 paper_numbers.py            (prints; exit 1 if a stated check fails)
 
-Inputs: growth.csv (profiles.py: Torii & Shinkai's Table I for D <= 11, modes_r.py for D >= 20); logs_order3.txt
+Inputs: growth.csv (profiles.py: #195's crate, qd, all 16 rows since #200 and #221); logs_order3.txt
 (Omega1); Shinkai & Torii 2017 Table I (alpha_GB = 0 rows, transcribed below); Shinkai & Hayward 2002's lifetime
 exponents 0.60 (ghost pulses) and 0.61 (normal pulses).
 """
@@ -54,15 +54,88 @@ for r in rows:
     print(f"{D:5d}  {w:18.10f}  {f3:15.8f}  {abs(w - f3) / w:9.2e}   {(w - f3) * s * s:12.2f}       {r['source']}")
     if 7 <= D <= 11:
         check(abs(w - f3) / w < 0.011, f"3-term within 1.1% at D = {D}")
-fit = {}
-for r in rows:
-    D = int(r["D"])
-    if D in (200, 500):
-        s = 2 * (D - 3)
-        fit[D] = (float(r["W2a2"]) - (s + OM0 + OM1_CLOSED / s)) * s * s
-check(all(70 < v < 76 for v in fit.values()), "remainder ~ 73 / s^2 at D = 200, 500")
-print("  (the r-integration's own uncertainty, logs_modes_r.txt, times s^2: 0.02 at D = 200, 0.6 at 500, 6 at 1000,"
-      " 80 at 2000; so the last column means nothing beyond D = 1000)")
+# Paper III's expansion (#26, #208, #209: Omega_1 .. Omega_3 derived) and its Table 1, checked against main.tex
+mp.mp.dps = 60
+q, z3, PI = mp.log(2), mp.zeta(3), mp.pi
+OMS = [-4 * q, 2 * PI**2 / 3 + 8 * q**2, 80 * z3 - mp.mpf(8) / 3 * PI**2 * q - mp.mpf(32) / 3 * q**3,
+       22 * PI**4 / 45 + mp.mpf(16) / 3 * PI**2 * q**2 + mp.mpf(32) / 3 * q**4 - 320 * z3 * q - 384 * z3]
+OM4_FIT = mp.mpf("-12794.49986002")               # #195's fit (w2_output.txt), not derived
+o4 = open(os.path.join(HERE, "order4_output.txt")).read()
+o5 = open(os.path.join(HERE, "order5_output.txt")).read()
+a70 = mp.mpf(re.search(r"X1: Omega2 \(A70\) = ([0-9.]+)", o4).group(1))
+check(abs(a70 - OMS[2]) < mp.mpf("1e-45"), "Omega2 closed form against order4.py's A70")
+m5 = re.search(r"= (-652\.[0-9]{40,})", o5)
+check(m5 is not None and abs(mp.mpf(m5.group(1)) - OMS[3]) < mp.mpf("1e-38"), "Omega3 closed form against order5_output.txt")
+TEX = open(os.path.join(HERE, "..", "..", "paper", "3-wormhole-largeD", "main.tex")).read()
+quoted = {"Omega1": mp.nstr(OMS[1], 12), "Omega2": mp.nstr(OMS[2], 12), "Omega3": mp.nstr(OMS[3], 12),
+          "Omega1/2": mp.nstr(OMS[1] / 2, 10), "Omega2/4": mp.nstr(OMS[2] / 4, 10), "Omega3/8": mp.nstr(OMS[3] / 8, 10),
+          "Omega4 fit": mp.nstr(OM4_FIT, 7)}
+ratios = [f"{abs(float(OMS[k + 1] / OMS[k])):.1f}" for k in range(3)] + [f"{abs(float(OM4_FIT / OMS[3])):.1f}"]
+quoted["ratios"] = ", ".join(ratios[:3]) + " and " + ratios[3]
+dB = float(re.search(r"M3: Omega2 of A70 against B2: ([0-9.]+) digits", o4).group(1))
+dC = re.search(r"X3: Omega3 against.*?digits: B3 ([0-9.]+), B4", o5)
+quoted["Chebyshev digits"] = f"{int(dB)} and {int(float(dC.group(1)))}" if dC else "?"
+crate_rows = {int(m.group(1)): (mp.mpf(m.group(3)), mp.mpf(m.group(4))) for m in re.finditer(
+    r"^\s+(\d+)\s+(TS13 Table I|modes_r\.py)\s+([0-9.]+)\s+([0-9.]+)", open(os.path.join(HERE, "w2_output.txt")).read(), re.M)}
+low = max(crate_rows[D][1] - crate_rows[D][0] for D in (20, 30, 50, 100, 200, 500, 1000))
+quoted["r-integration low by"] = f"{float(low):.1e}".replace("e-06", "\\times10^{-6}")
+ts_digits = min(-mp.log10(abs(crate_rows[D][1] - crate_rows[D][0]) / crate_rows[D][1]) for D in range(4, 12))
+check(ts_digits >= 9, f"TS13 agrees with the crate to nine or more significant figures ({float(ts_digits):.2f})")
+print("\n  quoted coefficients:", quoted)
+for k, v in quoted.items():
+    check(v in TEX, f"{k} = {v} printed in main.tex")
+
+
+def sci(x):
+    x = abs(float(x))
+    if x >= 0.1:
+        return f"${x:.2g}$"
+    e = math.floor(math.log10(x))
+    return f"${x / 10**e:.1f}\\times10^{{{e}}}$"
+
+
+print("\n  Table 1 rows (as printed in main.tex)")
+TROWS = (4, 5, 6, 7, 8, 10, 20, 50, 100, 200, 500, 1000, 2000)
+rowsD = {int(r["D"]): mp.mpf(r["W2a2"]) for r in rows}
+w2o = open(os.path.join(HERE, "w2_output.txt")).read()
+sec = w2o[w2o.index("growth.csv against the crate"):]
+full = {int(m.group(1)): mp.mpf(m.group(2)) for m in                       # the crate's qd values, about 20 digits
+        re.finditer(r"^\s+(\d+)\s+(?:TS13 Table I|modes_r\.py)\s+[0-9.]+\s+([0-9.]+)", sec, re.M)}
+for D in TROWS:
+    w = rowsD[D]
+    s_ = mp.mpf(2 * (D - 3))
+    f3 = s_ + OMS[0] + OMS[1] / s_
+    f5 = f3 + OMS[2] / s_**2 + OMS[3] / s_**3
+    r3 = (w - f3) * s_**2
+    f5full = f5                                                             # the s^4 column needs the full digits
+    r5 = f"${float((full[D] - f5full) * s_**4):.0f}$" if D >= 100 else "--"
+    line = (f"{D} & {mp.nstr(w, len(str(int(w))) + 10, strip_zeros=False)} & {sci((w - f3) / w)} & {sci((w - f5) / w)} & "
+            f"${float(r3):.2f}$ & {r5} \\\\")
+    print("   ", line)
+    check(line in TEX, f"Table 1 row D = {D} printed in main.tex")
+prev = None
+for D in (20, 30, 50, 100, 200, 500, 1000, 2000):                  # the five-term error falls monotonically from D = 20
+    s_ = mp.mpf(2 * (D - 3))
+    e5 = abs(rowsD[D] - (s_ + OMS[0] + OMS[1] / s_ + OMS[2] / s_**2 + OMS[3] / s_**3)) / rowsD[D]
+    check(prev is None or e5 < prev, f"five-term error falls at D = {D}")
+    prev = e5
+print("  (data - 3 terms) s^2 tends to Omega2 + Omega3/s: at D = 1000 that is "
+      f"{float(OMS[2] + OMS[3] / 1994):.2f}; (data - 5 terms) s^4 tends to Omega4 ~ {float(OM4_FIT):.0f} (#195's fit)")
+
+# the ghost sector of Choptuik's solution (notes/wormhole_next, #30): mu(D), as quoted in Sec. 7
+import json
+mu = {}
+for fn in ("ghost_mu.jsonl", "ghost_mu2.jsonl"):
+    for line in open(os.path.join(HERE, "..", "wormhole_next", fn)):
+        r = json.loads(line)
+        if r["mode"] == 1 and r.get("plant") is None and r["pivot0"] / r["pivot_h"] < 1e-4:
+            z = [x["mu"] for x in r["zeros"] if x["ok"]]
+            if z:
+                mu[round(r["D"], 4)] = max(z)
+mq = {D: f"{mu[D]:.4f}" for D in (4.0, 5.0, 70.5)}
+print("\n  mu(D) as quoted:", mq)
+for D, v in mq.items():
+    check(v.replace("-", "−") in TEX or v in TEX, f"mu(D = {D}) = {v} printed in main.tex")
 
 # e-folding times and the type I lifetime slope 1/(sqrt 2 W) in the null coordinate x^- = (t - r_*)/sqrt 2
 TS = {int(r["D"]): float(r["W2a2"]) for r in rows}
