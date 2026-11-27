@@ -898,7 +898,10 @@ def analyze_suite(suite, scale):
         print(f"    final window (last e-fold of r, {cl['npts']} pts, r/a = {cl['r0']:.1f} to {cl['r1']:.1f}): H max/min {cl['Hratio']:.3f}, H end/start {cl['Hgrow']:.3f}, |rho| max/min {cl['rhoratio']:.3f}, "
               f"w_bar in [{cl['wmin']:.4f}, {cl['wmax']:.4f}]; 1/H linear in tau: k = {cl['k']:.4f}, tau_s = {cl['tau_s']:.4f} (last point {cl['tau_end']:.4f}), max residual {cl['ft_resid']:.1e}  -> class {cl['class']}")
         lines = []
-        limit_report(M, lines)
+        try:
+            limit_report(M, lines)
+        except Exception as e:                     # a report, not a check: it must not stop the analysis (mutated runs have no finite tau_s)
+            lines.append(f"    limit report not available: {e!r}")
         print("\n".join(lines))
         print(f"    slope test (#211): H/W at r/a = " + ", ".join(f"{r0:g}: {v:.3f}" for r0, v in vals.items()) + f"; bar {CRIT['SL']['bar']:.0%}: {'met' if met else 'not met'}")
         R = M["R"]
