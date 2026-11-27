@@ -102,6 +102,22 @@ fn cmd_starcheck(a: &Args) {
     }
 }
 
+/// the star's Taylor steps as data (#196): per step x0, x1 and the coefficients 0..=NS of (P, u, m, Z) about x0, which
+/// `Star::state` sums by Horner. 20 digits per coefficient (an f64 reader loses nothing).
+fn cmd_starsteps(a: &Args) {
+    let m = model(a);
+    let p = star_pars::<DD>(&m);
+    let cfg = solve_cfg(a);
+    let (pc, zc) = parse_star(a);
+    let r_end = a.f("rend", 62.0);
+    let st = star::build_star(pc, zc, &p, &cfg, r_end);
+    println!("{{\"cmd\":\"starsteps_head\",\"ns\":{},\"steps\":{},\"r_end\":{:e},\"pc\":\"{}\",\"zc\":\"{}\",\"rs\":{:e},\"startol\":{:e}}}", star::NS, st.steps.len(), st.r_end, pc.sci(34), zc.sci(34), cfg.rs, cfg.tol);
+    for s in &st.steps {
+        let f: Vec<String> = (0..4).map(|f| format!("[{}]", (0..=star::NS).map(|k| format!("\"{}\"", s.coef[f][k].sci(20))).collect::<Vec<_>>().join(","))).collect();
+        println!("{{\"cmd\":\"starstep\",\"x0\":{:e},\"x1\":{:e},\"coef\":[{}]}}", s.x0, s.x1, f.join(","));
+    }
+}
+
 fn lane_dispatch(a: &Args) {
     match a.s("lane", "dd") {
         "f64" => run_d::<f64>(a),
@@ -318,6 +334,7 @@ fn main() {
         .spawn(move || match cmd.as_str() {
             "star" => cmd_star(&args),
             "starcheck" => cmd_starcheck(&args),
+            "starsteps" => cmd_starsteps(&args),
             "d" => lane_dispatch(&args),
             "jcheck" => cmd_jcheck(&args),
             "jjets" => cmd_jjets(&args),
@@ -327,7 +344,7 @@ fn main() {
             "rows" => lane_rows(&args),
             "rmplant" => rows::rmplant(&args),
             "qplant" => lane_qplant(&args),
-            _ => eprintln!("commands: star starcheck d jcheck planted rows rmplant qplant"),
+            _ => eprintln!("commands: star starcheck starsteps d jcheck planted rows rmplant qplant"),
         })
         .unwrap();
     h.join().unwrap();

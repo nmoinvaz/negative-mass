@@ -64,6 +64,8 @@ pub fn variant(name: &str) -> Var {
         "r0" => Var { name: "r0", r0: 3e-3, g0: if crate::mutate::on("r0_grid") { 1e-3 } else { 3e-3 }, ..base },
         // order 24 at tol 1e-22, #186's V3
         "o24" => Var { name: "o24", order: 24, tol: Some(1e-22), ..base },
+        // order 24 at tol 1e-22 with the phi_cut 1e-12 matching radius (#196: the reference of the phi_cut column)
+        "phio24" => Var { name: "phio24", cut: 1e-12, order: 24, tol: Some(1e-22), ..base },
         x => panic!("variant {x}"),
     }
 }
