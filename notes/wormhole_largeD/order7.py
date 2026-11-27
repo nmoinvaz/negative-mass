@@ -284,7 +284,7 @@ WRONG_OM = ("wrong_Om0", "wrong_Om1", "wrong_Om2", "wrong_Om3", "wrong_Om4")
 def omega_chain_ref(B, kmax, log=None):
     """Omega_0 .. Omega_{kmax-2} from G_2 .. G_kmax = 0, in turn, each G_k from the whole hierarchy (the uncached path); returns (Om, slopes, secs)"""
     Om = [mp.mpf(0)] * kmax
-    slopes, secs = {}, {}
+    slopes, secs, resid = {}, {}, {}
     cl = closed_omegas()
     for k in range(2, kmax + 1):
         t0 = time.time()
@@ -295,10 +295,13 @@ def omega_chain_ref(B, kmax, log=None):
         val, slope = solve_omega(lambda kk, o: B.hierarchy(o, kk)[2][kk], k, Om_in)
         Om[k - 2] = val
         slopes[k] = slope
+        Om_root = list(Om_in)
+        Om_root[k - 2] = val
+        resid[k] = abs(B.hierarchy(Om_root, k)[2][k]) / abs(slope)           # G_k at the root
         secs[k] = time.time() - t0
         if log:
             print(f"    k = {k}: Omega_{k - 2} = {nd(val, 30)}  slope {nd(slope, 20)}  ({secs[k]:.0f} s)", flush=True)
-    return Om, slopes, secs, {}
+    return Om, slopes, secs, resid
 
 
 def omega_chain(B, kmax, log=None):
@@ -323,14 +326,15 @@ def omega_chain(B, kmax, log=None):
             B.lk(k - 1, Omt, Yt, Lt, Gt)
             Yt.append(B.yk(k, Lt))
             B.lk(k, Omt, Yt, Lt, Gt)
-            return Gt[k], Lt[k - 1]
-        g0, l0 = trial(mp.mpf(0))
-        g1, _ = trial(mp.mpf(1))
+            return Gt[k], Lt[k - 1], Gt[k - 1]
+        g0, l0, gm0 = trial(mp.mpf(0))
+        g1 = trial(mp.mpf(1))[0]
         val, slope = -g0 / (g1 - g0), g1 - g0
         Om[k - 2] = val
         slopes[k] = slope
         if MUTATE == "stale_cache" and k >= 3:
             L.append(l0)                                          # level k - 1 from the first trial, not recomputed at the root
+            G[k - 1] = gm0
         else:
             B.lk(k - 1, Om, Y, L, G)                              # level k - 1 at the root (G_{k-1} at the root is read below)
         if k >= 3:
