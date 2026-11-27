@@ -1,0 +1,220 @@
+throat_drift.py analyze {'raw': '/home/nathan/Source/negative-mass-raw/I255-dh610/runs'}: numba 0.68.1, numpy 2.5.4, python 3.14.10, dh610-fedora, load average at start 14.15 18.51 19.02, mutation None, 2026-11-27 15:40:02
+throat_drift.py analyze: mode record, mutation None, numba 0.68.1, numpy 2.5.4, 2026-11-27 15:40:06
+  pulse integrals on the initial ray (D = 5): I_2 = 38.73014, I_1 = -19.94486
+    PL1 D = 5, static throat of radius 1.2, h = 0.005, t in (0.8, 2.7): max |r_th - exact| 4.6e-05, max |rdot| 7.3e-05; orders [1.99, 1.99]
+[pass] PL1: planted static throat of known radius c = 1.2  (bars: |r_th - exact| <= 0.0002, |rdot| <= 0.0005, orders in (1.75, 2.25))
+    PL2 D = 5, static throat moving with v = 0.13 (r_th = 1), h = 0.005, t in (0.8, 2.7): max |r_th - exact| 1.2e-04, max |rdot| 2.2e-04
+    PL2 D = 5, static throat moving with v = -0.3 (r_th = 1), h = 0.005, t in (0.8, 2.7): max |r_th - exact| 8.3e-05, max |rdot| 1.5e-04
+[pass] PL2: planted static throat moving in the grid (v = (0.13, -0.3)): the throat radius is 1 and its rate 0 (the drift of the position is not a drift of the radius)  (bars: |r_th - exact| <= 0.0005, |rdot| <= 0.001)
+    PL3 planted rdot_inf = +0.0260, kappa = 0.48: recovered +0.02600, kappa 0.4800
+    PL3 planted rdot_inf = +0.0000, kappa = 0.48: recovered -0.00000, kappa 0.4802
+    PL3 planted rdot_inf = -0.0100, kappa = 0.48: recovered -0.01000, kappa 0.4798
+[pass] PL3: planted rdot(tau) = rdot_inf + c exp(-kappa tau) through the same rdot and fit code: rdot_inf and kappa recovered  (worst |rdot_inf error| 8.1e-08 (bar 1e-05), worst relative kappa error 4.6e-04 (bar 5e-03))
+    PL5 de Sitter, H = W, rho = const, w = -1: class DS (expected DS), slope test met (expected met)
+    PL5 finite-time divergence, r = (tau_s - tau)^-2, rho = -4H^2, w = -1/3: class FT (expected FT), slope test not met (expected not met)
+    PL5 flat stiff fluid, a ~ tau^(1/3), w = +1: class STIFF (expected STIFF), slope test not met (expected not met)
+    PL5 Gaussian growth, r = exp(tau^2/2), H = tau, w = -1/3: class GROW (expected GROW), slope test not met (expected not met)
+    PL5 decelerating radiation, a ~ tau^(1/2), w = +1/3: class OTHER (expected OTHER), slope test not met (expected not met)
+[pass] PL5: planted series with known classes (#213's five) through the classification used for the expanding member
+    PX alpha = 2 h index 1: p*_h 1.731059e-03, 1.081912e-02, 4.327647e-02; exponent of p*_h 2.000 (0.04 to 0.1), 2.000 (0.1 to 0.2)
+       r_th - 1 at t = (8.0, 10.0, 12.0): B=0.04 [0.01407, 0.02069, 0.02814], B=0.1 [0.08794, 0.12932, 0.17587], B=0.2 [0.35178, 0.51726, 0.70348]; exponents [2.000, 2.000, 2.000] (0.04 to 0.1), [2.000, 2.000, 2.000] (0.1 to 0.2)
+       rdot_inf +0.00416 +- 6.6e-06, +0.02603 +- 5.5e-05, +0.10465 +- 4.2e-04 (rms residual 1.4e-05, 9.1e-05, 4.0e-04; n 110, 99, 79); exponents 2.001, 2.007; kappa 0.4822, 0.4803, 0.4715 (ratio 0.04 / 0.1 = 1.004)
+    PX alpha = 2 h index 2: p*_h 1.714509e-03, 1.071568e-02, 4.286273e-02; exponent of p*_h 2.000 (0.04 to 0.1), 2.000 (0.1 to 0.2)
+       r_th - 1 at t = (8.0, 10.0, 12.0): B=0.04 [0.01409, 0.02071, 0.02816], B=0.1 [0.08805, 0.12944, 0.17601], B=0.2 [0.35220, 0.51776, 0.70404]; exponents [2.000, 2.000, 2.000] (0.04 to 0.1), [2.000, 2.000, 2.000] (0.1 to 0.2)
+       rdot_inf +0.00416 +- 6.9e-06, +0.02605 +- 5.8e-05, +0.10470 +- 4.3e-04 (rms residual 1.4e-05, 9.3e-05, 4.1e-04; n 107, 96, 78); exponents 2.001, 2.007; kappa 0.4814, 0.4792, 0.4707 (ratio 0.04 / 0.1 = 1.005)
+[pass] PX2: planted B family r_th - 1, p*_h, rdot ~ B^2: the gates PS, PR, PV pass  (PS True, PR True, PV True)
+    PX alpha = 1 h index 1: p*_h 4.327647e-03, 1.081912e-02, 2.163824e-02; exponent of p*_h 1.000 (0.04 to 0.1), 1.000 (0.1 to 0.2)
+       r_th - 1 at t = (8.0, 10.0, 12.0): B=0.04 [0.03518, 0.05173, 0.07035], B=0.1 [0.08794, 0.12932, 0.17587], B=0.2 [0.17589, 0.25863, 0.35174]; exponents [1.000, 1.000, 1.000] (0.04 to 0.1), [1.000, 1.000, 1.000] (0.1 to 0.2)
+       rdot_inf +0.01040 +- 1.6e-05, +0.02603 +- 5.5e-05, +0.05215 +- 1.5e-04 (rms residual 3.5e-05, 9.1e-05, 1.9e-04; n 110, 99, 89); exponents 1.001, 1.002; kappa 0.4822, 0.4803, 0.4774 (ratio 0.04 / 0.1 = 1.004)
+    PX alpha = 1 h index 2: p*_h 4.286273e-03, 1.071568e-02, 2.143137e-02; exponent of p*_h 1.000 (0.04 to 0.1), 1.000 (0.1 to 0.2)
+       r_th - 1 at t = (8.0, 10.0, 12.0): B=0.04 [0.03522, 0.05178, 0.07040], B=0.1 [0.08805, 0.12944, 0.17601], B=0.2 [0.17610, 0.25888, 0.35202]; exponents [1.000, 1.000, 1.000] (0.04 to 0.1), [1.000, 1.000, 1.000] (0.1 to 0.2)
+       rdot_inf +0.01041 +- 1.7e-05, +0.02605 +- 5.8e-05, +0.05218 +- 1.5e-04 (rms residual 3.5e-05, 9.3e-05, 1.9e-04; n 107, 96, 87); exponents 1.001, 1.002; kappa 0.4814, 0.4792, 0.4762 (ratio 0.04 / 0.1 = 1.005)
+[pass] PX1: planted B family r_th - 1, p*_h, rdot ~ B^1: the gates PS, PR, PV all fail  (PS False, PR False, PV False)
+    PX alpha = 3 h index 1: p*_h 6.924235e-04, 1.081912e-02, 8.655294e-02; exponent of p*_h 3.000 (0.04 to 0.1), 3.000 (0.1 to 0.2)
+       r_th - 1 at t = (8.0, 10.0, 12.0): B=0.04 [0.00563, 0.00828, 0.01126], B=0.1 [0.08794, 0.12932, 0.17587], B=0.2 [0.70356, 1.03453, 1.40696]; exponents [3.000, 3.000, 3.000] (0.04 to 0.1), [3.000, 3.000, 3.000] (0.1 to 0.2)
+       rdot_inf +0.00166 +- 2.6e-06, +0.02603 +- 5.5e-05, +0.21072 +- 1.2e-03 (rms residual 5.5e-06, 9.1e-05, 8.3e-04; n 110, 99, 70); exponents 3.001, 3.017; kappa 0.4822, 0.4803, 0.4606 (ratio 0.04 / 0.1 = 1.004)
+    PX alpha = 3 h index 2: p*_h 6.858037e-04, 1.071568e-02, 8.572547e-02; exponent of p*_h 3.000 (0.04 to 0.1), 3.000 (0.1 to 0.2)
+       r_th - 1 at t = (8.0, 10.0, 12.0): B=0.04 [0.00564, 0.00828, 0.01126], B=0.1 [0.08805, 0.12944, 0.17601], B=0.2 [0.70440, 1.03552, 1.40807]; exponents [3.000, 3.000, 3.000] (0.04 to 0.1), [3.000, 3.000, 3.000] (0.1 to 0.2)
+       rdot_inf +0.00167 +- 2.8e-06, +0.02605 +- 5.8e-05, +0.21107 +- 1.3e-03 (rms residual 5.6e-06, 9.3e-05, 8.4e-04; n 107, 96, 68); exponents 3.001, 3.018; kappa 0.4814, 0.4792, 0.4581 (ratio 0.04 / 0.1 = 1.005)
+[pass] PX3: planted B family r_th - 1, p*_h, rdot ~ B^3: the gates PS, PR, PV all fail  (PS False, PR False, PV False)
+[pass] CT1: control: 8 of #40's recorded points of G (B = 0.1, D = 5, h = 0.00707107) rerun through make_data_B give the same fate, event cell and time bit for bit  (8 of 8 equal)
+[pass] CT2: control: the pair p*_h -/+ 1e-9 at B = 0.1 (D = 5, h = 0.00707107) rerun through job_stall gives #225's stored locus series (r, l, f, tau, v)  (max |difference| 0.0e+00, bar 1e-12; fates [-1, 1])
+[pass] CT4: control: the bisection of this work at B = 0.1 (D = 4, h = 0.02, tolerance 1e-12) gives #40's p*_h within 2 x tolerance  (p* 1.494576357104148e-02, #40's 1.494576357090011e-02, difference 1.4e-13, 40 runs)
+    pair D=5 B=0.04 h=0.00707107 delta=1e-10: p*_h 2.092897711995e-03; slices 3168; fates (-1, 1) on the locus (-1, 1)
+       t  6.00 tau   5.976 r_th 1.00664 odd +1.3e-08 l +0.035 v +0.0199 f +0.0184 N_th 0.9906 rho_g/rho_eq - 1 +1.3e-03 q_t -2.4605
+       t  8.00 tau   7.961 r_th 1.00775 odd +3.8e-07 l +0.078 v +0.0230 f +0.0116 N_th 0.9940 rho_g/rho_eq - 1 +2.0e-04 q_t -2.4728
+       t 10.00 tau   9.951 r_th 1.00990 odd +1.2e-05 l +0.126 v +0.0246 f +0.0087 N_th 0.9954 rho_g/rho_eq - 1 -6.7e-05 q_t -2.4866
+       t 12.00 tau  11.942 r_th 1.01247 odd +3.5e-04 l +0.176 v +0.0254 f +0.0076 N_th 0.9959 rho_g/rho_eq - 1 -9.9e-05 q_t -2.5005
+       t 13.00 tau  12.938 r_th 1.01384 odd +1.9e-03 l +0.201 v +0.0256 f +0.0073 N_th 0.9960 rho_g/rho_eq - 1 -2.2e-05 q_t -2.5078
+    pair D=5 B=0.04 h=0.00353553 delta=1e-10: p*_h 1.662513338560e-03; slices 6337; fates (-1, 1) on the locus (-1, 1)
+       t  6.00 tau   5.976 r_th 1.00691 odd +1.3e-08 l +0.035 v +0.0199 f +0.0186 N_th 0.9906 rho_g/rho_eq - 1 +1.4e-03 q_t -2.4618
+       t  8.00 tau   7.961 r_th 1.00805 odd +3.8e-07 l +0.078 v +0.0231 f +0.0117 N_th 0.9939 rho_g/rho_eq - 1 +2.5e-04 q_t -2.4742
+       t 10.00 tau   9.950 r_th 1.01023 odd +1.1e-05 l +0.126 v +0.0247 f +0.0088 N_th 0.9953 rho_g/rho_eq - 1 +8.2e-05 q_t -2.4882
+       t 12.00 tau  11.941 r_th 1.01283 odd +3.4e-04 l +0.176 v +0.0254 f +0.0077 N_th 0.9958 rho_g/rho_eq - 1 +3.6e-05 q_t -2.5023
+       t 13.00 tau  12.937 r_th 1.01422 odd +1.9e-03 l +0.202 v +0.0256 f +0.0074 N_th 0.9960 rho_g/rho_eq - 1 -6.1e-06 q_t -2.5095
+    pair D=5 B=0.04 h=0.00176777 delta=1e-10: p*_h 1.554973524301e-03; slices 12672; fates (-1, 1) on the locus (-1, 1)
+       t  6.00 tau   5.976 r_th 1.00698 odd +1.3e-08 l +0.035 v +0.0199 f +0.0186 N_th 0.9906 rho_g/rho_eq - 1 +1.5e-03 q_t -2.4621
+       t  8.00 tau   7.961 r_th 1.00812 odd +3.8e-07 l +0.078 v +0.0231 f +0.0117 N_th 0.9939 rho_g/rho_eq - 1 +2.9e-04 q_t -2.4746
+       t 10.00 tau   9.950 r_th 1.01031 odd +1.1e-05 l +0.126 v +0.0247 f +0.0088 N_th 0.9953 rho_g/rho_eq - 1 +9.1e-05 q_t -2.4886
+       t 12.00 tau  11.941 r_th 1.01292 odd +3.4e-04 l +0.176 v +0.0254 f +0.0077 N_th 0.9958 rho_g/rho_eq - 1 +3.8e-05 q_t -2.5028
+       t 13.00 tau  12.937 r_th 1.01430 odd +1.9e-03 l +0.202 v +0.0256 f +0.0074 N_th 0.9960 rho_g/rho_eq - 1 -2.7e-05 q_t -2.5099
+    pair D=5 B=0.1 h=0.00707107 delta=1e-10: p*_h 1.123300737498e-02; slices 3665; fates (-1, 1) on the locus (-1, 1)
+       t  6.00 tau   5.828 r_th 1.05860 odd +9.0e-09 l +0.223 v +0.1224 f +0.1267 N_th 0.9316 rho_g/rho_eq - 1 +1.3e-02 q_t -2.5740
+       t  8.00 tau   7.711 r_th 1.08752 odd +1.9e-07 l +0.485 v +0.1370 f +0.0860 N_th 0.9489 rho_g/rho_eq - 1 +3.4e-03 q_t -2.7536
+       t 10.00 tau   9.618 r_th 1.12882 odd +3.8e-06 l +0.763 v +0.1390 f +0.0680 N_th 0.9572 rho_g/rho_eq - 1 +1.4e-03 q_t -2.9896
+       t 12.00 tau  11.537 r_th 1.17531 odd +6.8e-05 l +1.037 v +0.1351 f +0.0609 N_th 0.9611 rho_g/rho_eq - 1 +5.6e-04 q_t -3.2530
+       t 13.00 tau  12.498 r_th 1.19945 odd +2.8e-04 l +1.171 v +0.1321 f +0.0590 N_th 0.9624 rho_g/rho_eq - 1 +4.0e-04 q_t -3.3923
+    pair D=5 B=0.1 h=0.00353553 delta=1e-10: p*_h 1.081911782359e-02; slices 7334; fates (-1, 1) on the locus (-1, 1)
+       t  6.00 tau   5.828 r_th 1.05894 odd +8.9e-09 l +0.223 v +0.1225 f +0.1269 N_th 0.9315 rho_g/rho_eq - 1 +1.3e-02 q_t -2.5753
+       t  8.00 tau   7.710 r_th 1.08794 odd +1.9e-07 l +0.486 v +0.1371 f +0.0861 N_th 0.9488 rho_g/rho_eq - 1 +3.6e-03 q_t -2.7559
+       t 10.00 tau   9.617 r_th 1.12932 odd +3.8e-06 l +0.763 v +0.1391 f +0.0682 N_th 0.9571 rho_g/rho_eq - 1 +1.4e-03 q_t -2.9920
+       t 12.00 tau  11.536 r_th 1.17587 odd +6.8e-05 l +1.038 v +0.1352 f +0.0610 N_th 0.9611 rho_g/rho_eq - 1 +6.1e-04 q_t -3.2560
+       t 13.00 tau  12.498 r_th 1.20005 odd +2.8e-04 l +1.172 v +0.1322 f +0.0591 N_th 0.9623 rho_g/rho_eq - 1 +4.2e-04 q_t -3.3954
+    pair D=5 B=0.1 h=0.00176777 delta=1e-10: p*_h 1.071568325683e-02; slices 14668; fates (-1, 1) on the locus (-1, 1)
+       t  6.00 tau   5.828 r_th 1.05903 odd +8.9e-09 l +0.224 v +0.1225 f +0.1269 N_th 0.9315 rho_g/rho_eq - 1 +1.3e-02 q_t -2.5758
+       t  8.00 tau   7.710 r_th 1.08805 odd +1.9e-07 l +0.486 v +0.1371 f +0.0861 N_th 0.9488 rho_g/rho_eq - 1 +3.6e-03 q_t -2.7564
+       t 10.00 tau   9.617 r_th 1.12944 odd +3.8e-06 l +0.764 v +0.1391 f +0.0682 N_th 0.9571 rho_g/rho_eq - 1 +1.4e-03 q_t -2.9926
+       t 12.00 tau  11.536 r_th 1.17601 odd +6.8e-05 l +1.039 v +0.1352 f +0.0610 N_th 0.9611 rho_g/rho_eq - 1 +6.4e-04 q_t -3.2567
+       t 13.00 tau  12.497 r_th 1.20019 odd +2.8e-04 l +1.172 v +0.1322 f +0.0592 N_th 0.9623 rho_g/rho_eq - 1 +4.3e-04 q_t -3.3962
+    pair D=5 B=0.2 h=0.00707107 delta=1e-10: p*_h 6.314461624724e-02; slices 6672; fates (-1, 0) on the locus (1, 1)
+       t  6.00 tau   5.215 r_th 1.31636 odd +3.4e-09 l +0.790 v +0.3511 f +0.5076 N_th 0.7264 rho_g/rho_eq - 1 +4.9e-02 q_t -3.1583
+       t  8.00 tau   6.735 r_th 1.46956 odd +2.8e-08 l +1.480 v +0.3345 f +0.3543 N_th 0.7894 rho_g/rho_eq - 1 -3.0e-03 q_t -4.1681
+       t 10.00 tau   8.358 r_th 1.64275 odd +1.9e-07 l +2.119 v +0.3040 f +0.2741 N_th 0.8306 rho_g/rho_eq - 1 -9.7e-03 q_t -5.4624
+       t 12.00 tau  10.047 r_th 1.81251 odd +1.1e-06 l +2.697 v +0.2744 f +0.2340 N_th 0.8554 rho_g/rho_eq - 1 -9.2e-03 q_t -6.8510
+       t 13.00 tau  10.906 r_th 1.89364 odd +2.5e-06 l +2.964 v +0.2613 f +0.2217 N_th 0.8640 rho_g/rho_eq - 1 -8.2e-03 q_t -7.5566
+    pair D=5 B=0.2 h=0.00353553 delta=1e-10: p*_h 6.285376358351e-02; slices 13358; fates (-1, 0) on the locus (1, 1)
+       t  6.00 tau   5.214 r_th 1.31703 odd +3.3e-09 l +0.791 v +0.3512 f +0.5078 N_th 0.7263 rho_g/rho_eq - 1 +4.9e-02 q_t -3.1611
+       t  8.00 tau   6.734 r_th 1.47036 odd +2.8e-08 l +1.481 v +0.3346 f +0.3545 N_th 0.7893 rho_g/rho_eq - 1 -2.9e-03 q_t -4.1721
+       t 10.00 tau   8.357 r_th 1.64361 odd +1.9e-07 l +2.120 v +0.3041 f +0.2744 N_th 0.8305 rho_g/rho_eq - 1 -9.7e-03 q_t -5.4675
+       t 12.00 tau  10.045 r_th 1.81343 odd +1.1e-06 l +2.698 v +0.2745 f +0.2342 N_th 0.8553 rho_g/rho_eq - 1 -9.1e-03 q_t -6.8571
+       t 13.00 tau  10.905 r_th 1.89458 odd +2.5e-06 l +2.966 v +0.2613 f +0.2219 N_th 0.8639 rho_g/rho_eq - 1 -8.3e-03 q_t -7.5629
+[FAIL] JOB[D=5 B=0.2 h=0.00176777]: the pair p*_h -/+ delta exists and the bisection finished to the declared tolerance  (not run to completion: the job was stopped by its 2 h timeout (rc 124) after 32 recorded points; no pair)
+[pass] JOB[D=5 B=0.04 h=0.00707107]: the pair p*_h -/+ delta has fates (collapse, expansion) on #40's events and on the locus's levels; the bisection finished to the declared tolerance  (fates (-1, 1), locus (-1, 1); bracket 5.6e-13, 37 runs)
+[FAIL] NO[D=5 B=0.04 h=0.00707107]: the pair's odd part (the unstable mode) is at most 0.0003 for t in (6.5, 12.0): the pair's mean is the tuned member  (max |odd| 3.5e-04)
+[pass] QS[D=5 B=0.04 h=0.00707107]: on the locus the ghost's energy density is a static throat's of the same radius, |rho_g / rho_eq - 1| <= 0.005 for t in (8.0, 12.0)  (max 2.2e-04)
+[pass] JOB[D=5 B=0.04 h=0.00353553]: the pair p*_h -/+ delta has fates (collapse, expansion) on #40's events and on the locus's levels; the bisection finished to the declared tolerance  (fates (-1, 1), locus (-1, 1); bracket 5.4e-13, 37 runs)
+[FAIL] NO[D=5 B=0.04 h=0.00353553]: the pair's odd part (the unstable mode) is at most 0.0003 for t in (6.5, 12.0): the pair's mean is the tuned member  (max |odd| 3.4e-04)
+[pass] QS[D=5 B=0.04 h=0.00353553]: on the locus the ghost's energy density is a static throat's of the same radius, |rho_g / rho_eq - 1| <= 0.005 for t in (8.0, 12.0)  (max 2.8e-04)
+[pass] JOB[D=5 B=0.04 h=0.00176777]: the pair p*_h -/+ delta has fates (collapse, expansion) on #40's events and on the locus's levels; the bisection finished to the declared tolerance  (fates (-1, 1), locus (-1, 1); bracket 5.4e-13, 37 runs)
+[FAIL] NO[D=5 B=0.04 h=0.00176777]: the pair's odd part (the unstable mode) is at most 0.0003 for t in (6.5, 12.0): the pair's mean is the tuned member  (max |odd| 3.4e-04)
+[pass] QS[D=5 B=0.04 h=0.00176777]: on the locus the ghost's energy density is a static throat's of the same radius, |rho_g / rho_eq - 1| <= 0.005 for t in (8.0, 12.0)  (max 2.9e-04)
+[pass] JOB[D=5 B=0.1 h=0.00707107]: the pair p*_h -/+ delta has fates (collapse, expansion) on #40's events and on the locus's levels  (fates (-1, 1), locus (-1, 1))
+[pass] NO[D=5 B=0.1 h=0.00707107]: the pair's odd part (the unstable mode) is at most 0.0003 for t in (6.5, 12.0): the pair's mean is the tuned member  (max |odd| 6.8e-05)
+[pass] QS[D=5 B=0.1 h=0.00707107]: on the locus the ghost's energy density is a static throat's of the same radius, |rho_g / rho_eq - 1| <= 0.005 for t in (8.0, 12.0)  (max 3.6e-03)
+[pass] JOB[D=5 B=0.1 h=0.00353553]: the pair p*_h -/+ delta has fates (collapse, expansion) on #40's events and on the locus's levels  (fates (-1, 1), locus (-1, 1))
+[pass] NO[D=5 B=0.1 h=0.00353553]: the pair's odd part (the unstable mode) is at most 0.0003 for t in (6.5, 12.0): the pair's mean is the tuned member  (max |odd| 6.8e-05)
+[pass] QS[D=5 B=0.1 h=0.00353553]: on the locus the ghost's energy density is a static throat's of the same radius, |rho_g / rho_eq - 1| <= 0.005 for t in (8.0, 12.0)  (max 3.6e-03)
+[pass] JOB[D=5 B=0.1 h=0.00176777]: the pair p*_h -/+ delta has fates (collapse, expansion) on #40's events and on the locus's levels  (fates (-1, 1), locus (-1, 1))
+[pass] NO[D=5 B=0.1 h=0.00176777]: the pair's odd part (the unstable mode) is at most 0.0003 for t in (6.5, 12.0): the pair's mean is the tuned member  (max |odd| 6.8e-05)
+[pass] QS[D=5 B=0.1 h=0.00176777]: on the locus the ghost's energy density is a static throat's of the same radius, |rho_g / rho_eq - 1| <= 0.005 for t in (8.0, 12.0)  (max 3.6e-03)
+[FAIL] JOB[D=5 B=0.2 h=0.00707107]: the pair p*_h -/+ delta has fates (collapse, expansion) on #40's events and on the locus's levels; the bisection finished to the declared tolerance  (fates (-1, 0), locus (1, 1); bracket 8.8e-13, 41 runs)
+[pass] NO[D=5 B=0.2 h=0.00707107]: the pair's odd part (the unstable mode) is at most 0.0003 for t in (6.5, 12.0): the pair's mean is the tuned member  (max |odd| 1.1e-06)
+[FAIL] QS[D=5 B=0.2 h=0.00707107]: on the locus the ghost's energy density is a static throat's of the same radius, |rho_g / rho_eq - 1| <= 0.005 for t in (8.0, 12.0)  (max 1.0e-02)
+[FAIL] JOB[D=5 B=0.2 h=0.00353553]: the pair p*_h -/+ delta has fates (collapse, expansion) on #40's events and on the locus's levels; the bisection finished to the declared tolerance  (fates (-1, 0), locus (1, 1); bracket 8.5e-13, 41 runs)
+[pass] NO[D=5 B=0.2 h=0.00353553]: the pair's odd part (the unstable mode) is at most 0.0003 for t in (6.5, 12.0): the pair's mean is the tuned member  (max |odd| 1.1e-06)
+[FAIL] QS[D=5 B=0.2 h=0.00353553]: on the locus the ghost's energy density is a static throat's of the same radius, |rho_g / rho_eq - 1| <= 0.005 for t in (8.0, 12.0)  (max 9.9e-03)
+/home/nathan/Source/negative-mass-i255/notes/wormhole_evolution/throat_drift.py:302: RuntimeWarning: overflow encountered in exp
+  f = lambda z, a, c, kap: a + c * np.exp(-kap * (z - x[0]))      # noqa: E731
+    D=5 h index 0: p*_h 2.092898e-03, 1.123301e-02, 6.314462e-02; exponent of p*_h 1.834 (0.04 to 0.1), 2.491 (0.1 to 0.2)
+       r_th - 1 at t = (8.0, 10.0, 12.0): B=0.04 [0.00775, 0.00990, 0.01247], B=0.1 [0.08752, 0.12882, 0.17531], B=0.2 [0.46956, 0.64275, 0.81251]; exponents [2.645, 2.800, 2.885] (0.04 to 0.1), [2.424, 2.319, 2.213] (0.1 to 0.2)
+       rdot_inf +0.00142 +- 6.4e-06, +0.02597 +- 4.0e-05, -33.35665 +- 4.8e+04 (rms residual 1.5e-05, 8.5e-05, 3.1e-03; n 109, 110, 100); exponents 3.175, nan; kappa 0.4951, 0.4824, 0.0000 (ratio 0.04 / 0.1 = 1.026)
+    D=5 h index 1: p*_h 1.662513e-03, 1.081912e-02, 6.285376e-02; exponent of p*_h 2.044 (0.04 to 0.1), 2.538 (0.1 to 0.2)
+       r_th - 1 at t = (8.0, 10.0, 12.0): B=0.04 [0.00805, 0.01023, 0.01283], B=0.1 [0.08794, 0.12932, 0.17587], B=0.2 [0.47036, 0.64361, 0.81343]; exponents [2.610, 2.769, 2.857] (0.04 to 0.1), [2.419, 2.315, 2.209] (0.1 to 0.2)
+       rdot_inf +0.00143 +- 6.5e-06, +0.02601 +- 4.1e-05, -40.25864 +- 5.6e+04 (rms residual 1.5e-05, 8.6e-05, 3.1e-03; n 109, 110, 100); exponents 3.163, nan; kappa 0.4945, 0.4821, 0.0000 (ratio 0.04 / 0.1 = 1.026)
+    D=5 h index 2: p*_h 1.554974e-03, 1.071568e-02, nan; exponent of p*_h 2.107 (0.04 to 0.1), nan (0.1 to 0.2)
+       r_th - 1 at t = (8.0, 10.0, 12.0): B=0.04 [0.00812, 0.01031, 0.01292], B=0.1 [0.08805, 0.12944, 0.17601], B=0.2 [nan, nan, nan]; exponents [2.602, 2.761, 2.851] (0.04 to 0.1), [nan, nan, nan] (0.1 to 0.2)
+       rdot_inf +0.00144 +- 6.4e-06, +0.02602 +- 4.3e-05, +nan +- nan (rms residual 1.5e-05, 8.8e-05, nan; n 109, 107, 0); exponents 3.162, nan; kappa 0.4970, 0.4813, nan (ratio 0.04 / 0.1 = 1.033)
+[pass] PS: prediction: p*_h(B) ~ B^alpha with alpha in (1.8, 2.4) between B = 0.04 and 0.1 at the finest 2 h (first order would give 1)  (exponents [2.044, 2.107])
+[FAIL] PR: prediction: r_th(t) - 1 ~ B^alpha, alpha in (1.8, 2.4), between B = 0.04 and 0.1 at t = (8.0, 10.0, 12.0) and the finest 2 h  (exponents [2.610, 2.769, 2.857]; [2.602, 2.761, 2.851])
+[FAIL] PV: prediction: rdot_inf(B) ~ B^alpha, alpha in (1.8, 2.4), and kappa(0.04) / kappa(0.1) in (0.75, 1.25)  (exponents [3.163, 3.162], kappa ratios [1.026, 1.033])
+    D=5 B = 0.04: r_th(10) - 1 at the three h [0.009902, 0.010228, 0.010308], observed order 2.02, finest pair differ by 7.85e-03
+[pass] CV[B=0.04]: r_th(10) - 1 converges at second order over the three h (order in (1.7, 2.3)) and the two finest agree within 1%  (order 2.02, two finest 7.8e-03)
+    D=5 B = 0.1: r_th(10) - 1 at the three h [0.128816, 0.129316, 0.129439], observed order 2.02, finest pair differ by 9.53e-04
+[pass] CV[B=0.1]: r_th(10) - 1 converges at second order over the three h (order in (1.7, 2.3)) and the two finest agree within 1%  (order 2.02, two finest 9.5e-04)
+    D=5 B = 0.2: the series at some h is not available (the job was stopped)
+[FAIL] CV[B=0.2]: r_th(10) - 1 converges at second order over the three h (order in (1.7, 2.3)) and the two finest agree within 1%  (order nan, two finest nan)
+  energies the pulses leave, E_net = (B^2 - A*^2) I_2, against rdot_inf (finest h):
+    B = 0.04: A* = 1.554974e-03, E_net = 0.06187, rdot_inf = +0.00144, rdot_inf / E_net = 0.02320, kappa 0.4970
+    B = 0.1: A* = 1.071568e-02, E_net = 0.38285, rdot_inf = +0.02602, rdot_inf / E_net = 0.06797, kappa 0.4813
+    B = 0.2: A* = nan, E_net = nan, rdot_inf = +nan, rdot_inf / E_net = nan, kappa nan
+  Misner-Sharp mass at fixed areal radius on the + and - side of the collapse-side run, finest h:
+    B = 0.04 t = 8: M_+(R = 2, 3, 4) [+0.1386, +0.0710, +0.0485], M_-(R = 2, 3, 4) [+0.1194, +0.0467, +0.0265]
+    B = 0.04 t = 10: M_+(R = 2, 3, 4) [+0.1399, +0.0706, +0.0464], M_-(R = 2, 3, 4) [+0.1202, +0.0448, +0.0184]
+    B = 0.04 t = 12: M_+(R = 2, 3, 4) [+0.1412, +0.0712, +0.0468], M_-(R = 2, 3, 4) [+0.1215, +0.0452, +0.0185]
+    B = 0.1 t = 8: M_+(R = 2, 3, 4) [+0.2302, +0.1608, +0.1413], M_-(R = 2, 3, 4) [+0.1070, -0.0065, -0.0046]
+    B = 0.1 t = 10: M_+(R = 2, 3, 4) [+0.2559, +0.1666, +0.1365], M_-(R = 2, 3, 4) [+0.1383, -0.0058, -0.0569]
+    B = 0.1 t = 12: M_+(R = 2, 3, 4) [+0.2887, +0.1812, +0.1446], M_-(R = 2, 3, 4) [+0.1784, +0.0118, -0.0480]
+  D = 4, reported (not gated):
+    D=4 B=0.04 h=0.02: p*_h 2.363737e-03; r_th - 1 at t = (8.0, 10.0, 12.0): [+0.00088, -0.00021, -0.00090]; rdot_inf -0.00000 +- 4.0e-06, kappa 0.229, n 130
+    D=4 B=0.04 h=0.01: p*_h 2.292815e-03; r_th - 1 at t = (8.0, 10.0, 12.0): [+0.00088, -0.00021, -0.00090]; rdot_inf -0.00000 +- 4.3e-06, kappa 0.230, n 112
+    D=4 B=0.1 h=0.02: p*_h 1.494576e-02; r_th - 1 at t = (8.0, 10.0, 12.0): [+0.00949, +0.00498, +0.00315]; rdot_inf +0.00133 +- 1.8e-05, kappa 0.244, n 130
+    D=4 B=0.1 h=0.01: p*_h 1.487736e-02; r_th - 1 at t = (8.0, 10.0, 12.0): [+0.00949, +0.00498, +0.00316]; rdot_inf +0.00133 +- 1.9e-05, kappa 0.244, n 111
+    D=4 B=0.2 h=0.02: p*_h 6.830547e-02; r_th - 1 at t = (8.0, 10.0, 12.0): [+0.14235, +0.40143, +1.08987]; rdot_inf +4747.29179 +- 1.2e+06, kappa 0.000, n 97
+    D=4 B=0.2 h=0.01: p*_h 6.827490e-02; r_th - 1 at t = (8.0, 10.0, 12.0): [+0.14430, +0.40937, +1.10538]; rdot_inf +5232.60541 +- 1.4e+06, kappa 0.000, n 97
+
+==== post hoc (reported, gates nothing): the supplementary B scan, D = 5, B = 0.02 and 0.07 added by the coordinator's ruling after the declared runs ====
+  h = 0.00707107: p*_h, r_th - 1 at t = 8, 10, 12, rdot_inf and kappa of the fit, d ln(r_th - 1)/d tau at t = 10 (+-1), the growth form over t in [8, 12]
+    B = 0.020: p* 9.501365e-04; R [0.00143, 0.00175, 0.00211]; rdot_inf +0.00019 (kappa 0.666, n 107); dlnR/dtau 0.100; linear rms 4.4e-03, exponential rms 1.4e-03 (kappa 0.099)
+    B = 0.040: p* 2.092898e-03; R [0.00775, 0.00990, 0.01247]; rdot_inf +0.00142 (kappa 0.495, n 109); dlnR/dtau 0.122; linear rms 6.0e-03, exponential rms 2.4e-03 (kappa 0.121)
+        exponents against B = 0.02: p* 1.14, R(t = 8, 10, 12) [2.43, 2.50, 2.56], rdot_inf 2.87
+    B = 0.070: p* 5.430519e-03; R [0.03211, 0.04506, 0.06046]; rdot_inf +0.00896 (kappa 0.378, n 110); dlnR/dtau 0.162; linear rms 7.9e-03, exponential rms 7.3e-03 (kappa 0.162)
+        exponents against B = 0.04: p* 1.70, R(t = 8, 10, 12) [2.54, 2.71, 2.82], rdot_inf 3.30
+    B = 0.100: p* 1.123301e-02; R [0.08752, 0.12882, 0.17531]; rdot_inf +0.02597 (kappa 0.482, n 110); dlnR/dtau 0.181; linear rms 5.7e-03, exponential rms 1.2e-02 (kappa 0.181)
+        exponents against B = 0.07: p* 2.04, R(t = 8, 10, 12) [2.81, 2.94, 2.98], rdot_inf 2.98
+    B = 0.200: p* 6.314462e-02; R [0.46956, 0.64275, 0.81251]; rdot_inf -33.35665 (kappa 0.000, n 100); dlnR/dtau 0.163; linear rms 2.4e-03, exponential rms 1.4e-02 (kappa 0.164)
+        exponents against B = 0.1: p* 2.49, R(t = 8, 10, 12) [2.42, 2.32, 2.21], rdot_inf nan
+  h = 0.00353553: p*_h, r_th - 1 at t = 8, 10, 12, rdot_inf and kappa of the fit, d ln(r_th - 1)/d tau at t = 10 (+-1), the growth form over t in [8, 12]
+    B = 0.020: p* 5.179191e-04; R [0.00172, 0.00206, 0.00245]; rdot_inf +0.00021 (kappa 0.651, n 107); dlnR/dtau 0.092; linear rms 3.9e-03, exponential rms 1.0e-03 (kappa 0.091)
+    B = 0.040: p* 1.662513e-03; R [0.00805, 0.01023, 0.01283]; rdot_inf +0.00143 (kappa 0.495, n 109); dlnR/dtau 0.119; linear rms 5.9e-03, exponential rms 2.3e-03 (kappa 0.119)
+        exponents against B = 0.02: p* 1.68, R(t = 8, 10, 12) [2.23, 2.31, 2.39], rdot_inf 2.76
+    B = 0.070: p* 5.005773e-03; R [0.03245, 0.04545, 0.06090]; rdot_inf +0.00898 (kappa 0.378, n 110); dlnR/dtau 0.162; linear rms 7.8e-03, exponential rms 7.2e-03 (kappa 0.161)
+        exponents against B = 0.04: p* 1.97, R(t = 8, 10, 12) [2.49, 2.67, 2.78], rdot_inf 3.28
+    B = 0.100: p* 1.081912e-02; R [0.08794, 0.12932, 0.17587]; rdot_inf +0.02601 (kappa 0.482, n 110); dlnR/dtau 0.181; linear rms 5.6e-03, exponential rms 1.2e-02 (kappa 0.181)
+        exponents against B = 0.07: p* 2.16, R(t = 8, 10, 12) [2.80, 2.93, 2.97], rdot_inf 2.98
+    B = 0.200: p* 6.285376e-02; R [0.47036, 0.64361, 0.81343]; rdot_inf -40.25864 (kappa 0.000, n 100); dlnR/dtau 0.163; linear rms 2.4e-03, exponential rms 1.4e-02 (kappa 0.164)
+        exponents against B = 0.1: p* 2.54, R(t = 8, 10, 12) [2.42, 2.32, 2.21], rdot_inf nan
+
+  energies and the speed the radius approaches (post hoc): E_net = (B^2 - A*^2) I_2, rdot_inf, rdot_inf / E_net, rdot_inf / E_net^(3/2), and the normal field's stress on the locus at t = 10 against the ghost's:
+    h = 0.00353553 B = 0.020: E_net 0.01548, rdot_inf +0.00021 (se 1.2e-06), /E_net 0.01365, /E_net^1.5 0.10973; rho_n / |rho_g| at t = 10: -5.1e-08
+    h = 0.00353553 B = 0.040: E_net 0.06186, rdot_inf +0.00143 (se 6.5e-06), /E_net 0.02318, /E_net^1.5 0.09321; rho_n / |rho_g| at t = 10: -2.3e-07
+    h = 0.00353553 B = 0.070: E_net 0.18881, rdot_inf +0.00898 (se 3.2e-05), /E_net 0.04759, /E_net^1.5 0.10952; rho_n / |rho_g| at t = 10: -1.4e-06
+    h = 0.00353553 B = 0.100: E_net 0.38277, rdot_inf +0.02601 (se 4.1e-05), /E_net 0.06795, /E_net^1.5 0.10983; rho_n / |rho_g| at t = 10: -9.5e-06
+    h = 0.00176777 B = 0.040: E_net 0.06187, rdot_inf +0.00144 (se 6.4e-06), /E_net 0.02320, /E_net^1.5 0.09327; rho_n / |rho_g| at t = 10: -2.3e-07
+    h = 0.00176777 B = 0.100: E_net 0.38285, rdot_inf +0.02602 (se 4.3e-05), /E_net 0.06797, /E_net^1.5 0.10986; rho_n / |rho_g| at t = 10: -9.5e-06
+
+  the fitted static member on the collapse side's profile slices (finest h): t, r_th, s_th (fit rms), Q/q_0 = r_th^(n-1)/N(+inf) of the member (1 if it has the data's ghost charge, + end time),
+  and the charge flux per unit proper time of the locus q_t/N_th over sqrt(n(n-1)) r_th^(n-1) (1 by the identity of QS):
+    B = 0.04 h = 0.00176777: t 6: r_th 1.0070, s_th +0.022 (1e-03), Q/q_0 0.9971; t 8: r_th 1.0081, s_th +0.027 (2e-03), Q/q_0 0.9952; t 10: r_th 1.0103, s_th +0.030 (2e-05), Q/q_0 0.9968; t 12: r_th 1.0126, s_th +0.031 (1e-05), Q/q_0 1.0012
+    B = 0.1 h = 0.00176777: t 6: r_th 1.0590, s_th +0.121 (1e-02), Q/q_0 1.0233; t 8: r_th 1.0881, s_th +0.145 (3e-02), Q/q_0 1.0614; t 10: r_th 1.1294, s_th +0.168 (3e-03), Q/q_0 1.1251; t 12: r_th 1.1759, s_th +0.157 (3e-03), Q/q_0 1.2296
+    B = 0.2 h = 0.00353553: t 6: r_th 1.3170, s_th +0.241 (2e-01), Q/q_0 1.4546; t 8: r_th 1.4704, s_th +0.178 (3e-01), Q/q_0 1.8940; t 10: r_th 1.6436, s_th +0.215 (3e-01), Q/q_0 2.3066; t 12: r_th 1.8134, s_th +0.288 (7e-02), Q/q_0 2.6718
+[pass] DL[h index 0]: the tuned mean at delta = 1e-9 (#225) and 1e-10 differs by at most 1e-05 for t in (7.0, 11.0)  (max |difference| 1.9e-08)
+[pass] DL[h index 1]: the tuned mean at delta = 1e-9 (#225) and 1e-10 differs by at most 1e-05 for t in (7.0, 11.0)  (max |difference| 8.4e-08)
+[pass] DL[h index 2]: the tuned mean at delta = 1e-9 (#225) and 1e-10 differs by at most 1e-05 for t in (7.0, 11.0)  (max |difference| 1.9e-08)
+[pass] RV: reproduction: rdot_inf of the B = 0.1 tuned series (delta = 1e-10) at the finest h is dev_04's 0.02602 within 5 %  (rdot_inf +0.02602 +- 4.3e-05, kappa 0.4813, n 107)
+  --- G D=5 A = 0.05 h = 0.00707107 (X = 160, 238 s) ---
+       r/a        t       tau        l        v         H     H/W         rho  |rho|/H^2    w_bar
+      1.50     5.13    4.6302   +0.036  +0.1261    0.5517   0.319  -4.098e+00    13.4631 -0.52014
+      3.00     7.89    5.5299   +0.131  +0.0198    1.0012   0.579  -7.834e+00     7.8151 -0.50055
+     10.00    19.17    6.4968   +0.305  +0.0145    1.5056   0.871  -1.546e+01     6.8222 -0.50000
+     25.00    43.22    7.0378   +0.651  +0.0144    1.9090   1.105  -2.463e+01     6.7591 -0.50000
+     50.00    83.29    7.3710   +1.227  +0.0144    2.2727   1.315  -3.487e+01     6.7510 -0.50000
+    100.00   163.43    7.6510   +2.377  +0.0144    2.7035   1.565  -4.933e+01     6.7492 -0.50000
+    final window (last e-fold of r, 27799 points, r/a = 50.5 to 137.2): H max/min 1.284, H end/start 1.284, |rho| max/min 1.649, w_bar in [-0.5000, -0.5000]; 1/H linear in tau: k = 3.9957, tau_s = 9.1290 (last point 7.7634, ratio 1.1759), max residual 7.3e-05 -> class FT
+    slope test: H/W at r/a = 10: 0.871, 25: 1.105, 50: 1.315; locus drift l at the end +3.233
+  --- G D=5 A = 0.05 h = 0.00353553 (X = 160, 1875 s) ---
+       r/a        t       tau        l        v         H     H/W         rho  |rho|/H^2    w_bar
+      1.50     5.13    4.6237   +0.035  +0.1274    0.5523   0.320  -4.089e+00    13.4066 -0.52122
+      3.00     7.88    5.5235   +0.130  +0.0198    1.0011   0.579  -7.833e+00     7.8155 -0.50054
+     10.00    19.17    6.4906   +0.304  +0.0145    1.5057   0.871  -1.547e+01     6.8222 -0.50000
+     25.00    43.21    7.0316   +0.651  +0.0144    1.9091   1.105  -2.463e+01     6.7591 -0.50000
+     50.00    83.28    7.3648   +1.226  +0.0144    2.2728   1.316  -3.487e+01     6.7510 -0.50000
+    100.00   163.42    7.6447   +2.377  +0.0144    2.7036   1.565  -4.933e+01     6.7492 -0.50000
+    final window (last e-fold of r, 55600 points, r/a = 50.5 to 137.2): H max/min 1.284, H end/start 1.284, |rho| max/min 1.649, w_bar in [-0.5000, -0.5000]; 1/H linear in tau: k = 3.9957, tau_s = 9.1226 (last point 7.7572, ratio 1.1760), max residual 7.3e-05 -> class FT
+    slope test: H/W at r/a = 10: 0.871, 25: 1.105, 50: 1.316; locus drift l at the end +3.233
+[pass] KX2: G, D = 5, A = 0.05, X = 160: class FT with tau_s / tau_end <= 1.2 (#213's bound) at both h  (h = 0.00707107: FT, k 3.9957, ratio 1.1759; h = 0.00353553: FT, k 3.9957, ratio 1.1760)
+    RES2 h 0.00707107 vs 0.00353553: class FT / FT; tau_s 9.1290 / 9.1226; k 3.9957 / 3.9957; H at fixed r/a [4.98e-05, 5.00e-05, 5.01e-05]
+[pass] RES2: the two h agree: same class, H at fixed r/a within 1%, k and tau_s within 1%
+[pass] CT3: control: the X = 160 runs reproduce #225's X = 100 runs (locus r, l, f, tau on every slice that lies inside both rectangles)  (max |difference| 0.0e+00, bar 1e-12)
+
+37 of 48 checks pass; 11 fail: JOB[D=5 B=0.2 h=0.00176777], NO[D=5 B=0.04 h=0.00707107], NO[D=5 B=0.04 h=0.00353553], NO[D=5 B=0.04 h=0.00176777], JOB[D=5 B=0.2 h=0.00707107], QS[D=5 B=0.2 h=0.00707107], JOB[D=5 B=0.2 h=0.00353553], QS[D=5 B=0.2 h=0.00353553], PR, PV, CV[B=0.2]
+25.4 s
