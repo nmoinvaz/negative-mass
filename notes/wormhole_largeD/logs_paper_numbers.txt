@@ -53,4 +53,9 @@ J = 17.4206887224287 (direct), 17.4206887224288 (u form);  8 pi ln 2 = 17.420688
 
   D = 4, Shinkai & Hayward 2002 small-amplitude runs: 0.60 (ghost pulses), 0.61 (normal pulses); predicted 0.598
 
+  D   1/W        first code [1e-11,1e-3]   first code [1e-9,1e-4]   second code [1e-9,1e-4]   largest |rel| [1e-9,1e-4]
+   4   0.846045   0.846522                  0.846040                 0.846043                  6.3e-06
+   5   0.578803   0.579027                  0.578786                 0.578789                  2.9e-05
+   6   0.461924   0.459628                  0.461770                 0.461705                  4.7e-04
+
 checks failed: 0

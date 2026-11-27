@@ -39,7 +39,8 @@ significant figures and leaves, up to $D=2000$, a remainder of order $D^{-4}$ af
 rigidly while the mode lives in the nearly flat region outside it, with the profile
 $\delta r\propto (r/a)\,e^{1-r^2/a^2}$. Because the wormhole is the critical solution of the threshold between collapse
 to a black hole and inflationary expansion, $1/W$ is also the slope of the logarithmic lifetime law there. Published
-evolutions in four, five and six dimensions are consistent with it.
+evolutions in four, five and six dimensions are consistent with it, and bisections to the threshold in a double-null
+evolution give it to within $5\times10^{-4}$ in $D=4$, $5$ and $6$.
 \end{abstract}
 
 \tableofcontents
@@ -63,7 +64,7 @@ This paper derives the large-$D$ expansion of $W$ and the shape of the unstable 
 the perturbation problem as a single master equation. Section~\ref{sec:numerics} solves it numerically and compares with
 Ref.~\cite{TS2013}. Section~\ref{sec:largeD} carries out the matched expansion, and Sec.~\ref{sec:mode} describes the
 mode. Section~\ref{sec:threshold} turns the growth rate into a prediction for the lifetime of near-threshold
-evolutions and compares it with published runs.
+evolutions and compares it with published runs and with bisections to the threshold.
 
 \section{The wormhole and its radial perturbations}\label{sec:setup}
 
@@ -312,8 +313,40 @@ $D$ & $1/(Wa)$ & predicted & measured & source & runs \\
 The agreement in $D=4$ is with Shinkai and Hayward's fit over two decades of $\Delta E$; the comparison with the
 linear growth rate does not appear in Refs.~\cite{SH2002,GGS2009a}. The higher-dimensional runs of Ref.~\cite{ST2017} were not designed to measure the lifetime
 law, and two runs at moderate amplitude give only a rough slope, but in $D=5$ and $6$ they agree with the prediction
-within their uncertainties. A bisection to the threshold in $D=5$ and $6$, with the lifetime fitted against
-$\ln|p-p_*|$, would test Eq.~\eqref{eq:lifetime} properly. At large $D$ the prediction is
+within their uncertainties.
+
+A bisection to the threshold tests Eq.~\eqref{eq:lifetime} directly. In a double-null evolution of the model (in the
+accompanying repository, \texttt{notes/wormhole\_evolution/threshold.md}), a Gaussian ghost pulse of amplitude $p$ is
+sent in on both null rays, mirrored, or on one. The threshold is found by bisection at three grid spacings $h$, and the
+time $t$ of the outcome is fitted against $\ln(1/|p-p_*|)$ with one slope for both outcomes. For the mirrored pulse $t$
+is the proper time at the throat. Table~\ref{tab:bisect} gives the slopes. Over $10^{-9}\le|p-p_*|\le10^{-4}$ they
+agree with $1/W$ to within $7\times10^{-6}$, $3\times10^{-5}$ and $5\times10^{-4}$ in $D=4$, $5$ and $6$, and the
+difference falls as $h^2$. A second code, written separately and sharing only the field equations, gives the same
+slopes. Including distances up to $|p-p_*|=10^{-3}$ lowers the $D=6$ slope by $0.5\%$, because the lifetime there is
+not yet logarithmic at that distance.
+
+\begin{table}[t]
+\centering
+\caption{Lifetime slope $dT/d\ln(1/|p-p_*|)$, in units of $a$, for a mirrored ghost pulse, at the finest grid spacing
+($h/a=0.005$, $0.0025/\sqrt2$, $0.00125$ in $D=4$, $5$, $6$). First code: events at the first trapped cell or at an
+expanding throat of radius $2a$, on the grid. Second code: the throat's crossing of $r=a/2$ or $2a$, interpolated in
+time.}
+\label{tab:bisect}
+\begin{tabular}{rllll}
+\toprule
+$D$ & $1/(Wa)$ & first code, $10^{-11}$ to $10^{-3}$ & first code, $10^{-9}$ to $10^{-4}$ & second code, $10^{-9}$ to $10^{-4}$ \\
+\midrule
+4 & 0.846045 & 0.846522 & 0.846040 & 0.846043 \\
+5 & 0.578803 & 0.579027 & 0.578786 & 0.578789 \\
+6 & 0.461924 & 0.459628 & 0.461770 & 0.461705 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+In both families the threshold data are the static wormhole itself, with $p_*\propto h^2$. They test the growth rate in
+a nonlinear evolution, not that generic data approach the wormhole. When a fixed pulse of a normal scalar is added on the
+same ray, the slope read on the line $x^+=x^-$ is $6\%$, $38\%$ and $115\%$ above $1/W$ in $D=4$, $5$ and $6$, the same at each $h$. The
+throat then drifts off that line, and the cause of the difference is not established. At large $D$ the prediction is
 $T\simeq a\ln(1/|p-p_*|)/\sqrt{2(D-3)}$.
 
 This threshold is of type I, unlike Choptuik's threshold for a normal scalar~\cite{Choptuik1993}, which is of type II:
@@ -357,14 +390,18 @@ compared with each other and with the published table of Ref.~\cite{TS2013}, whi
 digits, and the reductions of $G_3$, $G_4$ and $G_5$ were repeated independently. $\Omega_1$, $\Omega_2$ and $\Omega_3$ were
 also computed without the reductions on two grids, and the expansion was compared with quad-double eigenvalues up to
 $D=10^4$.
+\item \emph{Threshold evolutions.} The bisections and lifetime fits ran on one double-null code and were repeated for the
+mirrored pulse by a second code that shares only the field equations. A planted series with a known slope, and one whose
+time unit is off by $\sqrt2$, test the fit.
 \item \emph{Numbers.} Every number in the tables and text is recomputed by one script from the data files, with
 checks that fail if a stated agreement does not hold.
 \end{itemize}
 These checks are internal; the work has not yet been reviewed by specialists.
 
-\paragraph{Reproducibility.} The derivation and integration scripts, the data behind the figure and the number checks
-are in \texttt{notes/wormhole\_largeD/} of the accompanying repository, \url{https://github.com/nmoinvaz/negative-mass},
-and the figure is made by \texttt{paper/figures/make\_figures.py}.
+\paragraph{Reproducibility.} The accompanying repository is \url{https://github.com/nmoinvaz/negative-mass}. The
+derivation and integration scripts, the data behind the figure and the number checks are in
+\path{notes/wormhole_largeD/}, the threshold evolutions and both codes are in \path{notes/wormhole_evolution/},
+and the figure is made by \path{paper/figures/make_figures.py}.
 
 \paragraph{Acknowledgments.} The author thanks Anthropic's Claude, which carried out the analysis, computations and
 drafting described in Sec.~\ref{sec:method} under the author's direction.

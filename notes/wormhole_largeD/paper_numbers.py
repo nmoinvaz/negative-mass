@@ -157,5 +157,38 @@ for D, ((e1, x1), (e2, x2)) in ST17.items():
     check(abs(sl - pred) < 2 * err, f"ST17 slope within 2 sigma at D = {D}")
 print("\n  D = 4, Shinkai & Hayward 2002 small-amplitude runs: 0.60 (ghost pulses), 0.61 (normal pulses);"
       f" predicted {1 / (math.sqrt(2) * math.sqrt(TS[4])):.3f}")
+
+# the threshold bisections of Sec. 6 (notes/wormhole_evolution, #40): threshold_output.txt (first code) and
+# threshold_check_output.txt (the coordinator's second code, with #40's points refit over [1e-9, 1e-4])
+import re
+EV = os.path.join(HERE, "..", "wormhole_evolution")
+sl, rel = {}, {}
+for line in open(os.path.join(EV, "threshold_output.txt")):
+    m = re.match(r"\s+SL D=(\d) (\w) h = ([0-9.]+): .*primary slope ([0-9.]+) .*rel dev ([-+0-9.e]+)", line)
+    if m:
+        sl[(int(m[1]), m[2], float(m[3]))] = (m[4], float(m[5]))
+k4 = [l for l in open(os.path.join(EV, "threshold_check_output.txt")) if l.startswith("[PASS] K4")]
+check(len(k4) == 1, "threshold_check_output.txt has a passing K4 line")
+k4 = dict((int(D), (a, b)) for D, a, b in re.findall(r"D=(\d): ind40 ([0-9.]+), #40 refit over \[1e-9, 1e-4\] ([0-9.]+)", k4[0]))
+FINE = {4: 0.005, 5: 0.00176777, 6: 0.00125}
+print("\n  D   1/W        first code [1e-11,1e-3]   first code [1e-9,1e-4]   second code [1e-9,1e-4]   largest |rel| [1e-9,1e-4]")
+bound = {}
+for D in (4, 5, 6):
+    Wi = 1 / math.sqrt(TS[D])
+    first, second = float(k4[D][1]), float(k4[D][0])
+    worst = max(abs(first * math.sqrt(TS[D]) - 1), abs(second * math.sqrt(TS[D]) - 1))
+    e = math.floor(math.log10(worst))
+    bound[D] = (math.ceil(worst / 10 ** e), e)
+    row = f"{D} & {Wi:.6f} & {sl[(D, 'S', FINE[D])][0]} & {k4[D][1]} & {k4[D][0]} \\\\"
+    print(f"{D:4d}   {Wi:.6f}   {sl[(D, 'S', FINE[D])][0]}                  {k4[D][1]}                 {k4[D][0]}                  {worst:.1e}")
+    check(row in TEX, f"Table bisect row D = {D} printed in main.tex: {row}")
+txt = ", ".join(f"${m}\\times10^{{{e}}}$" for m, e in (bound[4], bound[5])) + f" and ${bound[6][0]}\\times10^{{{bound[6][1]}}}$"
+check(txt in TEX, f"the bounds {txt} printed in main.tex")
+check(f"within ${bound[6][0]}\\times10^{{{bound[6][1]}}}$ in $D=4$, $5$ and $6$" in TEX, "the abstract's bound printed in main.tex")
+low = (float(sl[(6, 'S', 0.00125)][0]) / float(k4[6][1]) - 1) * 100
+check(f"lowers the $D=6$ slope by ${abs(low):.1f}\\%$" in TEX, f"D = 6 window effect {low:.2f} % printed in main.tex")
+GH = {4: 0.005, 5: 0.00176777, 6: 0.0025}
+gp = [f"${round(100 * sl[(D, 'G', GH[D])][1])}\\%$" for D in (4, 5, 6)]
+check(f"{gp[0]}, {gp[1]} and {gp[2]} above $1/W$" in TEX, f"G family departures {gp} printed in main.tex")
 print("\nchecks failed:", bad)
 sys.exit(1 if bad else 0)
