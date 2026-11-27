@@ -852,6 +852,8 @@ def main():
     global MUT
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["controls", "pstar", "run", "analyze", "jobs", "table"])
+    ap.add_argument("--kmax", type=int, default=None)
+    ap.add_argument("--kmin", type=int, default=None)
     ap.add_argument("--emit", default=None, help="jobs: print queue lines whose output goes to this directory")
     ap.add_argument("--raw40", default=os.path.expanduser("~/Source/negative-mass-raw/I40-dh610/runs"))
     ap.add_argument("--ext", default=None, help="table: the pstar json of the extension h, D = 5 then D = 6, comma separated")
@@ -873,6 +875,8 @@ def main():
         table = json.load(open(o.table)) if o.table else None
         rows = []
         for nm, sp in jobs().items():
+            if (o.kmax is not None and sp.get("k", 0) > o.kmax) or (o.kmin is not None and sp.get("k", 0) < o.kmin):
+                continue
             est = est_secs(sp, table) if table else 0.0
             rows.append((est, nm, sp))
         for est, nm, sp in sorted(rows, key=lambda r: -r[0]):          # longest first
