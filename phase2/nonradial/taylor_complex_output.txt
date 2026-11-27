@@ -1,5 +1,5 @@
 # taylor_complex_output.txt: the runs of record of #188, assembled by negative-mass-raw/I188-mac/assemble_output.py
-# raw folder I188-mac, last commit touching it when assembled: 16bfc018
+# raw folder I188-mac, last commit touching it when assembled: 7b55688d
 # machine: Apple M5 Mac (10 cores, 32 GB), shared with other sessions; two queues of one process each (run_all.sh A and B), nice 10, the references of run_01 to run_04 one process; the crate is single-threaded;
 # the load average is on the first lines of each run's log below
 

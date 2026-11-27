@@ -431,7 +431,7 @@ XR has no control: it fails on the unmutated crate, so none could serve.
 
 multishoot's plane module takes a complex scalar with a small change: `plane::Complex<R>` (a pair of lane values, a `Real` itself), four defaulted methods on `Real`
 (`conj`, `abs2`, `mag`, `re_f64`: the identity, `z * z`, `|x|`, `x` on the real lanes), the Hermitian product in `orthonormalize`, and the control `NoConj`. Pull request https://github.com/nmoinvaz/multishoot/pull/81 (branch
-`feat/complex-plane`, 9aebbcd, not merged and not published): `tests/plane_complex.rs` runs P1c (this note's planted system) in f64, dd and qd against a closed form with the bars of the plane tests, the real lanes' digests
+`feat/complex-plane`, 54d6fca after CodeRabbit's four findings, not merged and not published): `tests/plane_complex.rs` runs P1c (this note's planted system) in f64, dd and qd against a closed form with the bars of the plane tests, the real lanes' digests
 of P1, P2, P3 are those of #189's runs of record (10 of 10), the complex lane with real data has the real lane's digest, and 16 digests are the same on the default backend (aarch64 NEON) and with `--features portable`;
-`cargo fmt` and `cargo clippy --all-targets --features mutate -- -D warnings` (also `portable,mutate`) are clean. `+avx2,+fma` was not run (no x86 machine). With the pull request merged and released the crate's `Cx<T>` can
+`cargo fmt` and `cargo clippy --all-targets --features mutate -- -D warnings` (also `portable,mutate`) are clean. `+avx2,+fma` was not run here (no x86 machine); the pull request's CI jobs for AVX2 and ARM64 NEON passed. With the pull request merged and released the crate's `Cx<T>` can
 become `plane::Complex<T::Lib>` (recommended task 5).
