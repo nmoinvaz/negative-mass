@@ -432,6 +432,242 @@ its reference list.
     from the Einstein tensor ("So far we have not used any theory of gravity as such"). Does not contain: a matter model
     or field equations that produce the fluid, stability, or an evolution from regular data.
 
+### Prior work on the horizon sector of the black universes (#260)
+Read 2026-11-27 for #260, from local copies of the arXiv texts, against four statements of this project: S1 (the horizon
+coefficient c₂ of the c = −1 member is a free number of regular Cauchy data, #248), S2 (so the member has a growing
+direction of rate κ, against the "stable" verdict), S3 (a non-extremal Killing horizon at an extremum of the areal
+radius makes c₂ gauge invariant, #261) and S4 (the closed form `Y = R e^{κx}` of the growing mode, #262). Verdicts and
+the comparison of boundary conditions are in `black_universe/horizon_literature.md`; the queries (with hit counts), the
+screening of 424 full texts, the depth of each reading and the verification of each reference are in negative-mass-raw
+`I260-mac`. Per entry: the text that bears on S1–S4, with its section or equation; what the paper contains; what it does
+not. Entries above this subsection ([BF06], [BKZ12], [BBS12], [SV19], [LRSSV21], [BW22]) are not changed; additions to
+them are listed first. The papers' full texts are not committed (third-party content); `I260-mac/papers/downloads.tsv`
+has each url and sha256.
+
+**Additions to existing entries** (re-read in full for [BF06], [BKZ12]; passages for the others).
+- [BF06], read on every page. After Eq. (14): "the throat ρ = 0 is located in the R region if c > −1 , i.e., if 3πm < 2b
+  , at the horizon if 3πm = 2b and in the T region beyond it if 3πm > 2b". For ρ₀ = 0: "at c = −1 they merge into a
+  double horizon". Item (C), p. 2: the no-hair theorem holds for ε = −1, V ≤ 0 "and r′ > 0 at and outside the event
+  horizon. It will be seen below that there exist BH solutions where the condition r′ > 0 is violated." Eq. (8) prints
+  `A′(h) = (ρ₀ − h)/r²(h)`; with Eq. (7), `B′ = 2(ρ₀ − ρ)/r⁴`, A(h) = 0 gives twice that (as #212). No erratum or
+  related record on INSPIRE (queries `q16`, `q17`); no later paper of 424 repeats Eq. (8).
+- [BKZ12], read on every page (reference list excluded). Gauge, §IV, Eq. (35): "Then we can use the gauge freedom and
+  fix" `δψ = δμ₃ ≡ 0 ⟹ δR(r, t) = 0`. Horizon condition, §V.A: "The quasinormal boundary conditions for black hole
+  perturbations imply pure incoming waves at the horizon and pure outgoing waves at spatial infinity." (Eq. 43, Ψ ∝
+  e^{±iωr*}.) §V.C: "Black universes with c ≤ −1, or equivalently 3πm ≥ 2b, have no throat in the static region", so no
+  regularization at c = −1; "As we have shown, black universes at c = −1 (b = 3πm/2) are stable against polar monopole
+  perturbations"; "From Fig. 5 one can see that for c = −1 the effective potential has a negative gap, however,
+  time-domain integration proves that in this case the black universe is stable." The method is cited, not described
+  (§V.B, for the wormholes: "we have used the time-domain integration method proposed by Gundlach et al. [35]"); the
+  initial data of the c = −1 run are not given. Fig. 5 caption: "The potentials vanish at the horizon." §V.A: "For
+  nonzero scalar potentials V (φ), analytical expressions for static perturbations are unknown." Conclusion 2 as quoted
+  above. Not in the paper: a growth rate, a count of modes, the region beyond the horizon, the nonlinear problem.
+- [LRSSV21] §IV.A: "If a = 2m, the (maximally extended) spacetime has only extremal horizons, so we have a one-way
+  wormhole geometry with an extremal null throat". Its introduction restates [BKZ12]'s verdict as motivation ("except
+  for a special class of black universes where the event horizon coincides with the minimum of the area function"); no
+  stability computation.
+- [BW22]: for 2M = a "the minimum of r coincides with a single horizon" (the "one-way wormhole"); no stability analysis
+  (as in the entry above).
+
+**The black universes: stability and its gauge**
+- **[BFZ11] Bronnikov, Fabris & Zhidenko 2011**, "On the stability of scalar-vacuum space-times", EPJC 71, 1791,
+  arXiv:1109.6576 v2, doi:10.1140/epjc/s10052-011-1791-2 (INSPIRE and arXiv checked). Read: abstract, §1, §2.4–2.6,
+  conclusions; the rest by patterns.
+  - Claim, §2.5: "The gauge δβ = 0 (the same as δr = 0) is suitable for describing the perturbations at any points
+    except those where r′ = 0: these are throats and other critical points of r(u)." "putting δr = 0, we forbid
+    perturbations of the throat radius, while there is no physical reason for that". §2.6: "with nonzero δr on the
+    throat. So it is necessary to pass on to another gauge"; Eq. (50): δr is finite in the gauge δφ = 0 if φ′ ≠ 0.
+  - Contains: the S-deformation regularization of a throat's potential and the instability of the V ≡ 0 solutions. Does
+    not contain: a horizon at a critical point of r, free Cauchy data, or the black universes' c = −1 member. Bears on
+    S1 (nonzero δr at a critical point of r is admissible) as a statement for throats.
+- **[Bro18] Bronnikov 2018**, "Scalar fields as sources for wormholes and regular black holes", Particles 1, 56,
+  arXiv:1802.00098 v2, doi:10.3390/particles1010005 (INSPIRE and arXiv checked). Read: §2.2, §4.1–4.3, Fig. 5; the rest
+  by patterns.
+  - §4.1, after Eq. (70): "The gauge δβ = 0 is convenient for calculations but looks doubtful when applied to
+    configurations with throats." "we suppose that the throat radius is not subject to perturbations, whereas its
+    changes are in general admissible". Eqs. (64)–(68): δφ = ψe^{−η}, η′ = β′ + h′/2h, U with (V − e^{−2β}) and
+    +2φ′V_φ/β′ (the signs of #212's derivation, not of [BKZ12]'s printed (36)–(38)).
+  - §4.3: "the perturbation δφ should remain finite in the whole space and also vanish at infinities or horizons". Fig.
+    5 caption: "Only one of the models under study is stable (the time-domain plot is asymptotically constant), it is
+    the model where the throat coincides with the event horizon." §2.2: "if a minimum of r coincides with a horizon,
+    then the same reasoning shows that NEC violation is necessary on either side in its neighborhood".
+  - Contains: a review of the above; no new computation of the c = −1 member. Bears on S2 (restates the verdict and the
+    horizon requirement on δφ).
+- **[BBS20] Bronnikov, Bolokhov & Skvortsova 2020**, "Hybrid metric-Palatini gravity: black holes, wormholes,
+  singularities and instabilities", Grav. Cosmol. 26, 212, arXiv:2006.00559 v1, doi:10.1134/S0202289320030044 (INSPIRE
+  and arXiv checked). Read: abstract, §5.2–5.3, §6.
+  - §5.3, item 2(i): "among the black-universe solutions there is a stable subset, in which the horizon coincides with
+    the sphere of minimum radius", with [BKZ12] as the reference. §5.2: at a horizon "we have no reason to require there
+    anything more than finiteness of δφ". §6: "a conformally mapped black universe with a horizon at the minimum
+    radius".
+  - Contains: stability results of conformally mapped solutions by mapping [BKZ12]'s boundary conditions. Does not
+    contain: a new computation at c = −1. Bears on S2 (restatement) and on the list of solutions with the minimum of r
+    on a horizon.
+- **[Bro19] Bronnikov 2019**, "Spherically symmetric black holes and wormholes in hybrid metric-Palatini gravity", Grav.
+  Cosmol. 25, 331, arXiv:1908.02012 v2, doi:10.1134/S0202289319040030 (INSPIRE and arXiv checked). Read: abstract, §3.5.
+  §3.5: "if we adopt for the horizons the same boundary condition δψ = 0 as is used at infinity (which looks
+  reasonable)". Bears on the horizon condition of the school.
+- **[BBS21] Bronnikov, Bolokhov & Skvortsova 2021**, "Spherically symmetric space-times in generalized hybrid
+  metric-Palatini gravity", Grav. Cosmol. 27, 358, arXiv:2109.01794 v1, doi:10.1134/S0202289321040046 (INSPIRE and arXiv
+  checked). Read: abstract, Figs. 4 and 6.
+  - Fig. 4 caption (Example 2): "At m≈ 0.212, the horizon occurs at x = 0 and coincides with the minimum of r(x)."; Fig.
+    6 (Example 3): m ≈ 0.141. Einstein-frame solutions with a phantom scalar and a potential; whether the horizon is
+    simple is not stated in the captions. No stability analysis there.
+- **[BD11] Bronnikov & Donskoy 2011**, "Black universes with trapped ghosts", Grav. Cosmol. 17, 176, arXiv:1110.6030 v1,
+  doi:10.1134/S0202289311020083 (INSPIRE and arXiv checked). Read: §2 passage. "In the intermediate case where a minimum
+  of r(u) coincides with a horizon (A = 0), the condition r′′ > 0 holds in its vicinity". Solutions only; no
+  perturbations.
+- Other follow-ups from the same group, read by abstract and patterns (G): [BBS12] 1208.4619 (no c = −1 stability
+  statement beyond the entry above), 0910.4930 (Bronnikov & Donskoy, brane-world black universes; no perturbations),
+  1503.02956 (Bronnikov & Korolyov; the gauge remark "The gauge δβ = 0 is technically the simplest one, but causes
+  certain problems when applied to wormholes and other configurations with throats"), 1705.05906 (Bronnikov & Korolyov,
+  long throats).
+- **Restatements of [BKZ12]'s verdict, no new computation** (each read at the passage): [ES13] Eiroa & Sendra 2013,
+  "Regular phantom black hole gravitational lensing", PRD 88, 103007, arXiv:1308.5959 v2, doi:10.1103/PhysRevD.88.103007
+  (§6: "when the horizon coincides with the throat, since it was shown in Ref. [21] that the solution is stable");
+  [BFR20] Bronnikov, Fabris & Rodrigues 2020, "Instability of some k-essence spacetimes", IJMPD 29, 2050016,
+  arXiv:1908.09126 v1, doi:10.1142/S0218271820500169; [KMP23] Karakasis, Mavromatos & Papantonopoulos 2023, "Regular
+  compact objects with scalar hair", PRD 108, 024001, arXiv:2305.00058 v3, doi:10.1103/PhysRevD.108.024001; [Sim23]
+  Simpson 2023, "Excising Curvature Singularities from General Relativity", arXiv:2304.07383 v1 (INSPIRE lists
+  doi:10.26686/wgtn.22338298, no journal); [FDV23] Fabris, Daouda & Velten 2023, "Spherically Symmetric Configurations
+  in Unimodular Gravity", Universe 9, 515, arXiv:2310.19037 v1, doi:10.3390/universe9120515 (§VI: "the solutions are
+  unstable, except for the regular solution in the very special case the minimum of the areal function coincides with
+  the horizon"); [GOPV25] González, Olivares, Papantonopoulos & Vásquez 2026, "Observational tests of regular black
+  holes with scalar hair and their stability", PRD 113, 124076, arXiv:2510.18647 v2, doi:10.1103/dd4m-zs39; [BGPV26]
+  Bécar, González, Papantonopoulos & Vásquez 2026, "Anomalous decay rate and greybody factors for regular black holes
+  with scalar hair", PRD 113, 104020, arXiv:2602.16972 v2, doi:10.1103/gksh-s6pn; [GOPV26] González, Olivares,
+  Papantonopoulos & Vásquez 2026, "Timelike geodesics of regular black holes with scalar hair", EPJ Plus 141, 1227,
+  arXiv:2604.20661 v2, doi:10.1140/epjp/s13360-026-08428-4 (all INSPIRE and arXiv checked). [BGPV26] and [GOPV26] use
+  test fields and geodesics on the family, with the horizon at the throat at the critical scalar charge; [BGPV26]: "This
+  occurs precisely when the event horizon coincides with the minimum of the areal radius". With [Bro18] and [BBS20], 11
+  papers. None examines `Y ≠ 0` on the horizon.
+
+**Simpson–Visser black bounces and other horizons on a throat**
+- **[BIK26] Bronnikov, Ibadov & Kunz 2026**, "Instabilities of Simpson–Visser black bounces sourced by a phantom scalar
+  and nonlinear electrodynamics", arXiv:2611.08322 v1 (5 Nov 2026; INSPIRE record 3225530 has no journal reference)
+  (INSPIRE and arXiv checked). Read: abstract, §I, §II.C, §III, §V.D, §VI.
+  - Claim, abstract: all space-times under study are unstable "(the extremal case a = 2M is not analyzed separately)";
+    "the leading unstable black-hole and wormhole modes approach the same limiting growth rate" M·0.10121 as a/(2M) → 1
+    from either side. §II.C: "at a = 2M we obtain a regular extremal black hole with a horizon at minimum radius". §V.D:
+    "This does not establish the regularity of the perturbations at the extremal horizon, which requires a separate
+    analysis." §VI: "the regularity of perturbations at the degenerate horizon of the extremal configuration a = 2M
+    remains to be established".
+  - Gauge, §III.A: "The gauge δβ = 0 is attainable only for perturbations with δβ = 0 at the throat, whereas the gauge
+    δψ = 0 is always attainable. This is the source of all subtleties discussed below."
+  - Contains: the radial spectrum of the whole Simpson–Visser family except a = 2M, the rate of the Ellis limit
+    (1.18197). Does not contain: a horizon at the minimum with κ ≠ 0, the horizon sector, c₂, an exact mode. Bears on S1
+    (gauge), S3 (a = 2M is extremal, κ = 0; the lemma excludes it) and on S2 by contrast (the limit of the rate is not
+    κ).
+- **[FLV24] Franzin, Liberati & Vellucci 2024**, "From regular black holes to horizonless objects: quasi-normal modes,
+  instabilities and spectroscopy", JCAP 01 (2024) 020, arXiv:2310.11990 v2, doi:10.1088/1475-7516/2024/01/020 (INSPIRE
+  and arXiv checked). Read: abstract, §III, §V. Gravitational and test-field QNMs of Bardeen-like and Simpson–Visser
+  black-hole mimickers with a phantom + magnetic source, up to the one-way wormhole with an "extremal null throat" at ℓ
+  = 2M; no radial (monopole) sector; the Aretakis instability is mentioned as conjectured for the extremal case. Bears
+  on S3 only as the extremal contrast.
+- **[RJLR25] Róis, Junior, Lobo & Rodrigues 2025**, "Horizons, throats and bounces in hybrid metric-Palatini gravity
+  with a non-zero potential", JCAP 07 (2025) 078, arXiv:2504.07861 v2, doi:10.1088/1475-7516/2025/07/078 (INSPIRE and
+  arXiv checked). Read: abstract, §III.C, §V.C, §VI.
+  - §V.C: "The former type of solutions emerges when exactly one horizon exists – either an EH or an extremal EH – and
+    it is also a throat (xT = xH ), corresponding to an extremal null throat." "occurs when the minimum of R(x)
+    coincides with the outermost horizon (among several), whether it is an EH or an extremal EH". §VI: "guiding future
+    research into the stability properties of these solutions".
+  - Contains: charged phantom-sector solutions with the minimum of R on a horizon, with Penrose diagrams. Does not
+    contain: a perturbation analysis; per solution, whether the horizon is simple. Bears on the list of solutions in
+    S3's scope.
+- Read at the passage (G): 2409.12101 (Alencar, Nilton, Rodrigues & Silva, arXiv v2 25 Aug 2025; INSPIRE's title is
+  garbled by MathML, journal not read; §VI: "the WH’s throat coincides with the event horizon, and, with this, we have a
+  black throat"), 2603.05543 (Alencar, Crispim, Sáez-Chillón Gómez & Silva, Phys. Dark Univ. 53, 102427 (2026); §II.C:
+  "the root of A(x) at x = 0 is degenerate (extremal horizon)"), 2609.14199 (Alencar, Bronnikov, Crispim, Sáez-Chillón
+  Gómez & Silva 2026, arXiv v2 16 Sep 2026, no journal reference on INSPIRE; §II.C: "There can be an intermediate case
+  where the minimum of r(x) coincides with a horizon"), 2201.01650 (Franzin, Liberati, Mazza, Dey & Chakraborty, PRD
+  105, 124051 (2022); rotating Simpson–Visser, null throat on an extremal horizon, test scalar). All solution-level or
+  test-field.
+- **[XCY25] Xu, Chew & Yeom 2025**, "Dynamics of Bronnikov–Ellis wormhole with double-null simulation", JCAP 08 (2025)
+  012, arXiv:2503.07610 v1, doi:10.1088/1475-7516/2025/08/012 (INSPIRE and arXiv checked). Read: abstract, §III.B.1,
+  §IV. Nonlinear double-null evolution of the Ellis wormhole; a pulse "splits the throat into two distinct apparent
+  horizons" (§III.B.1). Wormhole, no Killing horizon at the throat. Context for the nonlinear fate; not for S1–S4.
+
+**Horizon instabilities (S3's contrast): κ = 0, test fields, inner horizons**
+- **[Are11a] Aretakis 2011**, "Stability and Instability of Extreme Reissner–Nordström Black Hole Spacetimes for Linear
+  Scalar Perturbations I", CMP 307, 17, arXiv:1110.2007 v1, doi:10.1007/s00220-011-1254-5; **[Are11b]** "… II", Ann.
+  Henri Poincaré 12, 1491, arXiv:1110.2009 v1, doi:10.1007/s00023-011-0110-7 (INSPIRE and arXiv checked). Read: abstract
+  and §1 of I; II by abstract and patterns. Abstract of I: "The fundamental new aspect of this problem is the degeneracy
+  of the redshift on H+." §1.1.1: "a black hole is called extreme if the surface gravity vanishes on H+". Linear scalar
+  field on extreme RN; non-decay and blow-up of transversal derivatives. Does not contain: non-extremal horizons, the
+  metric perturbation.
+- **[Are15] Aretakis**, "Horizon Instability of Extremal Black Holes", Adv. Theor. Math. Phys. 19, 507 (2015),
+  arXiv:1206.6598 v2, doi:10.4310/ATMP.2015.v19.n3.a1 (INSPIRE and arXiv checked). Read: abstract, §1, §2.1. Abstract:
+  "in stark contrast with the subextremal case for which decay is known for all derivatives along the event horizon".
+  Assumption A2, Eq. (2): ∇_V V = 0 on H⁺; "The condition (2) captures the extremality of H+." The instability is
+  "completely determined by local properties of extremal horizons".
+- **[LMRT13] Lucietti, Murata, Reall & Tanahashi 2013**, "On the horizon instability of an extreme Reissner–Nordström
+  black hole", JHEP 03 (2013) 035, arXiv:1212.2557 v2, doi:10.1007/JHEP03(2013)035 (INSPIRE and arXiv checked). Read:
+  abstract, §1, contents. Abstract: the instability occurs for a massive scalar and for "coupled linearized
+  gravitational and electromagnetic perturbations"; "instabilities are present for initial perturbations supported
+  outside the horizon, e.g. an ingoing wavepacket". Extreme RN only. Does not contain: a non-extremal horizon, an area
+  extremum.
+- **[MRT13] Murata, Reall & Tanahashi 2013**, "What happens at the horizon(s) of an extreme black hole?", CQG 30,
+  235007, arXiv:1307.6800 v1, doi:10.1088/0264-9381/30/23/235007 (INSPIRE and arXiv checked). Read: abstract, §1.
+  Abstract: "generically the endpoint of the instability is a non-extreme RN solution". §1: "So, for a non-extreme black
+  hole, outgoing radiation at the horizon decays. However, for an extreme black hole, κ = 0 so the horizon redshift
+  effect is absent: outgoing radiation at the horizon does not decay."
+- Read at the abstract and the patterns (G or short S): Angelopoulos, Aretakis & Gajic 1809.10037 (PRL 121, 131102
+  (2018)) and 1802.05692 (CQG 35, 155007 (2018); data through the bifurcation sphere of sub-extremal RN, polynomial
+  tails); Casals, Gralla & Zimmerman 1606.08505 (PRD 94, 064003 (2016), extremal Kerr); Gralla, Ravishankar & Zimmerman
+  1911.11164 (JHEP 05 (2020) 094, extremal BTZ); Katagiri & Kimura 2112.09832 (PRD 105, 2022; "general static and
+  spherically symmetric extremal black hole spacetimes", areal radius as the coordinate); Porfyriadis, Rosen &
+  Tsaraktsidis 2512.23629 (JHEP 06 (2026) 068); Agrawal, Charalambous, Donnay, Liberati & Neri 2604.15260 (JHEP 11
+  (2026) 104); Solodukhin 2610.11664 (arXiv v3, 17 Nov 2026; extremal mimickers, "Aretakis-like modes arise in a local
+  analysis of the throat, they do not lead to a physical instability of the mimicker"). All have κ = 0 (or
+  near-extremal) and a test field.
+- **[CDLPV18] Carballo-Rubio, Di Filippo, Liberati, Pacilio & Visser 2018**, "On the viability of regular black holes",
+  JHEP 07 (2018) 023, arXiv:1805.02675 v1, doi:10.1007/JHEP07(2018)023 (INSPIRE and arXiv checked). Read: §3. §3, after
+  Eq. (3.6): "the mass parameter in the region A grows exponentially, on a timescale determined by the surface gravity
+  of the inner horizon". An inner-horizon growth at the surface-gravity rate with generic data (ingoing tails and an
+  outgoing flux), in the mass function; a different mechanism from S3.
+
+**Gauge fixing of a horizon, minimal sections, trapping horizons (S3)**
+- **[HW13] Hollands & Wald 2013**, "Stability of Black Holes and Black Branes", CMP 321, 629, arXiv:1201.0463 v4,
+  doi:10.1007/s00220-012-1638-1 (INSPIRE and arXiv checked). Read: §2.1.
+  - §2.1: "the linearized Raychaudhuri equation implies that, to first order in λ, the expansion must be constant along
+    the horizon. Thus, the perturbed expansion δϑ must vanish on the horizon at all times"; "We now wish to argue that
+    this condition can always be imposed."; with `K = κ[u∂_u − r∂_r]` (Eq. 9), "if λ1 = 0, we would have ϑ(1) = 0, i.e.
+    B1 would be a MOTS lying outside the black hole, which is impossible", so "We now show that λ1 is strictly positive,
+    λ1 > 0" and "we can uniquely solve the equation C(f ) = j for any smooth j". Lemma 1 is for "a stationary black hole
+    spacetime satisfying the vacuum Einstein equations". "For another argument leading to the same conclusion in the
+    more general context of “non-evolving horizons”, see Prop. 3 of [26]" ([Mars12]).
+  - Contains: the gauge condition δϑ|_B = 0 and its proof for vacuum stationary black holes. Does not contain: matter
+    with a potential, a horizon whose section is minimal, a growth rate of δr. Bears on S3 (with [Mars12]).
+- **[Mars12] Mars 2012**, "Stability of MOTS in totally geodesic null horizons", CQG 29, 145019, arXiv:1205.1724 v1,
+  doi:10.1088/0264-9381/29/14/145019 (INSPIRE and arXiv checked). Read: abstract, §1, Props. 2–3, Cor. 3, Thm. 1.
+  - Abstract: "We link these stability properties with the surface gravity of the horizon and/or to the existence of
+    minimal sections." Eq. (11): `L ψ = −Δψ + 2 s_ℓ(∇ψ) + ψ(2 div s_ℓ − ½κ_ℓθ_k + ½⟨k, tr N⟩)`; Killing horizons have N
+    = 0 ("This definition includes all Killing horizons"). §1: "non-evolving horizons with non-zero and constant surface
+    gravity are marginally stable if and only if they admit a section with vanishing total null expansion". Thm. 1: "If
+    H admits a minimal section (i.e. a section S0 with vanishing mean curvature vector H|S0 = 0), then H is marginally
+    stable."
+  - Contains: the stability operator of a section of a Killing horizon and its vanishing on minimal sections, with the
+    Einstein tensor in Eq. (13). Does not contain: perturbations of the spacetime, δr, a scalar source, a growth rate.
+    Bears on S3.
+- **[Hay09] Hayward 2009**, "Wormhole dynamics in spherical symmetry", PRD 79, 124001, arXiv:0903.5438 v1,
+  doi:10.1103/PhysRevD.79.124001 (INSPIRE and arXiv checked). Read: abstract, §I, §IV. §I: "a Morris-Thorne wormhole
+  throat is a double trapping horizon, which will generally bifurcate under a dynamic perturbation, such as someone
+  crossing it". §IV: "In static cases, a wormhole mouth as defined above must be a double trapping horizon". Timelike
+  throats; no growth rate. Also read: [Hay99] (entry above, patterns), Hayward 2002 gr-qc/0203051 and Hayward & Koyama
+  2004 gr-qc/0406080 (patterns), 2104.08935, 2104.11134, 2601.05902 (patterns; no statement on S1–S4).
+- Physical-process first law, read at the passage: Mishra, Chakraborty, Ghosh & Sarkar 1709.08925 (JHEP 09 (2018) 034:
+  "The event horizon exhibits a teleological property and one has to impose future boundary conditions to ensure the
+  stability under perturbation"), Visser & Yan 2403.07140 (JHEP 10 (2024) 029, Eq. (1.19): dδθ_v/dv = −8πG δT_vv),
+  Hollands, Wald & Zhang 2402.00818 (PRD 110, 024070 (2024)). The Raychaudhuri statements agree with [HW13]; none treats
+  an area extremum.
+
+*Search limits (#260).* INSPIRE citers of [BKZ12], [BF06], [BMD07], [SV19], [Are15], [LMRT13], [MRT13] (262, 453, 197,
+543, 245, 121, 105 records) downloaded whole; 15 other INSPIRE queries; 13 arXiv API queries; 8 WebSearch queries in
+extended mode (`I260-mac/queries/`). 424 full texts searched with the 13 patterns of `I260-mac/screen_patterns.txt`; 59
+of them read at the depth stated per entry; 52 citers of [BKZ12] without an arXiv id not read. A statement worded unlike
+every pattern would be missed. AI-directed text: none (27 pattern matches, all author names, "do not report", or
+disclosures of AI use).
+
 ### Other proposals of a new universe inside a black hole
 - **[FMM89] Frolov, Markov & Mukhanov 1989**, "Through a black hole into a new universe?", PLB 216, 272,
   doi:10.1016/0370-2693(89)91114-3, and **[FMM90]** "Black holes as possible sources of closed and semiclosed worlds",
