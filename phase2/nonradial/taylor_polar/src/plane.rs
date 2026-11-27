@@ -76,7 +76,7 @@ pub fn gram_schmidt<T: Num, const R: usize, const C: usize>(y: &mut [[T; R]; C])
             for p in 0..c {
                 let mut d = T::zero();
                 for i in 0..R {
-                    d = d + y[p][i] * y[c][i];
+                    d = d + y[p][i].conj() * y[c][i];
                 }
                 for i in 0..R {
                     y[c][i] = y[c][i] - d * y[p][i];
@@ -85,7 +85,7 @@ pub fn gram_schmidt<T: Num, const R: usize, const C: usize>(y: &mut [[T; R]; C])
         }
         let mut s = T::zero();
         for i in 0..R {
-            s = s + y[c][i] * y[c][i];
+            s = s + y[c][i].abs2();
         }
         let nrm = s.sqrt();
         let inv = nrm.recip();
@@ -162,7 +162,7 @@ pub fn integrate<T: Num, const R: usize, const C: usize>(
             let mut e = 0.0f64;
             for c in 0..C {
                 for i in 0..R {
-                    e = e.max(co[c][i][k].to_f64().abs());
+                    e = e.max(co[c][i][k].mag());
                 }
             }
             if !e.is_finite() {

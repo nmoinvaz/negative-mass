@@ -48,11 +48,11 @@ pub fn det_n<T: Num, const N: usize>(a: &[[T; N]; N]) -> T {
     for c in 0..N {
         let mut p = c;
         for r in c + 1..N {
-            if m[r][c].to_f64().abs() > m[p][c].to_f64().abs() {
+            if m[r][c].mag() > m[p][c].mag() {
                 p = r;
             }
         }
-        if m[p][c].to_f64() == 0.0 {
+        if m[p][c].mag() == 0.0 {
             return T::zero();
         }
         if p != c {
@@ -80,7 +80,7 @@ pub fn inv_n<T: Num, const N: usize>(a: &[[T; N]; N]) -> [[T; N]; N] {
     for c in 0..N {
         let mut p = c;
         for r in c + 1..N {
-            if m[r][c].to_f64().abs() > m[p][c].to_f64().abs() {
+            if m[r][c].mag() > m[p][c].mag() {
                 p = r;
             }
         }
@@ -108,7 +108,7 @@ fn fro<T: Num, const N: usize>(a: &[[T; N]; N]) -> f64 {
     let mut s = 0.0;
     for r in a {
         for x in r {
-            s += x.to_f64() * x.to_f64();
+            s += x.mag() * x.mag();
         }
     }
     s.sqrt()
@@ -129,7 +129,7 @@ pub fn contracting_projector<T: Num>(m: &[[T; 4]; 4]) -> [[T; 4]; 4] {
         for i in 0..4 {
             for j in 0..4 {
                 xn[i][j] = half * (mu_t * x[i][j] + imu * xi[i][j]);
-                diff += (xn[i][j] - x[i][j]).to_f64().powi(2);
+                diff += (xn[i][j] - x[i][j]).mag().powi(2);
             }
         }
         let rel = diff.sqrt() / fro(&xn);
@@ -178,6 +178,10 @@ pub fn zerilli_q<T: Num>(gamma: T, mass: T, l: usize, r_start: f64, rm: f64, ord
     let lam = lam_l::<T>(l);
     let s2 = gamma * gamma;
     let mut q = -(s2 + zerilli_v(T::from_f64(r_start), mass, lam)).sqrt();
+    // the decaying branch q ~ -s (polar_solver's rule for a complex s; never true for a real gamma > 0)
+    if (q / gamma).re_f64() > 0.0 {
+        q = -q;
+    }
     let inv = recips::<T>();
     let three_m = mass * T::from_f64(3.0);
     let nine_m2 = T::from_f64(9.0) * mass * mass;
@@ -211,10 +215,10 @@ pub fn zerilli_q<T: Num>(gamma: T, mass: T, l: usize, r_start: f64, rm: f64, ord
             }
             qc[k + 1] = s * inv[k + 1];
         }
-        let q0 = qc[0].to_f64().abs().max(1e-300);
+        let q0 = qc[0].mag().max(1e-300);
         let mut h = x0 * 0.5;
         for k in [order - 1, order] {
-            let e = qc[k].to_f64().abs() / q0;
+            let e = qc[k].mag() / q0;
             if e > 0.0 {
                 h = h.min((tol / e).powf(1.0 / k as f64));
             }
@@ -274,14 +278,14 @@ pub fn interior_q<T: Num>(y: &[[T; 6]; 3], ys: &[[T; 4]; 2], mext: T, rm: T, l: 
         // mutation qint_cofsign: the cofactor signs are not alternated
         n[j] = if j % 2 == 0 || crate::mutate::on("qint_cofsign") { d } else { -d };
     }
-    let nmax = n.iter().map(|x| x.to_f64().abs()).fold(0.0, f64::max);
+    let nmax = n.iter().map(|x| x.mag()).fold(0.0, f64::max);
     let mut res = 0.0f64;
     for i in 0..4 {
         let mut s = T::zero();
         for k in 0..5 {
             s = s + m[i][k] * n[k];
         }
-        res = res.max(s.to_f64().abs());
+        res = res.max(s.mag());
     }
     let mut met = [T::zero(); 2];
     for c in 0..3 {
@@ -314,8 +318,15 @@ pub fn far_start(rm: f64, gamma: f64, l: usize) -> f64 {
 }
 
 pub fn d_eval<T: Num>(cfg: &Cfg, table: &JTable<T>, mext: T, gamma: f64) -> DOut<T> {
+    let r_s = scalar_start(cfg.rm, gamma, cfg.model.omega);
+    let r_far = far_start(cfg.rm, gamma, cfg.l);
+    d_eval_s(cfg, table, mext, T::from_f64(gamma), r_s, r_far)
+}
+
+/// D at the growth rate s (a lane value, complex on a complex lane), the scalar plane started at r_s and the Riccati
+/// integration of the Zerilli solution at r_far.
+pub fn d_eval_s<T: Num>(cfg: &Cfg, table: &JTable<T>, mext: T, g: T, r_s: f64, r_far: f64) -> DOut<T> {
     let l = cfg.l;
-    let g = T::from_f64(gamma);
     let s2 = g * g;
     // interior
     let t0 = Instant::now();
@@ -339,7 +350,6 @@ pub fn d_eval<T: Num>(cfg: &Cfg, table: &JTable<T>, mext: T, gamma: f64) -> DOut
     let t0 = Instant::now();
     let mext = if crate::mutate::on("mext0") { T::zero() } else { mext };
     let rmt = T::from_f64(cfg.rm);
-    let r_far = far_start(cfg.rm, gamma, l);
     let (q, steps_q) = zerilli_q(g, mext, l, r_far, cfg.rm, cfg.ctl.order, cfg.ctl.tol);
     let f = T::one() - (mext + mext) / rmt;
     let mon = moncrief(rmt, mext, l);
@@ -348,7 +358,6 @@ pub fn d_eval<T: Num>(cfg: &Cfg, table: &JTable<T>, mext: T, gamma: f64) -> DOut
     let t_q = t0.elapsed().as_secs_f64();
     // exterior: scalar plane
     let t0 = Instant::now();
-    let r_s = scalar_start(cfg.rm, gamma, cfg.model.omega);
     let vac = VacSource { mass: mext, model: cfg.model, l, s: g, lo: 2 };
     // the metric rows must not feed on the scalar columns in vacuum
     {
@@ -356,7 +365,7 @@ pub fn d_eval<T: Num>(cfg: &Cfg, table: &JTable<T>, mext: T, gamma: f64) -> DOut
         for i in 0..2 {
             for j in 2..6 {
                 for k in 0..4 {
-                    assert!(jf[i][j].get(k).to_f64() == 0.0, "J_vac[{i}][{j}] couples the blocks");
+                    assert!(jf[i][j].get(k).mag() == 0.0, "J_vac[{i}][{j}] couples the blocks");
                 }
             }
         }
