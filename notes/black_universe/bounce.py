@@ -51,6 +51,7 @@ PT_KAPPA, PT_NU = 1.0, 3e-5                                # V = -nu (nu + 1) ka
 LAM_MIN = W_LO**2                                          # counted real eigenvalues of the spectral check: lambda > W_LO^2
 SPEC = {"S-A": dict(N=401, X0=45.0, kX=12.0, tol_nothroat=1e-2, tol_throat=1e-2),
         "S-B": dict(N=801, X0=90.0, kX=24.0, tol_nothroat=1e-4, tol_throat=2e-2)}
+SER_X = 30.0                                                # amendment A7: low stage, B family, A and A' from the series in 1/x for x >= SER_X
 MAP_X, MAP_A = 150.0, 5.0                                  # amendment A4: spectral grid mapped (sinh) where X > MAP_X
 MUT = set()
 
@@ -137,6 +138,7 @@ class Bg:
         self.ned = 0.0 if mutating("ned_off") else 1.0
         self.xh = self.A1 = None
         self.taylor = None
+        self.series = None
         if fam == "sv":
             self.xh2 = 4 * self.m**2 - 1
             if self.m > 0.5:
@@ -150,6 +152,8 @@ class Bg:
         else:
             self.p = 3 * self.m - math.pi * self.q**2
             self.kind = "simple"
+            if stage == "low":
+                self._series_setup()
             self.xh = 0.0 if at_throat else self._horizon()
             self.A1 = 2 * self.p if at_throat else float(self.Ap(self.xh))
             self._taylor_setup(at_throat)
@@ -169,13 +173,43 @@ class Bg:
         Bo = -math.pi * p / 2 - math.pi**2 * q2 / 4 + (1 + q2 + p * x) / (1 + x * x) + (p + 2 * q2 * x / (1 + x * x)) * at + q2 * at**2
         return np.where(x >= 1.0, Bt, Bo)
 
+    def _series_setup(self, K=40):
+        """B = sum_k b_k y^k, y = 1/x (amendment A7): B(x) = (1+q^2+px)/(1+x^2) + pi q^2 x/(1+x^2) - (p + pi q^2) t - 2 q^2 x t/(1+x^2) + q^2 t^2,
+        t = atan(y); no cancellation at large x (the closed form loses 1e-16 x relative accuracy in A - 1 through B ~ 1/x^2 from O(p/x) terms)."""
+        q2, p = self.q**2, self.p
+        S = np.zeros(K); S[0::2] = (-1.0) ** np.arange(len(S[0::2]))                       # 1/(1+y^2)
+        t = np.zeros(K); t[1::2] = (-1.0) ** np.arange(len(t[1::2])) / np.arange(1, K, 2)   # atan(y)
+        mul = lambda a, b: np.convolve(a, b)[:K]
+        yS = np.concatenate([[0.0], S[:-1]])                                              # y/(1+y^2)
+        y2S = np.concatenate([[0.0, 0.0], S[:-2]])                                        # y^2/(1+y^2)
+        b = (1 + q2) * y2S + p * yS + math.pi * q2 * yS - (p + math.pi * q2) * t - 2 * q2 * mul(yS, t) + q2 * mul(t, t)
+        if mutating("ser_coef"):
+            b[3] *= 1.001                                                                 # control: wrong coefficient of the series
+        b[0] = b[1] = 0.0                                                                 # vanish analytically (B = O(y^2)); exact zeros, not roundoff
+        c = np.zeros(K)                                                                   # A = (1 + y^-2) B = sum_n c_n y^n, c_n = b_{n+2} + b_n
+        c[:K - 2] = b[2:]
+        c += b
+        self.ser_c = c
+        self.series = True
+
+    def _A_series(self, x):
+        y = 1.0 / np.asarray(x, dtype=float)
+        A = np.polynomial.polynomial.polyval(y, self.ser_c)
+        n = np.arange(1, len(self.ser_c))
+        Ap = -y**2 * np.polynomial.polynomial.polyval(y, self.ser_c[1:] * n)               # dA/dx = -y^2 dA/dy
+        return A, Ap
+
     def A(self, x):
+        if self.series and np.isrealobj(x) and np.all(np.asarray(x) >= SER_X):
+            return self._A_series(x)[0]
         if self.fam == "sv":
             R = np.sqrt(x * x + 1)
             return (x * x - self.xh2) / (R * (R + 2 * self.m))
         return (x * x + 1) * self._B(x)
 
     def Ap(self, x):
+        if self.series and np.isrealobj(x) and np.all(np.asarray(x) >= SER_X):
+            return self._A_series(x)[1]
         if self.fam == "sv":
             return 2 * self.m * x / np.sqrt(x * x + 1)**3
         q2, p = self.q**2, self.p
@@ -863,6 +897,14 @@ def check_numerics_vs_mp(mut=()):
             for z in (1e-9, 1e-5, 1e-3, 0.02, 0.049, 0.06, 0.3):
                 a = float(A(xh + mp.mpf(z)) / mp.mpf(z))
                 worst = max(worst, abs(bg.a_over_z(z) - a) / abs(a))
+    # low stage, B: A and A' from the series in 1/x for x >= 30 (amendment A7): |dA| <= 1e-14, |dA'| <= 1e-12 |A'|
+    for m, q, thr in ((B1_M, 0.5, False), (m_throat(0.7), 0.7, True), (B3_M, 0.2, False), (-2 * (-10.0) / (3 * math.pi), 0.0, False)):
+        bg = Bg("bbs", m, q, "R2", thr, "low")
+        A = mp_A("bbs", mp.mpf(m), mp.mpf(q))
+        for x in (30.0, 100.0, 1e3, 1e4, 1e5, 2e6):
+            a = float(A(mp.mpf(x)))
+            ap = float(mp.diff(A, mp.mpf(x), h=mp.mpf(x) * mp.mpf("1e-20")))
+            worst = max(worst, abs(float(bg.A(x)) - a) / 1e-3, abs(float(bg.Ap(x)) - ap) / abs(ap) / 1e-1)
     return worst
 
 
@@ -901,7 +943,7 @@ def check_command():
     w20 = check_bbs_printed_V20(MUT)
     line("S1 [BBS12] printed (20) for V against (9) (mpmath 30 digits, 3 members, 4 points)", w20 < 1e-25, f"max abs difference {float(w20):.3e} (declared <= 1e-25)")
     mpx = check_numerics_vs_mp(MUT)
-    line("S2 float64 background (A, A', A/z series, large x) against mpmath 40 digits, 7 members", mpx < 1e-11, f"max relative difference {mpx:.3e} (declared <= 1e-11)")
+    line("S2 float64 background (A, A', A/z series, large x; low-stage series of B) against mpmath 40 digits, 7 members", mpx < 1e-11, f"max scaled difference {mpx:.3e} (declared <= 1e-11)")
     import mpmath as mp
     worst = check_horizons(MUT)
     line("S3 horizons: S A'(x_h) = 2 m x_h/R_h^3; B2 A(0) = 0, A'(0) = 2p (mpmath 40 digits)", worst < 1e-30, f"max abs difference {float(worst):.3e} (declared <= 1e-30)")
@@ -1116,7 +1158,7 @@ CONTROLS = {
     "sv_V": ("check", "S1"), "sv_L": ("check", "S1"), "bbs_A": ("check", "S1 background"), "bbs_V20": ("check", "S1 [BBS12] printed (20)"),
     "ned_T": ("check", "S4 NED source"), "master_ned": ("check", "S4 linearized"), "master_p": ("check", "S4 linearized"),
     "bkz41_sign": ("check", "S4 linearized"), "family_ned": ("check", "S5 family"), "veff_ned": ("check", "S8 Vhat"),
-    "bg_kappa": ("check", "S3 horizons"), "az_series": ("check", "S2 float64"),
+    "bg_kappa": ("check", "S3 horizons"), "az_series": ("check", "S2 float64"), "ser_coef": ("check", "S2 float64"),
     "eps": ("planted", "P1 planted"), "throat_wall": ("planted", "P1 planted"), "rmax": ("planted", "P1 planted"),
     "hz_start": ("agree", "R1 v R2"), "ned_off": ("agree", "R1 v R2"),
     "lowW_V": ("plantedlow", "P3 planted"), "lowW_range": ("plantedlow", "P3 planted"), "rmax_low": ("agreelow", "low R1 v R2"),
