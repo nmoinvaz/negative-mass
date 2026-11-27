@@ -1,0 +1,296 @@
+# Output of bounce.py of record, assembled from negative-mass-raw/I223-rpi5. Count runs (results/*.json, 220, main stage R1 and R2, low stage R1 and R2): bounce.py at 9b3db56 (main stage, S low stage) and f6d1802 (B low stage). check, planted, planted_low, planted_complex, complex, spectral, report and controls (run 2): ef25201. The complex controls (run 4): 2db4b58 (counting code unchanged from f6d1802 to 2db4b58). A report exits 1 because S9 is NOT MET at 7 members, as found; spectral exits 1 because S6 is not met on 14 members (README Sec. 8); the controls of run 2 and 4 exit 1 because cplx_conj is silent.
+
+## bounce.py check   (check_run2.log)
+PASS  S1 background (sympy, closed form): SV R'' + eps phi'^2 R/2: residual 0
+PASS  S1 background (sympy, closed form): SV A'' - [(A (R^2)'' - 2)/R^2 - R Lam_R]: residual 0
+PASS  S1 background (sympy, closed form): SV V + Lam + (R/2) Lam_R + (A' R^2)'/(2 R^2): residual 0
+PASS  S1 background (sympy, closed form): SV V_phi - eps (A phi'' + 2 A phi' R'/R + A' phi'): residual 0
+PASS  S1 background (sympy, closed form): BBS R'' + eps phi'^2 R/2: residual 0
+PASS  S1 background (sympy, closed form): BBS A'' - [(A (R^2)'' - 2)/R^2 - R Lam_R]: residual 0
+PASS  S1 background (sympy, closed form): BBS V + Lam + (R/2) Lam_R + (A' R^2)'/(2 R^2): residual 0
+PASS  S1 background (sympy, closed form): BBS V_phi - eps (A phi'' + 2 A phi' R'/R + A' phi'): residual 0
+PASS  S1 background (sympy, closed form): BBS printed (8) 2 (A r^2 phi')' - eps r^2 dV/dphi: residual 0
+PASS  S1 background (sympy, closed form): BBS printed (9) (A' r^2)' + 2 r^2 V - 2 q^2/r^2: residual 0
+PASS  S1 background (sympy, closed form): BBS printed (10) r''/r + eps phi'^2: residual 0
+PASS  S1 background (sympy, closed form): BBS printed (11) A (r^2)'' - r^2 A'' - 2 + 4 q^2/r^2: residual 0
+PASS  S1 background (sympy, closed form): BBS printed (12) -1 + A' r r' + A r'^2 - r^2 (eps A phi'^2 - V) + q^2/r^2: residual 0
+PASS  S1 background (sympy, closed form): BBS printed (15) B' - 2 (p - x + 2 q^2 atan x)/(1+x^2)^2: residual 0
+PASS  S1 [BW22] printed source against the Einstein tensor (sympy, Q = 0): component t (0): residual 0
+PASS  S1 [BW22] printed source against the Einstein tensor (sympy, Q = 0): component x (1): residual 0
+PASS  S1 [BW22] printed source against the Einstein tensor (sympy, Q = 0): component th (2): residual 0
+PASS  S1 [BW22] printed source against the Einstein tensor (sympy, Q = 0): component th (3): residual 0
+PASS  S1 [BBS12] printed (20) for V against (9) (mpmath 30 digits, 3 members, 4 points): max abs difference 3.155e-30 (declared <= 1e-25)
+PASS  S2 float64 background (A, A', A/z series, large x; low-stage series of B) against mpmath 40 digits, 7 members: max scaled difference 3.666e-13 (declared <= 1e-11)
+PASS  S3 horizons: S A'(x_h) = 2 m x_h/R_h^3; B2 A(0) = 0, A'(0) = 2p (mpmath 40 digits): max abs difference 9.184e-41 (declared <= 1e-30)
+      elapsed 9 s
+PASS  S4 NED source, Bianchi and NED equation (sympy): F = F_mn F^mn - 2 q^2/r^4: residual 0
+PASS  S4 NED source, Bianchi and NED equation (sympy): T^t_t + L/2: residual 0
+PASS  S4 NED source, Bianchi and NED equation (sympy): T^x_x + L/2: residual 0
+PASS  S4 NED source, Bianchi and NED equation (sympy): T^th_th - (F L_F - L/2): residual 0
+PASS  S4 NED source, Bianchi and NED equation (sympy): S_t - (Lam + r Lam'/2): residual 0
+PASS  S4 NED source, Bianchi and NED equation (sympy): S_th - Lam: residual 0
+PASS  S4 NED source, Bianchi and NED equation (sympy): dF = 0: (t,th,ph) component is f_t sin th: residual 0
+PASS  S4 NED source, Bianchi and NED equation (sympy): dF = 0: (x,th,ph) component is f_x sin th: residual 0
+PASS  S4 NED source, Bianchi and NED equation (sympy): NED equation, nu = 0: residual 0
+PASS  S4 NED source, Bianchi and NED equation (sympy): NED equation, nu = 1: residual 0
+PASS  S4 NED source, Bianchi and NED equation (sympy): NED equation, nu = 2: residual 0
+PASS  S4 NED source, Bianchi and NED equation (sympy): NED equation, nu = 3: residual 0
+PASS  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): background (0, 0): 0
+PASS  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): background (0, 1): 0
+PASS  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): background (1, 1): 0
+PASS  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): background (2, 2): 0
+PASS  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): background S: 0
+PASS  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): G1 t-rho equation solved for delta lambda: 0
+PASS  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): G1 (0, 0) residual after the master equation: 0
+PASS  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): G1 (1, 1) residual after the master equation: 0
+PASS  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): BK t-rho equation solved for delta lambda: 0
+PASS  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): BK (0, 0) residual after the master equation: 0
+PASS  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): BK (1, 1) residual after the master equation: 0
+PASS  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): (41) with V -> V + Lambda: A*Ut - rhs, eps = -1: 0
+PASS  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)):   ... eps = +1: 0
+PASS  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): gauge map F = -phi0' Y/R' residual: 0
+      elapsed 74 s
+      NED extension of [BKZ12] (41): A*Ut - (41 as printed) = -Lam(rho)*R(rho)**2*Derivative(P0(rho), rho)**2/Derivative(R(rho), rho)**2   (eps = -1)
+PASS  S5 family coefficients vs generic derived equation (mpmath 30 digits, sv m = 3/10): max abs difference 1.972e-31 (declared <= 1e-25)
+PASS  S5 family coefficients vs generic derived equation (mpmath 30 digits, sv m = 7/10): max abs difference 3.944e-31 (declared <= 1e-25)
+PASS  S5 family coefficients vs generic derived equation (mpmath 30 digits, bbs m = 7/10, q = 2/5): max abs difference 7.889e-31 (declared <= 1e-25)
+PASS  S5 family coefficients vs generic derived equation (mpmath 30 digits, bbs m = 1/20, q = 1/10): max abs difference 2.465e-31 (declared <= 1e-25)
+PASS  S8 Vhat of u = Y/x against A Ut + R_x*x*/R of the delta R = 0 gauge (mpmath 30 digits, sv m = 3/10): max abs difference 3.944e-31 (declared <= 1e-25)
+PASS  S8 Vhat of u = Y/x against A Ut + R_x*x*/R of the delta R = 0 gauge (mpmath 30 digits, sv m = 13/10): max abs difference 7.889e-31 (declared <= 1e-25)
+PASS  S8 Vhat of u = Y/x against A Ut + R_x*x*/R of the delta R = 0 gauge (mpmath 30 digits, bbs m = 7/10, q = 2/5): max abs difference 7.573e-29 (declared <= 1e-25)
+PASS  S8 Vhat of u = Y/x against A Ut + R_x*x*/R of the delta R = 0 gauge (mpmath 30 digits, bbs m = 1/20, q = 1/10): max abs difference 5.867e-30 (declared <= 1e-25)
+      elapsed 76 s
+exit status 0
+
+## bounce.py planted   (planted_run2.log)
+PASS  P1 planted Ellis (S, m = 0) R1: growing modes 1 (declared 1); W^2 a^2 = 1.397052434007015; reference 1.39705243433350684047; |difference| = 3.265e-10 (declared <= 1e-07); nodes 0
+PASS  P1 planted Ellis (S, m = 0) R2: growing modes 1 (declared 1); W^2 a^2 = 1.397052434332310; reference 1.39705243433350684047; |difference| = 1.197e-12 (declared <= 1e-09); nodes 0
+exit status 0
+
+## bounce.py planted_low   (planted_low_run2.log)
+PASS  P3 planted weak bound state R1: roots 1 (declared 1), W = 2.9999999997e-05, reference 3.0000000000e-05, relative difference 8.767e-11 (declared <= 0.001); range [1e-05, 0.001], 40 points
+PASS  P3 planted weak bound state R2: roots 1 (declared 1), W = 3.0000000000e-05, reference 3.0000000000e-05, relative difference 2.830e-13 (declared <= 0.0001); range [1e-05, 0.001], 100 points
+exit status 0
+
+## bounce.py planted_complex   (planted_complex_run2.log)
+PASS  P4 planted complex bound state R1: W = 0.2999999999 +0.1999999999i, reference 0.3000000000 +0.2000000000i, relative difference 2.429e-10 (declared <= 1e-06); secant iterations 12
+PASS  P4 planted complex bound state R2: W = 0.3000000000 +0.2000000000i, reference 0.3000000000 +0.2000000000i, relative difference 1.442e-13 (declared <= 1e-08); secant iterations 14
+exit status 0
+
+## bounce.py complex S_m0.2 S_m0.3 B1_q0.77   (complex_run2.log; complex.json)
+PASS  C1 complex shooting S_m0.2: W = 0.5069928780 +0.3680959496i (R2; R1 0.5069928782 +0.3680959498i), lambda = 0.12154715 +0.37324405i, spectral S-B lambda = 0.12154715 +0.37324405i, |dlambda|/|lambda| = 5.68e-10 (declared <= 0.001), R1 v R2 |dW|/|W| = 4.88e-10 (declared <= 1e-06); secant iterations 22, 7
+PASS  C1 complex shooting S_m0.3: W = 0.3983975976 +0.3872015107i (R2; R1 0.3983975976 +0.3872015108i), lambda = 0.00879564 +0.30852030i, spectral S-B lambda = 0.00879564 +0.30852030i, |dlambda|/|lambda| = 9.02e-13 (declared <= 0.001), R1 v R2 |dW|/|W| = 9.19e-11 (declared <= 1e-06); secant iterations 22, 13
+PASS  C1 complex shooting B1_q0.77: W = 0.1212595737 +0.0915306664i (R2; R1 0.1212595737 +0.0915306664i), lambda = 0.00632602 +0.02219794i, spectral S-B lambda = 0.00632602 +0.02219794i, |dlambda|/|lambda| = 3.74e-10 (declared <= 0.001), R1 v R2 |dW|/|W| = 1.31e-10 (declared <= 1e-06); secant iterations 13, 24
+exit status 0
+
+## bounce.py report results --complex=complex.json   (report.txt)
+Radial modes, b = 1 (W in units 1/b). Main stage: W in [0.001, 8], R1 and R2; low stage: W in [1e-05, 0.001], R1 and R2; Sturm: nodes of the zero-energy solution (x_h >= 0, no range)
+id               m        q       x_h     kappa       p | nR1 nR2 | W main (R2)                        | lR1 lR2 | Sturm  | count | verdicts
+S_m0        0.0000   0.0000         -         -       - | 1   1   | 1.1819697265                       | 0   0   | -      | 1     | R1 v R2 1.2e-10 ok; low R1 v R2 0.0e+00 ok
+S_m0.1      0.1000   0.0000         -         -       - | 2   2   | 0.5564095926; 0.6081311388         | 0   0   | -      | 2     | R1 v R2 3.0e-09 ok; low R1 v R2 0.0e+00 ok
+S_m0.2      0.2000   0.0000         -         -       - | 0   0   | none                               | 0   0   | -      | 0     | R1 v R2 0.0e+00 ok; low R1 v R2 0.0e+00 ok; complex pair W = 0.506993 +0.368096i and conjugate (C1, spectral and shooting)
+S_m0.3      0.3000   0.0000         -         -       - | 0   0   | none                               | 0   0   | -      | 0     | R1 v R2 0.0e+00 ok; low R1 v R2 0.0e+00 ok; complex pair W = 0.398398 +0.387202i and conjugate (C1, spectral and shooting)
+S_m0.4      0.4000   0.0000         -         -       - | 1   1   | 0.0107401464                       | 0   0   | -      | 1     | R1 v R2 3.2e-09 ok; low R1 v R2 0.0e+00 ok
+S_m0.45     0.4500   0.0000         -         -       - | 1   1   | 0.0942891493                       | 0   0   | -      | 1     | R1 v R2 4.4e-10 ok; low R1 v R2 0.0e+00 ok
+S_m0.5      0.5000   0.0000   0.00000   0.00000       - | 1   1   | 0.2024268304                       | 0   0   | 1      | 1     | R1 v R2 5.1e-10 ok; low R1 v R2 0.0e+00 ok; S9 ok
+S_m0.55     0.5500   0.0000   0.45826   0.18936       - | 2   2   | 0.0045625070; 0.2374002909         | 0   0   | 2      | 2     | R1 v R2 1.4e-08 ok; low R1 v R2 0.0e+00 ok; S9 ok
+S_m0.6      0.6000   0.0000   0.66332   0.23032       - | 2   2   | 0.0023933649; 0.2414092096         | 0   0   | 2      | 2     | R1 v R2 4.1e-08 ok; low R1 v R2 0.0e+00 ok; S9 ok
+S_m0.75     0.7500   0.0000   1.11803   0.24845       - | 1   1   | 0.2200096329  | low 5.537149e-04   | 1   1   | 2      | 2     | R1 v R2 2.2e-10 ok; low R1 v R2 1.1e-07 ok; S9 NOT MET (Sturm 2, shooting in range 1)
+S_m1        1.0000   0.0000   1.73205   0.21651       - | 1   1   | 0.1774535459  | low 1.055808e-04   | 1   1   | 2      | 2     | R1 v R2 8.4e-11 ok; low R1 v R2 1.5e-06 ok; S9 NOT MET (Sturm 2, shooting in range 1)
+S_m1.5      1.5000   0.0000   2.82843   0.15713       - | 1   1   | 0.1235330645  | low 1.214858e-05   | 1   1   | 2      | 2     | R1 v R2 1.5e-10 ok; low R1 v R2 3.2e-06 ok; S9 NOT MET (Sturm 2, shooting in range 1)
+S_m2        2.0000   0.0000   3.87298   0.12103       - | 1   1   | 0.0939439722                       | 0   0   | 2      | 2     | R1 v R2 1.6e-10 ok; low R1 v R2 0.0e+00 ok; S9 NOT MET (Sturm 2, shooting in range 1); 1 mode(s) with W < 1e-05: Sturm count is the count, rate unresolved
+S_m3        3.0000   0.0000   5.91608   0.08217       - | 1   1   | 0.0632310030                       | 0   0   | 2      | 2     | R1 v R2 7.6e-11 ok; low R1 v R2 0.0e+00 ok; S9 NOT MET (Sturm 2, shooting in range 1); 1 mode(s) with W < 1e-05: Sturm count is the count, rate unresolved
+S_m5        5.0000   0.0000   9.94987   0.04975       - | 1   1   | 0.0381207744                       | 0   0   | 1      | 1     | R1 v R2 4.2e-11 ok; low R1 v R2 0.0e+00 ok; S9 ok
+S_m10      10.0000   0.0000  19.97498   0.02497       - | 1   1   | 0.0190985522                       | 0   0   | 1      | 1     | R1 v R2 4.3e-11 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B1_q0       0.6366   0.0000   1.11873   0.35137  1.9099 | 1   1   | 0.2827745372                       | 0   0   | 1      | 1     | R1 v R2 3.6e-10 ok; low R1 v R2 0.0e+00 ok; S9 ok; P2 R1 vs #212 c = -3 (n 1, W 0.2827745372): dW/W 3.5e-10 ok; P2 R2 vs #212 c = -3 (n 1, W 0.2827745372): dW/W 5.0e-12 ok
+B1_q0.1     0.6366   0.1000   1.11063   0.35127  1.8784 | 1   1   | 0.2830232728  | low 1.720781e-04   | 1   1   | 2      | 2     | R1 v R2 2.9e-10 ok; low R1 v R2 1.0e-06 ok; S9 NOT MET (Sturm 2, shooting in range 1)
+B1_q0.2     0.6366   0.2000   1.08580   0.35087  1.7842 | 1   1   | 0.2837360714  | low 7.234247e-04   | 1   1   | 2      | 2     | R1 v R2 1.1e-10 ok; low R1 v R2 3.1e-07 ok; S9 NOT MET (Sturm 2, shooting in range 1)
+B1_q0.3     0.6366   0.3000   1.04242   0.34975  1.6271 | 2   2   | 0.0017687801; 0.2847862791         | 0   0   | 2      | 2     | R1 v R2 1.3e-07 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B1_q0.4     0.6366   0.4000   0.97673   0.34700  1.4072 | 2   2   | 0.0035584685; 0.2858431151         | 0   0   | 2      | 2     | R1 v R2 5.7e-08 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B1_q0.5     0.6366   0.5000   0.88104   0.34035  1.1245 | 2   2   | 0.0066584736; 0.2860120306         | 0   0   | 2      | 2     | R1 v R2 4.0e-08 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B1_q0.6     0.6366   0.6000   0.73732   0.32327  0.7789 | 2   2   | 0.0126297199; 0.2824129268         | 0   0   | 2      | 2     | R1 v R2 1.8e-08 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B1_q0.7     0.6366   0.7000   0.48099   0.26706  0.3705 | 2   2   | 0.0286422404; 0.2607019704         | 0   0   | 2      | 2     | R1 v R2 1.8e-09 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B1_q0.74    0.6366   0.7400   0.26440   0.19461  0.1895 | 2   2   | 0.0502898680; 0.2244851121         | 0   0   | 2      | 2     | R1 v R2 1.2e-09 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B1_q0.76    0.6366   0.7600  -0.01472   0.09297  0.0953 | 2   2   | 0.1025427653; 0.1522105669         | 0   0   | -      | 2     | R1 v R2 1.0e-09 ok; low R1 v R2 0.0e+00 ok
+B1_q0.77    0.6366   0.7700  -1.43678   0.11172  0.0472 | 1   1   | 0.0395522836                       | 0   0   | -      | 1     | R1 v R2 3.1e-10 ok; low R1 v R2 0.0e+00 ok; complex pair W = 0.121260 +0.091531i and conjugate (C1, spectral and shooting)
+B1_q0.775   0.6366   0.7750  -2.80480   0.15250  0.0229 | 1   1   | 0.0737792262                       | 0   0   | -      | 1     | R1 v R2 1.0e-10 ok; low R1 v R2 0.0e+00 ok
+B2_q0       0.2122   0.0000   0.00000   0.63662  0.6366 | 0   0   | none                               | 0   0   | 0      | 0     | R1 v R2 0.0e+00 ok; low R1 v R2 0.0e+00 ok; S9 ok; P2 R1 vs #212 c = -1 (n 0, W None): dW/W - ok; P2 R2 vs #212 c = -1 (n 0, W None): dW/W - ok
+B2_q0.1     0.2196   0.1000   0.00000   0.62728  0.6273 | 1   1   | 0.0037625403                       | 0   0   | 1      | 1     | R1 v R2 1.1e-07 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B2_q0.2     0.2416   0.2000   0.00000   0.59925  0.5993 | 1   1   | 0.0150493185                       | 0   0   | 1      | 1     | R1 v R2 5.9e-08 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B2_q0.3     0.2784   0.3000   0.00000   0.55254  0.5525 | 1   1   | 0.0332760334                       | 0   0   | 1      | 1     | R1 v R2 5.3e-09 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B2_q0.4     0.3299   0.4000   0.00000   0.48715  0.4872 | 1   1   | 0.0571826036                       | 0   0   | 1      | 1     | R1 v R2 2.4e-09 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B2_q0.5     0.3962   0.5000   0.00000   0.40308  0.4031 | 1   1   | 0.0850394861                       | 0   0   | 1      | 1     | R1 v R2 3.2e-09 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B2_q0.6     0.4771   0.6000   0.00000   0.30032  0.3003 | 1   1   | 0.1146635774                       | 0   0   | 1      | 1     | R1 v R2 7.9e-10 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B2_q0.7     0.5728   0.7000   0.00000   0.17887  0.1789 | 1   1   | 0.1431241393                       | 0   0   | 1      | 1     | R1 v R2 1.1e-09 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B2_q0.75    0.6261   0.7500   0.00000   0.11115  0.1111 | 1   1   | 0.1556059111                       | 0   0   | 1      | 1     | R1 v R2 5.6e-10 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B2_q0.78    0.6599   0.7800   0.00000   0.06827  0.0683 | 1   1   | 0.1621010056                       | 0   0   | 1      | 1     | R1 v R2 6.3e-10 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B2_q0.8     0.6831   0.8000   0.00000   0.03875  0.0387 | 1   1   | 0.1658842533                       | 0   0   | 1      | 1     | R1 v R2 5.1e-10 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B2_q0.81    0.6950   0.8100   0.00000   0.02371  0.0237 | 1   1   | 0.1675848842                       | 0   0   | 1      | 1     | R1 v R2 3.1e-11 ok; low R1 v R2 0.0e+00 ok; S9 ok
+B3_q0       0.0637   0.0000  -0.92675   0.60130  0.1910 | 1   1   | 0.9700800261                       | 0   0   | -      | 1     | R1 v R2 1.8e-10 ok; low R1 v R2 0.0e+00 ok; P2 R1 vs #212 c = -0.3 (n 1, W 0.9700800261): dW/W 1.9e-10 ok; P2 R2 vs #212 c = -0.3 (n 1, W 0.9700800261): dW/W 1.6e-11 ok
+B3_q0.03    0.0637   0.0300  -0.93831   0.59833  0.1882 | 2   2   | 0.0015382718; 0.9708451345         | 0   0   | -      | 2     | R1 v R2 1.1e-07 ok; low R1 v R2 0.0e+00 ok
+B3_q0.06    0.0637   0.0600  -0.97444   0.58914  0.1797 | 2   2   | 0.0062920317; 0.9731465455         | 0   0   | -      | 2     | R1 v R2 1.3e-08 ok; low R1 v R2 0.0e+00 ok
+B3_q0.09    0.0637   0.0900  -1.04014   0.57286  0.1655 | 2   2   | 0.0146503994; 0.9770026299         | 0   0   | -      | 2     | R1 v R2 4.1e-09 ok; low R1 v R2 0.0e+00 ok
+B3_q0.12    0.0637   0.1200  -1.14626   0.54774  0.1457 | 2   2   | 0.0272511743; 0.9824446433         | 0   0   | -      | 2     | R1 v R2 5.9e-09 ok; low R1 v R2 0.0e+00 ok
+B3_q0.15    0.0637   0.1500  -1.31629   0.51055  0.1203 | 2   2   | 0.0450033233; 0.9895188862         | 0   0   | -      | 2     | R1 v R2 1.6e-10 ok; low R1 v R2 0.0e+00 ok
+B3_q0.18    0.0637   0.1800  -1.60880   0.45489  0.0892 | 2   2   | 0.0690909714; 0.9982935571         | 0   0   | -      | 2     | R1 v R2 4.6e-10 ok; low R1 v R2 0.0e+00 ok
+B3_q0.2     0.0637   0.2000  -1.95501   0.40076  0.0653 | 2   2   | 0.0893424841; 1.0051395731         | 0   0   | -      | 2     | R1 v R2 3.7e-09 ok; low R1 v R2 0.0e+00 ok
+B3_q0.22    0.0637   0.2200  -2.64605   0.32093  0.0389 | 2   2   | 0.1133822877; 1.0128419936         | 0   0   | -      | 2     | R1 v R2 2.9e-09 ok; low R1 v R2 0.0e+00 ok
+B3_q0.23    0.0637   0.2300  -3.39754   0.26201  0.0248 | 2   2   | 0.1268728296; 1.0170401422         | 0   0   | -      | 2     | R1 v R2 7.4e-10 ok; low R1 v R2 0.0e+00 ok
+B3_q0.24    0.0637   0.2400  -5.49002   0.17148  0.0100 | 2   2   | 0.1412710630; 1.0214905594         | 0   0   | -      | 2     | R1 v R2 5.1e-10 ok; low R1 v R2 0.0e+00 ok
+P2_c-10     2.1221   0.0000   4.19708   0.11652  6.3662 | 1   1   | 0.0895350811                       | 0   0   | 1      | 1     | R1 v R2 4.0e-11 ok; low R1 v R2 0.0e+00 ok; S9 ok; P2 R1 vs #212 c = -10 (n 1, W 0.0895350811): dW/W 3.2e-10 ok; P2 R2 vs #212 c = -10 (n 1, W 0.0895350811): dW/W 3.6e-10 ok
+P2_c-1.1    0.2334   0.0000   0.07576   0.62095  0.7003 | 1   1   | 0.6031905199                       | 0   0   | 1      | 1     | R1 v R2 2.6e-10 ok; low R1 v R2 0.0e+00 ok; S9 ok; P2 R1 vs #212 c = -1.1 (n 1, W 0.6031905199): dW/W 2.9e-10 ok; P2 R2 vs #212 c = -1.1 (n 1, W 0.6031905199): dW/W 2.1e-11 ok
+P2_c-0.9    0.1910   0.0000  -0.08183   0.65043  0.5730 | 1   1   | 0.6730206207                       | 0   0   | -      | 1     | R1 v R2 2.8e-09 ok; low R1 v R2 0.0e+00 ok; P2 R1 vs #212 c = -0.9 (n 1, W 0.6730206207): dW/W 2.8e-09 ok; P2 R2 vs #212 c = -0.9 (n 1, W 0.6730206207): dW/W 3.8e-11 ok
+P2_c-0.01   0.0021   0.0000  -7.00216   0.14009  0.0064 | 1   1   | 1.1741182764                       | 0   0   | -      | 1     | R1 v R2 1.9e-10 ok; low R1 v R2 0.0e+00 ok; P2 R1 vs #212 c = -0.01 (n 1, W 1.1741182764): dW/W 2.0e-10 ok; P2 R2 vs #212 c = -0.01 (n 1, W 1.1741182764): dW/W 1.7e-11 ok
+members with at least one growing mode (real roots by shooting and Sturm, or a confirmed complex pair): 54 of 55
+exit status 1
+
+## bounce.py spectral results   (spectral_run2.log)
+PASS  S6 spectral S-A (Y-form, X = 45) S_m0: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [1.187524925], |dW|/W = ['4.70e-03'] (declared <= 0.01)
+PASS  S6 spectral S-B (Y-form, X = 90) S_m0: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [1.187568417], |dW|/W = ['4.74e-03'] (declared <= 0.02)
+PASS  S6 spectral S-A (Y-form, X = 45) S_m0.1: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.551176332, 0.613909121], |dW|/W = ['9.41e-03', '9.50e-03'] (declared <= 0.01)
+PASS  S6 spectral S-B (Y-form, X = 90) S_m0.1: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.551115099, 0.613976326], |dW|/W = ['9.52e-03', '9.61e-03'] (declared <= 0.02)
+FAIL  S6 spectral S-A (Y-form, X = 45) S_m0.2: positive real eigenvalues 0 (shooting 0), complex with Re > 1e-3: 2 (lambda, 0.12153870+0.37324466i and conjugates), W = [], |dW|/W = [] (declared <= 0.01)
+FAIL  S6 spectral S-B (Y-form, X = 90) S_m0.2: positive real eigenvalues 0 (shooting 0), complex with Re > 1e-3: 2 (lambda, 0.12153856+0.37324470i and conjugates), W = [], |dW|/W = [] (declared <= 0.02)
+FAIL  S6 spectral S-A (Y-form, X = 45) S_m0.3: positive real eigenvalues 0 (shooting 0), complex with Re > 1e-3: 2 (lambda, 0.00879563+0.30852021i and conjugates), W = [], |dW|/W = [] (declared <= 0.01)
+FAIL  S6 spectral S-B (Y-form, X = 90) S_m0.3: positive real eigenvalues 0 (shooting 0), complex with Re > 1e-3: 2 (lambda, 0.00879563+0.30852021i and conjugates), W = [], |dW|/W = [] (declared <= 0.02)
+PASS  S6 spectral S-A (Y-form, X = 1117) S_m0.4: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.010740146], |dW|/W = ['8.23e-11'] (declared <= 0.01)
+PASS  S6 spectral S-B (Y-form, X = 2235) S_m0.4: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.010740146], |dW|/W = ['5.38e-12'] (declared <= 0.02)
+PASS  S6 spectral S-A (Y-form, X = 127) S_m0.45: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.094289146], |dW|/W = ['2.98e-08'] (declared <= 0.01)
+PASS  S6 spectral S-B (Y-form, X = 255) S_m0.45: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.094289149], |dW|/W = ['3.92e-13'] (declared <= 0.02)
+PASS  S6 spectral S-A (u-form, X = 59) S_m0.5: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.20242683], |dW|/W = ['1.30e-10'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 119) S_m0.5: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.20242683], |dW|/W = ['2.63e-13'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 2630) S_m0.55: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.004562442, 0.23740032], |dW|/W = ['1.42e-05', '1.22e-07'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 5260) S_m0.55: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.004562439, 0.237400317], |dW|/W = ['1.49e-05', '1.08e-07'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 5014) S_m0.6: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.002389868, 0.241432524], |dW|/W = ['1.46e-03', '9.66e-05'] (declared <= 0.01)
+FAIL  S6 spectral S-B (u-form, X = 10028) S_m0.6: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.00238671, 0.24142933], |dW|/W = ['2.78e-03', '8.33e-05'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 55) S_m0.75: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.220009633], |dW|/W = ['1.56e-10'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 109) S_m0.75: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.220009633], |dW|/W = ['1.70e-14'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 68) S_m1: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.177453546], |dW|/W = ['1.47e-10'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 135) S_m1: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.177453546], |dW|/W = ['2.67e-13'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 97) S_m1.5: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.123533065], |dW|/W = ['1.53e-10'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 194) S_m1.5: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.123533065], |dW|/W = ['4.74e-14'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 128) S_m2: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.093943972], |dW|/W = ['1.70e-10'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 255) S_m2: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.093943972], |dW|/W = ['3.18e-13'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 190) S_m3: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.063231003], |dW|/W = ['2.12e-10'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 380) S_m3: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.063231003], |dW|/W = ['6.39e-13'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 315) S_m5: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.038120774], |dW|/W = ['3.03e-10'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 630) S_m5: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.038120774], |dW|/W = ['3.01e-13'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 628) S_m10: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.019098552], |dW|/W = ['5.09e-10'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 1257) S_m10: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.019098552], |dW|/W = ['3.50e-13'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 45) B1_q0: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.282774537], |dW|/W = ['4.47e-11'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 90) B1_q0: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.282774537], |dW|/W = ['2.18e-13'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 45) B1_q0.1: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.283023273], |dW|/W = ['4.36e-11'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 90) B1_q0.1: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.283023273], |dW|/W = ['2.77e-13'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 45) B1_q0.2: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.283736071], |dW|/W = ['4.17e-11'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 90) B1_q0.2: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.283736071], |dW|/W = ['2.94e-13'] (declared <= 0.0001)
+FAIL  S6 spectral S-A (u-form, X = 6784) B1_q0.3: positive real eigenvalues 1 (shooting 2), complex with Re > 1e-3: 0, W = [0.293208199], |dW|/W = ['1.65e+02'] (declared <= 0.01)
+FAIL  S6 spectral S-B (u-form, X = 13569) B1_q0.3: positive real eigenvalues 1 (shooting 2), complex with Re > 1e-3: 0, W = [0.293134114], |dW|/W = ['1.65e+02'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 3372) B1_q0.4: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.003574373, 0.285828251], |dW|/W = ['4.47e-03', '5.20e-05'] (declared <= 0.01)
+FAIL  S6 spectral S-B (u-form, X = 6744) B1_q0.4: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.003573677, 0.285827806], |dW|/W = ['4.27e-03', '5.36e-05'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 1802) B1_q0.5: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.006658474, 0.28601203], |dW|/W = ['1.37e-08', '3.08e-10'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 3604) B1_q0.5: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.006658474, 0.28601203], |dW|/W = ['1.35e-08', '3.38e-10'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 950) B1_q0.6: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.01262972, 0.282412927], |dW|/W = ['8.58e-11', '1.05e-13'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 1900) B1_q0.6: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.01262972, 0.282412927], |dW|/W = ['1.25e-12', '1.01e-13'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 419) B1_q0.7: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.02864224, 0.26070197], |dW|/W = ['1.05e-10', '2.02e-14'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 838) B1_q0.7: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.02864224, 0.26070197], |dW|/W = ['4.89e-13', '1.85e-14'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 239) B1_q0.74: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.050289868, 0.224485112], |dW|/W = ['1.39e-10', '2.23e-13'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 477) B1_q0.74: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.050289868, 0.224485112], |dW|/W = ['8.00e-13', '1.60e-13'] (declared <= 0.0001)
+PASS  S6 spectral S-A (Y-form, X = 117) B1_q0.76: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.102686969, 0.152286002], |dW|/W = ['1.41e-03', '4.96e-04'] (declared <= 0.01)
+PASS  S6 spectral S-B (Y-form, X = 234) B1_q0.76: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.10254276, 0.152210567], |dW|/W = ['4.98e-08', '1.95e-09'] (declared <= 0.02)
+FAIL  S6 spectral S-A (Y-form, X = 303) B1_q0.77: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 2 (lambda, 0.00632602+0.02219794i and conjugates), W = [0.039552284], |dW|/W = ['4.52e-10'] (declared <= 0.01)
+FAIL  S6 spectral S-B (Y-form, X = 607) B1_q0.77: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 2 (lambda, 0.00632602+0.02219794i and conjugates), W = [0.039552284], |dW|/W = ['1.23e-09'] (declared <= 0.02)
+PASS  S6 spectral S-A (Y-form, X = 163) B1_q0.775: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.073779226], |dW|/W = ['9.45e-10'] (declared <= 0.01)
+PASS  S6 spectral S-B (Y-form, X = 325) B1_q0.775: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.073779226], |dW|/W = ['8.21e-10'] (declared <= 0.02)
+PASS  S6 spectral S-A (u-form, X = 45) B2_q0: positive real eigenvalues 0 (shooting 0), complex with Re > 1e-3: 0, W = [], |dW|/W = [] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 90) B2_q0: positive real eigenvalues 0 (shooting 0), complex with Re > 1e-3: 0, W = [], |dW|/W = [] (declared <= 0.0001)
+FAIL  S6 spectral S-A (u-form, X = 3189) B2_q0.1: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.001789858], |dW|/W = ['5.24e-01'] (declared <= 0.01)
+FAIL  S6 spectral S-B (u-form, X = 6379) B2_q0.1: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.001755205], |dW|/W = ['5.34e-01'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 797) B2_q0.2: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.015049319], |dW|/W = ['1.89e-11'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 1595) B2_q0.2: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.015049319], |dW|/W = ['1.05e-10'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 361) B2_q0.3: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.033276033], |dW|/W = ['7.84e-11'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 721) B2_q0.3: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.033276033], |dW|/W = ['4.84e-12'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 210) B2_q0.4: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.057182604], |dW|/W = ['8.24e-11'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 420) B2_q0.4: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.057182604], |dW|/W = ['4.28e-12'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 141) B2_q0.5: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.085038769], |dW|/W = ['8.43e-06'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 282) B2_q0.5: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.085039486], |dW|/W = ['1.37e-12'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 105) B2_q0.6: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.114663577], |dW|/W = ['2.53e-09'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 209) B2_q0.6: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.114663577], |dW|/W = ['8.33e-13'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 84) B2_q0.7: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.143124139], |dW|/W = ['1.17e-10'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 168) B2_q0.7: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.143124139], |dW|/W = ['6.52e-14'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 77) B2_q0.75: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.155605911], |dW|/W = ['1.28e-10'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 154) B2_q0.75: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.155605911], |dW|/W = ['1.06e-12'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 74) B2_q0.78: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.162101006], |dW|/W = ['1.37e-10'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 148) B2_q0.78: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.162101006], |dW|/W = ['6.48e-13'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 72) B2_q0.8: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.165884253], |dW|/W = ['1.45e-10'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 145) B2_q0.8: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.165884253], |dW|/W = ['2.14e-13'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 72) B2_q0.81: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.167584884], |dW|/W = ['1.50e-10'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 143) B2_q0.81: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.167584884], |dW|/W = ['9.84e-14'] (declared <= 0.0001)
+PASS  S6 spectral S-A (Y-form, X = 45) B3_q0: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.969447424], |dW|/W = ['6.52e-04'] (declared <= 0.01)
+PASS  S6 spectral S-B (Y-form, X = 90) B3_q0: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.969442791], |dW|/W = ['6.57e-04'] (declared <= 0.02)
+FAIL  S6 spectral S-A (Y-form, X = 7801) B3_q0.03: positive real eigenvalues 1 (shooting 2), complex with Re > 1e-3: 0, W = [0.550474945], |dW|/W = ['3.57e+02'] (declared <= 0.01)
+FAIL  S6 spectral S-B (Y-form, X = 15602) B3_q0.03: positive real eigenvalues 1 (shooting 2), complex with Re > 1e-3: 0, W = [0.549590408], |dW|/W = ['3.56e+02'] (declared <= 0.02)
+FAIL  S6 spectral S-A (Y-form, X = 1907) B3_q0.06: positive real eigenvalues 1 (shooting 2), complex with Re > 1e-3: 0, W = [0.988804107], |dW|/W = ['1.56e+02'] (declared <= 0.01)
+FAIL  S6 spectral S-B (Y-form, X = 3814) B3_q0.06: positive real eigenvalues 1 (shooting 2), complex with Re > 1e-3: 0, W = [0.98865043], |dW|/W = ['1.56e+02'] (declared <= 0.02)
+FAIL  S6 spectral S-A (Y-form, X = 819) B3_q0.09: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.01634801, 0.976929482], |dW|/W = ['1.16e-01', '7.49e-05'] (declared <= 0.01)
+FAIL  S6 spectral S-B (Y-form, X = 1638) B3_q0.09: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.016266521, 0.976975406], |dW|/W = ['1.10e-01', '2.79e-05'] (declared <= 0.02)
+PASS  S6 spectral S-A (Y-form, X = 440) B3_q0.12: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.027260248, 0.982436101], |dW|/W = ['3.33e-04', '8.69e-06'] (declared <= 0.01)
+PASS  S6 spectral S-B (Y-form, X = 881) B3_q0.12: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.027260902, 0.982435658], |dW|/W = ['3.57e-04', '9.15e-06'] (declared <= 0.02)
+PASS  S6 spectral S-A (Y-form, X = 267) B3_q0.15: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.045003324, 0.989518885], |dW|/W = ['9.69e-09', '7.32e-10'] (declared <= 0.01)
+PASS  S6 spectral S-B (Y-form, X = 533) B3_q0.15: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.045003324, 0.989518885], |dW|/W = ['1.45e-08', '1.06e-09'] (declared <= 0.02)
+PASS  S6 spectral S-A (Y-form, X = 174) B3_q0.18: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.069090971, 0.998293557], |dW|/W = ['4.54e-10', '5.69e-12'] (declared <= 0.01)
+PASS  S6 spectral S-B (Y-form, X = 347) B3_q0.18: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.069090971, 0.998293557], |dW|/W = ['6.81e-10', '1.68e-11'] (declared <= 0.02)
+FAIL  S6 spectral S-A (Y-form, X = 134) B3_q0.2: positive real eigenvalues 1 (shooting 2), complex with Re > 1e-3: 0, W = [1.086956442], |dW|/W = ['1.12e+01'] (declared <= 0.01)
+PASS  S6 spectral S-B (Y-form, X = 269) B3_q0.2: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.089342484, 1.005139573], |dW|/W = ['1.88e-10', '3.21e-11'] (declared <= 0.02)
+FAIL  S6 spectral S-A (Y-form, X = 106) B3_q0.22: positive real eigenvalues 1 (shooting 2), complex with Re > 1e-3: 0, W = [1.100556319], |dW|/W = ['8.71e+00'] (declared <= 0.01)
+PASS  S6 spectral S-B (Y-form, X = 212) B3_q0.22: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.113382288, 1.012841994], |dW|/W = ['5.56e-10', '3.55e-11'] (declared <= 0.02)
+FAIL  S6 spectral S-A (Y-form, X = 95) B3_q0.23: positive real eigenvalues 1 (shooting 2), complex with Re > 1e-3: 0, W = [1.096572941], |dW|/W = ['7.64e+00'] (declared <= 0.01)
+PASS  S6 spectral S-B (Y-form, X = 189) B3_q0.23: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.12687283, 1.017040142], |dW|/W = ['1.35e-10', '1.95e-11'] (declared <= 0.02)
+FAIL  S6 spectral S-A (Y-form, X = 85) B3_q0.24: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.047372927, 1.088868358], |dW|/W = ['6.65e-01', '6.60e-02'] (declared <= 0.01)
+PASS  S6 spectral S-B (Y-form, X = 170) B3_q0.24: positive real eigenvalues 2 (shooting 2), complex with Re > 1e-3: 0, W = [0.141271063, 1.021490559], |dW|/W = ['2.16e-09', '1.51e-10'] (declared <= 0.02)
+PASS  S6 spectral S-A (u-form, X = 134) P2_c-10: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.089535081], |dW|/W = ['1.73e-10'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 268) P2_c-10: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.089535081], |dW|/W = ['5.12e-13'] (declared <= 0.0001)
+PASS  S6 spectral S-A (u-form, X = 45) P2_c-1.1: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.60319052], |dW|/W = ['3.26e-14'] (declared <= 0.01)
+PASS  S6 spectral S-B (u-form, X = 90) P2_c-1.1: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.60319052], |dW|/W = ['7.18e-15'] (declared <= 0.0001)
+PASS  S6 spectral S-A (Y-form, X = 45) P2_c-0.9: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.673018388], |dW|/W = ['3.32e-06'] (declared <= 0.01)
+PASS  S6 spectral S-B (Y-form, X = 90) P2_c-0.9: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [0.673017997], |dW|/W = ['3.90e-06'] (declared <= 0.02)
+PASS  S6 spectral S-A (Y-form, X = 45) P2_c-0.01: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [1.179403623], |dW|/W = ['4.50e-03'] (declared <= 0.01)
+PASS  S6 spectral S-B (Y-form, X = 90) P2_c-0.01: positive real eigenvalues 1 (shooting 1), complex with Re > 1e-3: 0, W = [1.179445381], |dW|/W = ['4.54e-03'] (declared <= 0.02)
+exit status 1
+
+## bounce.py controls, run 2 (controls_run2_a.log, controls_run2_b.log, controls_run2_c.log; in c the cplx_conj line is the silent control and the cplx_ned line is the mis-built control of README A10)
+fires   --mutate=sv_V (target S1): exit 1; FAIL  S1 background (sympy, closed form): SV V + Lam + (R/2) Lam_R + (A' R^2)'/(2 R^2): residual -m/(5*(x**2 + 1)**(5/2)); FAIL  S1 background (sympy, closed form): SV V_phi - eps (A phi'' + 2 A phi' R'/R + A' phi'): residual sqrt(2)*m*x/(2*(x**2 + 1)**(5/2)); FAIL  S1 [BW22] printed source against 
+fires   --mutate=sv_L (target S1): exit 1; FAIL  S1 background (sympy, closed form): SV A'' - [(A (R^2)'' - 2)/R^2 - R Lam_R]: residual 2*m/(x**2 + 1)**(5/2); FAIL  S1 background (sympy, closed form): SV V + Lam + (R/2) Lam_R + (A' R^2)'/(2 R^2): residual 3*m/(5*(x**2 + 1)**(5/2)); FAIL  S1 [BW22] printed source against the Einstein tensor (
+fires   --mutate=bbs_A (target S1 background): exit 1; FAIL  S1 background (sympy, closed form): BBS A'' - [(A (R^2)'' - 2)/R^2 - R Lam_R]: residual q**2*(4*x*atan(x) + 2)/(x**2 + 1); FAIL  S1 background (sympy, closed form): BBS V_phi - eps (A phi'' + 2 A phi' R'/R + A' phi'): residual sqrt(2)*q**2*(-x**2*atan(x) - x - at; FAIL  S1 background (sympy, c
+fires   --mutate=bbs_V20 (target S1 [BBS12] printed (20)): exit 1; FAIL  S1 [BBS12] printed (20) for V against (9) (mpmath 30 digits, 3 members, 4 points): max abs difference 1.043e+01 (declared <= 1e-25)
+fires   --mutate=ned_T (target S4 NED source): exit 1; FAIL  S4 NED source, Bianchi and NED equation (sympy): S_th - Lam: residual Lf(2*q**2/r(t, x)**4); FAIL  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): background (2, 2): 2*Lam(rho)*R(rho)**2; FAIL  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): G1 (0, 0) residual a
+fires   --mutate=master_ned (target S4 linearized): exit 1; FAIL  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): G1 (0, 0) residual after the master equation: A(rho)*LamR(rho)*R(rho)*; FAIL  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): G1 (1, 1) residual after the master equation: -LamR(rho)*R(rho)*Deriva; FAIL  S4 lineari
+fires   --mutate=master_p (target S4 linearized): exit 1; FAIL  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): G1 (0, 0) residual after the master equation: W**2*Y(rho)/R(rho) - 3*e; FAIL  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): G1 (1, 1) residual after the master equation: -W**2*Y(rho)/(A(rho)**2*; FAIL  S4 lineari
+fires   --mutate=bkz41_sign (target S4 linearized): exit 1; FAIL  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)): (41) with V -> V + Lambda: A*Ut - rhs, eps = -1: -4*A(rho)*R(rho)*Deri; FAIL  S4 linearized equations (sympy, generic A, R, phi0, Lambda(R)):   ... eps = +1: 4*A(rho)*R(rho)*Derivative(P0(rho), rho)*Derivative(P0
+fires   --mutate=family_ned (target S5 family): exit 1; FAIL  S5 family coefficients vs generic derived equation (mpmath 30 digits, sv m = 3/10): max abs difference 1.150e+00 (declared <= 1e-25); FAIL  S5 family coefficients vs generic derived equation (mpmath 30 digits, sv m = 7/10): max abs difference 3.622e+00 (declared <= 1e-25); FAIL  S5 family coef
+fires   --mutate=veff_ned (target S8 Vhat): exit 1; FAIL  S8 Vhat of u = Y/x against A Ut + R_x*x*/R of the delta R = 0 gauge (mpmath 30 digits, sv m = 3/10): max abs difference 1.375e+00 (dec; FAIL  S8 Vhat of u = Y/x against A Ut + R_x*x*/R of the delta R = 0 gauge (mpmath 30 digits, sv m = 13/10): max abs difference 1.903e+01 (de; FAIL  S8 Vhat of
+fires   --mutate=bg_kappa (target S3 horizons): exit 1; FAIL  S3 horizons: S A'(x_h) = 2 m x_h/R_h^3; B2 A(0) = 0, A'(0) = 2p (mpmath 40 digits): max abs difference 2.165e-01 (declared <= 1e-30)
+fires   --mutate=az_series (target S2 float64): exit 1; FAIL  S2 float64 background (A, A', A/z series, large x; low-stage series of B) against mpmath 40 digits, 7 members: max scaled difference 2
+fires   --mutate=ser_coef (target S2 float64): exit 1; FAIL  S2 float64 background (A, A', A/z series, large x; low-stage series of B) against mpmath 40 digits, 7 members: max scaled difference 1
+exit status 0
+fires   --mutate=eps (target P1 planted): exit 1; FAIL  P1 planted Ellis (S, m = 0) R1: growing modes 3 (declared 1); W^2 a^2 = 0.009142923677800; reference 1.39705243433350684047; |differen
+fires   --mutate=throat_wall (target P1 planted): exit 1; FAIL  P1 planted Ellis (S, m = 0) R1: growing modes 0 (declared 1); no growing mode found
+fires   --mutate=rmax (target P1 planted): exit 1; FAIL  P1 planted Ellis (S, m = 0) R1: growing modes 1 (declared 1); W^2 a^2 = 1.397052903487435; reference 1.39705243433350684047; |differen
+fires   --mutate=hz_start (target R1 v R2): exit 0; B3_q0.15: n_roots 2 against 2; max |dW|/W = 1.679e-01 (declared <= 1e-06)
+fires   --mutate=ned_off (target R1 v R2): exit 0; B3_q0.15: n_roots 1 against 2; max |dW|/W = 2.265e+01 (declared <= 1e-06)
+fires   --mutate=scan_range (target S9 Sturm): exit 0; B1_q0.3: shooting n_roots 0 in [0.001, 8], Sturm 2
+fires   --mutate=sturm_sign (target S9 Sturm): exit 0; B1_q0.3: shooting n_roots 2 in [0.001, 8], Sturm 0
+fires   --mutate=spec_sign (target S6 spectral): exit 1; FAIL  S6 spectral S-A (u-form, X = 6784) B1_q0.3: positive real eigenvalues 0 (shooting 2), complex with Re > 1e-3: 0, W = [], |dW|/W = [] (; FAIL  S6 spectral S-B (u-form, X = 13569) B1_q0.3: positive real eigenvalues 0 (shooting 2), complex with Re > 1e-3: 0, W = [], |dW|/W = [] 
+exit status 0
+SILENT  --mutate=cplx_conj (target P4 planted): exit 0; 
+fires   --mutate=cplx_V (target P4 planted): exit 1; FAIL  P4 planted complex bound state R1: W = 0.3900000000 +0.2600000000i, reference 0.3000000000 +0.2000000000i, relative difference 3.000e-01 (declared <= 1e-0
+SILENT  --mutate=cplx_ned (target C1 complex): exit 1; FAIL  C1 S_m0.3: no complex eigenvalue with Re lambda > 1e-3 in the S-B spectral problem
+fires   --mutate=lowW_V (target P3 planted): exit 1; FAIL  P3 planted weak bound state R1: roots 1 (declared 1), W = 5.9999999995e-05, reference 3.0000000000e-05, relative difference 1.000e+00 (declared <= 0.001);
+fires   --mutate=lowW_range (target P3 planted): exit 1; FAIL  P3 planted weak bound state R1: roots 0 (declared 1), W = nan, reference 3.0000000000e-05, relative difference nan (declared <= 0.001); range [0.0001, 0.0
+fires   --mutate=rmax_low (target low R1 v R2): exit 0; S_m1 low stage: n_roots 0 against 1; max |dW|/W = 0.000e+00 (declared <= 0.0001)
+exit status 1
+
+## bounce.py controls --only=cplx_conj,cplx_hypot,cplx_ned, run 4 (controls_run4_c.log). cplx_hypot was added after the runs of record and is not part of the declared set; its target was computed in run 3 (controls_run3_c.log) before this run.
+SILENT  --mutate=cplx_conj (target P4 planted): exit 0; 
+fires   --mutate=cplx_hypot (target P4 planted): exit 1; FAIL  P4 planted complex bound state R1: W = nan +0.0000000000i, reference 0.3000000000 +0.2000000000i, relative difference nan (declared <= 1e-06); secant iter
+fires   --mutate=cplx_ned (target C1 complex shooting): exit 1; FAIL  C1 complex shooting S_m0.3: W = 0.2626301500 -0.0000000000i (R2; R1 0.2626301500 +0.0000000001i), lambda = 0.06897460 -0.00000000i, spectral S-B lambda = 0.00879564 +0.30852030i, |dlambda|/|lamb
+exit status 1
