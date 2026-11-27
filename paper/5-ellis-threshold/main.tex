@@ -369,9 +369,8 @@ wormhole and leaves it at that wormhole's rate. The wormhole is not the symmetri
 and the excess of $6\%$ on the line is the observer's, not the critical solution's. In $D=5$ the stall does not settle
 onto one member, so the lifetime is not a single logarithm over the range measured.
 
-\pending{\#255}{What drives the drift of the stall member's radius in $D=5$, and the expanding member of G in $D=5$ run
-to $X\approx160$, where the locus reaches $\tau_s/\tau_{\rm end}\le1.2$. This subsection will add the cause of the drift
-and the class of that member.}
+\pending{\#255}{What drives the drift of the stall member's radius in $D=5$, and whether G's expanding member in $D=5$
+follows Eq.~\eqref{eq:ft} on a longer run. This subsection will add both.}
 
 \subsection{The settled black-hole mass}\label{sec:mass}
 
@@ -426,7 +425,8 @@ radius $0.45a$ of Ref.~\cite{GGS2009b}. Right: the settled mass against the dist
 G settles higher, at $0.235548a$ ($r_\AH=0.4711a$) for $\delta=10^{-8}$, $1.25\times10^{-2}a$ above S at the same $h$
 and $\delta$. The difference is the same at the three $h$, so it is not truncation error. Of it, $1.3\times10^{-3}a$ is
 present at formation, and the rest is less negative-energy flux into the horizon afterwards; the normal field adds no
-flux after formation. Unlike S, G's settled mass depends on $\delta$: it has a minimum near $\delta=10^{-5}$ and rises by
+flux after formation. Unlike S, G's settled mass depends on $\delta$: over $10^{-12}\le\delta\le10^{-3}$ it has a minimum near
+$\delta=10^{-5}$, and it rises by
 $2\times10^{-4}$ to $6\times10^{-4}$ per decade as $\delta$ falls from $10^{-6}$ to $10^{-12}$, reaching $0.237622a$ at
 $\delta=10^{-12}$. The rise per decade still grows at $10^{-12}$.
 
@@ -472,7 +472,8 @@ the sectional curvature $K$ of the spheres are $-2.0000$, $-1.0000$, $-2.0000$ a
 extrapolation: the last cell is at $\tau_s-\tau=0.3151a$ in $D=4$ and $1.5874a$ in $D=5$. $H/W$ is $1.230$, $1.946$ and
 $2.752$ at $r/a=10$, $25$, $50$ in $D=4$, far from a constant. The other members in $D=4$ have the same $k$ to
 $4\times10^{-4}$; the amplitude mainly shifts $\tau_s$. The two resolutions agree on $H$ at fixed $r/a$ to
-$5.0\times10^{-5}$ ($D=4$) and $4.1\times10^{-4}$ ($D=5$).
+$5.0\times10^{-5}$ ($D=4$) and $4.1\times10^{-4}$ ($D=5$). The one-sided family G, read on its locus, gives
+$k=1.9993$ to $1.9999$ for three members in $D=4$ and $k=3.9834$ for the tuned member in $D=5$.
 
 \begin{table}[tbp]
 \centering
@@ -487,10 +488,10 @@ $D$ & member & $k$ & $\tau_s/a$ & $|\rho|/H^2$ at $r=50a$ & $H/W$ at $r/a=10$, $
 \midrule
 4 & $\pst+10^{-6}$ & 2.0000 & 17.8902 & 4.0000 & 1.230, 1.946, 2.752 \\
 4 & $p=0.01$ & 2.0000 & 10.0559 & 4.0000 & 1.232, 1.949, 2.756 \\
-4 & $p=0.05$ & 2.0000 & 8.4334 & 4.0000 & 1.280, 2.023, 2.861 \\
-4 & $p=0.2$ & 2.0004 & 6.1690 & 4.0000 & 1.768, 2.777, 3.924 \\
+4 & $p=0.05$ & 2.0000 & 8.4334 & 3.9999 & 1.280, 2.024, 2.862 \\
+4 & $p=0.2$ & 2.0004 & 6.1690 & 3.9985 & 1.769, 2.778, 3.924 \\
 5 & $\pst+10^{-6}$ & 3.9875 & 15.0724 & 6.7525 & 0.847, 1.074, 1.279 \\
-5 & $p=0.05$ & 3.9897 & 7.9180 & 6.7525 & 1.023, 1.297, 1.544 \\
+5 & $p=0.05$ & 3.9897 & 7.9180 & 6.7523 & 1.023, 1.297, 1.544 \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -531,8 +532,8 @@ $\bar w=(1-n)/(1+n)$. The ends of the grid gain mass, by exactly the ghost field
 $D=4$ and $5$, $k=2$ and $k\approx4$, which fit $k=2(n-1)$; that is a \emph{conjecture} from two points.
 
 \pending{\#230}{$k(n)$ from the scaling solution of the expanding throat: a closed form or a numerical scaling solution
-whose $k$ and $c$ match Table~\ref{tab:expand} to $10^{-3}$, its prediction for $D=6$ tested by a run, and the $D=4$ run
-to $X=800$ that approaches $\tau_s$ to $0.15a$.}
+whose $k$ and $c$ match Table~\ref{tab:expand} to $10^{-3}$, its prediction for $D=6$ tested by a run, and a longer
+$D=4$ run that approaches $\tau_s$ more closely.}
 
 \section{Consequences and limits}\label{sec:limits}
 
@@ -592,7 +593,7 @@ $r=a/2$ and $2a$ on the throat, interpolated in $t$. It shares no code with \tex
 equations, the family's definition and $W$. Its $\pst$ agrees with the first code's to a relative $1.9\times10^{-4}$, so
 the two schemes' truncation seeds are close, and its slopes are those of Table~\ref{tab:life}. Its mutations (a wrong
 oracle slope, a shifted $\pst$ in the fit, the $\sqrt2$ time unit) fire exactly their targets; the time-unit mutation
-gives $0.598243=1/(\sqrt2W)$.
+gives $0.598243$ against $1/(\sqrt2W)=0.598244$.
 
 \paragraph{The review checks.} Each result was reviewed on another machine with a check that shares no code with the
 code under test except as stated.
