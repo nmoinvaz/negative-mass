@@ -280,3 +280,36 @@ three processes, 27 s for `check`, 6 minutes for `controls`, 126 MB at most.
   PRD 86, 024028 (2012), arXiv:1205.2224v3. Read in full (PDF and TeX).
 - [CHM99] M. W. Choptuik, E. W. Hirschmann, R. L. Marsa, "New critical behavior in Einstein-Yang-Mills collapse", PRD 60, 124011 (1999),
   arXiv:gr-qc/9903081. Verified against INSPIRE (record 497094); not read here. It is the issue's reference for the "type III" analogy.
+
+## Coordinator's review
+
+Under review: `wip/i212-black-universe` at 08a414d, raw `I212-rpi5` at c50bd64. Review folder
+`negative-mass-raw/I212-mac-review`, whose README holds the criteria, committed before the first run of `ind212.py`. The
+changed files are those the brief names.
+
+- **Rerun on the Mac.**
+  - `check`'s verdict lines equal the Pi's.
+  - `planted` gives the same verdicts, with W²a² moving by 1.3e-14.
+  - `controls`: 14 of 14 fire.
+  - The 40 member runs give the same counts, with every W equal to the Pi's to 1.3e-10.
+  - `spectral`: 40 of 40. Its first rerun crashed on the review's own command, which omitted the results directory;
+    it is kept.
+- **ind212**, runs 1 and 2, 3 of 3. It uses a third method: finite differences of u_xx = (V̂ + W²)u on a uniform tortoise
+  grid, with Dirichlet ends at ±400 and Richardson extrapolation over two grids. It covers the nine members with no
+  throat in the static region.
+  - ρ_h and κ equal the table to 1.8e-14.
+  - c = −10 … −1.0001 have one negative eigenvalue each, with W equal to the shooting result to 2.4e-10 or better.
+  - c = −1 has none.
+  - W/κ = 0.99997 at c = −1.0001.
+  - It shares the background and V̂ with this note. Those were checked against [BKZ12] (40) and (41) in sympy here,
+    and are not re-derived by the review.
+  - Mutations: `short-X` fails exactly its target. `wrong-V` fails K2 but is silent on K3, the near-horizon limit.
+    `wrong-m` crashes the program instead of failing cleanly (amendment A1 fixed one crash and a second remained). It
+    is reported as such.
+- *Added by the coordinator:* the throat members (c > −1, eleven of the twenty) are checked here only by this note's two
+  methods. The spectral one is weaker near the throat (4.5e-3), so their counts rest mainly on the shooting with the
+  complex-path crossing.
+- The discrepancies with the printed [BKZ12] (36)–(38) and [BF06] (8) are reported in §2 and §1 and not corrected. They
+  belong in `notes/literature.md` with #211.
+- `critical_ghost.md` §1.1's row carries an update from this issue.
+- **Follow-ups.** #217 (the evolution of a one-mode member, task 2) and #218 (the polar and M-AdS counts, tasks 1 and 3).
