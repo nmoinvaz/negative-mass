@@ -1,0 +1,278 @@
+threshold.py analyze {'raw': '/home/nathan/Source/negative-mass-raw/I40-dh610/runs'}: numba 0.68.1, numpy 2.5.4, python 3.14.10, dh610-fedora, load average at start 17.61 21.08 21.03, mutation None, 2026-11-27 01:09:41
+analyze: /home/nathan/Source/negative-mass-raw/I40-dh610/runs: 26 jobs; mutation None
+    PL D=4: planted slope 0.846045, q = 0.01414, sigma = 0.01; seed 1: p* recovered 4.699999999957071e-05 (planted 4.700000000000000e-05), primary slope 0.846552 +- 0.000318 (OLS SE), spread [0.845050, 0.848796]; over 40 seeds: 1/W inside the spread in 40, p* recovered in 40, primary rel error mean -5.0e-05, rms 3.8e-04
+[pass] PL[D=4]: planted type I series through the same bisection and fit code: p* recovered and 1/W inside the fit spread in at least 90% of 40 noise seeds  (40 of 40 inside, p* 40 of 40)
+    PX D=4: planted slope 1/(sqrt2 W) = 0.598244; seed 1 fitted 0.598740, spread [0.597252, 0.600926] against 1/W = 0.846045; rejected in 40 of 40 seeds
+[pass] PX[D=4]: a planted series with the time unit scaled by sqrt2 (slope 1/(sqrt2 W)) is rejected by the comparison with 1/W in every seed  (40 of 40)
+    PL D=5: planted slope 0.578803, q = 0.00500, sigma = 0.01; seed 1: p* recovered 4.699999999957071e-05 (planted 4.700000000000000e-05), primary slope 0.579341 +- 0.000295 (OLS SE), spread [0.578036, 0.581493]; over 40 seeds: 1/W inside the spread in 40, p* recovered in 40, primary rel error mean -9.3e-05, rms 5.2e-04
+[pass] PL[D=5]: planted type I series through the same bisection and fit code: p* recovered and 1/W inside the fit spread in at least 90% of 40 noise seeds  (40 of 40 inside, p* 40 of 40)
+    PX D=5: planted slope 1/(sqrt2 W) = 0.409276; seed 1 fitted 0.409823, spread [0.408567, 0.411817] against 1/W = 0.578803; rejected in 40 of 40 seeds
+[pass] PX[D=5]: a planted series with the time unit scaled by sqrt2 (slope 1/(sqrt2 W)) is rejected by the comparison with 1/W in every seed  (40 of 40)
+    PL D=6: planted slope 0.461924, q = 0.00354, sigma = 0.01; seed 1: p* recovered 4.699999999957071e-05 (planted 4.700000000000000e-05), primary slope 0.462445 +- 0.000287 (OLS SE), spread [0.461168, 0.464518]; over 40 seeds: 1/W inside the spread in 40, p* recovered in 40, primary rel error mean -9.9e-05, rms 6.4e-04
+[pass] PL[D=6]: planted type I series through the same bisection and fit code: p* recovered and 1/W inside the fit spread in at least 90% of 40 noise seeds  (40 of 40 inside, p* 40 of 40)
+    PX D=6: planted slope 1/(sqrt2 W) = 0.326629; seed 1 fitted 0.327072, spread [0.325818, 0.329341] against 1/W = 0.461924; rejected in 40 of 40 seeds
+[pass] PX[D=6]: a planted series with the time unit scaled by sqrt2 (slope 1/(sqrt2 W)) is rejected by the comparison with 1/W in every seed  (40 of 40)
+    G6 D=6: h = 0.002887, 0.001443, X = 12.0; W_fit 2.160530, 2.162551 against W = 2.164860 (rel -2.00e-03, -1.07e-03); mutation in that run: None
+[pass] G6: D = 6 growth control: tuned growth within 1% of W at two resolutions that agree within 0.5%  (results [['G1[D=6]', True]])
+[pass] BR[D=4 S h=0.02]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.09e-15, stopped None, )
+[pass] FM[D=4 S h=0.02]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=4 S h = 0.02: p*_h = 4.752772535085e-05; primary slope 0.846642 +- 0.000380 (OLS SE), n = 34, rms 0.0119; collapse 0.847335, expansion 0.845950; spread [0.844435, 0.849102]; 1/W = 0.846045, rel dev +7.05e-04
+[pass] SL[D=4 S h=0.02]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.846642, spread [0.844435, 0.849102], 1/W 0.846045)
+[pass] BR[D=4 S h=0.01]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.09e-15, stopped None, )
+[pass] FM[D=4 S h=0.01]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=4 S h = 0.01: p*_h = 1.188416336390e-05; primary slope 0.846522 +- 0.000323 (OLS SE), n = 34, rms 0.0102; collapse 0.846853, expansion 0.846191; spread [0.845217, 0.848691]; 1/W = 0.846045, rel dev +5.63e-04
+[pass] SL[D=4 S h=0.01]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.846522, spread [0.845217, 0.848691], 1/W 0.846045)
+[pass] BR[D=4 S h=0.005]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.09e-15, stopped None, )
+[pass] FM[D=4 S h=0.005]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=4 S h = 0.005: p*_h = 2.971180033455e-06; primary slope 0.846522 +- 0.000261 (OLS SE), n = 34, rms 0.0082; collapse 0.846853, expansion 0.846191; spread [0.845723, 0.848441]; 1/W = 0.846045, rel dev +5.63e-04
+[pass] SL[D=4 S h=0.005]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.846522, spread [0.845723, 0.848441], 1/W 0.846045)
+    PS D=4 S: p*_h = 4.7527725351e-05, 1.1884163364e-05, 2.9711800335e-06; Richardson order 2.000; with p* = 0: orders 2.000, 2.000; Richardson p* = -7.4484964159e-10
+[pass] PS[D=4 S]: p*_h converges at second order (order in [1.75, 2.25])  (p*_h = 4.7527725351e-05, 1.1884163364e-05, 2.9711800335e-06; Richardson order 2.000; with p* = 0: orders 2.000, 2.000; Richardson p* = -7.4484964159e-10)
+[pass] RA[D=4 S]: primary slopes at the two finest h run agree within 0.5%  (0.846522, 0.846522; rel diff 1.52e-12)
+    ED D=4 S h = 0.01: event tol0.1: slope 0.846150 +- 0.000253 (n = 16), primary spread [0.845217, 0.848691]
+    ED D=4 S h = 0.01: event rexp3: slope 0.845894 +- 0.000204 (n = 16), primary spread [0.845217, 0.848691]
+[pass] ED[D=4 S]: the slope does not depend on the event definition: each alternative lies inside the primary spread
+[pass] BR[D=4 O h=0.02]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.09e-15, stopped None, )
+[pass] FM[D=4 O h=0.02]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=4 O h = 0.02: p*_h = 9.505203060598e-05; primary slope 0.846040 +- 0.000302 (OLS SE), n = 34, rms 0.0095; collapse 0.845890, expansion 0.846191; spread [0.844393, 0.847632]; 1/W = 0.846045, rel dev -6.29e-06
+[pass] SL[D=4 O h=0.02]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.846040, spread [0.844393, 0.847632], 1/W 0.846045)
+[pass] BR[D=4 O h=0.01]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.09e-15, stopped None, )
+[pass] FM[D=4 O h=0.01]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=4 O h = 0.01: p*_h = 2.376811288286e-05; primary slope 0.845859 +- 0.000158 (OLS SE), n = 34, rms 0.0050; collapse 0.845829, expansion 0.845890; spread [0.844957, 0.846741]; 1/W = 0.846045, rel dev -2.20e-04
+[pass] SL[D=4 O h=0.01]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.845859, spread [0.844957, 0.846741], 1/W 0.846045)
+[pass] BR[D=4 O h=0.005]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.09e-15, stopped None, )
+[pass] FM[D=4 O h=0.005]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=4 O h = 0.005: p*_h = 5.942346574557e-06; primary slope 0.845867 +- 0.000168 (OLS SE), n = 34, rms 0.0053; collapse 0.845423, expansion 0.846311; spread [0.844639, 0.846716]; 1/W = 0.846045, rel dev -2.11e-04
+[pass] SL[D=4 O h=0.005]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.845867, spread [0.844639, 0.846716], 1/W 0.846045)
+    PS D=4 O: p*_h = 9.5052030606e-05, 2.3768112883e-05, 5.9423465746e-06; Richardson order 2.000; Richardson p* = -1.7037913575e-09
+[pass] PS[D=4 O]: p*_h converges at second order (order in [1.75, 2.25])  (p*_h = 9.5052030606e-05, 2.3768112883e-05, 5.9423465746e-06; Richardson order 2.000; Richardson p* = -1.7037913575e-09)
+[pass] RA[D=4 O]: primary slopes at the two finest h run agree within 0.5%  (0.845859, 0.845867; rel diff 8.90e-06)
+    ED D=4 O h = 0.01: event tol0.1: slope 0.846003 +- 0.000218 (n = 16), primary spread [0.844957, 0.846741]
+    ED D=4 O h = 0.01: event rexp3: slope 0.846186 +- 0.000204 (n = 16), primary spread [0.844957, 0.846741]
+[pass] ED[D=4 O]: the slope does not depend on the event definition: each alternative lies inside the primary spread
+[pass] BR[D=4 G h=0.02]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 5.68e-15, stopped None, B = 0.1)
+[pass] FM[D=4 G h=0.02]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=4 G h = 0.02: p*_h = 1.494576357090e-02; primary slope 0.898291 +- 0.005730 (OLS SE), n = 34, rms 0.1799; collapse 0.894814, expansion 0.901768; spread [0.864041, 0.958733]; 1/W = 0.846045, rel dev +6.18e-02
+[FAIL] SL[D=4 G h=0.02]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.898291, spread [0.864041, 0.958733], 1/W 0.846045)
+[pass] BR[D=4 G h=0.01]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 5.68e-15, stopped None, B = 0.1)
+[pass] FM[D=4 G h=0.01]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=4 G h = 0.01: p*_h = 1.487735996748e-02; primary slope 0.898043 +- 0.005462 (OLS SE), n = 34, rms 0.1715; collapse 0.895250, expansion 0.900835; spread [0.863276, 0.957708]; 1/W = 0.846045, rel dev +6.15e-02
+[FAIL] SL[D=4 G h=0.01]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.898043, spread [0.863276, 0.957708], 1/W 0.846045)
+[pass] BR[D=4 G h=0.005]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 5.68e-15, stopped None, B = 0.1)
+[pass] FM[D=4 G h=0.005]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=4 G h = 0.005: p*_h = 1.486025485413e-02; primary slope 0.899089 +- 0.005454 (OLS SE), n = 34, rms 0.1713; collapse 0.896620, expansion 0.901558; spread [0.864070, 0.958277]; 1/W = 0.846045, rel dev +6.27e-02
+[FAIL] SL[D=4 G h=0.005]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.899089, spread [0.864070, 0.958277], 1/W 0.846045)
+    PS D=4 G: p*_h = 1.4945763571e-02, 1.4877359967e-02, 1.4860254854e-02; Richardson order 2.000; Richardson p* = 1.4854551277e-02
+[pass] PS[D=4 G]: p*_h converges at second order (order in [1.75, 2.25])  (p*_h = 1.4945763571e-02, 1.4877359967e-02, 1.4860254854e-02; Richardson order 2.000; Richardson p* = 1.4854551277e-02)
+[pass] RA[D=4 G]: primary slopes at the two finest h run agree within 0.5%  (0.898043, 0.899089; rel diff 1.16e-03)
+    ED D=4 G h = 0.01: event tol0.1: slope 0.919304 +- 0.014544 (n = 16), primary spread [0.863276, 0.957708]
+    ED D=4 G h = 0.01: event rexp3: slope 0.861395 +- 0.007530 (n = 16), primary spread [0.863276, 0.957708]
+[FAIL] ED[D=4 G]: the slope does not depend on the event definition: each alternative lies inside the primary spread
+[pass] BR[D=5 S h=0.00707107]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.09e-15, stopped None, )
+[pass] FM[D=5 S h=0.00707107]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=5 S h = 0.00707107: p*_h = 2.884790369035e-04; primary slope 0.578346 +- 0.000127 (OLS SE), n = 34, rms 0.0040; collapse 0.578080, expansion 0.578612; spread [0.577478, 0.579151]; 1/W = 0.578803, rel dev -7.89e-04
+[pass] SL[D=5 S h=0.00707107]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.578346, spread [0.577478, 0.579151], 1/W 0.578803)
+[pass] BR[D=5 S h=0.00353553]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.09e-15, stopped None, )
+[pass] FM[D=5 S h=0.00353553]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=5 S h = 0.00353553: p*_h = 7.209092301764e-05; primary slope 0.579011 +- 0.000220 (OLS SE), n = 34, rms 0.0069; collapse 0.579283, expansion 0.578740; spread [0.577925, 0.580133]; 1/W = 0.578803, rel dev +3.60e-04
+[pass] SL[D=5 S h=0.00353553]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.579011, spread [0.577925, 0.580133], 1/W 0.578803)
+[pass] BR[D=5 S h=0.00176777]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.09e-15, stopped None, )
+[pass] FM[D=5 S h=0.00176777]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=5 S h = 0.00176777: p*_h = 1.802093123388e-05; primary slope 0.579027 +- 0.000229 (OLS SE), n = 34, rms 0.0072; collapse 0.579368, expansion 0.578687; spread [0.578002, 0.580219]; 1/W = 0.578803, rel dev +3.88e-04
+[pass] SL[D=5 S h=0.00176777]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.579027, spread [0.578002, 0.580219], 1/W 0.578803)
+    PS D=5 S: p*_h = 2.8847903690e-04, 7.2090923018e-05, 1.8020931234e-05; Richardson order 2.001; with p* = 0: orders 2.001, 2.000; Richardson p* = 9.6089388992e-09
+[pass] PS[D=5 S]: p*_h converges at second order (order in [1.75, 2.25])  (p*_h = 2.8847903690e-04, 7.2090923018e-05, 1.8020931234e-05; Richardson order 2.001; with p* = 0: orders 2.001, 2.000; Richardson p* = 9.6089388992e-09)
+[pass] RA[D=5 S]: primary slopes at the two finest h run agree within 0.5%  (0.579011, 0.579027; rel diff 2.76e-05)
+    ED D=5 S h = 0.00353553: event tol0.1: slope 0.579072 +- 0.000285 (n = 16), primary spread [0.577925, 0.580133]
+    ED D=5 S h = 0.00353553: event rexp3: slope 0.579008 +- 0.000273 (n = 16), primary spread [0.577925, 0.580133]
+[pass] ED[D=5 S]: the slope does not depend on the event definition: each alternative lies inside the primary spread
+[pass] BR[D=5 O h=0.00707107]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.09e-15, stopped None, )
+[pass] FM[D=5 O h=0.00707107]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=5 O h = 0.00707107: p*_h = 5.769894523701e-04; primary slope 0.579049 +- 0.000236 (OLS SE), n = 34, rms 0.0074; collapse 0.579251, expansion 0.578846; spread [0.578164, 0.581068]; 1/W = 0.578803, rel dev +4.24e-04
+[pass] SL[D=5 O h=0.00707107]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.579049, spread [0.578164, 0.581068], 1/W 0.578803)
+[pass] BR[D=5 O h=0.00353553]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.09e-15, stopped None, )
+[pass] FM[D=5 O h=0.00353553]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=5 O h = 0.00353553: p*_h = 1.441837732500e-04; primary slope 0.578857 +- 0.000128 (OLS SE), n = 34, rms 0.0040; collapse 0.578740, expansion 0.578974; spread [0.577989, 0.579507]; 1/W = 0.578803, rel dev +9.33e-05
+[pass] SL[D=5 O h=0.00353553]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.578857, spread [0.577989, 0.579507], 1/W 0.578803)
+[pass] BR[D=5 O h=0.00176777]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.09e-15, stopped None, )
+[pass] FM[D=5 O h=0.00176777]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=5 O h = 0.00176777: p*_h = 3.604198011544e-05; primary slope 0.578966 +- 0.000285 (OLS SE), n = 34, rms 0.0090; collapse 0.578155, expansion 0.579778; spread [0.577095, 0.581630]; 1/W = 0.578803, rel dev +2.82e-04
+[pass] SL[D=5 O h=0.00176777]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.578966, spread [0.577095, 0.581630], 1/W 0.578803)
+    PS D=5 O: p*_h = 5.7698945237e-04, 1.4418377325e-04, 3.6041980115e-05; Richardson order 2.001; Richardson p* = 2.1197000436e-08
+[pass] PS[D=5 O]: p*_h converges at second order (order in [1.75, 2.25])  (p*_h = 5.7698945237e-04, 1.4418377325e-04, 3.6041980115e-05; Richardson order 2.001; Richardson p* = 2.1197000436e-08)
+[pass] RA[D=5 O]: primary slopes at the two finest h run agree within 0.5%  (0.578857, 0.578966; rel diff 1.88e-04)
+    ED D=5 O h = 0.00353553: event tol0.1: slope 0.578878 +- 0.000112 (n = 16), primary spread [0.577989, 0.579507]
+    ED D=5 O h = 0.00353553: event rexp3: slope 0.579163 +- 0.000134 (n = 16), primary spread [0.577989, 0.579507]
+[pass] ED[D=5 O]: the slope does not depend on the event definition: each alternative lies inside the primary spread
+[FAIL] BR[D=5 G h=0.00707107]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 2.91e-12, stopped static through X, B = 0.1)
+[pass] FM[D=5 G h=0.00707107]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=5 G h = 0.00707107: p*_h = 1.123300737498e-02; primary slope 0.798948 +- 0.015509 (OLS SE), n = 34, rms 0.4870; collapse 0.723239, expansion 0.874656; spread [0.707438, 0.935869]; 1/W = 0.578803, rel dev +3.80e-01
+[FAIL] SL[D=5 G h=0.00707107]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.798948, spread [0.707438, 0.935869], 1/W 0.578803)
+[pass] BR[D=5 G h=0.00353553]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 5.68e-15, stopped None, B = 0.1)
+[pass] FM[D=5 G h=0.00353553]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=5 G h = 0.00353553: p*_h = 1.081911782359e-02; primary slope 0.800044 +- 0.015453 (OLS SE), n = 34, rms 0.4853; collapse 0.724761, expansion 0.875327; spread [0.708978, 0.936973]; 1/W = 0.578803, rel dev +3.82e-01
+[FAIL] SL[D=5 G h=0.00353553]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.800044, spread [0.708978, 0.936973], 1/W 0.578803)
+[pass] BR[D=5 G h=0.00176777]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 5.68e-15, stopped None, B = 0.1)
+[pass] FM[D=5 G h=0.00176777]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=5 G h = 0.00176777: p*_h = 1.071568325683e-02; primary slope 0.800277 +- 0.015565 (OLS SE), n = 34, rms 0.4888; collapse 0.724332, expansion 0.876221; spread [0.709379, 0.938761]; 1/W = 0.578803, rel dev +3.83e-01
+[FAIL] SL[D=5 G h=0.00176777]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.800277, spread [0.709379, 0.938761], 1/W 0.578803)
+    PS D=5 G: p*_h = 1.1233007375e-02, 1.0819117824e-02, 1.0715683257e-02; Richardson order 2.001; Richardson p* = 1.0681221869e-02
+[pass] PS[D=5 G]: p*_h converges at second order (order in [1.75, 2.25])  (p*_h = 1.1233007375e-02, 1.0819117824e-02, 1.0715683257e-02; Richardson order 2.001; Richardson p* = 1.0681221869e-02)
+[pass] RA[D=5 G]: primary slopes at the two finest h run agree within 0.5%  (0.800044, 0.800277; rel diff 2.91e-04)
+    ED D=5 G h = 0.00353553: event tol0.1: slope 0.849156 +- 0.032420 (n = 16), primary spread [0.708978, 0.936973]
+    ED D=5 G h = 0.00353553: event rexp3: slope 0.753372 +- 0.017728 (n = 16), primary spread [0.708978, 0.936973]
+[pass] ED[D=5 G]: the slope does not depend on the event definition: each alternative lies inside the primary spread
+[pass] BR[D=6 S h=0.005]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.09e-15, stopped None, )
+[pass] FM[D=6 S h=0.005]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=6 S h = 0.005: p*_h = 1.115514798998e-03; primary slope 0.457989 +- 0.000776 (OLS SE), n = 34, rms 0.0244; collapse 0.456439, expansion 0.459540; spread [0.449488, 0.460292]; 1/W = 0.461924, rel dev -8.52e-03
+[FAIL] SL[D=6 S h=0.005]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.457989, spread [0.449488, 0.460292], 1/W 0.461924)
+[pass] BR[D=6 S h=0.0025]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.09e-15, stopped None, )
+[pass] FM[D=6 S h=0.0025]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=6 S h = 0.0025: p*_h = 2.778388367506e-04; primary slope 0.460247 +- 0.000666 (OLS SE), n = 34, rms 0.0209; collapse 0.458336, expansion 0.462159; spread [0.454915, 0.463275]; 1/W = 0.461924, rel dev -3.63e-03
+[pass] SL[D=6 S h=0.0025]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.460247, spread [0.454915, 0.463275], 1/W 0.461924)
+[pass] BR[D=6 S h=0.00125]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.09e-15, stopped None, )
+[pass] FM[D=6 S h=0.00125]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=6 S h = 0.00125: p*_h = 6.939553437860e-05; primary slope 0.459628 +- 0.000868 (OLS SE), n = 34, rms 0.0273; collapse 0.458904, expansion 0.460353; spread [0.455143, 0.462600]; 1/W = 0.461924, rel dev -4.97e-03
+[pass] SL[D=6 S h=0.00125]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.459628, spread [0.455143, 0.462600], 1/W 0.461924)
+    PS D=6 S: p*_h = 1.1155147990e-03, 2.7783883675e-04, 6.9395534379e-05; Richardson order 2.007; with p* = 0: orders 2.005, 2.001; Richardson p* = 3.4538317968e-07
+[pass] PS[D=6 S]: p*_h converges at second order (order in [1.75, 2.25])  (p*_h = 1.1155147990e-03, 2.7783883675e-04, 6.9395534379e-05; Richardson order 2.007; with p* = 0: orders 2.005, 2.001; Richardson p* = 3.4538317968e-07)
+[pass] RA[D=6 S]: primary slopes at the two finest h run agree within 0.5%  (0.460247, 0.459628; rel diff 1.35e-03)
+    ED D=6 S h = 0.0025: event tol0.1: slope 0.461717 +- 0.000339 (n = 16), primary spread [0.454915, 0.463275]
+    ED D=6 S h = 0.0025: event rexp3: slope 0.461269 +- 0.000503 (n = 16), primary spread [0.454915, 0.463275]
+[pass] ED[D=6 S]: the slope does not depend on the event definition: each alternative lies inside the primary spread
+[pass] BR[D=6 O h=0.005]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.09e-15, stopped None, )
+[pass] FM[D=6 O h=0.005]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=6 O h = 0.005: p*_h = 2.232927031787e-03; primary slope 0.458629 +- 0.001063 (OLS SE), n = 34, rms 0.0334; collapse 0.457959, expansion 0.459299; spread [0.453675, 0.468485]; 1/W = 0.461924, rel dev -7.13e-03
+[pass] SL[D=6 O h=0.005]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.458629, spread [0.453675, 0.468485], 1/W 0.461924)
+[pass] BR[D=6 O h=0.0025]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.10e-15, stopped None, )
+[pass] FM[D=6 O h=0.0025]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=6 O h = 0.0025: p*_h = 5.557914722112e-04; primary slope 0.460609 +- 0.000497 (OLS SE), n = 34, rms 0.0156; collapse 0.460255, expansion 0.460963; spread [0.457147, 0.464379]; 1/W = 0.461924, rel dev -2.85e-03
+[pass] SL[D=6 O h=0.0025]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.460609, spread [0.457147, 0.464379], 1/W 0.461924)
+[pass] BR[D=6 O h=0.00125]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 9.09e-15, stopped None, )
+[pass] FM[D=6 O h=0.00125]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=6 O h = 0.00125: p*_h = 1.387981085509e-04; primary slope 0.460325 +- 0.000791 (OLS SE), n = 34, rms 0.0248; collapse 0.461599, expansion 0.459051; spread [0.452896, 0.465270]; 1/W = 0.461924, rel dev -3.46e-03
+[pass] SL[D=6 O h=0.00125]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.460325, spread [0.452896, 0.465270], 1/W 0.461924)
+    PS D=6 O: p*_h = 2.2329270318e-03, 5.5579147221e-04, 1.3879810855e-04; Richardson order 2.008; Richardson p* = 8.1093067489e-07
+[pass] PS[D=6 O]: p*_h converges at second order (order in [1.75, 2.25])  (p*_h = 2.2329270318e-03, 5.5579147221e-04, 1.3879810855e-04; Richardson order 2.008; Richardson p* = 8.1093067489e-07)
+[pass] RA[D=6 O]: primary slopes at the two finest h run agree within 0.5%  (0.460609, 0.460325; rel diff 6.17e-04)
+    ED D=6 O h = 0.0025: event tol0.1: slope 0.460794 +- 0.000174 (n = 16), primary spread [0.457147, 0.464379]
+    ED D=6 O h = 0.0025: event rexp3: slope 0.460858 +- 0.000544 (n = 16), primary spread [0.457147, 0.464379]
+[pass] ED[D=6 O]: the slope does not depend on the event definition: each alternative lies inside the primary spread
+[pass] BR[D=6 G h=0.005]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 5.68e-15, stopped None, B = 0.1)
+[pass] FM[D=6 G h=0.005]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=6 G h = 0.005: p*_h = 1.265767896758e-02; primary slope 0.990046 +- 0.026391 (OLS SE), n = 34, rms 0.8288; collapse 0.854538, expansion 1.125554; spread [0.795196, 1.190386]; 1/W = 0.461924, rel dev +1.14e+00
+[FAIL] SL[D=6 G h=0.005]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.990046, spread [0.795196, 1.190386], 1/W 0.461924)
+[pass] BR[D=6 G h=0.0025]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 5.68e-15, stopped None, B = 0.1)
+[pass] FM[D=6 G h=0.0025]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=6 G h = 0.0025: p*_h = 1.108797761415e-02; primary slope 0.994756 +- 0.026714 (OLS SE), n = 34, rms 0.8389; collapse 0.857876, expansion 1.131636; spread [0.798040, 1.200660]; 1/W = 0.461924, rel dev +1.15e+00
+[FAIL] SL[D=6 G h=0.0025]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.994756, spread [0.798040, 1.200660], 1/W 0.461924)
+    D=6 G h = 0.00125: not run (declared: about 4 h, over the 2 h stop)
+[pass] RA[D=6 G]: primary slopes at the two finest h run agree within 0.5%  (0.990046, 0.994756; rel diff 4.73e-03)
+    PS D=6 G: two h only: p*_h = 1.2657678968e-02, 1.1087977614e-02, ratio 1.1416 (second order: 4)
+    ED D=6 G h = 0.0025: event tol0.1: slope 1.069299 +- 0.044434 (n = 16), primary spread [0.798040, 1.200660]
+    ED D=6 G h = 0.0025: event rexp3: slope 1.001053 +- 0.038960 (n = 16), primary spread [0.798040, 1.200660]
+[pass] ED[D=6 G]: the slope does not depend on the event definition: each alternative lies inside the primary spread
+
+Null constraints along the two runs that bracket p*_h (lo = last collapse, hi = last expansion), over the nodes of the event cell's past,
+max |C| and max |C| / max(sum of the absolute values of its terms); change with h against the change of p*_h and of the primary slope
+    CS D=4 S h = 0.02: lo: |C++| 5.922e-05 (rel 5.91e-05), |C--| 5.919e-05 (rel 5.90e-05), event [959, 959], repro 5.6e-17; hi: |C++| 5.832e-05 (rel 5.83e-05), |C--| 5.832e-05 (rel 5.83e-05), event [1125, 1125], repro 5.6e-17; max 5.922e-05, max rel 5.91e-05
+    CS D=4 S h = 0.01: lo: |C++| 1.481e-05 (rel 1.48e-05), |C--| 1.481e-05 (rel 1.48e-05), event [1824, 1824], repro 5.6e-17; hi: |C++| 1.460e-05 (rel 1.46e-05), |C--| 1.460e-05 (rel 1.46e-05), event [2359, 2359], repro 5.6e-17; max 1.481e-05, max rel 1.48e-05
+    CS D=4 S h = 0.005: lo: |C++| 3.758e-06 (rel 3.75e-06), |C--| 3.757e-06 (rel 3.75e-06), event [3670, 3670], repro 5.6e-17; hi: |C++| 3.712e-06 (rel 3.71e-06), |C--| 3.712e-06 (rel 3.71e-06), event [4234, 4234], repro 5.6e-17; max 3.758e-06, max rel 3.75e-06
+    CS D=4 S h 0.02 -> 0.01: max|C| ratio 3.998 (second order: 4); change of p*_h -3.564e-05 (relative -0.750); change of the primary slope -1.20e-04 (relative -1.42e-04)
+    CS D=4 S h 0.01 -> 0.005: max|C| ratio 3.941 (second order: 4); change of p*_h -8.913e-06 (relative -0.750); change of the primary slope -1.28e-12 (relative -1.52e-12)
+    CS D=4 O h = 0.02: lo: |C++| 5.923e-05 (rel 5.91e-05), |C--| 5.920e-05 (rel 5.91e-05), event [1048, 1048], repro 5.6e-17; hi: |C++| 5.832e-05 (rel 5.83e-05), |C--| 5.832e-05 (rel 5.83e-05), event [1125, 1125], repro 5.6e-17; max 5.923e-05, max rel 5.91e-05
+    CS D=4 O h = 0.01: lo: |C++| 1.481e-05 (rel 1.48e-05), |C--| 1.481e-05 (rel 1.48e-05), event [1876, 1876], repro 5.6e-17; hi: |C++| 1.459e-05 (rel 1.46e-05), |C--| 1.459e-05 (rel 1.46e-05), event [2234, 2234], repro 5.6e-17; max 1.481e-05, max rel 1.48e-05
+    CS D=4 O h = 0.005: lo: |C++| 3.792e-06 (rel 3.78e-06), |C--| 3.767e-06 (rel 3.76e-06), event [3787, 3787], repro 5.6e-17; hi: |C++| 3.715e-06 (rel 3.71e-06), |C--| 3.719e-06 (rel 3.72e-06), event [4417, 4417], repro 5.6e-17; max 3.792e-06, max rel 3.78e-06
+    CS D=4 O h 0.02 -> 0.01: max|C| ratio 3.999 (second order: 4); change of p*_h -7.128e-05 (relative -0.750); change of the primary slope -1.81e-04 (relative -2.14e-04)
+    CS D=4 O h 0.01 -> 0.005: max|C| ratio 3.905 (second order: 4); change of p*_h -1.783e-05 (relative -0.750); change of the primary slope +7.53e-06 (relative +8.90e-06)
+    CS D=4 G h = 0.02: lo: |C++| 1.045e-04 (rel 1.02e-04), |C--| 7.097e-05 (rel 6.27e-05), event [936, 1073], repro 1.1e-16; hi: |C++| 1.045e-04 (rel 1.02e-04), |C--| 7.049e-05 (rel 6.23e-05), event [1232, 1232], repro 1.1e-16; max 1.045e-04, max rel 1.02e-04
+    CS D=4 G h = 0.01: lo: |C++| 2.614e-05 (rel 2.54e-05), |C--| 1.775e-05 (rel 1.57e-05), event [1805, 2066], repro 1.1e-16; hi: |C++| 2.614e-05 (rel 2.54e-05), |C--| 1.763e-05 (rel 1.56e-05), event [2548, 2548], repro 1.1e-16; max 2.614e-05, max rel 2.54e-05
+    CS D=4 G h = 0.005: lo: |C++| 6.536e-06 (rel 6.36e-06), |C--| 4.503e-06 (rel 3.98e-06), event [3632, 4158], repro 1.1e-16; hi: |C++| 6.535e-06 (rel 6.36e-06), |C--| 4.459e-06 (rel 3.94e-06), event [5593, 5593], repro 1.1e-16; max 6.536e-06, max rel 6.36e-06
+    CS D=4 G h 0.02 -> 0.01: max|C| ratio 3.997 (second order: 4); change of p*_h -6.840e-05 (relative -0.005); change of the primary slope -2.48e-04 (relative -2.77e-04)
+    CS D=4 G h 0.01 -> 0.005: max|C| ratio 4.000 (second order: 4); change of p*_h -1.711e-05 (relative -0.001); change of the primary slope +1.05e-03 (relative +1.17e-03)
+    CS D=5 S h = 0.00707107: lo: |C++| 4.686e-05 (rel 2.33e-05), |C--| 4.676e-05 (rel 2.32e-05), event [1822, 1822], repro 1.1e-16; hi: |C++| 4.606e-05 (rel 2.29e-05), |C--| 4.606e-05 (rel 2.29e-05), event [2292, 2292], repro 1.1e-16; max 4.686e-05, max rel 2.33e-05
+    CS D=5 S h = 0.00353553: lo: |C++| 1.226e-05 (rel 6.09e-06), |C--| 1.231e-05 (rel 6.12e-06), event [3477, 3477], repro 1.1e-16; hi: |C++| 1.202e-05 (rel 6.00e-06), |C--| 1.206e-05 (rel 6.03e-06), event [4222, 4222], repro 1.1e-16; max 1.231e-05, max rel 6.12e-06
+    CS D=5 S h = 0.00176777: lo: |C++| 7.294e-06 (rel 3.62e-06), |C--| 7.483e-06 (rel 3.72e-06), event [6916, 6916], repro 2.2e-16; hi: |C++| 7.631e-06 (rel 3.81e-06), |C--| 8.641e-06 (rel 4.32e-06), event [8444, 8444], repro 1.1e-16; max 8.641e-06, max rel 4.32e-06
+    CS D=5 S h 0.00707107 -> 0.00353553: max|C| ratio 3.807 (second order: 4); change of p*_h -2.164e-04 (relative -0.750); change of the primary slope +6.65e-04 (relative +1.15e-03)
+    CS D=5 S h 0.00353553 -> 0.00176777: max|C| ratio 1.425 (second order: 4); change of p*_h -5.407e-05 (relative -0.750); change of the primary slope +1.60e-05 (relative +2.76e-05)
+    CS D=5 O h = 0.00707107: lo: |C++| 4.695e-05 (rel 2.33e-05), |C--| 4.683e-05 (rel 2.32e-05), event [1873, 1873], repro 2.2e-16; hi: |C++| 4.640e-05 (rel 2.30e-05), |C--| 4.599e-05 (rel 2.30e-05), event [2176, 2176], repro 1.1e-16; max 4.695e-05, max rel 2.33e-05
+    CS D=5 O h = 0.00353553: lo: |C++| 1.258e-05 (rel 6.25e-06), |C--| 1.258e-05 (rel 6.25e-06), event [3693, 3693], repro 2.2e-16; hi: |C++| 1.229e-05 (rel 6.14e-06), |C--| 1.224e-05 (rel 6.12e-06), event [4451, 4451], repro 1.1e-16; max 1.258e-05, max rel 6.25e-06
+    CS D=5 O h = 0.00176777: lo: |C++| 7.121e-06 (rel 3.54e-06), |C--| 6.675e-06 (rel 3.32e-06), event [6962, 6962], repro 2.2e-16; hi: |C++| 7.832e-06 (rel 3.91e-06), |C--| 7.797e-06 (rel 3.90e-06), event [8699, 8699], repro 1.1e-16; max 7.832e-06, max rel 3.91e-06
+    CS D=5 O h 0.00707107 -> 0.00353553: max|C| ratio 3.731 (second order: 4); change of p*_h -4.328e-04 (relative -0.750); change of the primary slope -1.92e-04 (relative -3.31e-04)
+    CS D=5 O h 0.00353553 -> 0.00176777: max|C| ratio 1.607 (second order: 4); change of p*_h -1.081e-04 (relative -0.750); change of the primary slope +1.09e-04 (relative +1.88e-04)
+    CS D=5 G h = 0.00707107: lo: |C++| 4.425e-05 (rel 2.18e-05), |C--| 4.697e-05 (rel 2.09e-05), event [1786, 2186], repro 2.2e-16; hi: |C++| 4.425e-05 (rel 2.18e-05), |C--| 4.697e-05 (rel 2.09e-05), event [2601, 2601], repro 2.2e-16; max 4.697e-05, max rel 2.18e-05
+    CS D=5 G h = 0.00353553: lo: |C++| 1.106e-05 (rel 5.45e-06), |C--| 1.176e-05 (rel 5.24e-06), event [4203, 5151], repro 2.2e-16; hi: |C++| 1.106e-05 (rel 5.45e-06), |C--| 1.175e-05 (rel 5.23e-06), event [5842, 5842], repro 2.2e-16; max 1.176e-05, max rel 5.45e-06
+    CS D=5 G h = 0.00176777: lo: |C++| 6.469e-06 (rel 3.19e-06), |C--| 4.882e-06 (rel 2.17e-06), event [8046, 9861], repro 2.2e-16; hi: |C++| 7.668e-06 (rel 3.78e-06), |C--| 4.634e-06 (rel 2.06e-06), event [11286, 11286], repro 2.2e-16; max 7.668e-06, max rel 3.78e-06
+    CS D=5 G h 0.00707107 -> 0.00353553: max|C| ratio 3.995 (second order: 4); change of p*_h -4.139e-04 (relative -0.037); change of the primary slope +1.10e-03 (relative +1.37e-03)
+    CS D=5 G h 0.00353553 -> 0.00176777: max|C| ratio 1.533 (second order: 4); change of p*_h -1.034e-04 (relative -0.010); change of the primary slope +2.33e-04 (relative +2.91e-04)
+    CS D=6 S h = 0.005: lo: |C++| 7.775e-05 (rel 2.53e-05), |C--| 7.776e-05 (rel 2.53e-05), event [1995, 1995], repro 2.2e-16; hi: |C++| 7.775e-05 (rel 2.53e-05), |C--| 7.775e-05 (rel 2.53e-05), event [2523, 2523], repro 2.2e-16; max 7.776e-05, max rel 2.53e-05
+    CS D=6 S h = 0.0025: lo: |C++| 2.265e-05 (rel 7.47e-06), |C--| 2.286e-05 (rel 7.54e-06), event [3903, 3903], repro 2.2e-16; hi: |C++| 2.233e-05 (rel 7.40e-06), |C--| 2.245e-05 (rel 7.44e-06), event [4928, 4928], repro 2.2e-16; max 2.286e-05, max rel 7.54e-06
+    CS D=6 S h = 0.00125: lo: |C++| 2.597e-05 (rel 8.58e-06), |C--| 2.923e-05 (rel 9.66e-06), event [7739, 7739], repro 2.2e-16; hi: |C++| 5.282e-05 (rel 1.76e-05), |C--| 4.800e-05 (rel 1.60e-05), event [10357, 10357], repro 2.2e-16; max 5.282e-05, max rel 1.76e-05
+    CS D=6 S h 0.005 -> 0.0025: max|C| ratio 3.401 (second order: 4); change of p*_h -8.377e-04 (relative -0.751); change of the primary slope +2.26e-03 (relative +4.93e-03)
+    CS D=6 S h 0.0025 -> 0.00125: max|C| ratio 0.433 (second order: 4); change of p*_h -2.084e-04 (relative -0.750); change of the primary slope -6.19e-04 (relative -1.35e-03)
+    CS D=6 O h = 0.005: lo: |C++| 7.990e-05 (rel 2.57e-05), |C--| 7.834e-05 (rel 2.56e-05), event [2120, 2119], repro 2.2e-16; hi: |C++| 7.990e-05 (rel 2.57e-05), |C--| 7.591e-05 (rel 2.50e-05), event [2583, 2583], repro 2.2e-16; max 7.990e-05, max rel 2.57e-05
+    CS D=6 O h = 0.0025: lo: |C++| 3.250e-05 (rel 1.07e-05), |C--| 3.055e-05 (rel 1.01e-05), event [4670, 4670], repro 2.2e-16; hi: |C++| 2.379e-05 (rel 7.86e-06), |C--| 2.346e-05 (rel 7.80e-06), event [4954, 4954], repro 2.2e-16; max 3.250e-05, max rel 1.07e-05
+    CS D=6 O h = 0.00125: lo: |C++| 3.638e-05 (rel 1.20e-05), |C--| 3.568e-05 (rel 1.18e-05), event [8417, 8417], repro 2.2e-16; hi: |C++| 5.104e-05 (rel 1.70e-05), |C--| 4.211e-05 (rel 1.40e-05), event [10188, 10188], repro 2.2e-16; max 5.104e-05, max rel 1.70e-05
+    CS D=6 O h 0.005 -> 0.0025: max|C| ratio 2.459 (second order: 4); change of p*_h -1.677e-03 (relative -0.751); change of the primary slope +1.98e-03 (relative +4.32e-03)
+    CS D=6 O h 0.0025 -> 0.00125: max|C| ratio 0.637 (second order: 4); change of p*_h -4.170e-04 (relative -0.750); change of the primary slope -2.84e-04 (relative -6.17e-04)
+    CS D=6 G h = 0.005: lo: |C++| 7.371e-05 (rel 2.40e-05), |C--| 7.364e-05 (rel 2.45e-05), event [3414, 4057], repro 2.2e-16; hi: |C++| 7.371e-05 (rel 2.40e-05), |C--| 7.364e-05 (rel 2.45e-05), event [5278, 5278], repro 2.2e-16; max 7.371e-05, max rel 2.45e-05
+    CS D=6 G h = 0.0025: lo: |C++| 1.826e-05 (rel 5.99e-06), |C--| 1.828e-05 (rel 6.09e-06), event [6711, 7986], repro 2.2e-16; hi: |C++| 1.827e-05 (rel 5.99e-06), |C--| 1.828e-05 (rel 6.09e-06), event [9925, 9925], repro 2.2e-16; max 1.828e-05, max rel 6.09e-06
+    CS D=6 G h 0.005 -> 0.0025: max|C| ratio 4.032 (second order: 4); change of p*_h -1.570e-03 (relative -0.124); change of the primary slope +4.71e-03 (relative +4.76e-03)
+
+Formation values at the first trapped cell and the stall, p* -/+ 1e-8 (not settled masses; #41's question stays open)
+D family h    side fate     T       event cell offset (cells, l)   r_cell   M_cell   M_hor=r^(D-3)/2 | stall: t     r      l     span  dl/dt
+4 G  0.005  -1 collapse   15.825     243 +0.8591   0.99066  0.49544  0.49533 |  12.41 1.00275 +0.5843 9.64 +0.0735
+4 G  0.005   1 expand     20.460       0 +0.0000   n/a (expansion event: r = rexp) |  12.41 1.00325 +0.5843 10.97 +0.0746
+4 G  0.01  -1 collapse   15.860     122 +0.8627   0.99014  0.49519  0.49507 |  12.41 1.00275 +0.5842 9.67 +0.0735
+4 G  0.01   1 expand     20.457       0 +0.0000   n/a (expansion event: r = rexp) |  12.41 1.00325 +0.5842 10.97 +0.0746
+4 G  0.02  -1 collapse   15.867      61 +0.8627   0.99006  0.49515  0.49503 |  12.39 1.00276 +0.5824 9.66 +0.0735
+4 G  0.02   1 expand     20.464       0 +0.0000   n/a (expansion event: r = rexp) |  12.40 1.00325 +0.5835 10.96 +0.0745
+4 O  0.005  -1 collapse   15.369       0 +0.0000   0.98812  0.49416  0.49406 |   6.24 1.00000 -0.0000 15.35 -0.0000
+4 O  0.005   1 expand     20.199       0 +0.0000   n/a (expansion event: r = rexp) |   6.24 1.00000 -0.0000 15.83 -0.0000
+4 O  0.01  -1 collapse   15.365       0 +0.0000   0.98817  0.49418  0.49409 |   6.24 1.00000 -0.0000 15.33 -0.0000
+4 O  0.01   1 expand     20.202       0 +0.0000   n/a (expansion event: r = rexp) |   6.24 1.00000 -0.0000 15.83 -0.0000
+4 O  0.02  -1 collapse   15.373       0 +0.0000   0.98810  0.49415  0.49405 |   6.25 1.00000 -0.0000 15.30 -0.0000
+4 O  0.02   1 expand     20.209       0 +0.0000   n/a (expansion event: r = rexp) |   6.34 1.00000 -0.0000 15.81 -0.0000
+4 S  0.005  -1 collapse   14.782       0 +0.0000   0.98812  0.49416  0.49406 |   6.24 1.00000 -0.0000 14.77 -0.0000
+4 S  0.005   1 expand     19.612       0 +0.0000   n/a (expansion event: r = rexp) |   6.24 1.00000 -0.0000 15.25 -0.0000
+4 S  0.01  -1 collapse   14.786       0 +0.0000   0.98808  0.49414  0.49404 |   6.24 1.00000 -0.0000 14.76 +0.0000
+4 S  0.01   1 expand     19.622       0 +0.0000   n/a (expansion event: r = rexp) |   6.24 1.00000 -0.0000 15.24 +0.0000
+4 S  0.02  -1 collapse   14.779       0 +0.0000   0.98821  0.49420  0.49411 |   6.25 1.00000 +0.0000 14.72 -0.0000
+4 S  0.02   1 expand     19.615       0 +0.0000   n/a (expansion event: r = rexp) |   6.28 1.00000 +0.0000 15.22 +0.0000
+5 G  0.00176777  -1 collapse   12.950     933 +1.1662   1.17222  0.68719  0.68705 |   6.24 1.06181 +0.2537 3.11 +0.1267
+5 G  0.00176777   1 expand     17.581       0 +0.0000   n/a (expansion event: r = rexp) |   6.24 1.06181 +0.2537 3.11 +0.1267
+5 G  0.00353553  -1 collapse   12.960     467 +1.1675   1.17188  0.68680  0.68665 |   6.24 1.06174 +0.2538 3.11 +0.1267
+5 G  0.00353553   1 expand     17.577       0 +0.0000   n/a (expansion event: r = rexp) |   6.24 1.06174 +0.2538 3.10 +0.1267
+5 G  0.00707107  -1 collapse   12.950     233 +1.1650   1.17121  0.68602  0.68587 |   6.24 1.06138 +0.2535 3.10 +0.1267
+5 G  0.00707107   1 expand     17.575       0 +0.0000   n/a (expansion event: r = rexp) |   6.24 1.06138 +0.2535 3.10 +0.1267
+5 O  0.00176777  -1 collapse   11.031       0 +0.0000   0.99186  0.49199  0.49189 |   6.24 0.99998 -0.0000 11.02 -0.0000
+5 O  0.00176777   1 expand     14.951       0 +0.0000   n/a (expansion event: r = rexp) |   6.24 0.99998 -0.0000 11.58 -0.0000
+5 O  0.00353553  -1 collapse   11.037       0 +0.0000   0.99168  0.49181  0.49171 |   6.24 0.99991 -0.0000 11.02 -0.0000
+5 O  0.00353553   1 expand     14.952       0 +0.0000   n/a (expansion event: r = rexp) |   6.24 0.99992 -0.0000 11.57 -0.0000
+5 O  0.00707107  -1 collapse   11.055       0 +0.0000   0.99106  0.49121  0.49110 |   6.24 0.99965 -0.0001 11.03 -0.0000
+5 O  0.00707107   1 expand     14.955       0 +0.0000   n/a (expansion event: r = rexp) |   6.95 0.99965 -0.0002 11.56 -0.0000
+5 S  0.00176777  -1 collapse   10.629       0 +0.0000   0.99188  0.49201  0.49191 |   6.24 0.99997 +0.0000 10.62 -0.0000
+5 S  0.00176777   1 expand     14.549       0 +0.0000   n/a (expansion event: r = rexp) |   6.24 0.99998 -0.0000 11.18 +0.0000
+5 S  0.00353553  -1 collapse   10.627       0 +0.0000   0.99181  0.49194  0.49184 |   6.24 0.99991 +0.0000 10.62 -0.0000
+5 S  0.00353553   1 expand     14.552       0 +0.0000   n/a (expansion event: r = rexp) |   6.24 0.99992 -0.0000 11.17 -0.0000
+5 S  0.00707107  -1 collapse   10.625       0 +0.0000   0.99150  0.49163  0.49153 |   6.24 0.99965 -0.0000 10.60 +0.0000
+5 S  0.00707107   1 expand     14.545       0 +0.0000   n/a (expansion event: r = rexp) |   6.51 0.99966 +0.0000 11.16 -0.0000
+6 G  0.0025  -1 collapse   13.926     855 +1.5114   1.73403  2.60758  2.60701 |  11.91 1.65451 +1.3072 0.98 +0.1110
+6 G  0.0025   1 expand     19.571       0 +0.0000   n/a (expansion event: r = rexp) |   6.24 1.20847 +0.4315 0.67 +0.2005
+6 G  0.005  -1 collapse   13.888     427 +1.5097   1.72714  2.57667  2.57602 |  11.87 1.64785 +1.3036 0.98 +0.1115
+6 G  0.005   1 expand     19.506       0 +0.0000   n/a (expansion event: r = rexp) |   6.24 1.20495 +0.4313 0.67 +0.2006
+6 O  0.00125  -1 collapse    9.176       0 +0.0000   0.99313  0.48986  0.48976 |   6.24 0.99973 +0.0000 9.17 -0.0000
+6 O  0.00125   1 expand     12.725       0 +0.0000   n/a (expansion event: r = rexp) |   6.28 0.99975 +0.0000 9.72 -0.0000
+6 O  0.0025  -1 collapse    9.187       0 +0.0000   0.99179  0.48789  0.48779 |   6.24 0.99895 +0.0000 9.18 -0.0000
+6 O  0.0025   1 expand     12.719       0 +0.0000   n/a (expansion event: r = rexp) |   6.93 0.99892 -0.0001 9.72 -0.0000
+6 O  0.005  -1 collapse    9.256      -1 -0.0035   0.98553  0.47877  0.47861 |   6.24 0.99565 -0.0002 9.24 -0.0002
+6 O  0.005   1 expand     12.689       0 +0.0000   n/a (expansion event: r = rexp) |   7.59 0.99510 -0.0012 9.71 -0.0002
+6 S  0.00125  -1 collapse    8.850       0 +0.0000   0.99321  0.48999  0.48989 |   6.24 0.99972 -0.0000 8.85 +0.0000
+6 S  0.00125   1 expand     12.405       0 +0.0000   n/a (expansion event: r = rexp) |   6.24 0.99977 -0.0000 9.40 -0.0000
+6 S  0.0025  -1 collapse    8.841       0 +0.0000   0.99223  0.48853  0.48844 |   6.24 0.99894 -0.0000 8.83 -0.0000
+6 S  0.0025   1 expand     12.401       0 +0.0000   n/a (expansion event: r = rexp) |   6.61 0.99897 -0.0000 9.40 +0.0000
+6 S  0.005  -1 collapse    8.800       0 +0.0000   0.98816  0.48254  0.48244 |   6.24 0.99572 -0.0000 8.79 -0.0000
+6 S  0.005   1 expand     12.371       0 +0.0000   n/a (expansion event: r = rexp) |   7.25 0.99540 +0.0000 9.39 -0.0000
+
+100 of 111 checks pass; 11 fail: SL[D=4 G h=0.02], SL[D=4 G h=0.01], SL[D=4 G h=0.005], ED[D=4 G], BR[D=5 G h=0.00707107], SL[D=5 G h=0.00707107], SL[D=5 G h=0.00353553], SL[D=5 G h=0.00176777], SL[D=6 S h=0.005], SL[D=6 G h=0.005], SL[D=6 G h=0.0025]
+0.5 s
