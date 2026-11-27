@@ -1366,6 +1366,7 @@ def report_command(d, cfile=None):
 
 # ------------------------------------------------------------------------------------------------ controls
 CONTROLS = {
+    # cplx_conj is silent on P4 (dominance of the growing solution); cplx_hypot was added after the runs of record and is not part of the declared set.
     # mutation: (kind, target); check/planted: the command must exit 1 with a FAIL line containing the target;
     # agree: R1 with the mutation against an unmutated R2 must fail agree_resolutions; sturm: the shooting count and the Sturm count
     # (one of them mutated) must differ; spectral: `spectral` on one member must give a FAIL line containing the target
