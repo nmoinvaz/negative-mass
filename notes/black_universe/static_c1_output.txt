@@ -1,0 +1,100 @@
+[pass] S1: x-form of H at dphi = dF = 0 with q = (A/2)(V + (1 - A)/R^2), V from (v rho), R^2 A'' = 2 (A - 1): d/drho[R (A dr' - A' dr/2)] = 0 (symbolic)  (residual 0)
+[pass] S2: c_b = (1 - A rho^2/R^2)/2 - rho A'/2 = 1/(2 rho^2) + O(rho^-3) and R - rho = 1/(2 rho) + O(rho^-3) at rho -> infinity (c = -1): dm + kappa Theta = c_b dr + (R - rho) dr_x -> 0 for dr = O(ln rho)  (c_b = -2*t**3/(5*pi) + t**2/2; R - rho = -t**3/8 + t/2)
+[pass] S3: the potential V = -A''/2 - rho A'/R^2 of the member c on the profile phi = sqrt2 arctan rho is proportional to c (dV/c has no c): a neighbouring member solves a different theory  (d(V/c)/dc = 0)
+[pass] S4: the background identity of T1: mu s r_Pi = rho A/(2 kappa) and (mu s r_Pi)' = mu E (1/r - V r) with V R^2 = 1 - (rho A)' ((theta theta), #269), symbolic in A(rho)  (residual 0)
+
+4 of 4 checks pass  [1 s]  mutation: None
+[pass] T1: background identity (mu s r_Pi)' = mu E (1/r - V r), relative, 8 points of 0.05 <= s <= 100  (c = -1.0: 6.5e-11; c = -1.5: 2.8e-10)
+        (T1 0 s)
+[pass] T2: rho-form p, q against the chart's P, Q (8 points); Theta and dm in rho against the s-form on a homogeneous solution (6 points); the closed-form tail against the ODE; Theta conserved on [rho(1.05), 1e8]  (p 1.4e-13, q 7.0e-12, Theta 1.7e-12, dm 2.4e-13; closed form 3.1e-13; conservation 3.1e-13)
+        (T2 0 s)
+[pass] T3: Theta_gen vanishes on exact pure gauge L_xi(member), dF != 0, s = -3 ... 10 (finite-difference jets, step 1e-3), |Theta| over the largest of its four terms  (c = -1.0: 1.1e-09; c = -1.5: 3.5e-11; Theta without the dF term: 7.3e+00)
+        (T3 0 s)
+[pass] T4: exact static mode r = sqrt(L) R (d/dL at L = 1): c1 = 1/2; Theta_gen = -c1 at 14 values 0.05 <= s <= 1e6 (relative); dm of the slice code against d_L m at fixed Pi; dM_ADM from the family at rho = 1e8 against mpmath's d/dL of lim m_L = 1/pi; kappa c1 = dM_ADM; seven cut extensions (four right, three left) read at rho = 1e8  (c1 0.500000000000; Theta 1.1e-11; dm 7.2e-13; dM(1e8) 0.318309887515 vs mp 0.318309886184 (4.2e-09), mp vs 1/pi 7.8e-15; kappa c1 vs dM 7.8e-15; cut extensions 4.2e-13)
+        (T4 1 s)
+[pass] T5: compact datum G (#258, ODE path): |Theta_gen| <= 1e-12 at 22 points of |s| <= 1.05; homogeneous left starts of dM = 1e-4 and 2e-4: kappa c1 against dm at rho = 1e8 (relative)  (max |Theta| 1.4e-15; kappa c1 vs dM: 1.1e-13, 1.2e-13; c1 1.573913e-04, 3.147827e-04; dm(1e8) 1.001984e-04, 2.003969e-04; dm(1e2), dm(1e4) of the first: 1.001841e-04, 1.001984e-04)
+        (T5 1 s)
+[pass] T6: evolved classes A0, A1R, A1L (Richardson of h = 0.0025, 0.00125): Theta_gen(s) = -c1 at s = -0.03 ... 1.9 and dr(S) = c1 to 1e-6 (relative; the slice functional at V0 = 0.5, 1 is printed, not a criterion: its error is V0 times that of c2, 20 V0 times c1's for A1R); dM_ADM of the cut extensions (s_cut = 1.0, 1.9 on the right and -0.03 on the left, read at rho = 1e8) = kappa c1 to 1e-6; c1 against #248's table to 1e-6  (A0: c1 1.6580466e-03, Theta 3.2e-08, dr(S) 3.2e-08, (info) functional at V0 = 0.5, 1 5.3e-07, dM 3.2e-08, vs #248's table 2.3e-07; A1R: c1 5.2367679e-05, Theta 7.4e-08, dr(S) 7.3e-08, (info) functional at V0 = 0.5, 1 1.2e-06, dM 7.4e-08, vs #248's table 1.8e-08; A1L: c1 2.0947073e-03, Theta 1.1e-08, dr(S) 1.1e-08, (info) functional at V0 = 0.5, 1 2.4e-07, dM 1.1e-08, vs #248's table 1.4e-07)
+        (T6 11 s)
+[pass] T7: evolved controls L, G, R (c1 = 0 in the continuum): max |Theta_gen(s)| <= 1e-12 after Richardson (the issue's bar) and the raw values fall by 4 +- 1 per halving at the last two steps (T5 gives the compact datum)  (L: |Theta|max 2.0e-13 (Richardson); raw 3.0e-08, 7.4e-09, 1.8e-09, 4.6e-10; ratios 4.01, 4.00, 4.00; G: |Theta|max 3.0e-13 (Richardson); raw 1.9e-08, 4.7e-09, 1.2e-09, 3.0e-10; ratios 3.95, 3.99, 4.00; R: |Theta|max 2.9e-13 (Richardson); raw 1.9e-08, 4.7e-09, 1.2e-09, 3.0e-10; ratios 3.95, 3.99, 4.00)
+        (T7 9 s)
+[pass] T8: exact static mode (amplitude dL = 2e-3, c1 = 1e-3, dM_ADM = dL/pi) as ray data through the Kruskal solver: error/scale at h = 0.00125, last ratio; c1 of the fit, dr(S), the slice functional c1 = dr - V0 c2 at V0 = 0.5, 1; Theta_gen(s); dM_ADM of the cut extensions; |c2|  (errors 3.17e-02, 7.96e-03, 1.99e-03, 4.98e-04; last ratio 4.00; c1 fit 4.9e-09, dr(S) 3.5e-09, functional 2.1e-08, Theta 7.6e-09, dM 7.6e-09; c2 -3.1e-11)
+        (T8 4 s)
+[pass] T9: #232's solver (linear.py, c = -1, h = 0.005, 0.0025 Richardson, P = 7): c1 = dr(p0) - e^{b p0} c2_slice from the slices p + sigma = const crossing the horizon at p0 = 0.5, 1, 2, 4, 6 equals the horizon fit to 1e-6 (relative to |c1|; classes A0, A1R, A1L), and |c1| <= 1e-9 for the pulse classes L, R  (A0: c1 3.0349284e-04, c2 9.58974e-04, functional vs fit at p = 0.5 ... 6: 3.67e-08, 3.67e-08, 3.69e-08, 3.85e-08, 4.36e-08; A1R: c1 -1.5707963e-03, c2 1.57080e-03, functional vs fit at p = 0.5 ... 6: 1.33e-08, 1.33e-08, 1.34e-08, 1.34e-08, 1.67e-08; A1L: c1 1.5707963e-03, c2 8.96605e-04, functional vs fit at p = 0.5 ... 6: 5.05e-09, 5.07e-09, 5.05e-09, 5.35e-09, 5.79e-09; L: c1 fit -9.4e-13, functional 4.4e-16, -2.6e-15, -1.1e-15, 3.3e-14, 1.9e-13; R: c1 fit 3.7e-13, functional 1.1e-26, 3.0e-22, 2.1e-16, -3.9e-14, -1.7e-14)
+        (T9 125 s)
+[pass] T10: first law along the exact static family r = sqrt(L) R (finite L, mpmath): dM/dL = kappa_xi (dA/dL)/(8 pi), A = 4 pi L R(rho_h)^2, kappa_xi = sqrt(L) A'(rho_h)/2, at L = 0.5 ... 4 (ratio of the two sides)  (ratios 0.5: 1.000000000000, 0.9: 1.000000000000, 1.0: 1.000000000000, 1.5: 1.000000000000, 2.0: 1.000000000000, 4.0: 1.000000000000)
+        (T10 0 s)
+[pass] T11: c1 from one point of the slice: #232's corner (p, sigma) = (0, 0) is (V, U) = (1, -1) on V + U = 0, so c1 = -Theta_gen(s = 1) = -(a dr + mu dr') with dr = a0, dr' = a1R/b - a1L tanh(b sigma*)/b equals the horizon fit of #232's solver (h = 0.005, 0.0025 Richardson) to 1e-6 for A0, A1R, A1L and is 0 for the pulse classes L, R (1e-12; fit 1e-9)  (A0: closed form 3.034928278e-04, fit 3.034928390e-04, relative 3.7e-08; A1R: closed form -1.570796327e-03, fit -1.570796306e-03, relative 1.3e-08; A1L: closed form 1.570796327e-03, fit 1.570796335e-03, relative 5.1e-09; L: closed form -0.0e+00, fit -9.4e-13; R: closed form -0.0e+00, fit 3.7e-13)
+        (T11 0 s)
+
+11 of 11 checks pass  [150 s]  mutation: None
+== exact static mode r = sqrt(L) R, F_L = A + 1/L - 1 (#269 N6), d/dL at L = 1, fixed Pi ==
+c1 = dr(S) = 0.500000000000; c2 = 0; dM_ADM = d_L [2 L^(3/2)/(3 pi)] = 1/pi = 0.318309886184; kappa c1 = 0.318309886184; mpmath d_L lim m_L = 0.318309886184
+        s       rho  Theta_gen + c1   Theta (no dF)        dm slice        dm exact
+     0.05    0.0062       1.665e-16   -4.999536e-01    0.2523826708    0.2523826708
+      0.1    0.0243      -6.661e-16   -4.992927e-01    0.2590159242    0.2590159242
+      0.3    0.1906      -3.997e-15   -4.628876e-01    0.2966908691    0.2966908691
+      0.7    0.6735      -7.483e-14   -1.729225e-01    0.3047476775    0.3047476775
+        1    1.0000      -2.220e-15    1.068003e-01    0.3099079532    0.3099079532
+        2    1.7767       1.976e-14    8.906064e-01    0.3311291084    0.3311291084
+        5    2.9612      -1.199e-14    2.198572e+00    0.3416654330    0.3416654330
+       20    4.9015      -6.484e-14    4.408333e+00    0.3398086749    0.3398086749
+      100    7.2516       3.020e-14    7.108162e+00    0.3351927028    0.3351927028
+    1e+03   10.6956       6.573e-14    1.107413e+01    0.3306397464    0.3306397464
+    1e+04   14.1884       1.990e-13    1.509904e+01    0.3278660587    0.3278660587
+    3e+04   15.8654      -1.759e-12    1.703174e+01    0.3269160568    0.3269160568
+    1e+05   17.7088      -3.787e-12    1.915633e+01    0.3260606571    0.3260606571
+    1e+06   21.2467      -5.596e-12    2.323409e+01    0.3248073903    0.3248073903
+dm(rho) at fixed Pi, rho > 21.6, minus 1/pi, times rho (the 1/rho convergence of the mass at fixed Pi):
+   rho =  3.0e+01: dm = 0.322929821008, (dm - 1/pi) rho = 0.138598
+   rho =  1.0e+02: dm = 0.319678119137, (dm - 1/pi) rho = 0.136823
+   rho =  1.0e+03: dm = 0.318443782985, (dm - 1/pi) rho = 0.133897
+   rho =  1.0e+04: dm = 0.318323212380, (dm - 1/pi) rho = 0.133262
+   rho =  1.0e+06: dm = 0.318310019335, (dm - 1/pi) rho = 0.133152
+   rho =  1.0e+08: dm = 0.318309887515, (dm - 1/pi) rho = 0.133150
+== #248's classes (corner (-0.05, -2) of the rectangle, amplitude 1e-3), Richardson of h = 0.0025, 0.00125 ==
+class         c1 fit          dr(S)             c2       kappa c1     dM cut 1.0     dM cut 1.9   dM cut -0.03  Theta(0.5)+c1  Theta(1.9)+c1
+  A0  1.6580466e-03  1.6580467e-03  1.2270433e-02  1.0555453e-03  1.0555453e-03  1.0555453e-03  1.0555453e-03      -5.36e-11      -5.24e-11
+ A1R  5.2367679e-05  5.2367683e-05  1.0473537e-03  3.3338300e-05  3.3338302e-05  3.3338302e-05  3.3338302e-05      -3.86e-12      -3.86e-12
+ A1L  2.0947073e-03  2.0947073e-03  1.0071565e-02  1.3335321e-03  1.3335321e-03  1.3335321e-03  1.3335321e-03      -2.33e-11      -2.31e-11
+   G -4.7908676e-12  2.7826511e-17 -9.6108622e-04 -3.0499610e-12 -1.8931993e-13 -9.0780400e-16 -2.1614802e-14      -4.89e-12      -4.79e-12
+   L -9.3074865e-13 -2.5580639e-17 -9.6108622e-04 -5.9253299e-13 -7.4517792e-16 -5.1261294e-21 -2.1659138e-14      -1.00e-12      -9.31e-13
+   R -3.8601142e-12  5.2729887e-17  5.3538291e-13 -2.4574250e-12 -1.8644313e-13  2.1250594e-15  4.4660737e-17      -3.89e-12      -3.86e-12
+c1 of the horizon fit and Theta_gen(s = 0, 0.5, 1.9) against h = 0.01, 0.005, 0.0025, 0.00125:
+   A0: c1 fit 1.6516614e-03, 1.6564432e-03, 1.6576453e-03, 1.6579463e-03; Theta(0) -1.6575300e-03, -1.6579171e-03, -1.6580143e-03, -1.6580386e-03; Theta(1.9) -1.6569286e-03, -1.6577666e-03, -1.6579766e-03, -1.6580292e-03
+   A1L: c1 fit 2.0920382e-03, 2.0940365e-03, 2.0945394e-03, 2.0946653e-03; Theta(0) -2.0943734e-03, -2.0946238e-03, -2.0946864e-03, -2.0947021e-03; Theta(1.9) -2.0940250e-03, -2.0945366e-03, -2.0946646e-03, -2.0946966e-03
+== the formal neighbouring member d/dc at c = -1 (a solution of the potential V_c, not of V_-1): mpmath, 40 digits ==
+dM_ADM/dc = -0.212206592528 (-2/(3 pi) = -0.212206590789); c1 = d_c R(rho_h(c)) = 0.00e+00 (R'(0) = 0); kappa c1 = 0 against dM_ADM/dc: the identity does not hold for it, and it is not a perturbation of the fixed theory (S3)
+== the evolved exact mode (amplitude 2e-3), Richardson of h = 0.0025, 0.00125 ==
+c1 fit 9.999999951e-04 (exact 1e-3); dr(S) 9.999999965e-04; c2 -3.06e-11; dM cuts 6.366197700e-04, 6.366197675e-04, 6.366197698e-04 (exact 6.366197724e-04); error/scale 3.17e-02, 7.96e-03, 1.99e-03, 4.98e-04
+== #258's ODE path: compact datum G and homogeneous left starts with mass ==
+G: c1 = 1.37e-15, c2 = -6.653514770e-04; max |Theta_gen| over 22 points = 1.43e-15
+homogeneous start (dM(3e4) = 1e-04 of #258): c1 = 1.573913478e-04, kappa c1 = 1.001984440e-04; dm at rho = 1e+02: 1.001840884e-04, 1e+04: 1.001984403e-04, 1e+06: 1.001984440e-04, 1e+08: 1.001984440e-04; -kappa Theta = 1.001984440e-04; dm(3e4) of the s-form = 1.000000000e-04
+homogeneous start (dM(3e4) = 2e-04 of #258): c1 = 3.147826957e-04, kappa c1 = 2.003968881e-04; dm at rho = 1e+02: 2.003681767e-04, 1e+04: 2.003968806e-04, 1e+06: 2.003968881e-04, 1e+08: 2.003968881e-04; -kappa Theta = 2.003968881e-04; dm(3e4) of the s-form = 2.000000000e-04
+== #232's corner (p, sigma) = (0, 0) = (V, U) = (1, -1) lies on V + U = 0: c1 = -Theta_gen(s = 1) in closed form ==
+rho(s = 1) = 1.000000000000, r = 1.414213562373 (sqrt2 = 1.414213562373), a(1) = -R A'/(2 kappa) = -0.303492827834; c1(A0) = -a(1) a0 = 3.034928278e-04 = sqrt2 (1 - pi/4) a0 = 3.034928278e-04; c1(A1L) = 1.570796327e-03, c1(A1R) = -1.570796327e-03 (a/kappa = 1.570796327e-03)
+== #232's solver (linear.py, c = -1, P = 7), Richardson of h = 0.005, 0.0025: c1 as a functional of the slice data ==
+ A0: c1 fit 3.034928390e-04 (h = 0.01, 0.005, 0.0025: 3.0332193e-04, 3.0345017e-04, 3.0348217e-04), c2 fit 9.5897432e-04; functional at p0 = 0.5, 1, 2, 4, 6: 3.034928278e-04, 3.034928278e-04, 3.034928278e-04, 3.034928273e-04, 3.034928257e-04
+A1R: c1 fit -1.570796306e-03 (h = 0.01, 0.005, 0.0025: -1.5711265e-03, -1.5708787e-03, -1.5708169e-03), c2 fit 1.5707963e-03; functional at p0 = 0.5, 1, 2, 4, 6: -1.570796327e-03, -1.570796327e-03, -1.570796327e-03, -1.570796327e-03, -1.570796332e-03
+A1L: c1 fit 1.570796335e-03 (h = 0.01, 0.005, 0.0025: 1.5706852e-03, 1.5707686e-03, 1.5707894e-03), c2 fit 8.9660477e-04; functional at p0 = 0.5, 1, 2, 4, 6: 1.570796327e-03, 1.570796327e-03, 1.570796327e-03, 1.570796326e-03, 1.570796326e-03
+  L: c1 fit -9.412418480e-13 (h = 0.01, 0.005, 0.0025: 1.3993827e-08, 3.4927815e-09, 8.7248945e-10), c2 fit -1.0404810e-04; functional at p0 = 0.5, 1, 2, 4, 6: 4.384784636e-16, -2.606729213e-15, -1.066132136e-15, 3.288240629e-14, 1.854916683e-13
+  R: c1 fit 3.719453023e-13 (h = 0.01, 0.005, 0.0025: -1.0615099e-08, -2.6515051e-09, -6.6259732e-10), c2 fit -1.0690158e-14; functional at p0 = 0.5, 1, 2, 4, 6: 1.070085170e-26, 2.959211091e-22, 2.060751343e-16, -3.862699999e-14, -1.697389679e-14
+s_q: fired ['S1']; declared ['S1']; equal
+s_pot: fired ['S1', 'S3', 'S4']; declared ['S1', 'S3', 'S4']; equal
+cor_noa0: fired ['T11']; declared ['T11']; equal
+cor_dU: fired ['T11']; declared ['T11']; equal
+law_norm: fired ['T10']; declared ['T10']; equal
+th_noF: fired ['T3', 'T4', 'T6', 'T7', 'T8']; declared ['T3', 'T4', 'T6', 'T7', 'T8']; equal
+th_nophi: fired ['T3', 'T4', 'T5', 'T6', 'T7', 'T8']; declared ['T3', 'T4', 'T5', 'T6', 'T7', 'T8']; equal
+th_asign: fired ['T11', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8']; declared ['T11', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8']; equal
+dm_noT: fired ['T2', 'T4', 'T5', 'T6', 'T8']; declared ['T2', 'T4', 'T5', 'T6', 'T8']; equal
+kappa_off: fired ['T4', 'T5', 'T6']; declared ['T4', 'T5', 'T6']; equal
+jump_off: fired ['T4', 'T6', 'T8']; declared ['T4', 'T6', 'T8']; equal
+xform_p: fired ['T2', 'T4', 'T5', 'T6', 'T8']; declared ['T2', 'T4', 'T5', 'T6', 'T8']; equal
+xform_q: fired ['T2', 'T4', 'T5', 'T6', 'T8']; declared ['T2', 'T4', 'T5', 'T6', 'T8']; equal
+mode_khat: fired ['T4', 'T8']; declared ['T4', 'T8']; equal
+mode_dF0: fired ['T4', 'T8']; declared ['T4', 'T8']; equal
+fn_c1_noV: fired ['T9']; declared ['T9']; equal
+fn_c1_aT: fired ['T8', 'T9']; declared ['T8', 'T9']; equal
+fn_c1_sign: fired ['T9']; declared ['T9']; equal
+18 of 18 fired sets equal the declared ones
