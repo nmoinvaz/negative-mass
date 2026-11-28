@@ -1,0 +1,64 @@
+$ log_at_S.py derive   (exit 0)
+[pass] D1: static chart, own Ricci: E_tt, E_rr and the scalar equation vanish with Vp from E_thth; Vp = (1 - (rho A)')/R^2  (residuals 0, 0, 0, 0; A(0) = 0, A'(0) = 2*kappa, A''(0) = -2/b**2)
+[pass] D2: Kruskal chart: the background series (Om0 = A/(2 kappa^2 Pi), r0, Th0, Vp) solves VV, VU, UU, thth and the scalar equation  (lowest degree of a nonzero residual (b, G0, equation: degree; bar > 8): b=1 G0=1: VV:10,VU:10,UU:10,thth:10,sc:10; b=2 G0=1: VV:10,VU:10,UU:10,thth:10,sc:10; b=3/2 G0=3: VV:10,VU:10,UU:10,thth:10,sc:10)
+[pass] D3: linearized operator: pure gauge (xi^V, xi^U arbitrary in (V, U), and xi^V(V), xi^U(U)) solves all five linearized equations  (lowest degree of a nonzero residual (bar > 8): b=1 G0=1: VV:9,VU:9,UU:9,thth:9,sc:9; b=2 G0=1: VV:9,VU:9,UU:9,thth:9,sc:9; b=3/2 G0=3: VV:9,VU:9,UU:9,thth:9,sc:9)
+[pass] D4: Y = dr - g dth vanishes on pure gauge (gauge invariant)  (lowest degree of Y(pure gauge): b=1: 11, b=2: 11, b=3/2: 11; bar > 8)
+
+4 checks, 4 pass; failed: []; mutation None; 7 s
+
+$ log_at_S.py series   (exit 0)
+[pass] S1: double-null gauge (dr, dOm, dth): smooth solutions (nullity 33 of the truncated system, N = 7) obey y21 = (F_Pi/2) y10, y12 = (F_Pi/2) y01, y_i0 = y_0i = 0 (i >= 2); y21 = 0 is excluded  (F_Pi(0) = 1/kappa from my Om0; y21 = (F_Pi/2) y10: True; y12 = (F_Pi/2) y01: True; Y_N''(0) = -F_Pi Y_N(0): True; horizon laws True; y21 = 0 in the span: False)
+       relation: (1) y00 + (1/kappa) y11 + (-2) y22 = 0
+       relation: (1) y01 + (-2*kappa) y12 = 0
+       relation: (1) y02 = 0
+       relation: (1) y03 = 0
+       relation: (1) y04 = 0
+       relation: (1) y10 + (-2*kappa) y21 = 0
+       relation: (1) y20 = 0
+       relation: (1) y30 = 0
+       relation: (1) y40 = 0
+[pass] S1b: a smooth solution with delta r = c2 V on H+ and 0 on H- (y00 = y01 = 0, y10 = 1, nothing else imposed) exists  (nullity 30; its Y = V + (F_Pi/2) V^2 U + ... = V + 1/(2*kappa) V^2 U + ...; V R = V + O(V^3 U^2))
+[pass] S1g: general smooth gauge (dr, dOm, dth, hv, hu): smooth solutions (nullity 67 of the truncated system, N = 5) obey y21 = (F_Pi/2) y10, y12 = (F_Pi/2) y01, y_i0 = y_0i = 0 (i >= 2); y21 = 0 is excluded  (F_Pi(0) = 1/kappa from my Om0; y21 = (F_Pi/2) y10: True; y12 = (F_Pi/2) y01: True; Y_N''(0) = -F_Pi Y_N(0): True; horizon laws True; y21 = 0 in the span: False)
+[pass] S2: smooth ansatz: no solution with Y = c2 V R, none with Y = c2' U R (also when only the degree <= 3 coefficients of Y are imposed), a solution with Y = c1 R  (consistent: Y=VR (degree <= 7): False, Y=UR (degree <= 7): False, Y=VR (degree <= 3): False, Y=R (degree <= 7): True)
+[pass] S3: log ansatz: Y = c2 V R has a solution; the coefficient of V ln V in delta theta is -c2/kappa for every solution, i.e. d_N delta phi = -sqrt2/kappa c2 ln|s| = -(pi/sqrt2) c2 ln|s| at kappa = 2/pi  (double-null gauge: coefficient of V ln V in delta theta = -1/kappa, spread over the solution space False, nullity 31, log terms of delta theta of degree <= 1: [('dth', 1, 0, '-1/kappa')] | general smooth gauge, logs also in hv, hu: coefficient of V ln V in delta theta = -1/kappa, spread over the solution space False, nullity 103, log terms of delta theta of degree <= 1: [('dth', 1, 0, '-1/kappa')])
+[pass] S4: planted: Y = c1 R (the static mass mode) through the same log ansatz: the coefficient of V ln V in delta theta is 0 for every solution  (q = 0, spread False, log terms of delta theta in the particular solution: [])
+[pass] S5: control: members (b, kappa) with A''(0) = -2/b^2 and kappa independent, and G0 changed: q = A''(0) c_h / (2 kappa), c_h = d_V delta r on H+  (b=1, G0=1: A''(0) = -2, q = -1/kappa, A''(0)/(2 kappa) = -1/kappa: equal | b=2, G0=1: A''(0) = -1/2, q = -1/(4*kappa), A''(0)/(2 kappa) = -1/(4*kappa): equal | b=3/2, G0=1: A''(0) = -8/9, q = -4/(9*kappa), A''(0)/(2 kappa) = -4/(9*kappa): equal | b=1/2, G0=1: A''(0) = -8, q = -4/kappa, A''(0)/(2 kappa) = -4/kappa: equal | b=1, G0=3: A''(0) = -2, q = -1/kappa, A''(0)/(2 kappa) = -1/kappa: equal | b=2, G0=5/2: A''(0) = -1/2, q = -1/(4*kappa), A''(0)/(2 kappa) = -1/(4*kappa): equal)
+[pass] S6: the log is the violation of the smooth relation: Y = V + t V^2 U + ... has q = 2 t - F_Pi, and a smooth solution iff t = F_Pi/2  (y21 = 0/1 (F_Pi/2) y10: smooth solution False, q = -1/kappa (2 y21 - F_Pi y10 = -1/kappa) | y21 = 1/2 (F_Pi/2) y10: smooth solution False, q = -1/(2*kappa) (2 y21 - F_Pi y10 = -1/(2*kappa)) | y21 = 1/1 (F_Pi/2) y10: smooth solution True, q = 0 (2 y21 - F_Pi y10 = 0) | y21 = 2/1 (F_Pi/2) y10: smooth solution False, q = 1/kappa (2 y21 - F_Pi y10 = 1/kappa))
+
+8 checks, 8 pass; failed: []; mutation None; 80 s
+
+$ log_at_S.py check   (exit 0)
+[pass] B1: the family r = lam R, F = A - 2 rho lam'/lam + 1/lam^2 - 1 solves vv, v-rho, rho-rho, thth and the scalar equation of my Ricci in the ingoing chart  (worst relative residual 3.65e-31 over 2 values of beta and 3 points; bar 1e-20)
+       0 s
+[pass] B5: amplitude of the family: delta r = c1 + c2 V on the ray U = 0 with c1 = 0, c2 = 1/2 per unit beta  (c2 = 0.5 (V = 1e-7), delta r / V over V = 1e-3, 1e-5, 1e-7 differs by 4.72e-16; c1 = 0.0)
+[pass] B2: d_V delta phi of the exact family at fixed U: slope against ln V over -(pi/sqrt2) c2, at V = 1e-4 ... 1e-8 (bar |ratio - 1| < 1e-4 at 1e-8 and falling)  (V_b = 1.0, U = -0.5: 1.00881026, 1.00109839, 1.00013149, 1.00001531, 1.00000175; V_b = 1.0, U = -1.0: 1.04244313, 1.00495788, 1.00056586, 1.00006358, 1.00000706; V_b = 0.05, U = -0.5: 1.00288906, 1.00043333, 1.00005775, 1.00000722, 1.00000087; V_b = 0.05, U = -1.0: 1.00596401, 1.00089155, 1.00011859, 1.0000148, 1.00000177)
+       137 s
+[pass] X1: cross-check of the two routes: the numeric slope of B2 equals Route A's exact -(sqrt2/kappa) c2 (S3) to 1e-5, and does not depend on the step in beta (eps/10)  (ratio at 1e-8: 1.00000175 (eps) and 1.00000175 (eps/10); -(sqrt2/kappa) c2 = -1.11072073454)
+       170 s
+[pass] B3: planted: the static mass mode (r = sqrt(L) R, F = A + 1/L - 1), in its own Kruskal chart V = e^{kappa_L v}, has no log: slope / ((pi/sqrt2) c) < 1e-6 at V = 1e-8  (U = -0.5: slope / ((pi/sqrt2)/2) = -0.000629, -6.3e-5, -6.3e-6, -6.3e-7, -6.3e-8; U = -1.0: slope / ((pi/sqrt2)/2) = -0.00675, -0.000679, -6.79e-5, -6.79e-6, -6.79e-7)
+       190 s
+[pass] B4: the same mode in the chart with V = e^{kappa v} of the background (kappa not kappa_L) has the log of the gauge xi^V = (d kappa/kappa) V ln V, proportional to U_K = -Pi(rho_b)/V_b: sqrt2 U_K/(2 kappa^2) per unit dL, to 1e-3  (U = -0.5: slope -1.33537, predicted sqrt2 U_K/(2 kappa^2) = -1.335368; U = -1.0: slope -4.3139115, predicted sqrt2 U_K/(2 kappa^2) = -4.3138906)
+       211 s
+
+6 checks, 6 pass; failed: []; mutation None; 211 s
+
+$ log_at_S.py mutations runs mut_
+eps     (derive): fired D1,D2,D3; declared D1,D2,D3: equal
+a2      (derive): fired D2,D3; declared D2,D3: equal
+om      (derive): fired D2,D3; declared D2,D3: equal
+gauge   (derive): fired D3; declared D3: equal
+gth     (derive): fired D4; declared D4: equal
+fpi     (series): fired S1,S1g,S6; declared S1,S1g,S6: equal
+nolog   (series): fired S3,S4,S5,S6; declared S3,S4,S5,S6: equal
+pred    (series): fired S5; declared S5: equal
+rhs     (series): fired S3,S5,S6; declared S3,S5,S6: equal
+hor     (series): fired S1b; declared S1b: equal
+s2t     (series): fired S2; declared S2: equal
+rate    (check): fired B1,B2,B5,X1; declared B1,B2,B5,X1: equal
+h       (check): fired B1,B2,X1; declared B1,B2,X1: equal
+beta    (check): fired B1,B2,X1; declared B1,B2,X1: equal
+phi     (check): fired B1,B2,B4,X1; declared B1,B2,B4,X1: equal
+chart   (check): fired B3; declared B3: equal
+pgauge  (check): fired B4; declared B4: equal
+step    (check): fired B5,X1; declared B5,X1: equal
+18 of 18 fired sets equal the declared ones
