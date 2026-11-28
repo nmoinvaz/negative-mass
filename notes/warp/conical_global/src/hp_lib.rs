@@ -82,6 +82,9 @@ impl<P: Precision<Native>> Scalar for W<P> {
     fn round_dd(self) -> Self {
         W(P::from_dd(P::to_dd(self.0)))
     }
+    fn is_finite(self) -> bool {
+        P::part(self.0, 0).is_finite()
+    }
     /// the Cauchy sum in the lane's dot accumulator, as `field::cs` (which `hp.rs` used) forms it
     fn cauchy(a: &[Self], b: &[Self], k: usize) -> Self {
         let mut acc = <P::V as BaseLane>::acc0();
@@ -282,6 +285,7 @@ pub fn hp_walk<P: Precision<Native>>(
         }
         let adv = match w.advance(h, targets[ti]) {
             Ok(a) => a,
+            Err(WStop::NotFormed) => unreachable!("advance follows the form of the same state"),
             Err(WStop::Tiny) => {
                 out.stop = Stop::TinyStep;
                 break;

@@ -6,9 +6,9 @@ rust-version = "1.89"
 publish = false
 
 [dependencies]
-multishoot = { git = "https://github.com/nmoinvaz/multishoot", rev = "eaf55a8d53b9a1379b64a60f4f14e59ccc270687" }
-multisolver = "=0.2.2"
-multidouble = "=5.1.0"
+multishoot = "=5.0.0"
+multisolver = "=0.3.0"
+multidouble = "=6.1.0"
 
 [features]
 # the implicit-ODE recursion and the walk of multishoot::implicit in place of poly.rs and hp.rs (issue #190)
