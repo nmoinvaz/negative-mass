@@ -354,10 +354,12 @@ def collect(raw, outdir, boxes):
         if os.path.exists(f) and not (MUT == "missing" and bx["name"] == boxes[0]["name"]):
             rec[bx["name"]] = json.load(open(f))
     print("# #274: the winding2 boxes of #126 (31) and #117 (4) counted with the crate's complex lane (f64) as the evaluator, --guard=all")
-    print(f"{len(rec)} of {len(boxes)} boxes have a record")
+    lists = [b for b in boxes if not b["extra"]]
+    print(f"{sum(b['name'] in rec for b in lists)} of {len(lists)} boxes of the two lists have a record"
+          + (f"; {sum(b['name'] in rec for b in boxes if b['extra'])} of {sum(b['extra'] for b in boxes)} extra box outside them (#115's s1 at l = 5, last rows)" if len(lists) < len(boxes) else ""))
     print("| box | source | l | eps, omega | region | R_s | stored winding | crate winding | planted (stored) | planted (crate) | max step (stored, crate) | min abs D (stored, crate) | verdict |")
     print("|---|---|---|---|---|---|---|---|---|---|---|---|---|")
-    bad = 0
+    bad, bad_ctl = 0, []
     for bx in boxes:
         r = rec.get(bx["name"])
         if r is None:
@@ -381,7 +383,7 @@ def collect(raw, outdir, boxes):
         if r is None or "crate" not in r:
             continue
         c, a, p = r["crate"], r["agree"], r["points"]
-        print(f"| {r['box']} | {c['margin']:.2e} | {c['plant_margin']:.2e} | {r['E']:.2e} | {a['ph_max']:.2e} | {a['mod_max']:.2e} | {r['margin_used'] / (CRIT['FACTOR'] * r['E']):.0f} | "
+        print(f"| {r['box']} | {c['margin']:.2e} | {c['plant_margin']:.2e} | {r['E']:.2e} | {a['ph_max']:.2e} | {a['mod_max']:.2e} | {r['margin_used'] / (CRIT['FACTOR'] * r['E']):.1f} | "
               f"{p['asked']} | {p['stored']} | {p['asked_not_stored']} | {p['stored_not_asked']} | {c['n_evaluated_now']} | {c['wall_sum']:.1f} | {c['wall_median']:.3f} / {c['wall_max']:.3f} | "
               f"{c['t_star'] + c['t_table']:.1f} |")
     print()
@@ -401,21 +403,34 @@ def collect(raw, outdir, boxes):
         dm = os.path.join(outdir, "results", m)
         if os.path.isdir(dm):
             ctl[m] = {n[:-5]: json.load(open(os.path.join(dm, n))) for n in os.listdir(dm) if n.endswith(".json")}
-    print("| control | target | boxes fired | not fired | effect (smallest and largest over the boxes) |")
+    print("| control | target | boxes fired | not fired | effect over the boxes (smallest … largest) |")
     print("|---|---|---|---|---|")
     tgt = {m: "COUNT, STORED" for m in COUNTER_MUTS}
     tgt.update({m: "MARGIN" for m in EVAL_MUTS})
     tgt["kmin_shift"] = "INPUT"
+
+    def effect(m, rs_):
+        if m in COUNTER_MUTS:   # distance of the crate's planted difference from the expectation (the check's tolerance is 0.05)
+            v = [abs(r["crate"]["plant_diff"] - r["log"]["expected"]) for r in rs_.values() if "crate" in r and r.get("fired") is not None]
+            return f"planted difference off the expectation by {min(v):.4f} … {max(v):.4f} (tolerance {CRIT['WIND']})"
+        if m == "kmin_shift":
+            v = [abs(r["rs"] - r["log"]["rs"]) for r in rs_.values() if "log" in r]
+            return f"R_s off the log's by {min(v):.1f} … {max(v):.1f} (tolerance {CRIT['RS_TOL']})"
+        v = [r["agree"]["ph_max"] for r in rs_.values() if "agree" in r]
+        q = [r["margin_used"] / (CRIT["FACTOR"] * r["E"]) for r in rs_.values() if "agree" in r]
+        stopped = sum(1 for r in rs_.values() if "agree" not in r)
+        return (f"phase against the stored values {min(v):.2e} … {max(v):.2e} rad; margin / 10 E {min(q):.2g} … {max(q):.2g} (fires below 1)"
+                + (f"; the mutated crate stopped in {stopped}" if stopped else ""))
     for m, rs_ in ctl.items():
         fired = [n for n, r in rs_.items() if r.get("fired") is True]
         na = [n for n, r in rs_.items() if r.get("fired") is None]
-        nf = [n for n, r in rs_.items() if r.get("fired") is False] + [b["name"] for b in boxes if b["name"] not in rs_]
-        bad += len(nf)
-        eff = sorted(r.get("effect", "") for r in rs_.values() if r.get("effect"))
-        print(f"| `{m}` | {tgt[m]} | {len(fired)} of {len(boxes) - len(na)}{f' ({len(na)} n/a)' if na else ''} | {', '.join(nf) if nf else 'none'} | {eff[0] if eff else ''} … {eff[-1] if eff else ''} |")
+        nf = [n for n, r in rs_.items() if r.get("fired") is False] + [b["name"] for b in lists if b["name"] not in rs_]
+        bad_ctl += [f"{m} on {n}" for n in nf]
+        print(f"| `{m}` | {tgt[m]} | {len(fired)} of {len(lists) - len(na)}{f' ({len(na)} n/a)' if na else ''} | {', '.join(nf) if nf else 'none'} | {effect(m, rs_)} |")
     print()
-    print("RESULT: " + ("every box OK, every control fired on every box it applies to" if not bad else f"{bad} box or control rows not OK"))
-    return 1 if bad else 0
+    print(f"RESULT: {len(boxes) - bad} of {len(boxes)} box rows OK" + ("" if not bad_ctl else f"; controls NOT fired: {', '.join(bad_ctl)}")
+          + ("; every control fired on every box it applies to" if not bad_ctl else ""))
+    return 1 if (bad or bad_ctl) else 0
 
 
 # ---------------------------------------------------------------------------------------------------------------
