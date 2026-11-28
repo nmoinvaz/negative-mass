@@ -359,6 +359,12 @@ apparent-horizon mass with a second code to 1.2e-4 up to e^{−f} ≈ 12):
   - The reading carries the unstable mode's second-order part: the static member reads r_th − 1 = −1.41 ε² and ṙ_th = −3.24 ε².
     With that subtracted (post hoc) the three are predicted to 3.7e-5.
   - So the relation is a statement about the reading at ε = 1e-3, not about every reading of departure.
+- *Update from #313* (`wormhole_evolution/settled_mass_route5.md`; *numerical evidence*):
+  - A route of moderate leverage (normal pulse width 0.7 at centre 5.0; leverage 0.10, 0.52, 0.77), chosen by a rule written
+    before the runs, is predicted by #295's frozen refit within the bar: +2.9e-5, +5.3e-5, +1.8e-5 (6e-5). Y2's margin (7.2e-6) is
+    below its settled mass's h change (1.3e-5).
+  - The static-member fit is poor at two of the three (rms 1.5e-4, 2.3e-4), and the misses are not ordered by leverage (#305's X1
+    at 0.27 missed by 9e-5). So the miss of #305's route is not explained by leverage or by the static fit's rms alone.
 - *Update from #246* (`wormhole_evolution/settled_mass_d56.md`; *numerical evidence*):
   - The same chain at D = 5 and 6 (M = r^{n−1}/2 on the apparent horizon; second order at three h; a planted Tangherlini recovered
     to 3e-6 to 6e-6; to e^{−f} = 4.0e8 on the horizon) gives for the symmetric family S a settled mass of 0.14587 a²

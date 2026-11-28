@@ -154,3 +154,15 @@ The misses of this refit are not ordered by leverage across the three routes (#3
 `settled_mass_route5.py` (commands `tag`, `bracket`, `pstar`, `job`, `member`, `planted`, `analyze`; `--mutate=`, `--baseline=`, `--rn=`), `settled_mass_route5_output.txt`, `settled_mass_route5_post.py`, `settled_mass_route5_post_output.txt`, `settled_mass_route5_graph.py`, `settled_mass_route5.svg`, this note;
 raw `negative-mass-raw/I313-mac` (`README.md` in stages 1, 1b, 2: the choice rule, the bars, the scan, the route, the mutation table; `runs/<tag>/h<h>/{pstar,chain,member,logs}` the six runs of record, `runs_rep/` the X2 reproduction, `runs_rn/` the second realization, `mut/` the 35 mutated analyses of record,
 `dev/` the scan (`devselect.1.log`), the retune (`logs/tune_*`), the planted cases (`planted_1.log`), the development set (`set_a/`), its analyses (`ana_dev1.log`, `ana_dev2.log`) and mutations (`mut_a/`), `scripts/`, `jobs_*.txt`, `analyze_record.log`, `post_hoc_1.log`, `post_hoc_2.log` (final) and the figure).
+
+## Coordinator's review
+
+Merged at c1aef96. Review folder `negative-mass-raw/I313-mac-review` at 6a2e31ea, criteria committed (b7fff361) before the first run of
+`ind313.py`. The route was chosen by the issue's rule, written into the raw README before the scan.
+
+- **Rerun on the Mac** from 779a6ba: the Y3 point at h = 0.005 is bitwise equal to the runner's, and `analyze` equals the output of
+  record (exit 1: FITQ, as declared).
+- **ind313**, 2 of 2, with ind283's reader: M − P4 = +2.87e-5, +5.28e-5, +1.85e-5 and leverage 0.103, 0.521, 0.771. `old-coef` and
+  `no-speed` fire. Run 1 of the review script stopped on its own NameError after both checks had printed PASS; run 2 is the fix.
+- Y2's margin (7.2e-6) is below its settled mass's h change (1.3e-5): the pass at Y2 is within the resolution, as the note says.
+- Applied: `settled_mass_route3.md`, `critical_ghost.md` §1.3, and Paper V (`paper_numbers.py` 270 of 270).
