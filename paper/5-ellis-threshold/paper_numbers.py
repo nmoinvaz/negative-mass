@@ -44,6 +44,7 @@ MUTATIONS = {
     "route4_X2": ("route4", "0.228784      +2.13e-04", "0.228784      +3.13e-04"),
     "eps_T2": ("eps", "max |M - predicted| 9.34e-05", "max |M - predicted| 5.34e-05"),
     "route5_Y2": ("route5", "0.235041      +5.28e-05", "0.235041      +6.28e-05"),
+    "speed_S1r": ("speed", "(M - pred +1.05e-04, +1.78e-04, +1.14e-04)", "(M - pred +1.05e-04, +1.78e-04, +1.24e-04)"),
     "slope_S6": ("check", "ind40 0.461705", "ind40 0.461805"),
 }
 
@@ -76,6 +77,7 @@ SRC = {
     "route4": read(EV, "settled_mass_route4_output.txt"),
     "eps": read(EV, "settled_mass_eps_output.txt"),
     "route5": read(EV, "settled_mass_route5_output.txt"),
+    "speed": read(EV, "settled_mass_speed_output.txt"),
     "expansion": read(EV, "expansion_output.txt"),
     "plateau": read(EV, "constraint_plateau_output.txt"),
     "derive": read(EV, "derive_output.txt"),
@@ -658,6 +660,16 @@ lv5 = [float(a) for a, _ in yr]; rs5 = [float(b) for _, b in yr]
 check(all(abs(x) <= 6e-5 for x in rs5), f"#313: P4 within 6e-5 at all three ({rs5})")
 printed(f"with leverage ${lv5[0]:.2f}$, ${lv5[1]:.2f}$ and ${lv5[2]:.2f}$", "#313 leverage")
 printed(f"the largest miss ${fmt(max(abs(x) for x in rs5))}$", "#313 largest residual")
+
+# #314: eight readings of #305's route (notes/wormhole_evolution/settled_mass_speed_output.txt)
+so = SRC["speed"]
+px = {m[0]: [float(x) for x in m[1].split(", ")] for m in re.findall(r"\[(?:pass|FAIL)\] PX_(\w+): .*?\(M - pred ([-+0-9.e, ]+)\)", so)}
+pn = re.findall(r"\[(pass|FAIL)\] P[NY]_\w+:", so)
+check(len(px) == 8 and all(p == "pass" for p in pn) and len(pn) == 16, f"#314: eight readings; N and Y pass under all ({len(px)}, {len(pn)})")
+x23 = min(min(abs(v[1]), abs(v[2])) for v in px.values())
+check(x23 > 6e-5, f"#314: X2 and X3 beyond 6e-5 under every reading (smallest {x23:.2e})")
+e = math.floor(math.log10(x23))
+printed(f"by at least ${x23 / 10 ** e:.2f}\\times10^{{{e}}}$", "#314: the smallest X2/X3 residual over the eight readings")
 
 print(f"\n{count} checks, {bad} failed; mutation {OPT.mutate}")
 sys.exit(1 if bad else 0)
