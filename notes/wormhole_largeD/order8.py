@@ -384,7 +384,7 @@ def run_B(N, w, V, dps, kmax=8, log=False, cached=True):
 
 
 # declared grids and the control grids are fixed in the raw README before the runs of record (see there)
-GRIDS = {"G1": (300, (1, 4), 51, 470), "G2": (310, (3, 10), 50, 460)}             # w as a fraction (num, den), evaluated at the working precision
+GRIDS = {"G1": (300, (1, 4), 50, 465), "G2": (310, (3, 10), 49, 455)}             # w as a fraction (num, den), evaluated at the working precision
 REPORT_GRIDS = {"B1": (60, (2, 5), 26, 100), "B2": (100, (1, 4), 32, 170), "B3": (170, (1, 4), 40, 285)}
 CGRIDS = {"G1": (90, (1, 4), 32, 160), "G2": (85, (3, 10), 31, 150)}
 
@@ -481,7 +481,7 @@ def check_evals():
     if GRIDSEL:
         todo = [(n, g) for n, g in todo if n in GRIDSEL]
     for name, (N, w, V, dps) in todo:
-        ev[name] = run_B(N, w, V, dps)
+        ev[name] = run_B(N, w, V, dps, log=True)
         e = ev[name]
         print(f"  {name}: {e['grid']}  {e['secs']:.0f} s (panel setup {e['init_secs']:.0f} s)\n    Omega0 = {nd(e['Om0'], 60)}\n    Omega1 = {nd(e['Om1'], 60)}"
               f"\n    Omega2 = {nd(e['Om2'], 60)}\n    Omega3 = {nd(e['Om3'], 110)}\n    Omega4 = {nd(e['Om4'], 200)}\n    Omega5 = {nd(e['Om5'], dps - 40)}"
