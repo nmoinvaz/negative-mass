@@ -12,6 +12,7 @@ a claim about these two families of curves in the (v, rho) plane.
     family_causal.py derive [--mutate=NAME]               sympy checks S0 - S6
     family_causal.py check  [--only=..] [--mutate=NAME]   numerical checks N0 - N13 (mpmath 40 digits and float64 ray integrations); exit 1 when one fails
     family_causal.py figures [OUTDIR]                     the four conformal diagrams, family_causal.svg
+    family_causal.py table                                the numbers the note quotes: horizons, reference rays, the lens
     family_causal.py mutations DIR PREFIX                 fired sets of stored logs DIR/PREFIX<name>.log against the declared ones
 
 Status words as in AGENTS.md.  Ray integrations are numerical evidence.  mpmath for every extended-precision number.
@@ -1075,6 +1076,48 @@ def figures(outdir):
     open(fn, "w").write(svg.finish(h))
     print("wrote", fn)
 
+
+def table():
+    """The numbers behind the diagrams and the note: reference quantities, apparent horizons and the event horizon at chosen v."""
+    print("== static members: rho_h, surface gravity kappa = A'(rho_h)/2, K ==")
+    for cq, cf in MEMBERS:
+        f = Fam(cf, 0.0)
+        print(f"c = {cf}: K = {f.K:.6f}, rho_h = {f.rhoh():.6f}, kappa = {f.Ap(f.rhoh()) / 2:.6f}")
+    print("\n== beta = -1 (v* = 0): the throat rho = 0, AH-, the event horizon, AH+ at chosen v; rho_1 with s_AH(rho_1) = -1 ==")
+    for cq, cf in MEMBERS:
+        f = Fam(cf, -1.0)
+        sol = eh_backward(f, -10.0)
+        K = f.K
+        A0 = f.A(-1 / K)
+        rho1 = brentq(lambda x: s_AH(f, x) + 1, max(f.rhoh(), 1e-3) * (1 + 1e-9) if cf < -1 else 1e-3, 50.0)
+        print(f"c = {cf}: P* at rho = -1/K = {-1 / K:.6f}, A(-1/K) = {A0:.6f}, rho_1 = {rho1:.6f}, F(v, 0) = c + 1/lam^2 null at v = {f.vs + np.log(1 + 1 / cf) / K:.6f} (beta = -1)" if cf < -1 else
+              f"c = {cf}: P* at rho = -1/K = {-1 / K:.6f}, A(-1/K) = {A0:.6f}, rho_1 = {rho1:.6f}, F(v, 0) = 1/lam^2 - 1 > 0 for all v < v*")
+        print("      v          s       rho_AH-      rho_EH    rho_AH+    r_EH = lam R(rho_EH)")
+        for vv in (-10.0, -7.0, -5.0, -3.0, -2.0, -1.0, -0.5, -0.1, -0.01):
+            ah = ah_roots(f, vv)
+            e = float(sol.sol(f.vs - vv)[0])
+            print(f"   {vv:7.2f}  {f.sv(vv):9.5f}  {ah['minus']:10.5f}  {e:10.5f}  {ah['plus']:9.5f}  {np.sqrt(f.lam2(vv)) * np.sqrt(1 + e * e):9.5f}")
+        zc = None
+        try:
+            zc = brentq(lambda vv: float(sol.sol(f.vs - vv)[0]), -9.0, -0.01)
+        except ValueError:
+            pass
+        print("   the event horizon crosses the throat rho = 0 at v = " + (f"{zc:.5f}" if zc is not None else "never (rho_EH < 0 for all v)"))
+    print("\n== beta = +1, c = -3/2: the trapped lens ==")
+    f = Fam(-1.5, 1.0)
+    res = minimize_scalar(lambda x: -s_AH(f, x), bounds=(1e-6, f.rhoh() * (1 - 1e-6)), method="bounded", options={"xatol": 1e-12})
+    smax, rm = -res.fun, res.x
+    print(f"s_max = max s_AH on (0, rho_h) = {smax:.8f} at rho = {rm:.6f}; the lens closes at v_max = ln(s_max)/K = {np.log(smax) / f.K:.5f}")
+    print("      v          s       rho_AH(in)   rho_AH(out)")
+    for vv in (-10.0, -7.0, -5.0, -4.0, -3.5, -3.2):
+        ah = ah_roots(f, vv)
+        print(f"   {vv:7.2f}  {f.sv(vv):9.5f}  {ah['in']:11.6f}  {ah['out']:11.6f}")
+    print("\n== beta = +1, c = -1: the throat F(v, 0) = c + 1/lam^2 and l(r) on it ==")
+    f = Fam(-1.0, 1.0)
+    for vv in (-6.0, 0.0, 3.0):
+        print(f"   v = {vv:5.1f}: s = {f.sv(vv):.5g}, F(v, 0) = {f.F(vv, 0.0):.5g}, 2 R lam l(r) = P(v, 0) = s K = {f.sv(vv) * f.K:.5g}")
+
+
 NUMERIC = [("N0", N0), ("N1", N1), ("N2", N2), ("N3", N3), ("N4", N4), ("N5", N5), ("N6", N6), ("N7", N7), ("N8", N8), ("N9", N9), ("N10", N10), ("N11", N11), ("N12", N12), ("N13", N13)]
 
 
@@ -1138,6 +1181,9 @@ def main():
         bad = run_all(DERIVE)
     elif sub == "check":
         bad = run_all(NUMERIC)
+    elif sub == "table":
+        table()
+        sys.exit(0)
     elif sub == "figures":
         args = [a for a in sys.argv[2:] if not a.startswith("--")]
         figures(args[0] if args else HERE)
