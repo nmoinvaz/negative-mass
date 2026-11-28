@@ -11,9 +11,10 @@ The pull request is [multishoot#73](https://github.com/nmoinvaz/multishoot/pull/
 series of N(x, y, y', y'') = 0, a polynomial in y'', order by order through one division by dN/dy'', carries the root branch, and
 reports where dN/dy'' vanishes. Every planted check that is gated is met in f64, double- and quad-double, and every control fails
 exactly its declared checks; three results are **not met** and recorded (the relative error of each Taylor coefficient, the
-`Conserve` mode through a double root, one f64 fold estimate). With the cargo feature `implicit_lib` #167's crate runs its
-recursion and the walk of #184 and #183 on the module, and #167's, #184's and #183's checks pass with the same eta\*, classes and
-kinds to the printed digits.
+`Conserve` mode through a double root, one f64 fold estimate). #167's crate runs its recursion and the walk of #184 and #183 on
+the module, and #167's, #184's and #183's checks pass with the same eta\*, classes and kinds to the printed digits. In #190 that
+path was the cargo feature `implicit_lib`; since #216 it is the crate's only path, on the multishoot 5.0.0 release
+([conical_global/README.md](conical_global/README.md)).
 
 ## The facility
 
@@ -78,10 +79,16 @@ themselves NOT MET were counted as controls firing; A2 uses gated cells only.
 
 ## #167's crate on the facility
 
-`notes/warp/conical_global/`, Cargo feature `implicit_lib` (default off, enables multishoot's `mutate`): `poly_lib.rs` runs
-`poly::implicit_taylor` (the matching with duals) on `Recursion<Fl<T, 1>>`, `hp_lib.rs` runs `hp::hp_walk` on `Walker` with the
-locator, the checkpoints, the trace and the statistics of N kept in the crate; `hp.rs` and `poly.rs` differ from #183's only by
-`cfg` attributes, three `pub(crate)` and a `pub use`. multishoot is taken from the PR branch by a git `rev` (eaf55a8), no local
+*History.* This section describes the crate as #190 left it. #216 moved it to multishoot 5.0.0, multisolver 0.3.0 and multidouble
+6.1.0 from crates.io, deleted the crate's own recursion and walk, and removed the feature; `poly_lib.rs` and `hp_lib.rs` were folded
+into `poly.rs` and `hp.rs`. The crate as it is now and #216's comparison with this baseline are in
+[conical_global/README.md](conical_global/README.md).
+
+In #190, `notes/warp/conical_global/` had a Cargo feature `implicit_lib` (default off, enables multishoot's `mutate`):
+`poly_lib.rs` ran `poly::implicit_taylor` (the matching with duals) on `Recursion<Fl<T, 1>>`, `hp_lib.rs` ran `hp::hp_walk` on
+`Walker` with the locator, the checkpoints, the trace and the statistics of N kept in the crate; `hp.rs` and `poly.rs` differed
+from #183's only by
+`cfg` attributes, three `pub(crate)` and a `pub use`. multishoot was taken from the PR branch by a git `rev` (eaf55a8), no local
 path. The baseline is the 9debda2 tree built against multishoot 4.2.0 from crates.io; "off" is the same code against the PR's rev.
 
 | script (arm) | exit | checks | controls | wall s | max rss MB |
@@ -121,21 +128,29 @@ NEON) and `--features portable` were run, bitwise equal digests; `+avx2,+fma` wa
 
 ## Reproduce
 
+The library suite, from a multishoot checkout at its tag 5.0.0, which holds #73:
+
 ```sh
-cd ~/Source/negative-mass-i190-libs/multishoot   # feat/implicit-taylor-r2 (PR #73)
 cargo test --release --features mutate --lib --test implicit --test taylor --test taylor_order --test plane -- --nocapture
 cargo test --release --features portable,mutate --test implicit -- --nocapture
-cd ~/Source/negative-mass-i190/notes/warp/conical_global && cargo build --release --features implicit_lib
-# then copy the binaries to target/release and run, from the repository root, with --nobuild:
-python3 notes/warp/conical_global.py --nobuild
-python3 notes/warp/conical_loglog.py --nobuild
-python3 notes/warp/conical_offgrid.py --grid=ctl --no-controls --nobuild --dump=DIR
 ```
+
+The crate, from this repository's root (the scripts build it; #216's rerun commands are in
+[conical_global/README.md](conical_global/README.md)):
+
+```sh
+python3 notes/warp/conical_global.py
+python3 notes/warp/conical_loglog.py
+python3 notes/warp/conical_offgrid.py --grid=ctl --no-controls --dump=DIR
+```
+
+#190's runs used `cargo build --release --features implicit_lib` at 550800c and `--nobuild`; that feature no longer exists.
 
 ## Coordinator's review
 
-Under review: multishoot pull request #73 (`feat/implicit-taylor-r2` at eaf55a8, on main 70fea18, not merged; its review *Update 2026-11-28:* merged (2827f0a) and released in multishoot 5.0.0; #216 moves the crate to the release.
-and release are the user's), `wip/i190-implicit-taylor` at 550800c, raw `I190-rpi5` at 5f2ac0f. Review folder
+Under review: multishoot pull request #73 (`feat/implicit-taylor-r2` at eaf55a8, on main 70fea18, not merged; its review
+and release are the user's), `wip/i190-implicit-taylor` at 550800c, raw `I190-rpi5` at 5f2ac0f. *Update 2026-11-28:* #73 was
+merged (2827f0a) and released in multishoot 5.0.0; #216 moved the crate to the release. Review folder
 `negative-mass-raw/I190-mac-review` (at ddf8e6f), whose README holds the criteria, committed before the first run of
 `ind190`. The changed files are those the brief names. The baseline files `hp.rs` and `poly.rs` only gain `cfg` gates
 and wider visibility.
@@ -161,8 +176,9 @@ and wider visibility.
   (`slaved_residual_returns_the_factorization_error`), on every platform. multishoot main at 70fea18 fails the same
   test, so the defect is on main and does not come from this PR; the runner's report did not mention the red CI. The
   CI does not assert the implicit digests, so the AVX2 build's bitwise equality is still open (#214).
-- *Added by the coordinator:* `Cargo.toml` takes multishoot from the PR commit eaf55a8 for every build, the feature
+- *Added by the coordinator:* `Cargo.toml` took multishoot from the PR commit eaf55a8 for every build, the feature
   off included. The runner checked that the feature-off output equals the baseline exactly. If the PR is
-  squash-merged, the commit leaves every branch, as #70's a880903 did; #216 moves the crate to a release.
+  squash-merged, the commit leaves every branch, as #70's a880903 did. *Update:* #216 replaced the pin with the 5.0.0
+  release.
 - **Follow-ups:** #214 (AVX2 digests), #215 (one scalar trait and `Branch::Auto`, after #73 merges) and #216
-  (`implicit_lib` as the only path, after a release).
+  (`implicit_lib` as the only path, after a release; done, and the feature removed).
