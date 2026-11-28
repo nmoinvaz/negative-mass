@@ -10,7 +10,7 @@ horizon_sector.py (linear.py) from two diagonal layers, and c2 = d_V dr(S) read 
     full_slice.py table                                   the data tables (c1, c2, Y at S, parity, the first integral)
     full_slice.py mutations DIR PREFIX                    fired sets of the stored logs DIR/PREFIX<name>.log against the declared ones
 
-Mutations: H_P H_eps M_phi M_F fn_aT fn_sign l1_sign l1_noquad dm_noT mass_off odd_off asym_S left_mass kg_eps.
+Mutations: H_P H_eps M_phi M_F fn_aT fn_sign l1_sign l1_noquad dm_noT mass_off odd_off asym_S left_mass kg_eps mode_M.
 Reads horizon_sector.py and linear.py (read-only imports). Python: ~/Source/negative-mass/.venv/bin/python.
 """
 import math
@@ -38,7 +38,7 @@ HLIST = (0.01, 0.005, 0.0025, 0.00125)
 VMAX = 3.0                                    # the right-half march reaches V = 3
 JD = 0.5                                      # the diamond over |s| <= 0.5
 KAPPA = 2.0 / math.pi
-KNOWN = ("H_P", "H_eps", "M_phi", "M_F", "fn_aT", "fn_sign", "l1_sign", "l1_noquad", "dm_noT", "mass_off", "odd_off", "asym_S", "left_mass", "kg_eps")
+KNOWN = ("H_P", "H_eps", "M_phi", "M_F", "fn_aT", "fn_sign", "l1_sign", "l1_noquad", "dm_noT", "mass_off", "odd_off", "asym_S", "left_mass", "kg_eps", "mode_M")
 assert MUT is None or MUT in KNOWN, MUT
 
 
@@ -496,7 +496,7 @@ class ModeData:
             return
         m0 = ModeData(sl, c2, ic=(0.0, 0.0, 0.0)).M_at(1.0)
         m1 = ModeData(sl, 0.0, ic=(1e-3, 0.0, 0.0)).M_at(1.0)
-        self.alpha = -m0 / m1                                           # the data with M = 0 are mode(0) + alpha * e1
+        self.alpha = 0.0 if MUT == "mode_M" else -m0 / m1               # the data with M = 0 are mode(0) + alpha * e1 (mode_M: alpha = 0, M != 0)
         self.sol = self._integrate((self.alpha * 1e-3, 0.0, 0.0))
         self.Mmax = max(abs(self.M_at(s)) for s in np.linspace(self.s0, self.s1, 14))
         self.Mscale = max(abs(m0), 1e-300)
@@ -994,6 +994,7 @@ DECLARED = {                      # computed in the development run (dev1) befor
     "asym_S": {"Q3", "Q4", "E3", "E4", "E6"},
     "left_mass": {"Q3", "Q4", "Q5", "Q7", "E3", "E4"},
     "kg_eps": {"Q6"},
+    "mode_M": {"E9"},
 }
 
 
@@ -1058,6 +1059,11 @@ def report_table():
         w = k * 1e-4 * Datum.mass_start(sl)
         sol = sl.even(SL, SR, data_G()[0] + data_G()[2].scaled(datum("G").km), tuple(w), max_step=0.01)
         print(f"delta M = {k * 1e-4:.0e}: c1 = {sol.sol(0.0)[0]:.6e}, c1/delta M = {sol.sol(0.0)[0] / (k * 1e-4):.6f}")
+    d = Datum(sl, *data_G(), mode="left_mass", name="left_mass")
+    e = d.ev(SR)
+    th = sl.theta(SR, e[0], e[1])
+    print(f"left_mass datum (G plus a homogeneous solution of delta m(3e4) = 1e-4): Theta(1.05) = {th:.9e}, -c1 = {-d.c1:.9e}, kappa c1 = {KAPPA * d.c1:.6e}, "
+          f"-kappa Theta = {-KAPPA * th:.6e}, delta m(3e4) = {dm_of(bg, SFAR, *tails(sl, e, +1)[-1][1:3]):.6e}")
     return 0
 
 
