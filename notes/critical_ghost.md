@@ -225,6 +225,13 @@ generic family, the lifetime against ln|p − p*|, and comparison with the linea
     to an odd power, which no expansion in B² gives.
   - The throat stays quasi-static (ρ_g within 4e-3 of a static throat's) and is not driven by the normal flux or the unstable
     mode. The cause is not established.
+  - *Update from #272* (`wormhole_evolution/ellis_spectrum.md`; *numerical evidence*, the zero modes *checked symbolically*):
+    - The symmetric wormhole's linear spectrum beyond the unstable mode has no pole near the transient's rate κ (0.495 at D = 5,
+      0.244 at D = 4). The zeros it has decay at rates 2.6 to 5.7.
+    - The late linear response of the throat radius is a power law. At D = 4 the shift saturates and the speed falls as t^−3; at
+      D = 5 the speed is nearly constant and falls as t^−0.2, from a double pole with a logarithm at W = 0.
+    - So the fitted κ is the local exponent of a tail. No Jordan block exists: the zero modes' secular partners are unbounded.
+    - ṙ∞/E_net varies by a factor of 5 over B = 0.02 to 0.1, so the D = 5 speed is not linear in the injected energy.
   - The expanding member A = 0.05, run to X = 160, is class FT with k = 3.9957 at two h.
 - **Update from #230** (`wormhole_evolution/throat_scaling.md`; the coordinator's review checked the closed form at n = 2 in its
   own forms): the late state of the symmetric expanding throat is a closed-form solution of the field equations with the sphere term

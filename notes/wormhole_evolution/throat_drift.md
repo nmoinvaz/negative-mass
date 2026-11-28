@@ -90,7 +90,7 @@ B = 0.02, 0.04, 0.07, 0.1: its B independence at 0.04 and 0.1 (PV's κ part) doe
 | a second-order (in B) response of the radius | ruled out | PR, PV; the exponents rise from 2.3 to 3 with B |
 | a static member with the data's ghost charge | holds at B = 0.04, fails at 0.1 | Q/q₀ = 0.997, 0.995, 0.997, 1.001 at t = 6, 8, 10, 12 (B = 0.04); 1.023, 1.061, 1.125, 1.230 (B = 0.1); 1.45 to 2.67 (B = 0.2) |
 | the constraint plateau (#226) | not tested here | roundoff of 1e-11 against ṙ∞ = 0.026 |
-| a generalized zero mode (a Jordan block) of the static family; a slow tail of the ghost field; a drift of the lapse relative to the far region | not established | the data bear on them only through the exponents above |
+| a generalized zero mode (a Jordan block) of the static family; a slow tail of the ghost field; a drift of the lapse relative to the far region | Jordan block ruled out; a slow tail is present in the linear problem (#272) | no bounded secular partner exists (the zero modes' partners t·Y are exact and Y^(1) grows as l³); the resolvent has a double pole with a logarithm at W = 0 at D = 5 (throat speed ∼ t^−0.2) and a simple pole at D = 4 (shift saturates, speed ∼ t^−3); no pole near κ ([ellis_spectrum.md](ellis_spectrum.md)) |
 
 The tuned throat radius follows a quasi-static sequence of throats whose growth speed approaches 0.026 at B = 0.1 (D = 5); what fixes that speed (∝ |B|³ in the scan, ∝ E_net^(3/2)) is the open question. At D = 4 the same measurement gives
 ṙ∞ ≤ 0.0013 and a relaxing radius (B = 0.04: r_th − 1 = +0.0009, −0.0002, −0.0009 at t = 8, 10, 12; B = 0.1: +0.0095, +0.0050, +0.0032; B = 0.2: the radius runs away, 2.1 at t = 12).
@@ -148,7 +148,7 @@ generic family approaches the static wormhole's neighbourhood with a throat that
 
 ## Recommended tasks
 
-1. **The linear spectrum of the symmetric Ellis wormhole at D = 5 beyond the unstable mode.** What: the even and odd spherically symmetric perturbations of the static wormhole (zero modes, decaying modes, any slowly growing mode), the generalized
+1. *Done in #272* ([ellis_spectrum.md](ellis_spectrum.md)): no pole of the linear resolvent near κ at D = 4 or 5; the transient's "rate" is the local exponent of a power-law tail. **The linear spectrum of the symmetric Ellis wormhole at D = 5 beyond the unstable mode.** What: the even and odd spherically symmetric perturbations of the static wormhole (zero modes, decaying modes, any slowly growing mode), the generalized
    kernel of the scale mode. Why: ṙ∞ approaches a constant and the transient has rate about 0.5 here and 0.24 at D = 4; a Jordan block of the zero modes predicts a constant speed. Acceptance (can fail): the linear mode rates against κ = 0.495 ± 0.01 and 0.244; the scale mode's
    secular term against ṙ∞/E_net at B = 0.02. Depends on: this note, #195.
 2. **Why ṙ∞ ∝ |B|³.** What: B = 0.01, 0.014 and 0.03 at h = 0.00354 (about 25 min each) and the same B at D = 4, with p*ₕ by bisection to 1e-12; fit ṙ∞ with the window extended to t = 16 (pairs at 1e-12). Why: an odd power of B cannot come from an expansion in B². Acceptance:

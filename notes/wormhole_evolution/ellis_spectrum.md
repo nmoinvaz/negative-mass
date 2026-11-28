@@ -170,3 +170,21 @@ transient's "rate" is the local exponent of a tail and the near-constant D = 5 s
 ## Files
 
 `ellis_spectrum.py`, `ellis_spectrum_output.txt`, this note; raw `negative-mass-raw/I272-mac` (README: method, criteria, mutations; `dev/`; `runs/`, `runs/mut/`).
+
+## Coordinator's review
+
+Merged at df53984. Review folder `negative-mass-raw/I272-mac-review` at 52f6e7bf, criteria committed (e7b556e5) before the first run of
+`ind272.py`. The changed files are those the brief names.
+
+- **Rerun on the Mac** from 6373c3c, with `w2_crate` built in the review tree: `ellis_spectrum.py run` equals the stored output apart
+  from timings and the header's commit (exit 1, the same 8 failures). A first attempt without the crate built stopped at two stages
+  and is kept.
+- **ind272**, 4 of 4. It shares only the formula of D, the data and the definition of P with this note's code. It has its own
+  integrator (velocity Verlet), outer boundary (Dirichlet at l = 75), eigen-solve and rate estimate. Its W² matches #195's to 2.5e-8,
+  which anchors D. It reproduces the time-domain table: Y(t, 0) to 1e-4, the D = 4 local rates to 3.5e-3, rate × t = 2.735, 2.886,
+  2.965 (a power law), and v/P = 0.2815, 0.2421 at D = 5. The mutations `wrong-n`, `no-proj` and `width` fire.
+- **Not checked independently:** the zero search (S1 to S4) and the symbolic zero-mode checks (Z1 to Z4) rest on this note's code.
+  The second-method criterion stays not met, as worded.
+- On T7's message: with the spread taken over the mean, as T7 computes it, an exponential gives 50 %, so the note's correction is right.
+  The 67 % is the rise from t = 15 to 25.
+- Applied: the proposed text for `throat_drift.md` and `critical_ghost.md` §1.3, and a paragraph in Paper V's §on the drift.
