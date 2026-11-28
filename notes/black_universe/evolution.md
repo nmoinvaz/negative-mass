@@ -234,3 +234,8 @@ diagnosis are on the issue (rulings 1 and 2).
   - Task 2 is #239, the c = −1.5 floor.
   - Tasks 3 and 4 are #240, family independence and the analytic mode.
   - Task 5 is #241, the state on the A > A* side.
+
+**Update from #277** ([planted_family.md](planted_family.md)): the kernel reproduces #269's exact time-dependent family, r = λ(v)R, F = A − 2ρλ′/λ + 1/λ² − 1,
+from data on two rays at c = −1.5 and −1, β = ±0.05. The sup error of r over the rectangle falls by 3.977 to 4.003 per halving of h = 0.02 … 0.00125, and v* of the
+β < 0 members is found to 2.0e-4 (h = 0.02) and 7.9e-7 (h = 0.00125) (numerical evidence; the coordinator's rerun gives 11 of 11). A wrong rate K in λ(v) is seen by
+the constraints and not by the evolution. For β < 0, r → 0 at v* holds at fixed ρ; along outgoing rays ρ → ∞ and r tends to a positive constant.

@@ -457,7 +457,8 @@ independent Ricci computation). In the ingoing null chart $\dd s^2=F\,\dd v^2-2\
 scalar unchanged, take $r=\lambda(v)R(\rho)$ and $F=A-2\rho\dot\lambda/\lambda+\lambda^{-2}-1$. Four of the five field equations hold
 for every $\lambda(v)$; the fifth is $\dd(\lambda\dot\lambda)/\dd v=K\lambda\dot\lambda$, so $\lambda^2=L+\beta e^{Kv}$, and to first order in
 $\beta$ the perturbation is $\delta r=\tfrac\beta2R\,e^{K(t+x)}$. The rate is $K=\tfrac12(R^2A'-2\rho A)+\rho$, a constant of the static
-equations. For $\beta<0$ the areal radius vanishes at the finite $v_*=-K^{-1}\ln|\beta|$ with a diverging Ricci scalar; for
+equations. For $\beta<0$ the areal radius vanishes at fixed $\rho$ at the finite $v_*=-K^{-1}\ln|\beta|$ with a diverging Ricci scalar
+(along the outgoing null rays $\rho\to\infty$ there, and $r$ tends to a positive constant, numerical evidence); for
 $\beta>0$ it grows as $e^{Kv/2}$. The family is not asymptotically flat for $\beta\ne0$ and linearizes to the solution that grows
 toward spatial infinity, not to the one that decays there, so it does not give the fate of asymptotically flat data.
 \nopagebreak
@@ -549,7 +550,10 @@ items 1 to 3 hold there (by the paragraph on matter in Appendix~\ref{app:proof})
 A double-null code for the Einstein--phantom equations with the potential evolves the member plus $A$ times its growing
 solution, with data on two null rays through a point at $\rho=0$ ($c=-0.3$) or $\rho=1$ ($c=-1.5$, $-1$). The code's
 evolution equations equal an independent derivation from a brute-force Ricci tensor to $1.1\times10^{-15}$, and the static
-members stay static to second order in the step $h$. The time is the Killing time of the static observer on the diagonal. The
+members stay static to second order in the step $h$. The code also reproduces the exact time-dependent solution of
+Sec.~\ref{sec:cauchy} from characteristic data on two rays, at $c=-1.5$ and $-1$ with $\beta=\pm0.05$: the supremum of
+$|r-\lambda R|$ over the rectangle falls by $3.977$ to $4.003$ per halving of $h$ from $0.02$ to $0.00125$, and for $\beta<0$ the
+zero $v_*$ is found to $2.0\times10^{-4}$ at the coarsest step and $7.9\times10^{-7}$ at the finest (numerical evidence). The time is the Killing time of the static observer on the diagonal. The
 lifetime $T$ is the first time at which $|Y|$ on the diagonal reaches $2\times10^{-5}$, and the outcome is the sign of $Y$
 there. A bisection in $A$ finds the threshold $A_*$. Near it a static critical solution with one growing mode predicts
 \begin{equation}
@@ -659,7 +663,8 @@ fail.
   against the null-chart solver on the same data to $1.8\times10^{-6}$; the transport check of $c_2$; the planted pure-gauge
   case and the class-R control.
 \item \emph{Evolutions.} The evolution equations against a brute-force Ricci tensor (review); a planted lifetime series with
-  known slope, recovered in 40 of 40 seeds, and one with the time unit off by $\sqrt2$, rejected in 40 of 40.
+  known slope, recovered in 40 of 40 seeds, and one with the time unit off by $\sqrt2$, rejected in 40 of 40. The exact
+  family of Sec.~\ref{sec:cauchy} as planted truth, with a sign mutation of $\beta$ that fires.
 \item \emph{Lemma~\ref{lem:horizon}.} Five symbolic checks, each with a mutation that fails it.
 \item \emph{This paper's numbers.} \texttt{paper\_numbers.py} reads every number quoted here from the outputs of record,
   checks that this text prints it, and exits non-zero otherwise; a mutation of one source number makes it fail.

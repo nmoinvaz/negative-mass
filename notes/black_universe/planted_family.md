@@ -184,3 +184,18 @@ planted_family.py case --c=-1.5 --beta=-0.05 --h=0.005   # one run, JSON
 
 `planted_family_output.txt` is `check`, `mutations`, the mutations' effects and `rays` of the runs of record (`I277-mac/runs`, assembled by `assemble.sh`), in that order. The code of the runs of record is commit 4ee1c6b; `rays` was added in
 c883a16 and the final script's `check` reproduces the run of record to the printed digits (`final_check_none.log`).
+
+## Coordinator's review
+
+Review of branch `wip/i277-planted-family` at 5f2b81c and raw `I277-mac` at 63f0f279, recorded in negative-mass-raw `I277-mac-review`.
+
+- **Scope.** The branch adds the script, its output and this note.
+- **Rerun.** `planted_family.py check` on the Mac gives 11 of 11, every verdict line equal.
+- **What it checks.** This is itself the independent check of #217's code: an exact nonlinear solution (#269), confirmed by the
+  coordinator's brute-force Ricci check (`I269-mac-review/ind269.py`), reproduced at second order in h.
+- **Findings, as reported.**
+  - The `rate` mutation (K × 1.001) still solves the evolution equations, so only the constraints (D1, D3, D4) see it.
+  - For β < 0, r → 0 at v* holds at fixed ρ only; along the grid's outgoing rays r tends to a positive constant. Paper IV's sentence now
+    says "at fixed ρ", and the point bears on #278.
+- **Applied.** `evolution.md` and Paper IV (Sec. 5 and the computations list) carry the result, and `paper_numbers.py` checks its numbers
+  (139 of 139).

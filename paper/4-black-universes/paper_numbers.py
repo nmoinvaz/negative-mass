@@ -366,6 +366,15 @@ need(f"$c_2={float(e4[1]) * 1e4:.6f}\\times10^{{-4}}$", "c2 of the full-slice da
 need(f"to ${float(e4[2]) * 1e8:.1f}\\times10^{{-8}}$ (relative; Richardson of $h=0.005$ and $0.0025$)", "slice vs horizon fit")
 need(f"(${float(o1[1]) * 1e4:.6f}\\times10^{{-4}}$ at amplitude $10^{{-3}}$)", "two-sided c2")
 
+# #277: the exact family as planted truth for the nonlinear code (notes/black_universe/planted_family_output.txt)
+PF = S.read("planted_family_output.txt")
+rats = [float(x) for line in re.findall(r"error ratios per halving of h, r: ([0-9. ]+);", PF) for x in line.split()]
+verr = [[abs(float(x)) for x in m.split(", ")] for m in re.findall(r"beta = -0\.05: v\* = [0-9.]+; found .*?; errors ([-+0-9.e, ]+); error ratios", PF)]
+check(len(rats) == 16 and len(verr) == 2, f"#277: 16 error ratios and two v* error lists ({len(rats)}, {len(verr)})")
+need(f"falls by ${min(rats):.3f}$ to ${max(rats):.3f}$ per halving of $h$ from $0.02$ to $0.00125$", "#277 error ratios")
+need(f"found to ${max(e[0] for e in verr) * 1e4:.1f}\\times10^{{-4}}$ at the coarsest step and ${max(e[-1] for e in verr) * 1e7:.1f}\\times10^{{-7}}$ at the finest", "#277 v*")
+need("at $c=-1.5$ and $-1$ with $\\beta=\\pm0.05$", "#277 members")
+
 # ---------------------------------------------------------------------------------------------------- placeholders and marks
 pend = re.findall(r"\\pending\{\\#(\d+)", TEX)
 needs = len(re.findall(r"% NEEDS #260", TEX))
