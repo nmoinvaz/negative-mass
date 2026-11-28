@@ -219,7 +219,7 @@ comes only from the absence of the growing term.
 - `order4.py`, `omega2.md`: orders 3 and 4, Ω₂ from G₄ = 0, and its reduction by hand (#26, `order4_output.txt`).
 - `order5.py`, `omega3.md`: order 5, Ω₃ from G₅ = 0, its identification and its reduction by hand (#208, `order5_output.txt`).
 - `exchange_review.py`, `exchange_review.md`: E1, E2, E3 and the Clausen integrals re-derived independently (#209, `exchange_review_output.txt`).
-- `omega_graph.py`: `omega_coeffs.svg`, the coefficients Ω₀ … Ω₄ and the error of each truncation against #195's W².
+- `omega_graph.py`: `omega_coeffs.svg`, the coefficients Ω₀ … Ω₅, the estimate of Ω₆, and the error of each truncation against #195's W².
 - `profiles.py`: the mode profiles and the table of growth rates behind Paper III's figure (`profiles.csv`,
   `growth.csv`).
 - `paper_numbers.py`: every number quoted in Paper III, with checks (`logs_paper_numbers.txt`).

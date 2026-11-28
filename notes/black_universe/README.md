@@ -131,7 +131,7 @@ W is in units 1/b. The bracket column is W in [BKZ12]'s units (m = 1/3), i.e. ti
 - W falls monotonically with −c, from the Ellis value 1.18197 at c = 0 (1.1741 at c = −0.01) to 0.0895 at c = −10.
 - In [BKZ12]'s units the rate tends to zero as c → 0⁻ and does not fall toward c = −1 (0.3856, 0.3958, 0.4034 at c = −0.9, −0.95, −0.99, then
   0.4053 at −1.0001). They describe both in words for Figs 7 and 8 and give no rates.
-- The graph: `growth_rate.svg`.
+- The graph: `growth_rate.svg`. The exact family's causal diagram is `family_causal.svg` ([family_causal.md](family_causal.md), #278).
 
 ## 5. Why c = −1 is alone
 
