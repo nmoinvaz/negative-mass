@@ -421,7 +421,7 @@ def nks(n, fam):
 def at_limit(s, Fmax):
     """The series up to the last column with e^{-f} < Fmax (the run's own convention: the stop column belongs to the next level). A run to a larger limit
     contains the run to Fmax as a bit-identical prefix (check PFX)."""
-    over = s["F"] >= Fmax
+    over = s["F"] >= (1.5 * Fmax if mut("pfx_cut") else Fmax)
     idx = int(np.argmax(over)) if over.any() else len(s["F"])
     return {k: v[:idx] for k, v in s.items()}
 
@@ -566,7 +566,7 @@ def c_of(D, a4_printed=False):
     """[ST17]'s energy per unit Misner-Sharp mass: E = (D - 2) V_{D-2} M with M = r^(D-3) (1 - (grad r)^2)/2 and kappa^2 = 8 pi G = 1 (both here and in [ST17]);
     V is the volume of the unit ball, as the printed A_2, A_3, A_5 are; the printed A_4 = pi^2 is twice the unit 4-ball's pi^2/2."""
     V = dict(VOL)
-    if a4_printed:
+    if a4_printed and not mut("a4p"):
         V[4] = ST17_A4_PRINTED
     if mut("conv_vol"):
         V[4] = ST17_A4_PRINTED
@@ -714,6 +714,7 @@ def noise_report(raw, cases_data, ns_fams, t0):
 # the analysis
 # --------------------------------------------------------------------------------------------------------------------
 MUTATIONS = {}
+MUT_CASES = {}
 CASES_ALL = [(n, f) for n in NS for f in FAMS]
 
 
@@ -806,7 +807,8 @@ def main():
         cmp_planted_check()
         sys.exit(finish(t0))
     elif cmd == "analyze":
-        sys.exit(analyze_cmd(opts["raw"], cases=parse_cases(opts["cases"]) if "cases" in opts else None, skip=tuple(opts.get("skip", "").split(","))))
+        cases = parse_cases(opts["cases"]) if "cases" in opts else (parse_cases(MUT_CASES[MUT]) if MUT in MUT_CASES else None)
+        sys.exit(analyze_cmd(opts["raw"], cases=cases, skip=tuple(opts.get("skip", "").split(","))))
     elif cmd == "tang_test":
         tang_selftest()
     else:
