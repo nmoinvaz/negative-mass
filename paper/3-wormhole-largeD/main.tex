@@ -250,11 +250,15 @@ not derived a second time (\texttt{notes/wormhole\_largeD/omega5.md}, \texttt{id
 with $c_3=\Omega_3/8$, $c_4=\Omega_4/16$ and $c_5=\Omega_5/32$. Numerically the coefficients of $(D-3)^{-k}$ are
 $5.211680189$, $18.59234668$, $-81.60501345$, $-799.6562413$ and $1276.889230$. All the $\ln2$ of the seven terms comes from
 one factor: $W^2a^2=s\,2^{-4/s}F(1/s)$ with $F(\varepsilon)=1+\tfrac23\pi^2\varepsilon^2+80\zeta(3)\varepsilon^3+(\tfrac{22}{45}\pi^4-384\zeta(3))\varepsilon^4+\dots$ free of
-$\ln2$ through $\varepsilon^6$ (checked symbolically for these terms; nothing is claimed beyond them). Table~\ref{tab:W} and
+$\ln2$ through $\varepsilon^6$ (checked symbolically for these terms). At $\varepsilon^7$ it is free of $\ln2$ too, identified by an
+integer-relation search at 390 digits in a basis that includes every product of $\ln2$ with the constants of weight up to 7;
+that coefficient is not derived. Table~\ref{tab:W} and
 Fig.~\ref{fig:main}(a) compare the expansion with the numerical eigenvalues. The difference from the first three terms,
 times $s^2$, tends to $\Omega_2+\Omega_3/s$, and the difference from all five, times $s^4$, tends to
 $\Omega_4$; a fit in $1/s$ to the quad-double eigenvalues gives $\Omega_4$ to all of its 14 digits. The difference from all
-seven, times $s^6$, gives $\Omega_6\approx4\times10^6$, an estimate. The series is asymptotic: the ratios
+seven, times $s^6$, gives $\Omega_6\approx4\times10^6$, an estimate. The order-8 matching integral, solved on two grids
+that agree to 430 digits, gives $\Omega_6=3672259.162594390$; its closed form in weights 7 to 3 is identified, not derived
+(\texttt{notes/wormhole\_largeD/omega6.md}). The series is asymptotic: the ratios
 $|\Omega_{k+1}/\Omega_k|$ are 3.8, 7.1, 8.8 and 19.6 for $k=0$ to $3$. At $D\le8$ the five terms are no better than three,
 and at $D=4$ neither is useful; at $D=50$ the five terms are within $1.7\times10^{-6}$ (relative) and at $D=1000$ within
 $4.1\times10^{-13}$.
