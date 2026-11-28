@@ -10,7 +10,7 @@ v = const are the ingoing null rays (rho is an affine parameter on them); the ou
 a claim about these two families of curves in the (v, rho) plane.
 
     family_causal.py derive [--mutate=NAME]               sympy checks S0 - S6
-    family_causal.py check  [--only=..] [--mutate=NAME]   numerical checks N0 - N12 (mpmath 40 digits and float64 ray integrations); exit 1 when one fails
+    family_causal.py check  [--only=..] [--mutate=NAME]   numerical checks N0 - N13 (mpmath 40 digits and float64 ray integrations); exit 1 when one fails
     family_causal.py figures [OUTDIR]                     the four conformal diagrams, family_causal.svg
     family_causal.py mutations DIR PREFIX                 fired sets of stored logs DIR/PREFIX<name>.log against the declared ones
 
@@ -60,6 +60,7 @@ KA = 1.01 if MUT == "kA" else 1.0                     # the coefficient of rho +
 R_SCALE = 1.01 if MUT == "r_scale" else 1.0           # the areal radius of the planted static member
 F2 = 2.02 if MUT == "f2" else 2.0                     # the coefficient of rho lam'/lam in the large-rho metric
 GPP = 0.01 if MUT == "gpp" else 0.0                   # a g_{rho rho} term in the metric of the affine-parameter check
+DS_H = 1.01 if MUT == "ds_h" else 1.0                 # the claimed de Sitter rate H^2 = -2c of the left side of the cone
 
 
 def want(cid):
@@ -810,6 +811,39 @@ def N12():
 
 
 
+def N13():
+    """beta = -1: the curvature along the rays that reach the cone v = v*.  On the AF side (rho -> +infinity) Ricci scalar ~ sqrt(tau) and Kretschmann ~ tau tend to 0
+    (flat); on the other side (rho -> -infinity) they tend to the de Sitter values 4V(-infinity) = -24c = 12 H^2 and 24 H^4, H^2 = -2c.  Only the vertex P* is singular."""
+    ok, rows = True, []
+    for cq, cf in MEMBERS:
+        f = Fam(cf, -1.0)
+        sol = eh_backward(f, -10.0)
+        rb = float(sol.sol(f.vs + 10.0)[0])                         # the unshifted ray into P*
+        H2 = -2 * cf * DS_H
+        res = {}
+        for name, dd in (("right", 1e-4), ("left", -3e-5)):
+            kind, ve, re_, sl = ray(f, -10.0, rb + dd, dense=True)
+            vals = {}
+            for tau in (1e-6, 1e-8):
+                rho_t = float(np.tan(sl.sol(f.vs - tau)[0]))
+                u = mp.nstr(-mp.expm1(-mp.mpf(f.K) * tau), 30)
+                J, V, Vp, v0, _ = em.eval_family(cq, "1", "-1", u, mp.nstr(mp.mpf(rho_t), 25))
+                ricci = -J["F"] * 2 / (1 + mp.mpf(rho_t) ** 2) ** 2 + 4 * V      # trace of the field equations: -F phi'^2 + 4 V
+                vals[tau] = (float(ricci), float(em.kretschmann(J)))
+            res[name] = vals
+        rr = res["right"]
+        ratio_R = rr[1e-6][0] / rr[1e-8][0]
+        ratio_K = rr[1e-6][1] / rr[1e-8][1]
+        ok_r = 8 < ratio_R < 12 and 80 < ratio_K < 120 and abs(rr[1e-8][0]) < 0.02 and rr[1e-8][1] < 1e-3
+        ll = res["left"][1e-8]
+        ok_l = abs(ll[0] / (12 * H2) - 1) < 5e-3 and abs(ll[1] / (24 * H2 ** 2) - 1) < 5e-3
+        ok &= ok_r and ok_l
+        rows.append(f"c = {cf}: right ray (tau = 1e-6 -> 1e-8): Ricci {rr[1e-6][0]:.4g} -> {rr[1e-8][0]:.4g} (ratio {ratio_R:.2f}), Kretschmann {rr[1e-6][1]:.4g} -> {rr[1e-8][1]:.4g} (ratio {ratio_K:.1f}); "
+                    f"left ray at tau = 1e-8: Ricci {ll[0]:.5g} (12 H^2 = {12 * H2:.5g}), Kretschmann {ll[1]:.5g} (24 H^4 = {24 * H2 ** 2:.5g})")
+    check("N13", "beta = -1, c = -1, -3/2, rays at rho_EH(-10) + 1e-4 (AF side) and - 3e-5 (other side) to the cone: AF side, Ricci(1e-6)/Ricci(1e-8) in (8, 12), Kretschmann ratio in (80, 120), |Ricci| < 0.02 and Kretschmann < 1e-3 at tau = 1e-8; "
+          "other side, Ricci and Kretschmann at tau = 1e-8 within 0.5% of 12 H^2 and 24 H^4, H^2 = -2c", ok, "; ".join(rows))
+
+
 # ----------------------------------------------------------------------------------------------------------------------
 # figures: the four conformal diagrams
 # ----------------------------------------------------------------------------------------------------------------------
@@ -987,6 +1021,10 @@ def draw_panel(svg, x0, y0, W, d, title, sub, bq, cf):
         a1, b1 = P(uq, 1.0)
         a2, b2 = P(1.0, 1.0)
         svg.add(f'<line x1="{a1:.1f}" y1="{b1:.1f}" x2="{a2:.1f}" y2="{b2:.1f}" stroke="{SERIES[7]}" stroke-width="2.4" stroke-dasharray="1 0"/>')
+        a, b = P(0.5, 1.0)
+        svg.text(a + 8, b - 4, "flat-like", size=10, fill=INK)
+        a, b = P(uq / 2, 1.0)
+        svg.text(a + 8, b - 4, "dS-like", size=10, fill=INK)
         px, py = P(0.0, 1.0)
         svg.add(f'<circle cx="{px:.1f}" cy="{py:.1f}" r="4" fill="{INK}"/>')
         svg.text(px + 6, py - 6, "P* (r = 0)", size=10, fill=INK)
@@ -1037,7 +1075,7 @@ def figures(outdir):
     open(fn, "w").write(svg.finish(h))
     print("wrote", fn)
 
-NUMERIC = [("N0", N0), ("N1", N1), ("N2", N2), ("N3", N3), ("N4", N4), ("N5", N5), ("N6", N6), ("N7", N7), ("N8", N8), ("N9", N9), ("N10", N10), ("N11", N11), ("N12", N12)]
+NUMERIC = [("N0", N0), ("N1", N1), ("N2", N2), ("N3", N3), ("N4", N4), ("N5", N5), ("N6", N6), ("N7", N7), ("N8", N8), ("N9", N9), ("N10", N10), ("N11", N11), ("N12", N12), ("N13", N13)]
 
 
 # name: checks that must fire (development runs of negative-mass-raw I278-mac/dev, before they were declared)
@@ -1058,6 +1096,7 @@ MUTATIONS = {
     "r_scale": ["S0"],
     "f2": ["S5"],
     "gpp": ["S6"],
+    "ds_h": ["N13"],
 }
 
 
