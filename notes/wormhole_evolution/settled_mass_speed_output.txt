@@ -1,0 +1,148 @@
+settled_mass_speed.py analyze []: numpy 2.5.4, mutation None, part all, 2026-11-28 02:19:32
+== points: 24 (the fifteen, N1 to N3, X1 to X3, Y1 to Y3) at h = 0.005
+[pass] DEP: the departure time recomputed here (ln-linear in |odd|/r = 1e-3) equals #266's to 3e-6 at every point  (max 1.8e-06)
+[pass] PAIR: the pair's mean written here has the slices, t, tau, r and odd part of #267's `pair_arrays` (data equality, to 1e-12)  (max difference 0.0e+00)
+[pass] SPD0: #267's estimator (linear, +-0.5 in tau) written here and evaluated exactly at the departure time equals `speed_at` to 5e-6 at every point  (max 1.2e-06)
+[pass] MEMREF: the member's fit written here with unit weights equals the stored fit (s_th, #225's `fit_asym`) to 1e-7 on every third stored slice  (max 0.0e+00)
+[pass] FRZ: the refit over the fifteen read from the stored runs here returns the frozen (a, b, c) of #295 to 1e-9  (max 3.4e-11: [0.22963189 0.28341704 0.76576571])
+[pass] REFN: the reference reading's residuals M - P4 at N1 to N3 equal #295's printed values to 1e-8  (-4.77e-07, -2.15e-06, +1.21e-06)
+[FAIL] REFX: the reference reading's residuals M - P4 at X1 to X3 equal #305's printed values to 6e-8  (+9.00e-05, +2.13e-04, +1.98e-04)
+[pass] REFX-ph: POST HOC, gates nothing: the same with half a unit of the last printed digit of each value (5e-8, 5e-7, 5e-7)  (+9.2e-09, -2.0e-07, -3.4e-08)
+[pass] REFY: the reference reading's residuals M - P4 at Y1 to Y3 equal #313's printed values (+2.9e-05, +5.3e-05, +1.8e-05) to half a unit of the last printed digit, 5e-7  (+2.87e-05, +5.28e-05, +1.83e-05)
+
+== speeds at t_dep (reference = #267's `speed_at`); rms of the reference speeds over the fifteen 7.460e-04
+    point    t_dep    lapse    REF          S1           S1r(dr/dt)   S2           S3           | S1-REF   S2-REF   S3-REF
+    B0.025  13.3030  0.9985  -9.6904e-05  -9.6880e-05  -9.6735e-05  -9.8678e-05  -9.6416e-05  | +2.4e-08 -1.8e-06 +4.9e-07
+    B0.05   13.3554  0.9939  -3.0256e-04  -3.0252e-04  -3.0067e-04  -3.0519e-04  -3.0179e-04  | +3.4e-08 -2.6e-06 +7.7e-07
+    B0.1    13.6150  0.9739  +6.5048e-05  +6.5274e-05  +6.3572e-05  +5.8872e-05  +6.7058e-05  | +2.3e-07 -6.2e-06 +2.0e-06
+    B0.125  13.8638  0.9576  +1.5945e-03  +1.5944e-03  +1.5268e-03  +1.5848e-03  +1.5975e-03  | -7.5e-08 -9.6e-06 +3.0e-06
+    e7      11.6105  0.9728  -6.3158e-04  -6.3129e-04  -6.1413e-04  -6.4175e-04  -6.2829e-04  | +2.9e-07 -1.0e-05 +3.3e-06
+    e9      15.6185  0.9747  +5.0940e-04  +5.0944e-04  +4.9657e-04  +5.0503e-04  +5.1073e-04  | +4.7e-08 -4.4e-06 +1.3e-06
+    e10     17.6237  0.9753  +8.0517e-04  +8.0534e-04  +7.8546e-04  +8.0177e-04  +8.0618e-04  | +1.7e-07 -3.4e-06 +1.0e-06
+    e11     19.6285  0.9757  +1.0109e-03  +1.0110e-03  +9.8646e-04  +1.0082e-03  +1.0116e-03  | +1.1e-07 -2.6e-06 +7.5e-07
+    e12     21.6130  0.9761  +1.0957e-03  +1.0958e-03  +1.0697e-03  +1.0873e-03  +1.0983e-03  | +1.7e-07 -8.4e-06 +2.6e-06
+    W1      13.3478  0.9920  -5.0483e-04  -5.0490e-04  -5.0084e-04  -5.0824e-04  -5.0375e-04  | -7.0e-08 -3.4e-06 +1.1e-06
+    W2      13.5682  0.9678  -6.6526e-04  -6.6452e-04  -6.4313e-04  -6.7499e-04  -6.6213e-04  | +7.5e-07 -9.7e-06 +3.1e-06
+    W3      13.7764  0.9491  +4.9885e-04  +4.9932e-04  +4.7391e-04  +4.8446e-04  +5.0363e-04  | +4.7e-07 -1.4e-05 +4.8e-06
+    C1      13.3655  0.9944  -3.8877e-04  -3.8884e-04  -3.8666e-04  -3.9204e-04  -3.8783e-04  | -6.9e-08 -3.3e-06 +9.5e-07
+    C2      13.6402  0.9767  -2.9163e-04  -2.9153e-04  -2.8472e-04  -2.9982e-04  -2.8900e-04  | +1.0e-07 -8.2e-06 +2.6e-06
+    C3      13.8911  0.9623  +9.9490e-04  +9.9523e-04  +9.5773e-04  +9.8197e-04  +9.9881e-04  | +3.3e-07 -1.3e-05 +3.9e-06
+    N1      13.3609  0.9934  -4.3483e-04  -4.3482e-04  -4.3195e-04  -4.3815e-04  -4.3383e-04  | +1.3e-08 -3.3e-06 +1.0e-06
+    N2      13.6230  0.9731  -4.1769e-04  -4.1773e-04  -4.0650e-04  -4.2654e-04  -4.1488e-04  | -4.5e-08 -8.9e-06 +2.8e-06
+    N3      13.8672  0.9570  +8.6492e-04  +8.6485e-04  +8.2768e-04  +8.5176e-04  +8.6914e-04  | -6.1e-08 -1.3e-05 +4.2e-06
+    X1      13.3758  0.9888  -1.1304e-03  -1.1306e-03  -1.1179e-03  -1.1387e-03  -1.1279e-03  | -1.2e-07 -8.2e-06 +2.5e-06
+    X2      13.6495  0.9586  -2.7326e-03  -2.7307e-03  -2.6177e-03  -2.7592e-03  -2.7249e-03  | +1.8e-06 -2.7e-05 +7.7e-06
+    X3      13.8793  0.9373  -2.4390e-03  -2.4360e-03  -2.2832e-03  -2.4792e-03  -2.4281e-03  | +3.1e-06 -4.0e-05 +1.1e-05
+    Y1      13.3613  0.9940  -6.2134e-04  -6.2138e-04  -6.1762e-04  -6.2666e-04  -6.1973e-04  | -3.9e-08 -5.3e-06 +1.6e-06
+    Y2      13.6085  0.9756  -1.1834e-03  -1.1832e-03  -1.1543e-03  -1.2002e-03  -1.1784e-03  | +1.1e-07 -1.7e-05 +4.9e-06
+    Y3      13.8177  0.9616  -4.0479e-04  -4.0499e-04  -3.8944e-04  -4.2822e-04  -3.9760e-04  | -2.0e-07 -2.3e-05 +7.2e-06
+
+== the member at t_dep (gamma_1, r_th): reference, then the change under WA, WJ, WJi
+    point    g1 ref      r_th ref    | dg1 WA     dg1 WJ     dg1 WJi    | drth WJ    drth WJi
+    B0.025 0.002936  0.999446  | -2.84e-07  -1.34e-07  -3.78e-07  | +5.68e-06  +9.05e-07
+    B0.05  0.011844  0.998356  | +3.18e-06  -2.29e-06  +1.52e-06  | +1.69e-05  -3.37e-06
+    B0.1   0.048316  1.002878  | +4.64e-06  -4.04e-05  -2.51e-05  | +6.80e-05  -2.05e-05
+    B0.125 0.075449  1.015883  | -9.22e-05  -9.73e-05  -1.61e-04  | +1.16e-04  -2.75e-05
+    e7     0.048511  1.003370  | +3.33e-05  -7.39e-05  -1.98e-05  | +1.24e-04  -3.28e-05
+    e9     0.048159  1.003477  | -1.85e-05  -2.57e-05  -3.70e-05  | +4.47e-05  -1.23e-05
+    e10    0.048013  1.004787  | -3.43e-05  -1.69e-05  -4.62e-05  | +3.18e-05  -6.52e-06
+    e11    0.047870  1.006583  | -4.63e-05  -1.13e-05  -5.40e-05  | +2.23e-05  -4.10e-06
+    e12    0.047732  1.008642  | -5.32e-05  -9.09e-06  -5.93e-05  | +4.19e-05  +1.85e-05
+    W1     0.012003  0.994956  | +7.84e-06  -4.10e-06  +4.86e-06  | +2.98e-05  -5.81e-06
+    W2     0.047982  0.989179  | +4.84e-05  -6.52e-05  -7.13e-08  | +1.10e-04  -3.09e-05
+    W3     0.075022  0.993634  | +1.22e-06  -1.58e-04  -1.16e-04  | +1.78e-04  -4.55e-05
+    C1     0.011989  0.999623  | +2.35e-06  -3.30e-06  -2.19e-08  | +2.36e-05  -5.01e-06
+    C2     0.048006  1.006321  | +1.50e-05  -5.43e-05  -2.48e-05  | +9.27e-05  -2.66e-05
+    C3     0.074833  1.019366  | -4.95e-05  -1.31e-04  -1.45e-04  | +1.55e-04  -3.76e-05
+    N1     0.011993  0.997459  | +4.82e-06  -3.62e-06  +2.21e-06  | +2.65e-05  -4.92e-06
+    N2     0.047988  0.998724  | +2.71e-05  -5.78e-05  -1.56e-05  | +9.88e-05  -2.76e-05
+    N3     0.075017  1.008541  | -3.50e-05  -1.39e-04  -1.37e-04  | +1.61e-04  -3.97e-05
+    X1     0.011999  0.993694  | +2.16e-05  -3.45e-05  -2.19e-07  | +2.89e-04  +1.80e-05
+    X2     0.047545  0.983798  | +1.27e-04  -3.97e-04  -1.27e-04  | +7.90e-04  +1.14e-05
+    X3     0.074911  0.983968  | +1.01e-04  -7.85e-04  -4.10e-04  | +9.79e-04  -1.41e-05
+    Y1     0.011968  0.999756  | +3.10e-05  -1.49e-05  +2.14e-05  | +1.22e-04  +2.85e-06
+    Y2     0.047984  1.005090  | +1.07e-04  -1.93e-04  -2.06e-05  | +3.74e-04  -1.44e-05
+    Y3     0.074387  1.015009  | +9.10e-05  -4.02e-04  -1.80e-04  | +5.04e-04  -3.34e-05
+
+== refit over the fifteen with each reading: coefficients, in-sample and leave-one-out errors of the fifteen (M - predicted), and M - predicted at N1 to N3 and X1 to X3, Y1 to Y3
+    reading   a            b            c            max in-sample  max LOO     |  N1        N2        N3        |  X1        X2        X3        |  Y1        Y2        Y3
+    REF     +0.229632  +0.283417  +0.765766  5.51e-05      7.90e-05   | -4.77e-07  -2.15e-06  +1.21e-06  | +9.00e-05  +2.13e-04  +1.98e-04  | +2.87e-05  +5.28e-05  +1.83e-05
+    S1      +0.229630  +0.283382  +0.765920  5.50e-05      7.89e-05   | -3.88e-07  -1.87e-06  +1.49e-06  | +9.03e-05  +2.12e-04  +1.96e-04  | +2.88e-05  +5.31e-05  +1.89e-05
+    S1r     +0.229398  +0.288588  +0.785876  5.28e-05      7.59e-05   | +8.04e-06  -3.24e-06  +1.52e-06  | +1.05e-04  +1.78e-04  +1.14e-04  | +4.03e-05  +5.31e-05  +2.96e-06
+    S2      +0.229685  +0.284824  +0.763169  5.86e-05      8.38e-05   | +8.64e-08  -2.27e-06  +1.59e-06  | +9.25e-05  +2.20e-04  +2.10e-04  | +3.03e-05  +5.68e-05  +2.35e-05
+    S3      +0.229617  +0.282924  +0.766659  5.40e-05      7.74e-05   | -6.06e-07  -2.09e-06  +1.08e-06  | +8.93e-05  +2.11e-04  +1.96e-04  | +2.83e-05  +5.19e-05  +1.70e-05
+    WA      +0.229645  +0.282853  +0.779410  5.44e-05      7.81e-05   | +4.23e-06  -2.74e-06  +1.11e-06  | +1.00e-04  +2.18e-04  +2.06e-04  | +2.98e-05  +4.22e-05  +1.00e-06
+    WJ      +0.229321  +0.286924  +0.768406  5.16e-05      7.84e-05   | -1.24e-06  -2.56e-06  +1.64e-06  | +3.92e-05  +1.43e-04  +1.83e-04  | +9.54e-06  +2.51e-05  +1.26e-05
+    WJi     +0.229282  +0.296043  +0.767351  5.22e-05      7.49e-05   | +3.17e-06  -3.28e-06  +1.96e-06  | +9.02e-05  +2.35e-04  +2.72e-04  | +2.64e-05  +5.11e-05  +3.25e-05
+
+    supplementary (declared, gates nothing): a speed estimator with a member reading together
+    S1+WA    +0.229643  +0.282817  +0.779565  5.43e-05                   | +4.32e-06  -2.45e-06  +1.40e-06  | +1.00e-04  +2.17e-04  +2.04e-04  | +2.99e-05  +4.25e-05  +1.60e-06
+    S1+WJ    +0.229319  +0.286888  +0.768560  5.15e-05                   | -1.15e-06  -2.27e-06  +1.92e-06  | +3.95e-05  +1.42e-04  +1.82e-04  | +9.69e-06  +2.54e-05  +1.32e-05
+    S1+WJi   +0.229280  +0.296008  +0.767504  5.21e-05                   | +3.26e-06  -3.00e-06  +2.24e-06  | +9.04e-05  +2.34e-04  +2.70e-04  | +2.65e-05  +5.14e-05  +3.31e-05
+    S2+WA    +0.229699  +0.284286  +0.776777  5.80e-05                   | +4.80e-06  -2.86e-06  +1.50e-06  | +1.03e-04  +2.26e-04  +2.18e-04  | +3.14e-05  +4.63e-05  +6.24e-06
+    S2+WJ    +0.229374  +0.288347  +0.765798  5.51e-05                   | -6.75e-07  -2.68e-06  +2.03e-06  | +4.17e-05  +1.51e-04  +1.96e-04  | +1.12e-05  +2.91e-05  +1.79e-05
+    S2+WJi   +0.229335  +0.297463  +0.764756  5.57e-05                   | +3.74e-06  -3.40e-06  +2.34e-06  | +9.26e-05  +2.42e-04  +2.84e-04  | +2.80e-05  +5.51e-05  +3.77e-05
+    S3+WA    +0.229630  +0.282351  +0.780315  5.33e-05                   | +4.09e-06  -2.67e-06  +9.75e-07  | +9.95e-05  +2.16e-04  +2.03e-04  | +2.93e-05  +4.13e-05  -3.56e-07
+    S3+WJ    +0.229306  +0.286425  +0.769302  5.04e-05                   | -1.37e-06  -2.50e-06  +1.50e-06  | +3.86e-05  +1.42e-04  +1.81e-04  | +9.10e-06  +2.42e-05  +1.12e-05
+    S3+WJi   +0.229267  +0.295546  +0.768244  5.11e-05                   | +3.04e-06  -3.22e-06  +1.82e-06  | +8.95e-05  +2.33e-04  +2.69e-04  | +2.59e-05  +5.02e-05  +3.12e-05
+
+[pass] PN_REF: reading REF: #295's N1 to N3 within 6e-5 of the refit over the fifteen  (M - pred -4.77e-07, -2.15e-06, +1.21e-06)
+[FAIL] PX_REF: reading REF: #305's X1 to X3 within 6e-5 of the refit over the fifteen  (M - pred +9.00e-05, +2.13e-04, +1.98e-04)
+[pass] PY_REF: reading REF: #313's Y1 to Y3 within 6e-5 of the refit over the fifteen  (M - pred +2.87e-05, +5.28e-05, +1.83e-05)
+[pass] PN_S1: reading S1: #295's N1 to N3 within 6e-5 of the refit over the fifteen  (M - pred -3.88e-07, -1.87e-06, +1.49e-06)
+[FAIL] PX_S1: reading S1: #305's X1 to X3 within 6e-5 of the refit over the fifteen  (M - pred +9.03e-05, +2.12e-04, +1.96e-04)
+[pass] PY_S1: reading S1: #313's Y1 to Y3 within 6e-5 of the refit over the fifteen  (M - pred +2.88e-05, +5.31e-05, +1.89e-05)
+[pass] PN_S1r: reading S1r: #295's N1 to N3 within 6e-5 of the refit over the fifteen  (M - pred +8.04e-06, -3.24e-06, +1.52e-06)
+[FAIL] PX_S1r: reading S1r: #305's X1 to X3 within 6e-5 of the refit over the fifteen  (M - pred +1.05e-04, +1.78e-04, +1.14e-04)
+[pass] PY_S1r: reading S1r: #313's Y1 to Y3 within 6e-5 of the refit over the fifteen  (M - pred +4.03e-05, +5.31e-05, +2.96e-06)
+[pass] PN_S2: reading S2: #295's N1 to N3 within 6e-5 of the refit over the fifteen  (M - pred +8.64e-08, -2.27e-06, +1.59e-06)
+[FAIL] PX_S2: reading S2: #305's X1 to X3 within 6e-5 of the refit over the fifteen  (M - pred +9.25e-05, +2.20e-04, +2.10e-04)
+[pass] PY_S2: reading S2: #313's Y1 to Y3 within 6e-5 of the refit over the fifteen  (M - pred +3.03e-05, +5.68e-05, +2.35e-05)
+[pass] PN_S3: reading S3: #295's N1 to N3 within 6e-5 of the refit over the fifteen  (M - pred -6.06e-07, -2.09e-06, +1.08e-06)
+[FAIL] PX_S3: reading S3: #305's X1 to X3 within 6e-5 of the refit over the fifteen  (M - pred +8.93e-05, +2.11e-04, +1.96e-04)
+[pass] PY_S3: reading S3: #313's Y1 to Y3 within 6e-5 of the refit over the fifteen  (M - pred +2.83e-05, +5.19e-05, +1.70e-05)
+[pass] PN_WA: reading WA: #295's N1 to N3 within 6e-5 of the refit over the fifteen  (M - pred +4.23e-06, -2.74e-06, +1.11e-06)
+[FAIL] PX_WA: reading WA: #305's X1 to X3 within 6e-5 of the refit over the fifteen  (M - pred +1.00e-04, +2.18e-04, +2.06e-04)
+[pass] PY_WA: reading WA: #313's Y1 to Y3 within 6e-5 of the refit over the fifteen  (M - pred +2.98e-05, +4.22e-05, +1.00e-06)
+[pass] PN_WJ: reading WJ: #295's N1 to N3 within 6e-5 of the refit over the fifteen  (M - pred -1.24e-06, -2.56e-06, +1.64e-06)
+[FAIL] PX_WJ: reading WJ: #305's X1 to X3 within 6e-5 of the refit over the fifteen  (M - pred +3.92e-05, +1.43e-04, +1.83e-04)
+[pass] PY_WJ: reading WJ: #313's Y1 to Y3 within 6e-5 of the refit over the fifteen  (M - pred +9.54e-06, +2.51e-05, +1.26e-05)
+[pass] PN_WJi: reading WJi: #295's N1 to N3 within 6e-5 of the refit over the fifteen  (M - pred +3.17e-06, -3.28e-06, +1.96e-06)
+[FAIL] PX_WJi: reading WJi: #305's X1 to X3 within 6e-5 of the refit over the fifteen  (M - pred +9.02e-05, +2.35e-04, +2.72e-04)
+[pass] PY_WJi: reading WJi: #313's Y1 to Y3 within 6e-5 of the refit over the fifteen  (M - pred +2.64e-05, +5.11e-05, +3.25e-05)
+
+== verdict map per speed reading (#305's task 2): D15 = max |change of rdot_th| over the fifteen / (0.02 rms), DX = change of rdot_th at X1, X2, X3 relative to the reference
+    S1 : D15 7.47e-07 (0.10 % of rms; bar 2 %), DX 0.01 %, 0.07 %, 0.13 %; X within 6e-5: False  ->  form (neither)
+    S1r: D15 6.77e-05 (9.07 % of rms; bar 2 %), DX 1.11 %, 4.20 %, 6.39 %; X within 6e-5: False  ->  form (neither)
+    S2 : D15 1.44e-05 (1.93 % of rms; bar 2 %), DX 0.73 %, 0.97 %, 1.65 %; X within 6e-5: False  ->  form (neither)
+    S3 : D15 4.78e-06 (0.64 % of rms; bar 2 %), DX 0.22 %, 0.28 %, 0.45 %; X within 6e-5: False  ->  form (neither)
+
+== the shift of the speed that would close each miss under the reference refit: +(M - P4) / (r_th c) (it raises the prediction by the miss), against each estimator's shift at X1, X2, X3
+    X1: needed +1.183e-04 (+10.5 % of |-1.130e-03|); shifts S1 -1.2e-07, S1r +1.3e-05, S2 -8.2e-06, S3 +2.5e-06
+    X2: needed +2.825e-04 (+10.3 % of |-2.733e-03|); shifts S1 +1.8e-06, S1r +1.1e-04, S2 -2.7e-05, S3 +7.7e-06
+    X3: needed +2.627e-04 (+10.8 % of |-2.439e-03|); shifts S1 +3.1e-06, S1r +1.6e-04, S2 -4.0e-05, S3 +1.1e-05
+
+== POST HOC (added after record 1; prints only): the fraction of the reference miss at X1, X2, X3 that each reading closes, 1 - (M - pred_rho) / (M - pred_REF)
+    S1      -0.3 %     +0.4 %     +0.8 %
+    S1r    -16.4 %    +16.6 %    +42.2 %
+    S2      -2.7 %     -3.5 %     -6.2 %
+    S3      +0.7 %     +0.8 %     +1.2 %
+    WA     -11.3 %     -2.5 %     -3.9 %
+    WJ     +56.4 %    +32.7 %     +7.5 %
+    WJi     -0.2 %    -10.3 %    -37.2 %
+
+    PSPD planted: noise sd 1.24e-09 (median of the points; largest 1.86e-09), 18 planted cases (each point's own model of r(tau), degree 7 over [-2.5, +1.2])
+      S1 : max |error| 4.32e-06 at W3 (signed -4.32e-06), median 2.10e-06, bar 1e-05
+[pass] PSPD_S1: estimator S1 recovers the planted speed of every planted case (18) to the bar  (max error 4.32e-06 (bar 1e-05))
+      S1r: max |error| 4.13e-06 at N3 (signed -4.13e-06), median 2.04e-06, bar 1e-05
+[pass] PSPD_S1r: estimator S1r recovers the planted speed of every planted case (18) to the bar  (max error 4.13e-06 (bar 1e-05))
+      S2 : max |error| 1.92e-05 at W3 (signed -1.92e-05), median 9.53e-06, bar 3e-05
+[pass] PSPD_S2: estimator S2 recovers the planted speed of every planted case (18) to the bar  (max error 1.92e-05 (bar 3e-05))
+      S3 : max |error| 9.01e-08 at e7 (signed -9.01e-08), median 5.15e-08, bar 1e-05
+[pass] PSPD_S3: estimator S3 recovers the planted speed of every planted case (18) to the bar  (max error 9.01e-08 (bar 1e-05))
+    PSPD stress (curvature coefficients of r(tau) x 2, reported, gates nothing): S1 8.63e-06, S1r 8.25e-06, S2 3.83e-05, S3 1.81e-07
+    PMEM planted: joint fits recover (r_th, s_th) to 3.8e-14; WA against its grid search 1.6e-10; unit weights against the grid 1.1e-10
+[pass] PMEM: planted static members: WJ and WJi recover (r_th, s_th) to 1e-7 from a locus r_th 3e-4 off; WA and the unit-weight fit equal an independent grid search of their objective to 1e-6  (joint 3.8e-14 (bar 1e-07), WA 1.6e-10, unit 1.1e-10 (bar 1e-06))
+[pass] PPRED: planted data that follow the refit return its coefficients (1e-9), pass the prediction at an X-like row (1e-12), fail it with c x 0.8 (more than 6e-5), and the leave-one-out finds a point displaced by 1e-4  (coefficients 5.6e-15; planted miss 0.0e+00; with c x 0.8 4.09e-04; displaced point's LOO error 1.00e-04)
+
+39 checks (1 post hoc, gating nothing), 9 gating checks failed, 0 post hoc checks failed; 56 s
