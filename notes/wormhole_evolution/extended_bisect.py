@@ -794,6 +794,12 @@ def analyze_variant(raw, variant, es_all):
     check(f"LL3-{tag}", "log law: largest residual of the extension fit <= one row spacing sqrt2 h", np.isfinite(mr) and mr <= AN["resid_bar"] * q,
           f"max residual {mr:.4f} against sqrt2 h = {q:.4f} (rms {rmsx:.4f}, uniform quantization {q / math.sqrt(12):.4f})")
     info.update(fits=fits, env=env, sx=sx)
+    if not mut("drop_point") and not mut("evc_shift") and ONLY is None:
+        print(f"[table] series, variant {tag}: T at p* -/+ 10^-e in binary128 (collapse side, expansion side), event cell offset |i - j|", flush=True)
+        by = {(r["e"], r["side_p"]): r for r in rows}
+        for e in sorted({r["e"] for r in rows}):
+            m, pl = by.get((e, -1)), by.get((e, 1))
+            print(f"  e = {e:4.1f}  T- = {m['T'] if m else float('nan'):9.4f}  T+ = {pl['T'] if pl else float('nan'):9.4f}  fates {m['fate'] if m else 0:+d} {pl['fate'] if pl else 0:+d}  rows j {m['j'] if m else 0} {pl['j'] if pl else 0}", flush=True)
     return info
 
 
