@@ -159,3 +159,28 @@ generic family approaches the static wormhole's neighbourhood with a throat that
 ## Files
 
 `throat_drift.py`, `throat_drift_output.txt`, this note; raw `negative-mass-raw/I255-dh610` (README: prediction, criteria, rulings, development runs and results; `dev/`, `runs/` with the bisections, pairs, expansions, controls, extras and the mutation runs; `scripts/`).
+
+## Coordinator's review
+
+Review of branch `wip/i255-g-drift` at 572cde0 (declared code 6f060f4) and raw `I255-dh610` at a1cb65b2, recorded in negative-mass-raw
+`I255-mac-review`. On the Mac, nice 10.
+
+- **Scope.** The branch adds the script, its output and this note, nothing else.
+- **Rerun.** `analyze` on the stored runs gives the same 48 verdicts (37 pass, 11 fail, as listed). Every verdict line equals the output of
+  record.
+- **Rulings during the task.** There was no waiver for B = 0.2 at h = 0.00177, so B = 0.2 is reported at two h. The supplementary B scan
+  (0.02, 0.07) was allowed as post hoc and gates nothing. Both are recorded on the issue.
+- **No independent code.** The coordinator's own march is the symmetric half domain and cannot run the one-sided family G. The result rests
+  on the locus code of #225 (its planted moving throats) and the second-order convergence in h.
+- **What holds.**
+  - The threshold scales as B² (PS).
+  - The throat radius and its speed do not: PR and PV are not met, and r_th − 1 grows as B^2.6 to B^2.9.
+  - The post-hoc fit ṙ∞ ≈ 0.110 E_net^(3/2) ∝ |B|³ is an odd power, which no expansion in B² gives. Its cause is not established, and
+    the B = 0.04 point is 15 % off it.
+  - The expanding member at X = 160 is class FT with k = 3.9957, so #225's KX is met once the locus reaches τ_s/τ_end ≤ 1.2.
+- **Applied.** `throat_locus.md`, `critical_ghost.md` §1.3, #42 and Paper V's #255 placeholder carry the update.
+- **Follow-ups.**
+  - Task 1 (the linear spectrum beyond the unstable mode, the scale mode's secular term) is #272.
+  - Task 2 (why |B|³) is #273.
+  - Task 3 is not filed: it is not needed for the acceptance.
+  - Task 4 is added to #228.

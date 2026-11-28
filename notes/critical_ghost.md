@@ -217,6 +217,15 @@ generic family, the lifetime against ln|p − p*|, and comparison with the linea
   - A planted drift of 0.1 makes the diagonal read +7.8 %.
   - At D = 5 the throat radius grows during the stall (1.07 to 1.20 a). The mode's rate follows W/r_th(t), so the
     series' slope (+21 %) averages over a drifting member.
+- **Update from #255** (`wormhole_evolution/throat_drift.md`; *numerical evidence*; the coordinator's rerun gives the same
+  48 verdicts):
+  - At D = 5 the tuned state's throat radius grows at a speed that approaches ṙ∞ = 0.026 a per unit proper time at B = 0.1
+    (D = 4: at most 0.0013).
+  - The threshold scales as B² (p*ₕ ∝ B^2.04), but r_th − 1 scales as B^2.6 to B^2.9 and ṙ∞ as |B|^3.16. Post hoc, the latter is close
+    to an odd power, which no expansion in B² gives.
+  - The throat stays quasi-static (ρ_g within 4e-3 of a static throat's) and is not driven by the normal flux or the unstable
+    mode. The cause is not established.
+  - The expanding member A = 0.05, run to X = 160, is class FT with k = 3.9957 at two h.
 
 **What [SH02] measured** (their eq. 3.5, Tables I–II):
 - Ghost pulses: e^{x_H⁻ − 3} ∝ E₀^{−0.60}. Normal pulses: E₀^{−0.61}. Here x_H⁻ is the null coordinate where the final

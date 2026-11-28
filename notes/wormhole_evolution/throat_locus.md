@@ -24,7 +24,7 @@ GROW only because τ_s/τ_end = 1.2025 exceeds the declared 1.2); a drift of 0.0
 | control: #40's diagonal slope reproduced | met | all 40 points of each of the six jobs bit for bit; 0.898291, 0.898043, 0.899089 (D = 4), 0.798948, 0.800044, 0.800277 (D = 5) |
 | the member at the stall: r_th, asymmetry, normal charge | measured | D = 4: r_th 1.0028, γ₁ 0.048, m₊ +0.045, m₋ −0.052, q_n²/q_g² ≤ 1e-5; D = 5: r_th 1.06 to 1.21 (drifting), s_th 0.12 to 0.17 |
 | its e-fold compared with the locus slope, reported whether or not they agree | D = 4 agree (0.2 %); **D = 5 do not agree at the stall time (+14.6 %), they agree along the drift (0.5 %)** | CMP1–3, DR |
-| the expanding side on the locus: classes, H/W at r/a = 10, 25, 50, k | measured | D = 4 FT, k 1.9993 to 1.9999; D = 5 FT (tuned) and GROW (A = 0.05), k 3.9834, 3.9883; H/W below |
+| the expanding side on the locus: classes, H/W at r/a = 10, 25, 50, k | measured | D = 4 FT, k 1.9993 to 1.9999; D = 5 FT (tuned) and GROW (A = 0.05), k 3.9834, 3.9883; H/W below. *Update from #255:* at X = 160, A = 0.05 is FT, k = 3.9957, τ_s/τ_end = 1.176 at both h, so KX is met (`throat_drift.md`) |
 
 ## An error of the brief
 

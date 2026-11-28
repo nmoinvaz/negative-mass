@@ -55,6 +55,7 @@ SRC = {
     "locus": read(EV, "throat_locus_output.txt"),
     "settled": read(EV, "settled_mass_output.txt"),
     "settled_g": read(EV, "settled_mass_g_output.txt"),
+    "drift": read(EV, "throat_drift_output.txt"),
     "expansion": read(EV, "expansion_output.txt"),
     "plateau": read(EV, "constraint_plateau_output.txt"),
     "derive": read(EV, "derive_output.txt"),
@@ -462,6 +463,21 @@ k3 = find("ind226", r"\[PASS\] K3: ratios ([0-9.]+), ([0-9.]+), ([0-9.]+);")
 printed(f"own march (ind226) gives ${k3[0]}$, ${k3[1]}$ and ${k3[2]}$")
 rr = find("r_round", r"max \|r_float64 - r_binary128\| = ([0-9.e-]+)\n.*?max \|r_float64 - r_exact\(l\)\| = ([0-9.e-]+)", flags=re.S)
 printed(f"is ${sci(float(rr[0]), 1)}$ against a truncation error of ${sci(float(rr[1]), 1)}$ ($D=6$, $h=0.00125$)")
+
+
+# #255: the D = 5 drift and G's expanding member (notes/wormhole_evolution/throat_drift_output.txt, h index 1)
+dr = SRC["drift"]
+m = re.search(r"D=5 h index 1: p\*_h [^;]*; exponent of p\*_h ([0-9.]+) \(0\.04 to 0\.1\)", dr)
+rt = re.search(r"D=5 h index 1:.*?\n\s+r_th - 1 at t = [^:]*: .*?exponents \[([0-9.]+), [0-9.]+, ([0-9.]+)\] \(0\.04 to 0\.1\)", dr, re.S)
+rd = re.search(r"D=5 h index 1:.*?\n.*?\n\s+rdot_inf \+[0-9.]+ \+- [0-9.e-]+, \+([0-9.]+) \+- [0-9.e-]+, .*?exponents ([0-9.]+),", dr, re.S)
+kx = re.search(r"KX2: [^\n]*?\(h = [0-9.]+: FT, k ([0-9.]+), ratio [0-9.]+; h = [0-9.]+: FT, k ([0-9.]+),", dr)
+check(m and rt and rd and kx, "#255's exponents, rdot_inf and k in throat_drift_output.txt")
+printed(f"$B^{{{float(m[1]):.2f}}}$", "p*_h exponent (h index 1)")
+printed(f"$B^{{{float(rt[1]):.1f}}}$ to\n$B^{{{float(rt[2]):.1f}}}$", "r_th - 1 exponents")
+printed(f"$\\dot r_\\infty=0.0{round(float(rd[1]) * 1000):d}a$", "rdot_inf at B = 0.1")
+printed(f"$B^{{{float(rd[2]):.2f}}}$", "rdot_inf exponent")
+check(kx[1] == kx[2], "k equal at both h")
+printed(f"$k={kx[1]}$ at two $h$", "G's expanding member, k")
 
 print(f"\n{count} checks, {bad} failed; mutation {OPT.mutate}")
 sys.exit(1 if bad else 0)
