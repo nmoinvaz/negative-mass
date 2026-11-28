@@ -328,7 +328,7 @@ def get_run(raw, n, fam, k, delta, tag=None, noise=0.0, seed=0):
     pj = pstar_json(raw, n, fam, k)
     K = 0 if mut("no_zoom") else (12 if mut("short_limit") else None)
     ps = pj["ps"] + 2e-8 if mut("pstar_off") else pj["ps"]
-    r = run_real_d(n, fam, pj["h"], delta, ps, K=K)
+    r = run_real_d(n, fam, pj["h"], 3e-2 if (mut("delta_swap") and delta == 1e-6) else delta, ps, K=K)
     return r["ser"], dict(status=r["status"], event=r["event"], point=r["point"], up=r["up"], Nc=r["Nc"], F1=r["F1"], K=r["K"], h=pj["h"], delta=delta, ps=ps)
 
 
