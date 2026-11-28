@@ -193,8 +193,10 @@ fn run_d<T: Num>(a: &Args) {
     let tabl = tab.to_lane::<T>();
     let mext_dd = st.state(rm)[2];
     let mext = T::from_dd(mext_dd);
+    // which build made J's table (negative-mass #192): own (no field) or multishoot's `table` module
+    let table_src = if cfg!(feature = "lib_table") { ",\"table\":\"multishoot\"" } else { "" };
     println!(
-        "{{\"cmd\":\"setup\",\"kt_multishoot\":{},\"lane\":\"{}\",\"l\":{},\"r0\":{:e},\"rm\":{},\"mext\":\"{}\",\"star_steps\":{},\"table_steps\":{},\"t_star\":{:.4},\"t_table\":{:.4},\"linear_defect\":{:e}}}",
+        "{{\"cmd\":\"setup\",\"kt_multishoot\":{},\"lane\":\"{}\",\"l\":{},\"r0\":{:e},\"rm\":{},\"mext\":\"{}\",\"star_steps\":{},\"table_steps\":{},\"t_star\":{:.4},\"t_table\":{:.4},\"linear_defect\":{:e}{}}}",
         multishoot::Plan::optimal_kt(ctl.tol),
         T::NAME,
         l,
@@ -205,7 +207,8 @@ fn run_d<T: Num>(a: &Args) {
         tab.x0.len(),
         t_star,
         t_table,
-        tab.linear_defect
+        tab.linear_defect,
+        table_src
     );
     for g in a.list("gammas") {
         let t = Instant::now();

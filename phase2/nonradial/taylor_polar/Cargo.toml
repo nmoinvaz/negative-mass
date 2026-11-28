@@ -8,8 +8,13 @@ publish = false
 [dependencies]
 multishoot = "=5.0.0"
 multidouble = "6.1.0"
+# the Taylor tables of multishoot#79 (branch feat/taylor-tables: 4.2.0 plus `plane` and `table`), not merged or released; renamed so that the
+# crates.io multishoot above stays the one the default build uses. The feature lib_table waits for a release that contains the pull request.
+multishoot_tables = { package = "multishoot", git = "https://github.com/nmoinvaz/multishoot", rev = "60d21ab8f1623ae6877014b76da8d2a1f4fc9b75", optional = true, features = ["mutate"] }
 
 [features]
+# J's table (table.rs: build_table) from multishoot's `table` module instead of the crate's own step rule (negative-mass #192); compatible with lib_plane and complex
+lib_table = ["dep:multishoot_tables"]
 # the k-plane stepper of multishoot::plane (negative-mass #189) in place of plane.rs's own integrate and gram_schmidt
 lib_plane = []
 # the complex lane Cx<T> (a pair of lane values), D at complex s and the planted complex systems (negative-mass #188);
