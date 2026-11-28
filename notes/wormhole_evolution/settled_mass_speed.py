@@ -521,6 +521,9 @@ def analyze_cmd():
     if idxX:
         rX = [res0[k] for k in idxX]
         check("REFX", "the reference reading's residuals M - P4 at X1 to X3 equal #305's printed values to 6e-8", max(abs(a - b_) for a, b_ in zip(rX, CRIT["res_X"])) <= CRIT["bar_resX"], ", ".join(f"{x:+.2e}" for x in rX))
+        hu = (5e-8, 5e-7, 5e-7)          # half a unit of the last printed digit of +9.00e-05, +2.13e-04, +1.98e-04 (the bar above, 6e-8, is below it for the last two)
+        check("REFX-ph", "POST HOC, gates nothing: the same with half a unit of the last printed digit of each value (5e-8, 5e-7, 5e-7)", all(abs(a - b_) <= h_ for a, b_, h_ in zip(rX, CRIT["res_X"], hu)),
+              ", ".join(f"{a - b_:+.1e}" for a, b_ in zip(rX, CRIT["res_X"])), ph=True)
     # ---- per reading
     ref15 = np.array([rd[k]["REF"][2] for k in range(n15)])
     rms15 = float(np.sqrt(np.mean(ref15 ** 2)))
@@ -581,10 +584,13 @@ def analyze_cmd():
             else:
                 v = "form (neither)"
             print(f"    {key:3s}: D15 {d15:.2e} ({d15 / rms15 * 100:.2f} % of rms; bar 2 %), DX " + ", ".join(f"{x * 100:.2f} %" for x in dX) + f"; X within 6e-5: {inbar}  ->  {v}")
-        print("\n== the shift of the speed that would close each miss under the reference refit: -(M - P4) / (r_th c), against each estimator's shift at X1, X2, X3")
+        print("\n== the shift of the speed that would close each miss under the reference refit: +(M - P4) / (r_th c) (it raises the prediction by the miss), against each estimator's shift at X1, X2, X3")
         for k in idxX:
-            need = -res0[k] / (rd[k]["REF"][1] * P4[2] * (0.8 if mut("coef_c") else 1.0))
-            print(f"    {P[k]['name']}: needed {need:+.3e} ({need / rd[k]['REF'][2] * 100:+.1f} % of {rd[k]['REF'][2]:+.3e}); shifts " + ", ".join(f"{key} {rd[k][key][2] - rd[k]['REF'][2]:+.1e}" for key in SPD_KEYS))
+            need = res0[k] / (rd[k]["REF"][1] * P4[2] * (0.8 if mut("coef_c") else 1.0))
+            print(f"    {P[k]['name']}: needed {need:+.3e} ({need / abs(rd[k]['REF'][2]) * 100:+.1f} % of |{rd[k]['REF'][2]:+.3e}|); shifts " + ", ".join(f"{key} {rd[k][key][2] - rd[k]['REF'][2]:+.1e}" for key in SPD_KEYS))
+        print("\n== POST HOC (added after record 1; prints only): the fraction of the reference miss at X1, X2, X3 that each reading closes, 1 - (M - pred_rho) / (M - pred_REF)")
+        for key in GATING:
+            print(f"    {key:4s} " + "  ".join(f"{(1.0 - table[key][1][k] / res0[k]) * 100:+7.1f} %" for k in idxX))
     # ---- planted
     print()
     check_planted(P)
