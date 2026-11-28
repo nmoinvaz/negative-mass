@@ -298,23 +298,24 @@ CRITB = dict(
     bar_g0=2e-5, bar_r0=1e-4, eps_dep=1e-3, eps_alt=1e-2,
     bar_c225_s=1e-4, bar_c225_r=3e-4, bar_hst_g=5e-5, bar_hst_r=1e-4,
     bar_pm_g=1e-5, bar_pm_r=1e-6, bar_pm_m=1e-4, bar_dep=2e-5,
-    bar_rel=6e-5, rel_B=(0.025, 0.05, 0.1, 0.125),
+    bar_rel=6e-5, rel_B=(0.025, 0.05, 0.1), rel_B_ph=(0.025, 0.05, 0.1, 0.125),
 )
 C225 = {12.0: (1.0031, 0.0484), 13.0: (1.0028, 0.0483), 14.0: (1.0028, 0.0482)}      # #225's member table (throat_locus.md): t -> r_th, s_th as printed
 results = []
 
 
-def check(cid, text, ok, detail=""):
+def check(cid, text, ok, detail="", ph=False):
     ok = None if ok is None else bool(ok)
-    results.append((cid, ok))
+    results.append((cid, ok, ph))
     print(f"[{'SKIP' if ok is None else ('pass' if ok else 'FAIL')}] {cid}: {text}" + (f"  ({detail})" if detail else ""), flush=True)
 
 
 def finish(t0):
-    nfail = sum(1 for _, ok in results if ok is False)
-    print(f"\n{len(results)} checks, {nfail} failed; {time.time() - t0:.0f} s")
+    nfail = sum(1 for _, ok, ph in results if ok is False and not ph)
+    nph = sum(1 for _, ok, ph in results if ok is False and ph)
+    print(f"\n{len(results)} checks ({sum(1 for _, _, ph in results if ph)} post hoc, gating nothing), {nfail} gating checks failed, {nph} post hoc checks failed; {time.time() - t0:.0f} s")
     if MUT is not None:
-        fired = sorted({c for c, ok in results if ok is False})
+        fired = sorted({c for c, ok, ph in results if ok is False})
         want = sorted(MUTATIONS.get(MUT, []))
         print(f"mutation {MUT}: fired {fired}, declared {want}: {'MATCH' if fired == want else 'DIFFERENT'}")
         return 0 if fired == want else 1
@@ -491,26 +492,26 @@ def check_planted():
 # --------------------------------------------------------------------------------------------------------------------
 # mutations: name -> the checks that must fire (computed in the development runs, declared in the raw README before the runs of record)
 # --------------------------------------------------------------------------------------------------------------------
-MUTATIONS = {      # name: the checks that fire (computed on the development set, raw I266-mac dev/mut_a, before being declared in its README)
-    "crit_dm": ["CFG"],                                                # dm = 2.0 in the chain constants
-    "bisect_early": ["BR"],                                            # the bracket of the bisection after 30 steps instead of the last
-    "pstar_h_swap": ["P40"],                                           # #40's p*_h of the next h
-    "go_h": ["GO"],                                                    # O at the next h against G(B = 0)
-    "pstar_h1": ["PO"],                                                # p*_h scaled by h_1/h (a first-order seed)
-    "stl_flat": ["STL"],                                               # the lifetimes at 1e-6 and 1e-8 taken equal
-    "evt_side": ["EVT"],                                               # the pair's expansion-side event in place of the collapse-side one
-    "flux_sign": ["RC4"],                                              # the horizon flux with the wrong sign
-    "short_limit": ["RB10", "RC5", "RC8"],                             # K = 12: the chain stops at e^-f = 6144
-    "no_zoom": ["RB0", "RB10", "RC4", "RC5", "RC6", "RC8", "REL", "RH"],      # K = 0: a uniform grid
-    "mass_exponent": ["RB0", "RB10", "RC4", "REL"],                    # M = r^n/2 in place of r^(n-1)/2
-    "family_B": ["EVT", "RB10", "RC5", "RC6", "RC8", "REL", "RH"],     # B = 0.11 in place of 0.1 (the chain refuses: fates at p*_h -/+ delta)
-    "b_offset": ["EVT", "RB0", "RB10", "RC5", "RC6", "RC8", "REL", "RH"],     # B = 0.05 in place of 0 (the chain refuses)
-    "h_plat": ["RH"],                                                  # the plateau at h = 0.02 in place of 0.005
-    "rth_collapse_side": ["MB0", "REL"],                               # r_th of the collapse side alone in place of the pair's mean
-    "asym_sign": ["C225", "PMEM"],                                     # #225's fit_asym with the sides swapped
-    "dep_eps": ["MB0", "PDEP", "REL"],                                 # epsilon x 10 in departure_time
-    "eps_h": ["HST", "MB0", "REL"],                                    # epsilon x 100 at the finest h only
-    "rel_perm": ["PREL", "REL"],                                       # M of the members rolled by one
+MUTATIONS = {      # name: the checks that fire (computed on the development set, raw I266-mac dev/mut_b, before being declared in its README; REL fails without a mutation, so it is in most sets)
+    "crit_dm": ['CFG', 'REL'],   # dm = 2.0 in the chain constants
+    "bisect_early": ['BR', 'BR-ph', 'REL'],   # the bracket of the bisection after 30 steps instead of the last
+    "pstar_h_swap": ['P40', 'P40-ph', 'REL'],   # #40's p*_h of the next h
+    "go_h": ['GO', 'GO-ph', 'REL'],   # O at the next h against G(B = 0)
+    "pstar_h1": ['PO-ph', 'REL'],   # p*_h scaled by h_1/h (a first-order seed)
+    "stl_flat": ['REL', 'STL', 'STL-ph'],   # the lifetimes at 1e-6 and 1e-8 taken equal
+    "evt_side": ['EVT', 'EVT-ph', 'REL'],   # the pair's expansion-side event in place of the collapse-side one
+    "flux_sign": ['RC4', 'RC4-ph', 'REL'],   # the horizon flux with the wrong sign
+    "short_limit": ['RB10', 'RB10-ph', 'RC5', 'RC5-ph', 'RC8', 'RC8-ph'],   # K = 12: the chain stops at e^-f = 6144
+    "no_zoom": ['RB0', 'RB0-ph', 'RB10', 'RB10-ph', 'RC4', 'RC4-ph', 'RC5', 'RC5-ph', 'RC6-ph', 'RC8', 'RC8-ph', 'REL', 'REL-ph', 'RH', 'RH-ph'],   # K = 0: a uniform grid
+    "mass_exponent": ['RB0', 'RB0-ph', 'RB10', 'RB10-ph', 'RC4', 'RC4-ph', 'REL-ph'],   # M = r^n/2 in place of r^(n-1)/2
+    "family_B": ['EVT', 'EVT-ph', 'RB10', 'RB10-ph', 'RC5', 'RC5-ph', 'RC6-ph', 'REL', 'RH'],   # B = 0.11 in place of 0.1 (the chain refuses: fates at p*_h -/+ delta)
+    "b_offset": ['EVT', 'EVT-ph', 'RB0', 'RB0-ph', 'RB10', 'RB10-ph', 'RC5', 'RC5-ph', 'RC6-ph', 'REL', 'RH', 'RH-ph'],   # B = 0.05 in place of 0 (the chain refuses)
+    "h_plat": ['REL', 'RH'],   # the plateau at h = 0.02 in place of 0.005 in RH
+    "rth_collapse_side": ['MB0', 'MB0-ph', 'REL', 'REL-ph'],   # r_th of the collapse side alone in place of the pair's mean
+    "asym_sign": ['C225', 'PMEM', 'REL'],   # #225's fit_asym with the sides swapped
+    "dep_eps": ['MB0', 'MB0-ph', 'PDEP', 'REL', 'REL-ph'],   # epsilon x 10 in departure_time
+    "eps_h": ['HST', 'HST-ph', 'MB0', 'REL', 'REL-ph'],   # epsilon x 100 at the finest h only
+    "rel_perm": ['PREL', 'REL', 'REL-ph'],   # M of the members rolled by one
 }
 
 
@@ -522,6 +523,79 @@ G_B_DEFAULT = th.CRIT["G_B"]
 
 def appl(fam, B):
     return STALL_EXPECTED.get((fam, B), True)
+
+
+def stallscan_cmd(h, Bs, out):
+    """Post hoc scan of the stall against B: p*_h (bisected to hi - lo <= 1e-12) and the lifetime at p*_h -/+ 1e-6 and 1e-8 for each B (family G, D = 4)."""
+    os.makedirs(out, exist_ok=True)
+    X = th.CRIT["X"]["G"][ND]
+    rows = []
+    for B in Bs:
+        set_family("G", B)
+        t0 = time.time()
+        run = lambda p: th.point(ND, "G", h, X, p)
+        lo, hi, stopped = th.bisect(run, 0.02, 0.1, 1e-12)
+        ps = 0.5 * (lo + hi)
+        T = {}
+        for e in (6, 8):
+            for sd, nm in ((-1, "m"), (1, "p")):
+                r = th.point(ND, "G", h, X, ps + sd * 10.0 ** (-e))
+                T[f"{nm}{e}"] = dict(T=r["T"], fate=r["fate"])
+        gm = T["m8"]["T"] - T["m6"]["T"]
+        gp = T["p8"]["T"] - T["p6"]["T"]
+        rows.append(dict(B=B, h=h, ps=ps, hi_lo=hi - lo, stopped=stopped, T=T, gain_m=gm, gain_p=gp, secs=round(time.time() - t0, 1)))
+        print(f"B = {B:g}: p* {ps:.10e} (hi - lo {hi - lo:.1e}, {stopped}); T(-1e-6) {T['m6']['T']:.3f} T(-1e-8) {T['m8']['T']:.3f} gain {gm:+.2f}; T(+1e-6) {T['p6']['T']:.3f} T(+1e-8) {T['p8']['T']:.3f} gain {gp:+.2f}", flush=True)
+    json.dump(rows, open(os.path.join(out, f"stallscan_h{h:g}.json"), "w"), indent=1)
+
+
+def stallscan_report(raw):
+    """Prints the stored stall scans and the first B at which the stall (gain >= 2.0 per side) is gone. A report: it gates nothing."""
+    import glob
+    for f in sorted(glob.glob(os.path.join(raw, "runs", "stallscan_h*.json"))):
+        rows = json.load(open(f))
+        print(f"\n== Post hoc: the stall against B at h = {rows[0]['h']:g} (T gain from 1e-6 to 1e-8 on each side; a stall gains about 3.9 to 5; prompt gains 0)")
+        first = None
+        for r in rows:
+            sl = r["gain_m"] >= CRITB["stall_dT"] and r["gain_p"] >= CRITB["stall_dT"]
+            if not sl and first is None:
+                first = r["B"]
+            print(f"    B {r['B']:.4f}: p* {r['ps']:.8e} (hi - lo {r['hi_lo']:.1e}), collapse side T {r['T']['m6']['T']:.3f} -> {r['T']['m8']['T']:.3f} (+{r['gain_m']:.2f}), expansion side {r['T']['p6']['T']:.3f} -> {r['T']['p8']['T']:.3f} (+{r['gain_p']:.2f}): {'stall' if sl else 'prompt'}")
+        if first is None:
+            print("    the stall persists over the whole scan")
+        else:
+            prev = [r["B"] for r in rows if r["B"] < first]
+            print(f"    first B with no stall (gain < {CRITB['stall_dT']}): {first:g}" + (f"; the last with a stall: {max(prev):g}" if prev else ""))
+
+
+PH_TAGS = {("G", 0.125)}          # post hoc by the coordinator's ruling (2026-11-27): supplementary, gates nothing
+PH_H = (0.02,)
+
+
+def is_ph(fam, B, h):
+    return (fam, B) in PH_TAGS or h in PH_H
+
+
+class Acc:
+    """Accumulates one check over (member, h): the issue's members at the issue's h gate; B = 0.125 and h = 0.02 are post hoc and gate nothing."""
+
+    def __init__(self):
+        self.g, self.p, self.ng, self.np = True, True, 0, 0
+
+    def add(self, good, fam, B, h):
+        if is_ph(fam, B, h):
+            self.p, self.np = self.p and bool(good), self.np + 1
+        else:
+            self.g, self.ng = self.g and bool(good), self.ng + 1
+
+    def add_ph(self, good):
+        self.p, self.np = self.p and bool(good), self.np + 1
+
+
+def emit(cid, text, acc, detail=""):
+    if acc.ng:
+        check(cid, text, acc.g, detail)
+    if acc.np:
+        check(cid + "-ph", "POST HOC, gates nothing (B = 0.125 and/or h = 0.02): " + text, acc.p, detail, ph=True)
 
 
 def analyze_cmd(raw):
@@ -536,13 +610,15 @@ def analyze_cmd(raw):
     xg, xo = th.CRIT["X"]["G"][ND], th.CRIT["X"]["O"][ND]
     check("CFG", "settled_mass.CRIT (F1, K, W1, rcut, tol, dxp, dm) equal #41's declared chain, X = 28 for G and O, threshold's G_B = 0.1 at import",
           not bad and xg == g.DECLARED["X"] and xo == g.DECLARED["X"] and G_B_DEFAULT == 0.1, f"differs: {bad}; X(G) {xg}, X(O) {xo}, G_B {G_B_DEFAULT}" if bad or xg != 28.0 or xo != 28.0 or G_B_DEFAULT != 0.1 else "")
-    if miss:
-        check("RUNS", "every (tag, h) has its pstar, chain and member output", False, f"missing {sorted(miss)}")
+    acc = Acc()
+    for (tg, h), e in D.items():
+        acc.add("err" not in e, e["fam"], e["B"], h)
+    emit("RUNS", "every (member, h) has its pstar, chain and member output", acc, f"missing {sorted(miss)}" if miss else "")
     print("\n== Planted cases")
     check_planted()
 
     print("\n== p*_h of each member: bisection to hi - lo <= 1e-14 (threshold.bisect on threshold.point, X = 28), the h of the job as passed")
-    okb, det = True, []
+    acc, det = Acc(), []
     for fam, B, tg in ok_tags:
         for h in HS:
             e = D[(tg, h)]
@@ -550,81 +626,79 @@ def analyze_cmd(raw):
             lo, hi = bracket_after(pts, 30) if mut("bisect_early") else (p["lo"], p["hi"])
             good = (hi - lo <= CRITB["bar_bracket"] and pts[0]["fate"] == -1 and pts[1]["fate"] == 1 and p["h_arg"] == repr(float(h)) and float(p["h_arg"]) == h
                     and p["stopped"] is None and bracket_after(pts, len(pts)) == (p["lo"], p["hi"]))
-            okb &= good
+            acc.add(good, fam, B, h)
             det.append(f"{tg} h {h:g}: hi - lo {hi - lo:.1e}, {p['runs']} runs, h_arg '{p['h_arg']}', stopped {p['stopped']}{'' if good else '  <-- NOT OK'}")
     for ln in det:
         print("    " + ln)
-    check("BR", "bracket ends are collapse and expansion, the replayed bisection equals lo and hi, hi - lo <= 1e-14, not stopped by 'static through X', h passed as its float repr", okb)
-    ok40, det = True, []
+    emit("BR", "bracket ends are collapse and expansion, the replayed bisection equals lo and hi, hi - lo <= 1e-14, not stopped by 'static through X', h passed as its float repr", acc)
+    acc, det = Acc(), []
     for k, h in enumerate(HS):
         e = D.get(("G_B0.1", h))
         if e is None or "err" in e:
-            ok40 = False
+            acc.add(False, "G", 0.1, h)
             continue
         ref = g.i40_g(HS[(k + 1) % len(HS)] if mut("pstar_h_swap") else h)
         d = abs(e["p"]["ps"] - ref["ps"])
-        ok40 &= d <= CRITB["bar_p40"] and float(ref["h_log"]) == h
+        acc.add(d <= CRITB["bar_p40"] and float(ref["h_log"]) == h, "G", 0.1, h)
         det.append(f"h {h:g}: p*_h {e['p']['ps']:.16e}, #40's {ref['ps']:.16e} (job.log h '{ref['h_log']}'), difference {d:.1e}")
     for ln in det:
         print("    " + ln)
-    check("P40", "B = 0.1: this machine's p*_h equals #40's (D4_G_h*, dh610) within 1e-10, the h of #40's job.log equal to the h passed", ok40 and len(det) == len(HS), "bar 1e-10")
-    okg, det = True, []
+    emit("P40", "B = 0.1: this machine's p*_h equals #40's (D4_G_h*, dh610) within 1e-10, the h of #40's job.log equal to the h passed", acc, "bar 1e-10")
+    acc, det = Acc(), []
     for k, h in enumerate(HS):
         eg, eo = D.get(("G_B0", h)), D.get(("O", HS[(k + 1) % len(HS)] if mut("go_h") else h))
         if eg is None or eo is None or "err" in eg or "err" in eo:
-            okg = False
+            acc.add(False, "G", 0.0, h)
             continue
-        same = eg["p"]["ps"] == eo["p"]["ps"] and eg["i"]["event"] == eo["i"]["event"]
-        okg &= same
+        acc.add(eg["p"]["ps"] == eo["p"]["ps"] and eg["i"]["event"] == eo["i"]["event"], "G", 0.0, h)
         det.append(f"h {h:g}: p*_h G(B = 0) {eg['p']['ps']:.16e}, O {eo['p']['ps']:.16e}, events {eg['i']['event']} {eo['i']['event']}")
     for ln in det:
         print("    " + ln)
-    check("GO", "family G with B = 0 and family O have the same p*_h (bit for bit) and the same first trapped cell at every h", okg and len(det) == len(HS))
-    oko, det, ngate = True, [], 0
+    emit("GO", "family G with B = 0 and family O have the same p*_h (bit for bit) and the same first trapped cell at every h", acc)
+    acc, det = Acc(), []
     for fam, B, tg in ok_tags:
         ps = [D[(tg, h)]["p"]["ps"] * (HS[0] / h if mut("pstar_h1") else 1.0) for h in HS]
         o = math.log2((ps[0] - ps[1]) / (ps[1] - ps[2]))
         gated = appl(fam, B)
         if gated:
-            oko &= CRITB["order_band"][0] <= o <= CRITB["order_band"][1]
-            ngate += 1
+            acc.add_ph(CRITB["order_band"][0] <= o <= CRITB["order_band"][1])
         rich = ps[2] - (ps[1] - ps[2]) / 3.0
-        det.append(f"{tg}: p*_h = {ps[0]:.6e}, {ps[1]:.6e}, {ps[2]:.6e}; observed order {o:.3f}; Richardson (second order) p* = {rich:.6e}" + ("" if gated else "  (prompt threshold: reported, not gated)"))
+        det.append(f"{tg}: p*_h = {ps[0]:.6e}, {ps[1]:.6e}, {ps[2]:.6e}; observed order {o:.3f}; Richardson (second order) p* = {rich:.6e}" + ("" if gated else "  (prompt threshold: reported, not checked)"))
     for ln in det:
         print("    " + ln)
-    check("PO", f"p*_h converges at second order at h = {HS}: observed order in {CRITB['order_band']} for every stalling member (a prompt threshold, B = 0.2, is reported)", oko and ngate == len(st_tags))
+    emit("PO", f"p*_h converges at second order at h = {HS}: observed order in {CRITB['order_band']} for every stalling member (it needs three h, and h = 0.02 is post hoc)", acc)
 
     print("\n== Does the near-threshold run stall? Lifetime T at p*_h -/+ 1e-8 against 1e-6 (the stall adds about ln(100)/W = 3.9 per side), h = 0.02, 0.01, 0.005")
-    okl = True
+    acc = Acc()
     for fam, B, tg in ok_tags:
         for h in HS:
             e = D[(tg, h)]
             sl, dm, dp = stalls(e)
             want = appl(fam, B)
-            okl &= sl == want
+            acc.add(sl == want, fam, B, h)
             i = e["i"]
             print(f"    {tg:9s} h {h:5g}: collapse side T {i['pt6']['T']:.3f} (1e-6) -> {i['point']['T']:.3f} (1e-8), +{dm:.2f}; expansion side {i['up6']['T']:.3f} -> {i['up']['T']:.3f}, +{dp:.2f}: "
                   f"{'stall' if sl else 'prompt'} (declared {'stall' if want else 'prompt'})")
-    check("STL", "each member's classification (T gains >= 2.0 per side from 1e-6 to 1e-8: stall; else prompt) equals the declared one (stall for B <= 0.125 and O, prompt at B = 0.2), every h", okl)
-    okc, det = True, []
+    emit("STL", "each member's classification (T gains >= 2.0 per side from 1e-6 to 1e-8: stall; else prompt) equals the declared one (stall for B <= 0.125 and O, prompt at B = 0.2)", acc)
+    acc, det = Acc(), []
     for fam, B, tg in ok_tags:
         for h in HS:
             e = D[(tg, h)]
             try:
                 s_, i_ = chain_of(e)
             except Exception as ex:
-                okc = False
+                acc.add(False, fam, B, h)
                 det.append(f"{tg} h {h:g}: the chain run failed: {ex!r}")
                 continue
             ev = e["m"]["ev40_b"]["expand"] if mut("evt_side") and "expand" in e["m"]["ev40_b"] else e["m"]["ev40_a"].get("collapse")
             good = list(i_["event"]) == list(ev) and i_["point"]["fate"] == -1 and i_["up"]["fate"] == 1
             if tg == "G_B0.1":
                 good &= list(i_["event"]) == list(g.i40_g(h)["event"])
-            okc &= good
+            acc.add(good, fam, B, h)
             det.append(f"{tg} h {h:g}: chain event {list(i_['event'])}, pair's collapse-side event {ev}" + (f", #40's {g.i40_g(h)['event']}" if tg == "G_B0.1" else ""))
-    check("EVT", "the chain's first trapped cell equals the pair's collapse-side one (same amplitude p*_h - 1e-8), fates collapse at p*_h - 1e-8 and expansion at +1e-8, and #40's for B = 0.1", okc)
     for ln in det:
         print("    " + ln)
+    emit("EVT", "the chain's first trapped cell equals the pair's collapse-side one (same amplitude p*_h - 1e-8), fates collapse at p*_h - 1e-8 and expansion at +1e-8, and #40's for B = 0.1", acc)
 
     print("\n== The chain (#41's, unchanged) at delta = 1e-8: status, limit, first law, second order, settled value")
     S, I = {}, {}
@@ -642,60 +716,65 @@ def analyze_cmd(raw):
                 i = D[(tg, h)]["i"]
                 print(f"    {tg} h {h:g}: {i['cols']} columns, status '{i['status']}'; M_AH at the first trapped cell {i['M_start']:.5f} (r {2 * i['M_start']:.4f}), F_end {i['F_end']:.3f}  (no stall: not run through the checks below)")
     Fmax = sm.CRIT["F1"] * 2.0 ** sm.CRIT["K"]
-    ok5, det = True, []
+    acc, det = Acc(), []
     for fam, B, tg in st_tags:
         for h in HS:
             if (tg, h) not in S:
-                ok5 = False
+                acc.add(False, fam, B, h)
                 continue
             s, i = S[(tg, h)], I[(tg, h)]
             fine = np.allclose(np.diff(s["xp"]), h, atol=1e-9)
             good = i["status"] == "limit" and 0.5 * Fmax <= s["F"][-1] < Fmax and s["edge"].min() >= i["Nc"] / 8 and fine
-            ok5 &= good
+            acc.add(good, fam, B, h)
             det.append(f"{tg} h {h:g}: {i['status']}, F_end {s['F'][-1]:.0f}, edge {s['edge'].min():.0f}/{i['Nc']}")
-    check("RC5", f"every run of a stalling member ends at the declared limit (F = e^-f on the horizon, {0.5 * Fmax:g} <= F_end < {Fmax:g}), horizon at least Nc/8 cells from the box edges, no gaps",
-          ok5 and len(det) == len(st_tags) * len(HS), f"{len(det)} runs; worst F_end {min(float(x.split('F_end ')[1].split(',')[0]) for x in det):.4g}" if det else "")
+    emit("RC5", f"every run of a stalling member ends at the declared limit (F = e^-f on the horizon, {0.5 * Fmax:g} <= F_end < {Fmax:g}), horizon at least Nc/8 cells from the box edges, no gaps",
+         acc, f"{len(det)} runs; worst F_end {min(float(x.split('F_end ')[1].split(',')[0]) for x in det):.4g}" if det else "")
     for ln in det:
         print("    " + ln)
-    worst, parts = 0.0, []
+    acc, parts = Acc(), []
     for (tg, h), s in S.items():
         i1 = int(np.argmax(s["F"] >= 20.0))
         dMs = s["M"][i1] - s["M"][0]
         with np.errstate(all="ignore"):
             rel = abs(dMs - g.flux_integral_g(s, 0, i1)) / abs(dMs)
         rel = rel if np.isfinite(rel) else float("inf")
-        worst = max(worst, rel)
+        fam_, B_ = D[(tg, h)]["fam"], D[(tg, h)]["B"]
+        acc.add(rel <= CRITB["bar_flux"], fam_, B_, h)
         parts.append(f"{tg} h {h:g}: dM {dMs:+.4e}, flux {g.flux_integral_g(s, 0, i1):+.4e}, relative {rel:.1e}")
-    check("RC4", "first law on the horizon, both fields: M(x+_b) - M(x+_a) = integral of (r^2/2) e^f r_- (phi0_+^2 - phi1_+^2), from the first trapped cell to F = 20", worst <= CRITB["bar_flux"] and len(S) > 0,
-          f"max relative difference {worst:.2e} over {len(S)} runs (bar {CRITB['bar_flux']:g})")
+    if not S:
+        acc.add(False, "G", 0.1, 0.01)
+    emit("RC4", "first law on the horizon, both fields: M(x+_b) - M(x+_a) = integral of (r^2/2) e^f r_- (phi0_+^2 - phi1_+^2), from the first trapped cell to F = 20", acc, f"bar {CRITB['bar_flux']:g}")
     for ln in parts:
         print("    " + ln)
-    ok6 = True
+    acc = Acc()
     for fam, B, tg in st_tags:
         if not all((tg, h) in S for h in HS):
-            ok6 = False
+            acc.add_ph(False)
             continue
         rows = sm.band_orders({h: S[(tg, h)] for h in HS}, HS, g.WINDOWS, DELTA)
         for a_, b_, Ee, o in rows:
             good = all(g.BAND_R[0] <= x <= g.BAND_R[1] for x in o)
-            ok6 &= good
+            acc.add_ph(good)
             print(f"    RC6 {tg}, x+ - x+_f in [{a_:g}, {b_:g}]: E12 {Ee[0]:.2e}, E23 {Ee[1]:.2e}, order {o[0]:.2f} {'ok' if good else 'OUT'}")
-    check("RC6", f"M_AH(x+) converges at second order at the three h {HS}, three windows, every stalling member (observed order in {g.BAND_R})", ok6 and len(S) == len(st_tags) * len(HS))
+    emit("RC6", f"M_AH(x+) converges at second order at the three h {HS}, three windows, every stalling member (observed order in {g.BAND_R}; it needs three h, and h = 0.02 is post hoc)", acc)
     SS = {k: g.summary_g(s, k[1]) for k, s in S.items()}
-    check("RC8", "M_AH has settled at the limit: plateau mean over the last 1.0 differs from the previous 1.0 by <= 1e-4 and the mean horizon flux (both fields) over the last 0.5 is <= 1e-5, every run",
-          all(abs(q["dplat"]) <= CRITB["bar_plat"] and q["flux05"] <= CRITB["bar_flux05"] for q in SS.values()) and len(SS) == len(st_tags) * len(HS),
-          "plateau change " + ", ".join(f"{q['dplat']:+.1e}" for q in SS.values()) + "; flux " + ", ".join(f"{q['flux05']:.1e}" for q in SS.values()))
-    hp = {"": 1}
-    okh, dets = True, []
+    acc = Acc()
+    for (tg, h), q in SS.items():
+        acc.add(abs(q["dplat"]) <= CRITB["bar_plat"] and q["flux05"] <= CRITB["bar_flux05"], D[(tg, h)]["fam"], D[(tg, h)]["B"], h)
+    if not SS:
+        acc.add(False, "G", 0.1, 0.01)
+    emit("RC8", "M_AH has settled at the limit: plateau mean over the last 1.0 differs from the previous 1.0 by <= 1e-4 and the mean horizon flux (both fields) over the last 0.5 is <= 1e-5, every run", acc,
+         "plateau change " + ", ".join(f"{q['dplat']:+.1e}" for q in SS.values()) + "; flux " + ", ".join(f"{q['flux05']:.1e}" for q in SS.values()))
+    acc, dets = Acc(), []
     for fam, B, tg in st_tags:
         if not all((tg, h) in SS for h in HS):
-            okh = False
+            acc.add(False, fam, B, 0.01)
             continue
         h_a = HS[0] if mut("h_plat") else HS[2]
         d = abs(SS[(tg, HS[1])]["plat1"] - SS[(tg, h_a)]["plat1"])
-        okh &= d <= CRITB["bar_hpair"]
+        acc.add(d <= CRITB["bar_hpair"], fam, B, HS[1])
         dets.append(f"{tg}: |plat(0.01) - plat({h_a:g})| = {d:.1e}")
-    check("RH", "the settled value at two h: |plat(0.01) - plat(0.005)| (plateau mean over the last 1.0 of x+) <= 5e-5 for every stalling member", okh and len(dets) == len(st_tags), "; ".join(dets))
+    emit("RH", "the settled value at two h: |plat(0.01) - plat(0.005)| (plateau mean over the last 1.0 of x+) <= 5e-5 for every stalling member", acc, "; ".join(dets))
 
     print("\n== M(B) with the error bars of this note, kept separate (plateau mean over the last 1.0 of x+, delta = 1e-8)")
     print("    member     plat(0.02)  plat(0.01)  plat(0.005)  Richardson   h: |0.01 - 0.005|   scatter (#253, 6.6e-6 at h = 0.005, 2.5e-5 at 0.01)   sum")
@@ -706,30 +785,31 @@ def analyze_cmd(raw):
             print(f"    {tg:9s}  {p1:.6f}   {p2:.6f}   {p3:.6f}    {p3 - (p2 - p3) / 3:.6f}    {bh:.2e}          6.6e-06                                        {bh + 6.6e-6:.2e}")
     print("    delta dependence (physical, not an error): at B = 0.1 the plateau is +5.7e-4 from delta = 1e-6 to 1e-8 (#253); not measured at the other B")
     print("\n== B = 0 against family S's settled mass, and B = 0.1 against #253")
-    okb0, det = True, []
-    for tg in ("G_B0", "O"):
+    acc, det = Acc(), []
+    for tg, B_ in (("G_B0", 0.0), ("O", None)):
         for h in HS:
+            fam_ = "O" if tg == "O" else "G"
             if (tg, h) not in SS:
-                okb0 = False
+                acc.add(False, fam_, B_, h)
                 continue
             d = SS[(tg, h)]["plat1"] - S_PLATEAU
-            okb0 &= abs(d) <= CRITB["bar_s"]
+            acc.add(abs(d) <= CRITB["bar_s"], fam_, B_, h)
             det.append(f"{tg} h {h:g}: plat {SS[(tg, h)]['plat1']:.6f}, minus {S_PLATEAU} = {d:+.2e}")
     for ln in det:
         print("    " + ln)
-    check("RB0", f"B = 0 (G with a zero normal pulse, and O) reproduces S's 0.22309 within {CRITB['bar_s']:g}: plateau means at h = {HS}", okb0 and len(det) == 2 * len(HS), "bar 6e-4 (the issue's)")
-    okr, det = True, []
+    emit("RB0", f"B = 0 (G with a zero normal pulse, and O) reproduces S's 0.22309 within {CRITB['bar_s']:g}: plateau means at h = {HS}", acc, "bar 6e-4 (the issue's)")
+    acc, det = Acc(), []
     for h in HS:
         if ("G_B0.1", h) not in SS:
-            okr = False
+            acc.add(False, "G", 0.1, h)
             continue
         ref = g.summary_g(dict(np.load(f"{I253}/runs/h{h:g}_d1e-08/series.npz")), h)
         d = SS[("G_B0.1", h)]["plat1"] - ref["plat1"]
-        okr &= abs(d) <= CRITB["bar_b10"]
+        acc.add(abs(d) <= CRITB["bar_b10"], "G", 0.1, h)
         det.append(f"h {h:g}: plat {SS[('G_B0.1', h)]['plat1']:.6f}, #253's {ref['plat1']:.6f}, difference {d:+.2e}")
     for ln in det:
         print("    " + ln)
-    check("RB10", "B = 0.1 reproduces #253's plateau means (I253-rpi5, delta = 1e-8) at every h within 1e-4 (the roundoff-realization scatter of #253 is 2.5e-5 at h = 0.01)", okr and len(det) == len(HS), "bar 1e-4")
+    emit("RB10", "B = 0.1 reproduces #253's plateau means (I253-rpi5, delta = 1e-8) within 1e-4 (the roundoff-realization scatter of #253 is 2.5e-5 at h = 0.01)", acc, "bar 1e-4")
     s41 = dict(np.load(f"{g.I41RAW}/runs/h0.005_d1e-08/series.npz"))
     if ("G_B0", 0.005) in S:
         s0 = S[("G_B0", 0.005)]
@@ -749,43 +829,48 @@ def analyze_cmd(raw):
             q = MEM[(tg, h)]
             print(f"    {tg:9s} h {h:5g}: t_dep {q['m3']['t_dep']:.3f}: r_th {q['m3']['r_th']:.5f}, s_th {q['m3']['s_th']:+.5f}, gamma_1 {q['m3']['g1']:+.5f}   | 1e-2: t_dep {q['m2']['t_dep']:.3f}, r_th {q['m2']['r_th']:.5f}, "
                   f"gamma_1 {q['m2']['g1']:+.5f}   | collapse side alone, 1e-3: r_th {q['a3']['r_th']:.5f}, gamma_1 {q['a3']['g1']:+.5f}")
-    ok0, det = True, []
-    for tg in ("G_B0", "O"):
+    acc, det = Acc(), []
+    for tg, B_ in (("G_B0", 0.0), ("O", None)):
         for h in HS:
+            fam_ = "O" if tg == "O" else "G"
             q = MEM.get((tg, h))
             if q is None:
-                ok0 = False
+                acc.add(False, fam_, B_, h)
                 continue
             gg, rr = q["m3"]["g1"], q["m3"]["r_th"]
-            ok0 &= np.isfinite(gg) and abs(gg) <= CRITB["bar_g0"] and abs(rr - 1.0) <= CRITB["bar_r0"]
+            acc.add(np.isfinite(gg) and abs(gg) <= CRITB["bar_g0"] and abs(rr - 1.0) <= CRITB["bar_r0"], fam_, B_, h)
             det.append(f"{tg} h {h:g}: gamma_1 {gg:+.1e}, r_th - 1 {rr - 1.0:+.1e}")
-    check("MB0", "B = 0 (G and O): the member at departure is the symmetric one, |gamma_1| <= 2e-5 and |r_th - 1| <= 1e-4 (planted by symmetry, proved in #213) at every h", ok0 and len(det) == 2 * len(HS), "; ".join(det))
-    okc, det = True, []
+    emit("MB0", "B = 0 (G and O): the member at departure is the symmetric one, |gamma_1| <= 2e-5 and |r_th - 1| <= 1e-4 (planted by symmetry, proved in #213)", acc, "; ".join(det))
+    acc, det = Acc(), []
     for h in H2:
         e = D.get(("G_B0.1", h))
         if e is None or "err" in e:
-            okc = False
+            acc.add(False, "G", 0.1, h)
             continue
         for t_, (rp, sp) in C225.items():
             r_, s_ = s_at(e, t_, "m")
-            okc &= abs(r_ - rp) <= CRITB["bar_c225_r"] and abs(s_ - sp) <= CRITB["bar_c225_s"]
+            acc.add(abs(r_ - rp) <= CRITB["bar_c225_r"] and abs(s_ - sp) <= CRITB["bar_c225_s"], "G", 0.1, h)
             det.append(f"h {h:g} t = {t_:g}: r_th {r_:.5f} (#225 {rp}), s_th {s_:.5f} (#225 {sp})")
     for ln in det:
         print("    " + ln)
-    check("C225", "B = 0.1: r_th and s_th of the pair's mean at t = 12, 13, 14 equal #225's printed member table (stall pair at 1e-9) within 3e-4 and 1e-4", okc and len(det) == 3 * len(H2), "bars 3e-4 (r_th), 1e-4 (s_th)")
-    okh, det = True, []
+    emit("C225", "B = 0.1: r_th and s_th of the pair's mean at t = 12, 13, 14 equal #225's printed member table (stall pair at 1e-9) within 3e-4 and 1e-4", acc, "bars 3e-4 (r_th), 1e-4 (s_th)")
+    acc, det = Acc(), []
     for fam, B, tg in st_tags:
         a, b = MEM[(tg, HS[1])]["m3"], MEM[(tg, HS[2])]["m3"]
         dg, dr = abs(a["g1"] - b["g1"]), abs(a["r_th"] - b["r_th"])
-        okh &= dg <= CRITB["bar_hst_g"] and dr <= CRITB["bar_hst_r"]
+        acc.add(dg <= CRITB["bar_hst_g"] and dr <= CRITB["bar_hst_r"], fam, B, HS[1])
         det.append(f"{tg}: |gamma_1(0.01) - gamma_1(0.005)| {dg:.1e}, |r_th| {dr:.1e}")
     for ln in det:
         print("    " + ln)
-    check("HST", "the member at departure at the two finest h agree: |gamma_1| <= 5e-5, |r_th| <= 1e-4, every stalling member", okh and len(det) == len(st_tags), "bars 5e-5, 1e-4")
+    emit("HST", "the member at departure at the two finest h agree: |gamma_1| <= 5e-5, |r_th| <= 1e-4, every stalling member", acc, "bars 5e-5, 1e-4")
 
     print("\n== M(B) against gamma_1(B) and r_th(B) at departure (h = 0.005; M = plateau mean over the last 1.0 of x+; dM' = M / r_th - M(B = 0))")
     fin = HS[2]
-    rel_ok = all((f"G_B{b}", fin) in SS for b in CRITB["rel_B"]) and ("G_B0", fin) in SS
+    rel_ok = all((f"G_B{b}", fin) in SS for b in CRITB["rel_B_ph"]) and ("G_B0", fin) in SS
+
+    def lexp(x1, x0, B1, B0):
+        """local exponent d ln|x| / d ln B between two B (nan when a value is not positive: a mutated run)."""
+        return math.log(abs(x1) / abs(x0)) / math.log(B1 / B0) if x1 * x0 > 0 else float("nan")
     if rel_ok:
         c0 = SS[("G_B0", fin)]["plat1"]
         rows = []
@@ -799,20 +884,32 @@ def analyze_cmd(raw):
             m1, m2 = SS[(tg, HS[1])]["plat1"], SS[(tg, HS[0])]["plat1"]
             print(f"    {B if B is not None else 'O':<8} {ps:.8e}  {gg:+.5f}  {rr:.5f}  {M:.6f}  {m1:.6f}  {m2:.6f}  {M / rr:.6f}  {dMp:+.5f}   " + (f"{dMp / gg:+.4f}      {dMp / gg ** 2:+.3f}" if abs(gg) > 1e-3 else "-            -") + f"       {M - c0:+.5f}")
         pos = [r for r in rows if r[0] is not None and r[0] > 0 and abs(r[2]) > 1e-3]
-        def lexp(x1, x0, B1, B0):
-            """local exponent d ln|x| / d ln B between two B (nan when a value is not positive: a mutated run)."""
-            return math.log(abs(x1) / abs(x0)) / math.log(B1 / B0) if x1 * x0 > 0 else float("nan")
         for a_, b_ in zip(pos[:-1], pos[1:]):
             print(f"    local exponents B {a_[0]:g} -> {b_[0]:g}: gamma_1 {lexp(b_[2], a_[2], b_[0], a_[0]):.2f}, dM' {lexp(b_[5], a_[5], b_[0], a_[0]):.2f}, M - c0 "
                   f"{lexp(b_[4] - c0, a_[4] - c0, b_[0], a_[0]):.2f}, r_th - 1 {lexp(b_[3] - 1, a_[3] - 1, b_[0], a_[0]):.2f}")
-        use = [r for r in rows if r[0] in CRITB["rel_B"]]
-        lo = rel_loo([r[2] for r in use], [r[3] for r in use], [r[4] for r in use], c0, perm=mut("rel_perm"))
-        for r, (err, ab, y) in zip(use, lo):
-            print(f"    leave out B = {r[0]:g}: (a, b) = ({ab[0]:.4f}, {ab[1]:.4f}) from the others; dM' measured {y:+.5f}, predicted {y + err:+.5f}, error {err:+.2e}")
-        lo_u = rel_loo([r[2] for r in use], [1.0] * len(use), [r[4] for r in use], c0, perm=False)
-        print("    without the r_th scaling (M - M_0 = a gamma_1 + b gamma_1^2, a report): leave-one-out errors " + ", ".join(f"{x[0]:+.1e}" for x in lo_u) + "; with it: " + ", ".join(f"{x[0]:+.1e}" for x in lo))
-        check("REL", "M / r_th - M_0 = a gamma_1 + b gamma_1^2, leave one out over B = 0.025, 0.05, 0.1, 0.125 (M_0 = B = 0's plateau at h = 0.005): every held-out point within 6e-5",
-              max(abs(x[0]) for x in lo) <= CRITB["bar_rel"], f"max error {max(abs(x[0]) for x in lo):.1e} (bar {CRITB['bar_rel']:g}); the form was chosen after the h = 0.02, 0.01 development runs")
+        print("    the member's asymptotic masses (asym_masses at the fitted r_th, s_th; a report): B, m_+, m_-, (M - M_0)/m_+, dM'/m_+")
+        for B, tg, gg, rr, M, dMp in rows:
+            if B is None or B <= 0:
+                continue
+            try:
+                mp_, mm_ = tl.asym_masses(ND, MEM[(tg, fin)]["m3"]["r_th"], MEM[(tg, fin)]["m3"]["s_th"])
+                print(f"    {B:<6g} m_+ {mp_:+.5f}  m_- {mm_:+.5f}  (M - M_0)/m_+ {(M - c0) / mp_:.4f}  dM'/m_+ {dMp / mp_:.4f}")
+            except Exception as ex:
+                print(f"    {B:<6g} asym_masses failed: {ex!r}")
+        for name, Bset, gate in (("REL", CRITB["rel_B"], True), ("REL-ph", CRITB["rel_B_ph"], False)):
+            use = [r for r in rows if r[0] in Bset]
+            lo = rel_loo([r[2] for r in use], [r[3] for r in use], [r[4] for r in use], c0, perm=mut("rel_perm"))
+            for r, (err, ab, y) in zip(use, lo):
+                print(f"    {name}: leave out B = {r[0]:g}: (a, b) = ({ab[0]:.4f}, {ab[1]:.4f}) from the others; dM' measured {y:+.5f}, predicted {y + err:+.5f}, error {err:+.2e}")
+            lo_u = rel_loo([r[2] for r in use], [1.0] * len(use), [r[4] for r in use], c0, perm=False)
+            print(f"    {name} without the r_th scaling (M - M_0 = a gamma_1 + b gamma_1^2, a report): leave-one-out errors " + ", ".join(f"{x[0]:+.1e}" for x in lo_u) + "; with it: " + ", ".join(f"{x[0]:+.1e}" for x in lo))
+            ok_ = max(abs(x[0]) for x in lo) <= CRITB["bar_rel"]
+            txt = (f"M / r_th - M_0 = a gamma_1 + b gamma_1^2, leave one out over B = {', '.join(f'{b:g}' for b in Bset)} (M_0 = B = 0's plateau at h = 0.005): every held-out point within 6e-5")
+            det_ = f"max error {max(abs(x[0]) for x in lo):.1e} (bar {CRITB['bar_rel']:g}); the form was chosen after the h = 0.02, 0.01 development runs"
+            if gate:
+                check("REL", txt, ok_, det_)
+            else:
+                check("REL-ph", "POST HOC, gates nothing (B = 0.125): " + txt, ok_, det_, ph=True)
         print("    *the relation is a one-parameter family in B: it constrains the shape of M(gamma_1, r_th) along the curve, and does not test the dependence on gamma_1 and r_th separately*")
     else:
         check("REL", "M / r_th against gamma_1, leave one out", False, "a run is missing")
@@ -850,8 +947,12 @@ def main():
         t0 = time.time()
         check_planted()
         sys.exit(finish(t0))
+    elif cmd == "stallscan":
+        stallscan_cmd(float(opts["h"]), [float(x) for x in opts["B"].split(",")], opts["out"])
     elif cmd == "analyze":
-        sys.exit(analyze_cmd(opts["raw"]))
+        rc = analyze_cmd(opts["raw"])
+        stallscan_report(opts["raw"])
+        sys.exit(rc)
     else:
         raise SystemExit(__doc__)
 
