@@ -2,6 +2,8 @@
 pub mod connect;
 pub mod hp;
 pub mod json;
+#[cfg(feature = "locate_lib")]
+pub mod loc;
 pub mod model;
 pub mod offgrid;
 pub mod planted;
