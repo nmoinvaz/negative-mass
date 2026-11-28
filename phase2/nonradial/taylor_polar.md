@@ -682,3 +682,19 @@ The crate's count itself does not depend on this: its margin over its own error 
    it would be about 2.5e-5 at 10⁴ if it grew linearly with R_s (the t1 boxes show it does not depend on R_s alone), against margins like 5e-5. Accept: the crate-against-scipy phase at 5 points of a strip at R_s 5000 and 10⁴, and the strip's margin against it. Depends: #116.
 3. **Print the margin in winding2's RESULT line.** What: `winding2.py` prints the smallest distance of any compared quantity from its thresholds, with and without the plant. Why: a count whose margin is under 10 times its evaluator's phase error is
    visible only after this recount. Accept: the line is printed; a control that perturbs D by 1e-3 rad changes it. Depends: none.
+
+### Coordinator's review (#274)
+
+Merged at bf159db. Review folder `negative-mass-raw/I274-mac-review` at 916c4384, criteria committed (f5be0514) before the first
+run of `ind274.py`, with one amendment (A1) after run 1.
+
+- **Rerun on the Mac** from 6f91397: the boxes s1_l6 (thinnest margin) and s2_l2 (where `onesided` does not fire) give 445 and
+  245 crate evaluations bitwise equal to the runner's, with the same verdicts and margins. The collector prints
+  `i274_recount_output.txt` byte for byte.
+- **ind274**, 2 of 2 after A1. It shares only the crate's output files and the stored caches. It maps each box to its cache by
+  its own construction, finds every stored point among the crate's evaluations in all 36 files, and compares |D|, which the
+  phase strip leaves alone: the worst | |D_crate|/|D_cache| − 1 | is 6.2e-8 over 6811 points. The mutations `scale` and `drop` fire.
+- A1: run 1 assumed the record files hold only the record count's points. They also hold the counter controls' evaluations,
+  and a search by l alone matched boxes that share a region to the wrong star.
+- `onesided` not firing on s2_l2 stays as reported. The thinnest margin, 5.15e-5 rad, is 16 times the stored phase error there.
+- Paper II gains one sentence: the same code in double precision reproduces all 35 counts.
