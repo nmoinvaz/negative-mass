@@ -1,0 +1,136 @@
+throat_scaling.py analyze: mutation None, numba 0.68.1, numpy 2.5.4, 2026-11-27 18:24:41
+    CF n = 2: residuals [1, 1, 1, 1, 1] (1 = zero), k = 2/(2*A**2 - 3), c = 2*A**2
+    CF n = 3: residuals [1, 1, 1, 1, 1] (1 = zero), k = 2/(3*A**2 - 4), c = 9*A**2/2
+    CF n = 4: residuals [1, 1, 1, 1, 1] (1 = zero), k = 2/(4*A**2 - 5), c = 8*A**2
+    CF n = 5: residuals [1, 1, 1, 1, 1] (1 = zero), k = 2/(5*A**2 - 6), c = 25*A**2/2
+    CF n = 6: residuals [1, 1, 1, 1, 1] (1 = zero), k = 2/(6*A**2 - 7), c = 18*A**2
+[pass] CF1: the closed form (r^n = x+ + x-, phi = A arcsin((x+ - x-)/(x+ + x-)), f in closed form) solves the flat-limit evolution equations and both constraints exactly, A free  (n = [2, 3, 4, 5, 6]; failing n: [])
+[pass] CF2: on its diagonal H = k/(tau_s - tau) with k = 2/(nA^2 - n - 1), |rho|/H^2 = n^2 A^2/2, and the throat relation c = n(1/k + (n+1)/2) holds identically  (n = [2, 3, 4, 5, 6]; failing n: [])
+    CF3 n = 2: phi_inf = 2.221441469087, (pi/2) A = 2.221441469079, q = 1.414213562373
+    CF3 n = 3: phi_inf = 1.923824745266, (pi/2) A = 1.923824745243, q = 2.449489742783
+    CF3 n = 4: phi_inf = 1.813799364234, (pi/2) A = 1.813799364234, q = 3.464101615138
+    CF3 n = 5: phi_inf = 1.756203682760, (pi/2) A = 1.756203682760, q = 4.472135955000
+    CF3 n = 6: phi_inf = 1.720721162864, (pi/2) A = 1.720721162864, q = 5.477225575052
+[pass] CF3: the static wormhole's end value phi_inf = (pi/2) sqrt(n/(n-1)) (dn.ellis_dense, tail restored) and q = sqrt(n(n-1))  (max |phi_inf - (pi/2)A| 2.30e-11 (tol 1e-09), max |q - sqrt(n(n-1))| 0.00e+00)
+    CF4  D   n   k = 2(n-1)   c = n^3/(2(n-1))   c from the throat relation
+    CF4  4  2   2            4                  4
+    CF4  5  3   4            27/4               27/4
+    CF4  6  4   6            32/3               32/3
+    CF4  7  5   8            125/8              125/8
+    CF4  8  6   10           108/5              108/5
+    CF4  9  7   12           343/12             343/12
+    CF4  10 8   14           256/7              256/7
+[pass] CF4: with A^2 = n/(n-1) the closed form gives k = 2(n-1) and c = n^3/(2(n-1)) (exact rationals), equal to the values the checks use  (n = [2, 3, 4, 5, 6, 7, 8]; failing n: [])
+[pass] PF: planted: a synthetic H = k/(tau_s - tau) with relative noise through the fit recovers k and tau_s  (worst |k - 2.0| 4.97e-05 (tol 0.001), worst |tau_s - 17.8902| 1.05e-05 (tol 0.001); noise 0.0001, 3 seeds, window = last e-fold of r)
+    PX n = 3: planted g = 2.0, deviation at r_end 0.004; recovered k_inf = 3.999982 (k = 4.0), g = 2.00
+    PX n = 2: planted g = 2.5, deviation at r_end 0.0002; recovered k_inf = 1.999979 (k = 2.0), g = 2.48
+    PX n = 4: planted g = 2.4, deviation at r_end 0.005; recovered k_inf = 5.999979 (k = 6.0), g = 2.40
+[pass] PX: planted: a synthetic k_loc(r) = k - a r^-g with noise through the extrapolation recovers k  (worst relative error 2.15e-05 (tol 0.001) over 3 cases x 3 seeds, window = last e-fold of r)
+[pass] PS: planted: the spatial test passes on the closed form (n = 3, P(x) = (1 + 3x^2)/2) and fails when the amplitude is 2 % off  (exact: r^n 4.2e-09, phi 1.0e-08; amplitude +2 %: phi 2.3e-02; bars 0.001, 0.01)
+[pass] K4F: D = 4: #213's fitted k (last e-fold of r) within 0.001 (relative) of k = 2(n-1) = 2 for every stored member  (worst 2.02e-04; D4_tuned_h0.01 2.00001, D4_A0.01_h0.01 2.00001, D4_A0.05_h0.01 2.00004, D4_A0.2_h0.01 2.00040)
+[pass] K4X: D = 4: the local exponent extrapolated to r -> infinity (last e-fold, power-law approach) within 0.001 (relative) of 2  (worst 4.00e-06; D4_tuned_h0.01 2.00000, D4_A0.01_h0.01 1.99999, D4_A0.05_h0.01 2.00000, D4_A0.2_h0.01 2.00001)
+[pass] C4: D = 4: |rho|/H^2 at r = 50a within 0.001 (relative) of c = n^3/(2(n-1)) = 4.000000  (worst 3.70e-04; D4_tuned_h0.01 4.00000, D4_A0.01_h0.01 4.00000, D4_A0.05_h0.01 3.99993, D4_A0.2_h0.01 3.99852)
+[FAIL] K5F: D = 5: #213's fitted k (last e-fold of r) within 0.001 (relative) of k = 2(n-1) = 4 for every stored member  (worst 3.13e-03; D5_tuned_h0.00353553 3.98749, D5_A0.05_h0.00353553 3.98973)
+[pass] K5X: D = 5: the local exponent extrapolated to r -> infinity (last e-fold, power-law approach) within 0.001 (relative) of 4  (worst 8.17e-06; D5_tuned_h0.00353553 4.00003, D5_A0.05_h0.00353553 4.00003)
+[pass] C5: D = 5: |rho|/H^2 at r = 50a within 0.001 (relative) of c = n^3/(2(n-1)) = 6.750000  (worst 3.70e-04; D5_tuned_h0.00353553 6.75249, D5_A0.05_h0.00353553 6.75226)
+[pass] K6F: D = 6 at h <= 0.003: the fitted k (last e-fold of r) within 0.01 of the prediction 6  (worst 1.54e-03; D6_A0.05_h0.003_X200 5.99908, D6_A0.2_h0.003_X200 5.99981, D6_A0.01_h0.003_X200 5.99846)
+[FAIL] K6X: D = 6: the extrapolated local exponent within 0.01 of 6  (worst 2.84e-02; D6_A0.05_h0.003_X200 6.00163, D6_A0.2_h0.003_X200 6.02838, D6_A0.01_h0.003_X200 6.00033)
+[pass] C6: D = 6: |rho|/H^2 at r = 50a within 0.001 (relative) of c = 10.666667  (worst 1.38e-04; D6_A0.05_h0.003_X200 10.66756, D6_A0.2_h0.003_X200 10.66688, D6_A0.01_h0.003_X200 10.66814)
+[pass] RES6: D = 6: H at fixed r (r = 10, 25, 50) within 0.01 (relative) and the fitted k within 0.01 between h = 0.006 and h = 0.003  (worst H 3.93e-03, worst k 6.43e-06)
+[FAIL] WS: the extrapolated exponent does not depend on the window (last 1.0 against 1.5 e-folds of r) beyond 0.001 (relative)  (worst 4.67e-03)
+[pass] T800: D = 4 tuned at X = 800: tau_s from the fit within 0.001 of 17.8902  (tau_s = 17.89022, last cell at tau_s - tau = 0.1547)
+[pass] K800: D = 4 tuned at X = 800: k = 2.000 +- 0.001  (k = 2.00000, k_loc(end) 1.99870)
+[pass] KT800: D = 4 tuned at X = 800: K (tau_s - tau)^2 stays at 4.000 within 0.001 (relative) at the last cell  (K (tau_s - tau)^2 = 4.00000)
+[pass] JTK: jump test: the extrapolated exponent of data whose field end value is raised by b is k = 2/(nA^2 - n - 1), A = (2/pi)(phi_inf + b), within 0.001 (relative)  (worst 2.16e-04 over 11 runs (D = 4, 5, 6))
+[FAIL] JTC: jump test: |rho|/H^2 at r = 50a (or 0.8 r_end) is n^2 A^2/2 with the same A, within 0.001 (relative)  (worst 1.06e-03 over 11 runs)
+[pass] SP1: r^n = P(x+) + P(x-) with P = r_diag^n/2 on the stored columns x+ = X/4, X/2, X at x- >= 20, to 0.001 (relative)  (worst 4.48e-04 over 22 runs)
+[pass] SP2: phi = A arcsin((P+ - P-)/(P+ + P-)) with A = sqrt(n/(n-1)) on the same columns, to 0.01 (absolute)  (worst 1.30e-03 over 22 runs)
+
+--- runs: the throat series and its limits ---
+  D4_tuned_h0.01                 D=4 h=0.01      N=20000  r_end=  190.4 tau_s-tau_end=0.315  k_fit=2.00001  tau_s=17.89022  k_loc(end)=1.99997  k_inf=2.00000 (g=2.48, rms 9.2e-06)  c(r=50)=4.00000  K(tau_s-tau)^2=4.00005
+      approach: r = 10: k_loc 1.99312, c/c_pred - 1 +2.04e-03; r = 20: k_loc 2.00007, c/c_pred - 1 +1.39e-04; r = 50: k_loc 2.00007, c/c_pred - 1 +8.06e-07; r = 100: k_loc 2.00001, c/c_pred - 1 -4.18e-07
+      spatial (x+, max |r^n/(P+ + P-) - 1|, max |phi - A asin xi|): 50.0, 1.6e-04, 7.0e-05; 100.0, 8.6e-05, 1.1e-05; 200.0, 4.1e-05, 4.5e-06
+  D4_A0.01_h0.01                 D=4 h=0.01      N=20000  r_end=  196.4 tau_s-tau_end=0.310  k_fit=2.00001  tau_s=10.05589  k_loc(end)=1.99997  k_inf=1.99999 (g=1.74, rms 1.1e-05)  c(r=50)=4.00000  K(tau_s-tau)^2=4.00005
+      approach: r = 10: k_loc 1.99321, c/c_pred - 1 +2.03e-03; r = 20: k_loc 2.00009, c/c_pred - 1 +1.35e-04; r = 50: k_loc 2.00007, c/c_pred - 1 +1.31e-07; r = 100: k_loc 2.00001, c/c_pred - 1 -6.01e-07
+      spatial (x+, max |r^n/(P+ + P-) - 1|, max |phi - A asin xi|): 50.0, 4.8e-05, 1.2e-05; 100.0, 3.3e-05, 4.6e-06; 200.0, 1.7e-05, 4.9e-06
+  D4_A0.05_h0.01                 D=4 h=0.01      N=20000  r_end=  200.7 tau_s-tau_end=0.295  k_fit=2.00004  tau_s=8.43337  k_loc(end)=2.00001  k_inf=2.00000 (g=2.04, rms 9.9e-06)  c(r=50)=3.99993  K(tau_s-tau)^2=4.00016
+      approach: r = 10: k_loc 1.99608, c/c_pred - 1 +1.58e-03; r = 20: k_loc 2.00087, c/c_pred - 1 +2.77e-05; r = 50: k_loc 2.00021, c/c_pred - 1 -1.79e-05; r = 100: k_loc 2.00005, c/c_pred - 1 -5.25e-06
+      spatial (x+, max |r^n/(P+ + P-) - 1|, max |phi - A asin xi|): 50.0, 3.5e-05, 2.3e-05; 100.0, 2.5e-05, 2.6e-05; 200.0, 1.3e-05, 1.7e-05
+  D4_A0.2_h0.01                  D=4 h=0.01      N=20000  r_end=  238.9 tau_s-tau_end=0.197  k_fit=2.00040  tau_s=6.16898  k_loc(end)=2.00014  k_inf=2.00001 (g=2.03, rms 1.0e-05)  c(r=50)=3.99852  K(tau_s-tau)^2=4.00172
+      approach: r = 10: k_loc 2.05366, c/c_pred - 1 -5.96e-03; r = 20: k_loc 2.01703, c/c_pred - 1 -2.04e-03; r = 50: k_loc 2.00300, c/c_pred - 1 -3.70e-04; r = 100: k_loc 2.00077, c/c_pred - 1 -9.51e-05
+      spatial (x+, max |r^n/(P+ + P-) - 1|, max |phi - A asin xi|): 50.0, 9.4e-06, 4.3e-04; 100.0, 6.9e-06, 3.0e-04; 200.0, 3.7e-06, 1.7e-04
+  D5_tuned_h0.00353553           D=5 h=0.0035355 N=28284  r_end=   83.5 tau_s-tau_end=1.587  k_fit=3.98749  tau_s=15.07241  k_loc(end)=3.99568  k_inf=4.00003 (g=2.06, rms 7.9e-05)  c(r=50)=6.75249  K(tau_s-tau)^2=15.89733
+      approach: r = 10: k_loc 3.69242, c/c_pred - 1 +1.13e-02; r = 20: k_loc 3.92159, c/c_pred - 1 +2.58e-03; r = 50: k_loc 3.98801, c/c_pred - 1 +3.70e-04
+      spatial (x+, max |r^n/(P+ + P-) - 1|, max |phi - A asin xi|): 50.0, 3.0e-04, 1.3e-03; 100.0, 1.7e-04, 5.7e-04
+  D5_A0.05_h0.00353553           D=5 h=0.0035355 N=28284  r_end=   88.7 tau_s-tau_end=1.296  k_fit=3.98973  tau_s=7.91805  k_loc(end)=3.99700  k_inf=4.00003 (g=2.04, rms 1.0e-04)  c(r=50)=6.75226  K(tau_s-tau)^2=15.91563
+      approach: r = 10: k_loc 3.72182, c/c_pred - 1 +9.73e-03; r = 20: k_loc 3.92845, c/c_pred - 1 +2.27e-03; r = 50: k_loc 3.98892, c/c_pred - 1 +3.35e-04
+      spatial (x+, max |r^n/(P+ + P-) - 1|, max |phi - A asin xi|): 50.0, 1.0e-04, 7.3e-04; 100.0, 6.9e-05, 3.7e-04
+  D6_A0.05_h0.003_X200           D=6 h=0.003     N=66667  r_end=  168.6 tau_s-tau_end=1.934  k_fit=5.99908  tau_s=8.17309  k_loc(end)=6.00034  k_inf=6.00163 (g=1.09, rms 1.7e-03)  c(r=50)=10.66756  K(tau_s-tau)^2=35.98889
+      approach: r = 10: k_loc 5.76250, c/c_pred - 1 +4.08e-03; r = 20: k_loc 5.95656, c/c_pred - 1 +7.53e-04; r = 50: k_loc 5.99545, c/c_pred - 1 +8.37e-05; r = 100: k_loc 6.00088, c/c_pred - 1 +1.62e-05
+      spatial (x+, max |r^n/(P+ + P-) - 1|, max |phi - A asin xi|): 50.0, 1.7e-04, 1.9e-04; 100.0, 1.1e-04, 5.6e-05; 200.0, 5.8e-05, 1.5e-05
+  D6_A0.2_h0.003_X200            D=6 h=0.003     N=66667  r_end=  186.5 tau_s-tau_end=0.591  k_fit=5.99981  tau_s=4.72270  k_loc(end)=6.00107  k_inf=6.02838 (g=0.05, rms 2.1e-03)  c(r=50)=10.66688  K(tau_s-tau)^2=35.99766
+      approach: r = 10: k_loc 5.84472, c/c_pred - 1 +1.81e-03; r = 20: k_loc 5.97809, c/c_pred - 1 +2.58e-04; r = 50: k_loc 5.99824, c/c_pred - 1 +2.04e-05; r = 100: k_loc 5.99942, c/c_pred - 1 +3.13e-06
+      spatial (x+, max |r^n/(P+ + P-) - 1|, max |phi - A asin xi|): 50.0, 1.2e-05, 5.5e-05; 100.0, 8.0e-06, 1.8e-05; 200.0, 4.3e-06, 5.1e-06
+  D6_A0.01_h0.003_X200           D=6 h=0.003     N=66667  r_end=  166.7 tau_s-tau_end=2.556  k_fit=5.99846  tau_s=10.34836  k_loc(end)=5.99754  k_inf=6.00033 (g=2.07, rms 1.7e-03)  c(r=50)=10.66814  K(tau_s-tau)^2=35.98137
+      approach: r = 10: k_loc 5.67437, c/c_pred - 1 +6.21e-03; r = 20: k_loc 5.93540, c/c_pred - 1 +1.20e-03; r = 50: k_loc 5.99278, c/c_pred - 1 +1.38e-04; r = 100: k_loc 5.99771, c/c_pred - 1 +2.72e-05
+      spatial (x+, max |r^n/(P+ + P-) - 1|, max |phi - A asin xi|): 50.0, 3.3e-04, 3.1e-04; 100.0, 2.1e-04, 9.0e-05; 200.0, 1.1e-04, 2.4e-05
+  D6_A0.05_h0.006_X200           D=6 h=0.006     N=33333  r_end=  168.6 tau_s-tau_end=1.927  k_fit=5.99909  tau_s=8.16739  k_loc(end)=5.99989  k_inf=5.99996 (g=2.45, rms 3.1e-04)  c(r=50)=10.66755  K(tau_s-tau)^2=35.98897
+      approach: r = 10: k_loc 5.76367, c/c_pred - 1 +4.06e-03; r = 20: k_loc 5.95684, c/c_pred - 1 +7.48e-04; r = 50: k_loc 5.99538, c/c_pred - 1 +8.31e-05; r = 100: k_loc 5.99902, c/c_pred - 1 +1.60e-05
+      spatial (x+, max |r^n/(P+ + P-) - 1|, max |phi - A asin xi|): 50.0, 1.7e-04, 1.9e-04; 100.0, 1.1e-04, 5.6e-05; 200.0, 5.8e-05, 1.5e-05
+  D4_tuned_h0.01_X800            D=4 h=0.01      N=80000  r_end=  790.4 tau_s-tau_end=0.155  k_fit=2.00000  tau_s=17.89022  k_loc(end)=1.99870  k_inf=1.99929 (g=0.05, rms 3.2e-04)  c(r=50)=4.00000  K(tau_s-tau)^2=4.00000
+      approach: r = 10: k_loc 1.99312, c/c_pred - 1 +2.04e-03; r = 20: k_loc 2.00007, c/c_pred - 1 +1.39e-04; r = 50: k_loc 2.00007, c/c_pred - 1 +8.06e-07; r = 100: k_loc 2.00001, c/c_pred - 1 -4.18e-07
+      spatial (x+, max |r^n/(P+ + P-) - 1|, max |phi - A asin xi|): 200.0, 4.1e-05, 4.5e-06; 400.0, 2.0e-05, 2.8e-06; 800.0, 9.8e-06, 1.5e-06
+
+--- the jump test: A = (2/pi)(phi_inf + b); k = 2/(nA^2 - n - 1), c = n^2 A^2/2 against the runs (k_inf, c at r = 50a or 0.8 r_end) ---
+  D        b        A   k_pred    k_inf    k_fit   c_pred        c  r_end
+  4   +0.050  1.44604   1.6919   1.6919   1.6923   4.1821   4.1817  102.6
+  4   +0.100  1.47788   1.4617   1.4617   1.4622   4.3682   4.3675  107.0
+  4   +0.200  1.54154   1.1411   1.1411   1.1418   4.7527   4.7510  117.4
+  4   +0.400  1.66886   0.7782   0.7782   0.7788   5.5702   5.5643  146.7
+  4   -0.050  1.38238   2.4332   2.4332   2.4329   3.8220   3.8222   94.9
+  5   +0.200  1.35207   1.3475   1.3475   1.3446   8.2264   8.2288   57.6
+  5   +0.500  1.54305   0.6363   0.6364   0.6356  10.7146  10.7179   72.6
+  5   -0.030  1.20565   5.5440   5.5452   5.4769   6.5411   6.5453   52.1
+  6   +0.100  1.21836   2.1330   2.1330   2.1325  11.8753  11.8754   50.7
+  6   +0.300  1.34569   0.8915   0.8915   0.8915  14.4870  14.4870   54.9
+  6   -0.030  1.13560  12.6289  12.6290  12.4885  10.3167  10.3204   49.5
+
+--- the closed-form values ---
+  D  n    k = 2(n-1)           c
+  4  2        2.0000     4.00000
+  5  3        4.0000     6.75000
+  6  4        6.0000    10.66667
+
+--- post hoc rows (added after the runs of record; they gate nothing) ---
+  the extrapolated exponent of the throat-relation series k = H^2/Hdot (no numerical derivative), against the declared k_inf of the differenced k_loc;
+  scatter = rms of k_loc about its 201-cell mean over the window; H noise = rms of the second difference of H / H over the window
+  run                             k_pred     k_inf  k_inf(rel.)     g      rms  mean k_loc  mean k_rel   scatter   H noise
+  D4_tuned_h0.01                   2.000   2.00000      2.00000  2.49  3.9e-08     2.00001     2.00001   9.8e-06   1.3e-09
+  D4_A0.01_h0.01                   2.000   1.99999      2.00000  2.46  3.3e-08     2.00001     2.00001   1.0e-05   1.2e-09
+  D4_A0.05_h0.01                   2.000   2.00000      2.00000  2.11  2.6e-08     2.00003     2.00003   1.1e-05   1.2e-09
+  D4_A0.2_h0.01                    2.000   2.00001      2.00000  1.98  6.9e-08     2.00037     2.00037   1.0e-05   1.2e-09
+  D5_tuned_h0.00353553             4.000   4.00003      4.00004  2.06  2.7e-06     3.98830     3.98830   8.4e-05   9.5e-10
+  D5_A0.05_h0.00353553             4.000   4.00003      4.00003  2.04  1.8e-06     3.99040     3.99040   9.7e-05   9.9e-10
+  D6_A0.05_h0.003_X200             6.000   6.00163      5.99999  2.40  3.0e-07     5.99913     5.99913   1.8e-03   3.2e-09
+  D6_A0.2_h0.003_X200              6.000   6.02838      6.00000  2.80  2.1e-07     5.99982     5.99982   1.8e-03   3.2e-09
+  D6_A0.01_h0.003_X200             6.000   6.00033      6.00000  2.36  2.2e-07     5.99854     5.99854   1.8e-03   3.1e-09
+  D6_A0.05_h0.006_X200             6.000   5.99996      5.99999  2.41  2.6e-07     5.99914     5.99914   3.2e-04   1.1e-09
+  D4_tuned_h0.01_X800              2.000   1.99929      2.00000  2.81  2.6e-08     2.00000     2.00000   3.5e-04   4.6e-09
+  the extrapolated c of the jump test (JTC gates c at r = 50a, as declared), same window and estimator as k_inf:
+  run                              c_pred   c(r=50)       rel     c_inf       rel     g
+  D4_S_b+0.05_h0.02_X100           4.1821    4.1817  -8.4e-05    4.1821  +1.4e-06  1.93
+  D4_S_b+0.1_h0.02_X100            4.3682    4.3675  -1.6e-04    4.3682  +1.0e-06  1.97
+  D4_S_b+0.2_h0.02_X100            4.7527    4.7510  -3.6e-04    4.7527  +1.5e-06  1.96
+  D4_S_b+0.4_h0.02_X100            5.5702    5.5643  -1.1e-03    5.5702  +3.4e-06  1.95
+  D4_S_b-0.05_h0.02_X100           3.8220    3.8222  +5.9e-05    3.8220  +2.6e-06  2.77
+  D5_S_b+0.2_h0.00707_X60          8.2264    8.2288  +3.0e-04    8.2264  -6.6e-06  1.91
+  D5_S_b+0.5_h0.00707_X60         10.7146   10.7179  +3.1e-04   10.7143  -2.4e-05  1.70
+  D5_S_b-0.03_h0.00707_X60         6.5411    6.5453  +6.4e-04    6.5411  +1.9e-07  2.11
+  D6_S_b+0.1_h0.012_X60           11.8753   11.8754  +1.6e-05   11.8753  -9.1e-08  2.90
+  D6_S_b+0.3_h0.012_X60           14.4870   14.4870  +1.0e-06   14.4870  -4.6e-07  2.00
+  D6_S_b-0.03_h0.012_X60          10.3167   10.3204  +3.6e-04   10.3168  +4.9e-06  2.22
+  planted k_loc (n = 4, g = 2.4, r_end = 170, 20000 points) with scatter 1.8e-3 per point, 20 seeds, through the declared k_inf (the declared PX used scatter 1e-4):
+    deviation at r_end 1.5e-03: error rms 4.2e-04, max 9.2e-04, median |error| 3.3e-04, 0 of 20 outside 0.01
+    deviation at r_end 7.0e-05: error rms 7.1e-03, max 1.7e-02, median |error| 1.1e-03, 3 of 20 outside 0.01
+
+21 of 25 checks pass; failing: ['K5F', 'K6X', 'WS', 'JTC']
