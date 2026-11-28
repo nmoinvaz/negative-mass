@@ -54,8 +54,8 @@ N0: the equation as coded here is #212's `coef_x` to 3.2e-15. With Y = R e^{Wx} 
 (Y″ − P Y′ − Q Y)/e^{Wx} = 2 (πW + 2c) / ( ρ R (2cρ² arctan ρ − πcρ² + 2cρ + 2c arctan ρ − πc − π) ).
 ```
 
-At W = K it is zero for all ρ and c (S1, sympy). Interpretation: in the gauge δφ = 0, Y_K = R e^{Kv} is the perturbation δr = ε r e^{3m v}; at c = 0 it is the static variation of b (S2). Why it exists for
-every c is not understood here (recommended task 3).
+At W = K it is zero for all ρ and c (S1, sympy). Interpretation: in the gauge δφ = 0, Y_K = R e^{Kv} is the perturbation δr = ε r e^{3m v}; at c = 0 it is the static variation of b (S2). *Update from #269 ([exact_mode.md](exact_mode.md)):* Y_K = R e^{K(t+x)} is the linearization of the exact family r = λ(v)R,
+F = A − 2ρλ′/λ + 1/λ² − 1, λ² = L + βe^{Kv}, in the ingoing null chart (checked symbolically, twice); K = ½(R²A′ − 2ρA) + ρ is a constant of the static equations.
 
 **How it was found.** Not by a search over the class below: the formal series of Y at ρ = +∞, run as a convergence test (N3), had the coefficients 1, 0, 1/2, 0, −1/8, … of √(1 + ρ²) for the e^{+κx} solution,
 and a ratio growing like n for the e^{−κx} one. The raw README records the order.

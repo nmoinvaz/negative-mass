@@ -146,6 +146,12 @@ horizon and decaying at infinity is Y_∞ = Y_ref − Y_b/I₀, I₀ = 1.0149036
 W(c) = K(c) + (c + 1)/I₀ + O((c + 1)²), d(W/κ)/dc = 0.31402902 (numerical evidence; the third-order fit of the rates gives 0.31402903). The two-sided
 0.31 of the table is this slope.
 
+**Update from #269** ([exact_mode.md](exact_mode.md)): Y_ref is the linearization about the member of an exact nonlinear
+solution: a time-dependent throat radius b(v)² = L + βe^{Kv}, with the scalar unchanged and F = A − 2ρλ′/λ + 1/λ² − 1 in the ingoing null chart
+(checked symbolically for every member, and by the coordinator's brute-force Ricci check, `I269-mac-review/ind269.py`, 9e-40). For β < 0 it
+collapses at finite advanced time with a diverging Ricci scalar; for β > 0 it expands. It is not asymptotically flat, and it linearizes to Y_ref,
+not to Y_∞, so #250 stays open.
+
 Near the horizon, with the scaling ρ = ρ_h t at fixed t and ρ_h → 0, V̂ in x tends to a fixed well (sympy, S7, S7c; the members c = −1.0001 and
 −0.9999 follow it to 1.5e-3 and 1.3e-3, S7b, S7d):
 

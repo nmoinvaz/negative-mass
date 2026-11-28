@@ -175,3 +175,27 @@ exact_mode.py mutations DIR PREFIX      # fired sets of stored logs DIR/PREFIX<n
 ```
 
 `exact_mode_output.txt` is `derive`, `check` and `mutations` of the runs of record (`I269-mac/runs`), in that order.
+
+## Coordinator's review
+
+Review of branch `wip/i269-exact-solution` at 118ef9a and raw `I269-mac` at 3b276e1e, recorded in negative-mass-raw `I269-mac-review`.
+
+- **Scope.** The branch adds the script, its output and this note, nothing else.
+- **Independent check** (`ind269.py`).
+  - Method: a brute-force Ricci tensor in coordinates (v, ρ, θ, ϕ) with abstract F, r and φ, and the explicit family's jets from mpmath
+    at 40 digits. It shares the member and the potential with `exact_mode.py`, nothing else.
+  - Result: all five field equations hold to 9e-40 (relative) at 47 points: c = −1, −0.3, −1.5 and −10, β = 0.3, −0.4 and 0.7, with
+    L = 1 and 2.
+  - The linearization ∂r/∂β at β = 0 is R e^{Kv}/2 to 2e-41, which is #262's Y_K.
+  - Mutations fire: F without 1/λ² − 1, the rate 1.01 K, and φ scaled by 1.01.
+- **Status.** The family is *checked symbolically* (here and in the note), and the derivation of Sec. 2 is *proved* given the reduced
+  equations. The fate statements are as the note words them: the Ricci divergence for β < 0 is *proved* from the closed form, and the
+  Kretschmann growth is *numerical evidence*.
+- **What it is not.** The family is not asymptotically flat for β ≠ 0, and it linearizes to Y_ref, not to the decaying Y_∞. It shows
+  the fate of the Y_ref direction, not of asymptotically flat data, so #250 stays open.
+- **Applied.** `cminus1_mode.md`, the README's §5 and Paper IV (in place of "Why such a solution exists for every member is open") carry
+  the result. Paper IV's checker is at 133 of 133.
+- **Follow-ups.**
+  - Task 1 (the family as planted truth for #217's nonlinear code) is #277.
+  - Task 2 (its causal structure) is #278.
+  - Task 3 (second order about Y_ref and Y_∞) is added to #249.
