@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="712" viewBox="0 0 760 712" font-family="system-ui, sans-serif">
+<style>@media (prefers-color-scheme: dark){[fill="#fcfcfb"]{fill:#201f1d}[stroke="#fcfcfb"]{stroke:#201f1d}[fill="#0b0b0b"]{fill:#e8e6e3}[stroke="#0b0b0b"]{stroke:#e8e6e3}[fill="#52514e"]{fill:#a8a49d}[stroke="#52514e"]{stroke:#a8a49d}[fill="#e7e6e2"]{fill:#343230}[stroke="#e7e6e2"]{stroke:#343230}[fill="#c98500"]{fill:#d69a2d}[stroke="#c98500"]{stroke:#d69a2d}[fill="#eb6834"]{fill:#dd5c26}[stroke="#eb6834"]{stroke:#dd5c26}[fill="#eda100"]{fill:#c08800}[stroke="#eda100"]{stroke:#c08800}[fill="#e87ba4"]{fill:#d1678f}[stroke="#e87ba4"]{stroke:#d1678f}[fill="#4a3aa7"]{fill:#7263cf}[stroke="#4a3aa7"]{stroke:#7263cf}[fill="#a6339a"]{fill:#c257b5}[stroke="#a6339a"]{stroke:#c257b5}[fill="#7a7668"]{fill:#948e82}[stroke="#7a7668"]{stroke:#948e82}}</style>
+<rect width="760" height="712" fill="#fcfcfb"/>
+<text x="16.0" y="28.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">The miss at X1 to X3 and Y1 to Y3 under each reading of the speed and the member</text>
+<text x="16.0" y="44.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">h = 0.005; M - predicted after refitting the fifteen with the reading; lines: bar 6e-5; grey: #295's N1 to N3 (largest of the three); amber: #313's Y1 to Y3</text>
+<line x1="123.5" y1="74.0" x2="123.5" y2="274.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="123.5" y="289.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums"></text>
+<line x1="273.5" y1="74.0" x2="273.5" y2="274.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="273.5" y="289.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums"></text>
+<line x1="423.5" y1="74.0" x2="423.5" y2="274.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="423.5" y="289.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums"></text>
+<line x1="573.5" y1="74.0" x2="573.5" y2="274.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="573.5" y="289.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums"></text>
+<line x1="86.0" y1="274.0" x2="686.0" y2="274.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="278.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">-1e-04</text>
+<line x1="86.0" y1="224.0" x2="686.0" y2="224.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="228.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+0e+00</text>
+<line x1="86.0" y1="174.0" x2="686.0" y2="174.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="178.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+1e-04</text>
+<line x1="86.0" y1="124.0" x2="686.0" y2="124.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="128.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+2e-04</text>
+<line x1="86.0" y1="74.0" x2="686.0" y2="74.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="78.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+3e-04</text>
+<line x1="86.0" y1="274.0" x2="686.0" y2="274.0" stroke="#52514e" stroke-width="1"/>
+<line x1="86.0" y1="74.0" x2="86.0" y2="274.0" stroke="#52514e" stroke-width="1"/>
+<text x="386.0" y="308.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">reading</text>
+<text x="29.7" y="174.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 29.7 174.0)">M - predicted</text>
+<text x="123.5" y="290.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">REF</text>
+<text x="198.5" y="290.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">S1</text>
+<text x="273.5" y="290.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">S1r</text>
+<text x="348.5" y="290.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">S2</text>
+<text x="423.5" y="290.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">S3</text>
+<text x="498.5" y="290.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">WA</text>
+<text x="573.5" y="290.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">WJ</text>
+<text x="648.5" y="290.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">WJi</text>
+<line x1="86.0" y1="194.0" x2="686.0" y2="194.0" stroke="#7a7668" stroke-width="1"/>
+<line x1="86.0" y1="254.0" x2="686.0" y2="254.0" stroke="#7a7668" stroke-width="1"/>
+<line x1="86.0" y1="224.0" x2="686.0" y2="224.0" stroke="#9aa0a6" stroke-width="1"/>
+<circle cx="91.5" cy="225.1" r="4" fill="#9aa0a6"><title>REF: N1 to N3, largest |M - predicted| -2.15e-06</title></circle>
+<g><circle cx="95.5" cy="179.0" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1 under REF: M - predicted = +9.00e-05</title></g>
+<g><rect x="100.0" y="112.1" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2 under REF: M - predicted = +2.13e-04</title></g>
+<g><polygon points="115.5,118.5 122.0,130.5 109.0,130.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3 under REF: M - predicted = +1.98e-04</title></g>
+<g><circle cx="137.5" cy="209.7" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y1 under REF: M - predicted = +2.87e-05</title></g>
+<g><rect x="142.0" y="192.1" width="11.0" height="11.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y2 under REF: M - predicted = +5.28e-05</title></g>
+<g><polygon points="157.5,208.3 164.0,220.3 151.0,220.3" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y3 under REF: M - predicted = +1.83e-05</title></g>
+<circle cx="166.5" cy="224.9" r="4" fill="#9aa0a6"><title>S1: N1 to N3, largest |M - predicted| -1.87e-06</title></circle>
+<g><circle cx="170.5" cy="178.8" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1 under S1: M - predicted = +9.03e-05</title></g>
+<g><rect x="175.0" y="112.5" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2 under S1: M - predicted = +2.12e-04</title></g>
+<g><polygon points="190.5,119.3 197.0,131.3 184.0,131.3" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3 under S1: M - predicted = +1.96e-04</title></g>
+<g><circle cx="212.5" cy="209.6" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y1 under S1: M - predicted = +2.88e-05</title></g>
+<g><rect x="217.0" y="192.0" width="11.0" height="11.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y2 under S1: M - predicted = +5.31e-05</title></g>
+<g><polygon points="232.5,208.0 239.0,220.0 226.0,220.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y3 under S1: M - predicted = +1.89e-05</title></g>
+<circle cx="241.5" cy="220.0" r="4" fill="#9aa0a6"><title>S1r: N1 to N3, largest |M - predicted| +8.04e-06</title></circle>
+<g><circle cx="245.5" cy="171.6" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1 under S1r: M - predicted = +1.05e-04</title></g>
+<g><rect x="250.0" y="129.7" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2 under S1r: M - predicted = +1.78e-04</title></g>
+<g><polygon points="265.5,160.3 272.0,172.3 259.0,172.3" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3 under S1r: M - predicted = +1.14e-04</title></g>
+<g><circle cx="287.5" cy="203.8" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y1 under S1r: M - predicted = +4.03e-05</title></g>
+<g><rect x="292.0" y="191.9" width="11.0" height="11.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y2 under S1r: M - predicted = +5.31e-05</title></g>
+<g><polygon points="307.5,216.0 314.0,228.0 301.0,228.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y3 under S1r: M - predicted = +2.96e-06</title></g>
+<circle cx="316.5" cy="225.1" r="4" fill="#9aa0a6"><title>S2: N1 to N3, largest |M - predicted| -2.27e-06</title></circle>
+<g><circle cx="320.5" cy="177.8" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1 under S2: M - predicted = +9.25e-05</title></g>
+<g><rect x="325.0" y="108.4" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2 under S2: M - predicted = +2.20e-04</title></g>
+<g><polygon points="340.5,112.4 347.0,124.4 334.0,124.4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3 under S2: M - predicted = +2.10e-04</title></g>
+<g><circle cx="362.5" cy="208.9" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y1 under S2: M - predicted = +3.03e-05</title></g>
+<g><rect x="367.0" y="190.1" width="11.0" height="11.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y2 under S2: M - predicted = +5.68e-05</title></g>
+<g><polygon points="382.5,205.7 389.0,217.7 376.0,217.7" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y3 under S2: M - predicted = +2.35e-05</title></g>
+<circle cx="391.5" cy="225.0" r="4" fill="#9aa0a6"><title>S3: N1 to N3, largest |M - predicted| -2.09e-06</title></circle>
+<g><circle cx="395.5" cy="179.3" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1 under S3: M - predicted = +8.93e-05</title></g>
+<g><rect x="400.0" y="112.9" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2 under S3: M - predicted = +2.11e-04</title></g>
+<g><polygon points="415.5,119.7 422.0,131.7 409.0,131.7" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3 under S3: M - predicted = +1.96e-04</title></g>
+<g><circle cx="437.5" cy="209.9" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y1 under S3: M - predicted = +2.83e-05</title></g>
+<g><rect x="442.0" y="192.5" width="11.0" height="11.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y2 under S3: M - predicted = +5.19e-05</title></g>
+<g><polygon points="457.5,209.0 464.0,221.0 451.0,221.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y3 under S3: M - predicted = +1.70e-05</title></g>
+<circle cx="466.5" cy="221.9" r="4" fill="#9aa0a6"><title>WA: N1 to N3, largest |M - predicted| +4.23e-06</title></circle>
+<g><circle cx="470.5" cy="173.9" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1 under WA: M - predicted = +1.00e-04</title></g>
+<g><rect x="475.0" y="109.4" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2 under WA: M - predicted = +2.18e-04</title></g>
+<g><polygon points="490.5,114.7 497.0,126.7 484.0,126.7" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3 under WA: M - predicted = +2.06e-04</title></g>
+<g><circle cx="512.5" cy="209.1" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y1 under WA: M - predicted = +2.98e-05</title></g>
+<g><rect x="517.0" y="197.4" width="11.0" height="11.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y2 under WA: M - predicted = +4.22e-05</title></g>
+<g><polygon points="532.5,217.0 539.0,229.0 526.0,229.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y3 under WA: M - predicted = +1.00e-06</title></g>
+<circle cx="541.5" cy="225.3" r="4" fill="#9aa0a6"><title>WJ: N1 to N3, largest |M - predicted| -2.56e-06</title></circle>
+<g><circle cx="545.5" cy="204.4" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1 under WJ: M - predicted = +3.92e-05</title></g>
+<g><rect x="550.0" y="146.9" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2 under WJ: M - predicted = +1.43e-04</title></g>
+<g><polygon points="565.5,125.9 572.0,137.9 559.0,137.9" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3 under WJ: M - predicted = +1.83e-04</title></g>
+<g><circle cx="587.5" cy="219.2" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y1 under WJ: M - predicted = +9.54e-06</title></g>
+<g><rect x="592.0" y="205.9" width="11.0" height="11.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y2 under WJ: M - predicted = +2.51e-05</title></g>
+<g><polygon points="607.5,211.2 614.0,223.2 601.0,223.2" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y3 under WJ: M - predicted = +1.26e-05</title></g>
+<circle cx="616.5" cy="225.6" r="4" fill="#9aa0a6"><title>WJi: N1 to N3, largest |M - predicted| -3.28e-06</title></circle>
+<g><circle cx="620.5" cy="178.9" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1 under WJi: M - predicted = +9.02e-05</title></g>
+<g><rect x="625.0" y="101.1" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2 under WJi: M - predicted = +2.35e-04</title></g>
+<g><polygon points="640.5,81.7 647.0,93.7 634.0,93.7" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3 under WJi: M - predicted = +2.72e-04</title></g>
+<g><circle cx="662.5" cy="210.8" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y1 under WJi: M - predicted = +2.64e-05</title></g>
+<g><rect x="667.0" y="193.0" width="11.0" height="11.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y2 under WJi: M - predicted = +5.11e-05</title></g>
+<g><polygon points="682.5,201.2 689.0,213.2 676.0,213.2" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>Y3 under WJi: M - predicted = +3.25e-05</title></g>
+<text x="686.0" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">Y1 to Y3</text>
+<circle cx="625.0" cy="60" r="4.5" fill="#eda100"/>
+<text x="609.0" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">X3</text>
+<circle cx="586.2" cy="60" r="4.5" fill="#1baf7a"/>
+<text x="570.2" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">X2</text>
+<circle cx="547.4" cy="60" r="4.5" fill="#eb6834"/>
+<text x="531.4" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">X1</text>
+<circle cx="508.7" cy="60" r="4.5" fill="#2a78d6"/>
+<text x="16.0" y="354.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">How far the speed estimators move rdot_th at X1 to X3, against the shift that closes the miss</text>
+<text x="16.0" y="370.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">h = 0.005; shift = estimator minus #267's speed_at; marks: the needed shift +(M - P4)/(r_th c) of the reference refit; S1r reads dr/dt, a different variable, and is not shown</text>
+<line x1="186.0" y1="400.0" x2="186.0" y2="600.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="186.0" y="615.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">X1</text>
+<line x1="386.0" y1="400.0" x2="386.0" y2="600.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="386.0" y="615.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">X2</text>
+<line x1="586.0" y1="400.0" x2="586.0" y2="600.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="586.0" y="615.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">X3</text>
+<line x1="86.0" y1="568.4" x2="686.0" y2="568.4" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="572.4" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+0.0e-4</text>
+<line x1="86.0" y1="515.8" x2="686.0" y2="515.8" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="519.8" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+1.0e-4</text>
+<line x1="86.0" y1="463.2" x2="686.0" y2="463.2" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="467.2" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+2.0e-4</text>
+<line x1="86.0" y1="410.5" x2="686.0" y2="410.5" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="414.5" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+3.0e-4</text>
+<line x1="86.0" y1="600.0" x2="686.0" y2="600.0" stroke="#52514e" stroke-width="1"/>
+<line x1="86.0" y1="400.0" x2="86.0" y2="600.0" stroke="#52514e" stroke-width="1"/>
+<text x="386.0" y="634.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">point</text>
+<text x="23.3" y="500.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 23.3 500.0)">change of rdot_th</text>
+<line x1="86.0" y1="568.4" x2="686.0" y2="568.4" stroke="#9aa0a6" stroke-width="1"/>
+<line x1="141.0" y1="506.2" x2="231.0" y2="506.2" stroke="#0b0b0b" stroke-width="2.5"><title>X1: needed shift +1.18e-04</title></line>
+<g><circle cx="166.0" cy="568.5" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1, S1: change of rdot_th -1.25e-07 (needed +1.18e-04)</title></g>
+<g><rect x="180.5" y="567.2" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X1, S2: change of rdot_th -8.20e-06 (needed +1.18e-04)</title></g>
+<g><polygon points="206.0,560.6 212.5,572.6 199.5,572.6" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X1, S3: change of rdot_th +2.51e-06 (needed +1.18e-04)</title></g>
+<line x1="341.0" y1="419.8" x2="431.0" y2="419.8" stroke="#0b0b0b" stroke-width="2.5"><title>X2: needed shift +2.82e-04</title></line>
+<g><circle cx="366.0" cy="567.5" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X2, S1: change of rdot_th +1.84e-06 (needed +2.82e-04)</title></g>
+<g><rect x="380.5" y="576.9" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2, S2: change of rdot_th -2.66e-05 (needed +2.82e-04)</title></g>
+<g><polygon points="406.0,557.9 412.5,569.9 399.5,569.9" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X2, S3: change of rdot_th +7.68e-06 (needed +2.82e-04)</title></g>
+<line x1="541.0" y1="430.1" x2="631.0" y2="430.1" stroke="#0b0b0b" stroke-width="2.5"><title>X3: needed shift +2.63e-04</title></line>
+<g><circle cx="566.0" cy="566.8" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X3, S1: change of rdot_th +3.08e-06 (needed +2.63e-04)</title></g>
+<g><rect x="580.5" y="584.1" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X3, S2: change of rdot_th -4.02e-05 (needed +2.63e-04)</title></g>
+<g><polygon points="606.0,556.2 612.5,568.2 599.5,568.2" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3, S3: change of rdot_th +1.10e-05 (needed +2.63e-04)</title></g>
+<text x="686.0" y="390.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">S3 (quintic)</text>
+<circle cx="599.4" cy="386" r="4.5" fill="#1baf7a"/>
+<text x="583.4" y="390.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">S2 (+-1.0 in tau)</text>
+<circle cx="465.0" cy="386" r="4.5" fill="#eb6834"/>
+<text x="449.0" y="390.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">S1 (slope in t)</text>
+<circle cx="343.3" cy="386" r="4.5" fill="#2a78d6"/>
+<text x="16.0" y="700.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">Apple M5, 32 GB, macOS 27.0.1</text>
+<text x="16.0" y="686.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">settled_mass_speed.py at negative-mass dae4fee  ·  chain: #41 via #253  ·  member: #225 via #266  ·  speed: #267, #255  ·  refit: #295, frozen before the runs</text>
+<text x="16.0" y="670.0" font-size="10" fill="#c98500" text-anchor="start" font-weight="normal">⚠</text>
+<text x="30.0" y="670.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">the largest change of rdot_th at X1 to X3 by S1, S2, S3 is 4.0e-05; the needed shift is 1.2e-04 to 2.8e-04</text>
+<a href="https://github.com/nmoinvaz/negative-mass"><text x="744" y="700" font-size="10" fill="#52514e" text-anchor="end" text-decoration="underline">github.com/nmoinvaz/negative-mass</text></a>
+</svg>
