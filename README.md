@@ -48,7 +48,7 @@ N. Moinvaziri, *The instability of ghost-scalar wormholes at large dimension* �
 - **Verified by:** `notes/wormhole_largeD/` (symbolic check with control, two integrations against Torii–Shinkai's table,
   `paper_numbers.py`).
 
-![The coefficients Ω₀ … Ω₅ of W²a², the estimate of Ω₆, and the error of each truncation](notes/wormhole_largeD/omega_coeffs.svg)
+![The coefficients Ω₀ … Ω₆ of W²a², the estimate of Ω₇, and the error of each truncation](notes/wormhole_largeD/omega_coeffs.svg)
 
 ## Paper IV — black universes (draft)
 N. Moinvaziri, *Linear radial instability of the Bronnikov–Fabris black universes, including the member whose horizon

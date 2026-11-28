@@ -3,45 +3,51 @@
 <rect width="780" height="810" fill="#fcfcfb"/>
 <text x="16.0" y="26.0" font-size="14" fill="#0b0b0b" text-anchor="start" font-weight="bold">The large-D coefficients of the wormhole's growth rate, W²a² = s + Ω₀ + Ω₁/s + Ω₂/s² + …, s = 2(D − 3)</text>
 <text x="16.0" y="54.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">(a) The coefficients</text>
-<text x="16.0" y="70.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">|Ωₖ| on a log scale; ● positive, ▼ negative. Consecutive ratios Ω₁/Ω₀ … Ω₅/Ω₄: -3.76, 7.13, -8.78, 19.60, -3.19.</text>
-<line x1="136.0" y1="100.0" x2="136.0" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
-<text x="136.0" y="345.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0</text>
-<line x1="336.0" y1="100.0" x2="336.0" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
-<text x="336.0" y="345.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">2</text>
-<line x1="536.0" y1="100.0" x2="536.0" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
-<text x="536.0" y="345.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">4</text>
+<text x="16.0" y="70.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">|Ωₖ| on a log scale; ● positive, ▼ negative. Consecutive ratios Ω₁/Ω₀ … Ω₆/Ω₅: -3.76, 7.13, -8.78, 19.60, -3.19, 89.87.</text>
+<line x1="130.3" y1="100.0" x2="130.3" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="130.3" y="345.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0</text>
+<line x1="301.7" y1="100.0" x2="301.7" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="301.7" y="345.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">2</text>
+<line x1="473.1" y1="100.0" x2="473.1" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="473.1" y="345.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">4</text>
+<line x1="644.6" y1="100.0" x2="644.6" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="644.6" y="345.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">6</text>
 <line x1="96.0" y1="330.0" x2="696.0" y2="330.0" stroke="#e7e6e2" stroke-width="1"/>
 <text x="90.0" y="334.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1</text>
-<line x1="96.0" y1="247.9" x2="696.0" y2="247.9" stroke="#e7e6e2" stroke-width="1"/>
-<text x="90.0" y="251.9" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">100</text>
-<line x1="96.0" y1="165.7" x2="696.0" y2="165.7" stroke="#e7e6e2" stroke-width="1"/>
-<text x="90.0" y="169.7" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">10⁴</text>
+<line x1="96.0" y1="264.3" x2="696.0" y2="264.3" stroke="#e7e6e2" stroke-width="1"/>
+<text x="90.0" y="268.3" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">100</text>
+<line x1="96.0" y1="198.6" x2="696.0" y2="198.6" stroke="#e7e6e2" stroke-width="1"/>
+<text x="90.0" y="202.6" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">10⁴</text>
+<line x1="96.0" y1="132.9" x2="696.0" y2="132.9" stroke="#e7e6e2" stroke-width="1"/>
+<text x="90.0" y="136.9" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">10⁶</text>
 <line x1="96.0" y1="330.0" x2="696.0" y2="330.0" stroke="#52514e" stroke-width="1"/>
 <line x1="96.0" y1="100.0" x2="96.0" y2="330.0" stroke="#52514e" stroke-width="1"/>
 <text x="396.0" y="364.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">order k (the coefficient of 1/sᵏ)</text>
 <text x="58.9" y="215.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 58.9 215.0)">|Ωₖ|</text>
-<g><polygon points="136.0,318.3 142.5,306.3 129.5,306.3" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>Ω0 = -2.77258872223978 (−4 ln 2)</title></g>
-<g><circle cx="236.0" cy="288.2" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>Ω1 = 10.4233603787385 (2π²/3 + 8 ln²2)</title></g>
-<g><circle cx="336.0" cy="253.1" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>Ω2 = 74.3693867279333 (80ζ(3) − (8/3)π² ln 2 − (32/3) ln³2)</title></g>
-<g><polygon points="436.0,220.9 442.5,208.9 429.5,208.9" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>Ω3 = -652.840107570056 (22π⁴/45 + (16/3)π² ln²2 + (32/3) ln⁴2 − 320ζ(3) ln 2 − 384ζ(3))</title></g>
-<g><polygon points="536.0,167.8 542.5,155.8 529.5,155.8" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>Ω4 = -12794.4998600232 (−10432ζ(5) − 160π²ζ(3) + 640ζ(3) ln²2 − (64/9)π² ln³2 − (88/45)π⁴ ln 2 − (128/15) ln⁵2 − (2432/45)π⁴ + 1536ζ(3) ln 2 + 3072ζ(3))</title></g>
-<g><circle cx="636.0" cy="140.6" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>Ω5 = 40860.4553545257 (weights 6 to 3: (256/45) ln⁶2 + … − 36864ζ(3) (omega5.md))</title></g>
-<text x="152.0" y="315.8" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">Ω₀ = −4 ln 2 = -2.772589</text>
-<text x="252.0" y="292.2" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">Ω₁ = 2π²/3 + 8 ln²2 = 10.423360</text>
-<text x="352.0" y="257.1" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">Ω₂ = 80ζ(3) − (8/3)π² ln 2 − (32/3) ln³2 = 74.369387</text>
-<text x="452.0" y="218.4" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">Ω₃ = -652.840108</text>
-<text x="524.0" y="165.3" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">Ω₄ = -12794.5 (derived, #220)</text>
-<text x="624.0" y="144.6" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">Ω₅ = 40860.5 (derived, #263)</text>
-<circle cx="336.0" cy="253.1" r="10" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
-<line x1="328.6" y1="246.4" x2="296.0" y2="217.1" stroke="#0b0b0b" stroke-width="1"/>
-<text x="292.0" y="221.1" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="bold">derived in #26</text>
-<circle cx="436.0" cy="214.4" r="10" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
-<line x1="428.4" y1="207.9" x2="396.0" y2="180.4" stroke="#0b0b0b" stroke-width="1"/>
-<text x="392.0" y="184.4" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="bold">derived in #208; its −384ζ(3) term has weight 3</text>
-<text x="696.0" y="88.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">fit to W² (#195)</text>
-<circle cx="583.9" cy="84" r="4.5" fill="#eb6834"/>
-<text x="567.9" y="88.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">closed form</text>
-<circle cx="487.7" cy="84" r="4.5" fill="#2a78d6"/>
+<g><polygon points="130.3,321.9 136.8,309.9 123.8,309.9" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>Ω0 = -2.77258872223978 (−4 ln 2)</title></g>
+<g><circle cx="216.0" cy="296.6" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>Ω1 = 10.4233603787385 (2π²/3 + 8 ln²2)</title></g>
+<g><circle cx="301.7" cy="268.5" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>Ω2 = 74.3693867279333 (80ζ(3) − (8/3)π² ln 2 − (32/3) ln³2)</title></g>
+<g><polygon points="387.4,244.0 393.9,232.0 380.9,232.0" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>Ω3 = -652.840107570056 (22π⁴/45 + (16/3)π² ln²2 + (32/3) ln⁴2 − 320ζ(3) ln 2 − 384ζ(3))</title></g>
+<g><polygon points="473.1,201.6 479.6,189.6 466.6,189.6" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>Ω4 = -12794.4998600232 (−10432ζ(5) − 160π²ζ(3) + 640ζ(3) ln²2 − (64/9)π² ln³2 − (88/45)π⁴ ln 2 − (128/15) ln⁵2 − (2432/45)π⁴ + 1536ζ(3) ln 2 + 3072ζ(3))</title></g>
+<g><circle cx="558.9" cy="178.5" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>Ω5 = 40860.4553545257 (weights 6 to 3: (256/45) ln⁶2 + … − 36864ζ(3) (omega5.md))</title></g>
+<g><circle cx="644.6" cy="114.3" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>Ω6 = 3672259.16259439 (weights 7 to 3, computed and identified by PSLQ, not derived (omega6.md))</title></g>
+<text x="146.3" y="319.4" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">Ω₀ = −4 ln 2 = -2.772589</text>
+<text x="232.0" y="300.6" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">Ω₁ = 2π²/3 + 8 ln²2 = 10.423360</text>
+<text x="317.7" y="272.5" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">Ω₂ = 80ζ(3) − (8/3)π² ln 2 − (32/3) ln³2 = 74.369387</text>
+<text x="403.4" y="241.5" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">Ω₃ = -652.840108</text>
+<text x="461.1" y="199.1" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">Ω₄ = -12794.5 (derived, #220)</text>
+<text x="546.9" y="182.5" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">Ω₅ = 40860.5 (derived, #263)</text>
+<text x="632.6" y="118.3" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">Ω₆ = 3672259.2 (computed, closed form identified, #282)</text>
+<circle cx="301.7" cy="268.5" r="10" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
+<line x1="294.3" y1="261.8" x2="261.7" y2="232.5" stroke="#0b0b0b" stroke-width="1"/>
+<text x="257.7" y="236.5" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="bold">derived in #26</text>
+<circle cx="387.4" cy="237.5" r="10" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
+<line x1="384.3" y1="228.0" x2="347.4" y2="117.5" stroke="#0b0b0b" stroke-width="1"/>
+<text x="343.4" y="121.5" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="bold">derived in #208; its −384ζ(3) term has weight 3</text>
+<text x="696.0" y="88.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">computed; closed form identified, not derived</text>
+<circle cx="398.9" cy="84" r="4.5" fill="#eb6834"/>
+<text x="382.9" y="88.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">closed form derived</text>
+<circle cx="251.7" cy="84" r="4.5" fill="#2a78d6"/>
 <text x="16.0" y="392.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">(b) What each coefficient buys</text>
 <text x="16.0" y="408.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">|W²a² − the series through Ωₙ| against #195's 60-digit W² at 64 values of D: each term adds about one power of 1/D.</text>
 <line x1="96.0" y1="438.0" x2="96.0" y2="738.0" stroke="#e7e6e2" stroke-width="1"/>
@@ -60,90 +66,101 @@
 <text x="617.5" y="753.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">5000</text>
 <line x1="696.0" y1="438.0" x2="696.0" y2="738.0" stroke="#e7e6e2" stroke-width="1"/>
 <text x="696.0" y="753.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">10000</text>
-<line x1="96.0" y1="723.7" x2="696.0" y2="723.7" stroke="#e7e6e2" stroke-width="1"/>
-<text x="90.0" y="727.7" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-20</text>
-<line x1="96.0" y1="652.3" x2="696.0" y2="652.3" stroke="#e7e6e2" stroke-width="1"/>
-<text x="90.0" y="656.3" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-15</text>
-<line x1="96.0" y1="580.9" x2="696.0" y2="580.9" stroke="#e7e6e2" stroke-width="1"/>
-<text x="90.0" y="584.9" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-10</text>
-<line x1="96.0" y1="509.4" x2="696.0" y2="509.4" stroke="#e7e6e2" stroke-width="1"/>
-<text x="90.0" y="513.4" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-5</text>
+<line x1="96.0" y1="688.0" x2="696.0" y2="688.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="90.0" y="692.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-20</text>
+<line x1="96.0" y1="625.5" x2="696.0" y2="625.5" stroke="#e7e6e2" stroke-width="1"/>
+<text x="90.0" y="629.5" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-15</text>
+<line x1="96.0" y1="563.0" x2="696.0" y2="563.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="90.0" y="567.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-10</text>
+<line x1="96.0" y1="500.5" x2="696.0" y2="500.5" stroke="#e7e6e2" stroke-width="1"/>
+<text x="90.0" y="504.5" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-5</text>
 <line x1="96.0" y1="438.0" x2="696.0" y2="438.0" stroke="#e7e6e2" stroke-width="1"/>
 <text x="90.0" y="442.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1</text>
 <line x1="96.0" y1="738.0" x2="696.0" y2="738.0" stroke="#52514e" stroke-width="1"/>
 <line x1="96.0" y1="438.0" x2="96.0" y2="738.0" stroke="#52514e" stroke-width="1"/>
 <text x="396.0" y="772.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">dimension D</text>
 <text x="46.1" y="588.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 46.1 588.0)">error of the truncated series</text>
-<polyline points="96.0,513.1 104.7,516.2 114.7,519.7 124.0,522.8 134.1,526.3 143.4,529.5 153.4,533.0 162.6,536.1 172.2,539.4 182.2,542.7 191.3,545.8 200.7,549.0 210.1,552.2 219.7,555.4 229.1,558.6 239.2,562.0 248.4,565.0 258.0,568.3 267.3,571.4 276.9,574.6 286.6,577.8 295.8,580.9 305.5,584.1 315.1,587.3 324.5,590.4 334.0,593.6 343.6,596.7 353.1,599.9 362.7,603.1 372.2,606.2 381.7,609.3 391.2,612.5 400.7,615.6 410.3,618.8 419.9,622.0 429.3,625.1 438.8,628.2 448.4,631.4 457.9,634.5 467.5,637.6 476.9,640.8 486.5,643.9 496.0,647.1 505.5,650.2 515.0,653.3 524.6,656.5 534.1,659.6 543.6,662.7 553.1,665.9 562.7,669.0 572.2,672.1 581.7,675.3 591.2,678.4 600.8,681.5 610.3,684.7 619.8,687.8 629.3,690.9 638.8,694.1 648.4,697.2 657.9,700.3 667.4,703.5 677.0,706.6 686.5,709.7 696.0,712.9" fill="none" stroke="#eb6834" stroke-width="2"/>
-<g><circle cx="96.0" cy="513.1" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 50, through Ω5: 5.497e-06</title></g>
-<g><circle cx="182.2" cy="542.7" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 107, through Ω5: 4.652e-08</title></g>
-<g><circle cx="267.3" cy="571.4" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 227, through Ω5: 4.606e-10</title></g>
-<g><circle cx="353.1" cy="599.9" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 484, through Ω5: 4.665e-12</title></g>
-<g><circle cx="438.8" cy="628.2" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 1032, through Ω5: 4.849e-14</title></g>
-<g><circle cx="524.6" cy="656.5" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 2201, through Ω5: 5.096e-16</title></g>
-<g><circle cx="610.3" cy="684.7" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 4691, through Ω5: 5.409e-18</title></g>
-<g><circle cx="696.0" cy="712.9" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω5: 5.750e-20</title></g>
-<g><circle cx="696.0" cy="712.9" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω5: 5.750e-20</title></g>
-<text x="712.0" y="716.9" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">+ Ω₅/s⁵</text>
-<polyline points="96.0,508.8 104.7,511.6 114.7,514.7 124.0,517.6 134.1,520.8 143.4,523.7 153.4,526.7 162.6,529.5 172.2,532.4 182.2,535.4 191.3,538.2 200.7,540.9 210.1,543.7 219.7,546.5 229.1,549.3 239.2,552.2 248.4,554.9 258.0,557.7 267.3,560.4 276.9,563.1 286.6,565.9 295.8,568.5 305.5,571.2 315.1,573.9 324.5,576.6 334.0,579.3 343.6,582.0 353.1,584.7 362.7,587.4 372.2,590.0 381.7,592.6 391.2,595.3 400.7,597.9 410.3,600.6 419.9,603.3 429.3,605.9 438.8,608.5 448.4,611.2 457.9,613.8 467.5,616.5 476.9,619.1 486.5,621.7 496.0,624.3 505.5,627.0 515.0,629.6 524.6,632.2 534.1,634.8 543.6,637.5 553.1,640.1 562.7,642.7 572.2,645.3 581.7,647.9 591.2,650.6 600.8,653.2 610.3,655.8 619.8,658.4 629.3,661.0 638.8,663.6 648.4,666.2 657.9,668.9 667.4,671.5 677.0,674.1 686.5,676.7 696.0,679.3" fill="none" stroke="#eda100" stroke-width="2"/>
-<g><circle cx="96.0" cy="508.8" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 50, through Ω4: 1.106e-05</title></g>
-<g><circle cx="182.2" cy="535.4" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 107, through Ω4: 1.515e-07</title></g>
-<g><circle cx="267.3" cy="560.4" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 227, through Ω4: 2.725e-09</title></g>
-<g><circle cx="353.1" cy="584.7" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 484, through Ω4: 5.426e-11</title></g>
-<g><circle cx="438.8" cy="608.5" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 1032, through Ω4: 1.155e-12</title></g>
-<g><circle cx="524.6" cy="632.2" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 2201, through Ω4: 2.540e-14</title></g>
-<g><circle cx="610.3" cy="655.8" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 4691, through Ω4: 5.693e-16</title></g>
-<g><circle cx="696.0" cy="679.3" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω4: 1.285e-17</title></g>
-<g><circle cx="696.0" cy="679.3" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω4: 1.285e-17</title></g>
-<text x="712.0" y="683.3" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">+ Ω₄/s⁴</text>
-<polyline points="96.0,492.5 104.7,494.5 114.7,496.8 124.0,498.8 134.1,501.1 143.4,503.2 153.4,505.5 162.6,507.5 172.2,509.7 182.2,511.9 191.3,514.0 200.7,516.1 210.1,518.2 219.7,520.3 229.1,522.4 239.2,524.6 248.4,526.7 258.0,528.8 267.3,530.9 276.9,533.0 286.6,535.1 295.8,537.2 305.5,539.3 315.1,541.4 324.5,543.5 334.0,545.6 343.6,547.7 353.1,549.8 362.7,551.9 372.2,554.0 381.7,556.1 391.2,558.2 400.7,560.3 410.3,562.4 419.9,564.5 429.3,566.6 438.8,568.7 448.4,570.8 457.9,572.9 467.5,575.0 476.9,577.0 486.5,579.1 496.0,581.2 505.5,583.3 515.0,585.4 524.6,587.5 534.1,589.6 543.6,591.7 553.1,593.8 562.7,595.9 572.2,597.9 581.7,600.0 591.2,602.1 600.8,604.2 610.3,606.3 619.8,608.4 629.3,610.5 638.8,612.6 648.4,614.7 657.9,616.7 667.4,618.8 677.0,620.9 686.5,623.0 696.0,625.1" fill="none" stroke="#1baf7a" stroke-width="2"/>
-<g><circle cx="96.0" cy="492.5" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 50, through Ω3: 1.528e-04</title></g>
-<g><circle cx="182.2" cy="511.9" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 107, through Ω3: 6.684e-06</title></g>
-<g><circle cx="267.3" cy="530.9" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 227, through Ω3: 3.149e-07</title></g>
-<g><circle cx="353.1" cy="549.8" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 484, through Ω3: 1.488e-08</title></g>
-<g><circle cx="438.8" cy="568.7" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 1032, through Ω3: 7.121e-10</title></g>
-<g><circle cx="524.6" cy="587.5" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 2201, through Ω3: 3.424e-11</title></g>
-<g><circle cx="610.3" cy="606.3" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 4691, through Ω3: 1.655e-12</title></g>
-<g><circle cx="696.0" cy="625.1" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω3: 8.005e-14</title></g>
-<g><circle cx="696.0" cy="625.1" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω3: 8.005e-14</title></g>
-<text x="712.0" y="629.1" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">+ Ω₃/s³</text>
-<polyline points="96.0,481.2 104.7,482.8 114.7,484.7 124.0,486.3 134.1,488.1 143.4,489.8 153.4,491.6 162.6,493.2 172.2,494.9 182.2,496.6 191.3,498.2 200.7,499.8 210.1,501.4 219.7,503.1 229.1,504.7 239.2,506.4 248.4,507.9 258.0,509.6 267.3,511.2 276.9,512.8 286.6,514.4 295.8,516.0 305.5,517.6 315.1,519.2 324.5,520.7 334.0,522.3 343.6,523.9 353.1,525.5 362.7,527.1 372.2,528.7 381.7,530.3 391.2,531.9 400.7,533.4 410.3,535.0 419.9,536.6 429.3,538.2 438.8,539.7 448.4,541.3 457.9,542.9 467.5,544.5 476.9,546.0 486.5,547.6 496.0,549.2 505.5,550.7 515.0,552.3 524.6,553.9 534.1,555.5 543.6,557.0 553.1,558.6 562.7,560.2 572.2,561.7 581.7,563.3 591.2,564.9 600.8,566.4 610.3,568.0 619.8,569.6 629.3,571.1 638.8,572.7 648.4,574.3 657.9,575.8 667.4,577.4 677.0,579.0 686.5,580.5 696.0,582.1" fill="none" stroke="#e87ba4" stroke-width="2"/>
-<g><circle cx="96.0" cy="481.2" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 50, through Ω2: 9.388e-04</title></g>
-<g><circle cx="182.2" cy="496.6" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 107, through Ω2: 7.923e-05</title></g>
-<g><circle cx="267.3" cy="511.2" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 227, through Ω2: 7.576e-06</title></g>
-<g><circle cx="353.1" cy="525.5" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 484, through Ω2: 7.482e-07</title></g>
-<g><circle cx="438.8" cy="539.7" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 1032, through Ω2: 7.561e-08</title></g>
-<g><circle cx="524.6" cy="553.9" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 2201, through Ω2: 7.719e-09</title></g>
-<g><circle cx="610.3" cy="568.0" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 4691, through Ω2: 7.937e-10</title></g>
-<g><circle cx="696.0" cy="582.1" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω2: 8.176e-11</title></g>
-<g><circle cx="696.0" cy="582.1" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω2: 8.176e-11</title></g>
-<text x="712.0" y="586.1" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">+ Ω₂/s²</text>
-<polyline points="96.0,468.4 104.7,469.3 114.7,470.4 124.0,471.4 134.1,472.5 143.4,473.5 153.4,474.6 162.6,475.6 172.2,476.7 182.2,477.8 191.3,478.8 200.7,479.8 210.1,480.9 219.7,481.9 229.1,482.9 239.2,484.0 248.4,485.1 258.0,486.1 267.3,487.1 276.9,488.2 286.6,489.3 295.8,490.3 305.5,491.3 315.1,492.4 324.5,493.4 334.0,494.5 343.6,495.5 353.1,496.6 362.7,497.6 372.2,498.7 381.7,499.7 391.2,500.7 400.7,501.8 410.3,502.8 419.9,503.9 429.3,504.9 438.8,506.0 448.4,507.0 457.9,508.1 467.5,509.1 476.9,510.1 486.5,511.2 496.0,512.2 505.5,513.3 515.0,514.3 524.6,515.4 534.1,516.4 543.6,517.5 553.1,518.5 562.7,519.5 572.2,520.6 581.7,521.6 591.2,522.7 600.8,523.7 610.3,524.8 619.8,525.8 629.3,526.8 638.8,527.9 648.4,528.9 657.9,530.0 667.4,531.0 677.0,532.1 686.5,533.1 696.0,534.2" fill="none" stroke="#008300" stroke-width="2"/>
-<g><circle cx="96.0" cy="468.4" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 50, through Ω1: 7.478e-03</title></g>
-<g><circle cx="182.2" cy="477.8" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 107, through Ω1: 1.640e-03</title></g>
-<g><circle cx="267.3" cy="487.1" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 227, through Ω1: 3.630e-04</title></g>
-<g><circle cx="353.1" cy="496.6" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 484, through Ω1: 7.961e-05</title></g>
-<g><circle cx="438.8" cy="506.0" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 1032, through Ω1: 1.748e-05</title></g>
-<g><circle cx="524.6" cy="515.4" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 2201, through Ω1: 3.841e-06</title></g>
-<g><circle cx="610.3" cy="524.8" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 4691, through Ω1: 8.452e-07</title></g>
-<g><circle cx="696.0" cy="534.2" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω1: 1.860e-07</title></g>
-<g><circle cx="696.0" cy="534.2" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω1: 1.860e-07</title></g>
-<text x="712.0" y="538.2" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">+ Ω₁/s</text>
-<polyline points="96.0,451.2 104.7,451.8 114.7,452.4 124.0,452.9 134.1,453.5 143.4,454.1 153.4,454.7 162.6,455.2 172.2,455.8 182.2,456.4 191.3,456.9 200.7,457.4 210.1,458.0 219.7,458.5 229.1,459.1 239.2,459.6 248.4,460.2 258.0,460.7 267.3,461.2 276.9,461.8 286.6,462.3 295.8,462.8 305.5,463.4 315.1,463.9 324.5,464.4 334.0,465.0 343.6,465.5 353.1,466.0 362.7,466.6 372.2,467.1 381.7,467.6 391.2,468.1 400.7,468.7 410.3,469.2 419.9,469.7 429.3,470.2 438.8,470.8 448.4,471.3 457.9,471.8 467.5,472.3 476.9,472.9 486.5,473.4 496.0,473.9 505.5,474.4 515.0,475.0 524.6,475.5 534.1,476.0 543.6,476.5 553.1,477.1 562.7,477.6 572.2,478.1 581.7,478.6 591.2,479.2 600.8,479.7 610.3,480.2 619.8,480.7 629.3,481.2 638.8,481.8 648.4,482.3 657.9,482.8 667.4,483.3 677.0,483.9 686.5,484.4 696.0,484.9" fill="none" stroke="#7a7668" stroke-width="2"/>
-<g><circle cx="96.0" cy="451.2" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 50, through Ω0: 1.184e-01</title></g>
-<g><circle cx="182.2" cy="456.4" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 107, through Ω0: 5.175e-02</title></g>
-<g><circle cx="267.3" cy="461.2" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 227, through Ω0: 2.363e-02</title></g>
-<g><circle cx="353.1" cy="466.0" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 484, through Ω0: 1.091e-02</title></g>
-<g><circle cx="438.8" cy="470.8" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 1032, through Ω0: 5.082e-03</title></g>
-<g><circle cx="524.6" cy="475.5" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 2201, through Ω0: 2.375e-03</title></g>
-<g><circle cx="610.3" cy="480.2" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 4691, through Ω0: 1.113e-03</title></g>
-<g><circle cx="696.0" cy="484.9" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω0: 5.215e-04</title></g>
-<g><circle cx="696.0" cy="484.9" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω0: 5.215e-04</title></g>
-<text x="712.0" y="488.9" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">s + Ω₀</text>
-<g opacity="0.35"><line x1="132.0" y1="566.6" x2="132.0" y2="646.3" stroke="#52514e" stroke-width="2"/><polygon points="132.0,652.3 128.0,643.3 136.0,643.3" fill="#52514e"/><text x="132.0" y="602.4" font-size="11" fill="#52514e" text-anchor="middle" transform="rotate(90.0 132.0 609.4)">smaller</text></g>
-<circle cx="353.1" cy="599.9" r="10" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
-<line x1="343.3" y1="597.7" x2="203.1" y2="565.9" stroke="#0b0b0b" stroke-width="1"/>
-<text x="199.1" y="569.9" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="bold">≈ Ω₆/s⁶, with Ω₆ ≈ 3.7 × 10⁶ (estimate)</text>
-<text x="16.0" y="798.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">closed forms: README.md, omega2.md (#26), omega3.md (#208)  ·  Ω₄: omega4.md (#220); Ω₅: omega5.md (#263); W² (quad-double, dh610-fedora): w2_output.txt (#195)</text>
+<polyline points="96.0,522.5 104.7,525.0 114.7,528.0 124.0,530.9 134.1,534.1 143.4,537.0 153.4,540.3 162.6,543.2 172.2,546.4 182.2,549.7 191.3,552.7 200.7,555.8 210.1,558.9 219.7,562.1 229.1,565.2 239.2,568.6 248.4,571.6 258.0,574.8 267.3,578.0 276.9,581.2 286.6,584.4 295.8,587.5 305.5,590.7 315.1,593.9 324.5,597.1 334.0,600.3 343.6,603.5 353.1,606.7 362.7,609.9 372.2,613.1 381.7,616.3 391.2,619.5 400.7,622.7 410.3,625.9 419.9,629.1 429.3,632.3 438.8,635.5 448.4,638.7 457.9,641.8 467.5,645.1 476.9,648.2 486.5,651.4 496.0,654.6 505.5,657.8 515.0,661.0 524.6,664.2 534.1,667.4 543.6,670.6 553.1,673.8 562.7,677.0 572.2,680.2 581.7,683.4 591.2,686.6 600.8,689.8 610.3,693.0 619.8,696.2 629.3,699.4 638.8,702.6 648.4,705.8 657.9,709.0 667.4,712.2 677.0,715.4 686.5,718.6 696.0,721.7" fill="none" stroke="#4a3aa7" stroke-width="2"/>
+<g><circle cx="96.0" cy="522.5" r="5.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/><title>D = 50, through Ω6: 1.737e-07</title></g>
+<g><circle cx="182.2" cy="549.7" r="5.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/><title>D = 107, through Ω6: 1.169e-09</title></g>
+<g><circle cx="267.3" cy="578.0" r="5.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/><title>D = 227, through Ω6: 6.342e-12</title></g>
+<g><circle cx="353.1" cy="606.7" r="5.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/><title>D = 484, through Ω6: 3.197e-14</title></g>
+<g><circle cx="438.8" cy="635.5" r="5.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/><title>D = 1032, through Ω6: 1.599e-16</title></g>
+<g><circle cx="524.6" cy="664.2" r="5.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/><title>D = 2201, through Ω6: 7.973e-19</title></g>
+<g><circle cx="610.3" cy="693.0" r="5.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/><title>D = 4691, through Ω6: 3.992e-21</title></g>
+<g><circle cx="696.0" cy="721.7" r="5.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω6: 1.996e-23</title></g>
+<g><circle cx="696.0" cy="721.7" r="5.5" fill="#4a3aa7" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω6: 1.996e-23</title></g>
+<text x="712.0" y="725.7" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">+ Ω₆/s⁶</text>
+<polyline points="96.0,503.7 104.7,506.4 114.7,509.4 124.0,512.2 134.1,515.3 143.4,518.1 153.4,521.1 162.6,523.8 172.2,526.7 182.2,529.7 191.3,532.4 200.7,535.1 210.1,537.9 219.7,540.7 229.1,543.5 239.2,546.5 248.4,549.2 258.0,552.0 267.3,554.7 276.9,557.5 286.6,560.3 295.8,563.0 305.5,565.8 315.1,568.6 324.5,571.3 334.0,574.1 343.6,576.9 353.1,579.6 362.7,582.4 372.2,585.2 381.7,587.9 391.2,590.7 400.7,593.4 410.3,596.2 419.9,599.0 429.3,601.7 438.8,604.4 448.4,607.2 457.9,609.9 467.5,612.7 476.9,615.4 486.5,618.2 496.0,620.9 505.5,623.7 515.0,626.4 524.6,629.2 534.1,631.9 543.6,634.6 553.1,637.4 562.7,640.1 572.2,642.9 581.7,645.6 591.2,648.4 600.8,651.1 610.3,653.8 619.8,656.6 629.3,659.3 638.8,662.1 648.4,664.8 657.9,667.5 667.4,670.3 677.0,673.0 686.5,675.8 696.0,678.5" fill="none" stroke="#eb6834" stroke-width="2"/>
+<g><circle cx="96.0" cy="503.7" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 50, through Ω5: 5.497e-06</title></g>
+<g><circle cx="182.2" cy="529.7" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 107, through Ω5: 4.652e-08</title></g>
+<g><circle cx="267.3" cy="554.7" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 227, through Ω5: 4.606e-10</title></g>
+<g><circle cx="353.1" cy="579.6" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 484, through Ω5: 4.665e-12</title></g>
+<g><circle cx="438.8" cy="604.4" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 1032, through Ω5: 4.849e-14</title></g>
+<g><circle cx="524.6" cy="629.2" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 2201, through Ω5: 5.096e-16</title></g>
+<g><circle cx="610.3" cy="653.8" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 4691, through Ω5: 5.409e-18</title></g>
+<g><circle cx="696.0" cy="678.5" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω5: 5.750e-20</title></g>
+<g><circle cx="696.0" cy="678.5" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω5: 5.750e-20</title></g>
+<text x="712.0" y="682.5" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">+ Ω₅/s⁵</text>
+<polyline points="96.0,500.0 104.7,502.4 114.7,505.2 124.0,507.7 134.1,510.4 143.4,513.0 153.4,515.6 162.6,518.1 172.2,520.6 182.2,523.2 191.3,525.6 200.7,528.1 210.1,530.5 219.7,533.0 229.1,535.4 239.2,537.9 248.4,540.3 258.0,542.7 267.3,545.1 276.9,547.5 286.6,549.9 295.8,552.2 305.5,554.6 315.1,557.0 324.5,559.3 334.0,561.6 343.6,564.0 353.1,566.3 362.7,568.7 372.2,571.0 381.7,573.3 391.2,575.7 400.7,578.0 410.3,580.3 419.9,582.6 429.3,584.9 438.8,587.2 448.4,589.5 457.9,591.8 467.5,594.2 476.9,596.4 486.5,598.7 496.0,601.0 505.5,603.3 515.0,605.6 524.6,607.9 534.1,610.2 543.6,612.5 553.1,614.8 562.7,617.1 572.2,619.4 581.7,621.7 591.2,624.0 600.8,626.3 610.3,628.6 619.8,630.8 629.3,633.1 638.8,635.4 648.4,637.7 657.9,640.0 667.4,642.3 677.0,644.6 686.5,646.9 696.0,649.1" fill="none" stroke="#eda100" stroke-width="2"/>
+<g><circle cx="96.0" cy="500.0" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 50, through Ω4: 1.106e-05</title></g>
+<g><circle cx="182.2" cy="523.2" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 107, through Ω4: 1.515e-07</title></g>
+<g><circle cx="267.3" cy="545.1" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 227, through Ω4: 2.725e-09</title></g>
+<g><circle cx="353.1" cy="566.3" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 484, through Ω4: 5.426e-11</title></g>
+<g><circle cx="438.8" cy="587.2" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 1032, through Ω4: 1.155e-12</title></g>
+<g><circle cx="524.6" cy="607.9" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 2201, through Ω4: 2.540e-14</title></g>
+<g><circle cx="610.3" cy="628.6" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 4691, through Ω4: 5.693e-16</title></g>
+<g><circle cx="696.0" cy="649.1" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω4: 1.285e-17</title></g>
+<g><circle cx="696.0" cy="649.1" r="5.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω4: 1.285e-17</title></g>
+<text x="712.0" y="653.1" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">+ Ω₄/s⁴</text>
+<polyline points="96.0,485.7 104.7,487.4 114.7,489.4 124.0,491.2 134.1,493.2 143.4,495.1 153.4,497.0 162.6,498.8 172.2,500.7 182.2,502.7 191.3,504.5 200.7,506.3 210.1,508.2 219.7,510.0 229.1,511.9 239.2,513.8 248.4,515.6 258.0,517.5 267.3,519.3 276.9,521.1 286.6,523.0 295.8,524.8 305.5,526.7 315.1,528.5 324.5,530.3 334.0,532.2 343.6,534.0 353.1,535.8 362.7,537.7 372.2,539.5 381.7,541.3 391.2,543.2 400.7,545.0 410.3,546.9 419.9,548.7 429.3,550.5 438.8,552.3 448.4,554.2 457.9,556.0 467.5,557.8 476.9,559.7 486.5,561.5 496.0,563.3 505.5,565.2 515.0,567.0 524.6,568.8 534.1,570.6 543.6,572.5 553.1,574.3 562.7,576.1 572.2,578.0 581.7,579.8 591.2,581.6 600.8,583.4 610.3,585.3 619.8,587.1 629.3,588.9 638.8,590.7 648.4,592.6 657.9,594.4 667.4,596.2 677.0,598.1 686.5,599.9 696.0,601.7" fill="none" stroke="#1baf7a" stroke-width="2"/>
+<g><circle cx="96.0" cy="485.7" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 50, through Ω3: 1.528e-04</title></g>
+<g><circle cx="182.2" cy="502.7" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 107, through Ω3: 6.684e-06</title></g>
+<g><circle cx="267.3" cy="519.3" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 227, through Ω3: 3.149e-07</title></g>
+<g><circle cx="353.1" cy="535.8" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 484, through Ω3: 1.488e-08</title></g>
+<g><circle cx="438.8" cy="552.3" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 1032, through Ω3: 7.121e-10</title></g>
+<g><circle cx="524.6" cy="568.8" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 2201, through Ω3: 3.424e-11</title></g>
+<g><circle cx="610.3" cy="585.3" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 4691, through Ω3: 1.655e-12</title></g>
+<g><circle cx="696.0" cy="601.7" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω3: 8.005e-14</title></g>
+<g><circle cx="696.0" cy="601.7" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω3: 8.005e-14</title></g>
+<text x="712.0" y="605.7" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">+ Ω₃/s³</text>
+<polyline points="96.0,475.8 104.7,477.2 114.7,478.8 124.0,480.3 134.1,481.9 143.4,483.3 153.4,484.9 162.6,486.3 172.2,487.7 182.2,489.3 191.3,490.7 200.7,492.1 210.1,493.5 219.7,494.9 229.1,496.3 239.2,497.8 248.4,499.2 258.0,500.6 267.3,502.0 276.9,503.4 286.6,504.8 295.8,506.2 305.5,507.6 315.1,509.0 324.5,510.4 334.0,511.8 343.6,513.2 353.1,514.6 362.7,516.0 372.2,517.4 381.7,518.7 391.2,520.1 400.7,521.5 410.3,522.9 419.9,524.3 429.3,525.6 438.8,527.0 448.4,528.4 457.9,529.8 467.5,531.2 476.9,532.5 486.5,533.9 496.0,535.3 505.5,536.7 515.0,538.0 524.6,539.4 534.1,540.8 543.6,542.2 553.1,543.5 562.7,544.9 572.2,546.3 581.7,547.6 591.2,549.0 600.8,550.4 610.3,551.8 619.8,553.1 629.3,554.5 638.8,555.9 648.4,557.2 657.9,558.6 667.4,560.0 677.0,561.4 686.5,562.7 696.0,564.1" fill="none" stroke="#e87ba4" stroke-width="2"/>
+<g><circle cx="96.0" cy="475.8" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 50, through Ω2: 9.388e-04</title></g>
+<g><circle cx="182.2" cy="489.3" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 107, through Ω2: 7.923e-05</title></g>
+<g><circle cx="267.3" cy="502.0" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 227, through Ω2: 7.576e-06</title></g>
+<g><circle cx="353.1" cy="514.6" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 484, through Ω2: 7.482e-07</title></g>
+<g><circle cx="438.8" cy="527.0" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 1032, through Ω2: 7.561e-08</title></g>
+<g><circle cx="524.6" cy="539.4" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 2201, through Ω2: 7.719e-09</title></g>
+<g><circle cx="610.3" cy="551.8" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 4691, through Ω2: 7.937e-10</title></g>
+<g><circle cx="696.0" cy="564.1" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω2: 8.176e-11</title></g>
+<g><circle cx="696.0" cy="564.1" r="5.5" fill="#e87ba4" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω2: 8.176e-11</title></g>
+<text x="712.0" y="568.1" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">+ Ω₂/s²</text>
+<polyline points="96.0,464.6 104.7,465.4 114.7,466.4 124.0,467.2 134.1,468.2 143.4,469.1 153.4,470.1 162.6,470.9 172.2,471.9 182.2,472.8 191.3,473.7 200.7,474.6 210.1,475.5 219.7,476.4 229.1,477.3 239.2,478.3 248.4,479.2 258.0,480.1 267.3,481.0 276.9,481.9 286.6,482.8 295.8,483.7 305.5,484.7 315.1,485.6 324.5,486.5 334.0,487.4 343.6,488.3 353.1,489.2 362.7,490.2 372.2,491.1 381.7,492.0 391.2,492.9 400.7,493.8 410.3,494.7 419.9,495.6 429.3,496.6 438.8,497.5 448.4,498.4 457.9,499.3 467.5,500.2 476.9,501.1 486.5,502.0 496.0,503.0 505.5,503.9 515.0,504.8 524.6,505.7 534.1,506.6 543.6,507.5 553.1,508.4 562.7,509.3 572.2,510.3 581.7,511.2 591.2,512.1 600.8,513.0 610.3,513.9 619.8,514.8 629.3,515.7 638.8,516.7 648.4,517.6 657.9,518.5 667.4,519.4 677.0,520.3 686.5,521.2 696.0,522.1" fill="none" stroke="#008300" stroke-width="2"/>
+<g><circle cx="96.0" cy="464.6" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 50, through Ω1: 7.478e-03</title></g>
+<g><circle cx="182.2" cy="472.8" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 107, through Ω1: 1.640e-03</title></g>
+<g><circle cx="267.3" cy="481.0" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 227, through Ω1: 3.630e-04</title></g>
+<g><circle cx="353.1" cy="489.2" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 484, through Ω1: 7.961e-05</title></g>
+<g><circle cx="438.8" cy="497.5" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 1032, through Ω1: 1.748e-05</title></g>
+<g><circle cx="524.6" cy="505.7" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 2201, through Ω1: 3.841e-06</title></g>
+<g><circle cx="610.3" cy="513.9" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 4691, through Ω1: 8.452e-07</title></g>
+<g><circle cx="696.0" cy="522.1" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω1: 1.860e-07</title></g>
+<g><circle cx="696.0" cy="522.1" r="5.5" fill="#008300" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω1: 1.860e-07</title></g>
+<text x="712.0" y="526.1" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">+ Ω₁/s</text>
+<polyline points="96.0,449.6 104.7,450.1 114.7,450.6 124.0,451.1 134.1,451.6 143.4,452.1 153.4,452.6 162.6,453.1 172.2,453.6 182.2,454.1 191.3,454.5 200.7,455.0 210.1,455.5 219.7,456.0 229.1,456.4 239.2,456.9 248.4,457.4 258.0,457.9 267.3,458.3 276.9,458.8 286.6,459.3 295.8,459.7 305.5,460.2 315.1,460.7 324.5,461.1 334.0,461.6 343.6,462.1 353.1,462.5 362.7,463.0 372.2,463.5 381.7,463.9 391.2,464.4 400.7,464.8 410.3,465.3 419.9,465.8 429.3,466.2 438.8,466.7 448.4,467.1 457.9,467.6 467.5,468.1 476.9,468.5 486.5,469.0 496.0,469.4 505.5,469.9 515.0,470.3 524.6,470.8 534.1,471.3 543.6,471.7 553.1,472.2 562.7,472.6 572.2,473.1 581.7,473.5 591.2,474.0 600.8,474.5 610.3,474.9 619.8,475.4 629.3,475.8 638.8,476.3 648.4,476.7 657.9,477.2 667.4,477.7 677.0,478.1 686.5,478.6 696.0,479.0" fill="none" stroke="#7a7668" stroke-width="2"/>
+<g><circle cx="96.0" cy="449.6" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 50, through Ω0: 1.184e-01</title></g>
+<g><circle cx="182.2" cy="454.1" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 107, through Ω0: 5.175e-02</title></g>
+<g><circle cx="267.3" cy="458.3" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 227, through Ω0: 2.363e-02</title></g>
+<g><circle cx="353.1" cy="462.5" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 484, through Ω0: 1.091e-02</title></g>
+<g><circle cx="438.8" cy="466.7" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 1032, through Ω0: 5.082e-03</title></g>
+<g><circle cx="524.6" cy="470.8" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 2201, through Ω0: 2.375e-03</title></g>
+<g><circle cx="610.3" cy="474.9" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 4691, through Ω0: 1.113e-03</title></g>
+<g><circle cx="696.0" cy="479.0" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω0: 5.215e-04</title></g>
+<g><circle cx="696.0" cy="479.0" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>D = 10000, through Ω0: 5.215e-04</title></g>
+<text x="712.0" y="483.0" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">s + Ω₀</text>
+<g opacity="0.35"><line x1="132.0" y1="550.5" x2="132.0" y2="619.5" stroke="#52514e" stroke-width="2"/><polygon points="132.0,625.5 128.0,616.5 136.0,616.5" fill="#52514e"/><text x="132.0" y="581.0" font-size="11" fill="#52514e" text-anchor="middle" transform="rotate(90.0 132.0 588.0)">smaller</text></g>
+<circle cx="353.1" cy="606.7" r="10" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
+<line x1="357.5" y1="615.6" x2="393.1" y2="686.7" stroke="#0b0b0b" stroke-width="1"/>
+<text x="397.1" y="690.7" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="bold">≈ Ω₇/s⁷, with Ω₇ ≈ 2.4 × 10⁷ (estimate)</text>
+<text x="16.0" y="798.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">closed forms: README.md, omega2.md (#26), omega3.md (#208)  ·  Ω₄: omega4.md (#220); Ω₅: omega5.md (#263); Ω₆: omega6.md (#282); W² (quad-double, dh610-fedora): w2_output.txt (#195)</text>
 <a href="https://github.com/nmoinvaz/negative-mass"><text x="764" y="798" font-size="10" fill="#52514e" text-anchor="end" text-decoration="underline">github.com/nmoinvaz/negative-mass</text></a>
 </svg>
