@@ -86,8 +86,11 @@ r = R + a(1+t)/(1−t), a = max(R,1), Robin row f u_r + (3f/R − κ)u = 0, Diri
 **The number of negative eigenvalues agrees with the Sturm prediction [R<r_s] + [κ<κ_c] in all
 1000 cases at both resolutions**; lowest-eigenvalue difference N=160 vs 240 ≤ 7e-8.
 
-**κ_c(R)** (`kappa_c.csv`, `kappa_c_check.csv`, `kappa_c_large_l.csv`, left panel of
-`truncated.png`): the closed form d ln φ₀/dx agrees with an independent numerical bisection on κ
+The committed graph is `thresholds.svg`, drawn by `thresholds_graph.py` from the two CSV files (`truncated.png`,
+`truncated.py`'s own plot, is not committed).
+
+**κ_c(R)** (`kappa_c.csv`, `kappa_c_check.csv`, `kappa_c_large_l.csv`, top panel of
+`thresholds.svg`): the closed form d ln φ₀/dx agrees with an independent numerical bisection on κ
 to ≤ 1e-7 relative at 36 (l, R) points.
 
 | l | R=0.05 | 0.1 | 0.3 | 1 | 3 | 10 | 100 | large-R |
@@ -140,7 +143,7 @@ when R < r_s):
   For κ x_R < −1/2 a second negative eigenvalue appears (deeply bound, set by κ), consistent with
   the count formula.
 
-## 3. Growth rates √(−E₀) vs l (`growth_rates.csv`, right panel of `truncated.png`)
+## 3. Growth rates √(−E₀) vs l (`growth_rates.csv`, bottom panel of `thresholds.svg`)
 
 | l | full DG k/2 | R=0.05 Dir | R=0.05 Neu | R=0.3 Dir | R=0.3 Neu | R=1 Dir | R=1 Neu | R=1 κ=−10 | R=3 κ=−10 | R=10 κ=−1 | R=10 κ=−10 |
 |---|---|---|---|---|---|---|---|---|---|---|---|
