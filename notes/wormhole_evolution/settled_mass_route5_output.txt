@@ -1,0 +1,206 @@
+settled_mass_route5.py analyze {'raw': '/Users/nathan/Source/negative-mass-raw/I313-mac', 'rn': '/Users/nathan/Source/negative-mass-raw/I313-mac/runs_rn'}: numba 0.68.1, numpy 2.5.4, python 3.14.7, Nathans-MacBook-Air-M5-3.local, mutation None, 2026-11-28 02:06:06
+== Runs read from /Users/nathan/Source/negative-mass-raw/I313-mac/runs (and runs_rep): 7 of 7 (point, h) complete
+[pass] CFG: settled_mass.CRIT (F1, K, W1, rcut, tol, dxp, dm) equal #41's declared chain, X = 28 for G, the ghost pulse (xc 3, w 0.5), and the (B, xc, w) stored in each run equal the declared one
+[pass] FAM0: route_family with the default normal pulse (B, 3.0, 0.5) returns what threshold.family returns (the pulses, symmetry flag and signs), bit for bit
+[pass] RUNS: every (point, h) has its pstar, chain and member output and reads without error
+
+== Planted cases
+    PMEM g1 0 h 0.01: err g1 3.1e-16, r_th 0.0e+00, m+- 4.1e-11
+    PMEM g1 0 h 0.005: err g1 6.4e-16, r_th 1.6e-10, m+- 4.1e-11
+    PMEM g1 0.012 h 0.01: err g1 2.6e-08, r_th 3.2e-13, m+- 2.6e-08
+    PMEM g1 0.012 h 0.005: err g1 8.4e-08, r_th 6.9e-10, m+- 8.8e-08
+    PMEM g1 0.048 h 0.01: err g1 5.8e-07, r_th 5.1e-12, m+- 6.7e-07
+    PMEM g1 0.048 h 0.005: err g1 1.4e-07, r_th 2.3e-09, m+- 1.5e-07
+    PMEM g1 0.075 h 0.01: err g1 1.4e-07, r_th 1.3e-11, m+- 1.9e-07
+    PMEM g1 0.075 h 0.005: err g1 2.3e-07, r_th 3.5e-09, m+- 2.8e-07
+[pass] PMEM: planted static members (gamma_1 = 0, 0.012, 0.048, 0.075, known r_th, s_th, end masses) as profile slices through slice_masses, fit_asym, the parabolic throat minimum and asym_masses, h = (0.01, 0.005)  (max error gamma_1 5.8e-07 (bar 1e-05), r_th 3.5e-09 (bar 1e-06), m_+- 6.7e-07 (bar 0.0001))
+[pass] PDEP: planted growing pair (odd part q0 e^{lambda t}, known crossing times of 1e-3, 1e-2, 1e-1) through departure_time  (max |t_dep - exact| 6.3e-06 (bar 2e-05))
+    PTD gamma_1 0.012 r_th 0.997 v -1.0e-03 h 0.01: t_dep 13.6070 (13.6070), gamma_1 0.011994 (0.011994), r_th 0.995953 (0.995948), rdot_th -4.877e-04 (-4.879e-04)
+    PTD gamma_1 0.012 r_th 0.997 v -1.0e-03 h 0.005: t_dep 13.6070 (13.6070), gamma_1 0.011994 (0.011994), r_th 0.995953 (0.995948), rdot_th -4.877e-04 (-4.879e-04)
+    PTD gamma_1 0.048 r_th 0.999 v +2.0e-04 h 0.01: t_dep 13.6070 (13.6070), gamma_1 0.047994 (0.047994), r_th 0.999225 (0.999214), rdot_th +1.633e-04 (+1.638e-04)
+    PTD gamma_1 0.048 r_th 0.999 v +2.0e-04 h 0.005: t_dep 13.6070 (13.6070), gamma_1 0.047994 (0.047994), r_th 0.999225 (0.999214), rdot_th +1.633e-04 (+1.638e-04)
+    PTD gamma_1 0.075 r_th 1.008 v +2.0e-03 h 0.01: t_dep 13.6070 (13.6070), gamma_1 0.074994 (0.074994), r_th 1.010134 (1.010113), rdot_th +1.140e-03 (+1.141e-03)
+    PTD gamma_1 0.075 r_th 1.008 v +2.0e-03 h 0.005: t_dep 13.6070 (13.6070), gamma_1 0.074994 (0.074994), r_th 1.010134 (1.010113), rdot_th +1.140e-03 (+1.141e-03)
+    PTD gamma_1 0.012 r_th 1.001 v +1.0e-03 h 0.01: t_dep 13.6070 (13.6070), gamma_1 0.011994 (0.011994), r_th 1.002073 (1.002058), rdot_th +5.973e-04 (+5.982e-04)
+    PTD gamma_1 0.012 r_th 1.001 v +1.0e-03 h 0.005: t_dep 13.6070 (13.6070), gamma_1 0.011994 (0.011994), r_th 1.002073 (1.002058), rdot_th +5.973e-04 (+5.982e-04)
+[pass] PTD: planted pairs (odd part, trajectories of the measured size, rows every 0.5 in t from the exact static member) through member_at and speed_at: departure time, gamma_1, r_th and rdot_th at departure  (max error t_dep 7.2e-06 (bar 2e-05), gamma_1 4.8e-10 (1e-05), r_th 2.1e-05 (5e-05), rdot_th 1.4e-06 (5e-06))
+[pass] PFIT: planted data that follow the frozen refit exactly (M = r_th (M_0 + a g + b g^2 + c rdot) on the fifteen real (gamma_1, r_th, rdot_th)) return (a, b, c) and zero errors through fit and loo; with W3 displaced by 1e-4 in M its leave-one-out error is the displacement (in y) and the explicit and the hat-matrix leave-one-out agree  (max |co - planted| 2.0e-15, max |loo| 2.8e-17; displaced point: loo y error 1.006407e-04, displacement 1.006407e-04; explicit vs hat-matrix 1.0e-17)
+[pass] PPRED4: planted data that follow the frozen refit exactly pass the P4 test (1e-12), and planted data with a x 1.05, or c x 0.8, fire it (bar 6e-5)  (max |M - predicted|: own 0.0e+00; a x 1.05 8.7e-04; c x 0.8 1.9e-04 (bar 6e-05))
+[pass] PSEP3: planted points at known separations from three planted route curves (B, W, C) through the separation test: informative or not as planted (far, on a curve, 2 % and 10 % beyond the last point, 3e-6 and 6e-6 against an h difference of 1e-6)  (far from all three: B=YW=YC=Y; on route W's curve: B=YW=nC=Y; 2 % beyond the last point, far: B=YW=YC=Y; 10 % beyond the last point, far: B=nW=nC=n; 3e-6 in r_th against an h difference of 1e-6: B=nW=nC=n; 6e-6 in r_th against an h difference of 1e-6: B=YW=YC=Y)
+[pass] PLEV: planted leverage: the function at the fitted points equals the hat-matrix diagonal (1e-9), at random rows the SVD form (1e-9 relative), L(s a) = s^2 L(a) (1e-12), and 'above the fitted maximum' is false at 0.9 and 1.0 and true at 1.1 times W3's row  (max |L - hat| 1.5e-15; |L - svd|/L 5.7e-15; scaling 6.0e-15; decisions at 0.9, 1.0, 1.1 [False, False, True])
+[pass] PBAND: the LEVB decision (every leverage <= 1.0 and the largest >= 0.40) on planted triples: (0.1, 0.2, 0.39) false, (0.1, 0.2, 0.41) true, (0.2, 0.5, 1.0) true, (0.2, 0.5, 1.01) false, (0.45, 0.2, 0.1) true  (5 planted cases)
+
+== The frozen refit (#295's raw README stage 1) against the refit recomputed from the stored fifteen points
+[pass] FRZ: the refit recomputed from the stored fifteen points equals the frozen (a, b, c) to 1e-9, M_0 = B = 0's plateau to 1e-6, and the largest leave-one-out and in-sample errors equal the frozen 7.90e-5 and 5.51e-5 to 1e-7  (15 points; max |co - frozen| 3.4e-11; |B = 0 plateau - M_0| 1.8e-07; max LOO 7.902e-05, max in-sample 5.510e-05)
+    recomputed (a, b, c) = +0.2296318924, +0.2834170383, +0.7657657062; frozen +0.2296318924, +0.2834170383, +0.7657657062
+
+== p*_h of each point: bisection to hi - lo <= 1e-14 (threshold.bisect on threshold.point, X = 28), the h of the job as passed
+    Y1 (0.0394, 5.0, 0.7) h 0.01: p*_h 1.7672874699637764e-04, hi - lo 5.8e-15, 36 runs, stopped None
+    Y1 (0.0394, 5.0, 0.7) h 0.005: p*_h 1.5891104752372483e-04, hi - lo 5.8e-15, 36 runs, stopped None
+    Y2 (0.0768, 5.0, 0.7) h 0.01: p*_h 6.4359648470126542e-04, hi - lo 5.8e-15, 38 runs, stopped None
+    Y2 (0.0768, 5.0, 0.7) h 0.005: p*_h 6.2580495920556154e-04, hi - lo 5.8e-15, 38 runs, stopped None
+    Y3 (0.09431, 5.0, 0.7) h 0.01: p*_h 1.0040392623224762e-03, hi - lo 1.2e-14, 39 runs, stopped static through X
+    Y3 (0.09431, 5.0, 0.7) h 0.005: p*_h 9.8626952137856327e-04, hi - lo 5.8e-15, 39 runs, stopped None
+    RX2 (0.1695, 4.0, 1.5) h 0.005: p*_h 8.3444599027076051e-03, hi - lo 5.8e-15, 42 runs, stopped None
+[pass] BR: bracket ends are collapse and expansion, the replayed bisection equals lo and hi, and either hi - lo <= 1e-14 or the bisection stopped by 'static through X' at hi - lo <= 2e-14; h passed as its float repr
+
+== Does the near-threshold run stall? Lifetime T at p*_h -/+ 1e-8 against 1e-6 (a stall adds about 4 per side)
+    Y1 h 0.01: collapse side T 11.526 (1e-6) -> 15.443 (1e-8), +3.92; expansion side 16.384 -> 20.287, +3.90: stall
+    Y1 h 0.005: collapse side T 11.515 (1e-6) -> 15.440 (1e-8), +3.92; expansion side 16.387 -> 20.283, +3.90: stall
+    Y2 h 0.01: collapse side T 11.646 (1e-6) -> 15.804 (1e-8), +4.16; expansion side 16.539 -> 20.329, +3.79: stall
+    Y2 h 0.005: collapse side T 11.597 (1e-6) -> 15.768 (1e-8), +4.17; expansion side 16.536 -> 20.326, +3.79: stall
+    Y3 h 0.01: collapse side T 11.752 (1e-6) -> 16.150 (1e-8), +4.40; expansion side 16.525 -> 21.107, +4.58: stall
+    Y3 h 0.005: collapse side T 11.787 (1e-6) -> 16.115 (1e-8), +4.33; expansion side 16.522 -> 21.104, +4.58: stall
+    RX2 h 0.005: collapse side T 11.437 (1e-6) -> 15.737 (1e-8), +4.30; expansion side 16.522 -> 20.382, +3.86: stall
+[pass] STL: each point stalls: collapse at p*_h - 1e-6 and 1e-8 and expansion at + 1e-6 and 1e-8, and T gains >= 2.0 per side from 1e-6 to 1e-8
+[pass] EVT: the chain's first trapped cell equals the pair's collapse-side one (same amplitude p*_h - 1e-8), fate collapse at p*_h - 1e-8 and expansion at p*_h + 1e-8
+
+== The chain (#41's, unchanged) at delta = 1e-8: limit, first law, settled value
+    Y1 h 0.01: limit, F_end 1.569e+06, edge 196/480
+    Y1 h 0.005: limit, F_end 1.563e+06, edge 389/960
+    Y2 h 0.01: limit, F_end 1.557e+06, edge 200/480
+    Y2 h 0.005: limit, F_end 1.563e+06, edge 398/960
+    Y3 h 0.01: limit, F_end 1.554e+06, edge 203/480
+    Y3 h 0.005: limit, F_end 1.571e+06, edge 403/960
+    RX2 h 0.005: limit, F_end 1.568e+06, edge 406/960
+[pass] RC5: every run ends at the declared limit (F = e^-f on the horizon, 786432 <= F_end < 1.57286e+06), horizon at least Nc/8 cells from the box edges, no gaps
+[pass] RC4: first law on the horizon, both fields: M(x+_b) - M(x+_a) = integral of (r^2/2) e^f r_- (phi0_+^2 - phi1_+^2), from the first trapped cell to F = 20  (bar 0.02; worst 1.1e-04)
+[pass] RC8: M_AH has settled at the limit: plateau mean over the last 1.0 differs from the previous 1.0 by <= 1e-4 and the mean horizon flux (both fields) over the last 0.5 is <= 1e-5  (plateau change +5.8e-06, +2.8e-06, -4.5e-06, +1.0e-06, +1.9e-06, +1.4e-06, +1.9e-06)
+[pass] RH: the settled value at two h: |plat(0.01) - plat(0.005)| (plateau mean over the last 1.0 of x+) <= 5e-5  (Y1: 8.9e-06; Y2: 1.3e-05; Y3: 1.0e-05)
+
+== The member at departure (#225's slice_masses and fit_asym on the pair's mean profile; t_dep: the unstable mode's part reaches eps = 1e-3 of r_th) and the throat's speed there (#267's)
+    point  h       p*_h            t_dep    r_th      gamma_1   rdot_th     rms(fit)  M(plateau)
+    Y1    0.01    1.7672874700e-04   13.361  0.999757  0.011968  -6.214e-04  6.9e-05  0.225382
+    Y1    0.005   1.5891104752e-04   13.361  0.999756  0.011968  -6.213e-04  6.9e-05  0.225373
+    Y2    0.01    6.4359648470e-04   13.608  1.005091  0.047985  -1.184e-03  1.5e-04  0.235108
+    Y2    0.005   6.2580495921e-04   13.609  1.005090  0.047984  -1.183e-03  1.5e-04  0.235094
+    Y3    0.01    1.0040392623e-03   13.818  1.015011  0.074388  -4.051e-04  2.3e-04  0.245078
+    Y3    0.005   9.8626952138e-04   13.818  1.015009  0.074387  -4.048e-04  2.3e-04  0.245068
+    RX2   0.005   8.3444599027e-03   13.649  0.983798  0.047545  -2.733e-03  1.5e-04  0.228997
+[pass] TGT: gamma_1 at departure (h = 0.005) is within 3% of its target (0.012, 0.048, 0.075)  (Y1: -2.7e-03; Y2: -3.2e-04; Y3: -8.2e-03)
+    HST Y1: gamma_1 1.7e-05, r_th 2.1e-07, rdot_th 8.9e-08
+    HST Y2: gamma_1 2.1e-05, r_th 1.1e-06, rdot_th 1.7e-07
+    HST Y3: gamma_1 1.3e-05, r_th 1.3e-06, rdot_th 3.0e-07
+[pass] HST: the member at departure at the two h (0.01, 0.005) agrees to 1e-4 relative in gamma_1 and r_th, and to 2e-5 absolute in rdot_th (the issue's acceptance, as #283)
+[FAIL] FITQ: the member's fit of M(r) on the two sides has an rms residual of at most 1e-4 at the slices around departure (a static member describes the state there)
+
+== Leverage in the frozen fit's design and rdot_th against the fitted range (h = 0.005)
+    Y1: gamma_1 0.011968, rdot_th -6.2134e-04: leverage 0.1027 (within the fitted maximum 0.3932, W3); rdot_th inside [-6.7e-04, +1.6e-03] (information)
+    Y2: gamma_1 0.047984, rdot_th -1.1834e-03: leverage 0.5207 (above the fitted maximum 0.3932, W3); rdot_th outside [-6.7e-04, +1.6e-03] (information)
+    Y3: gamma_1 0.074387, rdot_th -4.0479e-04: leverage 0.7712 (above the fitted maximum 0.3932, W3); rdot_th inside [-6.7e-04, +1.6e-03] (information)
+[pass] LEVB: at h = 0.005, in the frozen fit's design (gamma_1, gamma_1^2, rdot_th), every new member's leverage is at most 1.0 and the largest is at least 0.40 (the fitted maximum is 0.3932, W3)  (Y1 0.1027, Y2 0.5207, Y3 0.7712)
+
+== Separation from the earlier routes at the same gamma_1 (h = 0.005; B = 0 anchors each curve; piecewise-linear and PCHIP, the smaller difference; gamma_1 up to 3 % beyond a curve's last point is extrapolated)
+    route B: gamma_1 0.00000, 0.00294, 0.01184, 0.04832, 0.07545; r_th 1.00000, 0.99945, 0.99836, 1.00288, 1.01588; rdot_th -3.26e-06, -9.69e-05, -3.03e-04, +6.50e-05, +1.59e-03
+    route W: gamma_1 0.00000, 0.01200, 0.04798, 0.07502; r_th 1.00000, 0.99496, 0.98918, 0.99363; rdot_th -3.26e-06, -5.05e-04, -6.65e-04, +4.99e-04
+    route C: gamma_1 0.00000, 0.01199, 0.04801, 0.07483; r_th 1.00000, 0.99962, 1.00632, 1.01937; rdot_th -3.26e-06, -3.89e-04, -2.92e-04, +9.95e-04
+    route N: gamma_1 0.00000, 0.01199, 0.04799, 0.07502; r_th 1.00000, 0.99746, 0.99872, 1.00854; rdot_th -3.26e-06, -4.35e-04, -4.18e-04, +8.65e-04
+    route X: gamma_1 0.00000, 0.01200, 0.04755, 0.07491; r_th 1.00000, 0.99369, 0.98380, 0.98397; rdot_th -3.26e-06, -1.13e-03, -2.73e-03, -2.44e-03
+    Y1 against route B: gamma_1 0.01197 (beyond its last point by 0.0%); r_th - route: +1.38e-03 (linear), +1.40e-03 (PCHIP), its h difference 2.1e-07 -> ok; rdot_th - route: -3.20e-04, -3.19e-04, h difference 8.9e-08 -> ok: informative
+    Y1 against route W: gamma_1 0.01197 (beyond its last point by 0.0%); r_th - route: +4.79e-03 (linear), +4.79e-03 (PCHIP), its h difference 2.1e-07 -> ok; rdot_th - route: -1.18e-04, -1.17e-04, h difference 8.9e-08 -> ok: informative
+    Y1 against route C: gamma_1 0.01197 (beyond its last point by 0.0%); r_th - route: +1.32e-04 (linear), +1.33e-04 (PCHIP), its h difference 2.1e-07 -> ok; rdot_th - route: -2.33e-04, -2.33e-04, h difference 8.9e-08 -> ok: informative
+    Y1 against route N: gamma_1 0.01197 (beyond its last point by 0.0%); r_th - route: +2.29e-03 (linear), +2.30e-03 (PCHIP), its h difference 2.1e-07 -> ok; rdot_th - route: -1.87e-04, -1.87e-04, h difference 8.9e-08 -> ok: informative
+    Y1 against route X: gamma_1 0.01197 (beyond its last point by 0.0%); r_th - route: +6.05e-03 (linear), +6.05e-03 (PCHIP), its h difference 2.1e-07 -> ok; rdot_th - route: +5.06e-04, +5.07e-04, h difference 8.9e-08 -> ok: informative
+    Y2 against route B: gamma_1 0.04798 (beyond its last point by 0.0%); r_th - route: +2.25e-03 (linear), +2.28e-03 (PCHIP), its h difference 1.1e-06 -> ok; rdot_th - route: -1.25e-03, -1.24e-03, h difference 1.7e-07 -> ok: informative
+    Y2 against route W: gamma_1 0.04798 (beyond its last point by 0.0%); r_th - route: +1.59e-02 (linear), +1.59e-02 (PCHIP), its h difference 1.1e-06 -> ok; rdot_th - route: -5.18e-04, -5.18e-04, h difference 1.7e-07 -> ok: informative
+    Y2 against route C: gamma_1 0.04798 (beyond its last point by 0.0%); r_th - route: -1.23e-03 (linear), -1.23e-03 (PCHIP), its h difference 1.1e-06 -> ok; rdot_th - route: -8.92e-04, -8.92e-04, h difference 1.7e-07 -> ok: informative
+    Y2 against route N: gamma_1 0.04798 (beyond its last point by 0.0%); r_th - route: +6.37e-03 (linear), +6.37e-03 (PCHIP), its h difference 1.1e-06 -> ok; rdot_th - route: -7.66e-04, -7.66e-04, h difference 1.7e-07 -> ok: informative
+    Y2 against route X: gamma_1 0.04798 (beyond its last point by 0.0%); r_th - route: +2.13e-02 (linear), +2.13e-02 (PCHIP), its h difference 1.1e-06 -> ok; rdot_th - route: +1.54e-03, +1.55e-03, h difference 1.7e-07 -> ok: informative
+    Y3 against route B: gamma_1 0.07439 (beyond its last point by 0.0%); r_th - route: -3.64e-04 (linear), -2.05e-04 (PCHIP), its h difference 1.4e-06 -> ok; rdot_th - route: -1.94e-03, -1.92e-03, h difference 3.0e-07 -> ok: informative
+    Y3 against route W: gamma_1 0.07439 (beyond its last point by 0.0%); r_th - route: +2.15e-02 (linear), +2.16e-02 (PCHIP), its h difference 1.4e-06 -> ok; rdot_th - route: -8.76e-04, -8.63e-04, h difference 3.0e-07 -> ok: informative
+    Y3 against route C: gamma_1 0.07439 (beyond its last point by 0.0%); r_th - route: -4.14e-03 (linear), -4.08e-03 (PCHIP), its h difference 1.4e-06 -> ok; rdot_th - route: -1.38e-03, -1.37e-03, h difference 3.0e-07 -> ok: informative
+    Y3 against route N: gamma_1 0.07439 (beyond its last point by 0.0%); r_th - route: +6.70e-03 (linear), +6.79e-03 (PCHIP), its h difference 1.4e-06 -> ok; rdot_th - route: -1.24e-03, -1.23e-03, h difference 3.0e-07 -> ok: informative
+    Y3 against route X: gamma_1 0.07439 (beyond its last point by 0.0%); r_th - route: +3.10e-02 (linear), +3.11e-02 (PCHIP), its h difference 1.4e-06 -> ok; rdot_th - route: +2.04e-03, +2.05e-03, h difference 3.0e-07 -> ok: informative
+[pass] SEPW: the new members' r_th or rdot_th at departure differs from route W (#283)'s at the same gamma_1 by more than 5 times its own h difference, all three points
+[pass] SEPC: the new members' r_th or rdot_th at departure differs from route C (#283)'s at the same gamma_1 by more than 5 times its own h difference, all three points
+[pass] SEPB: the new members' r_th or rdot_th at departure differs from family B (#266)'s at the same gamma_1 by more than 5 times its own h difference, all three points
+[pass] SEPN: the new members' r_th or rdot_th at departure differs from route N (#295)'s at the same gamma_1 by more than 5 times its own h difference, all three points
+[pass] SEPX: the new members' r_th or rdot_th at departure differs from route X (#305)'s at the same gamma_1 by more than 5 times its own h difference, all three points
+
+== The frozen refit on the new members: M - predicted, h = 0.005 (gating), with the leverage, the static fit's rms and rdot_th beside each residual
+    P4: M = r_th (M_0 + a g + b g^2 + c rdot_th), M_0 = 0.223086, (a, b, c) = (0.2296318924, 0.2834170383, 0.7657657062), frozen in #295 before any run of its third route, and before this issue
+    point   leverage  M(plateau)   P4 predicted  M - P4      rms(fit)  rdot_th     | comparison, gates nothing: M - P3 (#267's)   M - P2' (refit without the speed)
+    Y1      0.1027   0.225373   0.225344      +2.87e-05   6.86e-05  -6.213e-04  | +3.69e-05                -3.49e-04
+    Y2      0.5207   0.235094   0.235041      +5.28e-05   1.50e-04  -1.183e-03  | +8.17e-05                -9.93e-04
+    Y3      0.7712   0.245068   0.245049      +1.83e-05   2.33e-04  -4.048e-04  | +5.97e-05                -1.12e-03
+[pass] P4: the frozen refit predicts the settled mass at every new member within 6e-5 (h = 0.005; coefficients frozen in #295's raw README before any run of its third route, and before this issue)  (3 points; max |M - predicted| 5.3e-05 (bar 6e-05); Y1 +2.9e-05 (leverage 0.10, rms 6.9e-05), Y2 +5.3e-05 (leverage 0.52, rms 1.5e-04), Y3 +1.8e-05 (leverage 0.77, rms 2.3e-04))
+[pass] P4-ph: POST HOC, gates nothing: the frozen (a, b, c) at h = 0.01 with M_0(0.01) = 0.223095 (the coefficients were fitted at h = 0.005)  (Y1 +2.9e-05, Y2 +5.7e-05, Y3 +1.9e-05)
+
+== Reproduction of #305's X2 at h = 0.005 from its stored bracket, bit for bit (stored runs of #305 read only)
+[pass] REP5: #305's X2 at h = 0.005 reproduces #305's stored run bit for bit: p*_h, the chain's series, the locus, the member rows (all but the wall time), the plateau, and (gamma_1, r_th, rdot_th, t_dep)  (p*_h equal True, series True, locus True, member rows True; dM +0.0e+00, d(gamma_1, r_th, rdot_th, t_dep) +0.0e+00, +0.0e+00, +0.0e+00, +0.0e+00)
+
+== Post hoc (gates nothing): the nine held-out members, miss against leverage, the static fit's rms and the speed
+    name  leverage  gamma_1    r_th       rdot_th      M - P4      rms(fit)   |M - P4|/rms  rdot_th vs fitted range
+    N1    0.070    0.01199  0.997459  -4.348e-04  -4.77e-07  5.57e-06   0.086        inside
+    N2    0.189    0.04799  0.998724  -4.177e-04  -2.15e-06  2.97e-05   0.072        inside
+    N3    0.328    0.07502  1.008541  +8.649e-04  +1.21e-06  4.59e-05   0.026        inside
+    X1    0.272    0.01200  0.993694  -1.130e-03  +9.00e-05  6.46e-05   1.393        outside
+    X2    1.975    0.04755  0.983798  -2.733e-03  +2.13e-04  1.46e-04   1.457        outside
+    X3    3.058    0.07491  0.983968  -2.439e-03  +1.98e-04  2.09e-04   0.949        outside
+    Y1    0.103    0.01197  0.999756  -6.213e-04  +2.87e-05  6.86e-05   0.418        inside
+    Y2    0.521    0.04798  1.005090  -1.183e-03  +5.28e-05  1.50e-04   0.353        outside
+    Y3    0.771    0.07439  1.015009  -4.048e-04  +1.83e-05  2.33e-04   0.079        inside
+    ordered by leverage: N1 0.07:-4.8e-07, Y1 0.10:+2.9e-05, N2 0.19:-2.2e-06, X1 0.27:+9.0e-05, N3 0.33:+1.2e-06, Y2 0.52:+5.3e-05, Y3 0.77:+1.8e-05, X2 1.98:+2.1e-04, X3 3.06:+2.0e-04
+    the largest |M - P4| among the held-out members whose leverage is within the band [0.40, 1.0]: Y2 5.28e-05, Y3 1.83e-05
+
+== Post hoc (gates nothing): the static-member fit's rms at departure (FITQ's quantity) at every stored member at h = 0.005, against |rdot_th| (#305's M1, with the new members)
+    B0     gamma_1 -0.00000  r_th - 1 -0.00000  rdot_th -3.261e-06  rms(fit) 3.61e-09
+    B0.025 gamma_1 0.00294  r_th - 1 -0.00055  rdot_th -9.690e-05  rms(fit) 4.33e-07
+    B0.05  gamma_1 0.01184  r_th - 1 -0.00164  rdot_th -3.026e-04  rms(fit) 3.47e-06
+    B0.1   gamma_1 0.04832  r_th - 1 +0.00288  rdot_th +6.505e-05  rms(fit) 6.42e-06
+    B0.125 gamma_1 0.07545  r_th - 1 +0.01588  rdot_th +1.594e-03  rms(fit) 1.07e-04  (above FITQ bar 1e-4)
+    e7     gamma_1 0.04851  r_th - 1 +0.00337  rdot_th -6.316e-04  rms(fit) 3.75e-05
+    e9     gamma_1 0.04816  r_th - 1 +0.00348  rdot_th +5.094e-04  rms(fit) 2.34e-05
+    e10    gamma_1 0.04801  r_th - 1 +0.00479  rdot_th +8.052e-04  rms(fit) 3.95e-05
+    e11    gamma_1 0.04787  r_th - 1 +0.00658  rdot_th +1.011e-03  rms(fit) 5.12e-05
+    e12    gamma_1 0.04773  r_th - 1 +0.00864  rdot_th +1.096e-03  rms(fit) 5.66e-05
+    W1     gamma_1 0.01200  r_th - 1 -0.00504  rdot_th -5.048e-04  rms(fit) 8.64e-06
+    W2     gamma_1 0.04798  r_th - 1 -0.01082  rdot_th -6.653e-04  rms(fit) 5.02e-05
+    W3     gamma_1 0.07502  r_th - 1 -0.00637  rdot_th +4.989e-04  rms(fit) 2.48e-05
+    C1     gamma_1 0.01199  r_th - 1 -0.00038  rdot_th -3.888e-04  rms(fit) 3.62e-06
+    C2     gamma_1 0.04801  r_th - 1 +0.00632  rdot_th -2.916e-04  rms(fit) 1.89e-05
+    C3     gamma_1 0.07483  r_th - 1 +0.01937  rdot_th +9.949e-04  rms(fit) 5.86e-05
+    N1     gamma_1 0.01199  r_th - 1 -0.00254  rdot_th -4.348e-04  rms(fit) 5.57e-06
+    N2     gamma_1 0.04799  r_th - 1 -0.00128  rdot_th -4.177e-04  rms(fit) 2.97e-05
+    N3     gamma_1 0.07502  r_th - 1 +0.00854  rdot_th +8.649e-04  rms(fit) 4.59e-05
+    X1     gamma_1 0.01200  r_th - 1 -0.00631  rdot_th -1.130e-03  rms(fit) 6.46e-05
+    X2     gamma_1 0.04755  r_th - 1 -0.01620  rdot_th -2.733e-03  rms(fit) 1.46e-04  (above FITQ bar 1e-4)
+    X3     gamma_1 0.07491  r_th - 1 -0.01603  rdot_th -2.439e-03  rms(fit) 2.09e-04  (above FITQ bar 1e-4)
+    Y1     gamma_1 0.01197  r_th - 1 -0.00024  rdot_th -6.213e-04  rms(fit) 6.86e-05
+    Y2     gamma_1 0.04798  r_th - 1 +0.00509  rdot_th -1.183e-03  rms(fit) 1.50e-04  (above FITQ bar 1e-4)
+    Y3     gamma_1 0.07439  r_th - 1 +0.01501  rdot_th -4.048e-04  rms(fit) 2.33e-04  (above FITQ bar 1e-4)
+    correlation of rms with |gamma_1|, |r_th - 1|, |rdot_th| over 25 members: +0.537, +0.693, +0.669
+    the same over the 22 members without Y (#305's note: +0.952 with |rdot_th|, +0.795 with |r_th - 1|, +0.549 with |gamma_1|): +0.549, +0.795, +0.952
+    rms(fit) at the same gamma_1 target on each route (the static fit's rms against gamma_1 within a route):
+        route W: W1 (gamma_1 0.0120, rdot_th -5.0e-04) 8.64e-06, W2 (gamma_1 0.0480, rdot_th -6.7e-04) 5.02e-05, W3 (gamma_1 0.0750, rdot_th +5.0e-04) 2.48e-05
+        route C: C1 (gamma_1 0.0120, rdot_th -3.9e-04) 3.62e-06, C2 (gamma_1 0.0480, rdot_th -2.9e-04) 1.89e-05, C3 (gamma_1 0.0748, rdot_th +9.9e-04) 5.86e-05
+        route N: N1 (gamma_1 0.0120, rdot_th -4.3e-04) 5.57e-06, N2 (gamma_1 0.0480, rdot_th -4.2e-04) 2.97e-05, N3 (gamma_1 0.0750, rdot_th +8.6e-04) 4.59e-05
+        route X: X1 (gamma_1 0.0120, rdot_th -1.1e-03) 6.46e-05, X2 (gamma_1 0.0475, rdot_th -2.7e-03) 1.46e-04, X3 (gamma_1 0.0749, rdot_th -2.4e-03) 2.09e-04
+        route Y: Y1 (gamma_1 0.0120, rdot_th -6.2e-04) 6.86e-05, Y2 (gamma_1 0.0480, rdot_th -1.2e-03) 1.50e-04, Y3 (gamma_1 0.0744, rdot_th -4.0e-04) 2.33e-04
+
+== Post hoc (gates nothing): #305's description of its miss (M - P4 = k rdot_th, k the mean of X's three) applied to the new members without refitting k
+    k from X: -0.0796, -0.0779, -0.0812; mean -0.0796; c_eff/c on X: 0.896, 0.898, 0.894
+    Y1: rdot_th -6.213e-04; predicted miss k rdot_th +4.94e-05; observed +2.87e-05; error of the description -2.07e-05 against +2.87e-05 with no correction: better; (M - P4)/rdot_th -0.0462; c_eff/c 0.940
+    Y2: rdot_th -1.183e-03; predicted miss k rdot_th +9.41e-05; observed +5.28e-05; error of the description -4.13e-05 against +5.28e-05 with no correction: better; (M - P4)/rdot_th -0.0446; c_eff/c 0.942
+    Y3: rdot_th -4.048e-04; predicted miss k rdot_th +3.22e-05; observed +1.83e-05; error of the description -1.39e-05 against +1.83e-05 with no correction: better; (M - P4)/rdot_th -0.0453; c_eff/c 0.941
+    the description is better than no correction at 3 of 3 new members (declared in the raw README stage 1: better if |observed - k rdot_th| < |observed| at all three)
+    (M - P4)/rdot_th on Y alone: -0.0462, -0.0446, -0.0453; mean -0.0454, spread 3.4%; on X: mean -0.0796, spread 4.1%; Y's mean over X's 0.570
+    (M - P4)/rdot_th on N: N1 +0.0011, N2 +0.0052, N3 +0.0014 (descriptions of single routes, three points each; not a law)
+
+== Post hoc (gates nothing): refits including the new points (descriptions, not tests)
+    refit of P4 over the fifteen and Y (18 points): coefficients +0.2297, +0.2843, +0.7538 (frozen +0.2296, +0.2834, +0.7658); in-sample max 6.1e-05; leave-one-out max 8.2e-05; Y's leave-one-out: Y1 +2.1e-05, Y2 +4.3e-05, Y3 +1.5e-06
+    refit of P4 over the fifteen, #295's three and Y (21 points): coefficients +0.2297, +0.2851, +0.7546 (frozen +0.2296, +0.2834, +0.7658); in-sample max 6.2e-05; leave-one-out max 8.3e-05; Y's leave-one-out: Y1 +2.2e-05, Y2 +4.5e-05, Y3 +3.0e-06
+    refit of P4 over the fifteen, #295's three, #305's three and Y (24 points): coefficients +0.2292, +0.2980, +0.7157 (frozen +0.2296, +0.2834, +0.7658); in-sample max 9.9e-05; leave-one-out max 1.2e-04; Y's leave-one-out: Y1 +1.0e-06, Y2 -2.0e-05, Y3 -5.9e-05
+    *post hoc: fitted on points that include the ones tested; descriptions, not tests*
+
+== Post hoc (gates nothing): #283's description of P3's residual on the new members (its constant, K = -3.365e-3 from six points of routes W and C, is not refitted)
+    Y1: r_th - family B's +1.38e-03; K x that -4.66e-06; observed M - P3 (#267's) +3.69e-05; difference +4.2e-05
+    Y2: r_th - family B's +2.25e-03; K x that -7.58e-06; observed M - P3 (#267's) +8.17e-05; difference +8.9e-05
+    Y3: r_th - family B's -3.64e-04; K x that +1.23e-06; observed M - P3 (#267's) +5.97e-05; difference +5.8e-05
+
+== Post hoc (gates nothing): a second roundoff realization of the new points at h = 0.005 (p*_h bisected from another bracket), /Users/nathan/Source/negative-mass-raw/I313-mac/runs_rn
+    Y1    p*_h difference +5.0e-14  M(rn) - M -5.7e-07  gamma_1, r_th, rdot_th differences +8.9e-11, +8.3e-09, +1.1e-08  M - P4 (rn) +2.81e-05
+    Y2    p*_h difference +2.9e-15  M(rn) - M -9.8e-07  gamma_1, r_th, rdot_th differences +7.8e-10, +2.6e-09, +6.0e-09  M - P4 (rn) +5.18e-05
+    Y3    p*_h difference +2.3e-14  M(rn) - M +1.3e-06  gamma_1, r_th, rdot_th differences +2.6e-10, +1.0e-09, -1.2e-08  M - P4 (rn) +1.96e-05
+
+31 checks (1 post hoc, gating nothing), 1 gating checks failed, 0 post hoc checks failed; 11 s

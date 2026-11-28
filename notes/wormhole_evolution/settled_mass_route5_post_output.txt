@@ -1,0 +1,35 @@
+== the nine held-out members, h = 0.005 (M - P4 of the frozen refit)
+name  leverage  gamma_1   |r_th - 1|  rdot_th      rms(fit)  M - P4      |M - P4|/rms
+N1    0.070    0.01199  0.00254    -4.348e-04  5.57e-06  -4.77e-07  0.086
+N2    0.189    0.04799  0.00128    -4.177e-04  2.97e-05  -2.15e-06  0.072
+N3    0.328    0.07502  0.00854    +8.649e-04  4.59e-05  +1.21e-06  0.026
+X1    0.272    0.01200  0.00631    -1.130e-03  6.46e-05  +9.00e-05  1.393
+X2    1.975    0.04755  0.01620    -2.733e-03  1.46e-04  +2.13e-04  1.457
+X3    3.058    0.07491  0.01603    -2.439e-03  2.09e-04  +1.98e-04  0.949
+Y1    0.103    0.01197  0.00024    -6.213e-04  6.86e-05  +2.87e-05  0.418
+Y2    0.521    0.04798  0.00509    -1.183e-03  1.50e-04  +5.28e-05  0.353
+Y3    0.771    0.07439  0.01501    -4.048e-04  2.33e-04  +1.83e-05  0.079
+
+== Spearman rank correlation of |M - P4| with each quantity over the nine (and over the six of X and Y): descriptions of nine points, not tests
+    leverage        nine +0.683   six (X, Y) +0.543
+    |rdot_th|       nine +0.783   six (X, Y) +0.943
+    gamma_1         nine -0.050   six (X, Y) +0.086
+    |r_th - 1|      nine +0.550   six (X, Y) +0.657
+    static-fit rms  nine +0.617   six (X, Y) -0.257
+
+== geometric mean of |M - P4| / rms per route (as #305's M2)
+    route N: 0.055
+    route X: 1.244
+    route Y: 0.226
+    Y over N 4.1, X over Y 5.5, X over N 22.7
+
+== the margin of each new member to the bar 6e-5 against the changes of M (h = 0.005)
+    Y1: M - P4 +2.87e-05; margin to the bar +3.13e-05; |M(h = 0.01) - M(h = 0.005)| 8.94e-06; M(second realization) - M -5.70e-07; margin over the h change 3.50, over the realization change 54.9
+    Y2: M - P4 +5.28e-05; margin to the bar +7.19e-06; |M(h = 0.01) - M(h = 0.005)| 1.34e-05; M(second realization) - M -9.84e-07; margin over the h change 0.54, over the realization change 7.3
+    Y3: M - P4 +1.83e-05; margin to the bar +4.17e-05; |M(h = 0.01) - M(h = 0.005)| 1.01e-05; M(second realization) - M +1.27e-06; margin over the h change 4.14, over the realization change 32.9
+
+== separation from the earlier routes at the same gamma_1 (the smaller of the linear and PCHIP differences) in units of the point's own h difference (the bar is 5), in r_th and in rdot_th; the last line is the smallest over all pairs of the larger of the two
+    Y1: B: r_th 6490, rdot_th 3598; W: r_th 22430, rdot_th 1319; C: r_th 620, rdot_th 2625; N: r_th 10740, rdot_th 2105; X: r_th 28338, rdot_th 5714
+    Y2: B: r_th 2055, rdot_th 7218; W: r_th 14515, rdot_th 3009; C: r_th 1118, rdot_th 5179; N: r_th 5808, rdot_th 4448; X: r_th 19421, rdot_th 8972
+    Y3: B: r_th 150, rdot_th 6372; W: r_th 15697, rdot_th 2867; C: r_th 2984, rdot_th 4549; N: r_th 4894, rdot_th 4076; X: r_th 22687, rdot_th 6775
+    the smallest, over all (point, route), of the larger of the two ratios: 2625 (Y1 against C)
