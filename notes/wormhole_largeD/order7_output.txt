@@ -1,0 +1,368 @@
+# Output of order7.py of record: negative-mass-raw/I263-rpi5/run_01_sym_xsym_cache_exch7 run_02_evals_G1 run_03_evals_G2 run_04_evals_B run_05_values_remainder run_06a_pslq_Q1_Q2_Q3_Q4 run_06b_pslq_Q5_Q6 run_06c_pslq_Q7_Q8_Q9 run_07_reduce7 run_08_euler7 run_09_weights7, concatenated in this order, then the summaries of the control runs. See omega5.md and the raw README.
+# Code: order7.py of wip/i263-omega5 at 7d93fc3 for run_02, run_03; f7f294a for run_01, run_04; 2e70c66 for run_05, run_06a, run_06b; 4f6f020 for run_06c; be7b9cb for run_07; 7c21d83 for run_08, run_09; the controls ctl_* at 2e70c66 … 996c69f. The nominal path of the evaluations (cc, PanelK, omega_chain, run_B, the grids) is the same in all of them; see the raw README, Results of record.
+
+=== run_01_sym_xsym_cache_exch7: exit 0, wall 0:57.91, peak RSS 101048 kB, started 2026-11-27T14:59:33-08:00
+order7.py  mutate=None  parts=['sym', 'xsym', 'cache', 'exch7']  mpmath 1.3.0  sympy 1.14.0
+PASS    CACHE: cached chain against the uncached chain on (N 24, w 1/2, V 12, 60 digits): Omega0 .. Omega5 equal to 60.0, 60.0, 60.0, 60.0, 60.0, 60.0 digits, worst relative difference 0.0 (bar 1e-55); times 3 s and 5 s
+PASS    E0: h_k (k = 0 .. 7) and dY_k/dl (k = 1 .. 7) from the epsilon-expansion of the master equation against the table: residuals 0 (1.7 s)
+PASS    XS: sympy: P' - g4 u = 0; W' - w4' = 0; w5 - w_4(order 6) = 0; W(pi/2) of the primitive = 64*J2 - 32*pi*q**2 - 24*pi*q*w0 - 4*pi*w0**2 - 4*pi*w1
+  E-grid N = 40, w = 1/2, V = 18, dps 100, 36 panels; its Omega0 .. Omega4 meet the closed forms to 48.7, 48.2, 48.2, 48.9, 48.3 digits
+PASS    E1_7: G_7 against E1's right side (relative to the largest of its three terms): 50.1 digits at Omega5 = root, 51.6 digits at Omega5 = 0, 51.6 digits at Omega5 = 1/2 (bar 30)
+PASS    E2_6: int L_6 = 2 int h_6 ell/sin^2: 48.9 digits at Omega5 = root, 49.0 digits at Omega5 = 0, 49.0 digits at Omega5 = 1/2 (bar 30)
+PASS    E2_5: int L_5 = 2 int h_5 ell/sin^2: 48.1 digits at Omega5 = root, 48.1 digits at Omega5 = 0, 48.1 digits at Omega5 = 1/2 (bar 30)
+PASS    E2_4: int L_4 = 2 int h_4 ell/sin^2: 48.1 digits at Omega5 = root, 48.1 digits at Omega5 = 0, 48.1 digits at Omega5 = 1/2 (bar 30)
+PASS    E3_7: int Y_6 [(ell - Omega0)/sin^2 + 1] = 2 int (ell - Omega0) F_5: 50.4 digits at Omega5 = root, 50.4 digits at Omega5 = 0, 50.4 digits at Omega5 = 1/2 (bar 30)
+PASS    E123_7: G_7 against E1 + E2 (m = 6) + E3 (m = 6): 8 int H_6 ell/S + 2 int (F_6 - L_6) + 2 int (S'_7 - Omega6)/S - 4 int (ell - Omega0) F_5 (relative to its largest term): 48.6 digits at Omega5 = root, 48.8 digits at Omega5 = 0, 48.8 digits at Omega5 = 1/2 (bar 30)
+PASS    E4_7: int Y_5 w5 = -2 int (g + 16 u C) F_4 (the order-6 step E4 at one level higher): 49.6 digits at Omega5 = root, 49.6 digits at Omega5 = 0, 49.6 digits at Omega5 = 1/2 (bar 30)
+PASS    E2Wa: 12 int L_4 ell^2 = 8 int ell^3 h_4/S (E2 with a weight): 49.0 digits at Omega5 = root, 49.0 digits at Omega5 = 0, 49.0 digits at Omega5 = 1/2 (bar 30)
+PASS    E2Wb: int L_4 g4 = -2 int P h_4/S, g4 = 12 ell^2 - 2 g - 32 u C, P' = g4 tan th, P(0) = 0: 49.0 digits at Omega5 = root, 49.0 digits at Omega5 = 0, 49.0 digits at Omega5 = 1/2 (bar 30)
+PASS    E5_7: int Y_4 w4' = -2 int W u F_3, W' = w4', W(pi/2) = 0: 44.0 digits at Omega5 = root, 44.0 digits at Omega5 = 0, 44.0 digits at Omega5 = 1/2 (bar 30)
+PASS    G7R: G_7 against the reduced form (E1, E2, E3, E4, E2W, E5: Y_0 .. Y_3, L_0 .. L_3 only; relative to its largest term): 44.2 digits at Omega5 = root, 44.2 digits at Omega5 = 0, 44.2 digits at Omega5 = 1/2 (bar 30)
+PASS    LC2: the nodes' int ell^2 dth against J_2 = pi (12 ln^2 2 + pi^2)/24: 50.2 digits at Omega5 = root, 50.2 digits at Omega5 = 0, 50.2 digits at Omega5 = 1/2 (bar 30)
+    G_7 at Omega5 = 0 and 1/2: 513467.6254564465194, 513461.34227113933981 (48 s)
+
+15 passed, 0 failed of 15 checks; 57 s
+
+=== run_02_evals_G1: exit 0, wall 1:34:46, peak RSS 1018440 kB, started 2026-11-27T13:54:23-08:00
+order7.py  mutate=None  parts=['evals']  mpmath 1.3.0  sympy 1.14.0
+  G1: N=285 w=0.25 V=48 dps=445 panels=192  5685 s (panel setup 502 s)
+    Omega0 = -2.77258872223978123766892848583270627230200053744102101648272
+    Omega1 = 10.4233603787385171432264808771974205307202232175835584458771
+    Omega2 = 74.3693867279333175953846702958466172667341434150203368770111
+    Omega3 = -652.84010757005612543523930379964736108046174754557825736454474541984957010981385688446526998633149743225936765
+    Omega4 = -12794.499860023194632792012420381085933844719841316378174056902444435674941464467083134216280560972301563682406292593786447688876312069577834725515555361203477692118324847276388158360204813315600972604
+    Omega5 = 40860.4553545256873125440648260337042780393722153732840794541026678389942203329595654475280727801049129685053851464981060231423485860586479770140500771847736955536635560775840460858307956565767717907092227788433976248720736379212807035067221923274387323538917252535535409616522306804715648778070393583986752874057530750074378669243830706272524461024085509155042880728744620608709877068990901284095094842495
+    slopes G2 .. G7 = -12.566370614359172954 -12.566370614359172954 -12.566370614359172954 -12.566370614359172954 -12.566370614359172954 -12.566370614359172954
+    |G_k| at the root / |slope|, k = 2 .. 7 = 2.95e-440 3.77e-439 8.57e-439 7.4e-438 2.07e-437 1.1e-436
+
+0 passed, 0 failed of 0 checks; 5686 s
+
+=== run_03_evals_G2: exit 0, wall 1:04:52, peak RSS 794996 kB, started 2026-11-27T13:54:23-08:00
+order7.py  mutate=None  parts=['evals']  mpmath 1.3.0  sympy 1.14.0
+  G2: N=275 w=0.3 V=47 dps=410 panels=157  3891 s (panel setup 412 s)
+    Omega0 = -2.77258872223978123766892848583270627230200053744102101648272
+    Omega1 = 10.4233603787385171432264808771974205307202232175835584458771
+    Omega2 = 74.3693867279333175953846702958466172667341434150203368770111
+    Omega3 = -652.84010757005612543523930379964736108046174754557825736454474541984957010981385688446526998633149743225936765
+    Omega4 = -12794.499860023194632792012420381085933844719841316378174056902444435674941464467083134216280560972301563682406292593786447688876312069577834725515555361203477692118324847276388158360204813315600972604
+    Omega5 = 40860.45535452568731254406482603370427803937221537328407945410266783899422033295956544752807278010491296850538514649810602314234858605864797701405007718477369555366355607758404608583079565657677179070922277884339762487207363792128070350672219232743873235389172525355354096165223068047156487780703935839867528740575307500743786692438307062725244610240855091550428807287446
+    slopes G2 .. G7 = -12.566370614359172954 -12.566370614359172954 -12.566370614359172954 -12.566370614359172954 -12.566370614359172954 -12.566370614359172954
+    |G_k| at the root / |slope|, k = 2 .. 7 = 7.74e-406 8.36e-405 2.31e-403 8.22e-403 4.89e-402 5.33e-403
+
+0 passed, 0 failed of 0 checks; 3892 s
+
+=== run_04_evals_B: exit 0, wall 19:09.83, peak RSS 442588 kB, started 2026-11-27T15:00:31-08:00
+order7.py  mutate=None  parts=['evals']  mpmath 1.3.0  sympy 1.14.0
+  B1: N=60 w=0.4 V=24 dps=100 panels=60  31 s (panel setup 2 s)
+    Omega0 = -2.77258872223978123766892848583270627230200053744102101648272
+    Omega1 = 10.4233603787385171432264808771974205307202232175835584458771
+    Omega2 = 74.3693867279333175953846702958466172667341434150203368770111
+    Omega3 = -652.84010757005612543523930379964736108046174754557825736454474541984957010980697228202454575587844929873481095
+    Omega4 = -12794.499860023194632792012420381085933844719841316378174056902444435674941464485399612893461539117821071096269347438798220639483580392677057564138603622000367146997828470339667623565163329927233255361
+    Omega5 = 40860.4553545256873125440648260337042780393722153732840794541
+    slopes G2 .. G7 = -12.566370614359172954 -12.566370614359172954 -12.566370614359172954 -12.566370614359172954 -12.566370614359172954 -12.566370614359172954
+    |G_k| at the root / |slope|, k = 2 .. 7 = 6.07e-97 9.67e-96 2.32e-95 9.82e-94 1.29e-93 5.38e-93
+  B2: N=100 w=0.25 V=30 dps=170 panels=120  184 s (panel setup 13 s)
+    Omega0 = -2.77258872223978123766892848583270627230200053744102101648272
+    Omega1 = 10.4233603787385171432264808771974205307202232175835584458771
+    Omega2 = 74.3693867279333175953846702958466172667341434150203368770111
+    Omega3 = -652.84010757005612543523930379964736108046174754557825736454474541984957010981385688446526998633149743225936765
+    Omega4 = -12794.499860023194632792012420381085933844719841316378174056902444435674941464467083134216280560972301563682406292593786447688876312069577834725515555723152006255952217944895288974437351549487453456034
+    Omega5 = 40860.45535452568731254406482603370427803937221537328407945410266783899422033295956544752807278010491296850538514649810602314234859
+    slopes G2 .. G7 = -12.566370614359172954 -12.566370614359172954 -12.566370614359172954 -12.566370614359172954 -12.566370614359172954 -12.566370614359172954
+    |G_k| at the root / |slope|, k = 2 .. 7 = 2.74e-166 4.87e-165 2.73e-164 2.41e-163 3.41e-162 5.24e-162
+  B3: N=170 w=0.25 V=38 dps=285 panels=152  934 s (panel setup 74 s)
+    Omega0 = -2.77258872223978123766892848583270627230200053744102101648272
+    Omega1 = 10.4233603787385171432264808771974205307202232175835584458771
+    Omega2 = 74.3693867279333175953846702958466172667341434150203368770111
+    Omega3 = -652.84010757005612543523930379964736108046174754557825736454474541984957010981385688446526998633149743225936765
+    Omega4 = -12794.499860023194632792012420381085933844719841316378174056902444435674941464467083134216280560972301563682406292593786447688876312069577834725515555361203477692118324847276388158360204813315600972604
+    Omega5 = 40860.455354525687312544064826033704278039372215373284079454102667838994220332959565447528072780104912968505385146498106023142348586058647977014050077184773695553663556077584046085830795656576771790709222778843397624872073637921280703506722192327
+    slopes G2 .. G7 = -12.566370614359172954 -12.566370614359172954 -12.566370614359172954 -12.566370614359172954 -12.566370614359172954 -12.566370614359172954
+    |G_k| at the root / |slope|, k = 2 .. 7 = 1.02e-280 1.76e-279 3.75e-279 2.55e-277 5.19e-277 8.86e-277
+
+0 passed, 0 failed of 0 checks; 1149 s
+
+=== run_05_values_remainder: exit 0, wall 0:00.73, peak RSS 61612 kB, started 2026-11-27T16:19:14-08:00
+order7.py  mutate=None  parts=['values', 'remainder']  mpmath 1.3.0  sympy 1.14.0
+PASS    PL0: planted: Omega0 against its closed form, digits: G1 420.3, G2 384.5, B1 77.8, B2 148.8, B3 250.8 (bar 100 on G1, G2; the others reported)
+PASS    PL1: planted: Omega1 against its closed form, digits: G1 419.3, G2 383.0, B1 77.2, B2 148.2, B3 250.3 (bar 100 on G1, G2; the others reported)
+PASS    PL2: planted: Omega2 against its closed form, digits: G1 419.4, G2 383.0, B1 77.0, B2 148.1, B3 250.0 (bar 100 on G1, G2; the others reported)
+PASS    PL3: planted: Omega3 against its closed form, digits: G1 419.5, G2 384.2, B1 77.0, B2 148.4, B3 250.0 (bar 100 on G1, G2; the others reported)
+PASS    PL4: planted: Omega4 against its closed form, digits: G1 419.5, G2 383.3, B1 77.8, B2 148.5, B3 250.7 (bar 100 on G1, G2; the others reported)
+PASS    SL: slope of G_k in Omega_(k-2) against -4 pi, k = 2 .. 7, digits: G1 420.5/420.5/420.5/420.5/420.5/420.5, G2 384.1/384.1/384.1/384.1/384.1/384.1, B1 78.4/78.4/78.4/78.4/78.4/78.4, B2 150.4/150.4/150.4/150.4/150.4/150.4, B3 251.4/251.4/251.4/251.4/251.4/251.4 (bar 100 on G1, G2)
+PASS    RES: max over k = 2 .. 7 of |G_k at the chain's root| / |slope|: G1 1.1e-436, G2 4.89e-402, B1 5.38e-93, B2 5.24e-162, B3 8.86e-277 (bar 1e-100 on G1, G2)
+PASS    M5: Omega5 of G1 against G2 (two grids, two precisions): 382.7 digits (bar 100); |diff| = 8.99e-379
+PASS    RNG: Omega5 between 4.0e4 and 4.2e4: G1 40860.4553545, G2 40860.4553545
+  reported: digits between evaluations, Omega4 / Omega5: G1-G2 383.3/382.7, B1-G1 77.8/77.5, B2-G1 148.5/148.1, B3-G1 250.7/251.0
+  W^2 (qd, w2_output.txt) against the series s - 4 ln 2 + Omega1/s + ... (Omega1 .. Omega5 of G2), s = 2(D - 3):
+  D       s       rem6 s^5 (tends to Omega5)    (rem6 s^5 - Omega5) s (tends to Omega6)   rem7 s^6 (tends to Omega6)
+  1000   1994    42708.395062792              3684791.77828                            3684791.77828
+  2000   3994    41781.483421872              3678586.10098                            3678586.10098
+  5103   10200   41220.725263275              3674753.06924                            3674753.06924
+  10000  19994   41044.187177749              3673534.07353                            3673534.07353
+PASS    R6: two-point extrapolation (s2 x2 - s1 x1)/(s2 - s1) of rem6 s^5 from D = 5103, 10^4: 40860.331 against the computed Omega5 40860.455, relative difference -3.05e-6 (bar 1e-4: an estimate, not a bound)
+  reported: two-point extrapolation of rem7 s^6 from D = 5103, 10^4: Omega6 ~ 3672264.5 (an estimate, not a bound)
+PASS    R7: rem7 s^6 at D = 5103 and 10^4 differs by 1219.0 (bar 2500.0: a wrong Omega5 adds (error) s, about 10^4 per unit)
+PASS    X3: Omega5 against the polynomial extrapolation in 1/s of #195's 64 W^2 values (Omega0 .. Omega4 fixed at the closed forms), windows of the K largest s, |difference| G1: K = 14 7.5e-28, K = 18 5.8e-27, K = 22 2.3e-26, K = 26 5.9e-26, K = 30 1.1e-25, K = 36 2.1e-25, K = 44 3.3e-25; G2: K = 14 7.5e-28, K = 18 5.8e-27, K = 22 2.3e-26, K = 26 5.9e-26, K = 30 1.1e-25, K = 36 2.1e-25, K = 44 3.3e-25 (bar 0.00000000000000000000010000000000000000485967743265708723529783189783450120951502847720104849571498561999760568141937255859375 on every window; the spread over windows is an estimator range, 3.3e-25; not a bound)
+  reported, not gated: rem6 s^5 at the D of the list
+  D       rem6 s^5
+  50      81201.675545205
+  54      78067.559602383
+  59      74752.285311208
+  64      71963.88941639
+  70      69156.205369826
+  76      66804.510265509
+  83      64504.173456005
+  90      62573.628157222
+  98      60716.554850661
+  107     58970.631742867
+  116     57504.815691915
+  126     56129.866093676
+  137     54856.681633919
+  149     53688.743275852
+  162     52624.465441848
+  177     51596.107926298
+  192     50732.663234763
+  200     50326.486291685
+  209     49907.639124076
+  227     49171.917495569
+  247     48482.964491731
+  269     47845.860028615
+  292     47284.405627568
+  318     46749.256633099
+  346     46264.377063347
+  376     45826.236120885
+  409     45419.581069298
+  445     45045.656916478
+  484     44704.116039901
+  500     44579.594578979
+  527     44386.805845888
+  573     44100.637478675
+  623     43837.983427768
+  678     43594.211331127
+  737     43373.496620669
+  802     43168.221353942
+  873     42979.176054421
+  949     42808.368357437
+  1000    42708.395062792
+  1032    42650.742296608
+  1123    42504.849527594
+  1221    42372.179316147
+  1329    42248.741432965
+  1445    42136.802144401
+  1572    42033.268565649
+  1710    41938.266475274
+  1860    41851.047024246
+  2000    41781.483421872
+  2023    41770.978830484
+  2201    41697.128076731
+  2394    41629.496145553
+  2604    41567.323718233
+  2832    41510.285639605
+  3081    41457.65805916
+  3351    41409.447244108
+  3645    41365.088183426
+  3965    41324.295016584
+  4313    41286.813579204
+  4691    41252.410477542
+  5103    41220.725263275
+  5550    41191.675192508
+  6037    41164.927381391
+  6567    41140.330329475
+  7143    41117.741256415
+  7770    41096.96231358
+  8452    41077.863749842
+  9193    41060.327267749
+  10000   41044.187177749
+
+12 passed, 0 failed of 12 checks; 0 s
+
+=== run_06a_pslq_Q1_Q2_Q3_Q4: exit 0, wall 2:28.24, peak RSS 61932 kB, started 2026-11-27T16:19:14-08:00
+order7.py  mutate=None  parts=['pslq']  mpmath 1.3.0  sympy 1.14.0
+  PSLQ at 330 digits (the two grids share 382.7), tolerance 1e-318, verification at 350 digits
+PASS    PQ1: Q1 = {Omega5, ln^6 2, pi^2 ln^4 2, pi^4 ln^2 2, pi^6, zeta(3) ln^3 2, pi^2 zeta(3) ln 2, zeta(3)^2, zeta(5) ln 2}, n = 9, H = 1000000000000, d = 330: planted relation (den 5, seed 263001) recovered: True (0 s); perturbed basis on the planted target finds nothing; budget (n + 1) log10(2H + 1) + 1 = 111.7
+    REAL Q1: not found at H = 1000000000000 (1 s)
+PASS    PQ2: Q2 = {Omega5, ln^6 2, pi^2 ln^4 2, pi^4 ln^2 2, pi^6, zeta(3) ln^3 2, pi^2 zeta(3) ln 2, zeta(3)^2, zeta(5) ln 2, Li4(1/2) ln^2 2, Li4(1/2) pi^2, Li5(1/2) ln 2, Li6(1/2)}, n = 13, H = 1000000000000, d = 330: planted relation (den 7, seed 263002) recovered: True (2 s); perturbed basis on the planted target finds nothing; budget (n + 1) log10(2H + 1) + 1 = 160.9
+    REAL Q2: not found at H = 1000000000000 (8 s)
+PASS    PQ3: Q3 = {Omega5, ln^6 2, pi^2 ln^4 2, pi^4 ln^2 2, pi^6, zeta(3) ln^3 2, pi^2 zeta(3) ln 2, zeta(3)^2, zeta(5) ln 2, ln^5 2, pi^2 ln^3 2, pi^4 ln 2, zeta(3) ln^2 2, pi^2 zeta(3), zeta(5)}, n = 15, H = 100000000000, d = 330: planted relation (den 5, seed 263003) recovered: True (4 s); perturbed basis on the planted target finds nothing; budget (n + 1) log10(2H + 1) + 1 = 170.5
+    REAL Q3: not found at H = 100000000000 (15 s)
+PASS    PQ4: Q4 = {Omega5, ln^6 2, pi^2 ln^4 2, pi^4 ln^2 2, pi^6, zeta(3) ln^3 2, pi^2 zeta(3) ln 2, zeta(3)^2, zeta(5) ln 2, ln^5 2, pi^2 ln^3 2, pi^4 ln 2, zeta(3) ln^2 2, pi^2 zeta(3), zeta(5), ln^4 2, pi^2 ln^2 2, pi^4, zeta(3) ln 2}, n = 19, H = 10000000000, d = 330: planted relation (den 15, seed 263004) recovered: True (13 s); perturbed basis on the planted target finds nothing; budget (n + 1) log10(2H + 1) + 1 = 196.7
+    REAL Q4: not found at H = 10000000000 (41 s)
+
+4 passed, 0 failed of 4 checks; 148 s
+
+=== run_06b_pslq_Q5_Q6: exit 0, wall 12:28.77, peak RSS 62304 kB, started 2026-11-27T16:06:45-08:00
+order7.py  mutate=None  parts=['pslq']  mpmath 1.3.0  sympy 1.14.0
+  PSLQ at 330 digits (the two grids share 382.7), tolerance 1e-318, verification at 350 digits
+PASS    PQ5: Q5 = {Omega5, ln^6 2, pi^2 ln^4 2, pi^4 ln^2 2, pi^6, zeta(3) ln^3 2, pi^2 zeta(3) ln 2, zeta(3)^2, zeta(5) ln 2, ln^5 2, pi^2 ln^3 2, pi^4 ln 2, zeta(3) ln^2 2, pi^2 zeta(3), zeta(5), ln^4 2, pi^2 ln^2 2, pi^4, zeta(3) ln 2, ln^3 2, pi^2 ln 2, zeta(3)}, n = 22, H = 10000000000, d = 330: planted relation (den 5, seed 263005) recovered: True (26 s); perturbed basis on the planted target finds nothing; budget (n + 1) log10(2H + 1) + 1 = 227.6
+    REAL Q5: FOUND (counts) relation [315, -1792, -2240, -1232, 38812, 268800, -201600, -1008000, -13144320, 0, 0, -68096, 967680, 26880, -23385600, 0, 0, -275968, 3870720, 0, 0, 11612160], residual 0.0 (bar 1.0e-318), budget with H = 10000000000: 227.6 < 330: True; Omega5 coefficient 315; perturbed basis (constant ln^6 2 + sqrt(2)/1000) finds nothing; verified at 350 digits (bar 1.0e-338): G1 3.35e-344, G2 3.35e-344 -> True
+PASS    PQ6: Q6 = {Omega5, ln^6 2, pi^2 ln^4 2, pi^4 ln^2 2, pi^6, zeta(3) ln^3 2, pi^2 zeta(3) ln 2, zeta(3)^2, zeta(5) ln 2, ln^5 2, pi^2 ln^3 2, pi^4 ln 2, zeta(3) ln^2 2, pi^2 zeta(3), zeta(5), ln^4 2, pi^2 ln^2 2, pi^4, zeta(3) ln 2, ln^3 2, pi^2 ln 2, zeta(3), ln^2 2, pi^2, ln 2, 1}, n = 26, H = 1000000000, d = 330: planted relation (den 5, seed 263006) recovered: True (59 s); perturbed basis on the planted target finds nothing; budget (n + 1) log10(2H + 1) + 1 = 242.8
+    REAL Q6: FOUND (counts) relation [315, -1792, -2240, -1232, 38812, 268800, -201600, -1008000, -13144320, 0, 0, -68096, 967680, 26880, -23385600, 0, 0, -275968, 3870720, 0, 0, 11612160, 0, 0, 0, 0], residual 0.0 (bar 1.0e-318), budget with H = 1000000000: 242.8 < 330: True; Omega5 coefficient 315; perturbed basis (constant ln^6 2 + sqrt(2)/1000) finds nothing; verified at 350 digits (bar 1.0e-338): G1 3.35e-344, G2 3.35e-344 -> True
+
+2 passed, 0 failed of 2 checks; 748 s
+
+=== run_06c_pslq_Q7_Q8_Q9: exit 0, wall 1:26:31, peak RSS 63308 kB, started 2026-11-27T15:29:38-08:00
+order7.py  mutate=None  parts=['pslq']  mpmath 1.3.0  sympy 1.14.0
+  PSLQ at 330 digits (the two grids share 382.7), tolerance 1e-318, verification at 350 digits
+PASS    PQ7: Q7 = {Omega5, ln^6 2, pi^2 ln^4 2, pi^4 ln^2 2, pi^6, zeta(3) ln^3 2, pi^2 zeta(3) ln 2, zeta(3)^2, zeta(5) ln 2, ln^5 2, pi^2 ln^3 2, pi^4 ln 2, zeta(3) ln^2 2, pi^2 zeta(3), zeta(5), ln^4 2, pi^2 ln^2 2, pi^4, zeta(3) ln 2, ln^3 2, pi^2 ln 2, zeta(3), ln^2 2, pi^2, ln 2, 1, Li4(1/2), Li4(1/2) ln 2, Li5(1/2), Li4(1/2) ln^2 2, Li4(1/2) pi^2, Li5(1/2) ln 2, Li6(1/2)}, n = 33, H = 1000000000, d = 330: planted relation (den 21, seed 263007) recovered: True (175 s); perturbed basis on the planted target finds nothing; budget (n + 1) log10(2H + 1) + 1 = 307.9
+    REAL Q7: FOUND (counts) relation [-315, 1792, 2240, 1232, -38812, -268800, 201600, 1008000, 13144320, 0, 0, 68096, -967680, -26880, 23385600, 0, 0, 275968, -3870720, 0, 0, -11612160, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], residual 0.0 (bar 1.0e-318), budget with H = 1000000000: 307.9 < 330: True; Omega5 coefficient -315; perturbed basis (constant ln^6 2 + sqrt(2)/1000) finds nothing; verified at 350 digits (bar 1.0e-338): G1 3.35e-344, G2 3.35e-344 -> True
+PASS    PQ8: Q8 = {Omega5, ln^6 2, pi^2 ln^4 2, pi^4 ln^2 2, pi^6, zeta(3) ln^3 2, pi^2 zeta(3) ln 2, zeta(3)^2, zeta(5) ln 2, ln^5 2, pi^2 ln^3 2, pi^4 ln 2, zeta(3) ln^2 2, pi^2 zeta(3), zeta(5), ln^4 2, pi^2 ln^2 2, pi^4, zeta(3) ln 2, ln^3 2, pi^2 ln 2, zeta(3), Li4(1/2), Li4(1/2) ln 2, Li5(1/2), Li4(1/2) ln^2 2, Li4(1/2) pi^2, Li5(1/2) ln 2, Li6(1/2)}, n = 29, H = 1000000000, d = 330: planted relation (den 11, seed 263008) recovered: True (100 s); perturbed basis on the planted target finds nothing; budget (n + 1) log10(2H + 1) + 1 = 270.7
+    REAL Q8: FOUND (counts) relation [-315, 1792, 2240, 1232, -38812, -268800, 201600, 1008000, 13144320, 0, 0, 68096, -967680, -26880, 23385600, 0, 0, 275968, -3870720, 0, 0, -11612160, 0, 0, 0, 0, 0, 0, 0], residual 0.0 (bar 1.0e-318), budget with H = 1000000000: 270.7 < 330: True; Omega5 coefficient -315; perturbed basis (constant ln^6 2 + sqrt(2)/1000) finds nothing; verified at 350 digits (bar 1.0e-338): G1 3.35e-344, G2 3.35e-344 -> True
+PASS    PQ9: Q9 = {Omega5, ln^7 2, pi^2 ln^5 2, pi^4 ln^3 2, pi^6 ln 2, zeta(3) ln^4 2, pi^2 zeta(3) ln^2 2, pi^4 zeta(3), zeta(3)^2 ln 2, zeta(5) ln^2 2, pi^2 zeta(5), zeta(7), ln^6 2, pi^2 ln^4 2, pi^4 ln^2 2, pi^6, zeta(3) ln^3 2, pi^2 zeta(3) ln 2, zeta(3)^2, zeta(5) ln 2, ln^5 2, pi^2 ln^3 2, pi^4 ln 2, zeta(3) ln^2 2, pi^2 zeta(3), zeta(5), ln^4 2, pi^2 ln^2 2, pi^4, zeta(3) ln 2, ln^3 2, pi^2 ln 2, zeta(3), ln^2 2, pi^2, ln 2, 1}, n = 37, H = 100000000, d = 330: planted relation (den 21, seed 263009) recovered: True (364 s); perturbed basis on the planted target finds nothing; budget (n + 1) log10(2H + 1) + 1 = 308.1
+    REAL Q9: FOUND (counts) relation [315, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1792, -2240, -1232, 38812, 268800, -201600, -1008000, -13144320, 0, 0, -68096, 967680, 26880, -23385600, 0, 0, -275968, 3870720, 0, 0, 11612160, 0, 0, 0, 0], residual 0.0 (bar 1.0e-318), budget with H = 100000000: 308.1 < 330: True; Omega5 coefficient 315; perturbed basis (constant ln^6 2 + sqrt(2)/1000) finds nothing; verified at 350 digits (bar 1.0e-338): G1 3.35e-344, G2 3.35e-344 -> True
+
+3 passed, 0 failed of 3 checks; 5191 s
+
+=== run_07_reduce7: exit 0, wall 4:49.22, peak RSS 88296 kB, started 2026-11-27T16:56:11-08:00
+order7.py  mutate=None  parts=['reduce7']  mpmath 1.3.0  sympy 1.14.0
+PASS    RD1: the decomposition (sympy; coefficients of C^a D3^b Lc2^c: [(0, 0, 0), (0, 0, 1), (0, 0, 2), (0, 1, 0), (0, 1, 1), (0, 2, 0), (1, 0, 0), (1, 0, 1), (1, 1, 0), (2, 0, 0)]) against the numeric integrand of closed forms at theta = 0.2, 0.7, 1.1, 1.4: worst 45.0 digits; the same integrand in lt = ln(2 cos th) and K2 = int lt^2 (the masters' variables): 45.0 digits (bar 30)
+PASS    RD2: 37 integrations by parts I <- I - dF (steps LL, DL, DD, CD, CL, CC, D_u, D, K3C, C_u_lt0, C_u_lt1, C_u_lt2, C_u_lt3, C_u_lt4, C_u2th_lt1, C_u2th_lt0, C_u_lt0, C_u_lt1, K_u_lt0, K_u_lt1, K_u_lt2, K_u_lt3, K_u2th, K_u_lt0, P_u2, P_ui_lt7, P_ui_lt6, P_ui_lt5, P_ui_lt4, P_ui_lt3, P_ui_lt2, P_ui_lt1, P_ui_lt0, P_u_th1_lt3, P_u_th1_lt2, P_u_th1_lt1, P_u_th1_lt0): I - sum dF - I_final = 0; the primitives' residuals 0, 0; no u or 1/u left in I_final: True (9 s)
+PASS    RD3: cancellations: the 1/u part of the C D3 coefficient after the D3^2 step: 0; the 1/u part of the C coefficient after the D3 step: 0; K3 only in C K3: True; slope of G_7 in Omega5 = -4*pi (= -4 pi)
+PASS    RD4: the asymptotic series (order 10) of lt, u, 1/u, C, D3, K2, K3 against the functions at x = pi/2 - theta = 1e-3 (worst relative difference 8.86e-36) and at theta = 1e-3 (8.86e-33) (bar 1e-24)
+PASS    RD5: the master integrals <C^a D3^b K2^c th^j lt^k> against their closed forms (quadrature at 30 digits), digits: (0,0,0,0,0) 30.0, (0,0,0,0,1) 30.0, (0,0,0,0,2) 30.0, (0,0,0,0,3) 29.3, (0,0,0,0,4) 28.0, (0,0,0,0,5) 26.8, (0,0,0,0,6) 25.6, (0,0,0,2,0) 30.0, (0,0,1,1,0) 30.0, (0,0,2,0,0) 30.0, (0,1,0,0,3) 29.3, (1,0,0,1,0) 30.0, (1,0,0,1,1) 30.0, (1,0,1,0,0) 30.0, (1,0,1,0,1) 30.0, (2,0,0,0,0) 30.0, (2,0,0,0,1) 30.0, (2,0,0,0,2) 30.0 (bar 25; 47 s)
+PASS    RD5b: the two identified masters <lt^2 C^2> = pi (3 zeta(3)^2/4 - 95 zeta(6)/96) and <lt^3 D3> = pi (9 zeta(3)^2/16 - 11 zeta(6)/4) (found by PSLQ at 55 digits in {pi^7, pi zeta(3)^2}) against quadrature at 100 digits, digits: (2,0,0,0,2) 100.0, (0,1,0,0,3) 100.0 (bar 90; 24 s)
+PASS    RD6: G_7(Omega5 = 0) from the integrations by parts (sum of the boundary terms 81346.32391838445750203497 + quadrature of I_final) = 513467.62545644651939787084471209 against the integrand of closed forms by quadrature = 513467.62545644651939787084471209: 39.1 digits (bar 30)
+PASS    A7: method A at order 7 (closed forms, E1 .. E5, quadrature at 40 digits, 146 s): slope against -4 pi 41.1 digits; Omega_5 = 40860.455354525687312544064826033704278 against the grids' Omega_5, digits: G1 39.1, G2 39.1, B1 39.1, B2 39.1, B3 39.1 (bar 30)
+PASS    RD7: Omega5 of the closed form of the reduction (boundary terms + masters, A and B identified) against the grids' Omega5, digits: G1 418.9, G2 382.7, B1 77.5, B2 148.1, B3 251.0 (bar 100 on G1, G2; the others reported)
+  Omega5 (derived, symbolic, in q = ln 2) = 256*q**6/45 + 64*pi**2*q**4/9 - 2560*q**3*zeta(3)/3 - 3072*q**2*zeta(3) + 176*pi**4*q**2/45 - 12288*q*zeta(3) + 640*pi**2*q*zeta(3) + 9728*pi**4*q/45 + 41728*q*zeta(5) - 38812*pi**6/315 - 36864*zeta(3) - 256*pi**2*zeta(3)/3 + 3200*zeta(3)**2 + 74240*zeta(5) + 39424*pi**4/45
+  Omega5/32 (the coefficient of 1/(D - 3)^5, derived, symbolic) = 8*q**6/45 + 2*pi**2*q**4/9 - 80*q**3*zeta(3)/3 - 96*q**2*zeta(3) + 11*pi**4*q**2/90 - 384*q*zeta(3) + 20*pi**2*q*zeta(3) + 304*pi**4*q/45 + 1304*q*zeta(5) - 9703*pi**6/2520 - 1152*zeta(3) - 8*pi**2*zeta(3)/3 + 100*zeta(3)**2 + 2320*zeta(5) + 1232*pi**4/45
+  Omega5 (derived) = 40860.455354525687312544064826033704278039372215373284079454102667838994220332959565447528072780104912968505385146498106
+  Omega5/32 = 1276.88922982892772851700202581355325868873038173041512748294
+PASS    LN2: F(eps) = exp(4 ln 2 eps)(1 + Omega0 eps + ... + Omega5 eps^6) has coefficients free of ln 2 through eps^6 (d/d ln 2 = [0, 0, 0, 0, 0, 0, 0]): f0 = 1; f1 = 0; f2 = 2*pi**2/3; f3 = 80*zeta(3); f4 = -384*zeta(3) + 22*pi**4/45; f5 = -10432*zeta(5) - 2432*pi**4/45 - 160*pi**2*zeta(3) + 3072*zeta(3); f6 = -38812*pi**6/315 - 36864*zeta(3) - 256*pi**2*zeta(3)/3 + 3200*zeta(3)**2 + 74240*zeta(5) + 39424*pi**4/45
+PASS    RD8: the integer relation of run_06b (PSLQ, Q6, 25 constants) [315, -1792, -2240, -1232, 38812, 268800, -201600, -1008000, -13144320, 0, 0, -68096, 967680, 26880, -23385600, 0, 0, -275968, 3870720, 0, 0, 11612160, 0, 0, 0, 0] against 315 followed by -315 x the derived closed form's coefficients [315, -1792, -2240, -1232, 38812, 268800, -201600, -1008000, -13144320, 0, 0, -68096, 967680, 26880, -23385600, 0, 0, -275968, 3870720, 0, 0, 11612160, 0, 0, 0, 0] (every term of the closed form is a constant of Q6)
+  (288 s)
+
+11 passed, 0 failed of 11 checks; 288 s
+
+=== run_08_euler7: exit 0, wall 8:58.97, peak RSS 69096 kB, started 2026-11-27T17:01:00-08:00
+order7.py  mutate=None  parts=['euler7']  mpmath 1.3.0  sympy 1.14.0
+PASS    RD5c: the Euler sums used, against their closed forms (Euler-Maclaurin at 34 digits), digits: H/n^3 = 5 zeta(4)/4: 34.0, H/n^5 = 7 zeta(6)/4 - zeta(3)^2/2: 34.0, H^2/n^4 = 97 zeta(6)/24 - 2 zeta(3)^2: 34.0, H2/n^2 = 7 zeta(4)/4: 34.0, H2/n^4 = zeta(3)^2 - zeta(6)/3: 34.0, H2^2/n^2 = 19 zeta(6)/24 + zeta(3)^2: 34.0, H H2/n^3 = 5 zeta(3)^2/2 - 101 zeta(6)/48: 34.0; (pi/4) sum_m s_m^2, s_m = (-1)^m[(H2_m - zeta(2))/m + 2 H_m/m^2 - 3/(2m^3)], against pi (3 zeta(3)^2/4 - 95 zeta(6)/96): 33.7 digits; sum s_m^2 assembled from the closed forms of the Euler sums, minus 3 zeta(3)^2 - 95 zeta(6)/24: sympy residual 0 (bar 30 digits, residual 0; 538 s)
+
+1 passed, 0 failed of 1 checks; 538 s
+
+=== run_09_weights7: exit 0, wall 0:00.60, peak RSS 61684 kB, started 2026-11-27T17:07:26-08:00
+order7.py  mutate=None  parts=['weights7']  mpmath 1.3.0  sympy 1.14.0
+  the relation of Q6 (run_06b): 315 Omega5 + sum c_i b_i = 0; Omega5 by weight (ln 2: 1, pi: 1, zeta(3): 3, zeta(5): 5):
+    weight 6: part -78718.581716055621918; 8 of 8 constants present: 256/45 ln^6 2; 64/9 pi^2 ln^4 2; 176/45 pi^4 ln^2 2; -38812/315 pi^6; -2560/3 zeta(3) ln^3 2; 640 pi^2 zeta(3) ln 2; 3200 zeta(3)^2; 41728 zeta(5) ln 2
+    weight 5: part 88791.030934322808058; 4 of 6 constants present: 9728/45 pi^4 ln 2; -3072 zeta(3) ln^2 2; -256/3 pi^2 zeta(3); 74240 zeta(5); absent: ln^5 2, pi^2 ln^3 2
+    weight 4: part 75100.631814333784909; 2 of 4 constants present: 39424/45 pi^4; -12288 zeta(3) ln 2; absent: ln^4 2, pi^2 ln^2 2
+    weight 3: part -44312.625678075283737; 1 of 3 constants present: -36864 zeta(3); absent: ln^3 2, pi^2 ln 2
+    weight 2: part 0.0; 0 of 2 constants present: ; absent: ln^2 2, pi^2
+    weight 1: part 0.0; 0 of 1 constants present: ; absent: ln 2
+    weight 0: part 0.0; 0 of 1 constants present: ; absent: 1
+    sum of the parts 40860.455354525687312544064826; Omega5/32 = 1276.88922982892772851700202581
+PASS    W7: Omega5 from the relation of Q6 = 40860.45535452568731254406482603370427804 (the sum of its weight parts equals it)
+
+1 passed, 0 failed of 1 checks; 0 s
+
+=== totals of the runs of record: 49 PASS, 0 FAIL of 49 checks; FAIL: none
+
+=== control runs ctl_t1_* against declared_t1.json
+cnom                         rc 0  fires: -   declared: -  -> on target
+coarse_B                     rc 1  fires: PL0, PL1, PL2, PL3, PL4, SL, M5, PQ1, PQ3, R6, R7, X3   declared: PL0, PL1, PL2, PL3, PL4, SL, M5, PQ1, PQ3, R6, R7, X3  -> on target
+                             silent: RES, RNG
+short_tail                   rc 1  fires: PL0, PL1, PL2, PL3, PL4, SL, R6, R7, X3   declared: PL0, PL1, PL2, PL3, PL4, SL, R6, R7, X3  -> on target
+                             silent: RES, M5, RNG, PQ1, PQ3
+stale_cache                  rc 1  fires: PL2, PL3, PL4, RES, RNG, R6, R7, X3   declared: PL2, PL3, PL4, RES, RNG, R6, R7, X3  -> on target
+                             silent: PL0, PL1, SL, M5, PQ1, PQ3
+wrong_Om0                    rc 1  fires: PL1, PL2, PL3, PL4, R6, R7, X3   declared: PL1, PL2, PL3, PL4, R6, R7, X3  -> on target
+                             silent: PL0, PLW, SL, RES, M5, RNG, PQ1, PQ3
+wrong_Om1                    rc 1  fires: PL2, PL3, PL4, R6, R7, X3   declared: PL2, PL3, PL4, R6, R7, X3  -> on target
+                             silent: PL0, PL1, PLW, SL, RES, M5, RNG, PQ1, PQ3
+wrong_Om2                    rc 1  fires: PL3, PL4, R6, R7, X3   declared: PL3, PL4, R6, R7, X3  -> on target
+                             silent: PL0, PL1, PL2, PLW, SL, RES, M5, RNG, PQ1, PQ3
+wrong_Om3                    rc 1  fires: PL4, R6, R7, X3   declared: PL4, R6, R7, X3  -> on target
+                             silent: PL0, PL1, PL2, PL3, PLW, SL, RES, M5, RNG, PQ1, PQ3
+wrong_Om4                    rc 1  fires: X3   declared: X3  -> on target
+                             silent: PL0, PL1, PL2, PL3, PL4, PLW, SL, RES, M5, RNG, PQ1, PQ3, R6, R7
+wrong_c6                     rc 1  fires: PL4, R6, R7, X3   declared: PL4, R6, R7, X3  -> on target
+                             silent: PL0, PL1, PL2, PL3, SL, RES, M5, RNG, PQ1, PQ3
+wrong_c7                     rc 1  fires: X3   declared: X3  -> on target
+                             silent: PL0, PL1, PL2, PL3, PL4, SL, RES, M5, RNG, PQ1, PQ3, R6, R7
+wrong_h                      rc 1  fires: PL0, PL1, PL2, PL3, PL4, RNG, R6, R7, X3   declared: PL0, PL1, PL2, PL3, PL4, RNG, R6, R7, X3  -> on target
+                             silent: SL, RES, M5, PQ1, PQ3
+
+=== control runs ctl_t2_* against declared_t2.json
+nominal                      rc 0  fires: -   declared: -  -> on target
+pslq_wrong_basis             rc 1  fires: PQ1, PQ3, PQ5   declared: PQ1, PQ3, PQ5  -> on target
+                             silent: PL0, PL1, PL2, PL3, PL4, SL, RES, M5, RNG, R6, R7, X3
+pslq_wrong_target            rc 1  fires: PQ1, PQ3, PQ5   declared: PQ1, PQ3, PQ5  -> on target
+                             silent: PL0, PL1, PL2, PL3, PL4, SL, RES, M5, RNG, R6, R7, X3
+wrong_Om5_series             rc 1  fires: R6, R7   declared: R6, R7  -> on target
+                             silent: PL0, PL1, PL2, PL3, PL4, SL, RES, M5, RNG, PQ1, PQ3, PQ5, X3
+wrong_closed4                rc 1  fires: PL4, X3   declared: PL4, X3  -> on target
+                             silent: PL0, PL1, PL2, PL3, SL, RES, M5, RNG, PQ1, PQ3, PQ5, R6, R7
+
+=== control runs ctl_t2b_* against declared_t2b.json
+nominal                      rc 0  fires: -   declared: -  -> on target
+pslq_wrong_basis             rc 1  fires: PQ2, PQ4, PQ6, PQ7, PQ8, PQ9   declared: PQ2, PQ4, PQ6, PQ7, PQ8, PQ9  -> on target
+                             silent: -
+pslq_wrong_target            rc 1  fires: PQ2, PQ4, PQ6, PQ7, PQ8, PQ9   declared: PQ2, PQ4, PQ6, PQ7, PQ8, PQ9  -> on target
+                             silent: -
+
+=== control runs ctl_ex_* against declared_ex.json
+e1_sign                      rc 1  fires: E1_7, E123_7, G7R   declared: E1_7, E123_7, G7R  -> on target
+                             silent: E2_6, E2_5, E2_4, E3_7, E4_7, E2Wa, E2Wb, E5_7, LC2
+e2_weight                    rc 1  fires: E2_6, E2_5, E2_4, E123_7, G7R   declared: E2_6, E2_5, E2_4, E123_7, G7R  -> on target
+                             silent: E1_7, E3_7, E4_7, E2Wa, E2Wb, E5_7, LC2
+e2w_P                        rc 1  fires: E2Wb, E5_7, G7R   declared: E2Wb, E5_7, G7R  -> on target
+                             silent: E1_7, E2_6, E2_5, E2_4, E3_7, E123_7, E4_7, E2Wa, LC2
+e2w_g                        rc 1  fires: E2Wa   declared: E2Wa  -> on target
+                             silent: E1_7, E2_6, E2_5, E2_4, E3_7, E123_7, E4_7, E2Wb, E5_7, G7R, LC2
+e3_factor                    rc 1  fires: E3_7, E123_7, G7R   declared: E3_7, E123_7, G7R  -> on target
+                             silent: E1_7, E2_6, E2_5, E2_4, E4_7, E2Wa, E2Wb, E5_7, LC2
+e4_g                         rc 1  fires: E4_7, E5_7, G7R   declared: E4_7, E5_7, G7R  -> on target
+                             silent: E1_7, E2_6, E2_5, E2_4, E3_7, E123_7, E2Wa, E2Wb, LC2
+e4_noC                       rc 1  fires: E4_7, E5_7, G7R   declared: E4_7, E5_7, G7R  -> on target
+                             silent: E1_7, E2_6, E2_5, E2_4, E3_7, E123_7, E2Wa, E2Wb, LC2
+e5_const                     rc 0  fires: -   declared: -  -> on target
+                             silent: E1_7, E2_6, E2_5, E2_4, E3_7, E123_7, E4_7, E2Wa, E2Wb, E5_7, G7R, LC2
+e5_noD3                      rc 1  fires: E5_7, G7R   declared: E5_7, G7R  -> on target
+                             silent: E1_7, E2_6, E2_5, E2_4, E3_7, E123_7, E4_7, E2Wa, E2Wb, LC2
+lc2_J                        rc 1  fires: LC2   declared: LC2  -> on target
+                             silent: E1_7, E2_6, E2_5, E2_4, E3_7, E123_7, E4_7, E2Wa, E2Wb, E5_7, G7R
+nominal                      rc 0  fires: -   declared: -  -> on target
+wrong_c7                     rc 0  fires: -   declared: -  -> on target
+                             silent: E1_7, E2_6, E2_5, E2_4, E3_7, E123_7, E4_7, E2Wa, E2Wb, E5_7, G7R, LC2
+wrong_h                      rc 1  fires: E4_7, G7R   declared: E4_7, G7R  -> on target
+                             silent: E1_7, E2_6, E2_5, E2_4, E3_7, E123_7, E2Wa, E2Wb, E5_7, LC2
+
+=== control runs ctl_chk_* against declared_chk.json
+e4_g                         rc 1  fires: XS   declared: XS  -> on target
+                             silent: CACHE, E0
+e5_noD3                      rc 1  fires: XS   declared: XS  -> on target
+                             silent: CACHE, E0
+nominal                      rc 0  fires: -   declared: -  -> on target
+stale_cache                  rc 1  fires: CACHE   declared: CACHE  -> on target
+                             silent: E0, XS
+wrong_c7                     rc 1  fires: E0   declared: E0  -> on target
+                             silent: CACHE, XS
+wrong_h                      rc 1  fires: E0   declared: E0  -> on target
+                             silent: CACHE, XS
+
+=== control runs ctl_red_* against declared_red.json
+a7_B                         rc 1  fires: RD1, RD6, A7   declared: RD1, RD6, A7  -> on target
+                             silent: RD2, RD3, RD4, RD5, RD5b, RD7, LN2, RD8
+euler_nominal                rc 0  fires: -   declared: -  -> on target
+                             silent: RD5c
+euler_rd_master              rc 1  fires: RD5c   declared: RD5c  -> on target
+                             silent: -
+nominal                      rc 0  fires: -   declared: -  -> on target
+rd_B                         rc 1  fires: RD6, RD7, LN2, RD8   declared: RD6, RD7, LN2  -> OFF TARGET
+                             silent: RD1, RD2, RD3, RD4, RD5, RD5b, A7
+rd_Dstep                     rc 1  fires: RD2   declared: RD2  -> on target
+                             silent: RD1
+rd_J5                        rc 1  fires: RD5, RD7, LN2, RD8   declared: RD5, RD7, LN2  -> OFF TARGET
+                             silent: RD1, RD2, RD3, RD4, RD5b, RD6, A7
+rd_Y3                        rc 1  fires: RD1, RD2, RD3, RD6, RD7, LN2, RD8   declared: RD1, RD2, RD3, RD6, RD7, LN2, RD8  -> on target
+                             silent: RD4, RD5, RD5b, A7
+rd_kit                       rc 1  fires: RD4   declared: RD4  -> on target
+                             silent: RD1, RD2, RD3, RD5, RD5b, RD6, A7, RD7, LN2, RD8
+rd_master                    rc 1  fires: RD5, RD5b, RD7, RD8   declared: RD5, RD5b, RD7  -> OFF TARGET
+                             silent: RD1, RD2, RD3, RD4, RD6, A7, LN2
+weights_nominal              rc 0  fires: -   declared: -  -> on target
+                             silent: W7
+weights_w7_rel               rc 1  fires: W7   declared: W7  -> on target
+                             silent: -
+
