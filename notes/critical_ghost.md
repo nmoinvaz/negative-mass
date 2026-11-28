@@ -353,6 +353,12 @@ apparent-horizon mass with a second code to 1.2e-4 up to e^{−f} ≈ 12):
   - The member's static-profile fit at those points has rms up to 2.1e-4 (bar 1e-4), following |ṙ_th|. The data do not say
     whether the miss belongs to the form or to the reading of the member.
   - So (γ₁, r_th, ṙ_th) with these coefficients suffice between the routes fitted (#295) and not far outside them (#305).
+- *Update from #296* (`wormhole_evolution/settled_mass_eps.md`; *numerical evidence*):
+  - Read at departure ε = 1e-2 instead of 1e-3, the refitted three-parameter form predicts #283's six to 1.29e-4 and #295's three to
+    9.3e-5, against the bar of 6e-5 (at ε = 1e-3: 7.2e-5 and 2.2e-6).
+  - The reading carries the unstable mode's second-order part: the static member reads r_th − 1 = −1.41 ε² and ṙ_th = −3.24 ε².
+    With that subtracted (post hoc) the three are predicted to 3.7e-5.
+  - So the relation is a statement about the reading at ε = 1e-3, not about every reading of departure.
 - *Update from #246* (`wormhole_evolution/settled_mass_d56.md`; *numerical evidence*):
   - The same chain at D = 5 and 6 (M = r^{n−1}/2 on the apparent horizon; second order at three h; a planted Tangherlini recovered
     to 3e-6 to 6e-6; to e^{−f} = 4.0e8 on the horizon) gives for the symmetric family S a settled mass of 0.14587 a²

@@ -111,6 +111,7 @@ displaced by 1e-4 has a leave-one-out error equal to the displacement); the pred
   the coefficients at any h but 0.005; any dependence on ε, the definition of departure (#266: 1e-4 level); other pulse kinds, the ghost pulse changed, δ ≠ 1e-8 on these routes; D = 5, 6 (#246); γ₁ above 0.075.
 - Not a failure of the chain: the chain, its first law and its planted cases are #41's and pass at every point (RC4 to 1.3e-4, RC8 settled, RH 1.0e-5 to 1.2e-5), and the reproduction of #283 is exact.
 
+- *The definition of departure, tested in #296* ([settled_mass_eps.md](settled_mass_eps.md)): read at ε = 1e-2 instead of 1e-3 the refit predicts the three to 9.3e-5 (bar 6e-5) and #283's six to 1.29e-4; the reading carries −1.41 ε² in r_th and −3.24 ε² in ṙ_th at the static member, and with it subtracted the three are predicted to 3.7e-5 (post hoc).
 - *Tested outside the fitted data in #305* ([settled_mass_route4.md](settled_mass_route4.md)): a route chosen for leverage in the fit's design (normal pulse width 1.5, centre 4.0; leverage 0.27, 1.98, 3.06 against 0.39; ṙ_th down to −2.7e-3 against −6.7e-4) is missed by this refit by +9.0e-5, +2.1e-4, +2.0e-4, against the bar 6e-5. The static-member fit at the same points has rms up to 2.1e-4 (bar 1e-4). Whether the miss belongs to the form or to the member's reading is not separated by the data.
 
 ## Stale or conflicting text found (for the coordinator; none was edited)

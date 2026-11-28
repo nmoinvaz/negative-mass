@@ -191,3 +191,15 @@ and r_th by 4.6e-4 at B = 0.1, and the reading carries a second-order part of �
 
 `settled_mass_eps.py` (command `analyze`; `--part=record|dev`, `--mutate=`, `--baseline=`), `settled_mass_eps_output.txt` (the second record, 139 lines), `settled_mass_eps.svg`, this note; raw `negative-mass-raw/I296-mac` (`README.md` in two stages with the tests, variants, development partition, mutation table and the record's verdicts;
 `dev/` the development logs and `dev/mut/`; `record/analyze_record.log` and `.2.log` (the output of record), `record/mut/` the 12 mutations of record, `record/graph*.log`; `scripts/run_muts.sh`, `scripts/settled_mass_eps_graph.py`).
+
+## Coordinator's review
+
+Merged at 1dbfd08. Review folder `negative-mass-raw/I296-mac-review` at 497cbc75, criteria committed (70b12fc8) before the first run of
+`ind296.py`. The changed files are those the brief names, plus a figure.
+
+- **Rerun on the Mac**: `analyze --part=record` equals `settled_mass_eps_output.txt` apart from the header (exit 1: T1 and T2).
+- **ind296**, 3 of 3, with ind283's reader at ε = 1e-2 (its own t_dep, member, plateau and speed): T1's largest residual 1.293e-4 and
+  T2's 9.30e-5, both beyond the bar, and at ε = 1e-3 #283's W3 (+7.11e-5) and #295's largest (2.1e-6). `eps-1e-3` and `no-speed` fire.
+- Not rechecked: the subtraction of the second-order mode part (the declared variant, post hoc). Three of the twelve mutations also fire
+  two post hoc checks, as the note reports.
+- Applied: `settled_mass_route3.md`, `critical_ghost.md` §1.3 and a sentence in Paper V (`paper_numbers.py` 266 of 266).
