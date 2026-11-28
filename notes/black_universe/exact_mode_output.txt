@@ -1,0 +1,57 @@
+== derive (negative-mass-raw I269-mac/runs/derive_run1.log) ==
+[pass] S0: the static member solves the five equations in the null chart, symbolic c (convention and potential: planted truth)  (vv: 0, vr: 0, rr: 0, thth: 0, scal: 0)
+    (S0: 1 s)
+[pass] S1: for an arbitrary lam(v), r = lam R, F = A - 2 rho lam'/lam + 1/lam^2 - 1: E_rho rho, E_v rho, E_theta theta and the scalar equation vanish identically  (rr: 0, vr: 0, thth: 0, scal: 0)
+[pass] S2: the remaining equation: E_vv = 2 (K lam lam' - lam lam'' - lam'^2) / ((1 + rho^2) lam^2), K = -2c/pi; it is zero iff (lam lam')' = K lam lam'  (the rho dependence is the overall factor 1/(1 + rho^2))
+    (S1: 1 s)
+[pass] S3: lam^2 = L + beta e^{K v}: all five residuals vanish identically for symbolic c, L, beta  (vv: 0, vr: 0, rr: 0, thth: 0, scal: 0)
+    (S3: 4 s)
+[pass] S4a: the rate is the first integral K = (R^2 A' - 2 rho A)/2 + rho of the static equations (rho independent, equal to -2c/pi)
+[pass] S4b: with c and the coefficient Ks of rho + R^2 arctan rho independent (no asymptotic flatness): the same four vanish and E_vv has Ks in place of K  (the rate is the coefficient Ks, whatever c)
+    (S4: 1 s)
+[pass] S5: the first-order part delta r = (beta/2) R e^{K(t+x)} is Y_K: #212's operator Y'' - P Y' - Q Y of the master equation annihilates R e^{Wx} at W = the candidate's rate
+    (S5: 0 s)
+[pass] S6: the hand-reduced equations (R_ab = (R2/2) h_ab - 2 H_ab/r, R_theta theta = 1 - r box r - (grad r)^2, box phi) at arbitrary lam(v) give the same residuals as the brute-force tensor: four zero, E_vv as in S2  (rr: ok, vr: ok, thth: ok, scal: ok, vv: ok)
+    (S6: 0 s)
+
+8 checks, 8 pass; failed: []; mutation None; 7 s
+rc=0
+
+== check (negative-mass-raw I269-mac/runs/check_run1.log) ==
+[pass] N0: hand-reduced equations against the brute-force Ricci residuals on a generic metric, five components (bar 1e-30; the metric is not a solution: residuals are O(1))  (2.41e-51; largest residual 4.43)
+    (N0: 1 s)
+[pass] N1: exact family (lam^2 = L + beta e^{K v}, L = 1, 3/2, beta of both signs, lam^2 from 0.3 to 3.0): the five hand-reduced residuals at 50 digits, relative to the largest term (bar 1e-30)  (worst 2.81e-49 over 120 points; c = -1: 3.7e-50, c = -3/10: 1.6e-50, c = -3/2: 3.6e-50, c = -10: 2.8e-49, c = 1/2: 8.1e-51)
+    (N1: 2 s)
+[pass] N2: static gauge, brute-force linearized E_tt, E_t rho, E_rho rho, E_theta theta and the scalar equation at Y = R Q T, H2 = 2D Q T/A, H0 = T (-2D Q/A + 4 W Xi) (the gauge image of the candidate, Xi free): residuals relative to the sum of the terms, 50 digits, members c = -1, -3/10, -3/2, -10, 8 points each, Xi = 0 and 3/7 (bar 1e-25)  (worst 1.23e-50 over 64 point-gauge pairs; c = -1: 1.1e-50, c = -3/10: 9.3e-51, c = -3/2: 1.2e-50, c = -10: 9.9e-51)
+    (N2: 3 s)
+[pass] N3: the Kretschmann routine on Schwarzschild (M = 3/2, r = 4): 48 M^2/r^6 (bar 1e-40)  (0.0263671875 against 0.0263671875)
+    (N3: 0 s)
+[pass] N4: beta = -7/10, L = 1: K_Kretschmann * lam^4 converges (1e-3) to a positive limit as lam^2 -> 0 (1e-6, 1e-8) at c = -1, -3/2, -10 and rho = -2, 1/2, 3, and K > 1e12 at lam^2 = 1e-8  (c = -1, rho = -2: K lam^4 = 0.0014337, 0.0014335; K = 1.43e+13 at lam^2 = 1e-8; v* = 0.560264; c = -1, rho = 0.5: K lam^4 = 8.5423, 8.5423; K = 8.54e+16 at lam^2 = 1e-8; v* = 0.560264; c = -1, rho = 3: K lam^4 = 0.010161, 0.010161; K = 1.02e+14 at lam^2 = 1e-8; v* = 0.560264; ... (9 cases))
+  info: c = -1, rho = -1/K = -1.5707963, lam^2 = 1/1000000: F = -5.683392618, K_Kretschmann = 69.979325
+  info: c = -1, rho = -1/K = -1.5707963, lam^2 = 1/100000000: F = -5.683392618, K_Kretschmann = 69.979325
+  info: c = -3/2, rho = -1/K = -1.0471976, lam^2 = 1/1000000: F = -4.763551392, K_Kretschmann = 123.96132
+  info: c = -3/2, rho = -1/K = -1.0471976, lam^2 = 1/100000000: F = -4.763551392, K_Kretschmann = 123.96132
+    (N4: 0 s)
+[pass] N5: beta = 7/10, L = 1: from lam^2 = 1e6 to 1e12 the Kretschmann invariant changes by < 1e-5 (finite limit), F < 0, and d ln r/dv = K/2 to 1e-10, at c = -1, -3/2, -10, -3/10 and rho = -2, 1/2, 3  (c = -1, rho = -2: K = 77.5098, F = -8.5242, d ln r/dv = 0.31830989 (K/2 = 0.31830989); c = -1, rho = 0.5: K = 2.58708, F = -0.88104, d ln r/dv = 0.31830989 (K/2 = 0.31830989); ... (12 cases))
+    (N5: 0 s)
+[pass] N6: static family L != 1 (r = sqrt(L) R, F = A + 1/L - 1, the same potential): five residuals at 50 digits, 5 members x 3 values of L (bar 1e-30)  (worst 3.34e-49)
+  info: #212's operator on Y = R at W = 0, c = -1, rho = 1: 1.41421356237310  (nonzero: its derivation divides by W through E_t rho)
+  info: #212's operator on Y = R at W = 0, c = -3/10, rho = 1: 0.303141593188432  (nonzero: its derivation divides by W through E_t rho)
+    (N6: 0 s)
+
+7 checks, 7 pass; failed: []; mutation None; 6 s
+rc=0
+
+== Mutations: fired sets in m_<name>.log against the declared ones ==
+  kf          fired ['N1', 'N2', 'S1', 'S2', 'S3', 'S4b', 'S6']  declared ['S1', 'S2', 'S3', 'S4b', 'S6', 'N1', 'N2']  equal
+  kh          fired ['N1', 'N2', 'N6', 'S1', 'S2', 'S3', 'S4b', 'S6']  declared ['S1', 'S2', 'S3', 'S4b', 'S6', 'N1', 'N2', 'N6']  equal
+  rate        fired ['N1', 'N2', 'S3', 'S5']  declared ['S3', 'S5', 'N1', 'N2']  equal
+  kappa       fired ['N1', 'N2']  declared ['N1', 'N2']  equal
+  shape       fired ['N1', 'N2', 'N4', 'N6', 'S1', 'S2', 'S3', 'S4b', 'S5', 'S6']  declared ['S1', 'S2', 'S3', 'S4b', 'S5', 'S6', 'N1', 'N2', 'N4', 'N6']  equal
+  naive       fired ['N1', 'N2', 'N4', 'N5', 'N6', 'S1', 'S2', 'S3', 'S4b', 'S6']  declared ['S1', 'S2', 'S3', 'S4b', 'S6', 'N1', 'N2', 'N4', 'N5', 'N6']  equal
+  pot         fired ['N1', 'N2', 'N6', 'S0', 'S1', 'S2', 'S3', 'S4b', 'S6']  declared ['S0', 'S1', 'S2', 'S3', 'S4b', 'S6', 'N1', 'N2', 'N6']  equal
+  eps         fired ['N1', 'N6', 'S0', 'S1', 'S3', 'S4b', 'S6']  declared ['S0', 'S1', 'S3', 'S4b', 'S6', 'N1', 'N6']  equal
+  charge      fired ['S4a']  declared ['S4a']  equal
+  hand_drop   fired ['N0', 'N1', 'N6', 'S6']  declared ['S6', 'N0', 'N1', 'N6']  equal
+  kret_drop   fired ['N3']  declared ['N3']  equal
+11 of 11 equal
