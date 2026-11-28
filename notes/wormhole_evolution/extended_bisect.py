@@ -20,6 +20,7 @@ import argparse
 import json
 import math
 import os
+import subprocess
 import sys
 import time
 
@@ -60,6 +61,7 @@ def static_taylor(n, dl, K, order=18):
     """r, r', phi at l_k = k dl, k = 0..K, by Taylor series of the given order about each l_k (power-series recurrences for r^(1-2n)
     and r^(-n)); the truncation error of a step is (dl / radius)^(order + 1) with radius >= 1: 1e-37 at dl = 0.007, order 18."""
     dl = LD(dl)
+    order = 8 if mut("taylor_order") else order
     q = np.sqrt(LD(n) * LD(n - 1))
     a1, a2 = -(2 * n - 1), -n
     R, V, P = np.empty(K + 1, LD), np.empty(K + 1, LD), np.empty(K + 1, LD)
@@ -107,6 +109,7 @@ def static_grid(n, h, Nmax):
     if have is not None and len(have[0]) >= 2 * Nmax + 1:
         return have
     dl = LD(h) / (2 * ld_sqrt2())
+    Nmax = int(Nmax * 1.15) + 200                   # headroom: the row cap grows run to run
     R, V, P = static_taylor(n, dl, 2 * Nmax)
     _STATIC[key] = (R, V, P, dl)
     return _STATIC[key]
@@ -210,7 +213,7 @@ def sweep(d, Jcap, dtype=LD, noise=0.0, seed=0, snap_every=0, find_events=True, 
         dd0 = np.zeros(Nc + 1, bool)
         i0, i1 = max(1, s - Jcap), min(Nc, s - 1)
         if i0 <= i1 and D2 is not None:
-            Sv = D2[:, i0 - 1:i1]
+            Sv = D1[:, i0 - 1:i1] if mut("diag_S") else D2[:, i0 - 1:i1]
             Ev = D1[:, i0:i1 + 1]
             Wv = D1[:, i0 - 1:i1]
             ds = dd2[i0 - 1:i1] | dd1[i0:i1 + 1] | dd1[i0 - 1:i1]
@@ -277,7 +280,7 @@ class Runner:
     noise: relative uniform noise a * 2^-52 (a = noise) on every node (the roundoff mutation); eta_scale and bump: planted data perturbations."""
 
     def __init__(self, n, h, variant="E", noise=0.0, seed=0, eta_scale=None, bump=None, wcol=40, tmax0=8.0, jmax=5000):
-        self.n, self.h, self.variant = n, h, variant
+        self.n, self.h, self.variant = n, h * (1.01 if mut("h_wrong") else 1.0), variant       # h_wrong: the whole problem at 1.01 h
         self.noise = (1.0 if mut("noise_f64") else noise) * 2.0 ** -52
         self.seed, self.eta_scale, self.bump, self.wcol, self.jmax = seed, eta_scale, bump, wcol, jmax
         self.tmax = tmax0
@@ -357,7 +360,7 @@ def cmd_series(a):
     n = a.D - 2
     b = json.load(open(os.path.join(a.out, "bisect.json")))
     ps = pstar_of(b["lo"], b["hi"])
-    es = [a.e0 + 0.5 * k for k in range(int(round((a.e1 - a.e0) / 0.5)) + 1)]
+    es = [float(x) for x in a.elist.split(",")] if a.elist else [a.e0 + 0.5 * k for k in range(int(round((a.e1 - a.e0) / 0.5)) + 1)]
     sides = (-1, 1) if a.side == 0 else (a.side,)
     tag = {0: "both", -1: "m", 1: "p"}[a.side]
     sink = LDSink(os.path.join(a.out, f"series_{tag}_{a.e0:g}_{a.e1:g}.jsonl"))
@@ -387,8 +390,8 @@ def cmd_f64(a):
         sink = threshold.Sink(os.path.join(a.out, f"f64_points_k{k}.jsonl"))
         run = lambda p: threshold.point(n, "S", a.h, X, p)
         t0 = time.time()
-        lo, hi, stopped = threshold.bisect(run, lo, hi, 1e-14, sink)
-        rec = dict(k=k, lo=lo, hi=hi, pstar=0.5 * (lo + hi), stopped=stopped, secs=round(time.time() - t0, 1), X=X, h=a.h, D=a.D)
+        lo, hi, stopped = threshold.bisect(run, lo, hi, a.f64tol, sink)
+        rec = dict(k=k, lo=lo, hi=hi, pstar=0.5 * (lo + hi), stopped=stopped, secs=round(time.time() - t0, 1), X=X, h=a.h, D=a.D, tol=a.f64tol)
         json.dump(rec, open(os.path.join(a.out, f"f64_bisect_k{k}.json"), "w"), indent=1)
         print(json.dumps(rec), flush=True)
     return 0
@@ -401,7 +404,7 @@ def cmd_f64series(a):
     ps = pstar_of(b["lo"], b["hi"])
     X = a.X or 34.0
     sink = threshold.Sink(os.path.join(a.out, f"f64series_{b['variant']}.jsonl"))
-    es = [a.e0 + 0.5 * k for k in range(int(round((a.e1 - a.e0) / 0.5)) + 1)]
+    es = [float(x) for x in a.elist.split(",")] if a.elist else [a.e0 + 0.5 * k for k in range(int(round((a.e1 - a.e0) / 0.5)) + 1)]
     for e in es:
         dl = LD(10) ** (-LD(e))
         for s in (-1, 1):
@@ -482,7 +485,12 @@ def cmd_stall(a):
 RESULTS = []
 
 
+ONLY = None         # analyze --only=A2,P1: only the checks whose id starts with one of these (views of the run-level mutations hold part of the data)
+
+
 def check(cid, text, ok, detail=""):
+    if ONLY is not None and cid.split("-")[0] not in ONLY:
+        return
     ok = None if ok is None else bool(ok)
     RESULTS.append((cid, ok))
     tag = "SKIP" if ok is None else ("pass" if ok else "FAIL")
@@ -534,9 +542,8 @@ def fit_window(rows, pstar, lo, hi):
     return s, se, rms, n
 
 
-def cmd_controls(a):
-    n2 = 2
-    # K1: the float64 anti-diagonal sweep reproduces the numba row kernel's events
+def ctl_k1():
+    """K1: the float64 anti-diagonal sweep reproduces the numba row kernel's events."""
     cnt = bad = 0
     cases = [(2, 0.02, 28.0, 4.7527725350e-05), (3, 0.01 / SQ2, 18.0, 2.8847903691e-04), (4, 0.005, 15.0, 1.1155147990e-03)]
     for n, h, X, ps in cases:
@@ -550,7 +557,10 @@ def cmd_controls(a):
             same = ref["fate"] == o["fate"] and ref["j"] == o["j"] and ref["i"] == o["i"] and ref["T"] == o["T"]
             bad += 0 if same else 1
     check("K1", "float64 sweep = numba row kernel (fate, event cell, T) at D = 4, 5, 6", cnt > 0 and bad == 0, f"{cnt - bad} of {cnt} equal")
-    # K2: the static solution
+
+
+def ctl_k2():
+    """K2: the static solution in binary128."""
     dl = LD(0.02) / (2 * ld_sqrt2())
     K = 2000
     R, V, P = static_taylor(2, dl, K)
@@ -563,7 +573,10 @@ def cmd_controls(a):
         fi.append(float(np.max(np.abs(V ** 2 - (1 - R ** (-2 * (n - 1)))))))
     check("K2", "binary128 static solution: closed form at D = 4, first integral r'^2 = 1 - r^-2(n-1) at D = 5, 6", max(e_r, e_p, *fi) <= 1e-30,
           f"D=4 r {e_r:.1e} phi {e_p:.1e}; first integral D=5 {fi[0]:.1e}, D=6 {fi[1]:.1e}; bar 1e-30")
-    # K3: the data against the float64 data
+
+
+def ctl_k3():
+    """K3: the data against the float64 data."""
     A = 4.7527725350e-05
     Nc = 1200
     pulses, sym, eps = threshold.family("S", A)
@@ -576,7 +589,10 @@ def cmd_controls(a):
     check("K3", "binary128 data against float64 data: variant E differs by the dense solution's error (rtol 1e-13), variant F by float64 roundoff",
           de[0] <= 3e-13 and de[1] <= 2e-12 and df[0] <= 1e-13 and df[1] <= 1e-14 and sym_err == 0.0,
           f"E: r {de[0]:.1e} phi {de[1]:.1e} (bars 3e-13, 2e-12); F: r {df[0]:.1e} phi {df[1]:.1e} (bars 1e-13, 1e-14); '+' and '-' rays mirror: {sym_err:.0e}")
-    # K4: the binary128 engine on float64 data reproduces the float64 events where roundoff cannot move them (e <= 8)
+
+
+def ctl_k4():
+    """K4: the binary128 engine on float64 data reproduces the float64 events where roundoff cannot move them (e <= 8)."""
     ps = 4.7527725350e-05
     cnt = bad = 0
     for e in (3.0, 5.0, 7.0, 8.0):
@@ -586,11 +602,17 @@ def cmd_controls(a):
             Jc = int(ref["j"] * 1.1) + 30
             pulses, sym, eps = threshold.family("S", p)
             d = dn.ellis_rays(2, Jc + 40, 0.02, pulses=pulses, symmetric=sym, eps=eps)
-            o = sweep(d, Jc, LD)
+            o = sweep(d, Jc, LD, hmut=1.01 if mut("quad_h") else 1.0)
             cnt += 1
             bad += 0 if (ref["fate"] == o["fate"] and ref["j"] == o["j"] and ref["i"] == o["i"]) else 1
     check("K4", "binary128 sweep on the float64 data = the float64 events at e = 3, 5, 7, 8", cnt > 0 and bad == 0, f"{cnt - bad} of {cnt} equal")
-    planted_checks()
+
+
+def cmd_controls(a):
+    only = set(a.only.split(",")) if a.only else None
+    for name, f in (("K1", ctl_k1), ("K2", ctl_k2), ("K3", ctl_k3), ("K4", ctl_k4), ("PL", planted_checks)):
+        if only is None or name in only:
+            f()
     nfail = sum(1 for _, ok in RESULTS if ok is False)
     print(f"{len(RESULTS)} checks, {nfail} fail", flush=True)
     return 1 if nfail else 0
@@ -616,7 +638,7 @@ def planted_checks():
     ok, det = pert_analysis(lambda eta, lo_, hi_, tol: bisect_planted(p0 + kap * LD(eta), slope, lo_, hi_, tol), p0, kap_hint=float(kap), exact=None)
     check("PL2", "planted linear response p*(eta) = p0 + kappa eta: kappa from eta = 1e-8, 1e-10 predicts the shift at eta = +-1e-16", ok, det)
     # PL3: a planted floor in the fate function: the series check must find the first wrong-side point near the floor
-    fl = PLANT["floor_rms"]
+    fl = 0.0 if mut("floor_off") else PLANT["floor_rms"]
     firsts = []
     for sd in range(PLANT["seeds"]):
         run = planted_run(p0, slope, floor=fl, seed=sd)
@@ -634,7 +656,7 @@ def bisect_planted(thr, slope, lo, hi, tol):
     return pstar_of(lo, hi), stopped
 
 
-PERT = dict(eta=(1e-8, 1e-10), eta_t=1e-16, lin_bar=1e-2, pred_bar=1e-3, w=(1e-6, 1e-8, 1e-14), tolrel=1e-8, tol_t=1e-24)
+PERT = dict(eta=(1e-8, 1e-10), eta_t=1e-16, lin_bar=1e-3, pred_bar=1e-4, w=(1e-6, 1e-8, 1e-14), tolrel=1e-8, tol_t=1e-24)
 
 
 def pert_analysis(measure, p0, kap_hint=None, exact=None):
@@ -669,7 +691,7 @@ AN = dict(
     tol=1e-24, e_lo=3.0, e_hi=20.0,
     ext=(1e-20, 1e-12), dbl=(1e-11, 1e-3), full=(1e-20, 1e-3),            # fit windows in delta: the extension, #40's primary, both
     slope_bar=5e-3, agree_bar=5e-3, resid_bar=1.0,                          # slope against 1/W, extension against double window, max residual / row spacing
-    dbl_floor=1e-11, evc=5, fs_band=1.5,
+    dbl_floor=1e-11, evc=5, fs_band=1.5, roundoff_bar=1e-13,
 )
 
 
@@ -714,12 +736,19 @@ def analyze_variant(raw, variant, es_all):
     lo, hi = bracket_history(d, 1e-14 if mut("bisect_loose") else AN["tol"]) if mut("bisect_loose") else (LD(b["lo"]), LD(b["hi"]))
     ps = pstar_of(lo, hi) + (LD("1e-18") if mut("pstar_off") else LD(0))
     rows = load_series(d, variant)
+    if mut("drop_point"):
+        rows = rows[1:]
+    if mut("evc_shift"):
+        for r in rows:
+            r["i"] = r["i"] + 10 if r["i"] is not None else None
     for r in rows:
         r["side_p"] = -1 if r["A"] < ps else 1          # the side of p* the amplitude is on, as the analysis sees it
     info = dict(b=b, ps=ps, rows=rows, d=d)
     tag = variant
     check(f"BR-{tag}", f"bisection to hi - lo <= {AN['tol']:.0e} with every run an event", b["stopped"] is None and hi - lo <= LD(AN["tol"]) * (1 + 1e-9),
           f"hi - lo = {float(hi - lo):.2e}, stopped {b['stopped']}, runs {b['runs']}, {b['secs']} s")
+    if not rows and ONLY is not None:                # a view of a run-level mutation without a series
+        return info
     have = sorted({r["e"] for r in rows})
     check(f"SR-{tag}", f"series e = {AN['e_lo']:g} .. {AN['e_hi']:g} step 0.5, both sides, complete", have == es_all and len(rows) == 2 * len(es_all),
           f"{len(rows)} points, e from {min(have) if have else None} to {max(have) if have else None}")
@@ -768,19 +797,32 @@ def analyze_variant(raw, variant, es_all):
     return info
 
 
+def f64_offsets(raw, fdir, ps):
+    fs = sorted(f for f in os.listdir(os.path.join(raw, "runs", fdir)) if f.startswith("f64_bisect_k") and f.endswith(".json"))
+    p64 = [json.load(open(os.path.join(raw, "runs", fdir, f)))["pstar"] for f in fs]
+    if mut("drop_k"):
+        p64 = p64[:4]
+    return np.array([float(LD(x) - ps) for x in p64]) * (1e-4 if mut("offsets_scaled") else 1.0)
+
+
 def analyze_f64(raw, infos):
-    """A2: the binary128 p* against K float64 bisections from different brackets (threshold.bisect, numba). FS: the float64 series about the
-    binary128 p* leaves its side where the offsets say."""
-    fs = sorted(f for f in os.listdir(os.path.join(raw, "runs", "f64")) if f.startswith("f64_bisect_k") and f.endswith(".json"))
-    p64 = [json.load(open(os.path.join(raw, "runs", "f64", f)))["pstar"] for f in fs]
-    check("KF", "float64 bisections from K >= 8 different brackets, each to hi - lo <= 1e-14", len(p64) >= 8, f"{len(p64)} bisections")
+    """A2: the binary128 p* against K float64 bisections from different brackets (threshold.bisect, numba). A3: for variant F (the same inputs in both
+    precisions) the offset is roundoff alone. FS: the float64 series about the binary128 p* leaves its side where the offsets say."""
     out = {}
     for tag, info in infos.items():
-        dev = np.array([float(LD(x) - info["ps"]) for x in p64])
+        dev = f64_offsets(raw, "f64", info["ps"])
         out[tag] = dev
+        if tag == "E":
+            check("KF", "float64 bisections from K >= 8 different brackets, each to hi - lo <= 1e-16", len(dev) >= 8, f"{len(dev)} bisections")
         check(f"A2-{tag}", f"p* (binary128, variant {tag}) agrees with every float64 p* to the double floor {AN['dbl_floor']:.0e}", len(dev) > 0 and np.max(np.abs(dev)) <= AN["dbl_floor"],
               f"float64 minus binary128: mean {dev.mean():+.2e}, rms {np.sqrt(np.mean(dev ** 2)):.2e}, sd {dev.std(ddof=1):.2e}, max {np.max(np.abs(dev)):.2e}, K = {len(dev)}")
-    # FS: the float64 series about the variant-E p*
+    if "F" in out:
+        dev = out["F"]
+        check("A3-F", f"variant F (the float64 run's own inputs): the float64 offset from the binary128 p* is roundoff alone, rms <= {AN['roundoff_bar']:.0e}",
+              np.sqrt(np.mean(dev ** 2)) <= AN["roundoff_bar"], f"rms {np.sqrt(np.mean(dev ** 2)):.2e}, mean {dev.mean():+.2e}, sd {dev.std(ddof=1):.2e}")
+    if "E" in infos and "F" in infos:
+        dd = float(infos["E"]["ps"] - infos["F"]["ps"])
+        print(f"[info] data effect: p*(E) - p*(F) = {dd:+.3e} (the dense static solution's error, rtol 1e-13, moves p* by this)", flush=True)
     for tag, info in infos.items():
         rows = read_jsonl(os.path.join(info["d"], f"f64series_{tag}.jsonl"))
         if not rows:
@@ -833,7 +875,8 @@ def analyze_pert(raw, info):
     return got
 
 
-ST = dict(win={4: (5.0, 13.0), 5: (4.0, 8.0), 6: (3.5, 6.0)}, rate_bar=0.02, floor_bar=3.0, nmin=4)
+THIN = [3.0, 6.0, 9.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 18.0, 20.0]      # the thinned series of the development set
+ST = dict(wt=(10.0, 17.0), rate_bar=0.02, floor_bar=3.0, nmin=4)          # window in W t: the transient e^(-W t) has decayed, the pair is still linear
 
 
 def analyze_stall(raw, f64dev):
@@ -847,12 +890,12 @@ def analyze_stall(raw, f64dev):
         if not fs:
             continue
         Wd = W[D - 2]
-        ta, tb = ST["win"][D]
+        ta, tb = ST["wt"][0] / Wd, ST["wt"][1] / Wd
         slopes, qslopes, epss, rmss, maxs, resid = [], [], [], [], [], []
         for f in fs:
             rec = json.load(open(os.path.join(d, f)))
             rows = rec["rows"]
-            t = np.array([r["t"] for r in rows])
+            t = np.array([r["t"] for r in rows]) * (SQ2 if mut("t_unit") else 1.0)
             sel = (t >= ta) & (t <= tb)
             qr = np.array([r["qrms"] for r in rows])
             qslopes.append(np.polyfit(t[sel], np.log(qr[sel]), 1)[0])
@@ -868,39 +911,124 @@ def analyze_stall(raw, f64dev):
                 resid.append(float(np.mean(rs[sel])))
         slopes, qslopes, epss = np.array(slopes), np.array(qslopes), np.array(epss)
         n = len(slopes)
-        out[D] = dict(eps_rms=float(np.sqrt(np.mean(epss ** 2))), slope=float(slopes.mean()))
-        check(f"S0-D{D}", f"the pair's profile Q grows as W = {Wd:.6f} over t in [{ta:g}, {tb:g}] (the window is in the linear regime)",
+        out[D] = dict(eps_rms=float(np.sqrt(np.mean(epss ** 2))), eps_mean=float(epss.mean()), slope=float(slopes.mean()))
+        check(f"S0-D{D}", f"the pair's profile Q grows as W = {Wd:.6f} over t in [{ta:.2f}, {tb:.2f}] (W t in {ST['wt']}; the window is in the linear regime)",
               n >= ST["nmin"] and abs(qslopes.mean() / Wd - 1) <= ST["rate_bar"], f"{qslopes.mean():.5f} ({qslopes.mean() / Wd - 1:+.2e}, bar {ST['rate_bar']:.0e}), {len(qslopes)} pairs")
-        check(f"S1-D{D}", f"|r_float64 - r_binary128| (rms over |l| <= 4) on the stall grows as W over t in [{ta:g}, {tb:g}]",
+        check(f"S1-D{D}", f"|r_float64 - r_binary128| (rms over |l| <= 4) on the stall grows as W over t in [{ta:.2f}, {tb:.2f}] (W t in {ST['wt']})",
               n >= ST["nmin"] and abs(slopes.mean() / Wd - 1) <= ST["rate_bar"],
               f"rate {slopes.mean():.5f} +- {slopes.std(ddof=1) / math.sqrt(n):.5f} (sd {slopes.std(ddof=1):.4f}), {slopes.mean() / Wd - 1:+.2e} against W, bar {ST['rate_bar']:.0e}; "
               f"size extrapolated to t = 0: rms {np.exp(np.mean(np.log(rmss))):.2e}; max/e^(Wt) {np.mean(maxs):.2e}; offset in p: rms {out[D]['eps_rms']:.2e}, mean {epss.mean():+.2e}; "
               f"residual after the Q projection {np.mean(resid):.2f}; {n} (pair, side) draws")
         out[D].update(n=n)
-    if 4 in out and f64dev is not None and len(f64dev):
-        dev_rms = float(np.sqrt(np.mean(np.asarray(f64dev) ** 2)))
-        ratio = out[4]["eps_rms"] / dev_rms
-        check("S2", f"the floor in p* predicted from the seed (offset equivalent to |r_f64 - r_b128|) is within a factor {ST['floor_bar']:g} of the float64 bisections' offsets (D = 4)",
-              1.0 / ST["floor_bar"] <= ratio <= ST["floor_bar"], f"predicted rms {out[4]['eps_rms']:.2e}, measured rms {dev_rms:.2e}: ratio {ratio:.2f}")
+    for D, dev in sorted((f64dev or {}).items()):
+        if D not in out or dev is None or not len(dev):
+            continue
+        dev = np.asarray(dev)
+        dev_rms = float(np.sqrt(np.mean(dev ** 2)))
+        sc = 10.0 if mut("seed_scale") else 1.0
+        ratio = out[D]["eps_rms"] * sc / dev_rms
+        check(f"S2-D{D}", f"the floor in p* predicted from the seed (offset equivalent to |r_f64 - r_b128|) is within a factor {ST['floor_bar']:g} of the float64 bisections' offsets from the binary128 p*",
+              1.0 / ST["floor_bar"] <= ratio <= ST["floor_bar"], f"predicted rms {out[D]['eps_rms'] * sc:.2e} (6+ stall draws), measured rms {dev_rms:.2e} (K = {len(dev)} brackets): ratio {ratio:.2f}")
+        pm, mm = -out[D]["eps_mean"] * sc, float(dev.mean())
+        check(f"S3-D{D}", "the mean offset predicted from the seed has the measured mean's sign and is within a factor 3 of it (p*_float64 - p*_binary128 = -eps)",
+              pm * mm > 0 and 1.0 / ST["floor_bar"] <= pm / mm <= ST["floor_bar"], f"predicted {pm:+.2e}, measured {mm:+.2e} (sd of the measured {dev.std(ddof=1):.1e})")
     return out
 
 
 def analyze(a):
+    global ONLY
     raw = a.raw
-    es_all = [AN["e_lo"] + 0.5 * k for k in range(int(round((AN["e_hi"] - AN["e_lo"]) / 0.5)) + 1)]
+    ONLY = set(a.only.split(",")) if a.only else None
+    es_all = THIN if a.thin else [AN["e_lo"] + 0.5 * k for k in range(int(round((AN["e_hi"] - AN["e_lo"]) / 0.5)) + 1)]
     infos = {}
     for tag in ("E", "F"):
         if os.path.exists(os.path.join(raw, "runs", tag, "bisect.json")):
             infos[tag] = analyze_variant(raw, tag, es_all)
-    f64dev = None
+    f64d = {}
     if infos and os.path.isdir(os.path.join(raw, "runs", "f64")):
-        f64dev = analyze_f64(raw, infos)
-    analyze_stall(raw, f64dev.get("F") if f64dev else None)
+        f64d[4] = analyze_f64(raw, infos).get("F")
+    for D in (5, 6):                                   # the floors at D = 5, 6 (wave 3), when run
+        bd, fd = os.path.join(raw, "runs", f"D{D}F"), os.path.join(raw, "runs", f"f64_D{D}")
+        if os.path.exists(os.path.join(bd, "bisect.json")) and os.path.isdir(fd):
+            bj = json.load(open(os.path.join(bd, "bisect.json")))
+            f64d[D] = f64_offsets(raw, f"f64_D{D}", pstar_of(bj["lo"], bj["hi"]))
+    analyze_stall(raw, f64d)
     if "E" in infos:
         analyze_pert(raw, infos["E"])
     nfail = sum(1 for _, ok in RESULTS if ok is False)
     print(f"{len(RESULTS)} checks, {sum(1 for _, ok in RESULTS if ok)} pass, {nfail} fail, {sum(1 for _, ok in RESULTS if ok is None)} skipped", flush=True)
     return 1 if nfail else 0
+
+
+# --------------------------------------------------------------------------------------------------------------------
+# figure (the primitives of phase2/nonradial/data_graphs.py, the arriba graph-data skill's, unchanged)
+# --------------------------------------------------------------------------------------------------------------------
+def cmd_graph(a):
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "phase2", "nonradial"))
+    import data_graphs as dg
+    raw = a.raw
+    es_all = THIN if a.thin else [AN["e_lo"] + 0.5 * k for k in range(35)]
+    d = os.path.join(raw, "runs", "E")
+    b = json.load(open(os.path.join(d, "bisect.json")))
+    ps = pstar_of(b["lo"], b["hi"])
+    rows = load_series(d, "E")
+    f64 = read_jsonl(os.path.join(d, "f64series_E.jsonl"))
+    invW = 1.0 / W[2]
+    svg = dg.Svg(760)
+    X0, PW, PH = 86, 600, 230
+    y = 28
+    y = dg.caption(svg, 16, y, "Lifetime T against the distance from the threshold, D = 4, family S, h = 0.02",
+                   "binary128 (filled) and float64 at the same amplitudes (rings), p*ₕ ∓ 10^−e; dashed: the slope 1/W of the linear mode through the e = 8 points")
+    xm, ym = dg.axes(svg, X0, y, PW, PH, (2.5, 20.5), (0, 48), "e, with |p − p*ₕ| = 10^−e (binary128 p*ₕ)", "lifetime T (a)", xfmt=lambda v: f"{v:g}", yfmt=lambda v: f"{v:g}")
+    for sd, col in ((-1, dg.SERIES[0]), (1, dg.SERIES[1])):
+        pts = sorted((r["e"], r["T"]) for r in rows if r["T"] is not None and r["fate"] == sd and (r["A"] < ps) == (sd < 0))
+        svg.add('<polyline fill="none" stroke="' + col + '" stroke-width="1.4" points="' + " ".join(f"{xm(e):.1f},{ym(T):.1f}" for e, T in pts) + '"/>')
+        for e, T in pts:
+            dg.marker(svg, "circle", xm(e), ym(T), col, f"binary128, e = {e:g}, T = {T:.3f}")
+        t8 = dict(pts).get(8.0)
+        if t8 is not None:
+            xs = np.array([3.0, 20.0])
+            svg.add('<polyline fill="none" stroke="' + dg.SERIES[-1] + '" stroke-width="1" stroke-dasharray="4 3" points="' + " ".join(f"{xm(x):.1f},{ym(t8 + invW * math.log(10) * (x - 8.0)):.1f}" for x in xs) + '"/>')
+    for r in f64:
+        if r["T"] is not None:
+            col = dg.SERIES[0] if r["side"] < 0 else dg.SERIES[1]
+            svg.add(f'<circle cx="{xm(r["e"]):.1f}" cy="{ym(r["T"]):.1f}" r="7" fill="none" stroke="{col}" stroke-width="1.3"><title>float64, e = {r["e"]:g}, side {r["side"]:+d}, fate {r["fate"]:+d}, T = {r["T"]:.3f}</title></circle>')
+    dg.legend(svg, X0 + PW, y - 10, [("collapse side", dg.SERIES[0]), ("expansion side", dg.SERIES[1]), ("1/W guide", dg.SERIES[-1])])
+    y1 = y + PH + 84
+    y = dg.caption(svg, 16, y1, "The float64 minus binary128 difference of r on the stall, as an offset in p",
+                   "ε(t) = ⟨d, Q⟩/⟨Q, Q⟩ over |l| ≤ 4 for each stall draw (thin) and the mean of |ε| (thick); time in units of 1/W; a plateau is the unstable mode carrying a fixed seed")
+    xm2, ym2 = dg.axes(svg, X0, y, PW, PH, (0, 20), (1e-15, 1e-11, "log"), "W t", "|ε| = offset in p equivalent to the roundoff", xfmt=lambda v: f"{v:g}", yfmt=lambda v: f"{v:.0e}")
+    for D, col in ((4, dg.SERIES[0]), (5, dg.SERIES[1]), (6, dg.SERIES[2])):
+        dd = os.path.join(raw, "runs", "stall", f"D{D}")
+        if not os.path.isdir(dd):
+            continue
+        allc = []
+        for f in sorted(os.listdir(dd)):
+            if f.startswith("stall_F_k") and f.endswith(".json"):
+                rec = json.load(open(os.path.join(dd, f)))
+                for tag in ("m", "p"):
+                    tt_ = np.array([r["t"] for r in rec["rows"]]) * W[D - 2]
+                    ee = np.abs([r[tag]["eps"] for r in rec["rows"]])
+                    sel = (tt_ >= 3) & (ee > 1e-15)
+                    allc.append((tt_, ee))
+                    svg.add('<polyline fill="none" stroke="' + col + '" stroke-opacity="0.35" stroke-width="0.8" points="' + " ".join(f"{xm2(t):.1f},{ym2(min(max(e, 1.01e-15), 0.99e-11)):.1f}" for t, e in zip(tt_[sel], ee[sel])) + '"/>')
+        if allc:
+            tg = allc[0][0]
+            m = np.mean([e for _, e in allc], axis=0)
+            sel = (tg >= 3) & (m > 1e-15)
+            svg.add('<polyline fill="none" stroke="' + col + '" stroke-width="2" points="' + " ".join(f"{xm2(t):.1f},{ym2(min(max(e, 1.01e-15), 0.99e-11)):.1f}" for t, e in zip(tg[sel], m[sel])) + '"/>')
+    svg.line(xm2(10.0), y, xm2(10.0), y + PH, dg.SERIES[-1], 1)
+    svg.line(xm2(17.0), y, xm2(17.0), y + PH, dg.SERIES[-1], 1)
+    dg.legend(svg, X0 + PW, y - 10, [("D = 4", dg.SERIES[0]), ("D = 5", dg.SERIES[1]), ("D = 6", dg.SERIES[2])])
+    try:
+        commit = subprocess.check_output(["git", "-C", os.path.dirname(os.path.abspath(__file__)), "rev-parse", "--short", "HEAD"], text=True).strip()
+    except (subprocess.SubprocessError, OSError):
+        commit = "?"
+    height = dg.footnote(svg, [f"extended_bisect.py at {commit}", "evolution #39, threshold #40, plateau #226"], dg.host_specs(),
+                         ["window of the growth-rate checks: W t in [10, 17] (grey lines)"], y1 + PH + 100, repo_url="https://github.com/nmoinvaz/negative-mass")
+    open(a.out, "w").write(svg.finish(height))
+    print("wrote", a.out)
+    return 0
 
 
 def main():
@@ -920,6 +1048,8 @@ def main():
     ap.add_argument("--bump", type=float, default=None)
     ap.add_argument("--e0", type=float, default=3.0)
     ap.add_argument("--e1", type=float, default=20.0)
+    ap.add_argument("--elist", default=None)
+    ap.add_argument("--thin", action="store_true")
     ap.add_argument("--side", type=int, default=0)
     ap.add_argument("--tmax0", type=float, default=8.0)
     ap.add_argument("--X", type=float, default=None)
@@ -930,13 +1060,15 @@ def main():
     ap.add_argument("--tmax", type=float, default=16.0)
     ap.add_argument("--snap", type=float, default=0.25)
     ap.add_argument("--L0", type=float, default=4.0)
+    ap.add_argument("--only", default=None)
+    ap.add_argument("--f64tol", type=float, default=1e-14)
     ap.add_argument("--mutate")
     a = ap.parse_args()
     if a.mutate:
         MUT = a.mutate
-        if a.mutate in ("time_unit", "finder_sign"):
+        if a.mutate in ("time_unit", "finder_sign", "ellis_charge"):
             dn.MUT = a.mutate
-    cmds = dict(bisect=cmd_bisect, series=cmd_series, f64=cmd_f64, f64series=cmd_f64series, stall=cmd_stall, controls=cmd_controls, analyze=analyze)
+    cmds = dict(bisect=cmd_bisect, series=cmd_series, f64=cmd_f64, f64series=cmd_f64series, stall=cmd_stall, controls=cmd_controls, analyze=analyze, graph=cmd_graph)
     sys.exit(cmds[a.cmd](a))
 
 
