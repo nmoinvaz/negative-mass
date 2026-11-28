@@ -14,6 +14,7 @@ Lambda^2 = r^2 cos^2(phi/sqrt2) = r^2/(1 + rho^2) equals lam(v)^2 at every x- on
     planted_family.py check [--only=D1,D2,...] [--mutate=NAME] [--out=DIR]    all checks and the runs; exit 1 when one fails (a mutated run is meant to exit 1)
     planted_family.py case --c=C --beta=B --h=H [--Xp=X --Xm=X --mutate=NAME]  one run
     planted_family.py mutations DIR PREFIX      fired sets of the stored mutated logs DIR/PREFIX<name>.log against the declared ones
+    planted_family.py rays                      reported diagnostic (not a check): the outgoing rays of the family near v* (beta < 0) and at their escape to rho = -infinity (beta > 0)
 Status words as in AGENTS.md: every number is numerical evidence; D3's identities are checked at 50 digits.  No sentence here says a result is new.
 """
 import json
@@ -590,8 +591,42 @@ def check_runs():
     check("V", f"for beta < 0, v* = ln(-L/beta)/K is found from the evolved interior Lambda^2 to {VSTAR_TOL:g}, at every h and both members", allV, "; ".join(vnotes))
 
 
+def rays():
+    """Where the exact map ends.  beta < 0: along outgoing rays (labelled by rho0 at v0 = 0) rho -> +infinity as v -> v*, 1 + K rho ~ (v* - v)^{-1/2}, r = lam R tends to a constant
+    (printed against eps = v* - v).  beta > 0: the v at which an outgoing ray reaches rho = -1000 (the integration of the exact map stops near there), against the rectangle's v_end."""
+    from scipy.integrate import solve_ivp
+    for c, beta in CASES:
+        fam = Family(c, beta)
+        K = fam.K
+        h = 0.005
+        Nm = int(round(XM / h))
+        rho0 = left_ray(fam, RHO_C, V0, Nm, h)
+        vend = SQ2 * XP[c]
+        picks = [("x- = 0 (rho0 = 1)", rho0[0]), ("x- = 8", rho0[int(8 / h)]), ("x- = 16", rho0[-1])]
+        if beta < 0:
+            vs = fam.vstar()
+            eps = [1.0, 1e-2, 1e-4, 1e-6, 1e-8]
+            vn = np.array([vs - e for e in eps])
+            print(f"c = {c}, beta = {beta:+}: v* = {vs:.6f}; outgoing rays at v = v* - eps")
+            for name, r0 in picks:
+                rho, lnE = flow(fam, np.array([r0]), V0, vn, rtol=1e-11, atol=1e-12)
+                rr = np.sqrt(fam.lam2(vn)) * np.sqrt(1 + rho[:, 0] ** 2)
+                print(f"  {name}: rho0 = {r0:.6f}; " + "; ".join(f"eps {e:g}: rho {x:.5g}, (1 + K rho) sqrt(K eps) {(1 + K * x) * math.sqrt(K * e):.5f}, r {rv:.5f}"
+                                                              for e, x, rv in zip(eps, rho[:, 0], rr)))
+        else:
+            print(f"c = {c}, beta = {beta:+}: the rectangle's v_end = {vend:.4f}; escape of the outgoing rays to rho = -1000")
+            for name, r0 in picks:
+                ev_ = lambda v, y: y[0] + 1000.0
+                ev_.terminal = True
+                sol = solve_ivp(lambda v, y: [0.5 * fam.F(v, y[0]), 0.5 * fam.Fp(v, y[0])], [V0, 30.0], [r0, math.log(fam.F(V0, r0))], method="DOP853", rtol=1e-11, atol=1e-12, events=ev_)
+                ve = float(sol.t_events[0][0]) if len(sol.t_events[0]) else float("nan")
+                print(f"  {name}: rho0 = {r0:.6f}; reaches rho = -1000 at v = {ve:.4f}")
+
+
 def main():
     cmd = next((a for a in sys.argv[1:] if not a.startswith("--")), "check")
+    if cmd == "rays":
+        return rays() or 0
     if cmd == "mutations":
         return report_mutations(sys.argv[2], sys.argv[3])
     if cmd == "case":
