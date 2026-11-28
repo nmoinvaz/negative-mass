@@ -43,6 +43,7 @@ MUTATIONS = {
     "route3_N2": ("route3", "0.234139      -2.15e-06", "0.234139      -9.15e-06"),
     "route4_X2": ("route4", "0.228784      +2.13e-04", "0.228784      +3.13e-04"),
     "eps_T2": ("eps", "max |M - predicted| 9.34e-05", "max |M - predicted| 5.34e-05"),
+    "route5_Y2": ("route5", "0.235041      +5.28e-05", "0.235041      +6.28e-05"),
     "slope_S6": ("check", "ind40 0.461705", "ind40 0.461805"),
 }
 
@@ -74,6 +75,7 @@ SRC = {
     "route3": read(EV, "settled_mass_route3_output.txt"),
     "route4": read(EV, "settled_mass_route4_output.txt"),
     "eps": read(EV, "settled_mass_eps_output.txt"),
+    "route5": read(EV, "settled_mass_route5_output.txt"),
     "expansion": read(EV, "expansion_output.txt"),
     "plateau": read(EV, "constraint_plateau_output.txt"),
     "derive": read(EV, "derive_output.txt"),
@@ -647,6 +649,15 @@ t1 = float(re.search(r"\[FAIL\] T1: .*?max \|M - predicted\| ([0-9.e+-]+)", eo)[
 t2 = float(re.search(r"\[FAIL\] T2: .*?max \|M - predicted\| ([0-9.e+-]+)", eo)[1])
 check(t1 > 6e-5 and t2 > 6e-5, f"#296: T1 {t1:.2e} and T2 {t2:.2e} beyond 6e-5")
 printed(f"predicts the third route to ${fmt(t2)}$ and the first two to ${fmt(t1)}$, beyond the bar", "#296 T2 and T1")
+
+# #313: a route of moderate leverage (notes/wormhole_evolution/settled_mass_route5_output.txt, h = 0.005)
+r5 = SRC["route5"]
+yr = re.findall(r"^\s+Y[123]\s+([0-9.]+)\s+[0-9.]+\s+[0-9.]+\s+([-+0-9.e]+)\s+[0-9.e-]+\s+[-+0-9.e]+\s+\|", r5, re.M)
+check(len(yr) == 3, f"#313's three points ({len(yr)})")
+lv5 = [float(a) for a, _ in yr]; rs5 = [float(b) for _, b in yr]
+check(all(abs(x) <= 6e-5 for x in rs5), f"#313: P4 within 6e-5 at all three ({rs5})")
+printed(f"with leverage ${lv5[0]:.2f}$, ${lv5[1]:.2f}$ and ${lv5[2]:.2f}$", "#313 leverage")
+printed(f"the largest miss ${fmt(max(abs(x) for x in rs5))}$", "#313 largest residual")
 
 print(f"\n{count} checks, {bad} failed; mutation {OPT.mutate}")
 sys.exit(1 if bad else 0)
