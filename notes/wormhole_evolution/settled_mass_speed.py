@@ -18,7 +18,7 @@ Member readings (the static member's fit to M_+(r), M_-(r) at r = 1.25 .. 4 r_th
     python3 settled_mass_speed.py analyze [--part=dev] [--mutate=NAME] [--baseline=FILE]
     python3 settled_mass_speed.py planted [--mutate=NAME]
 
---part=dev drops X1 to X3 from the points and raises if any new reading touches them (the mutation effects of the raw README were computed so, before X1 to X3 were read by any new estimator).
+--part=dev drops X1 to X3 and Y1 to Y3 (#313's members, added in stage 3 of the raw README) from the points and raises if any new reading touches them (the mutation effects of the raw README were computed so, before X1 to X3 were read by any new estimator).
 Units: a = 1 is the throat radius of the initial static wormhole, 8 pi G = 1, D = 4 (n = 2). Status words as in AGENTS.md: every number here is numerical evidence.
 """
 import json
@@ -40,6 +40,8 @@ SQ2 = math.sqrt(2.0)
 MUT = None
 PART = "all"
 I305 = os.path.join(s3.RAW_ROOT, "I305-mac")
+I313 = os.path.join(s3.RAW_ROOT, "I313-mac")
+POINTSY = (("Y1", (0.0394, 5.0, 0.7)), ("Y2", (0.0768, 5.0, 0.7)), ("Y3", (0.09431, 5.0, 0.7)))      # #313's members (stage 3 of the raw README)
 EPS = 1e-3
 M0 = s3.M0
 P4 = s3.CRIT3["P4"]
@@ -55,6 +57,7 @@ CRIT = dict(
     # the notes' printed residuals of the reference reading (settled_mass_route3.md, settled_mass_route4.md), half a unit of the last digit
     res_N=(-4.77e-07, -2.15e-06, +1.21e-06), bar_resN=1e-8,
     res_X=(+9.00e-05, +2.13e-04, +1.98e-04), bar_resX=6e-8,
+    res_Y=(+2.9e-05, +5.3e-05, +1.8e-05), bar_resY=5e-7,          # #313's printed values (two significant digits: half a unit of the last digit is 5e-7)
     # the verdict map (#305's recommended task 2)
     map_15=0.02, map_X=0.10,
     planted_noise_seed=314,
@@ -130,13 +133,17 @@ def load_points(part="all"):
             e = r.load_point(os.path.join(I305, "runs"), spec, H)
             x = r.read_point(e)
             P.append(dict(name=nm, grp="X", e=e, M=x["M"], mem=x["mem"], sp=x["sp"]))
+        for nm, spec in POINTSY:
+            e = r.load_point(os.path.join(I313, "runs"), spec, H)
+            x = r.read_point(e)
+            P.append(dict(name=nm, grp="Y", e=e, M=x["M"], mem=x["mem"], sp=x["sp"]))
     return P
 
 
 def guard(p):
     """The dev partition: X1 to X3 are not read by any new reading."""
-    if PART == "dev" and p["grp"] == "X":
-        raise RuntimeError("dev partition: X1 to X3 are not read by a new reading")
+    if PART == "dev" and p["grp"] in ("X", "Y"):
+        raise RuntimeError("dev partition: X1 to X3 and Y1 to Y3 are not read by a new reading")
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -328,7 +335,7 @@ def pred(co, g1, rth, rdot, m0=None):
 
 def refit_residuals(P, rd, key):
     """Refit the fifteen with reading `key`; M - predicted at every point of P (the fifteen first, then N, then X): returns (coefficients, residuals array, readings of the points)."""
-    P15 = [p for p in P if p["grp"] not in ("N", "X")]
+    P15 = [p for p in P if p["grp"] not in ("N", "X", "Y")]
     n15 = len(P15)
     drop = [k for k, p in enumerate(P15) if not (mut("drop_pt") and p["name"] == "e12")]
     Pd = [P15[k] for k in drop]
@@ -372,7 +379,7 @@ def measured_noise(P):
     """The scatter of r(tau) about its smooth model: the median over the points of the residual sd of a degree-9 fit over [tau_dep - 2.5, tau_dep + 0.6]."""
     sds = []
     for p in P:
-        if p["grp"] == "X":
+        if p["grp"] in ("X", "Y"):
             continue
         t, tau, rr, odd = pair_mean(p["e"]["loc"])
         t0 = dep_own(t, rr, odd)
@@ -390,7 +397,7 @@ def check_pspd(P, stress_report=True):
     errs = {k: [] for k in SPD_KEYS}
     worst = {}
     for p in P:
-        if p["grp"] == "X":
+        if p["grp"] in ("X", "Y"):
             continue
         tt, tp, rp, t0, v, vt = planted_arrays(p, noise, rng)
         sp = speeds_at(tt, tp, rp, t0)
@@ -409,7 +416,7 @@ def check_pspd(P, stress_report=True):
         for k in SPD_KEYS:
             errs[k] = []
         for p in P:
-            if p["grp"] == "X":
+            if p["grp"] in ("X", "Y"):
                 continue
             tt, tp, rp, t0, v, vt = planted_arrays(p, noise, rng2, stress=2.0)
             sp = speeds_at(tt, tp, rp, t0)
@@ -489,10 +496,11 @@ def analyze_cmd():
     t0 = time.time()
     P = load_points(PART)
     names = [p["name"] for p in P]
-    n15 = sum(1 for p in P if p["grp"] not in ("N", "X"))
+    n15 = sum(1 for p in P if p["grp"] not in ("N", "X", "Y"))
     idxN = [k for k, p in enumerate(P) if p["grp"] == "N"]
     idxX = [k for k, p in enumerate(P) if p["grp"] == "X"]
-    print(f"== points: {len(P)} (the fifteen, N1 to N3" + (", X1 to X3" if idxX else "; dev partition: X1 to X3 not loaded") + f") at h = {H}")
+    idxY = [k for k, p in enumerate(P) if p["grp"] == "Y"]
+    print(f"== points: {len(P)} (the fifteen, N1 to N3" + (", X1 to X3, Y1 to Y3" if idxX else "; dev partition: X1 to X3 and Y1 to Y3 not loaded") + f") at h = {H}")
     rd = [readings_of(p) for p in P]
     # ---- controls on the points
     dep_err = max(abs(x["_sp"]["t_dep"] - p["mem"]["t_dep"]) for p, x in zip(P, rd))
@@ -507,7 +515,7 @@ def analyze_cmd():
     check("SPD0", "#267's estimator (linear, +-0.5 in tau) written here and evaluated exactly at the departure time equals `speed_at` to 5e-6 at every point", s0_err <= CRIT["bar_spd0"], f"max {s0_err:.1e}")
     mr_err = 0.0
     for p in P:
-        if p["grp"] == "X":
+        if p["grp"] in ("X", "Y"):
             continue
         for row in p["e"]["m"]["rows"][::3]:
             mr_err = max(mr_err, abs(fit_row(row, "unit")[0] - row["s_m"]))
@@ -524,6 +532,9 @@ def analyze_cmd():
         hu = (5e-8, 5e-7, 5e-7)          # half a unit of the last printed digit of +9.00e-05, +2.13e-04, +1.98e-04 (the bar above, 6e-8, is below it for the last two)
         check("REFX-ph", "POST HOC, gates nothing: the same with half a unit of the last printed digit of each value (5e-8, 5e-7, 5e-7)", all(abs(a - b_) <= h_ for a, b_, h_ in zip(rX, CRIT["res_X"], hu)),
               ", ".join(f"{a - b_:+.1e}" for a, b_ in zip(rX, CRIT["res_X"])), ph=True)
+        rY = [res0[k] for k in idxY]
+        check("REFY", "the reference reading's residuals M - P4 at Y1 to Y3 equal #313's printed values (+2.9e-05, +5.3e-05, +1.8e-05) to half a unit of the last printed digit, 5e-7", max(abs(a - b_) for a, b_ in zip(rY, CRIT["res_Y"])) <= CRIT["bar_resY"],
+              ", ".join(f"{x:+.2e}" for x in rY))
     # ---- per reading
     ref15 = np.array([rd[k]["REF"][2] for k in range(n15)])
     rms15 = float(np.sqrt(np.mean(ref15 ** 2)))
@@ -536,8 +547,8 @@ def analyze_cmd():
     print("    point    g1 ref      r_th ref    | dg1 WA     dg1 WJ     dg1 WJi    | drth WJ    drth WJi")
     for p, x in zip(P, rd):
         print(f"    {p['name']:6s} {x['REF'][0]:.6f}  {x['REF'][1]:.6f}  | {x['WA'][0] - x['REF'][0]:+.2e}  {x['WJ'][0] - x['REF'][0]:+.2e}  {x['WJi'][0] - x['REF'][0]:+.2e}  | {x['WJ'][1] - x['REF'][1]:+.2e}  {x['WJi'][1] - x['REF'][1]:+.2e}")
-    print("\n== refit over the fifteen with each reading: coefficients, in-sample and leave-one-out errors of the fifteen (M - predicted), and M - predicted at N1 to N3" + (" and X1 to X3" if idxX else ""))
-    print("    reading   a            b            c            max in-sample  max LOO     |  N1        N2        N3" + ("        |  X1        X2        X3" if idxX else ""))
+    print("\n== refit over the fifteen with each reading: coefficients, in-sample and leave-one-out errors of the fifteen (M - predicted), and M - predicted at N1 to N3" + (" and X1 to X3, Y1 to Y3" if idxX else ""))
+    print("    reading   a            b            c            max in-sample  max LOO     |  N1        N2        N3" + ("        |  X1        X2        X3        |  Y1        Y2        Y3" if idxX else ""))
     table = {}
     for key in ("REF",) + GATING:
         co, res = refit_residuals(P, rd, key)
@@ -546,7 +557,7 @@ def analyze_cmd():
         table[key] = (co, res)
         line = f"    {key:6s}  {co[0]:+.6f}  {co[1]:+.6f}  {co[2]:+.6f}  {np.max(np.abs(res[:n15])):.2e}      {np.max(np.abs(eM)):.2e}   | " + "  ".join(f"{res[k]:+.2e}" for k in idxN)
         if idxX:
-            line += "  | " + "  ".join(f"{res[k]:+.2e}" for k in idxX)
+            line += "  | " + "  ".join(f"{res[k]:+.2e}" for k in idxX) + "  | " + "  ".join(f"{res[k]:+.2e}" for k in idxY)
         print(line)
     print("\n    supplementary (declared, gates nothing): a speed estimator with a member reading together")
     for k in ("S1", "S2", "S3"):
@@ -554,7 +565,7 @@ def analyze_cmd():
             co, res = refit_residuals(P, rd, f"{k}+{j}")
             line = f"    {k}+{j:4s}  {co[0]:+.6f}  {co[1]:+.6f}  {co[2]:+.6f}  {np.max(np.abs(res[:n15])):.2e}                   | " + "  ".join(f"{res[kk]:+.2e}" for kk in idxN)
             if idxX:
-                line += "  | " + "  ".join(f"{res[kk]:+.2e}" for kk in idxX)
+                line += "  | " + "  ".join(f"{res[kk]:+.2e}" for kk in idxX) + "  | " + "  ".join(f"{res[kk]:+.2e}" for kk in idxY)
             print(line)
     # ---- the gating predictions
     print()
@@ -565,6 +576,8 @@ def analyze_cmd():
         if idxX:
             rX = np.array([res[k] for k in idxX])
             check(f"PX_{key}", f"reading {key}: #305's X1 to X3 within 6e-5 of the refit over the fifteen", float(np.max(np.abs(rX))) <= CRIT["bar_pred"], "M - pred " + ", ".join(f"{x:+.2e}" for x in rX))
+            rY = np.array([res[k] for k in idxY])
+            check(f"PY_{key}", f"reading {key}: #313's Y1 to Y3 within 6e-5 of the refit over the fifteen", float(np.max(np.abs(rY))) <= CRIT["bar_pred"], "M - pred " + ", ".join(f"{x:+.2e}" for x in rY))
     # ---- the verdict map for the speed readings (declared in the README before the run)
     if idxX:
         print("\n== verdict map per speed reading (#305's task 2): D15 = max |change of rdot_th| over the fifteen / (0.02 rms), DX = change of rdot_th at X1, X2, X3 relative to the reference")
@@ -597,7 +610,7 @@ def analyze_cmd():
     return finish(t0)
 
 
-MUTATIONS = {       # mutation -> the checks it newly fires on the dev partition (X1 to X3 not read by any new estimator); X-checks (PX_*, REFX) are not in the dev partition and are listed apart
+MUTATIONS = {       # mutation -> the checks it newly fires on the dev partition (X1 to X3 and Y1 to Y3 not read by any new estimator); X- and Y-checks (PX_*, PY_*, REFX, REFX-ph, REFY) are not in the dev partition and are listed apart
     "s1_win": ['PSPD_S1', 'PSPD_S1r'],
     "s1_nolapse": ['PSPD_S1'],
     "s1_lapse_inv": ['PSPD_S1'],
@@ -617,7 +630,7 @@ MUTATIONS = {       # mutation -> the checks it newly fires on the dev partition
     "memref_w": ['MEMREF', 'PMEM'],
     "x_speed": [],      # record only (X1 to X3 speeds x 0.895 = #305's post hoc c_eff / c, from its published output): every PX_rho that fails in the baseline is expected to pass; fires nothing
 }
-XCHECKS = ("REFX",) + tuple(f"PX_{k}" for k in READINGS)
+XCHECKS = ("REFX", "REFX-ph", "REFY") + tuple(f"PX_{k}" for k in READINGS) + tuple(f"PY_{k}" for k in READINGS)
 
 
 def main():
