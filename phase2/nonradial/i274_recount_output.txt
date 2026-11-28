@@ -1,0 +1,132 @@
+# #274: the winding2 boxes of #126 (31) and #117 (4) counted with the crate's complex lane (f64) as the evaluator, --guard=all
+35 of 35 boxes of the two lists have a record; 1 of 1 extra box outside them (#115's s1 at l = 5, last rows)
+| box | source | l | eps, omega | region | R_s | stored winding | crate winding | planted (stored) | planted (crate) | max step (stored, crate) | min abs D (stored, crate) | verdict |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| p7603_l2 | #126 | 2 | -1, 0.7603 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 404.9 | +0.0000 | +0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.39, 0.39 | 6.70e-04, 6.70e-04 | OK |
+| p7603_l3 | #126 | 3 | -1, 0.7603 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 404.9 | +0.0000 | +0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 1.68e-03, 1.68e-03 | OK |
+| c075_l2 | #126 | 2 | +1, 0.75 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 404.4 | +0.0000 | +0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 6.88e-04, 6.88e-04 | OK |
+| p070_l2 | #126 | 2 | -1, 0.7 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 403.0 | +0.0000 | +0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 7.45e-04, 7.45e-04 | OK |
+| p070_l3 | #126 | 3 | -1, 0.7 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 403.0 | +0.0000 | -0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 1.86e-03, 1.86e-03 | OK |
+| p085_l2 | #126 | 2 | -1, 0.85 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 409.7 | -0.0000 | -0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 4.93e-04, 4.93e-04 | OK |
+| p085_l3 | #126 | 3 | -1, 0.85 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 409.7 | +0.0000 | +0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 1.23e-03, 1.23e-03 | OK |
+| n1_l2 | #126 | 2 | -1, 0.7603 | Re [0.0001, 0.1], abs(Im) ≤ 0.23 | 312.0 | -0.0000 | -0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.33, 0.33 | 2.82e-03, 2.82e-03 | OK |
+| n1_l3 | #126 | 3 | -1, 0.7603 | Re [0.0001, 0.1], abs(Im) ≤ 0.23 | 312.0 | +0.0000 | +0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.35, 0.35 | 3.16e-02, 3.16e-02 | OK |
+| n3_l2 | #126 | 2 | -1, 0.7603 | Re [-0.001, 0.0001], Im [0.01, 0.23] | 312.0 | +0.0000 | -0.0000 | +1.0000 of 1 | +1.0000 of 1 | 0.39, 0.39 | 2.75e-03, 2.75e-03 | OK |
+| n3_l3 | #126 | 3 | -1, 0.7603 | Re [-0.001, 0.0001], Im [0.01, 0.23] | 312.0 | -0.0000 | -0.0000 | +1.0000 of 1 | +1.0000 of 1 | 0.38, 0.38 | 3.66e-02, 3.66e-02 | OK |
+| s1_l2 | #126 | 2 | -1, 0.7603 | Re [0.03, 0.1], abs(Im) ≤ 2.5 | 1293.2 | +0.0000 | +0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 1.00e-03, 1.00e-03 | OK |
+| s1_l3 | #126 | 3 | -1, 0.7603 | Re [0.03, 0.1], abs(Im) ≤ 2.5 | 1293.2 | +0.0000 | +0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 2.49e-03, 2.49e-03 | OK |
+| h1_l2 | #126 | 2 | -1, 0.7603 | Re [0.1, 2.0], Im [2.5, 6.0] | 419.7 | +0.0000 | -0.0000 | +1.0000 of 1 | +1.0000 of 1 | 0.38, 0.38 | 1.05e-04, 1.05e-04 | OK |
+| h1_l3 | #126 | 3 | -1, 0.7603 | Re [0.1, 2.0], Im [2.5, 6.0] | 419.7 | -0.0000 | -0.0000 | +1.0000 of 1 | +1.0000 of 1 | 0.38, 0.38 | 2.63e-04, 2.63e-04 | OK |
+| t1_r40 | #126 | 2 | -1, 0.7603 | Re [0.02, 0.1], Im [0.15, 0.33] | 825.5 | +0.0000 | +0.0000 | +1.0000 of 1 | +1.0000 of 1 | 0.38, 0.38 | 3.73e-03, 3.73e-03 | OK |
+| t1_r80 | #126 | 2 | -1, 0.7603 | Re [0.02, 0.1], Im [0.15, 0.33] | 1626.8 | -0.0000 | +0.0000 | +1.0000 of 1 | +1.0000 of 1 | 0.39, 0.39 | 3.73e-03, 3.73e-03 | OK |
+| t2_r40 | #126 | 2 | -1, 0.7603 | Re [0.02, 0.1], Im [1.68, 1.84] | 1870.3 | +0.0000 | +0.0000 | +1.0000 of 1 | +1.0000 of 1 | 0.40, 0.40 | 9.30e-04, 9.30e-04 | OK |
+| t2_r80 | #126 | 2 | -1, 0.7603 | Re [0.02, 0.1], Im [1.68, 1.84] | 3716.5 | +0.0000 | -0.0000 | +1.0000 of 1 | +1.0000 of 1 | 0.35, 0.35 | 9.30e-04, 9.30e-04 | OK |
+| s2_l2 | #126 | 2 | -1, 0.7603 | Re [0.01, 0.03], abs(Im) ≤ 2.5 | 3831.3 | +0.0000 | -0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 5.30e-04, 5.30e-04 | OK |
+| h2_l2 | #126 | 2 | -1, 0.7603 | Re [0.1, 2.0], Im [6.0, 10.0] | 422.4 | -0.0000 | -0.0000 | +1.0000 of 1 | +1.0000 of 1 | 0.31, 0.31 | 2.57e-05, 2.57e-05 | OK |
+| s3_l2 | #126 | 2 | -1, 0.7603 | Re [0.03, 0.1], Im [2.5, 6.0] | 1342.8 | -0.0000 | +0.0000 | +1.0000 of 1 | +1.0000 of 1 | 0.39, 0.39 | 9.90e-05, 9.90e-05 | OK |
+| s3_l3 | #126 | 3 | -1, 0.7603 | Re [0.03, 0.1], Im [2.5, 6.0] | 1342.8 | -0.0000 | -0.0000 | +1.0000 of 1 | +1.0000 of 1 | 0.38, 0.38 | 2.71e-04, 2.71e-04 | OK |
+| rep_l4 | #126 | 4 | -1, 0.7603 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 404.9 | -0.0000 | -0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 3.02e-03, 3.02e-03 | OK |
+| s1_l4 | #126 | 4 | -1, 0.7603 | Re [0.03, 0.1], abs(Im) ≤ 2.5 | 1293.2 | +0.0000 | -0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 4.43e-03, 4.43e-03 | OK |
+| n1_l4 | #126 | 4 | -1, 0.7603 | Re [0.0001, 0.1], abs(Im) ≤ 0.23 | 312.0 | +0.0000 | +0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 4.17e-02, 4.17e-02 | OK |
+| rep_l5 | #126 | 5 | -1, 0.7603 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 404.9 | -0.0000 | +0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 4.70e-03, 4.70e-03 | OK |
+| n1_l5 | #126 | 5 | -1, 0.7603 | Re [0.0001, 0.1], abs(Im) ≤ 0.23 | 312.0 | -0.0000 | +0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 7.17e-02, 7.17e-02 | OK |
+| rep_l6 | #126 | 6 | -1, 0.7603 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 404.9 | -0.0000 | -0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 6.71e-03, 6.71e-03 | OK |
+| s1_l6 | #126 | 6 | -1, 0.7603 | Re [0.03, 0.1], abs(Im) ≤ 2.5 | 1293.2 | +0.0000 | +0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 8.69e-03, 8.69e-03 | OK |
+| n1_l6 | #126 | 6 | -1, 0.7603 | Re [0.0001, 0.1], abs(Im) ≤ 0.23 | 312.0 | +0.0000 | -0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.39, 0.39 | 1.35e-01, 1.35e-01 | OK |
+| b25_l2 | #117 | 2 | -1, 0.7603 | Re [2.0, 5.0], abs(Im) ≤ 10.0 | 44.0 | +0.0000 | +0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.39, 0.39 | 1.95e-05, 1.95e-05 | OK |
+| b25_l3 | #117 | 3 | -1, 0.7603 | Re [2.0, 5.0], abs(Im) ≤ 10.0 | 44.0 | -0.0000 | +0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 4.87e-05, 4.87e-05 | OK |
+| h2_l3 | #117 | 3 | -1, 0.7603 | Re [0.1, 2.0], Im [6.0, 10.0] | 422.4 | +0.0000 | -0.0000 | +1.0000 of 1 | +1.0000 of 1 | 0.38, 0.38 | 6.43e-05, 6.43e-05 | OK |
+| h3_l2 | #117 | 2 | -1, 0.7603 | Re [0.1, 2.0], Im [10.0, 20.0] | 423.6 | -0.0000 | -0.0000 | +1.0000 of 1 | +1.0000 of 1 | 0.28, 0.28 | 3.38e-06, 3.38e-06 | OK |
+| s1_l5 | #115 | 5 | -1, 0.7603 | Re [0.03, 0.1], abs(Im) ≤ 2.5 | 1293.2 | -0.0000 | +0.0000 | +2.0000 of 2 | +2.0000 of 2 | 0.40, 0.40 | 7.21e-03, 7.21e-03 | OK |
+
+| box | margin | margin with plant | E (phase error used) | crate against stored: phase max | modulus max | margin / 10 E | asked | stored | asked not stored | stored not asked | evaluations | crate wall (s) | median / max per D (s) | setup (s) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| p7603_l2 | 2.22e-03 | 2.22e-03 | 3.10e-06 | 9.77e-07 | 6.02e-10 | 71.6 | 147 | 147 | 0 | 0 | 147 | 10.6 | 0.072 / 0.086 | 6.9 |
+| p7603_l3 | 1.59e-03 | 1.59e-03 | 3.10e-06 | 9.96e-07 | 6.50e-10 | 51.4 | 209 | 209 | 0 | 0 | 209 | 14.7 | 0.070 / 0.083 | 6.9 |
+| c075_l2 | 3.80e-04 | 3.80e-04 | 3.10e-06 | 9.58e-07 | 8.14e-10 | 12.3 | 119 | 119 | 0 | 0 | 119 | 8.0 | 0.067 / 0.072 | 6.6 |
+| p070_l2 | 3.25e-03 | 1.85e-03 | 3.10e-06 | 8.24e-07 | 7.38e-10 | 59.6 | 149 | 149 | 0 | 0 | 149 | 9.9 | 0.066 / 0.094 | 6.9 |
+| p070_l3 | 2.96e-03 | 2.96e-03 | 3.10e-06 | 8.35e-07 | 6.69e-10 | 95.4 | 223 | 223 | 0 | 0 | 223 | 16.1 | 0.072 / 0.109 | 7.0 |
+| p085_l2 | 5.35e-04 | 5.35e-04 | 3.10e-06 | 1.14e-06 | 5.59e-10 | 17.3 | 141 | 141 | 0 | 0 | 141 | 10.4 | 0.073 / 0.081 | 7.0 |
+| p085_l3 | 1.24e-03 | 6.68e-04 | 3.10e-06 | 1.16e-06 | 4.62e-10 | 21.6 | 221 | 221 | 0 | 0 | 221 | 14.4 | 0.066 / 0.076 | 6.5 |
+| n1_l2 | 4.25e-02 | 2.28e-03 | 3.10e-06 | 9.24e-08 | 6.02e-11 | 73.7 | 97 | 97 | 0 | 0 | 97 | 5.1 | 0.053 / 0.060 | 6.7 |
+| n1_l3 | 1.79e-02 | 1.01e-02 | 3.10e-06 | 9.33e-08 | 8.32e-11 | 324.9 | 125 | 125 | 0 | 0 | 125 | 5.7 | 0.046 / 0.058 | 6.2 |
+| n3_l2 | 1.06e-02 | 6.80e-03 | 3.10e-06 | 9.39e-10 | 3.26e-10 | 219.2 | 144 | 144 | 0 | 0 | 144 | 7.1 | 0.049 / 0.057 | 6.2 |
+| n3_l3 | 2.08e-02 | 2.08e-02 | 3.10e-06 | 1.06e-09 | 3.01e-10 | 670.8 | 152 | 152 | 0 | 0 | 152 | 7.1 | 0.047 / 0.057 | 5.6 |
+| s1_l2 | 6.34e-04 | 6.34e-04 | 3.13e-06 | 3.13e-06 | 2.25e-08 | 20.2 | 201 | 201 | 0 | 0 | 201 | 38.0 | 0.183 / 0.228 | 5.9 |
+| s1_l3 | 1.22e-03 | 7.33e-05 | 3.14e-06 | 3.14e-06 | 1.96e-08 | 2.3 | 249 | 249 | 0 | 0 | 249 | 49.3 | 0.198 / 0.230 | 5.6 |
+| h1_l2 | 2.24e-03 | 2.24e-03 | 3.10e-06 | 1.01e-06 | 1.47e-09 | 72.3 | 126 | 126 | 0 | 0 | 126 | 10.3 | 0.072 / 0.123 | 6.7 |
+| h1_l3 | 6.08e-04 | 6.08e-04 | 3.10e-06 | 1.03e-06 | 1.25e-09 | 19.6 | 148 | 148 | 0 | 0 | 148 | 11.1 | 0.066 / 0.111 | 5.9 |
+| t1_r40 | 1.98e-02 | 1.98e-02 | 3.10e-06 | 2.91e-07 | 7.02e-11 | 637.5 | 108 | 108 | 0 | 0 | 108 | 13.4 | 0.124 / 0.142 | 6.1 |
+| t1_r80 | 9.01e-03 | 9.01e-03 | 3.10e-06 | 5.67e-07 | 7.03e-11 | 290.8 | 108 | 108 | 0 | 0 | 108 | 24.7 | 0.226 / 0.265 | 5.6 |
+| t2_r40 | 4.27e-03 | 4.27e-03 | 3.78e-06 | 3.78e-06 | 3.21e-08 | 113.2 | 106 | 106 | 0 | 0 | 106 | 27.9 | 0.260 / 0.299 | 5.7 |
+| t2_r80 | 6.37e-03 | 3.24e-03 | 7.51e-06 | 7.51e-06 | 3.21e-08 | 43.2 | 106 | 106 | 0 | 0 | 106 | 56.7 | 0.526 / 0.752 | 5.6 |
+| s2_l2 | 2.77e-03 | 2.71e-03 | 9.60e-06 | 9.60e-06 | 5.83e-08 | 28.2 | 245 | 245 | 0 | 0 | 245 | 129.4 | 0.520 / 0.799 | 5.6 |
+| h2_l2 | 8.70e-02 | 4.40e-03 | 3.10e-06 | 1.16e-06 | 2.08e-09 | 141.9 | 108 | 108 | 0 | 0 | 108 | 13.9 | 0.116 / 0.171 | 5.2 |
+| s3_l2 | 1.86e-03 | 1.86e-03 | 3.26e-06 | 3.26e-06 | 5.09e-08 | 57.1 | 128 | 128 | 0 | 0 | 128 | 27.8 | 0.186 / 0.327 | 5.6 |
+| s3_l3 | 9.24e-03 | 5.09e-03 | 3.27e-06 | 3.27e-06 | 6.22e-08 | 155.6 | 128 | 128 | 0 | 0 | 128 | 28.5 | 0.186 / 0.365 | 5.2 |
+| rep_l4 | 1.29e-03 | 1.39e-04 | 3.10e-06 | 1.00e-06 | 6.11e-10 | 4.5 | 279 | 279 | 0 | 0 | 279 | 14.2 | 0.050 / 0.060 | 4.6 |
+| s1_l4 | 3.70e-03 | 3.70e-03 | 3.15e-06 | 3.15e-06 | 1.76e-08 | 117.5 | 311 | 311 | 0 | 0 | 311 | 52.1 | 0.172 / 0.208 | 5.9 |
+| n1_l4 | 4.39e-03 | 4.39e-03 | 3.10e-06 | 9.38e-08 | 8.67e-11 | 141.5 | 131 | 131 | 0 | 0 | 131 | 5.2 | 0.037 / 0.052 | 4.4 |
+| rep_l5 | 6.06e-04 | 6.06e-04 | 3.10e-06 | 1.01e-06 | 5.85e-10 | 19.5 | 349 | 349 | 0 | 0 | 349 | 18.4 | 0.053 / 0.074 | 4.9 |
+| n1_l5 | 2.12e-03 | 3.72e-04 | 3.10e-06 | 9.43e-08 | 8.67e-11 | 12.0 | 145 | 145 | 0 | 0 | 145 | 6.6 | 0.045 / 0.051 | 6.0 |
+| rep_l6 | 1.05e-03 | 1.05e-03 | 3.10e-06 | 1.01e-06 | 5.70e-10 | 33.8 | 425 | 425 | 0 | 0 | 425 | 22.6 | 0.053 / 0.101 | 5.8 |
+| s1_l6 | 5.15e-05 | 5.15e-05 | 3.15e-06 | 3.15e-06 | 2.04e-08 | 1.6 | 445 | 445 | 0 | 0 | 445 | 71.4 | 0.154 / 0.229 | 5.7 |
+| n1_l6 | 4.83e-03 | 4.83e-03 | 3.10e-06 | 9.46e-08 | 5.30e-11 | 155.7 | 157 | 157 | 0 | 0 | 157 | 6.1 | 0.039 / 0.046 | 4.4 |
+| b25_l2 | 5.63e-03 | 2.92e-03 | 3.10e-06 | 1.00e-07 | 1.55e-10 | 94.3 | 195 | 195 | 0 | 0 | 195 | 1.8 | 0.008 / 0.015 | 4.8 |
+| b25_l3 | 7.72e-04 | 7.72e-04 | 3.10e-06 | 1.28e-07 | 7.88e-11 | 24.9 | 245 | 245 | 0 | 0 | 245 | 2.4 | 0.009 / 0.019 | 4.3 |
+| h2_l3 | 2.12e-02 | 2.12e-02 | 3.10e-06 | 1.20e-06 | 1.36e-09 | 683.2 | 110 | 110 | 0 | 0 | 110 | 12.4 | 0.112 / 0.166 | 4.3 |
+| h3_l2 | 2.95e-02 | 2.75e-03 | 3.10e-06 | 2.51e-06 | 2.98e-09 | 88.8 | 144 | 144 | 0 | 0 | 144 | 32.3 | 0.213 / 0.380 | 4.9 |
+| s1_l5 | 3.74e-04 | 3.74e-04 | 3.15e-06 | 3.15e-06 | 1.95e-08 | 11.9 | 387 | 387 | 0 | 0 | 387 | 49.3 | 0.131 / 0.146 | 3.5 |
+
+| box | STORED (counter on the stored cache) | checks |
+|---|---|---|
+| p7603_l2 | winding +0.0000, max step 0.39, min abs D 6.70e-04, plant +2.0000, asked 147, missing 0, margin 2.22e-03 (2.22e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| p7603_l3 | winding -0.0000, max step 0.40, min abs D 1.68e-03, plant +2.0000, asked 209, missing 0, margin 1.59e-03 (1.59e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| c075_l2 | winding +0.0000, max step 0.40, min abs D 6.88e-04, plant +2.0000, asked 119, missing 0, margin 3.80e-04 (3.80e-04 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| p070_l2 | winding -0.0000, max step 0.40, min abs D 7.45e-04, plant +2.0000, asked 149, missing 0, margin 3.25e-03 (1.85e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| p070_l3 | winding -0.0000, max step 0.40, min abs D 1.86e-03, plant +2.0000, asked 223, missing 0, margin 2.96e-03 (2.96e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| p085_l2 | winding +0.0000, max step 0.40, min abs D 4.93e-04, plant +2.0000, asked 141, missing 0, margin 5.34e-04 (5.34e-04 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| p085_l3 | winding +0.0000, max step 0.40, min abs D 1.23e-03, plant +2.0000, asked 221, missing 0, margin 1.24e-03 (6.68e-04 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| n1_l2 | winding -0.0000, max step 0.33, min abs D 2.82e-03, plant +2.0000, asked 97, missing 0, margin 4.25e-02 (2.28e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| n1_l3 | winding +0.0000, max step 0.35, min abs D 3.16e-02, plant +2.0000, asked 125, missing 0, margin 1.79e-02 (1.01e-02 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| n3_l2 | winding +0.0000, max step 0.39, min abs D 2.75e-03, plant +1.0000, asked 144, missing 0, margin 1.06e-02 (6.80e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| n3_l3 | winding -0.0000, max step 0.38, min abs D 3.66e-02, plant +1.0000, asked 152, missing 0, margin 2.08e-02 (2.08e-02 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| s1_l2 | winding +0.0000, max step 0.40, min abs D 1.00e-03, plant +2.0000, asked 201, missing 0, margin 6.34e-04 (6.34e-04 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| s1_l3 | winding +0.0000, max step 0.40, min abs D 2.49e-03, plant +2.0000, asked 249, missing 0, margin 1.22e-03 (7.33e-05 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| h1_l2 | winding +0.0000, max step 0.38, min abs D 1.05e-04, plant +1.0000, asked 126, missing 0, margin 2.24e-03 (2.24e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| h1_l3 | winding -0.0000, max step 0.38, min abs D 2.63e-04, plant +1.0000, asked 148, missing 0, margin 6.08e-04 (6.08e-04 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| t1_r40 | winding +0.0000, max step 0.38, min abs D 3.73e-03, plant +1.0000, asked 108, missing 0, margin 1.98e-02 (1.98e-02 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| t1_r80 | winding -0.0000, max step 0.39, min abs D 3.73e-03, plant +1.0000, asked 108, missing 0, margin 9.01e-03 (9.01e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| t2_r40 | winding +0.0000, max step 0.40, min abs D 9.30e-04, plant +1.0000, asked 106, missing 0, margin 4.27e-03 (4.27e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| t2_r80 | winding +0.0000, max step 0.35, min abs D 9.30e-04, plant +1.0000, asked 106, missing 0, margin 6.37e-03 (3.24e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| s2_l2 | winding +0.0000, max step 0.40, min abs D 5.30e-04, plant +2.0000, asked 245, missing 0, margin 2.77e-03 (2.71e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| h2_l2 | winding +0.0000, max step 0.31, min abs D 2.57e-05, plant +1.0000, asked 108, missing 0, margin 8.70e-02 (4.40e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| s3_l2 | winding -0.0000, max step 0.39, min abs D 9.90e-05, plant +1.0000, asked 128, missing 0, margin 1.86e-03 (1.86e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| s3_l3 | winding -0.0000, max step 0.38, min abs D 2.71e-04, plant +1.0000, asked 128, missing 0, margin 9.24e-03 (5.09e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| rep_l4 | winding -0.0000, max step 0.40, min abs D 3.02e-03, plant +2.0000, asked 279, missing 0, margin 1.29e-03 (1.39e-04 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| s1_l4 | winding +0.0000, max step 0.40, min abs D 4.43e-03, plant +2.0000, asked 311, missing 0, margin 3.70e-03 (3.70e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| n1_l4 | winding +0.0000, max step 0.40, min abs D 4.17e-02, plant +2.0000, asked 131, missing 0, margin 4.39e-03 (4.39e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| rep_l5 | winding -0.0000, max step 0.40, min abs D 4.70e-03, plant +2.0000, asked 349, missing 0, margin 6.06e-04 (6.06e-04 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| n1_l5 | winding -0.0000, max step 0.40, min abs D 7.17e-02, plant +2.0000, asked 145, missing 0, margin 2.12e-03 (3.72e-04 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| rep_l6 | winding -0.0000, max step 0.40, min abs D 6.71e-03, plant +2.0000, asked 425, missing 0, margin 1.05e-03 (1.05e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| s1_l6 | winding +0.0000, max step 0.40, min abs D 8.69e-03, plant +2.0000, asked 445, missing 0, margin 5.15e-05 (5.15e-05 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| n1_l6 | winding +0.0000, max step 0.39, min abs D 1.35e-01, plant +2.0000, asked 157, missing 0, margin 4.83e-03 (4.83e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| b25_l2 | winding +0.0000, max step 0.39, min abs D 1.95e-05, plant +2.0000, asked 195, missing 0, margin 5.63e-03 (2.92e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| b25_l3 | winding +0.0000, max step 0.40, min abs D 4.87e-05, plant +2.0000, asked 245, missing 0, margin 7.72e-04 (7.72e-04 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| h2_l3 | winding +0.0000, max step 0.38, min abs D 6.43e-05, plant +1.0000, asked 110, missing 0, margin 2.12e-02 (2.12e-02 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| h3_l2 | winding -0.0000, max step 0.28, min abs D 3.38e-06, plant +1.0000, asked 144, missing 0, margin 2.95e-02 (2.75e-03 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+| s1_l5 | winding -0.0000, max step 0.40, min abs D 7.21e-03, plant +2.0000, asked 387, missing 0, margin 3.74e-04 (3.74e-04 with plant) | INPUT=ok STORED=ok COUNT=ok MARGIN=ok |
+
+| control | target | boxes fired | not fired | effect over the boxes (smallest … largest) |
+|---|---|---|---|---|
+| `reverse` | COUNT, STORED | 35 of 35 | none | planted difference off the expectation by 2.0000 … 4.0000 (tolerance 0.05) |
+| `wrongdouble` | COUNT, STORED | 35 of 35 | none | planted difference off the expectation by 1.0000 … 1.0000 (tolerance 0.05) |
+| `misplant` | COUNT, STORED | 35 of 35 | none | planted difference off the expectation by 1.0000 … 2.0000 (tolerance 0.05) |
+| `onesided` | COUNT, STORED | 21 of 22 (13 n/a) | s2_l2 | planted difference off the expectation by 0.0254 … 0.5265 (tolerance 0.05) |
+| `jsign` | MARGIN | 35 of 35 | none | phase against the stored values 3.35e-02 … 3.14e+00 rad; margin / 10 E 1.6e-06 … 0.062 (fires below 1) |
+| `star_eps` | MARGIN | 35 of 35 | none | phase against the stored values 2.10e+00 … 3.14e+00 rad; margin / 10 E 1.7e-06 … 0.00079 (fires below 1); the mutated crate stopped in 1 |
+| `rs_shift` | MARGIN | 35 of 35 | none | phase against the stored values 2.91e-03 … 3.13e+00 rad; margin / 10 E 1.7e-06 … 0.72 (fires below 1) |
+| `strip_off` | MARGIN | 35 of 35 | none | phase against the stored values 1.97e+00 … 3.14e+00 rad; margin / 10 E 2.5e-06 … 0.00071 (fires below 1) |
+| `kmin_shift` | INPUT | 35 of 35 | none | R_s off the log's by 0.2 … 37.7 (tolerance 0.051) |
+
+RESULT: 36 of 36 box rows OK; controls NOT fired: onesided on s2_l2
