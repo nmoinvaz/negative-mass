@@ -125,7 +125,7 @@ What the feature changes:
   fit is 7.5e-12 off (0.7321000000074667), the library 1e-16 (0.7321000000000001).
 - **The kappa curve.** Of #183's 126 `a3->0` records, 116 keep their label. At the other 10 the library reads a conjugate pair
   (Im s from 1.4e-11, alpha(F) = 5/2 in all three fields) where the f64 fit read a real singularity: 5 cross the curve and end `F->0`
-  farther in, 5 end `TINYSTEP` (the walk stalls at the old eta*; a pair is read at 35 to 55 of its 73 to 79 gated steps). In #167's
+  farther in, 5 end `TINYSTEP` (the walk stalls at the old eta*; a pair is read at 38 to 55 of its 73 to 79 gated steps). In #167's
   `walk.rs`, which expands in x without a scaled variable, the walk has no real estimate to stop on and ends `NONFINITE` at R of about
   1.5e-10 with a planned step of 0 (traced at (2, 3000); not examined further). This is what fails the five checks above. The
   cause of the difference between the two readings is not decided.
