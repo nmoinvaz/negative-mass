@@ -50,8 +50,10 @@ X0, PW, PH = 86, 600, 190
 ROUTE = {"B": ("square", "#9aa0a6"), "D": ("triangle", dg.SERIES[3]), "W": ("circle", dg.SERIES[0]), "C": ("diamond", dg.SERIES[1])}
 y = 28
 y = dg.caption(svg, 16, y, "Measured minus the frozen refit, against leverage in the fit's design",
-               "h = 0.005; small filled: in-sample, open: leave-one-out, of the fifteen fitted points; grey: #295's three held-out members; green: the three members of the route chosen for leverage; lines: the bar 6e-5")
-xm, ym = dg.axes(svg, X0, y, PW, PH, (0.0, 3.3), (-3.0e-4, 3.0e-4), "leverage L = a^T (A^T A)^-1 a", "M - predicted", xfmt=lambda v: f"{v:.1f}", yfmt=lambda v: f"{v:+.0e}")
+               "h = 0.005; filled: fitted in-sample, open: fitted leave-one-out; grey: #295's held-out; green: this route; lines: bar 6e-5; vertical: fitted maximum")
+sq = np.sqrt
+xm0, ym = dg.axes(svg, X0, y, PW, PH, (0.0, 1.85), (-3.0e-4, 3.0e-4), "sqrt of the leverage L = a^T (A^T A)^-1 a", "M - predicted", xfmt=lambda v: f"{v:.1f}", yfmt=lambda v: f"{v:+.0e}")
+xm = lambda L: xm0(sq(L))             # noqa: E731  (the axis is sqrt(L): L = 0.39, 1, 2, 3 sit at 0.63, 1.0, 1.41, 1.73)
 for s_ in (+6e-5, -6e-5):
     svg.line(X0, ym(s_), X0 + PW, ym(s_), dg.SERIES[-1], 1)
 svg.line(X0, ym(0.0), X0 + PW, ym(0.0), "#9aa0a6", 1)
@@ -69,7 +71,7 @@ dg.legend(svg, X0 + PW, y - 10, [("B", "#9aa0a6"), ("delta scan", dg.SERIES[3]),
 
 y1 = y + PH + 80
 y = dg.caption(svg, 16, y1, "Where the members sit in the fit's design: rdot_th against gamma_1 at departure",
-               "h = 0.005; band: the fitted points' rdot_th range [-6.7e-4, +1.6e-3]; the new route lies below it at gamma_1 = 0.012, 0.048 and 0.075")
+               "h = 0.005; lines: the fitted points' rdot_th range [-6.7e-4, +1.6e-3]; the new route lies below it at gamma_1 = 0.012, 0.048 and 0.075")
 xm2, ym2 = dg.axes(svg, X0, y, PW, PH, (0.0, 0.085), (-3.2e-3, 2.2e-3), "gamma_1 at departure", "rdot_th at departure", xfmt=lambda v: f"{v:.2f}", yfmt=lambda v: f"{v * 1e3:+.1f}e-3")
 for s_ in (-6.7e-4, 1.6e-3):
     svg.line(X0, ym2(s_), X0 + PW, ym2(s_), "#c8ccd0", 1)

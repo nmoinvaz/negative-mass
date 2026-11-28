@@ -1,0 +1,10 @@
+post hoc, h = 0.005, frozen P4 (a, b, c) = (0.2296318924, 0.2834170383, 0.7657657062); c_eff = c + (M - P4) / (r_th rdot_th): the coefficient of rdot_th that removes the miss, a and b kept
+point  leverage  rdot_th     M - P4      (M - P4)/rdot_th   c_eff     c_eff/c    (M - P4)/leverage   (M - P4)/rms
+N1       0.070  -4.348e-04  -4.77e-07   +0.0011          0.7669    1.0014    -6.83e-06          -0.086
+N2       0.189  -4.177e-04  -2.15e-06   +0.0052          0.7709    1.0067    -1.14e-05          -0.072
+N3       0.328  +8.649e-04  +1.21e-06   +0.0014          0.7672    1.0018    +3.69e-06          +0.026
+X1       0.272  -1.130e-03  +9.00e-05   -0.0796          0.6856    0.8954    +3.31e-04          +1.393
+X2       1.975  -2.733e-03  +2.13e-04   -0.0779          0.6866    0.8966    +1.08e-04          +1.457
+X3       3.058  -2.439e-03  +1.98e-04   -0.0812          0.6833    0.8923    +6.47e-05          +0.949
+new members: (M - P4)/rdot_th = -0.0796, -0.0779, -0.0812; mean -0.0796, spread (max - min)/|mean| 0.041; c_eff/c = 0.895, 0.897, 0.892
+*post hoc: three points and one constant; a description, not a test. The in-sample errors of the fifteen fitted points are 5.5e-5 at most, so a coefficient c_eff 10 % below c is not seen in them.*
