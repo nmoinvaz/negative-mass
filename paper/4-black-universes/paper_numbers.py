@@ -391,6 +391,14 @@ check(t5 is not None and "[pass] T5:" in SM and "[pass] T4:" in SM, "#301's T4 a
 need(f"misses by ${sci(t5[1], d=2)}$ and ${sci(t5[2], d=2)}$ if $r_S$ is set to\n$1$", "#301: the wrong-r_S control at c = -1.5, -0.3")
 need("$M_{\\rm ADM}=-2cL^{3/2}/(3\\pi)$", "#301: the static member's mass at every c (ind301 J1)")
 
+# #302: the decaying partner and the log of the exact modes at S (notes/black_universe/horizon_basis_output.txt)
+HB = S.read("horizon_basis_output.txt")
+l1 = [float(x) for x in re.findall(r"-> ([0-9.]+) \(Y_N\(0\)", HB)]
+h3 = re.search(r"\[pass\] H3: .*?\(worst ([0-9.e+-]+);", HB)
+check(len(l1) == 8 and h3 is not None and "[pass] L1:" in HB and "[pass] L2:" in HB and "[pass] S1:" in HB, f"#302's S1, L1 (8 classes), L2, H3 ({len(l1)})")
+need(f"holds to ${sci(max(abs(x - 1) for x in l1), d=2)}$ on eight classes", "#302: the smoothness condition on evolved data (L1, worst Richardson ratio)")
+need(f"to ${sci(h3[1])}$ of the amplitude (8 classes, 8 random data)", "#302: the three modes on both horizons (H3)")
+
 # ---------------------------------------------------------------------------------------------------- placeholders and marks
 pend = re.findall(r"\\pending\{\\#(\d+)", TEX)
 needs = len(re.findall(r"% NEEDS #260", TEX))

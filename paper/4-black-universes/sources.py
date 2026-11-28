@@ -21,6 +21,7 @@ MUTATIONS = {
     "slope262": ("cminus1_mode_output.txt", "beta*  = 0.3140290188873", "beta*  = 0.3140290198873"),  # d(W/kappa)/dc, #262
     "c1theta": ("static_c1_output.txt", "Theta 7.4e-08", "Theta 9.4e-08"),                         # A1R, #259
     "rsone": ("static_c1_members_output.txt", "kappa c1 vs dM 5.31e-02 (fails)", "kappa c1 vs dM 6.31e-02 (fails)"),  # #301
+    "h3": ("horizon_basis_output.txt", "(worst 3.8e-08;", "(worst 4.8e-08;"),                     # #302
 }
 _mut = None
 

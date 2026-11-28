@@ -396,9 +396,13 @@ gauge $\delta\varphi=0$; on $\Hp$ at $c=-1$, $\rho=0$ and $Y=\delta r$.
   free.
 \item \emph{Gauge invariant.} At the area minimum $r_U=r_V=0$ on $\Hp$, so no shift of the horizon's position changes
   $\delta r$ there (Lemma~\ref{lem:horizon}).
-\item \emph{Regular.} The growing solution is $Y=c_2VR(\rho(\Pi))$, with $R$ the areal radius, analytic in $\Pi$: smooth across $S$ and into the
-  interior. A formal series at $S$ shows that the smooth solutions contain the two branches $Y\propto V$ and $Y\propto U$ and
-  otherwise only solutions with smooth $u$ (checked symbolically); the series at $W=\kappa$ has no logarithm.
+\item \emph{Regular data, singular mode.} The growing solution of the gauge-invariant $Y$ is $Y=c_2VR(\rho(\Pi))$, with $R$ the
+  areal radius, a function analytic in $\Pi$; a formal series at $S$ shows that the smooth solutions for $Y$ contain the two
+  branches $Y\propto V$ and $Y\propto U$ (checked symbolically). The perturbation with this $Y$ is not smooth at $S$, however:
+  every perturbation smooth at $S$ satisfies $\partial_s^2Y_N(0)=-F_\Pi(0)\,Y_N(0)$ on the slice $V+U=0$, which $Y=c_2VR$ violates,
+  so its scalar field carries $\partial_N\delta\varphi=-(\pi/\sqrt2)\,c_2\ln|s|$ there, in every gauge (derived and checked
+  symbolically; the condition holds to $3.45\times10^{-4}$ on eight classes of evolved smooth data). Smooth data with $c_2\ne0$ exist
+  (below); on $\Hp$ they follow the same law $c_1+c_2V$.
 \end{itemize}
 
 A second solver works in this chart, through $S$ and the interior, and evolves data on the rays $V=-0.05$ and $U=-2$.
@@ -463,6 +467,12 @@ whose vertex is the only singular point, and the event horizon of the asymptotic
 evidence). For $\beta>0$ the radius grows as $e^{Kv/2}$, no outgoing ray reaches the asymptotic end, and the trapped region,
 present for $c<-1$ at early $v$, closes at finite $v$. The family is not asymptotically flat for $\beta\ne0$ and linearizes to the solution that grows
 toward spatial infinity, not to the one that decays there, so it does not give the fate of asymptotically flat data.
+
+\paragraph{The decaying partner.} The time reverse of the growing solution is $Y=c_2'UR(\rho(\Pi))$ with $c_2'=\partial_U\delta r(S)$,
+and on the past horizon $H^-$ the law is $\delta r=c_1+c_2'U$. For evolved smooth data the three numbers $c_1$, $c_2$ and $c_2'$, read
+on the slice through $S$, reproduce $\delta r$ on both horizons to $3.8\times10^{-8}$ of the amplitude (8 classes, 8 random data). The
+two exact modes are singular at $S$ as perturbations (above), so smooth data are $c_1$ times the static mode, plus $c_2VR+c_2'UR$, plus
+a remainder that vanishes on both horizons; whether the remainder decays is open (\texttt{notes/black\_universe/horizon\_basis.md}).
 
 \paragraph{The static coefficient.} The constant $c_1=\delta r(S)$ of the horizon law is the first-order change of the area of
 $S$, $\delta A_S=8\pi r_Sc_1$ with $r_S=R(\rho_h)$, which is $1$ at $c=-1$. It is the coefficient of an exact static solution, the member $\beta=0$ of this family:
