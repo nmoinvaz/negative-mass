@@ -36,6 +36,7 @@ MUTATIONS = {
     "k_D4": ("expansion", "1/H linear in tau: k = 2.0000, tau_s = 17.8902", "1/H linear in tau: k = 2.0001, tau_s = 17.8902"),
     "settled_G": ("settled_g", "delta = 1e-8: 0.235548", "delta = 1e-8: 0.235648"),
     "member_M12": ("member", "      12  0.237622   0.047732", "      12  0.237722   0.047732"),
+    "spectrum_zero": ("spectrum", "zero at W = -2.61874 +0.15269i", "zero at W = -1.61874 +0.15269i"),
     "slope_S6": ("check", "ind40 0.461705", "ind40 0.461805"),
 }
 
@@ -60,6 +61,7 @@ SRC = {
     "scaling": read(EV, "throat_scaling_output.txt"),
     "massb": read(EV, "settled_mass_b_output.txt"),
     "member": read(EV, "settled_mass_member_output.txt"),
+    "spectrum": read(EV, "ellis_spectrum_output.txt"),
     "expansion": read(EV, "expansion_output.txt"),
     "plateau": read(EV, "constraint_plateau_output.txt"),
     "derive": read(EV, "derive_output.txt"),
@@ -550,6 +552,18 @@ tdv = {int(e): float(t) for e, t in re.findall(r"e = (\d+): T [0-9./]+, t_dep ([
 td = [round(tdv[e + 1] - tdv[e], 3) for e in range(7, 12)]
 check(all(f"{x:.1f}" == "2.0" for x in td), f"t_dep gains 2.0 per decade at h = 0.005 (delta = 1e-7 ... 1e-12): {td}")
 printed("moves the departure by $2.0$ in $t$", "t_dep per decade")
+
+# #272: the linear spectrum beyond the unstable mode (notes/wormhole_evolution/ellis_spectrum_output.txt)
+so = SRC["spectrum"]
+s2 = re.findall(r"^PASS    S2-D[45]-(?:even|odd): no zero with Re W in \[-1\.4, -0\.2\]", so, re.M)
+check(len(s2) == 4, f"#272: S2 passes in four of four sectors ({len(s2)})")
+zs = [(float(a), float(b)) for a, b in re.findall(r"zero at W = ([-0-9.]+) [+0-9.]+i; over ray angle and far point \(n = \d+\): spread ([0-9.e+-]+)", so)]
+conf = [-a for a, sp_ in zs if sp_ <= 1e-3]
+check(len(conf) == 4, f"#272: four confirmed zeros (spread <= 1e-3): {conf}")
+printed(f"its nearest zeros decay at rates ${min(conf):.2f}$", "the slowest confirmed zero")
+t7 = {D: [float(x) for x in re.search(rf"T7-D{D}: .*?rate x t at t = 15, 20, 25: \[([^\]]+)\]", so)[1].split()] for D in (4, 5)}
+printed(f"the speed falls only as $t^{{-{sum(t7[5]) / 3:.2f}}}$", "D = 5 tail exponent, mean of rate x t at t = 15, 20, 25")
+printed(f"a speed falling as $t^{{-{sum(t7[4]) / 3:.1f}}}$", "D = 4 tail exponent, mean of rate x t")
 
 print(f"\n{count} checks, {bad} failed; mutation {OPT.mutate}")
 sys.exit(1 if bad else 0)
