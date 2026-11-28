@@ -115,6 +115,7 @@ The planted speed goes through `member_at` and `speed_at` with an error of 1.4e-
 - *Shown (numerical evidence):* at D = 4, δ = 1e-8, six members of family G reached by two routes other than B (the normal pulse's width and centre) with γ₁ = 0.012, 0.048, 0.075 differ from family B at the same γ₁ in r_th and ṙ_th, and the settled mass at
   them is not given by #266's relation: P2 overestimates by up to 7.6e-4 (13 times the bar), all six of one sign. With the throat's speed added (P3, coefficients fixed before the runs) the six are predicted to 7.1e-5 (five to 4.7e-5) instead.
 - *Not shown:* that M is a function of (γ₁, r_th, ṙ_th) alone (P3 misses W3 by 1.1e-5 and its residual is correlated with r_th's separation from family B); that ṙ_th, and not another quantity that moves with it along these routes, is what carries the rest
+- *Tested in #295* ([settled_mass_route3.md](settled_mass_route3.md)): a refit over the fifteen members (four B, five δ, the six of this note), its coefficients (0.2296, 0.2834, 0.7658) frozen before the runs, predicts three members of a third route (normal pulse width 0.75, centre 3.5; γ₁ = 0.012, 0.048, 0.075) to 2.2e-6, against the bar 6e-5. The new members lie between W's and C's; outside the fitted data the relation is not tested.
   (the speed's coefficient is one of three fitted parameters); any dependence on ε, the definition of departure (#266: 1e-4 level); other pulse shapes, the ghost pulse changed, δ ≠ 1e-8 on these routes; D = 5, 6 (#246); γ₁ above 0.075 (on family B the stall ends near B = 0.16, γ₁ ≈ 0.12).
 - Not a failure of the chain: the chain, its first law and its planted cases are #41's and pass at every point (RC4 to 1.3e-4, RC8 settled, RH 6e-6 to 1.4e-5), and the reproduction of #266 is exact.
 
@@ -157,7 +158,7 @@ and the bullet "It is not a function of the member's $(\gamma_1,r_{\rm th})$ at 
 
 ## Recommended tasks
 
-1. *A third route, blind, with P3 refitted first.* What: refit y = a γ₁ + b γ₁² + c ṙ_th over the fifteen points now available (the four B of #266, the five δ of #267, the six of this note), fix (a, b, c) and a bar, then reach γ₁ = 0.012, 0.048, 0.075 by a route that
+1. *Done in #295.* *A third route, blind, with P3 refitted first.* What: refit y = a γ₁ + b γ₁² + c ṙ_th over the fifteen points now available (the four B of #266, the five δ of #267, the six of this note), fix (a, b, c) and a bar, then reach γ₁ = 0.012, 0.048, 0.075 by a route that
    changes both the normal pulse's width and centre (or its pulse kind) and predict the settled mass. Why: P3 misses W3 by 1.1e-5, and its residual follows r_th's separation from family B's; a refit with a fixed form and a held-out route says whether a function of (γ₁, r_th, ṙ_th) exists at 6e-5. Acceptance (can fail):
    every new member within 6e-5 of the frozen refit, with SEP as here. Depends on: this note and the coordinator's ruling on the refit's coefficients.
 2. *The definition of departure.* What: the six points and #266's and #267's runs read at ε = 1e-2 (the stored rows reach it), the relations refitted at ε = 1e-2, and P3's form tested there. Why: #266 found its relation depends on ε at the 1e-4 level, the size of this note's miss.

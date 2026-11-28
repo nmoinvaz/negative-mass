@@ -163,3 +163,18 @@ Recommended task 1: "done in #295".
 raw `negative-mass-raw/I295-mac` (`README.md` with the frozen refit, the route's selection rule, the criteria, the development findings and the mutation table; `refit_frozen.log`; `runs/<tag>/h<h>/{pstar,chain,member,logs}` the six runs of record,
 `runs_rep/` the W3 reproduction, `runs_rn/` the second realization, `mut/` the 30 mutated analyses of record, `mut_aborted_1/` a stopped first run of them, `dev/` the tuning, the development set, its analysis and mutations, `scripts/`, `jobs_*.txt`,
 `analyze_record.log` (final) and `analyze_record.1.log`, and the figure).
+
+## Coordinator's review
+
+Merged at f0151db. Review folder `negative-mass-raw/I295-mac-review` at 10458731, criteria committed (3f6a8842) before the first run of
+`ind295.py`. The raw commits are in the declared order: the refit frozen (305e5fee), then the criteria (6bdd3c69), then the runs.
+
+- **Rerun on the Mac** from f9e5998: the N3 point at h = 0.005 is bitwise equal to the runner's, and `analyze` equals the output
+  of record (26 checks, none failed).
+- **ind295**, 4 of 4. Its own readings (ind283's reader: member, plateau, ṙ_th by a different estimator) and its own fit over
+  the fifteen points give (0.229631, 0.283430, 0.765761), within 1.3e-5 of the frozen coefficients. With the frozen ones the
+  three new members are within 2.1e-6, and within 7.5e-9 of the note's residuals. The three new points lie inside the fitted
+  points' bounding box in (γ₁, r_th, ṙ_th), so this is an interpolation test, as the note says. `no-speed` fires. `drop-routes`
+  does not, because K1's bars were too loose; the nine-point fit also predicts the three within 2.2e-5.
+- Applied: `settled_mass_route.md`, `critical_ghost.md` §1.3, and Paper V (`paper_numbers.py` 259 of 259). The check caught
+  the proposal's "4.6e-4" for the no-speed miss; the output's value is 4.55e-4.

@@ -339,6 +339,13 @@ apparent-horizon mass with a second code to 1.2e-4 up to e^{−f} ≈ 12):
     7.1e-5: five within 6e-5, and W3 misses by 1.1e-5.
   - So the settled mass is not a function of (γ₁, r_th) at departure. The throat's speed carries most of the difference; that
     (γ₁, r_th, ṙ_th) suffice is a *conjecture*, not supported at the declared bar.
+- *Update from #295* (`wormhole_evolution/settled_mass_route3.md`; *numerical evidence*):
+  - Refitting y = M/r_th − M₀ = a γ₁ + b γ₁² + c ṙ_th over the fifteen members of four routes (B, the δ scan, W, C) at h = 0.005
+    gives (a, b, c) = (0.2296, 0.2834, 0.7658). The fit's errors reach 5.5e-5 in sample and 7.9e-5 leave-one-out.
+  - Frozen before any run, it predicts three members of a third route (the normal pulse's width 0.75 at centre 3.5, γ₁ = 0.012,
+    0.048, 0.075) to 2.2e-6, against the declared bar of 6e-5. The same fit without the speed misses by up to 4.55e-4.
+  - The new members lie between routes W and C, inside the fitted data. So (γ₁, r_th, ṙ_th) suffice between the routes fitted,
+    at the declared bar; outside them it is a *conjecture*.
 - *Update from #246* (`wormhole_evolution/settled_mass_d56.md`; *numerical evidence*):
   - The same chain at D = 5 and 6 (M = r^{n−1}/2 on the apparent horizon; second order at three h; a planted Tangherlini recovered
     to 3e-6 to 6e-6; to e^{−f} = 4.0e8 on the horizon) gives for the symmetric family S a settled mass of 0.14587 a²
