@@ -6,8 +6,8 @@ description = "Polar matching determinant D(gamma) of phase2/nonradial/polar_sol
 publish = false
 
 [dependencies]
-multishoot = "=4.2.0"
-multidouble = "5.1.0"
+multishoot = "=5.0.0"
+multidouble = "6.1.0"
 
 [features]
 # the k-plane stepper of multishoot::plane (negative-mass #189) in place of plane.rs's own integrate and gram_schmidt
@@ -15,13 +15,6 @@ lib_plane = []
 # the complex lane Cx<T> (a pair of lane values), D at complex s and the planted complex systems (negative-mass #188);
 # exclusive with lib_plane until the library's plane stepper takes complex lanes
 complex = []
-
-# multidouble main at ba0ad101ce76: the series module (mullow, Relaxed) of multidouble#186, unreleased.
-# multishoot's requirement "5.1.0" accepts it, so both resolve to this one revision.
-[patch.crates-io]
-multidouble = { git = "https://github.com/nmoinvaz/multidouble", rev = "ba0ad101ce7661f45153bc557dcb093d4dd41893" }
-# multishoot feat/plane-stepper (the PR of #189): 4.2.0 plus the module `plane`, the version the dependency names
-multishoot = { git = "https://github.com/nmoinvaz/multishoot", rev = "a880903331a43b6f49694cc9222acce8ebd34b37" }
 
 [profile.release]
 opt-level = 3
