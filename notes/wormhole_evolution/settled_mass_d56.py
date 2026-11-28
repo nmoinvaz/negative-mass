@@ -85,7 +85,8 @@ def pstar_cmd(n, fam, k, out):
 # --------------------------------------------------------------------------------------------------------------------
 # the chain's constants: #41's, with D-dependent entries declared in the raw README
 # --------------------------------------------------------------------------------------------------------------------
-CRITD = dict(F1=1.5, K=20, W1=2.4, rcut=0.05, tol=1e-2, dxp=12.0, dm=3.0)       # #41's declared chain; development runs may change entries per D
+CRITD = dict(F1=1.5, K=28, W1=2.4, rcut=0.05, tol=1e-2, dxp=14.0, dm=3.0)       # #41's chain with K = 28 (e^{-f} = 4.0e8) and dxp = 14 at D = 5, 6 (README: the x+ span after formation shrinks with D)
+K41 = 20                                                                            # #41's limit: e^{-f} = F1 2^20 = 1 572 864, read from the same series (it is a bit-identical prefix)
 
 
 def nc_of(h, W1=None):
@@ -141,8 +142,13 @@ def load_run(raw, tag):
     return dict(np.load(os.path.join(p, "series.npz"))), json.load(open(os.path.join(p, "summary.json")))
 
 
-def tag_of(n, fam, k, delta):
-    return f"D{n + 2}_{fam}_k{k}_d{delta:g}"
+def dstr(delta):
+    """delta as the lane script writes it: 1e-6, 1e-8."""
+    return f"{delta:g}".replace("e-0", "e-")
+
+
+def tag_of(n, fam, k, delta, suffix=""):
+    return f"D{n + 2}_{fam}_k{k}_d{dstr(delta)}{suffix}"
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -223,7 +229,7 @@ def tang_planted(n, h, lam, kp, xh, Nc, F1=None, K=None, xs=3.0):
 # --------------------------------------------------------------------------------------------------------------------
 # criteria and constants (declared in negative-mass-raw I246-dh610/README.md before the runs of record)
 # --------------------------------------------------------------------------------------------------------------------
-DECLARED = dict(F1=1.5, K=20, W1=2.4, rcut=0.05, tol=1e-2, dxp=12.0, dm=3.0)       # #41's chain, unchanged at D = 5, 6 (limit e^{-f} = F1 2^K = 1 572 864)
+DECLARED = dict(F1=1.5, K=28, W1=2.4, rcut=0.05, tol=1e-2, dxp=14.0, dm=3.0)       # #41's chain with K = 28 and dxp = 14 (limit e^{-f} = F1 2^K = 4.03e8; #41's 1 572 864 is read from the same series)
 DELTAS = (1e-6, 1e-8)
 WINDOWS = smg.WINDOWS                                                              # x+ - x+_f in [0, 1.5], [1.5, 3], [3, end]
 BAND_P, BAND_R = sm.BAND_P, sm.BAND_R                                              # planted (1.75, 2.25), real series (1.5, 2.5)
@@ -402,12 +408,47 @@ def nks(n, fam):
     return 3
 
 
+def at_limit(s, Fmax):
+    """The series up to the last column with e^{-f} < Fmax (the run's own convention: the stop column belongs to the next level). A run to a larger limit
+    contains the run to Fmax as a bit-identical prefix (check PFX)."""
+    over = s["F"] >= Fmax
+    idx = int(np.argmax(over)) if over.any() else len(s["F"])
+    return {k: v[:idx] for k, v in s.items()}
+
+
+def limit_checks(n, fam, S, I, hs, ks, Fmax, sfx, label):
+    """RC5, RC6, RC8 at one limit (sfx '' = this driver's K = 28; 'a' = #41's 1.57e6, read from the same series). Returns the late-time summaries."""
+    D = n + 2
+    ok5, det = True, []
+    for key, s in S.items():
+        fine = np.allclose(np.diff(s["xp"]), hs[key[0]], atol=1e-9)
+        okk = 0.5 * Fmax <= s["F"][-1] < Fmax and s["edge"].min() >= I[key]["Nc"] / 8 and fine and I[key]["status"] == "limit"
+        ok5 &= okk
+        det.append(f"k={key[0]},d={key[1]:g}: F_end {s['F'][-1]:.3g}, edge {s['edge'].min():.0f}/{I[key]['Nc']}")
+    check(cid("RC5" + sfx, n, fam), f"D = {D}, {fam}, limit {label}: every run ends at the limit (e^-f on the horizon, {0.5 * Fmax:.4g} <= F_end < {Fmax:.4g}), horizon at least Nc/8 cells from the box edges, no gaps", ok5, "; ".join(det))
+    print(f"\n== D = {D}, {fam}, limit {label}: second-order convergence of M_AH(x+): max |M_h - M_h/2| over windows of x+ - x+_f (cubic splines), h = {tuple(hs[k] for k in ks)}")
+    ok6 = True
+    for dl in DELTAS:
+        rows = sm.band_orders({hs[k]: S[(k, dl)] for k in ks}, tuple(hs[k] for k in ks), WINDOWS, dl)
+        for a_, b_, Ee, o in rows:
+            good = all(BAND_R[0] <= x <= BAND_R[1] for x in o)
+            ok6 &= good
+            print(f"    RC6{sfx} D = {D}, {fam}, delta = {dl:g}, x+ - x+_f in [{a_:g}, {b_:g}]: E12 {Ee[0]:.2e}, E23 {Ee[1]:.2e}, order {o[0]:.2f} {'ok' if good else 'OUT'}")
+    check(cid("RC6" + sfx, n, fam), f"D = {D}, {fam}, limit {label}: M_AH(x+) converges at second order at the three h {tuple(hs[k] for k in ks)}, three windows, both deltas (observed order in {BAND_R})", ok6)
+    dr = {k: summary_n(s, hs[k[0]], n) for k, s in S.items()}
+    check(cid("RC8" + sfx, n, fam), f"D = {D}, {fam}, limit {label}: M_AH has settled at the limit: plateau mean over the last 1.0 of x+ differs from the previous 1.0 by <= {BAR['rc8_plat']:g} and the mean horizon flux (both fields) over the last 0.5 is <= {BAR['rc8_flux']:g}, every run",
+          all(abs(q["dplat"]) <= BAR["rc8_plat"] and q["flux05"] <= BAR["rc8_flux"] for q in dr.values()),
+          "plateau change " + ", ".join(f"{q['dplat']:+.1e}" for q in dr.values()) + "; flux " + ", ".join(f"{q['flux05']:.1e}" for q in dr.values()))
+    return dr
+
+
 def analyze_case(raw, n, fam):
-    """RC1 to RC8, DEP, TRK for one (n, fam): the three h of the record, both delta. Returns the data for the reports."""
+    """RC1 to RC4, RC5 to RC8 at both limits, RC7 or DEP, TRK for one (n, fam): the three h of the record, both delta. Returns the data for the reports."""
     D = n + 2
     ks = list(range(nks(n, fam)))
     hs = tuple(th.CRIT["H"][n])
-    Fmax = CRITD["F1"] * 2.0 ** CRITD["K"]
+    F28 = CRITD["F1"] * 2.0 ** CRITD["K"]
+    F20 = CRITD["F1"] * 2.0 ** K41
     X = th.CRIT["X"][fam][n]
     ok1, det1 = True, []
     ref = {}
@@ -422,7 +463,7 @@ def analyze_case(raw, n, fam):
         okk &= pts == [-1, 1]
         ok1 &= okk
         det1.append(f"k={k} h={hs[k]:g}: hi-lo {pj['hi'] - pj['lo']:.1e}{' (' + str(pj['stopped']) + ')' if pj['stopped'] else ''}, fates {pts}")
-    check(cid("RC1", n, fam), f"D = {D}, {fam}: p*_h (#40's, or bisected here at G, D = 6, h = 0.00125) with hi - lo <= {BAR['bracket']:g}, h as the job takes it, fate(p*_h -/+ 1e-10) = collapse/expansion on this machine", ok1, "; ".join(det1))
+    check(cid("RC1", n, fam), f"D = {D}, {fam}: p*_h (#40's, or bisected here for G at D = 6, h = 0.00125) with hi - lo <= {BAR['bracket']:g}, h as the job takes it, fate(p*_h -/+ 1e-10) = collapse/expansion on this machine", ok1, "; ".join(det1))
     S, I, fail = {}, {}, {}
     for dl in DELTAS:
         for k in ks:
@@ -434,7 +475,7 @@ def analyze_case(raw, n, fam):
                 fail[(k, dl)] = repr(e)
                 print(f"    run D = {D}, {fam}, k = {k}, delta = {dl:g} failed: {e!r}")
     if fail:
-        for b in ("RC2", "RC3", "RC4", "RC5", "RC6", "RC7", "RC8"):
+        for b in ("RC2", "RC3", "RC4", "RC5", "RC6", "RC8", "RC5a", "RC6a", "RC8a", "RC7" if fam == "S" else "DEP"):
             check(cid(b, n, fam), "a run failed", False, "; ".join(f"{kk}: {v}" for kk, v in fail.items()))
         return None
     kref = [k for k in ks if ref[k] is not None]
@@ -457,41 +498,55 @@ def analyze_case(raw, n, fam):
           f"max relative difference {worst:.2e} over all runs (bar {BAR['rc4']:g})")
     for p_ in parts:
         print("    " + p_)
-    ok5, det = True, []
-    for key, s in S.items():
-        fine = np.allclose(np.diff(s["xp"]), hs[key[0]], atol=1e-9)
-        ok5 &= I[key]["status"] == "limit" and 0.5 * Fmax <= s["F"][-1] < Fmax and s["edge"].min() >= I[key]["Nc"] / 8 and fine
-        det.append(f"k={key[0]},d={key[1]:g}: {I[key]['status']}, F_end {s['F'][-1]:.0f}, edge {s['edge'].min():.0f}/{I[key]['Nc']}")
-    check(cid("RC5", n, fam), f"D = {D}, {fam}: every run ends at the declared limit (e^-f on the horizon, {0.5 * Fmax:g} <= F_end < {Fmax:g}), horizon at least Nc/8 cells from the box edges, no gaps", ok5, "; ".join(det))
-    print(f"\n== D = {D}, {fam}: second-order convergence of M_AH(x+): max |M_h - M_h/2| over windows of x+ - x+_f (cubic splines), h = {hs}")
-    ok6 = True
-    E = {}
-    for dl in DELTAS:
-        rows = sm.band_orders({hs[k]: S[(k, dl)] for k in ks}, tuple(hs[k] for k in ks), WINDOWS, dl)
-        for a_, b_, Ee, o in rows:
-            good = all(BAND_R[0] <= x <= BAND_R[1] for x in o)
-            ok6 &= good
-            E[(dl, a_)] = Ee
-            print(f"    RC6 D = {D}, {fam}, delta = {dl:g}, x+ - x+_f in [{a_:g}, {b_:g}]: E12 {Ee[0]:.2e}, E23 {Ee[1]:.2e}, order {o[0]:.2f} {'ok' if good else 'OUT'}")
-    check(cid("RC6", n, fam), f"D = {D}, {fam}: M_AH(x+) converges at second order at the three h {hs}, three windows, both deltas (observed order in {BAND_R})", ok6)
-    dr = {k: summary_n(s, hs[k[0]], n) for k, s in S.items()}
-    check(cid("RC8", n, fam), f"D = {D}, {fam}: M_AH has settled at the limit: plateau mean over the last 1.0 of x+ differs from the previous 1.0 by <= {BAR['rc8_plat']:g} and the mean horizon flux (both fields) over the last 0.5 is <= {BAR['rc8_flux']:g}, every run",
-          all(abs(q["dplat"]) <= BAR["rc8_plat"] and q["flux05"] <= BAR["rc8_flux"] for q in dr.values()),
-          "plateau change " + ", ".join(f"{q['dplat']:+.1e}" for q in dr.values()) + "; flux " + ", ".join(f"{q['flux05']:.1e}" for q in dr.values()))
+    S20 = {key: at_limit(s, F20) for key, s in S.items()}
+    dr = limit_checks(n, fam, S, I, hs, ks, F28, "", f"e^-f = {F28:.3g} (K = {CRITD['K']})")
+    dr20 = limit_checks(n, fam, S20, I, hs, ks, F20, "a", f"e^-f = {F20:.3g} (#41's)")
+    kf = ks[-1]
     dd = [abs(dr[(k, 1e-6)]["plat1"] - dr[(k, 1e-8)]["plat1"]) for k in ks]
+    ordd = [math.log2(dd[i] / dd[i + 1]) if dd[i] > 0 and dd[i + 1] > 0 else float("nan") for i in range(len(ks) - 1)]
+    print(f"    delta difference |plat(1e-6) - plat(1e-8)| at the three h {[f'{x:.2e}' for x in dd]}, observed orders {[round(x, 2) for x in ordd]}")
     if fam == "S":
-        check(cid("RC7", n, fam), f"D = {D}, S: the settled value does not depend on delta: plateau means over the last 1.0 at 1e-6 and 1e-8 agree", max(dd) <= BAR["rc7"], "|dM| " + ", ".join(f"{x:.1e}" for x in dd) + f" (bar {BAR['rc7']:g})")
+        check(cid("RC7", n, fam), f"D = {D}, S: the settled value does not depend on delta: plateau means over the last 1.0 at 1e-6 and 1e-8 agree at the finest h", dd[-1] <= BAR["rc7"],
+              "|dM| " + ", ".join(f"{x:.1e}" for x in dd) + f" at the three h, observed orders {[round(x, 2) for x in ordd]} (bar {BAR['rc7']:g} at the finest h)")
     else:
         d_f, d_p = dd[-1], dd[-2]
         check(cid("DEP", n, fam), f"D = {D}, G: the dependence on delta, plateau(1e-8) - plateau(1e-6), is the same at the two finest h to {BAR['dep']:.0%} (a property of the solution, not of the resolution), or both are below {BAR['rc7']:g}",
               (abs(d_f - d_p) <= BAR["dep"] * d_f) or (max(d_f, d_p) <= BAR["rc7"]),
-              "|dM| " + ", ".join(f"{x:.2e}" for x in dd) + f" at k = {ks}; signed at the finest h {dr[(ks[-1], 1e-8)]['plat1'] - dr[(ks[-1], 1e-6)]['plat1']:+.2e}")
+              "|dM| " + ", ".join(f"{x:.2e}" for x in dd) + f" at the three h; signed at the finest h {dr[(kf, 1e-8)]['plat1'] - dr[(kf, 1e-6)]['plat1']:+.2e}")
     if fam == "G":
         trk = min(float(np.max(np.abs(s["phip1"]))) for s in S.values())
         wor = max(float(np.max(np.abs(s["phip0_re"] - s["phip"]))) / max(float(np.max(np.abs(s["phip"]))), 1e-300) for s in S.values())
         check(cid("TRK", n, fam), f"D = {D}, G: the track wrapper's recomputed phi_+ of the ghost equals settled_mass.track's (relative 1e-12) and the normal field's phi_+ is nonzero on the horizon", wor <= 1e-12 and trk > 0,
               f"max relative difference {wor:.1e}, smallest max|phi_+(normal)| {trk:.2e}")
-    return dict(S=S, I=I, dr=dr, hs=hs, ks=ks, ref=ref, E=E)
+    return dict(S=S, I=I, dr=dr, dr20=dr20, S20=S20, hs=hs, ks=ks, ref=ref)
+
+
+def prefix_check(raw):
+    """PFX: a run to a smaller limit is a bit-identical prefix of the run to K = 28 (the case D = 5, 6 x S, G, k = 0, delta = 1e-8): the K = 20 and K = 24 runs
+    (same dxp) against the K = 28 series cut at their limits (M, x+, x-, r, e^-f equal bit for bit), and the end values M_end of the three."""
+    rows, ok, found = [], True, 0
+    for n in NS:
+        for fam in FAMS:
+            try:
+                s28, _ = load_run(raw, tag_of(n, fam, 0, 1e-8))
+            except Exception:
+                continue
+            ends = [("28", float(s28["M"][-1]))]
+            for K in (20, 24):
+                try:
+                    sk, _ = load_run(raw, tag_of(n, fam, 0, 1e-8, f"_K{K}"))
+                except Exception:
+                    ok = False
+                    rows.append(f"D = {n + 2} {fam} K = {K}: run missing")
+                    continue
+                found += 1
+                cut = at_limit(s28, CRITD["F1"] * 2.0 ** K)
+                same = all(np.array_equal(cut[q], sk[q]) for q in ("M", "xp", "xm", "r", "F"))
+                ok &= same
+                ends.append((str(K), float(sk["M"][-1])))
+                rows.append(f"D = {n + 2} {fam} K = {K}: {len(sk['M'])} columns, bit-identical to the K = 28 series cut at F < {CRITD['F1'] * 2.0 ** K:.4g}: {same}")
+            print(f"    M_end at the limits K = 20, 24, 28: D = {n + 2}, {fam}: " + ", ".join(f"K = {K}: {m:.6f}" for K, m in sorted(ends)))
+    check("PFX", "a run to a smaller limit (K = 20, 24) equals the K = 28 series cut at its limit bit for bit (M, x+, x-, r, e^-f), D = 5, 6, S and G, h = 0.00707 / 0.005, delta = 1e-8", ok and found > 0, "; ".join(rows))
 
 
 # --------------------------------------------------------------------------------------------------------------------
@@ -541,6 +596,8 @@ def compare_gs(n, AS, AG):
     print(f"  S: plateau mean over the last 1.0 of x+ {eS['plat']:.6f} (r_AH = {(2 * eS['plat']) ** (1.0 / (n - 1)):.5f}); h: finest pair {eS['Bh']:.2e}; delta: |plat(1e-6) - plat(1e-8)| {eS['Bd']:.2e}; Richardson {eS['rich']:.6f}; spread over the three h {eS['spread']:.2e}")
     print(f"  G: plateau mean {eG['plat']:.6f} (r_AH = {(2 * eG['plat']) ** (1.0 / (n - 1)):.5f}); h: finest pair {eG['Bh']:.2e}; delta: |plat(1e-6) - plat(1e-8)| {eG['Bd']:.2e}; Richardson {eG['rich']:.6f}; spread over the three h {eG['spread']:.2e}")
     print(f"  bar (declared as #253's): h {eG['Bh']:.2e} + delta {eG['Bd']:.2e} + machine {BAR['machine']:.0e} = {bar:.2e}; G - S = {dM:+.3e} (Richardson {eG['rich'] - eS['rich']:+.3e}); G/S = {eG['plat'] / eS['plat']:.4f}")
+    d20 = {fm: A_["dr20"][(A_["ks"][-1], 1e-8)]["plat1"] for fm, A_ in (("S", AS), ("G", AG))}
+    print(f"  at #41's limit (e^-f = 1.57e6, same series cut): S {d20['S']:.6f}, G {d20['G']:.6f}, G - S {d20['G'] - d20['S']:+.3e}")
     print(f"  VERDICT D = {D}: G's settled mass {'equals' if verdict else 'DIFFERS FROM'} S's: |G - S| = {abs(dM):.2e} {'<=' if verdict else '>'} bar {bar:.2e}")
     pb = 3e-5
     check(cid("CMPT", n), f"D = {D}: the comparison on planted offsets: half the bar is 'equal', three times the bar is 'differs' (the comparison can fail)",
@@ -566,17 +623,18 @@ def print_series(n, fam, A):
 
 
 def late_table(n, fam, A):
-    print(f"\n== Late-time values, D = {n + 2}, {fam} (reports)")
-    print("  delta   h        M_end     plat(1.0)  range(1.0) plat(0.5)  drift(1.0)  plat change  flux(0.5)")
-    for dl in DELTAS:
-        for k in A["ks"]:
-            q = A["dr"][(k, dl)]
-            print(f"  {dl:6g} {A['hs'][k]:9g}  {q['M_end']:.6f}  {q['plat1']:.6f}  {q['rng1']:.1e}  {q['plat0.5']:.6f}  {q['drift1']:+.2e}  {q['dplat']:+.2e}  {q['flux05']:.2e}")
-    for dl in DELTAS:
-        p = [A["dr"][(k, dl)]["plat1"] for k in A["ks"]]
-        a = [A["dr"][(k, dl)]["M_end"] for k in A["ks"]]
-        print(f"  delta = {dl:g}: plateau(1.0) {[round(x, 6) for x in p]}, differences {p[0] - p[1]:+.2e}, {p[1] - p[2]:+.2e}, Richardson (second order) {p[2] - (p[1] - p[2]) / 3:.6f}; "
-              f"M_end {[round(x, 6) for x in a]}, Richardson {a[2] - (a[1] - a[2]) / 3:.6f}")
+    for key, lab in (("dr", f"limit e^-f = {CRITD['F1'] * 2.0 ** CRITD['K']:.3g} (K = {CRITD['K']}, the quoted value)"), ("dr20", f"limit e^-f = {CRITD['F1'] * 2.0 ** K41:.3g} (#41's, same series cut)")):
+        print(f"\n== Late-time values, D = {n + 2}, {fam}, {lab} (reports)")
+        print("  delta   h        M_end     plat(1.0)  range(1.0) plat(0.5)  drift(1.0)  plat change  flux(0.5)")
+        for dl in DELTAS:
+            for k in A["ks"]:
+                q = A[key][(k, dl)]
+                print(f"  {dl:6g} {A['hs'][k]:9g}  {q['M_end']:.6f}  {q['plat1']:.6f}  {q['rng1']:.1e}  {q['plat0.5']:.6f}  {q['drift1']:+.2e}  {q['dplat']:+.2e}  {q['flux05']:.2e}")
+        for dl in DELTAS:
+            p = [A[key][(k, dl)]["plat1"] for k in A["ks"]]
+            a = [A[key][(k, dl)]["M_end"] for k in A["ks"]]
+            print(f"  delta = {dl:g}: plateau(1.0) {[round(x, 6) for x in p]}, differences {p[0] - p[1]:+.2e}, {p[1] - p[2]:+.2e}, Richardson (second order) {p[2] - (p[1] - p[2]) / 3:.6f}; "
+                  f"M_end {[round(x, 6) for x in a]}, Richardson {a[2] - (a[1] - a[2]) / 3:.6f}")
 
 
 def st17_table(cases):
@@ -672,6 +730,9 @@ def analyze_cmd(raw, cases=None, planted_only=False, skip=()):
             level0_identity(n, fam, raw)
         except Exception as e:
             check(cid("L0ID", n, fam), "level 0 against dn.evolve", False, "failed: " + repr(e))
+    if "pfx" not in skip:
+        print("\n== Runs to a smaller limit against the run to K = 28")
+        prefix_check(raw)
     data = {}
     for (n, fam) in cases:
         print(f"\n== D = {n + 2}, family {fam}: p*_h, runs and checks")
