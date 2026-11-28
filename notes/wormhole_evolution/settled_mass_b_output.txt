@@ -1,0 +1,311 @@
+settled_mass_b.py analyze {'raw': '/Users/nathan/Source/negative-mass-raw/I266-mac'}: numba 0.68.1, numpy 2.5.4, python 3.14.7, Nathans-MacBook-Air-M5-3.local, mutation None, 2026-11-27 19:19:03
+== Runs read from /Users/nathan/Source/negative-mass-raw/I266-mac/runs: 21 of 21 (tag, h) complete
+[pass] CFG: settled_mass.CRIT (F1, K, W1, rcut, tol, dxp, dm) equal #41's declared chain, X = 28 for G and O, threshold's G_B = 0.1 at import
+[pass] RUNS: every (member, h) has its pstar, chain and member output
+[pass] RUNS-ph: POST HOC, gates nothing (B = 0.125 and/or h = 0.02): every (member, h) has its pstar, chain and member output
+
+== Planted cases
+    PMEM g1 0 h 0.01: err g1 3.1e-16, r_th 0.0e+00, m+- 4.1e-11
+    PMEM g1 0 h 0.005: err g1 6.4e-16, r_th 1.6e-10, m+- 4.1e-11
+    PMEM g1 0.00293 h 0.01: err g1 2.8e-07, r_th 1.9e-14, m+- 2.9e-07
+    PMEM g1 0.00293 h 0.005: err g1 2.4e-08, r_th 2.9e-10, m+- 2.5e-08
+    PMEM g1 0.0483 h 0.01: err g1 5.5e-07, r_th 5.2e-12, m+- 6.3e-07
+    PMEM g1 0.0483 h 0.005: err g1 1.8e-07, r_th 2.3e-09, m+- 2.1e-07
+    PMEM g1 0.0755 h 0.01: err g1 5.8e-08, r_th 1.3e-11, m+- 8.5e-08
+    PMEM g1 0.0755 h 0.005: err g1 2.6e-07, r_th 3.5e-09, m+- 3.1e-07
+    PMEM g1 0.3 h 0.01: err g1 9.7e-07, r_th 2.1e-10, m+- 1.6e-06
+    PMEM g1 0.3 h 0.005: err g1 5.9e-07, r_th 1.4e-08, m+- 6.8e-07
+[pass] PMEM: planted static members (gamma_1 = 0 to 0.3, known r_th, s_th, end masses m_+, m_-) as profile slices through slice_masses, fit_asym, the parabolic throat minimum and asym_masses, h = (0.01, 0.005)  (max error gamma_1 9.7e-07 (bar 1e-05), r_th 1.4e-08 (bar 1e-06), m_+- 1.6e-06 (bar 0.0001))
+[pass] PDEP: planted growing pair (odd part q0 e^{lambda t}, known crossing times of 1e-3, 1e-2, 1e-1) through departure_time  (max |t_dep - exact| 6.3e-06 (bar 2e-05))
+[pass] PREL: planted relation M / r_th = M_0 + a gamma_1 + b gamma_1^2 through the leave-one-out test (every held-out point predicted within the bar)  (max |prediction error| 1.0e-15 (bar 6e-05))
+
+== p*_h of each member: bisection to hi - lo <= 1e-14 (threshold.bisect on threshold.point, X = 28), the h of the job as passed
+    O h 0.02: hi - lo 9.1e-15, 43 runs, h_arg '0.02', stopped None
+    O h 0.01: hi - lo 9.1e-15, 43 runs, h_arg '0.01', stopped None
+    O h 0.005: hi - lo 9.1e-15, 43 runs, h_arg '0.005', stopped None
+    G_B0 h 0.02: hi - lo 9.1e-15, 43 runs, h_arg '0.02', stopped None
+    G_B0 h 0.01: hi - lo 9.1e-15, 43 runs, h_arg '0.01', stopped None
+    G_B0 h 0.005: hi - lo 9.1e-15, 43 runs, h_arg '0.005', stopped None
+    G_B0.025 h 0.02: hi - lo 9.1e-15, 43 runs, h_arg '0.02', stopped None
+    G_B0.025 h 0.01: hi - lo 9.1e-15, 43 runs, h_arg '0.01', stopped None
+    G_B0.025 h 0.005: hi - lo 9.1e-15, 43 runs, h_arg '0.005', stopped None
+    G_B0.05 h 0.02: hi - lo 9.1e-15, 43 runs, h_arg '0.02', stopped None
+    G_B0.05 h 0.01: hi - lo 9.1e-15, 43 runs, h_arg '0.01', stopped None
+    G_B0.05 h 0.005: hi - lo 9.1e-15, 43 runs, h_arg '0.005', stopped None
+    G_B0.1 h 0.02: hi - lo 5.7e-15, 44 runs, h_arg '0.02', stopped None
+    G_B0.1 h 0.01: hi - lo 5.7e-15, 44 runs, h_arg '0.01', stopped None
+    G_B0.1 h 0.005: hi - lo 5.7e-15, 44 runs, h_arg '0.005', stopped None
+    G_B0.125 h 0.02: hi - lo 9.1e-15, 44 runs, h_arg '0.02', stopped None
+    G_B0.125 h 0.01: hi - lo 9.1e-15, 44 runs, h_arg '0.01', stopped None
+    G_B0.125 h 0.005: hi - lo 9.1e-15, 44 runs, h_arg '0.005', stopped None
+    G_B0.2 h 0.02: hi - lo 8.0e-15, 45 runs, h_arg '0.02', stopped None
+    G_B0.2 h 0.01: hi - lo 8.0e-15, 45 runs, h_arg '0.01', stopped None
+    G_B0.2 h 0.005: hi - lo 8.0e-15, 45 runs, h_arg '0.005', stopped None
+[pass] BR: bracket ends are collapse and expansion, the replayed bisection equals lo and hi, hi - lo <= 1e-14, not stopped by 'static through X', h passed as its float repr
+[pass] BR-ph: POST HOC, gates nothing (B = 0.125 and/or h = 0.02): bracket ends are collapse and expansion, the replayed bisection equals lo and hi, hi - lo <= 1e-14, not stopped by 'static through X', h passed as its float repr
+    h 0.02: p*_h 1.4945763570854639e-02, #40's 1.4945763570900113e-02 (job.log h '0.02'), difference 4.5e-14
+    h 0.01: p*_h 1.4877359967461527e-02, #40's 1.4877359967478583e-02 (job.log h '0.01'), difference 1.7e-14
+    h 0.005: p*_h 1.4860254854166324e-02, #40's 1.4860254854126537e-02 (job.log h '0.005'), difference 4.0e-14
+[pass] P40: B = 0.1: this machine's p*_h equals #40's (D4_G_h*, dh610) within 1e-10, the h of #40's job.log equal to the h passed  (bar 1e-10)
+[pass] P40-ph: POST HOC, gates nothing (B = 0.125 and/or h = 0.02): B = 0.1: this machine's p*_h equals #40's (D4_G_h*, dh610) within 1e-10, the h of #40's job.log equal to the h passed  (bar 1e-10)
+    h 0.02: p*_h G(B = 0) 9.5052030615079303e-05, O 9.5052030615079303e-05, events [543, 543] [543, 543]
+    h 0.01: p*_h G(B = 0) 2.3768112810103046e-05, O 2.3768112810103046e-05, events [1086, 1086] [1086, 1086]
+    h 0.005: p*_h G(B = 0) 5.9423466382213507e-06, O 5.9423466382213507e-06, events [2173, 2173] [2173, 2173]
+[pass] GO: family G with B = 0 and family O have the same p*_h (bit for bit) and the same first trapped cell at every h
+[pass] GO-ph: POST HOC, gates nothing (B = 0.125 and/or h = 0.02): family G with B = 0 and family O have the same p*_h (bit for bit) and the same first trapped cell at every h
+    O: p*_h = 9.505203e-05, 2.376811e-05, 5.942347e-06; observed order 2.000; Richardson (second order) p* = 4.245809e-10
+    G_B0: p*_h = 9.505203e-05, 2.376811e-05, 5.942347e-06; observed order 2.000; Richardson (second order) p* = 4.245809e-10
+    G_B0.025: p*_h = 9.763973e-04, 9.052504e-04, 8.874589e-04; observed order 2.000; Richardson (second order) p* = 8.815284e-04
+    G_B0.05: p*_h = 3.657848e-03, 3.587146e-03, 3.569466e-03; observed order 2.000; Richardson (second order) p* = 3.563572e-03
+    G_B0.1: p*_h = 1.494576e-02, 1.487736e-02, 1.486025e-02; observed order 2.000; Richardson (second order) p* = 1.485455e-02
+    G_B0.125: p*_h = 2.398895e-02, 2.392282e-02, 2.390628e-02; observed order 2.000; Richardson (second order) p* = 2.390077e-02
+    G_B0.2: p*_h = 6.830547e-02, 6.827490e-02, 6.826955e-02; observed order 2.515; Richardson (second order) p* = 6.826777e-02  (prompt threshold: reported, not checked)
+[pass] PO-ph: POST HOC, gates nothing (B = 0.125 and/or h = 0.02): p*_h converges at second order at h = (0.02, 0.01, 0.005): observed order in (1.75, 2.25) for every stalling member (it needs three h, and h = 0.02 is post hoc)
+
+== Does the near-threshold run stall? Lifetime T at p*_h -/+ 1e-8 against 1e-6 (the stall adds about ln(100)/W = 3.9 per side), h = 0.02, 0.01, 0.005
+    O         h  0.02: collapse side T 11.498 (1e-6) -> 15.373 (1e-8), +3.87; expansion side 16.306 -> 20.209, +3.90: stall (declared stall)
+    O         h  0.01: collapse side T 11.476 (1e-6) -> 15.365 (1e-8), +3.89; expansion side 16.313 -> 20.202, +3.89: stall (declared stall)
+    O         h 0.005: collapse side T 11.473 (1e-6) -> 15.369 (1e-8), +3.90; expansion side 16.302 -> 20.199, +3.90: stall (declared stall)
+    G_B0      h  0.02: collapse side T 11.498 (1e-6) -> 15.373 (1e-8), +3.87; expansion side 16.306 -> 20.209, +3.90: stall (declared stall)
+    G_B0      h  0.01: collapse side T 11.476 (1e-6) -> 15.365 (1e-8), +3.89; expansion side 16.313 -> 20.202, +3.89: stall (declared stall)
+    G_B0      h 0.005: collapse side T 11.473 (1e-6) -> 15.369 (1e-8), +3.90; expansion side 16.302 -> 20.199, +3.90: stall (declared stall)
+    G_B0.025  h  0.02: collapse side T 11.724 (1e-6) -> 15.627 (1e-8), +3.90; expansion side 16.334 -> 20.237, +3.90: stall (declared stall)
+    G_B0.025  h  0.01: collapse side T 11.639 (1e-6) -> 15.500 (1e-8), +3.86; expansion side 16.327 -> 20.230, +3.90: stall (declared stall)
+    G_B0.025  h 0.005: collapse side T 11.476 (1e-6) -> 15.464 (1e-8), +3.99; expansion side 16.324 -> 20.220, +3.90: stall (declared stall)
+    G_B0.05   h  0.02: collapse side T 11.865 (1e-6) -> 15.613 (1e-8), +3.75; expansion side 16.391 -> 20.266, +3.87: stall (declared stall)
+    G_B0.05   h  0.01: collapse side T 11.681 (1e-6) -> 15.592 (1e-8), +3.91; expansion side 16.384 -> 20.273, +3.89: stall (declared stall)
+    G_B0.05   h 0.005: collapse side T 11.582 (1e-6) -> 15.507 (1e-8), +3.92; expansion side 16.373 -> 20.269, +3.90: stall (declared stall)
+    G_B0.1    h  0.02: collapse side T 11.809 (1e-6) -> 15.867 (1e-8), +4.06; expansion side 16.391 -> 20.464, +4.07: stall (declared stall)
+    G_B0.1    h  0.01: collapse side T 11.802 (1e-6) -> 15.860 (1e-8), +4.06; expansion side 16.398 -> 20.457, +4.06: stall (declared stall)
+    G_B0.1    h 0.005: collapse side T 11.766 (1e-6) -> 15.825 (1e-8), +4.06; expansion side 16.394 -> 20.460, +4.07: stall (declared stall)
+    G_B0.125  h  0.02: collapse side T 12.148 (1e-6) -> 16.348 (1e-8), +4.20; expansion side 16.985 -> 21.934, +4.95: stall (declared stall)
+    G_B0.125  h  0.01: collapse side T 12.092 (1e-6) -> 16.278 (1e-8), +4.19; expansion side 16.963 -> 21.927, +4.96: stall (declared stall)
+    G_B0.125  h 0.005: collapse side T 12.038 (1e-6) -> 16.249 (1e-8), +4.21; expansion side 16.967 -> 21.924, +4.96: stall (declared stall)
+    G_B0.2    h  0.02: collapse side T 5.303 (1e-6) -> 5.303 (1e-8), +0.00; expansion side 12.205 -> 12.205, +0.00: prompt (declared prompt)
+    G_B0.2    h  0.01: collapse side T 5.240 (1e-6) -> 5.240 (1e-8), +0.00; expansion side 12.155 -> 12.155, +0.00: prompt (declared prompt)
+    G_B0.2    h 0.005: collapse side T 5.271 (1e-6) -> 5.271 (1e-8), +0.00; expansion side 12.137 -> 12.137, +0.00: prompt (declared prompt)
+[pass] STL: each member's classification (T gains >= 2.0 per side from 1e-6 to 1e-8: stall; else prompt) equals the declared one (stall for B <= 0.125 and O, prompt at B = 0.2)
+[pass] STL-ph: POST HOC, gates nothing (B = 0.125 and/or h = 0.02): each member's classification (T gains >= 2.0 per side from 1e-6 to 1e-8: stall; else prompt) equals the declared one (stall for B <= 0.125 and O, prompt at B = 0.2)
+    O h 0.02: chain event [543, 543], pair's collapse-side event [543, 543]
+    O h 0.01: chain event [1086, 1086], pair's collapse-side event [1086, 1086]
+    O h 0.005: chain event [2173, 2173], pair's collapse-side event [2173, 2173]
+    G_B0 h 0.02: chain event [543, 543], pair's collapse-side event [543, 543]
+    G_B0 h 0.01: chain event [1086, 1086], pair's collapse-side event [1086, 1086]
+    G_B0 h 0.005: chain event [2173, 2173], pair's collapse-side event [2173, 2173]
+    G_B0.025 h 0.02: chain event [550, 554], pair's collapse-side event [550, 554]
+    G_B0.025 h 0.01: chain event [1092, 1099], pair's collapse-side event [1092, 1099]
+    G_B0.025 h 0.005: chain event [2179, 2194], pair's collapse-side event [2179, 2194]
+    G_B0.05 h 0.02: chain event [544, 559], pair's collapse-side event [544, 559]
+    G_B0.05 h 0.01: chain event [1087, 1117], pair's collapse-side event [1087, 1117]
+    G_B0.05 h 0.005: chain event [2163, 2222], pair's collapse-side event [2163, 2222]
+    G_B0.1 h 0.02: chain event [530, 591], pair's collapse-side event [530, 591], #40's [530, 591]
+    G_B0.1 h 0.01: chain event [1060, 1182], pair's collapse-side event [1060, 1182], #40's [1060, 1182]
+    G_B0.1 h 0.005: chain event [2116, 2359], pair's collapse-side event [2116, 2359], #40's [2116, 2359]
+    G_B0.125 h 0.02: chain event [528, 627], pair's collapse-side event [528, 627]
+    G_B0.125 h 0.01: chain event [1052, 1249], pair's collapse-side event [1052, 1249]
+    G_B0.125 h 0.005: chain event [2101, 2494], pair's collapse-side event [2101, 2494]
+    G_B0.2 h 0.02: chain event [175, 199], pair's collapse-side event [175, 199]
+    G_B0.2 h 0.01: chain event [347, 393], pair's collapse-side event [347, 393]
+    G_B0.2 h 0.005: chain event [698, 792], pair's collapse-side event [698, 792]
+[pass] EVT: the chain's first trapped cell equals the pair's collapse-side one (same amplitude p*_h - 1e-8), fates collapse at p*_h - 1e-8 and expansion at +1e-8, and #40's for B = 0.1
+[pass] EVT-ph: POST HOC, gates nothing (B = 0.125 and/or h = 0.02): the chain's first trapped cell equals the pair's collapse-side one (same amplitude p*_h - 1e-8), fates collapse at p*_h - 1e-8 and expansion at +1e-8, and #40's for B = 0.1
+
+== The chain (#41's, unchanged) at delta = 1e-8: status, limit, first law, second order, settled value
+    G_B0.2 h 0.02: 28 columns, status 'level 0: horizon lost at x+ = 4.5300, F = 0.773'; M_AH at the first trapped cell 0.55559 (r 1.1112), F_end 0.773  (no stall: not run through the checks below)
+    G_B0.2 h 0.01: 60 columns, status 'level 0: horizon lost at x+ = 4.5250, F = 0.7725'; M_AH at the first trapped cell 0.55609 (r 1.1122), F_end 0.773  (no stall: not run through the checks below)
+    G_B0.2 h 0.005: 113 columns, status 'level 0: horizon lost at x+ = 4.5225, F = 0.7724'; M_AH at the first trapped cell 0.55589 (r 1.1118), F_end 0.772  (no stall: not run through the checks below)
+[pass] RC5: every run of a stalling member ends at the declared limit (F = e^-f on the horizon, 786432 <= F_end < 1.57286e+06), horizon at least Nc/8 cells from the box edges, no gaps  (18 runs; worst F_end 1.537e+06)
+[pass] RC5-ph: POST HOC, gates nothing (B = 0.125 and/or h = 0.02): every run of a stalling member ends at the declared limit (F = e^-f on the horizon, 786432 <= F_end < 1.57286e+06), horizon at least Nc/8 cells from the box edges, no gaps  (18 runs; worst F_end 1.537e+06)
+    O h 0.02: limit, F_end 1558722, edge 98/240
+    O h 0.01: limit, F_end 1571800, edge 193/480
+    O h 0.005: limit, F_end 1565035, edge 385/960
+    G_B0 h 0.02: limit, F_end 1558722, edge 98/240
+    G_B0 h 0.01: limit, F_end 1571800, edge 193/480
+    G_B0 h 0.005: limit, F_end 1565035, edge 385/960
+    G_B0.025 h 0.02: limit, F_end 1545852, edge 96/240
+    G_B0.025 h 0.01: limit, F_end 1558496, edge 193/480
+    G_B0.025 h 0.005: limit, F_end 1564962, edge 387/960
+    G_B0.05 h 0.02: limit, F_end 1570162, edge 98/240
+    G_B0.05 h 0.01: limit, F_end 1556434, edge 195/480
+    G_B0.05 h 0.005: limit, F_end 1562741, edge 391/960
+    G_B0.1 h 0.02: limit, F_end 1545930, edge 102/240
+    G_B0.1 h 0.01: limit, F_end 1556331, edge 201/480
+    G_B0.1 h 0.005: limit, F_end 1561871, edge 400/960
+    G_B0.125 h 0.02: limit, F_end 1536958, edge 101/240
+    G_B0.125 h 0.01: limit, F_end 1567380, edge 202/480
+    G_B0.125 h 0.005: limit, F_end 1572344, edge 405/960
+[pass] RC4: first law on the horizon, both fields: M(x+_b) - M(x+_a) = integral of (r^2/2) e^f r_- (phi0_+^2 - phi1_+^2), from the first trapped cell to F = 20  (bar 0.02)
+[pass] RC4-ph: POST HOC, gates nothing (B = 0.125 and/or h = 0.02): first law on the horizon, both fields: M(x+_b) - M(x+_a) = integral of (r^2/2) e^f r_- (phi0_+^2 - phi1_+^2), from the first trapped cell to F = 20  (bar 0.02)
+    O h 0.02: dM -2.5743e-01, flux -2.5756e-01, relative 4.9e-04
+    O h 0.01: dM -2.5693e-01, flux -2.5694e-01, relative 6.4e-05
+    O h 0.005: dM -2.5679e-01, flux -2.5680e-01, relative 2.6e-05
+    G_B0 h 0.02: dM -2.5743e-01, flux -2.5756e-01, relative 4.9e-04
+    G_B0 h 0.01: dM -2.5693e-01, flux -2.5694e-01, relative 6.4e-05
+    G_B0 h 0.005: dM -2.5679e-01, flux -2.5680e-01, relative 2.6e-05
+    G_B0.025 h 0.02: dM -2.5443e-01, flux -2.5455e-01, relative 5.0e-04
+    G_B0.025 h 0.01: dM -2.5539e-01, flux -2.5541e-01, relative 9.4e-05
+    G_B0.025 h 0.005: dM -2.5553e-01, flux -2.5554e-01, relative 2.2e-05
+    G_B0.05 h 0.02: dM -2.5313e-01, flux -2.5324e-01, relative 4.2e-04
+    G_B0.05 h 0.01: dM -2.5313e-01, flux -2.5316e-01, relative 1.2e-04
+    G_B0.05 h 0.005: dM -2.5352e-01, flux -2.5352e-01, relative 2.9e-05
+    G_B0.1 h 0.02: dM -2.4640e-01, flux -2.4653e-01, relative 5.1e-04
+    G_B0.1 h 0.01: dM -2.4666e-01, flux -2.4669e-01, relative 1.1e-04
+    G_B0.1 h 0.005: dM -2.4683e-01, flux -2.4684e-01, relative 2.3e-05
+    G_B0.125 h 0.02: dM -2.4272e-01, flux -2.4284e-01, relative 5.2e-04
+    G_B0.125 h 0.01: dM -2.4312e-01, flux -2.4314e-01, relative 1.0e-04
+    G_B0.125 h 0.005: dM -2.4309e-01, flux -2.4310e-01, relative 2.3e-05
+    RC6 O, x+ - x+_f in [0, 1.5]: E12 2.48e-05, E23 6.44e-06, order 1.94 ok
+    RC6 O, x+ - x+_f in [1.5, 3]: E12 5.93e-05, E23 1.82e-05, order 1.71 ok
+    RC6 O, x+ - x+_f in [3, 99]: E12 1.35e-04, E23 3.88e-05, order 1.80 ok
+    RC6 G_B0, x+ - x+_f in [0, 1.5]: E12 2.48e-05, E23 6.44e-06, order 1.94 ok
+    RC6 G_B0, x+ - x+_f in [1.5, 3]: E12 5.93e-05, E23 1.82e-05, order 1.71 ok
+    RC6 G_B0, x+ - x+_f in [3, 99]: E12 1.35e-04, E23 3.88e-05, order 1.80 ok
+    RC6 G_B0.025, x+ - x+_f in [0, 1.5]: E12 2.40e-05, E23 6.18e-06, order 1.96 ok
+    RC6 G_B0.025, x+ - x+_f in [1.5, 3]: E12 8.15e-05, E23 1.61e-05, order 2.34 ok
+    RC6 G_B0.025, x+ - x+_f in [3, 99]: E12 1.61e-04, E23 3.69e-05, order 2.13 ok
+    RC6 G_B0.05, x+ - x+_f in [0, 1.5]: E12 2.53e-05, E23 6.37e-06, order 1.99 ok
+    RC6 G_B0.05, x+ - x+_f in [1.5, 3]: E12 6.68e-05, E23 1.56e-05, order 2.10 ok
+    RC6 G_B0.05, x+ - x+_f in [3, 99]: E12 1.49e-04, E23 3.76e-05, order 1.99 ok
+    RC6 G_B0.1, x+ - x+_f in [0, 1.5]: E12 3.17e-05, E23 8.11e-06, order 1.97 ok
+    RC6 G_B0.1, x+ - x+_f in [1.5, 3]: E12 9.50e-05, E23 2.39e-05, order 1.99 ok
+    RC6 G_B0.1, x+ - x+_f in [3, 99]: E12 1.56e-04, E23 3.73e-05, order 2.06 ok
+    RC6 G_B0.125, x+ - x+_f in [0, 1.5]: E12 4.49e-05, E23 1.18e-05, order 1.93 ok
+    RC6 G_B0.125, x+ - x+_f in [1.5, 3]: E12 1.24e-04, E23 2.91e-05, order 2.09 ok
+    RC6 G_B0.125, x+ - x+_f in [3, 99]: E12 1.46e-04, E23 4.04e-05, order 1.85 ok
+[pass] RC6-ph: POST HOC, gates nothing (B = 0.125 and/or h = 0.02): M_AH(x+) converges at second order at the three h (0.02, 0.01, 0.005), three windows, every stalling member (observed order in (1.5, 2.5); it needs three h, and h = 0.02 is post hoc)
+[pass] RC8: M_AH has settled at the limit: plateau mean over the last 1.0 differs from the previous 1.0 by <= 1e-4 and the mean horizon flux (both fields) over the last 0.5 is <= 1e-5, every run  (plateau change -1.2e-05, +1.6e-06, +2.5e-06, -1.2e-05, +1.6e-06, +2.5e-06, -2.4e-06, -1.7e-06, +3.4e-06, -3.6e-06, -6.2e-06, +9.4e-07, -6.4e-06, +2.0e-06, +1.5e-06, +1.9e-05, +5.2e-06, +1.6e-07; flux 2.7e-07, 2.7e-07, 2.7e-07, 2.7e-07, 2.7e-07, 2.7e-07, 2.6e-07, 2.6e-07, 2.6e-07, 2.5e-07, 2.4e-07, 2.4e-07, 1.9e-07, 1.9e-07, 1.9e-07, 1.6e-07, 1.7e-07, 1.7e-07)
+[pass] RC8-ph: POST HOC, gates nothing (B = 0.125 and/or h = 0.02): M_AH has settled at the limit: plateau mean over the last 1.0 differs from the previous 1.0 by <= 1e-4 and the mean horizon flux (both fields) over the last 0.5 is <= 1e-5, every run  (plateau change -1.2e-05, +1.6e-06, +2.5e-06, -1.2e-05, +1.6e-06, +2.5e-06, -2.4e-06, -1.7e-06, +3.4e-06, -3.6e-06, -6.2e-06, +9.4e-07, -6.4e-06, +2.0e-06, +1.5e-06, +1.9e-05, +5.2e-06, +1.6e-07; flux 2.7e-07, 2.7e-07, 2.7e-07, 2.7e-07, 2.7e-07, 2.7e-07, 2.6e-07, 2.6e-07, 2.6e-07, 2.5e-07, 2.4e-07, 2.4e-07, 1.9e-07, 1.9e-07, 1.9e-07, 1.6e-07, 1.7e-07, 1.7e-07)
+[pass] RH: the settled value at two h: |plat(0.01) - plat(0.005)| (plateau mean over the last 1.0 of x+) <= 5e-5 for every stalling member  (O: |plat(0.01) - plat(0.005)| = 9.1e-06; G_B0: |plat(0.01) - plat(0.005)| = 9.1e-06; G_B0.025: |plat(0.01) - plat(0.005)| = 1.2e-05; G_B0.05: |plat(0.01) - plat(0.005)| = 1.5e-05; G_B0.1: |plat(0.01) - plat(0.005)| = 9.3e-06; G_B0.125: |plat(0.01) - plat(0.005)| = 6.7e-06)
+[pass] RH-ph: POST HOC, gates nothing (B = 0.125 and/or h = 0.02): the settled value at two h: |plat(0.01) - plat(0.005)| (plateau mean over the last 1.0 of x+) <= 5e-5 for every stalling member  (O: |plat(0.01) - plat(0.005)| = 9.1e-06; G_B0: |plat(0.01) - plat(0.005)| = 9.1e-06; G_B0.025: |plat(0.01) - plat(0.005)| = 1.2e-05; G_B0.05: |plat(0.01) - plat(0.005)| = 1.5e-05; G_B0.1: |plat(0.01) - plat(0.005)| = 9.3e-06; G_B0.125: |plat(0.01) - plat(0.005)| = 6.7e-06)
+
+== M(B) with the error bars of this note, kept separate (plateau mean over the last 1.0 of x+, delta = 1e-8)
+    member     plat(0.02)  plat(0.01)  plat(0.005)  Richardson   h: |0.01 - 0.005|   scatter (#253, 6.6e-6 at h = 0.005, 2.5e-5 at 0.01)   sum
+    O          0.223143   0.223095   0.223086    0.223083    9.14e-06          6.6e-06                                        1.57e-05
+    G_B0       0.223143   0.223095   0.223086    0.223083    9.14e-06          6.6e-06                                        1.57e-05
+    G_B0.025   0.223636   0.223576   0.223563    0.223559    1.21e-05          6.6e-06                                        1.87e-05
+    G_B0.05    0.225296   0.225250   0.225235    0.225230    1.46e-05          6.6e-06                                        2.12e-05
+    G_B0.1     0.235606   0.235558   0.235548    0.235545    9.33e-06          6.6e-06                                        1.59e-05
+    G_B0.125   0.247144   0.247107   0.247100    0.247098    6.74e-06          6.6e-06                                        1.33e-05
+    delta dependence (physical, not an error): at B = 0.1 the plateau is +5.7e-4 from delta = 1e-6 to 1e-8 (#253); not measured at the other B
+
+== B = 0 against family S's settled mass, and B = 0.1 against #253
+    G_B0 h 0.02: plat 0.223143, minus 0.22309 = +5.30e-05
+    G_B0 h 0.01: plat 0.223095, minus 0.22309 = +5.32e-06
+    G_B0 h 0.005: plat 0.223086, minus 0.22309 = -3.82e-06
+    O h 0.02: plat 0.223143, minus 0.22309 = +5.30e-05
+    O h 0.01: plat 0.223095, minus 0.22309 = +5.32e-06
+    O h 0.005: plat 0.223086, minus 0.22309 = -3.82e-06
+[pass] RB0: B = 0 (G with a zero normal pulse, and O) reproduces S's 0.22309 within 0.0006: plateau means at h = (0.02, 0.01, 0.005)  (bar 6e-4 (the issue's))
+[pass] RB0-ph: POST HOC, gates nothing (B = 0.125 and/or h = 0.02): B = 0 (G with a zero normal pulse, and O) reproduces S's 0.22309 within 0.0006: plateau means at h = (0.02, 0.01, 0.005)  (bar 6e-4 (the issue's))
+    h 0.02: plat 0.235606, #253's 0.235621, difference -1.50e-05
+    h 0.01: plat 0.235558, #253's 0.235559, difference -1.06e-06
+    h 0.005: plat 0.235548, #253's 0.235548, difference +7.46e-08
+[pass] RB10: B = 0.1 reproduces #253's plateau means (I253-rpi5, delta = 1e-8) within 1e-4 (the roundoff-realization scatter of #253 is 2.5e-5 at h = 0.01)  (bar 1e-4)
+[pass] RB10-ph: POST HOC, gates nothing (B = 0.125 and/or h = 0.02): B = 0.1 reproduces #253's plateau means (I253-rpi5, delta = 1e-8) within 1e-4 (the roundoff-realization scatter of #253 is 2.5e-5 at h = 0.01)  (bar 1e-4)
+    M_AH(x+ - x+_f), h = 0.005, delta = 1e-8: G(B = 0) x+_f 10.8675, S (I41-rpi5) x+_f 10.4525
+    dx+   M_G(B=0)  M_S       difference
+     0.0  0.494204  0.494207  -3.25e-06
+     1.0  0.470544  0.470560  -1.57e-05
+     2.0  0.377408  0.377457  -4.91e-05
+     3.0  0.249697  0.249720  -2.34e-05
+     4.0  0.224304  0.224303  +1.24e-07
+     5.0  0.223679  0.223677  +2.28e-06
+     6.0  0.223345  0.223346  -8.06e-07
+     8.0  0.223086  0.223087  -5.26e-07
+     9.4  0.223090  0.223088  +2.45e-06
+
+== The static member at departure (#225's slice_masses and fit_asym; throat radius r_th and gamma_1 = s_th / sqrt(1 - s_th^2); t_dep: the unstable mode's part reaches 1e-3 of r_th)
+    O         h  0.02: t_dep 13.286: r_th 1.00000, s_th -0.00000, gamma_1 -0.00000   | 1e-2: t_dep 15.234, r_th 0.99986, gamma_1 -0.00000   | collapse side alone, 1e-3: r_th 0.99895, gamma_1 -0.00000
+    O         h  0.01: t_dep 13.287: r_th 1.00000, s_th -0.00000, gamma_1 -0.00000   | 1e-2: t_dep 15.234, r_th 0.99986, gamma_1 -0.00000   | collapse side alone, 1e-3: r_th 0.99896, gamma_1 -0.00000
+    O         h 0.005: t_dep 13.287: r_th 1.00000, s_th -0.00000, gamma_1 -0.00000   | 1e-2: t_dep 15.234, r_th 0.99986, gamma_1 -0.00000   | collapse side alone, 1e-3: r_th 0.99896, gamma_1 -0.00000
+    G_B0      h  0.02: t_dep 13.286: r_th 1.00000, s_th -0.00000, gamma_1 -0.00000   | 1e-2: t_dep 15.234, r_th 0.99986, gamma_1 -0.00000   | collapse side alone, 1e-3: r_th 0.99895, gamma_1 -0.00000
+    G_B0      h  0.01: t_dep 13.287: r_th 1.00000, s_th -0.00000, gamma_1 -0.00000   | 1e-2: t_dep 15.234, r_th 0.99986, gamma_1 -0.00000   | collapse side alone, 1e-3: r_th 0.99896, gamma_1 -0.00000
+    G_B0      h 0.005: t_dep 13.287: r_th 1.00000, s_th -0.00000, gamma_1 -0.00000   | 1e-2: t_dep 15.234, r_th 0.99986, gamma_1 -0.00000   | collapse side alone, 1e-3: r_th 0.99896, gamma_1 -0.00000
+    G_B0.025  h  0.02: t_dep 13.303: r_th 0.99945, s_th +0.00293, gamma_1 +0.00293   | 1e-2: t_dep 15.252, r_th 0.99915, gamma_1 +0.00293   | collapse side alone, 1e-3: r_th 0.99840, gamma_1 +0.00294
+    G_B0.025  h  0.01: t_dep 13.303: r_th 0.99945, s_th +0.00294, gamma_1 +0.00294   | 1e-2: t_dep 15.252, r_th 0.99915, gamma_1 +0.00293   | collapse side alone, 1e-3: r_th 0.99841, gamma_1 +0.00294
+    G_B0.025  h 0.005: t_dep 13.303: r_th 0.99945, s_th +0.00294, gamma_1 +0.00294   | 1e-2: t_dep 15.252, r_th 0.99915, gamma_1 +0.00293   | collapse side alone, 1e-3: r_th 0.99841, gamma_1 +0.00294
+    G_B0.05   h  0.02: t_dep 13.355: r_th 0.99836, s_th +0.01184, gamma_1 +0.01184   | 1e-2: t_dep 15.310, r_th 0.99775, gamma_1 +0.01183   | collapse side alone, 1e-3: r_th 0.99732, gamma_1 +0.01185
+    G_B0.05   h  0.01: t_dep 13.355: r_th 0.99836, s_th +0.01184, gamma_1 +0.01184   | 1e-2: t_dep 15.311, r_th 0.99775, gamma_1 +0.01184   | collapse side alone, 1e-3: r_th 0.99733, gamma_1 +0.01185
+    G_B0.05   h 0.005: t_dep 13.355: r_th 0.99836, s_th +0.01184, gamma_1 +0.01184   | 1e-2: t_dep 15.311, r_th 0.99775, gamma_1 +0.01184   | collapse side alone, 1e-3: r_th 0.99733, gamma_1 +0.01185
+    G_B0.1    h  0.02: t_dep 13.614: r_th 1.00287, s_th +0.04825, gamma_1 +0.04831   | 1e-2: t_dep 15.617, r_th 1.00333, gamma_1 +0.04816   | collapse side alone, 1e-3: r_th 1.00184, gamma_1 +0.04834
+    G_B0.1    h  0.01: t_dep 13.615: r_th 1.00288, s_th +0.04826, gamma_1 +0.04832   | 1e-2: t_dep 15.618, r_th 1.00334, gamma_1 +0.04816   | collapse side alone, 1e-3: r_th 1.00184, gamma_1 +0.04835
+    G_B0.1    h 0.005: t_dep 13.615: r_th 1.00288, s_th +0.04826, gamma_1 +0.04832   | 1e-2: t_dep 15.618, r_th 1.00334, gamma_1 +0.04816   | collapse side alone, 1e-3: r_th 1.00184, gamma_1 +0.04835
+    G_B0.125  h  0.02: t_dep 13.863: r_th 1.01587, s_th +0.07522, gamma_1 +0.07544   | 1e-2: t_dep 15.928, r_th 1.01964, gamma_1 +0.07487   | collapse side alone, 1e-3: r_th 1.01482, gamma_1 +0.07549
+    G_B0.125  h  0.01: t_dep 13.864: r_th 1.01588, s_th +0.07523, gamma_1 +0.07545   | 1e-2: t_dep 15.929, r_th 1.01966, gamma_1 +0.07488   | collapse side alone, 1e-3: r_th 1.01483, gamma_1 +0.07550
+    G_B0.125  h 0.005: t_dep 13.864: r_th 1.01588, s_th +0.07524, gamma_1 +0.07545   | 1e-2: t_dep 15.929, r_th 1.01966, gamma_1 +0.07488   | collapse side alone, 1e-3: r_th 1.01484, gamma_1 +0.07550
+[pass] MB0: B = 0 (G and O): the member at departure is the symmetric one, |gamma_1| <= 2e-5 and |r_th - 1| <= 1e-4 (planted by symmetry, proved in #213)  (G_B0 h 0.02: gamma_1 -2.2e-07, r_th - 1 -3.1e-06; G_B0 h 0.01: gamma_1 -3.4e-08, r_th - 1 -1.8e-06; G_B0 h 0.005: gamma_1 -8.5e-09, r_th - 1 -1.5e-06; O h 0.02: gamma_1 -2.2e-07, r_th - 1 -3.1e-06; O h 0.01: gamma_1 -3.4e-08, r_th - 1 -1.8e-06; O h 0.005: gamma_1 -8.5e-09, r_th - 1 -1.5e-06)
+[pass] MB0-ph: POST HOC, gates nothing (B = 0.125 and/or h = 0.02): B = 0 (G and O): the member at departure is the symmetric one, |gamma_1| <= 2e-5 and |r_th - 1| <= 1e-4 (planted by symmetry, proved in #213)  (G_B0 h 0.02: gamma_1 -2.2e-07, r_th - 1 -3.1e-06; G_B0 h 0.01: gamma_1 -3.4e-08, r_th - 1 -1.8e-06; G_B0 h 0.005: gamma_1 -8.5e-09, r_th - 1 -1.5e-06; O h 0.02: gamma_1 -2.2e-07, r_th - 1 -3.1e-06; O h 0.01: gamma_1 -3.4e-08, r_th - 1 -1.8e-06; O h 0.005: gamma_1 -8.5e-09, r_th - 1 -1.5e-06)
+    h 0.01 t = 12: r_th 1.00316 (#225 1.0031), s_th 0.04841 (#225 0.0484)
+    h 0.01 t = 13: r_th 1.00288 (#225 1.0028), s_th 0.04831 (#225 0.0483)
+    h 0.01 t = 14: r_th 1.00292 (#225 1.0028), s_th 0.04823 (#225 0.0482)
+    h 0.005 t = 12: r_th 1.00316 (#225 1.0031), s_th 0.04841 (#225 0.0484)
+    h 0.005 t = 13: r_th 1.00288 (#225 1.0028), s_th 0.04831 (#225 0.0483)
+    h 0.005 t = 14: r_th 1.00292 (#225 1.0028), s_th 0.04823 (#225 0.0482)
+[pass] C225: B = 0.1: r_th and s_th of the pair's mean at t = 12, 13, 14 equal #225's printed member table (stall pair at 1e-9) within 3e-4 and 1e-4  (bars 3e-4 (r_th), 1e-4 (s_th))
+    O: |gamma_1(0.01) - gamma_1(0.005)| 2.6e-08, |r_th| 3.1e-07
+    G_B0: |gamma_1(0.01) - gamma_1(0.005)| 2.6e-08, |r_th| 3.1e-07
+    G_B0.025: |gamma_1(0.01) - gamma_1(0.005)| 1.0e-07, |r_th| 2.2e-07
+    G_B0.05: |gamma_1(0.01) - gamma_1(0.005)| 1.1e-07, |r_th| 5.1e-08
+    G_B0.1: |gamma_1(0.01) - gamma_1(0.005)| 1.1e-06, |r_th| 1.0e-06
+    G_B0.125: |gamma_1(0.01) - gamma_1(0.005)| 2.3e-06, |r_th| 3.4e-06
+[pass] HST: the member at departure at the two finest h agree: |gamma_1| <= 5e-5, |r_th| <= 1e-4, every stalling member  (bars 5e-5, 1e-4)
+[pass] HST-ph: POST HOC, gates nothing (B = 0.125 and/or h = 0.02): the member at departure at the two finest h agree: |gamma_1| <= 5e-5, |r_th| <= 1e-4, every stalling member  (bars 5e-5, 1e-4)
+
+== M(B) against gamma_1(B) and r_th(B) at departure (h = 0.005; M = plateau mean over the last 1.0 of x+; dM' = M / r_th - M(B = 0))
+    B        p*_h(0.005)      gamma_1    r_th      M(0.005)   M(0.01)    M(0.02)    M/r_th     dM'        dM'/gamma_1  dM'/gamma_1^2  M - c0
+    O        5.94234664e-06  -0.00000  1.00000  0.223086  0.223095  0.223143  0.223087  +0.00000   -            -       +0.00000
+    0.0      5.94234664e-06  -0.00000  1.00000  0.223086  0.223095  0.223143  0.223087  +0.00000   -            -       +0.00000
+    0.025    8.87458900e-04  +0.00294  0.99945  0.223563  0.223576  0.223636  0.223687  +0.00060   +0.2047      +69.740       +0.00048
+    0.05     3.56946554e-03  +0.01184  0.99836  0.225235  0.225250  0.225296  0.225606  +0.00252   +0.2128      +17.964       +0.00215
+    0.1      1.48602549e-02  +0.04832  1.00288  0.235548  0.235558  0.235606  0.234872  +0.01179   +0.2439      +5.049       +0.01246
+    0.125    2.39062812e-02  +0.07545  1.01588  0.247100  0.247107  0.247144  0.243237  +0.02015   +0.2671      +3.540       +0.02401
+    local exponents B 0.025 -> 0.05: gamma_1 2.01, dM' 2.07, M - c0 2.17, r_th - 1 1.57
+    local exponents B 0.05 -> 0.1: gamma_1 2.03, dM' 2.23, M - c0 2.54, r_th - 1 nan
+    local exponents B 0.1 -> 0.125: gamma_1 2.00, dM' 2.40, M - c0 2.94, r_th - 1 7.65
+    the member's asymptotic masses (asym_masses at the fitted r_th, s_th; a report): B, m_+, m_-, (M - M_0)/m_+, dM'/m_+
+    0.025  m_+ +0.00292  m_- -0.00295  (M - M_0)/m_+ 0.1634  dM'/m_+ 0.2058
+    0.05   m_+ +0.01161  m_- -0.01205  (M - M_0)/m_+ 0.1852  dM'/m_+ 0.2171
+    0.1    m_+ +0.04497  m_- -0.05234  (M - M_0)/m_+ 0.2771  dM'/m_+ 0.2621
+    0.125  m_+ +0.06828  m_- -0.08654  (M - M_0)/m_+ 0.3517  dM'/m_+ 0.2951
+    REL: leave out B = 0.025: (a, b) = (0.2026, 0.8548) from the others; dM' measured +0.00060, predicted +0.00060, error +1.18e-06
+    REL: leave out B = 0.05: (a, b) = (0.2022, 0.8637) from the others; dM' measured +0.00252, predicted +0.00252, error -3.82e-06
+    REL: leave out B = 0.1: (a, b) = (0.2021, 0.8999) from the others; dM' measured +0.01179, predicted +0.01187, error +7.95e-05
+    REL without the r_th scaling (M - M_0 = a gamma_1 + b gamma_1^2, a report): leave-one-out errors +6.1e-07, -2.0e-06, +4.1e-05; with it: +1.2e-06, -3.8e-06, +7.9e-05
+[FAIL] REL: M / r_th - M_0 = a gamma_1 + b gamma_1^2, leave one out over B = 0.025, 0.05, 0.1 (M_0 = B = 0's plateau at h = 0.005): every held-out point within 6e-5  (max error 7.9e-05 (bar 6e-05); the form was chosen after the h = 0.02, 0.01 development runs)
+    REL-ph: leave out B = 0.025: (a, b) = (0.2027, 0.8532) from the others; dM' measured +0.00060, predicted +0.00060, error +1.37e-06
+    REL-ph: leave out B = 0.05: (a, b) = (0.2027, 0.8531) from the others; dM' measured +0.00252, predicted +0.00252, error +6.66e-07
+    REL-ph: leave out B = 0.1: (a, b) = (0.2026, 0.8544) from the others; dM' measured +0.01179, predicted +0.01178, error -1.96e-06
+    REL-ph: leave out B = 0.125: (a, b) = (0.2026, 0.8556) from the others; dM' measured +0.02015, predicted +0.02016, error +5.48e-06
+    REL-ph without the r_th scaling (M - M_0 = a gamma_1 + b gamma_1^2, a report): leave-one-out errors -1.2e-05, -5.3e-05, +9.6e-05, -2.6e-04; with it: +1.4e-06, +6.7e-07, -2.0e-06, +5.5e-06
+[pass] REL-ph: POST HOC, gates nothing (B = 0.125): M / r_th - M_0 = a gamma_1 + b gamma_1^2, leave one out over B = 0.025, 0.05, 0.1, 0.125 (M_0 = B = 0's plateau at h = 0.005): every held-out point within 6e-5  (max error 5.5e-06 (bar 6e-05); the form was chosen after the h = 0.02, 0.01 development runs)
+    the same relation with the member read at epsilon = 1e-2 instead of 1e-3 (a report, four B): leave-one-out errors -2.6e-05, -2.0e-05, +4.9e-05, -1.4e-04; (a, b) from the first three: (0.2168, 0.5379)
+    *the relation is a one-parameter family in B: it constrains the shape of M(gamma_1, r_th) along the curve, and does not test the dependence on gamma_1 and r_th separately*
+
+37 checks (17 post hoc, gating nothing), 1 gating checks failed, 0 post hoc checks failed; 28 s
+
+== Post hoc: the stall against B at h = 0.02 (T gain from 1e-6 to 1e-8 on each side; a stall gains about 3.9 to 5; prompt gains 0)
+    B 0.1500: p* 3.56604747e-02 (hi - lo 5.8e-13), collapse side T 12.558 -> 16.956 (+4.40), expansion side 18.314 -> 23.801 (+5.49): stall
+    B 0.1550: p* 3.83328063e-02 (hi - lo 5.8e-13), collapse side T 12.657 -> 17.154 (+4.50), expansion side 18.625 -> 24.254 (+5.63): stall
+    B 0.1600: p* 4.11647927e-02 (hi - lo 5.8e-13), collapse side T 5.431 -> 5.431 (+0.00), expansion side 14.241 -> 14.269 (+0.03): prompt
+    B 0.1650: p* 4.40796868e-02 (hi - lo 5.8e-13), collapse side T 5.515 -> 5.515 (+0.00), expansion side 14.241 -> 14.269 (+0.03): prompt
+    B 0.1700: p* 4.72288155e-02 (hi - lo 5.8e-13), collapse side T 5.332 -> 5.332 (+0.00), expansion side 12.883 -> 12.883 (+0.00): prompt
+    B 0.1750: p* 5.03783865e-02 (hi - lo 5.8e-13), collapse side T 5.416 -> 5.416 (+0.00), expansion side 13.025 -> 13.025 (+0.00): prompt
+    first B with no stall (gain < 2.0): 0.16; the last with a stall: 0.155
+
+== Post hoc: the stall against B at h = 0.01 (T gain from 1e-6 to 1e-8 on each side; a stall gains about 3.9 to 5; prompt gains 0)
+    B 0.1500: p* 3.55977107e-02 (hi - lo 5.8e-13), collapse side T 12.516 -> 16.914 (+4.40), expansion side 18.321 -> 23.808 (+5.49): stall
+    B 0.1550: p* 3.82708644e-02 (hi - lo 5.8e-13), collapse side T 12.636 -> 17.091 (+4.45), expansion side 18.618 -> 24.247 (+5.63): stall
+    B 0.1600: p* 4.10604984e-02 (hi - lo 2.3e-12), collapse side T 12.756 -> 17.296 (+4.54), expansion side 18.943 -> 24.699 (+5.76): stall
+    B 0.1650: p* 4.40720461e-02 (hi - lo 5.8e-13), collapse side T 5.424 -> 5.424 (+0.00), expansion side 13.343 -> 13.357 (+0.01): prompt
+    B 0.1700: p* 4.71742088e-02 (hi - lo 5.8e-13), collapse side T 5.374 -> 5.374 (+0.00), expansion side 12.834 -> 12.834 (+0.00): prompt
+    B 0.1750: p* 5.03948841e-02 (hi - lo 5.8e-13), collapse side T 5.289 -> 5.289 (+0.00), expansion side 12.551 -> 12.565 (+0.01): prompt
+    first B with no stall (gain < 2.0): 0.165; the last with a stall: 0.16
+
+== Post hoc: the stall against B at h = 0.005 (T gain from 1e-6 to 1e-8 on each side; a stall gains about 3.9 to 5; prompt gains 0)
+    B 0.1500: p* 3.55820165e-02 (hi - lo 5.8e-13), collapse side T 12.477 -> 16.918 (+4.44), expansion side 18.318 -> 23.805 (+5.49): stall
+    B 0.1550: p* 3.82553758e-02 (hi - lo 5.8e-13), collapse side T 12.587 -> 17.070 (+4.48), expansion side 18.622 -> 24.243 (+5.62): stall
+    B 0.1600: p* 4.10763323e-02 (hi - lo 5.8e-13), collapse side T 5.427 -> 5.427 (+0.00), expansion side 14.627 -> 14.662 (+0.04): prompt
+    B 0.1650: p* 4.40731556e-02 (hi - lo 5.8e-13), collapse side T 5.402 -> 5.402 (+0.00), expansion side 13.156 -> 13.170 (+0.01): prompt
+    B 0.1700: p* 4.71668953e-02 (hi - lo 5.8e-13), collapse side T 5.353 -> 5.353 (+0.00), expansion side 12.774 -> 12.781 (+0.01): prompt
+    B 0.1750: p* 5.03934247e-02 (hi - lo 5.8e-13), collapse side T 5.370 -> 5.370 (+0.00), expansion side 12.484 -> 12.491 (+0.01): prompt
+    first B with no stall (gain < 2.0): 0.16; the last with a stall: 0.155
