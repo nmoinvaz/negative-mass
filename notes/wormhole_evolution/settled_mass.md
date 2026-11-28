@@ -153,7 +153,7 @@ and in §4 item 1 and the Summary, "0.30 a [SH02] against 0.22 a [GGS09b]" becom
 
 ## Limits
 
-- D = 4 and family S (plus SH02's data) only. The asymmetric static members that one-sided families may approach (#42, #225) are not run. Family G is measured in #253 ([settled_mass_g.md](settled_mass_g.md)): 0.2355 a at δ = 1e-8, 0.0125 a above S's, and it depends on δ.
+- D = 4 and family S (plus SH02's data) only. D = 5, 6 are measured in #246 ([settled_mass_d56.md](settled_mass_d56.md)): S settles at 0.14587 a² and 0.10792 a³, G at 0.2640 a² and 0.8629 a³ (δ = 1e-8). The asymmetric static members that one-sided families may approach (#42, #225) are not run. Family G is measured in #253 ([settled_mass_g.md](settled_mass_g.md)): 0.2355 a at δ = 1e-8, 0.0125 a above S's, and it depends on δ.
 - "Settled" means to e^{−f} = 1.57e6 (9.4 time units after formation). The mass is not followed to the event horizon or to I⁺.
 - The AN control uses one h (0.02) and bar 3e-4, set above the observed 2.0e-4 after the development run. The RC6 band [1.5, 2.5] is wider than #39's, as the raw README explains.
 - The tail of the SH02 explanation (their grid's resolution) is a conjecture. The uniform-grid test uses this code's kernel and not theirs.
@@ -167,7 +167,7 @@ and in §4 item 1 and the Summary, "0.30 a [SH02] against 0.22 a [GGS09b]" becom
 2. *The settled mass beyond the limit.* What: K = 28 (e^{−f} to 4e8) and dxp = 18 at h = 0.005, δ = 1e-8, same checks. Why: the flux returned once between 4.7 and 7.5; RC8 only says it is below 1e-6 at 9.4. Acceptance: plateau mean unchanged to 1e-5 out to
    x⁺ − x⁺_f = 15; P1 to the new limit. Depends on: this note.
 3. *Family G and the asymmetric static member (for #42, #225).* What: the same chain for G (threshold at a drifting throat). Why: whether the settled mass depends on the static member. Acceptance: M_AH(t) converges at three h; PL1 and PL2 pass unchanged; compare with 0.22308. Depends on: #225.
-4. *D = 5, 6.* What: the chain at n = 3, 4 (M = r^{n−1}/2, a planted Tangherlini for each). Why: [ST17]'s n = 5, 6 rows. Acceptance: planted M recovered at second order. Depends on: this note.
+4. *Done in #246.* *D = 5, 6.* What: the chain at n = 3, 4 (M = r^{n−1}/2, a planted Tangherlini for each). Why: [ST17]'s n = 5, 6 rows. Acceptance: planted M recovered at second order. Depends on: this note.
 5. *The event horizon.* What: integrate the outgoing null ray that stays on the horizon and compare r_EH/2 with M_AH. Why: GGS09b show the apparent horizon lies outside the event horizon; the settled mass is r_EH/2. Acceptance: r_EH agrees with r_AH to the plateau spread. Depends on: this note.
 
 ## Files

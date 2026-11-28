@@ -244,3 +244,21 @@ and in the "Reading" paragraph: "…and the dependence on the distance from thre
 
 `settled_mass_d56.py` (commands `pstar`, `job`, `planted`, `analyze`, `tang_test`; `--mutate=NAME`), `settled_mass_d56_output.txt`, this note; raw `negative-mass-raw/I246-dh610` (`README.md`: the declaration and its changes; `runs/`: p*ₕ, the bisection, the 24 runs, the 8 prefix runs, the 48 noise runs, the
 analysis log; `mut/`: the 26 mutated analyses of record; `dev/`: development runs, queues and the 26 development mutations; `posts/`: the issue posts; `scripts/`: lane scripts, `bisect_pstar.py`, `make_figure.py`, `data_graphs.py`; `figures/settled_mass_d56.svg` and its table).
+
+## Coordinator's review
+
+Merged at 1fca2ef. Review folder `negative-mass-raw/I246-mac-review` at 6f436e4c, criteria committed (9a59b906) before the first run of
+`ind246.py`. The changed files are those the brief names.
+
+- **Rerun on the Mac** from 5b3517b: `analyze` gives the same 72 verdict lines as the output of record (exit 1, RC8a). Every line
+  read from the stored runs is identical. The planted Tangherlini runs, integrated afresh on the analysing machine, differ in
+  the third or fourth printed digit between dh610 (x86-64) and the Mac (aarch64), each within its bar.
+- **ind246**, 4 of 4. It shares only the series with this note's code. It recomputes the finest-h plateaus (to 4.2e-7), the
+  Richardson values (to 3.6e-7; orders 1.99 to 2.13 in all eight cases), E/E_throat (0.2917, 0.2158), and the bit-identity of
+  the K = 20 and 24 prefixes (8 of 8). The mutation `order1` fires. `last-half` and `ball` do not: the plateau is flat to 9e-7,
+  and the unit-ball volume cancels in E/E_throat, so that check tests only M/(½a^{n−1}). The absolute throat energies π, 2π, π²
+  were recomputed separately.
+- The interruptions (a reboot at 03:59 UTC and a login-screen suspend at 05:23 UTC on dh610) are documented in the raw folder's
+  posts. Every partial log is kept, and all 80 runs of record exit 0. dh610's sleep targets are now masked.
+- Applied: `settled_mass.md`, `critical_ghost.md` §1.3 and §4, and Paper V's #246 paragraph and limits bullet
+  (`paper_numbers.py` 251 of 251). Paper V quotes the Richardson values, so G − S is 0.755 a³ there against the finest-h 0.754.

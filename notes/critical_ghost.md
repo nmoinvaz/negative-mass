@@ -339,6 +339,15 @@ apparent-horizon mass with a second code to 1.2e-4 up to e^{−f} ≈ 12):
     7.1e-5: five within 6e-5, and W3 misses by 1.1e-5.
   - So the settled mass is not a function of (γ₁, r_th) at departure. The throat's speed carries most of the difference; that
     (γ₁, r_th, ṙ_th) suffice is a *conjecture*, not supported at the declared bar.
+- *Update from #246* (`wormhole_evolution/settled_mass_d56.md`; *numerical evidence*):
+  - The same chain at D = 5 and 6 (M = r^{n−1}/2 on the apparent horizon; second order at three h; a planted Tangherlini recovered
+    to 3e-6 to 6e-6; to e^{−f} = 4.0e8 on the horizon) gives for the symmetric family S a settled mass of 0.14587 a²
+    (r_AH = 0.5401 a) at D = 5 and 0.10792 a³ (r_AH = 0.5996 a) at D = 6: E/E_throat = 0.292 and 0.216, against 0.446 at D = 4.
+  - [ST17]'s E_f is the static throat's energy in each D (E = (D − 2)V_{D−2} M with the unit-ball volumes; their printed A₄ is
+    twice V₄). The horizon's mass at its first trapped cell is 0.984 and 0.980 of it: a formation value, as at D = 4.
+  - The one-sided family G settles higher, 0.2640 a² and 0.8629 a³ at δ = 1e-8 (0.118 a² and 0.755 a³ above S), and depends
+    strongly on δ (0.2350 and 0.5679 at δ = 1e-6, the same at all three h). The gap grows with D.
+  - That G's mass follows the stall member's size at departure is a *conjecture* at D = 5, 6.
 
 **Type II?** Nobody reports a power law, and none is expected: the critical solution is static and has a scale.
 
@@ -526,7 +535,7 @@ Beyond `notes/literature.md` and the repo's phase 2 and phase 5 results:
 1. **Precision type I scaling at the Ellis threshold.**
    - No bisection to p* in a generic family. The lifetime exponent is known to two digits [SH02] and has never been compared
      with 1/λ₀ in print.
-   - The threshold mass is 0.30 a [SH02] or 0.22 a [GGS09b], unresolved. *Update from #40 and #41:* the bisection and the lifetime law are done for families through the static wormhole (#40), and the settled mass is 0.2231 a ([GGS09b]'s value; [SH02]'s not reproduced, #41). Open: generic families (#225). *Update from #225:* at D = 4 the generic family G approaches the member γ₁ = 0.048, r_th = 1.0028 a, with that member's e-fold; at D = 5 the member's radius drifts. *Update from #253:* family G settles at 0.2355 a (δ = 1e-8), and its value depends on δ. *Update from #267:* not through the member's (γ₁, r_th) alone; no δ → 0 limit is seen.
+   - The threshold mass is 0.30 a [SH02] or 0.22 a [GGS09b], unresolved. *Update from #40 and #41:* the bisection and the lifetime law are done for families through the static wormhole (#40), and the settled mass is 0.2231 a ([GGS09b]'s value; [SH02]'s not reproduced, #41). Open: generic families (#225). *Update from #225:* at D = 4 the generic family G approaches the member γ₁ = 0.048, r_th = 1.0028 a, with that member's e-fold; at D = 5 the member's radius drifts. *Update from #253:* family G settles at 0.2355 a (δ = 1e-8), and its value depends on δ. *Update from #267:* not through the member's (γ₁, r_th) alone; no δ → 0 limit is seen. *Update from #246:* S settles at 0.146 a² (D = 5) and 0.108 a³ (D = 6); [ST17]'s E_f is the formation value at D = 5, 6 too.
    - One accurate 1+1 run along the unstable manifold of the massless symmetric wormhole would settle the mass. A bisection
      with the lifetime fitted against ln|p − p*| would test the type I law.
 2. **Universality on the two-ended side.**
