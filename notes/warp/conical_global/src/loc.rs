@@ -10,11 +10,12 @@
 //! `Unresolved` or nothing gives none, as a field whose ratios change sign did for the f64 fit. The stop rule of the walkers (five
 //! consecutive real estimates ahead, the last within the stop radius) is unchanged.
 //!
-//! **The gate.** `locate` fits 119 windows and degrees per field: about 1.2 ms in double-double (K = 30), 21 ms in quad-double
-//! (K = 60) and 430 ms in octo-double (K = 120) on the Mac. It runs only at the steps where the planner's step h is at most
-//! `GATE` times the stop radius. h is the radius times about 0.09 (the planner's tolerance to the power 1/K), so the gate is
-//! open for the last 60 steps or so before the stop radius and for the five that the rule needs; where it is closed the step has
-//! no estimate, as a step whose fit failed. The rule is checked against `locate` at every step on the `ctl` grid (raw I207-mac).
+//! **The gate.** `locate` fits 119 windows and degrees per field: 0.9 ms in double-double (K = 30), 16 ms in quad-double (K = 60) and
+//! 0.3 s in octo-double (K = 120) on the Mac (`negative-mass-raw/I207-mac/dev_12_bench_locate.log`). It runs only at the steps where
+//! the planner's step h is at most `GATE` times the stop radius. h is the radius times about 0.09 (the planner's tolerance to the
+//! power 1/K), so the gate is open for the last 60 steps or so before the stop radius and for the five that the rule needs; where
+//! it is closed the step has no estimate, as a step whose fit failed. The `locate_ungated` arm runs `locate` at every step: on the
+//! `ctl` grid its output equals the gated arm's outside the `loc` key (raw I207-mac, `run_18`).
 //!
 //! **The shadow.** On the same steps the f64 fit of the walker runs beside `locate`, with its own five-step rule, and
 //! `LocStats` keeps what it said: the step at which it would have stopped and its eta*. The walk's steps do not depend on the
