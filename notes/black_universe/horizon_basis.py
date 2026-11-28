@@ -624,7 +624,7 @@ def check_H1():
 
 def check_H2():
     out, ok = [], True
-    rng = np.random.default_rng(3020)
+    rng = np.random.default_rng(3021)
     items = [(n, CLASSES[n]) for n in ("L", "G", "A0", "A1R", "A1L", "Lm", "Rb", "Gb")] + [(f"rand{k}", _rand_spec(rng)) for k in range(8)]
     c2ps = []
     worst = 0.0
