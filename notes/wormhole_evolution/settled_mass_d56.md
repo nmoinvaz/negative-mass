@@ -2,7 +2,7 @@
 
 Code: [settled_mass_d56.py](settled_mass_d56.py), a thin driver that imports #41's `settled_mass.py`, #253's `settled_mass_g.py`, #40's `threshold.py` and #39's `dn.py` unchanged. Output of record:
 [settled_mass_d56_output.txt](settled_mass_d56_output.txt) (`python3 settled_mass_d56.py analyze --raw=<negative-mass-raw>/I246-dh610`, exit 1: the four RC8a fail, as declared). Raw output, with the criteria
-written before the runs of record (README at 726241f9, code at 0c52443): negative-mass-raw `I246-dh610` (`README.md`, `runs/`, `mut/`, `dev/`, `posts/`, `figures/settled_mass_d56.svg`). Status words as in AGENTS.md: every mass
+written before the runs of record (README at 726241f9, code at 0c52443; runs, analysis, mutated analyses and figure at 085c3667): negative-mass-raw `I246-dh610` (`README.md`, `runs/`, `mut/`, `dev/`, `posts/`, `figures/settled_mass_d56.svg`). Status words as in AGENTS.md: every mass
 below is *numerical evidence*; what is not shown is marked *conjecture*. No sentence here says a result is new. Units: a = 1 is the throat radius of the initial static wormhole, 8πG = 1, D = n + 2, M = r^(n−1)/2 on the apparent
 horizon (r₊ = 0), so M_throat = 1/2 and E/E_throat = 2M = r_AH^(n−1).
 
@@ -22,7 +22,7 @@ each D, and the mass on the horizon at its first trapped cell is 0.984 (D = 5) a
 | G against S per D, with the δ dependence | **done**; G differs | \|G − S\| = 0.118 > bar 0.029 (D = 5), 0.754 > 0.297 (D = 6); δ dependence +2.89e-2 and +2.95e-1, the same at all three h |
 
 Controls: 69 counted checks, 65 pass, the 4 failing are RC8a of the four cases. PL1 to PL3 (#41's, through the driver) pass and are printed by #253's helper outside the count (see "Disagreements"). 26 of 26 mutations fire their
-declared sets in the runs of record (MUT_RESULT_PLACEHOLDER). The roundoff floor of #226 is **not reached** by M_AH's convergence at D = 5 and 6 (ratios 0.003 to 0.12, below).
+declared sets in the runs of record (`mut/`, exit 0 each). The roundoff floor of #226 is **not reached** by M_AH's convergence at D = 5 and 6 (ratios 0.003 to 0.12, below).
 
 ## What was run
 
