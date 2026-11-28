@@ -57,6 +57,7 @@ SRC = {
     "settled_g": read(EV, "settled_mass_g_output.txt"),
     "drift": read(EV, "throat_drift_output.txt"),
     "scaling": read(EV, "throat_scaling_output.txt"),
+    "massb": read(EV, "settled_mass_b_output.txt"),
     "expansion": read(EV, "expansion_output.txt"),
     "plateau": read(EV, "constraint_plateau_output.txt"),
     "derive": read(EV, "derive_output.txt"),
@@ -497,6 +498,29 @@ printed(f"$\\tau_s-\\tau={float(t8[1]):.3f}a$ gives $\\tau_s={float(t8[3]):.5f}a
 printed(f"extrapolated over the same runs is ${k5[1]}$", "D = 5 extrapolated exponent")
 printed(f"for $k$ from ${min(kp):.2f}$ to ${max(kp):.1f}$, to $2\\times10^{{-4}}$", "jump-test k range")
 check(f"{float(jt[1]):.0e}" == "2e-04", f"jump-test agreement {jt[1]} rounds to 2e-4")
+
+
+# #266: G's settled mass against B (notes/wormhole_evolution/settled_mass_b_output.txt, the M(B) table at h = 0.005)
+mb = SRC["massb"]
+rowsB = {m[0]: (float(m[1]), float(m[2]), float(m[3]), float(m[4])) for m in
+         re.findall(r"^\s+(0\.0|0\.025|0\.05|0\.1|0\.125)\s+[0-9.e+-]+\s+([-+0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\s+[0-9.]+\s+[0-9.]+\s+([0-9.]+)\s+[-+0-9.]+", mb, re.M)}
+check(len(rowsB) == 5, f"#266's M(B) table: {sorted(rowsB)}")
+printed(f"${rowsB['0.0'][2]:.6f}a$ at $B=0$", "M at B = 0")
+printed(f"${rowsB['0.025'][2]:.6f}a$, ${rowsB['0.05'][2]:.6f}a$ and ${rowsB['0.1'][2]:.6f}a$ at $B=0.025$, $0.05$ and $0.1$", "M(B)")
+printed(f"$\\gamma_1={rowsB['0.025'][0]:.5f}$, ${rowsB['0.05'][0]:.5f}$ and ${rowsB['0.1'][0]:.5f}$", "gamma_1(B)")
+printed(f"$r_{{\\rm th}}={rowsB['0.025'][1]:.5f}a$, ${rowsB['0.05'][1]:.5f}a$ and ${rowsB['0.1'][1]:.5f}a$", "r_th(B)")
+import numpy as _np
+g = _np.array([rowsB[k][0] for k in ("0.025", "0.05", "0.1", "0.125")])
+dm = _np.array([rowsB[k][3] - rowsB["0.0"][3] for k in ("0.025", "0.05", "0.1", "0.125")])     # M/r_th - M_0 from the 6-decimal column
+ab = _np.linalg.lstsq(_np.vstack([g, g ** 2]).T, dm, rcond=None)[0]
+printed(f"$a={ab[0]:.3f}$ and $b={ab[1]:.2f}$", "the four-point fit of M/r_th - M_0 (to the digits the printed table supports)")
+lo = re.search(r"\[FAIL\] REL: .*?\(max error ([0-9.e-]+) \(bar ([0-9.e-]+)\)", mb)
+lop = [abs(float(x)) for x in re.findall(r"REL-ph: leave out B = [0-9.]+: .*?error ([-+0-9.e]+)$", mb, re.M)]
+check(lo is not None and len(lop) == 4, "#266's leave-one-out rows")
+printed(f"(${float(lo[1]) * 1e5:.1f}\\times10^{{-5}}$ against ${float(lo[2]) * 1e5:.0f}\\times10^{{-5}}$)", "the declared leave-one-out")
+printed(f"holds to ${max(lop) * 1e6:.1f}\\times10^{{-6}}$", "the post-hoc four-B leave-one-out")
+st = re.search(r"first B with no stall \(gain < 2\.0\): ([0-9.]+); the last with a stall: ([0-9.]+)", mb)
+check(st is not None and float(st[1]) <= 0.165 and float(st[2]) >= 0.155, f"the stall ends between {st[2] if st else '?'} and {st[1] if st else '?'} at h = 0.005")
 
 print(f"\n{count} checks, {bad} failed; mutation {OPT.mutate}")
 sys.exit(1 if bad else 0)

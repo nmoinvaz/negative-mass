@@ -198,3 +198,7 @@ Review of branch `wip/i253-g-settled-mass` at 9579bcf and raw `I253-rpi5` at a31
   - Task 2 (G's plateau against the member at departure, as δ → 0) is #267.
   - Task 3 is added to #246.
   - Task 4 (the late-window scatter) is not filed: it is below the h-difference, and #266 and #267 will show whether it matters.
+
+**Update from #266** ([settled_mass_b.md](settled_mass_b.md)): along B, M/r_th − M(B = 0) ≈ 0.203 γ₁ + 0.85 γ₁², with γ₁ ≈ 4.8 B² the member's
+asymmetry at departure. The declared leave-one-out over three B is not met (7.9e-5 against 6e-5), and the post-hoc one over four B holds to
+5.5e-6. This is a relation along one family, not a test that M depends on the member alone. B = 0.2 has no stall. Recommended task 1 is done.

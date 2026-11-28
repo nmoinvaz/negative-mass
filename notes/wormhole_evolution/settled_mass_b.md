@@ -194,3 +194,24 @@ asymmetry of the member at departure; a relation along one family, not a test th
 
 `settled_mass_b.py` (commands `pstar`, `job`, `member`, `stallscan`, `planted`, `analyze`; `--mutate=`), `settled_mass_b_output.txt`, this note; raw `negative-mass-raw/I266-mac` (`README.md` with the criteria, amendment A1 and
 the mutation targets; `runs/<member>/h<h>/{pstar,chain,member,logs}`, `runs/stallscan*`, `mut/` the 19 mutated analyses of record, `dev/` development runs and their logs, `scripts/`, `plot_settled_mass_b.py` with the vendored `data_graphs.py`, and `settled_mass_b.svg`: M(B) and M/r_th − M₀ against γ₁).
+
+## Coordinator's review
+
+Review of branch `wip/i266-mass-vs-B` at c24b3a1 and raw `I266-mac` at 02768c06, recorded in negative-mass-raw `I266-mac-review`.
+
+- **Scope.** The branch adds the script, its output and this note.
+- **Rerun.** `analyze` on the stored runs gives every verdict line of the output of record. Its exit is 1, from REL, as declared.
+- **Rulings during the task.** B = 0.2 is reported as not applicable, since it has no stall. B = 0.125 and h = 0.02 are supplementary and
+  gate nothing. The runner's first declaration of them as gating was corrected in amendment A1, before the runs of record.
+- **What holds.**
+  - B = 0 reproduces S's 0.22309 a.
+  - M(B) converges at the three h.
+  - The member at departure has γ₁ ≈ 4.8 B².
+  - The relation M/r_th − M₀ = aγ₁ + bγ₁² fails its declared leave-one-out over three B (7.9e-5 against 6e-5). Over four B, post hoc, it
+    holds to 5.5e-6.
+- **A precision point.** Refitting a and b from the output's printed table gives a = 0.2026 to 0.2028 and b = 0.851 to 0.854. That depends
+  on whether the 5-decimal dM′ column or the 6-decimal M/r_th column is used. So Paper V and `critical_ghost.md` quote a = 0.203 and b = 0.85,
+  the digits the printed output supports, not 0.2027 and 0.853.
+- **Applied.** `settled_mass_g.md`, `critical_ghost.md` §1.3 and Paper V's #266 placeholder carry the result. #267 stays pending.
+  `paper_numbers.py` checks the M(B) table, γ₁, r_th, the fit and both leave-one-out results (219 of 219).
+- **Follow-ups.** #267, now running, is the δ → 0 half.

@@ -305,6 +305,14 @@ apparent-horizon mass with a second code to 1.2e-4 up to e^{−f} ≈ 12):
   formation; the gap is 0.0013 a at formation and 0.0112 a less ghost flux afterwards. So the settled mass is not the same for every
   family that approaches a static wormhole, and for G it is not one number. That it follows the member's parameters (γ₁, r_th at
   departure) is a *conjecture*. The coordinator's rerun on another machine gives G's plateau to 8e-7 and the δ dependence to 0.1 %.
+- *Update from #266* (`wormhole_evolution/settled_mass_b.md`; *numerical evidence*):
+  - With the normal amplitude B of family G varied at D = 4 and δ = 1e-8, the settled mass is 0.2231 a at B = 0 (S's value, to 4e-6),
+    and 0.2236, 0.2252 and 0.2355 a at B = 0.025, 0.05 and 0.1.
+  - The member the run leaves has γ₁ ≈ 4.8 B² (0.0029, 0.0118, 0.0483) and r_th = 0.9995, 0.9984 and 1.0029 a.
+  - M/r_th − 0.2231 a ≈ 0.203 γ₁ + 0.85 γ₁². A leave-one-out over the three declared B misses its bar (7.9e-5 against 6e-5); one over
+    four B, with B = 0.125 added post hoc, holds to 5.5e-6.
+  - That is a relation along one family; that the mass depends on the member alone is still a *conjecture* (#267).
+  - The stall ends between B = 0.155 and 0.165. Above that the threshold is prompt and there is no member to read.
 
 **Type II?** Nobody reports a power law, and none is expected: the critical solution is static and has a scale.
 
