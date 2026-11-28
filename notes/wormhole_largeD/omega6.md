@@ -154,3 +154,18 @@ T1 14 (the 13 grid-dependent mutations and the nominal run on the control grids)
 - **Off target: none.** The three H of the README that differed from the code (X1, X2, X3, XF) were found before the controls of record and are in the defects above; they did not move a target.
 - **Declared silences that are results:** `wrong_c8` and `wrong_Om5` are seen only by X4 (Ω₆ moves by less than R7 and R8 can see; as `wrong_c7`, `wrong_Om4` at order 7); `wrong_c7` and `wrong_Om4` do not fire PL4 (Ω₄ does not depend on them); M6 fires only under `coarse_B` (both grids share the other errors); RES fires only under `stale_cache`;
   PLW is silent in every `wrong_Om` run (the wrong input moved Ω_{i+1}); the planted-f₇ tests (`dev_13`, `dev_14`) are the stand-in for the real relation in the ST development runs.
+
+## Coordinator's review
+
+Merged at 57a1cac. Review folder `negative-mass-raw/I282-mac-review` at d951b02b, criteria committed (d725ea4f) before the first run of
+`ind282.py`. The changed files are those the brief names.
+
+- **ind282**, 3 of 3. It shares only the printed Ω₃ … Ω₆ with this note's code. From F = (1 + Σ Ω_{k−1}ε^k)·2^{4ε} it rebuilds f₂ and
+  f₃ exactly (a planted check of the series) and f₇, which equals the identified closed form to 7.9e-115 relative; the 107 printed
+  digits of Ω₃ set that limit. The mutation `zeta3` (the tower's 589824 in place of 565248) and `ln2` fire.
+- Not rerun: the two grids (2 h each on rpi5). Their agreement to 430.8 digits and the refit of #195's independent W² to 1.1e-23 are
+  the runner's evidence for Ω₆; the review checks the identification against the printed values.
+- The README's H for X1 … XF differed from the code's, reported by the runner (A2, A3); XF ran at the declared H and found the
+  relation.
+- Applied: `README.md` ("Result", "Limits") and Paper III (Ω₆ computed and its closed form identified; F free of ln 2 at ε⁷
+  identified; `paper_numbers.py` passes). `omega_graph.py` still marks Ω₆ as an estimate (a follow-up).

@@ -84,7 +84,7 @@ W^2a^2 = 2(D-3) - 4\ln 2 + \frac{\pi^2/3 + 4\ln^2 2}{D-3} + O(D^{-2}) .
   - **All the ln 2 of Ω₀ … Ω₅ comes from one factor:** W²a² = s 2^{−4/s} F(1/s), with F(ε) = 1 + (2π²/3)ε² + 80ζ(3)ε³ + (22π⁴/45 − 384ζ(3))ε⁴
     + … free of ln 2 through ε⁶. That is checked symbolically for these terms, both here and in the coordinator's review; nothing is
     claimed beyond them.
-  - The remainder after seven terms is Ω₆/(2(D − 3))⁶, with Ω₆ ≈ 3.7 × 10⁶ an estimate.
+  - The eighth coefficient is computed (#282, [omega6.md](omega6.md)): Ω₆ = 3672259.16259439…, from the order-8 matching integral on two grids that agree to 430.8 digits. Its closed form (weights 7 to 3; Ω₆/64 = 57379.0494155373514…) is identified by PSLQ at 390 digits, not derived. The remainder after eight terms is Ω₇/(2(D − 3))⁷ with Ω₇ ≈ 2.55 × 10⁷, an estimate. F is free of ln 2 through ε⁷: ε² … ε⁶ checked symbolically, ε⁷ identified in the full basis with ln 2 to ln⁷2. The "pure ζ(3) tower" −384, 3072, −36864 of f₄ … f₆ does not continue (f₇'s is 565248, not 589824).
 
 **What it means.**
 - **Faster in higher D.** The e-folding time is a/√(2(D − 3)) at large D. The exact values are 0.846 a (D = 4),
@@ -199,7 +199,7 @@ comes only from the absence of the growing term.
   and E2, which are derived in omega2.md and checked numerically, but not yet re-derived independently (#209). Ω₃ is a
   fit, not identified (#195; #208 computes it from the order-5 integral).
   **Update from #208:** Ω₃ is now derived too, resting on E1, E2 and a third identity, E3, which #209 should also
-  re-derive. Ω₄ is derived (#220); Ω₅ is derived (#263; E2W and E5 re-derived independently in #264); Ω₆ is an estimate (≈ 3.7 × 10⁶), not computed.
+  re-derive. Ω₄ is derived (#220); Ω₅ is derived (#263; E2W and E5 re-derived independently in #264); Ω₆ is computed and its closed form identified, not derived (#282); Ω₇ is an estimate (≈ 2.55 × 10⁷), not computed.
   **Update from #209:** E1, E2, E3 and the two Clausen integrals are re-derived independently, without the notes
   ([exchange_review.md](exchange_review.md)), with every boundary term stated. No sign, constant or result differs.
   So Ω₁, Ω₂ and Ω₃ are **derived**, and #25 is closed. *Added by the coordinator:* the review checked E1 to E3 on a

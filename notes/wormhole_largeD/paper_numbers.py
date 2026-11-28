@@ -158,6 +158,11 @@ for D in (500, 1000):
 o6txt = {f"{float(x):.0e}" for x in o6s}
 print(f"  (data - 7 terms) s^6 at D = 500, 1000: {[f'{float(x):.4g}' for x in o6s]}, an estimate of Omega6")
 check(o6txt == {"4e+06"} and "$\\Omega_6\\approx4\\times10^6$" in TEX, f"the Omega6 estimate {o6txt} printed as 4x10^6")
+O8 = open(os.path.join(HERE, "order8_output.txt")).read()
+om6 = re.findall(r"^\s+Omega6 = ([0-9.]+)$", O8, re.M)
+check(len(om6) >= 2 and len(set(x[:30] for x in om6)) == 1, f"#282: Omega6 printed on both grids, equal to 30 characters ({len(om6)})")
+check(f"$\\Omega_6={om6[0][:17]}$" in TEX, f"#282: Omega6 = {om6[0][:17]} printed in Paper III")
+check("REAL XF: FOUND" in O8, "#282: the full-basis PSLQ (XF, with every ln 2 monomial) found the ln 2-free relation")
 # the ln 2 structure (sympy): (1 + sum Omega_k e^(k+1)) e^(4 ln2 e) has ln2-free coefficients through e^6
 import sympy as sp
 Ls, ps, z3s, z5s, es = sp.symbols("L pi z3 z5 e")
