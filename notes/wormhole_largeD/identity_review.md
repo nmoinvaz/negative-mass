@@ -242,3 +242,20 @@ raw README A1). With `c_wrong`, E2_2 and E3_3 hold (they need only G₀, G₁), 
   peak 202 MB). With mpmath and sympy installed (the project's venv), run `python3 identity_review.py sym exch shifts bnd masters masters2 fp ctlsum --ctldir=../../../negative-mass-raw/I264-rpi5 --ctlprefix=ctl2` from this directory (the raw clone beside the checkout, its controls run by `ctl2_queue.sh`);
   `--cache=<dir>` keeps the derived nodes between runs; `--mutate=NAME` for the controls.
 - Raw `I264-rpi5` (negative-mass-raw): `derivations.md` (written first), `README.md` (criteria, routes, amendments A1 and A2), `dev_*`, `run_01` … `run_03`, `ctl_*` (first set), `ctl2_*` (second set), `scratch_tail.py`.
+
+## Coordinator's review
+
+Review of branch `wip/i264-identity-review` at 98aa798 and raw `I264-rpi5` at bfbd298.
+
+- **Scope.** The branch adds the script, its output and this note.
+- **Independence.** The derivations were committed (raw `derivations.md`, 38869df) before any script ran and before the notes were read
+  beyond their statement lines. §1 records what was read and when. The partial independence of E2W's and E5's sketches (Limits, item 4) is
+  stated, and accepted as stated.
+- **One statement corrected.** §10 says "Ω₄ and Ω₅ are roots of G₆ and G₇ to better than 1e-58". The output gives |G₆| = 1.7e-59 and
+  |G₇| = 6.9e-57 at the closed forms, both at the cutoff level of the hierarchy. Paper III and the README quote those two numbers, and
+  `paper_numbers.py` checks them.
+- **Status.** E4, E2W and E5 are *proved* by hand, independently, *checked symbolically* and checked numerically, with their hypotheses
+  stated (G₂ = G₃ = 0, G₄ = 0). The finite-part chain (11 and 37 steps) and the seven Euler sums are not re-derived. They rest on 22
+  quadratures, the planted splits and the end-to-end agreement.
+- **Applied.** Paper III's sentence on the review status of Ω₅ (and Ω₄) and the README's Result and Limits are updated. Paper III's
+  checker passes with the new numbers.

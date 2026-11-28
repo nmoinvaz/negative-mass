@@ -144,6 +144,12 @@ check(f"$-799.6562413$ and ${mp.nstr(OM5 / 32, 10, strip_zeros=False)}$" in TEX,
 check(f"=40860.45535.\n" in TEX or "=40860.45535." in TEX, "Omega5's value printed with its closed form")
 d7 = re.search(r"M5: Omega5 of G1 against G2 .*?: ([0-9.]+) digits", o7)
 check(d7 is not None and f"209 and {int(float(d7.group(1)))}\ndigits" in TEX, "the Chebyshev digits of Omega5 printed in main.tex")
+IR = open(os.path.join(HERE, "identity_review_output.txt")).read()      # #264's independent hierarchy
+g6 = re.search(r"H2_G6 : \|G_6\| = ([0-9.e-]+) at the closed forms", IR)
+g7 = re.search(r"# G_7 at #263's Omega_5: ([0-9.e-]+)", IR)
+check(g6 is not None and g7 is not None, "#264's G6 and G7 at the closed forms in identity_review_output.txt")
+g6t, g7t = (f"{float(x.group(1)):.1e}".split("e") for x in (g6, g7))
+check(f"${g6t[0]}\\times10^{{{int(g6t[1])}}}$ and ${g7t[0]}\\times10^{{{int(g7t[1])}}}$" in TEX, f"G6, G7 at the closed forms printed: {g6.group(1)}, {g7.group(1)}")
 OMS7 = OMS + [OM5]
 o6s = []
 for D in (500, 1000):
