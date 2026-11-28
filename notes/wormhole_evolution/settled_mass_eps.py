@@ -381,6 +381,33 @@ def post_hoc(P1, P2, allp, f1, t1, f2, t2):
             print(f"            T1 residuals (M_0 = 0.223086): " + ", ".join(f"{n} {x:+.2e}" for n, x in zip(SIX, out[0][0]["res"])) + "; T2: " + ", ".join(f"{n} {x:+.2e}" for n, x in zip(THREE, out[1][0]["res"])))
 
 
+def post_hoc2(P1, P2, allp):
+    """Added after the first record run (README stage 2 addendum; the gating checks and T1, T2 are unchanged): the variants' own errors, the fits without the roundoff-floor points, B = 0's reading against eps."""
+    print("\n== Post hoc 2 (gates nothing; added after the first record run): the fits' own errors at both eps for the four readings (fixed M_0, V2 M_0(eps), V1 free intercept, V3 B = 0 subtracted)")
+    for eps, P_ in ((EPS_A, P1), (EPS_B, P2)):
+        for nm, names in (("nine", TRAIN9), ("fifteen", TRAIN9 + SIX), ("eighteen", TRAIN9 + SIX + THREE)):
+            out = []
+            for lab, Pv, m0, kind in (("fixed", P_, M0, "P3"), ("V2", P_, m0_eps(eps, H_FIN), "P3"), ("V1", P_, M0, "free"), ("V3", sub_ref(P_, P_[REF]), M0, "P3")):
+                R = fit_pred(Pv, names, names[:1], m0, kind)
+                out.append(f"{lab} in-sample {np.max(np.abs(R['ins'])):.2e} loo {np.max(np.abs(R['loo'])):.2e}")
+            print(f"    eps {eps:g}, {nm}: " + "; ".join(out))
+    print("    -- the same tests without the roundoff-floor points (delta = 1e-12; and 1e-11, 1e-12), max |M - predicted| of T1 and T2")
+    for eps, P_ in ((EPS_A, P1), (EPS_B, P2)):
+        for lab, drop in (("all nine", ()), ("without e12", ("e12",)), ("without e11, e12", ("e11", "e12"))):
+            tr9 = tuple(n for n in TRAIN9 if n not in drop)
+            out = []
+            for kl, Pv, m0, kind in (("fixed", P_, M0, "P3"), ("V1", P_, M0, "free"), ("V3", sub_ref(P_, P_[REF]), M0, "P3")):
+                a = fit_pred(Pv, tr9, SIX, m0, kind)
+                c = fit_pred(Pv, tr9 + SIX, THREE, m0, kind)
+                out.append(f"{kl}: T1 {np.max(np.abs(a['res'])):.2e}, T2 {np.max(np.abs(c['res'])):.2e}")
+            print(f"    eps {eps:g}, {lab}: " + "; ".join(out))
+    print("    -- the symmetric member B = 0 against eps (r_th = 1 and rdot_th = 0 for the static member): the reading's second-order part")
+    print("    eps      r_th - 1     (r_th - 1)/eps^2   rdot_th      rdot_th/eps^2   t_dep")
+    for eps in EPS_SCAN:
+        q = read(REF, eps)
+        print(f"    {eps:<8g} {q['rth'] - 1:+.3e}  {(q['rth'] - 1) / eps ** 2:+8.3f}        {q['rdot']:+.3e}  {q['rdot'] / eps ** 2:+8.3f}      {q['t_dep']:.3f}")
+
+
 def analyze_cmd():
     t0 = time.time()
     f1, t1, f2, t2 = sets()
@@ -522,6 +549,7 @@ def analyze_cmd():
 
     try:
         post_hoc(P1, P2, allp, f1, t1, f2, t2)
+        post_hoc2(P1, P2, allp)
     except Exception as ex:
         import traceback
         print(f"\n== Post hoc block not computable: {ex!r}")
