@@ -20,6 +20,8 @@ stars* — [`paper/1-thresholds/main.pdf`](paper/1-thresholds/main.pdf)
 - **Verified by:** `phase2/dg_proof/` (exact SymPy checks of every identity, symbolic in l and for l = 2–10),
   `phase2/dg_spectrum/` (independent numerical spectra, 1000-case scan).
 
+![The threshold κ_c(R) of Theorem 2 for l = 2 to 5, and the point mass's l⁴ growth rate against finite stars](phase2/dg_spectrum/thresholds.svg)
+
 ## Paper II — negative-mass boson star
 N. Moinvaziri, *Stability of a negative-mass boson star* —
 [`paper/2-boson-star/main.pdf`](paper/2-boson-star/main.pdf)
