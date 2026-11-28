@@ -38,6 +38,7 @@ MUTATIONS = {
     "member_M12": ("member", "      12  0.237622   0.047732", "      12  0.237722   0.047732"),
     "spectrum_zero": ("spectrum", "zero at W = -2.61874 +0.15269i", "zero at W = -1.61874 +0.15269i"),
     "route_W3": ("route", "-7.55e-04   0.240723      +7.11e-05", "-7.55e-04   0.240723      +5.11e-05"),
+    "d56_S5": ("d56", "Richardson 0.145866; spread", "Richardson 0.146866; spread"),
     "slope_S6": ("check", "ind40 0.461705", "ind40 0.461805"),
 }
 
@@ -64,6 +65,7 @@ SRC = {
     "member": read(EV, "settled_mass_member_output.txt"),
     "spectrum": read(EV, "ellis_spectrum_output.txt"),
     "route": read(EV, "settled_mass_route_output.txt"),
+    "d56": read(EV, "settled_mass_d56_output.txt"),
     "expansion": read(EV, "expansion_output.txt"),
     "plateau": read(EV, "constraint_plateau_output.txt"),
     "derive": read(EV, "derive_output.txt"),
@@ -578,6 +580,23 @@ check(min(p2) > 6e-5, f"#283: P2 misses all six (smallest {min(p2):.2e})")
 check(sum(x <= 6e-5 for x in p3) == 5, f"#283: P3 within 6e-5 at five of six ({sorted(p3)})")
 printed(f"by up to\n${max(p2) * 1e4:.2f}\\times10^{{-4}}$", "the largest P2 miss")
 printed(f"predicted to ${max(p3) * 1e5:.2f}\\times10^{{-5}}$, five of them within $6\\times10^{{-5}}$", "the largest P3 miss and the count within the bar")
+
+# #246: the settled mass at D = 5, 6 (notes/wormhole_evolution/settled_mass_d56_output.txt; Richardson over three h, delta = 1e-8)
+do = SRC["d56"]
+sm = re.findall(r"^\s+S: plateau mean over the last 1\.0 of x\+ [0-9.]+ \(r_AH = ([0-9.]+)\);.*?Richardson ([0-9.]+);", do, re.M)
+gm = re.findall(r"^\s+G: plateau mean [0-9.]+ \(r_AH = [0-9.]+\);.*?Richardson ([0-9.]+);", do, re.M)
+check(len(sm) == 2 and len(gm) == 2, f"#246's settled S and G lines at D = 5, 6 ({len(sm)}, {len(gm)})")
+(r5, s5), (r6, s6) = [(float(a), float(b)) for a, b in sm]
+g5, g6 = float(gm[0]), float(gm[1])
+printed(f"${s5:.4f}a^{{2}}$ ($r_\\AH={r5:.4f}a$) and ${s6:.4f}a^{{3}}$ ($r_\\AH={r6:.4f}a$)", "S settled, D = 5, 6")
+printed(f"$E/E_{{\\rm throat}}=2M/a^{{n-1}}={2 * s5:.3f}$\nand ${2 * s6:.3f}$", "E/E_throat = 2M")
+printed(f"settles at ${g5:.3f}a^{{2}}$ and ${g6:.3f}a^{{3}}$, which is ${g5 - s5:.3f}a^{{2}}$ and ${g6 - s6:.3f}a^{{3}}$ above", "G settled and G - S")
+printed(f"$0.0125a$, ${g5 - s5:.3f}a^{{2}}$ and ${g6 - s6:.3f}a^{{3}}$ in $D=4$, $5$ and $6$", "the G - S gap by D")
+d6 = re.findall(r"^\s+delta = 1e-06: plateau\(1\.0\) \[[^\]]+\], differences [^,]+, [^,]+, Richardson \(second order\) ([0-9.]+);", do, re.M)
+check(len(d6) == 8, f"#246: eight delta = 1e-6 Richardson lines ({len(d6)})")
+printed(f"${float(d6[2]):.3f}a^{{2}}$ and ${float(d6[6]):.3f}a^{{3}}$ at $\\delta=10^{{-6}}$", "G at delta = 1e-6 (the first, 4.0e8, line of each G pair)")
+fr = {int(m[0]): float(m[1]) for m in re.findall(r"^\s+([56])\s+S formation \(first trapped cell\)\s+[0-9.]+\s+[0-9.]+\s+([0-9.]+)", do, re.M)}
+printed(f"first trapped cell is ${fr[5]:.3f}$ and ${fr[6]:.3f}$ of it", "S's formation E/E_throat, D = 5, 6")
 
 print(f"\n{count} checks, {bad} failed; mutation {OPT.mutate}")
 sys.exit(1 if bad else 0)
