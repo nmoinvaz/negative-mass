@@ -134,7 +134,7 @@ python3 notes/warp/conical_offgrid.py --grid=ctl --no-controls --nobuild --dump=
 
 ## Coordinator's review
 
-Under review: multishoot pull request #73 (`feat/implicit-taylor-r2` at eaf55a8, on main 70fea18, not merged; its review
+Under review: multishoot pull request #73 (`feat/implicit-taylor-r2` at eaf55a8, on main 70fea18, not merged; its review *Update 2026-11-28:* merged (2827f0a) and released in multishoot 5.0.0; #216 moves the crate to the release.
 and release are the user's), `wip/i190-implicit-taylor` at 550800c, raw `I190-rpi5` at 5f2ac0f. Review folder
 `negative-mass-raw/I190-mac-review` (at ddf8e6f), whose README holds the criteria, committed before the first run of
 `ind190`. The changed files are those the brief names. The baseline files `hp.rs` and `poly.rs` only gain `cfg` gates

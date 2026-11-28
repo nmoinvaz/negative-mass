@@ -182,7 +182,11 @@ exterior (Zerilli plus Yukawa) solutions, integrated with continuous orthonormal
 determinant has no real zero for $\gamma\in[10^{-3},300]$ ($\ell=2$) and $[10^{-3},1000]$ ($\ell=3$), ranges that contain
 the point-mass rates $137$ and $686$; the same holds for phantom stars at $\omega=0.70$ and $0.85$ and for the canonical
 star. An argument-principle count, validated on the known mode above, finds no zero with $0.1\le\Re s\le2$,
-$|\Im s|\le2.5$, which also excludes oscillatory matter-sector instabilities in that region. The axial potential is
+$|\Im s|\le2.5$, which also excludes oscillatory matter-sector instabilities in that region. For $\ell=2$ the count was
+repeated with an independent evaluator of the same determinant over complex $s$, a double-double Taylor-series code
+(accompanying repository, \texttt{phase2/nonradial/taylor\_polar.md}): at the 147 points of the contour it agrees with the
+orthonormalisation path at a tight tolerance to $1.2\times10^{-12}$ in modulus and $5.1\times10^{-11}$ in phase, and the count is
+again zero. The axial potential is
 positive for every $\ell\ge2$ and every star examined, so the axial sector is stable.
 
 The interior acts on the exterior through $\kappa_{\rm eff}(\ell,s)$, and the intertwiner gives the exact relation

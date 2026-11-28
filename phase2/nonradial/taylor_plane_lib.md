@@ -132,7 +132,7 @@ From a clone of multishoot at `feat/plane-stepper`: `cargo test --release --feat
 
 ## Coordinator's review
 
-Under review: multishoot pull request #70 (`feat/plane-stepper` at a880903, **not merged**: its review and release are
+Under review: multishoot pull request #70 (`feat/plane-stepper` at a880903, **not merged**: its review and release are *Update 2026-11-28:* merged (squash, 70fea18) and released in multishoot 5.0.0.
 the user's), `wip/i189-plane-lib` at 6c40e02, raw `I189-mac` at bb964b6. Review folder
 `negative-mass-raw/I189-mac-review`, whose README holds the criteria, committed before the first run of `ind189.py`.
 *Update, 2026-11-27:* the user squash-merged multishoot#70 into multishoot main as 70fea18. No release contains it yet

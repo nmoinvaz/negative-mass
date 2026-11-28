@@ -305,7 +305,7 @@ Under review: `wip/i187-taylor-rows` at 2a84083, raw `I187-mac` at 89bc112. Revi
 Follow-ups: #196 (scipy's drift with γ), #197 (quad-double at (5, 6000)), #198 (#114's l = 6 value), and #188 (complex s,
 already filed).
 
-**Update from #189.** The crate can step its planes with multishoot's plane stepper (pull request #70, unmerged) behind the
+**Update from #189.** The crate can step its planes with multishoot's plane stepper (pull request #70, unmerged) behind the *Update 2026-11-28:* #70 is merged and released in multishoot 5.0.0; #81, the complex plane of #188, is merged into multishoot main (75d1e1e), not yet released.
 cargo feature `lib_plane`. With it, every D and q token of #187's rows is the same; see [taylor_plane_lib.md](taylor_plane_lib.md) and its
 review.
 
@@ -464,7 +464,7 @@ Mac, nice 10, at a load of 20 to 60 from other projects.
 - **XR not met.** The stripped D is not independent of R_s: the phase differs by 0.11 rad. The cause is the exterior solution's tails in
   1/R_s and ln R_s, which are holomorphic and zero-free, and XRc shows the counts are unaffected. The finding stands as reported, and the
   bar is not moved.
-- **The library PR.** multishoot#81 (`feat/complex-plane`) is the user's to review and merge.
+- **The library PR.** multishoot#81 (`feat/complex-plane`) was merged into multishoot main on 2026-11-28 (75d1e1e). It is not yet in a release.
 - **Follow-ups.**
   - Task 1 (recount #126's boxes with the crate as a second evaluator) is #274.
   - Task 2 is added to #116.
