@@ -270,3 +270,19 @@ static_c1.py mutations DIR PREFIX                                           # fi
 ```
 
 `static_c1_output.txt` is `derive`, `check`, `table` and `mutations` of the runs of record (`I259-mac/runs`, code commit fbc5c8f), in that order. Memory 590 MB at most (#232's solver at h = 0.0025).
+
+## Coordinator's review
+
+Merged at 557416b. Review folder `negative-mass-raw/I259-mac-review` at 9f25c3e8, criteria committed (d3d8630d) before the first run of
+`ind259.py`. The changed files are those the brief names.
+
+- **Rerun on the Mac** from 38a08d4: `derive` (4 of 4), `check` (11 of 11) and `table` exit 0, and their logs equal the runner's
+  apart from timings.
+- **ind259**, 3 of 3, from the closed forms of A, R and #269's family alone. The static member's asymptotic mass is
+  M(L) = 2L^{3/2}/(3π) in the areal radius, so dM/dL = 1/π at L = 1. c₁ = ∂_L r(S) = 1/2 and κ = 2/π, so κ c₁ = δM_ADM
+  symbolically. Along the family dM/dL = κ_ξ (dA_h/dL)/8π holds to 2e-31 at L = 0.7, 1, 1.3, 2, with κ_ξ normalized at
+  infinity. The mutations `no-norm`, `c1-one` and `mass-exp` fire.
+- Not rechecked independently: T6 to T11 (the evolved classes and #232's solutions). The two bars the runner moved after
+  development (T3, T8) are named in its raw README before the run of record.
+- Applied: `horizon_sector.md`, `full_slice.md`, and Paper IV (a paragraph on the static coefficient; the open item removed;
+  `paper_numbers.py` 142 strings, mutation `c1theta` added).

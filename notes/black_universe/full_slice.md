@@ -88,10 +88,10 @@ Consequences:
 3. At large s, μ δr' = r A δr_ρ/κ and δm → −r A δr_ρ, while a → 0: **Θ(∞) = −δM_ADM/κ** (the ratio Θ/δm is −1.606 and −1.585 at ρ = 16 for the two
    homogeneous solutions, against −1/κ = −1.571: a 1/ρ convergence, not tested beyond ρ = 16). The constant-tail solution has Θ = 0, the mass solution Θ ≠ 0.
 
-So **c₁ = δM_ADM/κ = (π/2) δM_ADM for every solution of H** at c = −1 (conditional on the large-s statement in 3). A left start with zero constants has Θ = 0: c₁ = 0 and δM_R = 0 for
+So **c₁ = δM_ADM/κ = (π/2) δM_ADM for every solution of H** at c = −1 (proved by hand in #259 for δφ = δF = 0 beyond a finite ρ, [static_c1.md](static_c1.md) Sec. 2: δm = c_b δr − κΘρ/R with c_b = 1/(2ρ²) + O(ρ⁻³)). A left start with zero constants has Θ = 0: c₁ = 0 and δM_R = 0 for
 every compact datum, whatever its shape. That is the rank-1 end vector: the mass direction is never excited, only the constant-tail direction, which C1 removes. The physical reading is
 that static solutions are critical points of M_ADM. Checks: Q5 (c₁ = 1.4e-15 and −7.5e-17 from both starts), Q4 (δm ≤ 9e-16 out to ρ = 16), `left_mass` (δM = 1e-4 and 2e-4: c₁ = 1.573913e-4
-and 3.147827e-4; κc₁ = 1.001984e-4 against δm(3e4) = 1.000000e-4, the same 0.2% as Θ/δm at ρ = 16; and Θ(1.05) = −c₁ = −1.573913478e-4 to 9 digits, `table`).
+and 3.147827e-4; κc₁ = 1.001984e-4 against δm(3e4) = 1.000000e-4, the same 0.2% as Θ/δm at ρ = 16 (#259: δm(ρ = 1e8) = κ c₁ to 1.1e-13; the 0.2% is the finite-ρ value of δm); and Θ(1.05) = −c₁ = −1.573913478e-4 to 9 digits, `table`).
 
 The static term M of #232 (u_pm + V̂u/2, u = Y/ρ; zero on the exact mode) follows it. M(s) ≤ 1.1e-14 on G and ≤ 6e-17 on G without C1, and −1.286e-3 at s = ±0.2 for δM = 1e-4 (`table`).
 So M ≠ 0 exactly when δM ≠ 0 (hence c₁ ≠ 0): the corner-constant classes A0, A1L of #248 carry a mass perturbation.
@@ -195,11 +195,11 @@ and in the sentence "Data with $c_2=0$, among them all data supported away from 
 - The initial values of E9's δφ. The homogeneous solutions with Y = 0 are not all pure gauge: one carries δM. With zero initial values (`mode_M`) M reaches 3.6e-4 and the evolved Y is off by 3.2e-2 at every h; the fix sets δφ(0.3) = α·1e-3, α = 1.171509, so that M = 0.
 - C1 and C2 are required for compactness, not shown to be required by the physics; the first integral Θ is checked numerically (a′ = μQ), not derived from the Einstein equations here.
 - Nonlinear fate; polar modes; other members.
-- `c₁ = δM_ADM/κ` rests on Θ(∞) = −δM_ADM/κ, whose numerical ratio at ρ = 16 is 1.02 and 1.01 of the asymptotic value.
+- *Closed in #259:* Θ(∞) = −δM_ADM/κ is proved for data with δφ = δF = 0 beyond a finite ρ; the ratio at ρ = 16 is the finite-ρ value of δm.
 
 ## 9. Recommended tasks
 
-1. **c₁ and the mass in #259.** *What:* put the slice data of #248's classes A0, A1L (corner constants) through Θ and read their δM_ADM. *Why:* #259's static sector; c₁ = δM_ADM/κ would make A0, A1L mass perturbations. *Acceptance:* κ c₁ equals
+1. *Done in #259.* **c₁ and the mass in #259.** *What:* put the slice data of #248's classes A0, A1L (corner constants) through Θ and read their δM_ADM. *Why:* #259's static sector; c₁ = δM_ADM/κ would make A0, A1L mass perturbations. *Acceptance:* κ c₁ equals
    −κΘ(∞) of the class to 1e-6 (Θ at ρ = 16 and the large-ρ fit); a class with c₁ = 0 gives Θ = 0 to 1e-12. *Depends on:* #259, #258.
 2. **The exact mode through S.** *What:* an inverse construction of (δφ, δφ_N) from Y = c₂VR with a Frobenius start at s = 0 (g ∼ s²). *Why:* gives a planted case with c₂ ≠ 0 at the crossing. *Acceptance:* c₂ from the slice equals the mode's to 1e-6; M = 0 to 1e-12;
    a wrong initial value (M ≠ 0) fails. *Depends on:* #262, #258.

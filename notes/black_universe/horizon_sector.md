@@ -52,7 +52,7 @@ statements are *checked symbolically*; the solver results (functional against #2
 
   `∂_T` is the derivative of the slice values, `∂_N` the normal derivative (the second Cauchy datum). The code uses 4th-order central stencils on the nodes
   `(j₀ + k, i₀ − k)` and `(j₀ + k, i₀ + k)`, k = ±1, ±2. Through S the slice is V + U = 0 (T = 0). Invariantly, `c₂ = ℓ^μ∇_μ Y` with ℓ = ∂_V the horizon generator.
-- **What c₁ is.** `c₁ = Y(S)` is the static sector (the source M of #232's C2, static on solutions); it does not grow. Data with c₁ ≠ 0 exist (classes A0, A1L below).
+- **What c₁ is.** `c₁ = Y(S) = δr(S)` is the first-order change of the area of the bifurcation surface, δA_S = 8π r_S c₁ (r_S = 1 at c = −1), and κ c₁ = δM_ADM (#259, [static_c1.md](static_c1.md)). It is the coefficient of the static mass mode, the exact solution r = √L R, F = A + 1/L − 1 of #269 (c₁ = δL/2, c₂ = 0, δM_ADM = δL/π), and it does not grow. The classes A0, A1R, A1L carry mass; G, L, R do not.
 
 ## The check on #232's solutions (acceptance 1)
 
@@ -164,7 +164,7 @@ the count for `u = Y/ρ → 0` (c₁ = c₂ = 0), which also holds for data supp
   solve both constraints with a solution that is exactly zero outside the support (δM_ADM = 0), and c₂ from the slice equals c₂ of the evolved horizon fit to 2.7e-8 (numerical evidence).
 - The left exterior beyond a sliver (V ≥ −0.05, U ≤ 0.06); the interior past −Π = 0.18 (the analytic solution is followed to ρ = −40, D8, but I⁺ was not examined).
 - The late-time growth: the Kruskal chart cannot reach V ∼ e^{bP}. The rate κ is #232's; here only the horizon law and its coefficient are tested. The decaying partner `Y ∝ U` (the coefficient ∂_U Y(S) on the past horizon) is not computed separately.
-- The static source M and c₁: data with c₁ ≠ 0 exist (A0, A1L), their nature (a δc-like static mode?) is not analysed.
+- *Done in #259:* c₁ is the static mass mode, not a neighbouring member δc (the potential of the member changes with c); κ c₁ = δM_ADM to 7.4e-8 for A0, A1R, A1L.
 - N2 at c = −1 has a first ratio of 5.13 (h = 0.02 to 0.01, pre-asymptotic); the bar is on the last ratio, 3.98. N5's raw values at h = 0.005 are 2.2e-6 to 3.5e-6; the 1e-6 bar is met by Richardson.
 - Radial perturbations of D = 4, one potential; nothing about polar modes (#218) or the nonlinear fate.
 
@@ -173,7 +173,7 @@ the count for `u = Y/ρ → 0` (c₁ = c₂ = 0), which also holds for data supp
 1. **A compactly supported datum on a full slice.** *What:* solve the two constraints along a spacelike slice from the left through S to large ρ, with δφ and ∂_N δφ compactly supported near the crossing and δM_ADM = 0, and evolve. *Why:* closes the infinity gap above.
    *Acceptance:* the constraint solution decays to pure gauge outside the support; c₂ from the slice equals c₂ of the evolved horizon fit to 1e-6; a mutation with the wrong asymptotic condition changes c₂. *Depends on:* #248.
 2. **The count with the Kruskal-regular class.** *What:* #249's recount with the W = κ solution `Y ∝ V G(Π)` admitted at c = −1 and the c ≠ −1 members unchanged. *Why:* the horizon sector is now a datum, not an option. *Acceptance:* as #249's, plus c₂ from this note's functional for the eigenfunction. *Depends on:* #249.
-3. **The static sector.** *What:* identify c₁ (data A0, A1L) with the static M and with a static perturbation of the member. *Why:* c₁ ≠ 0 is regular data; its role in #217's family is open. *Acceptance:* c₁ as a functional of the slice data, checked on #232's solutions to 1e-6. *Depends on:* #232, #248.
+3. *Done in #259.* **The static sector.** *What:* identify c₁ (data A0, A1L) with the static M and with a static perturbation of the member. *Why:* c₁ ≠ 0 is regular data; its role in #217's family is open. *Acceptance:* c₁ as a functional of the slice data, checked on #232's solutions to 1e-6. *Depends on:* #232, #248.
 4. **#217's family along c₂.** *What:* #250's lifetime law along class R and a family with c₂ tuned, now that c₂ is a datum. *Acceptance:* #250's. *Depends on:* #250.
 
 ## Reproduce
