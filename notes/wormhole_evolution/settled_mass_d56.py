@@ -713,8 +713,36 @@ def noise_report(raw, cases_data, ns_fams, t0):
 # --------------------------------------------------------------------------------------------------------------------
 # the analysis
 # --------------------------------------------------------------------------------------------------------------------
-MUTATIONS = {}
-MUT_CASES = {}
+MUTATIONS = {   # name: the checks that must fire (computed in the development runs raw I246-dh610 dev/mut/, declared in its README before the runs of record); the case is MUT_CASES
+    "mass_exponent": ["PT1-5S", "RC3-5S", "RC4-5S", "RC8a-5S", "RN0-5S", "RNR-5S"],
+    "finder_sign": ["PT1-5S", "RC2-5S", "RC3-5S", "RC4-5S", "RC5-5S", "RC5a-5S", "RC6-5S", "RC6a-5S", "RC7-5S", "RC8-5S", "RC8a-5S"],
+    "hm_swap": ["PT1-5S", "RC5-5S", "RC5a-5S", "RC6-5S", "RC6a-5S", "RC8-5S", "RC8a-5S", "RN0-5S", "RNR-5S"],
+    "interp_shift": ["PT1-5S", "RC6-5S", "RC6a-5S", "RC7-5S", "RC8-5S", "RC8a-5S", "RN0-5S", "RNR-5S"],
+    "no_zoom": ["PT1-5S", "RC5-5S", "RC5a-5S", "RC6-5S", "RC6a-5S", "RC8-5S", "RC8a-5S", "RN0-5S", "RNR-5S"],
+    "short_limit": ["RC5-5S", "RC5a-5S", "RC8-5S", "RC8a-5S", "RN0-5S"],
+    "pstar_off": ["RC2-5S", "RC3-5S", "RC4-5S", "RC5-5S", "RC5a-5S", "RC6-5S", "RC6a-5S", "RC7-5S", "RC8-5S", "RC8a-5S"],
+    "pstar_shift": ["RC1-5S", "RC8a-5S"],
+    "theta_coef": ["L0ID-5S", "PT1-5S", "RC1-5S", "RC2-5S", "RC3-5S", "RC4-5S", "RC5-5S", "RC5a-5S", "RC6-5S", "RC6a-5S", "RC7-5S", "RC8-5S", "RC8a-5S"],
+    "rcut_off": ["L0ID-5S", "RC8a-5S"],
+    "col_shift": ["RC8a-5S", "RN0-5S", "RNR-5S"],
+    "time_unit": ["RC2-5S", "RC8a-5S"],
+    "delta_swap": ["RC7-5S", "RC8a-5S"],
+    "flux_sign": ["FLX", "RC4-5S", "RC8a-5S"],
+    "flux_exp": ["FLX", "RC4-5S"],
+    "normal_drop": ["FLX", "RC8a-5G"],
+    "normal_sign": ["FLX", "RC8a-5G"],
+    "family_B": ["DEP-5G", "L0ID-5G", "RC1-5G", "RC2-5G", "RC3-5G", "RC4-5G", "RC5-5G", "RC5a-5G", "RC6-5G", "RC6a-5G", "RC8-5G", "RC8a-5G"],
+    "trk_shift": ["RC8a-5G", "TRK-5G"],
+    "crit_dm": ["CFG", "RC8a-5S"],
+    "tang_kappa": ["PT0", "PT1-5S", "RC8a-5S"],
+    "conv_vol": ["CONV", "RC8a-5S"],
+    "a4p": ["A4P", "RC8a-5S"],
+    "cmp_bar0": ["CMPT", "RC8a-5S"],
+    "rn_ref": ["RC8a-5S", "RN0-5S", "RNR-5S"],
+    "pfx_cut": ["PFX", "RC5a-5S", "RC8a-5S"],
+}
+MUT_CASES = {n: "5S" for n in MUTATIONS}
+MUT_CASES.update(family_B="5G", normal_drop="5G", normal_sign="5G", trk_shift="5G")
 CASES_ALL = [(n, f) for n in NS for f in FAMS]
 
 
