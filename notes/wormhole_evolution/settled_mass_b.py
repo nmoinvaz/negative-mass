@@ -549,11 +549,16 @@ def stallscan_cmd(h, Bs, out):
 
 
 def stallscan_report(raw):
-    """Prints the stored stall scans and the first B at which the stall (gain >= 2.0 per side) is gone. A report: it gates nothing."""
+    """Prints the stored stall scans (every runs/stallscan*/stallscan_h*.json and runs/stallscan_h*.json, merged per h and sorted by B) and the first B at which the stall
+    (gain >= 2.0 per side) is gone, per h. A report: it gates nothing."""
     import glob
-    for f in sorted(glob.glob(os.path.join(raw, "runs", "stallscan_h*.json"))):
-        rows = json.load(open(f))
-        print(f"\n== Post hoc: the stall against B at h = {rows[0]['h']:g} (T gain from 1e-6 to 1e-8 on each side; a stall gains about 3.9 to 5; prompt gains 0)")
+    byh = {}
+    for f in sorted(glob.glob(os.path.join(raw, "runs", "stallscan_h*.json")) + glob.glob(os.path.join(raw, "runs", "stallscan*", "stallscan_h*.json"))):
+        for r in json.load(open(f)):
+            byh.setdefault(r["h"], {})[r["B"]] = r
+    for h in sorted(byh, reverse=True):
+        rows = [byh[h][b] for b in sorted(byh[h])]
+        print(f"\n== Post hoc: the stall against B at h = {h:g} (T gain from 1e-6 to 1e-8 on each side; a stall gains about 3.9 to 5; prompt gains 0)")
         first = None
         for r in rows:
             sl = r["gain_m"] >= CRITB["stall_dT"] and r["gain_p"] >= CRITB["stall_dT"]
@@ -564,7 +569,7 @@ def stallscan_report(raw):
             print("    the stall persists over the whole scan")
         else:
             prev = [r["B"] for r in rows if r["B"] < first]
-            print(f"    first B with no stall (gain < {CRITB['stall_dT']}): {first:g}" + (f"; the last with a stall: {max(prev):g}" if prev else ""))
+            print(f"    first B with no stall (gain < {CRITB['stall_dT']}): {first:g}" + (f"; the last with a stall: {max(prev):g}" if prev else "; no scanned B below it"))
 
 
 PH_TAGS = {("G", 0.125)}          # post hoc by the coordinator's ruling (2026-11-27): supplementary, gates nothing
@@ -910,6 +915,13 @@ def analyze_cmd(raw):
                 check("REL", txt, ok_, det_)
             else:
                 check("REL-ph", "POST HOC, gates nothing (B = 0.125): " + txt, ok_, det_, ph=True)
+        use2 = [r for r in rows if r[0] in CRITB["rel_B_ph"]]
+        try:
+            lo2 = rel_loo([MEM[(r[1], fin)]["m2"]["g1"] for r in use2], [MEM[(r[1], fin)]["m2"]["r_th"] for r in use2], [r[4] for r in use2], c0)
+            print("    the same relation with the member read at epsilon = 1e-2 instead of 1e-3 (a report, four B): leave-one-out errors " + ", ".join(f"{x[0]:+.1e}" for x in lo2)
+                  + f"; (a, b) from the first three: ({lo2[0][1][0]:.4f}, {lo2[0][1][1]:.4f})")
+        except (np.linalg.LinAlgError, ValueError) as ex:
+            print(f"    the relation with the member read at epsilon = 1e-2: not computable ({ex!r}; a mutated run)")
         print("    *the relation is a one-parameter family in B: it constrains the shape of M(gamma_1, r_th) along the curve, and does not test the dependence on gamma_1 and r_th separately*")
     else:
         check("REL", "M / r_th against gamma_1, leave one out", False, "a run is missing")
@@ -936,7 +948,7 @@ def main():
     print(f"settled_mass_b.py {cmd} {opts}: numba {nb.__version__}, numpy {np.__version__}, python {platform.python_version()}, {platform.node()}, "
           f"mutation {MUT}, {time.strftime('%Y-%m-%d %H:%M:%S')}", flush=True)
     fam = opts.get("fam", "G")
-    B = None if fam == "O" else float(opts.get("B", 0.1))
+    B = None if (fam == "O" or cmd == "stallscan") else float(opts.get("B", 0.1))
     if cmd == "pstar":
         pstar_cmd(fam, B, float(opts["h"]), opts["out"])
     elif cmd == "job":
