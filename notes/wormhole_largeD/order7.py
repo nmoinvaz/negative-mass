@@ -48,7 +48,7 @@ sys.argv = _argv
 
 MUTATIONS = ("wrong_h", "wrong_c6", "wrong_c7", "wrong_Om0", "wrong_Om1", "wrong_Om2", "wrong_Om3", "wrong_Om4", "coarse_B", "short_tail",
              "stale_cache", "pslq_wrong_basis", "pslq_wrong_target", "wrong_Om5_series", "wrong_closed4", "e1_sign", "e2_weight", "e3_factor",
-             "e4_g", "e4_noC", "e2w_g", "e2w_P", "e5_noD3", "e5_const", "rd_kit", "rd_Dstep", "rd_J5", "rd_master", "rd_B", "w7_rel")
+             "e4_g", "e4_noC", "e2w_g", "e2w_P", "e5_noD3", "e5_const", "rd_kit", "rd_Dstep", "rd_J5", "rd_master", "rd_B", "w7_rel", "rd_Y3", "a7_B", "lc2_J")
 MUTATE = None
 W2FILE = "w2_output.txt"
 SAVE = None
@@ -941,7 +941,7 @@ def check_exch7():
             lhs5, rhs5 = e5_sides(fl)
             gr, grp = g7_reduced(fl)
             sc = max(abs(x) for x in grp)
-            j2 = digits(fl.integral(lambda p, i: fl.ell[p][i] ** 2), mp.pi * (12 * mp.ln2**2 + mp.pi**2) / 24)
+            j2 = digits(fl.integral(lambda p, i: fl.ell[p][i] ** 2), mp.pi * ((11 if MUTATE == "lc2_J" else 12) * mp.ln2**2 + mp.pi**2) / 24)
             res[label] = dict(
                 E1=(-mp.log10(e1) if e1 else mp.mpf(dps), g7, scale),
                 E2_6=(digits(lhs2, rhs2), lhs2, rhs2), E2_5=(digits(lhs2b, rhs2b), lhs2b, rhs2b), E2_4=(digits(lhs2c, rhs2c), lhs2c, rhs2c),
@@ -1004,7 +1004,7 @@ def r7_parts():
     R = 1 / (1 - S)
     l = -2 * lg
     Om = list(w) + [sp.Integer(0)]
-    Y = [sp.Integer(1), 2 * lg, 4 * w[0] * lg - 6 * lg**2, 4 * w[1] * lg - 4 * lg**3 + 32 * lg**2 - 16 * w[0] * lg + 32 * u * C - 16 * D3]
+    Y = [sp.Integer(1), 2 * lg, 4 * w[0] * lg - 6 * lg**2, 4 * w[1] * lg - 4 * lg**3 + 32 * lg**2 - 16 * w[0] * lg + 32 * u * C - (15 if MUTATE == "rd_Y3" else 16) * D3]
     L = [sp.Integer(-1), -2 * w[0] + 4 * lg, -2 * w[1] - 4 * w[0] * lg + 16 * lg**2 + 16 * u * C]
     h3 = hk(3, Om, l, R, Y, L)
     sc = u * (1 - S)
@@ -1036,7 +1036,7 @@ def r7_numeric_integrand(Om):
         ell, s2b, ub, Cn, D3n = o4.basics(th, x, tail)
         Lc2 = o4.Lc2_poly(th)
         sc = mp.sin(th) * mp.cos(th)
-        B = -32 * (lc + q) * Cn + 16 * s2 * Cn + 32 * Lc2 + 16 * sc * lc * (lc + 2 * q) - 4 * Om[1] * th - 2 * Om[1] * sc
+        B = -32 * (lc + q) * Cn + 16 * s2 * Cn + (31 if MUTATE == "a7_B" else 32) * Lc2 + 16 * sc * lc * (lc + 2 * q) - 4 * Om[1] * th - 2 * Om[1] * sc
         LL = [L[0], L[1], L[2], -2 * hk(3, Om, l, R, Y, L) + 2 * u * B]
         gens = (lc, u, 1 / u, th, Cn, D3n, Lc2, q, Om[0], Om[1], Om[2], J2)
         W = {"g": xf["g"](*gens), "P": xf["P"](*gens), "Wd": xf["Wn"](*gens) - xf["lim"](*gens), "cC": lgs["cC"]}
@@ -1371,13 +1371,14 @@ def check_reduce7(ev=None):
     Bsum = sp.expand(sum(b for _, b in Bs).subs({RS.Jt2: Jt[2], RS.Jt3: Jt[3]}))
     masters = rd_masters(Jt)
     Pm = sp.Poly(I1, RS.C, RS.D3, RS.K2, RS.th, RS.lt)
-    total = Bsum + sum(cf * masters[m] for m, cf in Pm.terms())
+    unknown = [m for m, _ in Pm.terms() if m not in masters]                  # a monomial of I_final that is not one of the masters
+    total = Bsum + sum(cf * masters[m] for m, cf in Pm.terms() if m in masters)
     total = sp.expand(total)
     slope = sp.simplify(sp.diff(total, RS.v5))
     cancel_ok = (notes["CD: 1/u part after DD"] == 0 and notes["C: 1/u part after D"] == 0 and notes["K3 apart from C K3"] == 0)
-    report("RD3", cancel_ok and sp.simplify(slope + 4 * pi) == 0,
+    report("RD3", cancel_ok and not unknown and sp.simplify(slope + 4 * pi) == 0,
            f"cancellations: the 1/u part of the C D3 coefficient after the D3^2 step: {notes['CD: 1/u part after DD']}; the 1/u part of the C coefficient after the D3 step: "
-           f"{notes['C: 1/u part after D']}; K3 only in C K3: {notes['K3 apart from C K3'] == 0}; slope of G_7 in Omega5 = {slope} (= -4 pi)")
+           f"{notes['C: 1/u part after D']}; K3 only in C K3: {notes['K3 apart from C K3'] == 0}; I_final has only the 18 masters: {not unknown}; slope of G_7 in Omega5 = {slope} (= -4 pi)")
     e1, e2 = rd_kit_check()
     report("RD4", max(e1, e2) <= mp.mpf("1e-24"), f"the asymptotic series (order {RS_ORD}) of lt, u, 1/u, C, D3, K2, K3 against the functions at x = pi/2 - theta = 1e-3 (worst relative "
            f"difference {nd(e1, 3)}) and at theta = 1e-3 ({nd(e2, 3)}) (bar 1e-24)")
@@ -1408,19 +1409,22 @@ def check_reduce7(ev=None):
     q_ = mp.ln2
     Bnum = mp.mpf(0)
     for n, b in Bs:
-        Bnum += mp.mpf(str(sp.N(b.subs({RS.Jt2: sp.Float(str(Jtn[2]), 50), RS.Jt3: sp.Float(str(Jtn[3]), 50), X_Q: sp.log(2)}), 50)))
-    I1_f = sp.lambdify((RS.lt, RS.th, RS.C, RS.D3, RS.K2, RS.v5, X_Q), I1, "mpmath")
+        Bnum += mp.mpf(str(sp.N(b.subs({RS.Jt2: sp.Float(str(Jtn[2]), 50), RS.Jt3: sp.Float(str(Jtn[3]), 50), X_Q: sp.log(2), RS.v5: 0}), 50)))
+    if I1.has(RS.u) or I1.has(RS.ui):
+        g_red = mp.mpf(0)                                   # the integration by parts is incomplete (RD2 fires): RD6 reports no digits
+    else:
+        I1_f = sp.lambdify((RS.lt, RS.th, RS.C, RS.D3, RS.K2, RS.v5, X_Q), I1, "mpmath")
 
-    def fn1(th, x, tail):
-        if tail:
-            th = mp.pi / 2 - x
-        with mp.extradps(80):
-            lt = mp.log(2 * mp.sin(x)) if tail else mp.log(2 * mp.cos(th))
-            a2 = 2 * x if tail else mp.pi - 2 * th
-            Cv = mp.clsin(2, a2)
-            r = I1_f(lt, th, Cv, mp.clcos(3, a2) + 3 * mp.zeta(3) / 4, o4.Lc2_poly(th) + q_ * Cv - q_**2 * th, mp.mpf(0), q_)
-        return +r
-    g_red = Bnum + o4.both(fn1)
+        def fn1(th, x, tail):
+            if tail:
+                th = mp.pi / 2 - x
+            with mp.extradps(80):
+                lt = mp.log(2 * mp.sin(x)) if tail else mp.log(2 * mp.cos(th))
+                a2 = 2 * x if tail else mp.pi - 2 * th
+                Cv = mp.clsin(2, a2)
+                r = I1_f(lt, th, Cv, mp.clcos(3, a2) + 3 * mp.zeta(3) / 4, o4.Lc2_poly(th) + q_ * Cv - q_**2 * th, mp.mpf(0), q_)
+            return +r
+        g_red = Bnum + o4.both(fn1)
     w_ = [cl[0], cl[1], cl[2], cl[3], cl[4]]
 
     def G(o5):
