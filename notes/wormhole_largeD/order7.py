@@ -24,6 +24,7 @@ Parts (the arguments of a run; the checks of omega5.md and of the raw README of 
     pslq     PQ1 .. PQ9 and the real PSLQ of the bases Q1 .. Q9 (--bases=Q1,Q3 --no-real --pslq-cap=D)
     remainder R6, R7, X3 against #195's W^2 (--w2raw=inputs_w2_growthD.txt)
     reduce7  RD1 .. RD7, RD5b, LN2, RD8, A7: the finite-part reduction of the integrand of G_7 to masters and its closed form
+    weights7 W7: Omega5 by weight, from the PSLQ relation of Q6
     euler7   RD5c: the Euler sums behind three of the masters, numerically, and the exact assembly of the Parseval sum
 Mutations: --mutate=NAME (MUTATIONS below). Exit status 1 when a check fails.
 """
@@ -47,7 +48,7 @@ sys.argv = _argv
 
 MUTATIONS = ("wrong_h", "wrong_c6", "wrong_c7", "wrong_Om0", "wrong_Om1", "wrong_Om2", "wrong_Om3", "wrong_Om4", "coarse_B", "short_tail",
              "stale_cache", "pslq_wrong_basis", "pslq_wrong_target", "wrong_Om5_series", "wrong_closed4", "e1_sign", "e2_weight", "e3_factor",
-             "e4_g", "e4_noC", "e2w_g", "e2w_P", "e5_noD3", "e5_const", "rd_kit", "rd_Dstep", "rd_J5", "rd_master", "rd_B")
+             "e4_g", "e4_noC", "e2w_g", "e2w_P", "e5_noD3", "e5_const", "rd_kit", "rd_Dstep", "rd_J5", "rd_master", "rd_B", "w7_rel")
 MUTATE = None
 W2FILE = "w2_output.txt"
 SAVE = None
@@ -1514,6 +1515,28 @@ def check_euler7():
            f"sum s_m^2 assembled from the closed forms of the Euler sums, minus 3 zeta(3)^2 - 95 zeta(6)/24: sympy residual {rs} (bar 30 digits, residual 0; {time.time() - t2c:.0f} s)")
 
 
+def check_weights7():
+    """the weight parts of Omega5 from the PSLQ relation of Q6 (run_06b): which monomials of each weight are present, and the parts' values"""
+    mp.mp.dps = 50
+    names, cs = zip(*constants("Q6"))
+    wts = [6] * 8 + [5] * 6 + [4] * 4 + [3] * 3 + [2] * 2 + [1] + [0]
+    rel = list(PSLQ_REL_Q6)
+    if MUTATE == "w7_rel":
+        rel[4] += 1                                           # a coefficient of the relation off by one
+    om5 = -sum(mp.mpf(r) * c for r, c in zip(rel[1:], cs)) / rel[0]
+    tot = mp.mpf(0)
+    print("  the relation of Q6 (run_06b): " + str(rel[0]) + " Omega5 + sum c_i b_i = 0; Omega5 by weight (ln 2: 1, pi: 1, zeta(3): 3, zeta(5): 5):")
+    for w in range(6, -1, -1):
+        idx = [i for i in range(25) if wts[i] == w]
+        part = -sum(mp.mpf(rel[1 + i]) * cs[i] for i in idx) / rel[0]
+        tot += part
+        present = [f"{-sp.Rational(rel[1 + i], rel[0])} {names[i]}" for i in idx if rel[1 + i] != 0]
+        absent = [names[i] for i in idx if rel[1 + i] == 0]
+        print(f"    weight {w}: part {nd(part, 20)}; {len(present)} of {len(idx)} constants present: " + "; ".join(present) + ("; absent: " + ", ".join(absent) if absent else ""))
+    print(f"    sum of the parts {nd(tot, 30)}; Omega5/32 = {nd(om5 / 32, 30)}")
+    report("W7", abs(tot - om5) <= mp.mpf(10) ** -45 and 40860 < om5 < 40861, f"Omega5 from the relation of Q6 = {nd(om5, 40)} (the sum of its weight parts equals it)")
+
+
 def main():
     parse(sys.argv[1:])
     mp.mp.dps = 60
@@ -1543,6 +1566,8 @@ def main():
         check_reduce7(ev)
     if "euler7" in PARTS:
         check_euler7()
+    if "weights7" in PARTS:
+        check_weights7()
     if "pslq" in PARTS:
         check_pslq(ev)
     if "remainder" in PARTS:
