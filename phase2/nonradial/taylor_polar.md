@@ -574,3 +574,111 @@ first run. The changed files are those the brief names.
   history, and the split sentence in `taylor_plane_lib.md`'s review is repaired.
 - `lib_table`'s git dependency on multishoot main 75d1e1e stays until a release contains `table`; the default build is
   crates.io only.
+
+## #274: the boxes recounted by the crate
+
+Status: **numerical evidence**. The crate's f64 complex lane, as the evaluator of winding2's counter, gives the stored count in all 35 D boxes of #126's list (31) and #117 (4): winding 0, the planted
+pair returned (+2 in 22 symmetric boxes, +1 in 13 upper boxes), every phase step under 0.45 rad, and the counter asks **exactly the points winding2 stored** in every box. Each box takes 1.8 to 129 s of crate time (13 min in all,
+two lanes of 8 min). The thinnest margin is **5.15e-5 rad** (s1 at l = 6), not the 2.2e-3 of b1 in #188: it is 16 times the stored phase error there, and every box keeps at least 10 E (E = max(3.1e-6 rad, the measured
+crate-against-stored phase), least margin / 10 E = 1.63). One control, `onesided`, does not fire on one box (s2_l2). Every number is in `i274_recount_output.txt` (made by `recount_i274.py --collect`; raw folder
+`negative-mass-raw/I274-mac`, README first, criteria and the controls' development effects declared there before the runs of record). No sentence here claims novelty.
+
+### What was added
+
+- **`recount_i274.py`**, a driver beside `taylor_polar.py` (which is not edited; the driver imports its counter `count_winding` with the margins, its `dserve` client and its stored-value counter). It takes the 35 boxes from
+  `I126-rpi5/jobs.txt` and `I117-rpi5/jobs.txt` of the raw clone, counts each as winding2 counted it at `--guard=all` (eps, omega, l, region, `--y0`, `--rsmult`, `--zfac`, planted zero, R_s = r_m + rsmult / min Re k with
+  winding2's 200-point rule, the phase strip in double precision), with F(s) from `dserve` on `Cx<f64>`. The star's central data come from the crate's own `star` shooting for each (omega, eps) (four stars; central values agree
+  with the scipy path's to 1e-9 in α_c and 1e-7 in φ(r0) at r0 = 1e-3). **r_m comes from the scipy path's `PolarProblem(...).rm`** (a definition of the problem), so the evaluator shares the problem's definition, J's symbolic source
+  and r_m with the scipy path, not the integrator; the counter is a copy of winding2's, not winding2 itself.
+- Per box the driver runs four checks, each of which can fail: INPUT (R_s, r_m equal winding2's log), STORED (the counter on the stored cache alone reproduces the log: count, planted check, max steps and min abs D as printed,
+  no point missing), COUNT (the crate's count and planted pair equal the stored ones, steps under 0.45), MARGIN (the margin without and with the plant is at least 10 E). Recorded, not checked: whether the asked points are the
+  stored ones, the walls.
+- From `phase2/nonradial`, with `taylor_polar/target/complex` built (`python taylor_polar.py --complex --build`) and the raw repository beside this one: `python recount_i274.py --stars` (writes `stars.json` in `I274-mac`),
+  `python recount_i274.py --boxes=NAME,...` (default: the 35), `--mutate=NAME[,NAME]` (a control on every box), `--lane=dd`, `--sub=dd`, and `python recount_i274.py --collect --extra > i274_recount_output.txt`.
+
+### Results of the runs of record (f64 lane, one process per lane, nice 10, Apple M5 at load 5 to 8; commit of the driver 63fe72b, raw `I274-mac`)
+
+| box | source | l | eps, omega | region | R_s | winding stored, crate | planted found (of) | max step | min abs D | margin, with plant (rad) | E (rad) | margin / 10 E | asked = stored | wall (s) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| p7603_l2 | #126 | 2 | -1, 0.7603 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 404.9 | +0.0000, +0.0000 | +2.0000 of 2 | 0.39 | 6.70e-04 | 2.22e-03, 2.22e-03 | 3.10e-06 | 71.6 | yes, 147 | 10.6 |
+| p7603_l3 | #126 | 3 | -1, 0.7603 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 404.9 | +0.0000, +0.0000 | +2.0000 of 2 | 0.40 | 1.68e-03 | 1.59e-03, 1.59e-03 | 3.10e-06 | 51.4 | yes, 209 | 14.7 |
+| c075_l2 | #126 | 2 | +1, 0.75 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 404.4 | +0.0000, +0.0000 | +2.0000 of 2 | 0.40 | 6.88e-04 | 3.80e-04, 3.80e-04 | 3.10e-06 | 12.3 | yes, 119 | 8.0 |
+| p070_l2 | #126 | 2 | -1, 0.7 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 403.0 | +0.0000, +0.0000 | +2.0000 of 2 | 0.40 | 7.45e-04 | 3.25e-03, 1.85e-03 | 3.10e-06 | 59.6 | yes, 149 | 9.9 |
+| p070_l3 | #126 | 3 | -1, 0.7 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 403.0 | +0.0000, -0.0000 | +2.0000 of 2 | 0.40 | 1.86e-03 | 2.96e-03, 2.96e-03 | 3.10e-06 | 95.4 | yes, 223 | 16.1 |
+| p085_l2 | #126 | 2 | -1, 0.85 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 409.7 | -0.0000, -0.0000 | +2.0000 of 2 | 0.40 | 4.93e-04 | 5.35e-04, 5.35e-04 | 3.10e-06 | 17.3 | yes, 141 | 10.4 |
+| p085_l3 | #126 | 3 | -1, 0.85 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 409.7 | +0.0000, +0.0000 | +2.0000 of 2 | 0.40 | 1.23e-03 | 1.24e-03, 6.68e-04 | 3.10e-06 | 21.6 | yes, 221 | 14.4 |
+| n1_l2 | #126 | 2 | -1, 0.7603 | Re [0.0001, 0.1], abs(Im) ≤ 0.23 | 312.0 | -0.0000, -0.0000 | +2.0000 of 2 | 0.33 | 2.82e-03 | 4.25e-02, 2.28e-03 | 3.10e-06 | 73.7 | yes, 97 | 5.1 |
+| n1_l3 | #126 | 3 | -1, 0.7603 | Re [0.0001, 0.1], abs(Im) ≤ 0.23 | 312.0 | +0.0000, +0.0000 | +2.0000 of 2 | 0.35 | 3.16e-02 | 1.79e-02, 1.01e-02 | 3.10e-06 | 324.9 | yes, 125 | 5.7 |
+| n3_l2 | #126 | 2 | -1, 0.7603 | Re [-0.001, 0.0001], Im [0.01, 0.23] | 312.0 | +0.0000, -0.0000 | +1.0000 of 1 | 0.39 | 2.75e-03 | 1.06e-02, 6.80e-03 | 3.10e-06 | 219.2 | yes, 144 | 7.1 |
+| n3_l3 | #126 | 3 | -1, 0.7603 | Re [-0.001, 0.0001], Im [0.01, 0.23] | 312.0 | -0.0000, -0.0000 | +1.0000 of 1 | 0.38 | 3.66e-02 | 2.08e-02, 2.08e-02 | 3.10e-06 | 670.8 | yes, 152 | 7.1 |
+| s1_l2 | #126 | 2 | -1, 0.7603 | Re [0.03, 0.1], abs(Im) ≤ 2.5 | 1293.2 | +0.0000, +0.0000 | +2.0000 of 2 | 0.40 | 1.00e-03 | 6.34e-04, 6.34e-04 | 3.13e-06 | 20.2 | yes, 201 | 38.0 |
+| s1_l3 | #126 | 3 | -1, 0.7603 | Re [0.03, 0.1], abs(Im) ≤ 2.5 | 1293.2 | +0.0000, +0.0000 | +2.0000 of 2 | 0.40 | 2.49e-03 | 1.22e-03, 7.33e-05 | 3.14e-06 | 2.3 | yes, 249 | 49.3 |
+| h1_l2 | #126 | 2 | -1, 0.7603 | Re [0.1, 2.0], Im [2.5, 6.0] | 419.7 | +0.0000, -0.0000 | +1.0000 of 1 | 0.38 | 1.05e-04 | 2.24e-03, 2.24e-03 | 3.10e-06 | 72.3 | yes, 126 | 10.3 |
+| h1_l3 | #126 | 3 | -1, 0.7603 | Re [0.1, 2.0], Im [2.5, 6.0] | 419.7 | -0.0000, -0.0000 | +1.0000 of 1 | 0.38 | 2.63e-04 | 6.08e-04, 6.08e-04 | 3.10e-06 | 19.6 | yes, 148 | 11.1 |
+| t1_r40 | #126 | 2 | -1, 0.7603 | Re [0.02, 0.1], Im [0.15, 0.33] | 825.5 | +0.0000, +0.0000 | +1.0000 of 1 | 0.38 | 3.73e-03 | 1.98e-02, 1.98e-02 | 3.10e-06 | 637.5 | yes, 108 | 13.4 |
+| t1_r80 | #126 | 2 | -1, 0.7603 | Re [0.02, 0.1], Im [0.15, 0.33] | 1626.8 | -0.0000, +0.0000 | +1.0000 of 1 | 0.39 | 3.73e-03 | 9.01e-03, 9.01e-03 | 3.10e-06 | 290.8 | yes, 108 | 24.7 |
+| t2_r40 | #126 | 2 | -1, 0.7603 | Re [0.02, 0.1], Im [1.68, 1.84] | 1870.3 | +0.0000, +0.0000 | +1.0000 of 1 | 0.40 | 9.30e-04 | 4.27e-03, 4.27e-03 | 3.78e-06 | 113.2 | yes, 106 | 27.9 |
+| t2_r80 | #126 | 2 | -1, 0.7603 | Re [0.02, 0.1], Im [1.68, 1.84] | 3716.5 | +0.0000, -0.0000 | +1.0000 of 1 | 0.35 | 9.30e-04 | 6.37e-03, 3.24e-03 | 7.51e-06 | 43.2 | yes, 106 | 56.7 |
+| s2_l2 | #126 | 2 | -1, 0.7603 | Re [0.01, 0.03], abs(Im) ≤ 2.5 | 3831.3 | +0.0000, -0.0000 | +2.0000 of 2 | 0.40 | 5.30e-04 | 2.77e-03, 2.71e-03 | 9.60e-06 | 28.2 | yes, 245 | 129.4 |
+| h2_l2 | #126 | 2 | -1, 0.7603 | Re [0.1, 2.0], Im [6.0, 10.0] | 422.4 | -0.0000, -0.0000 | +1.0000 of 1 | 0.31 | 2.57e-05 | 8.70e-02, 4.40e-03 | 3.10e-06 | 141.9 | yes, 108 | 13.9 |
+| s3_l2 | #126 | 2 | -1, 0.7603 | Re [0.03, 0.1], Im [2.5, 6.0] | 1342.8 | -0.0000, +0.0000 | +1.0000 of 1 | 0.39 | 9.90e-05 | 1.86e-03, 1.86e-03 | 3.26e-06 | 57.1 | yes, 128 | 27.8 |
+| s3_l3 | #126 | 3 | -1, 0.7603 | Re [0.03, 0.1], Im [2.5, 6.0] | 1342.8 | -0.0000, -0.0000 | +1.0000 of 1 | 0.38 | 2.71e-04 | 9.24e-03, 5.09e-03 | 3.27e-06 | 155.6 | yes, 128 | 28.5 |
+| rep_l4 | #126 | 4 | -1, 0.7603 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 404.9 | -0.0000, -0.0000 | +2.0000 of 2 | 0.40 | 3.02e-03 | 1.29e-03, 1.39e-04 | 3.10e-06 | 4.5 | yes, 279 | 14.2 |
+| s1_l4 | #126 | 4 | -1, 0.7603 | Re [0.03, 0.1], abs(Im) ≤ 2.5 | 1293.2 | +0.0000, -0.0000 | +2.0000 of 2 | 0.40 | 4.43e-03 | 3.70e-03, 3.70e-03 | 3.15e-06 | 117.5 | yes, 311 | 52.1 |
+| n1_l4 | #126 | 4 | -1, 0.7603 | Re [0.0001, 0.1], abs(Im) ≤ 0.23 | 312.0 | +0.0000, +0.0000 | +2.0000 of 2 | 0.40 | 4.17e-02 | 4.39e-03, 4.39e-03 | 3.10e-06 | 141.5 | yes, 131 | 5.2 |
+| rep_l5 | #126 | 5 | -1, 0.7603 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 404.9 | -0.0000, +0.0000 | +2.0000 of 2 | 0.40 | 4.70e-03 | 6.06e-04, 6.06e-04 | 3.10e-06 | 19.5 | yes, 349 | 18.4 |
+| n1_l5 | #126 | 5 | -1, 0.7603 | Re [0.0001, 0.1], abs(Im) ≤ 0.23 | 312.0 | -0.0000, +0.0000 | +2.0000 of 2 | 0.40 | 7.17e-02 | 2.12e-03, 3.72e-04 | 3.10e-06 | 12.0 | yes, 145 | 6.6 |
+| rep_l6 | #126 | 6 | -1, 0.7603 | Re [0.1, 2.0], abs(Im) ≤ 2.5 | 404.9 | -0.0000, -0.0000 | +2.0000 of 2 | 0.40 | 6.71e-03 | 1.05e-03, 1.05e-03 | 3.10e-06 | 33.8 | yes, 425 | 22.6 |
+| s1_l6 | #126 | 6 | -1, 0.7603 | Re [0.03, 0.1], abs(Im) ≤ 2.5 | 1293.2 | +0.0000, +0.0000 | +2.0000 of 2 | 0.40 | 8.69e-03 | 5.15e-05, 5.15e-05 | 3.15e-06 | 1.6 | yes, 445 | 71.4 |
+| n1_l6 | #126 | 6 | -1, 0.7603 | Re [0.0001, 0.1], abs(Im) ≤ 0.23 | 312.0 | +0.0000, -0.0000 | +2.0000 of 2 | 0.39 | 1.35e-01 | 4.83e-03, 4.83e-03 | 3.10e-06 | 155.7 | yes, 157 | 6.1 |
+| b25_l2 | #117 | 2 | -1, 0.7603 | Re [2.0, 5.0], abs(Im) ≤ 10.0 | 44.0 | +0.0000, +0.0000 | +2.0000 of 2 | 0.39 | 1.95e-05 | 5.63e-03, 2.92e-03 | 3.10e-06 | 94.3 | yes, 195 | 1.8 |
+| b25_l3 | #117 | 3 | -1, 0.7603 | Re [2.0, 5.0], abs(Im) ≤ 10.0 | 44.0 | -0.0000, +0.0000 | +2.0000 of 2 | 0.40 | 4.87e-05 | 7.72e-04, 7.72e-04 | 3.10e-06 | 24.9 | yes, 245 | 2.4 |
+| h2_l3 | #117 | 3 | -1, 0.7603 | Re [0.1, 2.0], Im [6.0, 10.0] | 422.4 | +0.0000, -0.0000 | +1.0000 of 1 | 0.38 | 6.43e-05 | 2.12e-02, 2.12e-02 | 3.10e-06 | 683.2 | yes, 110 | 12.4 |
+| h3_l2 | #117 | 2 | -1, 0.7603 | Re [0.1, 2.0], Im [10.0, 20.0] | 423.6 | -0.0000, -0.0000 | +1.0000 of 1 | 0.28 | 3.38e-06 | 2.95e-02, 2.75e-03 | 3.10e-06 | 88.8 | yes, 144 | 32.3 |
+| s1_l5 (extra) | #115 | 5 | -1, 0.7603 | Re [0.03, 0.1], abs(Im) ≤ 2.5 | 1293.2 | -0.0000, +0.0000 | +2.0000 of 2 | 0.40 | 7.21e-03 | 3.74e-04, 3.74e-04 | 3.15e-06 | 11.9 | yes, 387 | 49.3 |
+
+`s1_l5` is #115's box, outside both lists (its guard-1 count lost 2π); it is run as a labeled extra. The 35 stored windings are 0 (the sign of zero is not significant), every stored planted check passed, the stored max steps and min abs D
+are equal to the crate's as printed in all 36 rows. "asked = stored" means 0 points asked that the cache lacks and 0 stored points not asked, from both counts (without and with the plant) together.
+
+| Check | Result |
+|---|---|
+| INPUT, STORED, COUNT, MARGIN | OK in 35 of 35 boxes (and the extra) |
+| crate against the stored values over the asked points | phase 9.4e-10 to 9.6e-6 rad (largest: s2_l2), modulus 5.3e-11 to 6.2e-8 (largest: s3_l3) |
+| dd lane on rep_l4, s1_l3, s1_l6 (`run_07`) | same count, planted pair, margins and phase against stored (1.00e-6, 3.14e-6, 3.15e-6); f64 against dd at the common points 6e-13 rad, 1.3e-13 modulus |
+| walls | crate 1.8 s (b25_l2) to 129 s (s2_l2) per box, 0.07 s per D at the median, 0.8 s at most (R_s 3800); setup (star, J table) 4 to 7 s per box not included; 483 and 506 s per lane |
+
+**Margins and the stored phase error.** Six boxes have a margin under 6e-4 rad: s1 at l = 6 (5.15e-5), s1 at l = 3 (7.33e-5, with the plant), rep at l = 4 (1.39e-4, with the plant), n1 at l = 5 (3.72e-4, with the plant), c075 (3.80e-4),
+p085 at l = 2 (5.35e-4); the others are at 6.06e-4 or above. The crate-against-stored phase, which is the stored caches' phase error (rtol 1e-8; the crate's own error is 1e-10 at R_s 1293, #188's X1b), is about 1e-6 rad at R_s 405
+(0.8e-6 to 1.2e-6 for l = 2 to 6 and omega 0.70 to 0.85; 2.5e-6 in h3_l2, |Im s| up to 20), 1e-7 in the n1 boxes and 1e-9 in the n3 boxes (|Im s| ≤ 0.23, R_s 312), 3e-7 and 6e-7 in the t1 boxes (R_s 825, 1627), 3.1e-6 to 3.3e-6 at R_s 1293 to 1343 (s1, s3), 3.8e-6 (t2_r40, R_s 1870), 7.5e-6 (t2_r80, 3717) and
+9.6e-6 (s2_l2, 3831). So #188's 3.1e-6 is a floor, not the worst case, at R_s above 1800. The margin is at least 16 times the phase error in every box (s1 at l = 6: 16.3; s1 at l = 3: 23.3; rep at l = 4: 44.9, the rest above 100).
+The crate's count itself does not depend on this: its margin over its own error is 5e5 in s1 at l = 6. The stored count has 1.6 times the declared 10 E there.
+
+### The controls (each run alone on all 35 boxes; effects as computed in development runs on five boxes before the runs of record)
+
+| control | target | fired | effect over the 35 boxes |
+|---|---|---|---|
+| `reverse` | COUNT, STORED | 35 of 35 | planted difference off the expectation by 2.0 to 4.0 (tolerance 0.05) |
+| `wrongdouble` | COUNT, STORED | 35 of 35 | off by 1.0 |
+| `misplant` | COUNT, STORED | 35 of 35 | off by 1.0 to 2.0 |
+| `onesided` | COUNT, STORED | **21 of 22 symmetric boxes** (identity in the 13 upper boxes) | off by 0.0254 to 0.527; **not fired on s2_l2** (+1.9746 against 2, inside 0.05: the box is 0.02 wide in Re s) |
+| `jsign`, `star_eps` | MARGIN | 35 of 35 | phase against stored: `jsign` 3.4e-2 (n3_l3, margin / 10 E 0.06; the next 0.001) to 3.14 rad, `star_eps` 2.1 to 3.14 rad; `star_eps` stops the crate on c075_l2 (the flipped-eps star does not solve), counted as fired |
+| `rs_shift`, `strip_off` | MARGIN | 35 of 35 | `strip_off` 1.97 to 3.14 rad; `rs_shift` 2.9e-3 to 3.13 rad: **weakest on n3_l3, margin / 10 E 0.72** (fires, by a factor 1.4) |
+| `kmin_shift` | INPUT | 35 of 35 | R_s off the log's by 0.2 to 37.7 (tolerance 0.051) |
+
+### Defects and discrepancies found
+
+- **`onesided` does not fire on s2_l2** (declared: every control fires on every box it applies to). The other three counter controls fire there. The planted zero 0.015 + 0.25i sits 0.25 above the real axis in a box 0.02 wide, so
+  breaking the conjugate symmetry costs 0.025 of the planted count. A sharper plant for new narrow boxes would sit closer to the axis than the box is wide.
+- **#188's "the counter's smallest margin is 2.2e-3 rad" and the issue's "2.2e-3 covers them" hold for b1 and b2 only.** Over these 35 boxes the smallest is 5.15e-5 rad; the stored phase error is larger than #188's 3.1e-6 at R_s above 1800. The
+  declared criterion (10 E) is met in every box, with 1.63 as the least ratio; it was not met with a large margin in s1 at l = 6.
+- The evaluator shares r_m, J's symbolic source and the problem's definition with the scipy path, and the counter is a copy of winding2's; the independent part is the integrator (Taylor series on the pair lane against scipy's DOP853 chunks).
+- After the runs of record only `--collect` was edited (extra-box rows, a numeric controls table, the result line); `run_box` is the code of 63fe72b.
+
+### Recommended tasks
+
+1. **The 30 Z boxes of #126's list on the crate.** What: counts of zeros of Z(r_m; s) with the crate, the poles of D. Why: the Z counts (#121, #124, #126) have no second evaluator. Accept: each box's count and planted pair equal the stored ones, with the margins
+   of this section, and a control per box. Depends: #188's task 3 (Z itself).
+2. **A stored-phase-error floor for #116's strips.** What: before counting strips with R_s of 10³ to 10⁴ in scipy at rtol 1e-8, compare with the crate at the same points (f64, 0.1 to 1.2 s per D). Why: the stored phase error here is 3e-6 at R_s 1293 and 1e-5 at 3800, so
+   it would be about 2.5e-5 at 10⁴ if it grew linearly with R_s (the t1 boxes show it does not depend on R_s alone), against margins like 5e-5. Accept: the crate-against-scipy phase at 5 points of a strip at R_s 5000 and 10⁴, and the strip's margin against it. Depends: #116.
+3. **Print the margin in winding2's RESULT line.** What: `winding2.py` prints the smallest distance of any compared quantity from its thresholds, with and without the plant. Why: a count whose margin is under 10 times its evaluator's phase error is
+   visible only after this recount. Accept: the line is printed; a control that perturbs D by 1e-3 rad changes it. Depends: none.
