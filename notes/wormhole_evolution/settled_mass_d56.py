@@ -321,9 +321,12 @@ def pstar_json(raw, n, fam, k):
     return json.load(open(os.path.join(raw, "runs", f"pstar_D{n + 2}_{fam}_k{k}.json")))
 
 
+RUN_MUTS = ("mass_exponent", "finder_sign", "hm_swap", "interp_shift", "no_zoom", "short_limit", "pstar_off", "theta_coef", "rcut_off", "col_shift", "delta_swap", "family_B", "trk_shift")
+
+
 def get_run(raw, n, fam, k, delta, tag=None, noise=0.0, seed=0):
     """The stored series, or, under a mutation, a fresh run from the stored p*_h."""
-    if MUT is None or tag is not None:
+    if MUT is None or tag is not None or MUT not in RUN_MUTS:
         return load_run(raw, tag or tag_of(n, fam, k, delta))
     pj = pstar_json(raw, n, fam, k)
     K = 0 if mut("no_zoom") else (12 if mut("short_limit") else None)
@@ -599,10 +602,13 @@ def compare_gs(n, AS, AG):
     d20 = {fm: A_["dr20"][(A_["ks"][-1], 1e-8)]["plat1"] for fm, A_ in (("S", AS), ("G", AG))}
     print(f"  at #41's limit (e^-f = 1.57e6, same series cut): S {d20['S']:.6f}, G {d20['G']:.6f}, G - S {d20['G'] - d20['S']:+.3e}")
     print(f"  VERDICT D = {D}: G's settled mass {'equals' if verdict else 'DIFFERS FROM'} S's: |G - S| = {abs(dM):.2e} {'<=' if verdict else '>'} bar {bar:.2e}")
-    pb = 3e-5
-    check(cid("CMPT", n), f"D = {D}: the comparison on planted offsets: half the bar is 'equal', three times the bar is 'differs' (the comparison can fail)",
-          smg.cmp_verdict(0.5 * smg.cmp_bar(pb, pb), smg.cmp_bar(pb, pb)) and not smg.cmp_verdict(3.0 * smg.cmp_bar(pb, pb), smg.cmp_bar(pb, pb)), f"planted bar {smg.cmp_bar(pb, pb):.2e}")
     return dict(S=eS, G=eG, dM=dM, bar=bar, verdict=verdict)
+
+
+def cmp_planted_check():
+    pb = 3e-5
+    check("CMPT", "the comparison on planted offsets: half the bar is 'equal', three times the bar is 'differs' (the comparison can fail)",
+          smg.cmp_verdict(0.5 * smg.cmp_bar(pb, pb), smg.cmp_bar(pb, pb)) and not smg.cmp_verdict(3.0 * smg.cmp_bar(pb, pb), smg.cmp_bar(pb, pb)), f"planted bar {smg.cmp_bar(pb, pb):.2e}")
 
 
 def print_series(n, fam, A):
@@ -718,6 +724,7 @@ def analyze_cmd(raw, cases=None, planted_only=False, skip=()):
     pt0_check()
     planted_checks(cases={(n, f) for n, f in cases} if cases != CASES_ALL else None)
     conversion_checks()
+    cmp_planted_check()
     if planted_only:
         return finish(t0)
     if "pl41" not in skip:
@@ -789,6 +796,7 @@ def main():
         pt0_check()
         planted_checks(cases=parse_cases(opts["cases"]) if "cases" in opts else None)
         conversion_checks()
+        cmp_planted_check()
         sys.exit(finish(t0))
     elif cmd == "analyze":
         sys.exit(analyze_cmd(opts["raw"], cases=parse_cases(opts["cases"]) if "cases" in opts else None, skip=tuple(opts.get("skip", "").split(","))))
