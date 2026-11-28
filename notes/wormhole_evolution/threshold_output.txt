@@ -1,5 +1,5 @@
-threshold.py analyze {'raw': '/home/nathan/Source/negative-mass-raw/I40-dh610/runs'}: numba 0.68.1, numpy 2.5.4, python 3.14.10, dh610-fedora, load average at start 17.61 21.08 21.03, mutation None, 2026-11-27 01:09:41
-analyze: /home/nathan/Source/negative-mass-raw/I40-dh610/runs: 26 jobs; mutation None
+threshold.py analyze {'raw': '/home/nathan/Source/negative-mass-raw/I228-dh610/runs40'}: numba 0.68.1, numpy 2.5.4, python 3.14.10, dh610-fedora, load average at start 11.53 15.50 17.96, mutation None, 2026-11-28 01:55:30
+analyze: /home/nathan/Source/negative-mass-raw/I228-dh610/runs40: 27 jobs; mutation None
     PL D=4: planted slope 0.846045, q = 0.01414, sigma = 0.01; seed 1: p* recovered 4.699999999957071e-05 (planted 4.700000000000000e-05), primary slope 0.846552 +- 0.000318 (OLS SE), spread [0.845050, 0.848796]; over 40 seeds: 1/W inside the spread in 40, p* recovered in 40, primary rel error mean -5.0e-05, rms 3.8e-04
 [pass] PL[D=4]: planted type I series through the same bisection and fit code: p* recovered and 1/W inside the fit spread in at least 90% of 40 noise seeds  (40 of 40 inside, p* 40 of 40)
     PX D=4: planted slope 1/(sqrt2 W) = 0.598244; seed 1 fitted 0.598740, spread [0.597252, 0.600926] against 1/W = 0.846045; rejected in 40 of 40 seeds
@@ -166,9 +166,13 @@ analyze: /home/nathan/Source/negative-mass-raw/I40-dh610/runs: 26 jobs; mutation
 [pass] FM[D=6 G h=0.0025]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
     SL D=6 G h = 0.0025: p*_h = 1.108797761415e-02; primary slope 0.994756 +- 0.026714 (OLS SE), n = 34, rms 0.8389; collapse 0.857876, expansion 1.131636; spread [0.798040, 1.200660]; 1/W = 0.461924, rel dev +1.15e+00
 [FAIL] SL[D=6 G h=0.0025]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.994756, spread [0.798040, 1.200660], 1/W 0.461924)
-    D=6 G h = 0.00125: not run (declared: about 4 h, over the 2 h stop)
-[pass] RA[D=6 G]: primary slopes at the two finest h run agree within 0.5%  (0.990046, 0.994756; rel diff 4.73e-03)
-    PS D=6 G: two h only: p*_h = 1.2657678968e-02, 1.1087977614e-02, ratio 1.1416 (second order: 4)
+[pass] BR[D=6 G h=0.00125]: the bisection ended with hi - lo <= 1e-14 and no run static through X  (hi - lo = 5.68e-15, stopped None, B = 0.1)
+[pass] FM[D=6 G h=0.00125]: every series point with |p - p*_h| >= 1e-11 lands on its own side of p*_h (fate monotone) and ends in an event  (0 of 34 points off; below that, 0 of 4 points off the side (roundoff floor, not fitted))
+    SL D=6 G h = 0.00125: p*_h = 1.069693394962e-02; primary slope 0.996251 +- 0.027127 (OLS SE), n = 34, rms 0.8519; collapse 0.857151, expansion 1.135351; spread [0.798695, 1.209563]; 1/W = 0.461924, rel dev +1.16e+00
+[FAIL] SL[D=6 G h=0.00125]: 1/W lies inside the spread of the fitted slopes (windows x {joint, collapse, expansion})  (primary 0.996251, spread [0.798695, 1.209563], 1/W 0.461924)
+    PS D=6 G: p*_h = 1.2657678968e-02, 1.1087977614e-02, 1.0696933950e-02; Richardson order 2.005; Richardson p* = 1.0567197259e-02
+[pass] PS[D=6 G]: p*_h converges at second order (order in [1.75, 2.25])  (p*_h = 1.2657678968e-02, 1.1087977614e-02, 1.0696933950e-02; Richardson order 2.005; Richardson p* = 1.0567197259e-02)
+[pass] RA[D=6 G]: primary slopes at the two finest h run agree within 0.5%  (0.994756, 0.996251; rel diff 1.50e-03)
     ED D=6 G h = 0.0025: event tol0.1: slope 1.069299 +- 0.044434 (n = 16), primary spread [0.798040, 1.200660]
     ED D=6 G h = 0.0025: event rexp3: slope 1.001053 +- 0.038960 (n = 16), primary spread [0.798040, 1.200660]
 [pass] ED[D=6 G]: the slope does not depend on the event definition: each alternative lies inside the primary spread
@@ -217,7 +221,9 @@ max |C| and max |C| / max(sum of the absolute values of its terms); change with 
     CS D=6 O h 0.0025 -> 0.00125: max|C| ratio 0.637 (second order: 4); change of p*_h -4.170e-04 (relative -0.750); change of the primary slope -2.84e-04 (relative -6.17e-04)
     CS D=6 G h = 0.005: lo: |C++| 7.371e-05 (rel 2.40e-05), |C--| 7.364e-05 (rel 2.45e-05), event [3414, 4057], repro 2.2e-16; hi: |C++| 7.371e-05 (rel 2.40e-05), |C--| 7.364e-05 (rel 2.45e-05), event [5278, 5278], repro 2.2e-16; max 7.371e-05, max rel 2.45e-05
     CS D=6 G h = 0.0025: lo: |C++| 1.826e-05 (rel 5.99e-06), |C--| 1.828e-05 (rel 6.09e-06), event [6711, 7986], repro 2.2e-16; hi: |C++| 1.827e-05 (rel 5.99e-06), |C--| 1.828e-05 (rel 6.09e-06), event [9925, 9925], repro 2.2e-16; max 1.828e-05, max rel 6.09e-06
+    CS D=6 G h = 0.00125: lo: |C++| 4.294e-05 (rel 1.41e-05), |C--| 2.920e-05 (rel 9.73e-06), event [13856, 16445], repro 2.2e-16; hi: |C++| 3.751e-05 (rel 1.23e-05), |C--| 2.047e-05 (rel 6.82e-06), event [18701, 18701], repro 2.2e-16; max 4.294e-05, max rel 1.41e-05
     CS D=6 G h 0.005 -> 0.0025: max|C| ratio 4.032 (second order: 4); change of p*_h -1.570e-03 (relative -0.124); change of the primary slope +4.71e-03 (relative +4.76e-03)
+    CS D=6 G h 0.0025 -> 0.00125: max|C| ratio 0.426 (second order: 4); change of p*_h -3.910e-04 (relative -0.035); change of the primary slope +1.50e-03 (relative +1.50e-03)
 
 Formation values at the first trapped cell and the stall, p* -/+ 1e-8 (not settled masses; #41's question stays open)
 D family h    side fate     T       event cell offset (cells, l)   r_cell   M_cell   M_hor=r^(D-3)/2 | stall: t     r      l     span  dl/dt
@@ -257,6 +263,8 @@ D family h    side fate     T       event cell offset (cells, l)   r_cell   M_ce
 5 S  0.00353553   1 expand     14.552       0 +0.0000   n/a (expansion event: r = rexp) |   6.24 0.99992 -0.0000 11.17 -0.0000
 5 S  0.00707107  -1 collapse   10.625       0 +0.0000   0.99150  0.49163  0.49153 |   6.24 0.99965 -0.0000 10.60 +0.0000
 5 S  0.00707107   1 expand     14.545       0 +0.0000   n/a (expansion event: r = rexp) |   6.51 0.99966 +0.0000 11.16 -0.0000
+6 G  0.00125  -1 collapse   13.933    1710 +1.5114   1.73565  2.61484  2.61430 |  11.92 1.65589 +1.3078 0.98 +0.1109
+6 G  0.00125   1 expand     19.584       0 +0.0000   n/a (expansion event: r = rexp) |   6.24 1.20924 +0.4314 0.67 +0.2005
 6 G  0.0025  -1 collapse   13.926     855 +1.5114   1.73403  2.60758  2.60701 |  11.91 1.65451 +1.3072 0.98 +0.1110
 6 G  0.0025   1 expand     19.571       0 +0.0000   n/a (expansion event: r = rexp) |   6.24 1.20847 +0.4315 0.67 +0.2005
 6 G  0.005  -1 collapse   13.888     427 +1.5097   1.72714  2.57667  2.57602 |  11.87 1.64785 +1.3036 0.98 +0.1115
@@ -274,5 +282,5 @@ D family h    side fate     T       event cell offset (cells, l)   r_cell   M_ce
 6 S  0.005  -1 collapse    8.800       0 +0.0000   0.98816  0.48254  0.48244 |   6.24 0.99572 -0.0000 8.79 -0.0000
 6 S  0.005   1 expand     12.371       0 +0.0000   n/a (expansion event: r = rexp) |   7.25 0.99540 +0.0000 9.39 -0.0000
 
-100 of 111 checks pass; 11 fail: SL[D=4 G h=0.02], SL[D=4 G h=0.01], SL[D=4 G h=0.005], ED[D=4 G], BR[D=5 G h=0.00707107], SL[D=5 G h=0.00707107], SL[D=5 G h=0.00353553], SL[D=5 G h=0.00176777], SL[D=6 S h=0.005], SL[D=6 G h=0.005], SL[D=6 G h=0.0025]
+103 of 115 checks pass; 12 fail: SL[D=4 G h=0.02], SL[D=4 G h=0.01], SL[D=4 G h=0.005], ED[D=4 G], BR[D=5 G h=0.00707107], SL[D=5 G h=0.00707107], SL[D=5 G h=0.00353553], SL[D=5 G h=0.00176777], SL[D=6 S h=0.005], SL[D=6 G h=0.005], SL[D=6 G h=0.0025], SL[D=6 G h=0.00125]
 0.5 s
