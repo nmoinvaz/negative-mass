@@ -384,6 +384,13 @@ need(f"satisfy it to ${sci(max(t6))}$", "#259: kappa c1 = -kappa Theta_gen for A
 need(f"have $\\Theta=0$ to ${sci(max(t7), d=0)}$", "#259: Theta of the c1 = 0 classes")
 need("$M_{\\rm ADM}=2L^{3/2}/(3\\pi)$", "#259: the mass of the static member (ind259 J1)")
 
+# #301: the static mass mode at other members (notes/black_universe/static_c1_members_output.txt)
+SM = S.read("static_c1_members_output.txt")
+t5 = re.search(r"c=-1\.5: r_S [0-9.]+, kappa c1 vs dM ([0-9.e+-]+) \(fails\); c=-0\.3: r_S [0-9.]+, kappa c1 vs dM ([0-9.e+-]+) \(fails\)", SM)
+check(t5 is not None and "[pass] T5:" in SM and "[pass] T4:" in SM, "#301's T4 and T5")
+need(f"misses by ${sci(t5[1], d=2)}$ and ${sci(t5[2], d=2)}$ if $r_S$ is set to\n$1$", "#301: the wrong-r_S control at c = -1.5, -0.3")
+need("$M_{\\rm ADM}=-2cL^{3/2}/(3\\pi)$", "#301: the static member's mass at every c (ind301 J1)")
+
 # ---------------------------------------------------------------------------------------------------- placeholders and marks
 pend = re.findall(r"\\pending\{\\#(\d+)", TEX)
 needs = len(re.findall(r"% NEEDS #260", TEX))

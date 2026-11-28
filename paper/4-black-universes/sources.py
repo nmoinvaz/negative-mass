@@ -20,6 +20,7 @@ MUTATIONS = {
     "rate": ("linear_output.txt", "(0.636627 against kappa", "(0.636637 against kappa"),            # R3, c = -1
     "slope262": ("cminus1_mode_output.txt", "beta*  = 0.3140290188873", "beta*  = 0.3140290198873"),  # d(W/kappa)/dc, #262
     "c1theta": ("static_c1_output.txt", "Theta 7.4e-08", "Theta 9.4e-08"),                         # A1R, #259
+    "rsone": ("static_c1_members_output.txt", "kappa c1 vs dM 5.31e-02 (fails)", "kappa c1 vs dM 6.31e-02 (fails)"),  # #301
 }
 _mut = None
 
