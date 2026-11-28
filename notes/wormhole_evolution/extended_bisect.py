@@ -795,7 +795,7 @@ def analyze_variant(raw, variant, es_all):
           f"max residual {mr:.4f} against sqrt2 h = {q:.4f} (rms {rmsx:.4f}, uniform quantization {q / math.sqrt(12):.4f})")
     info.update(fits=fits, env=env, sx=sx)
     if not mut("drop_point") and not mut("evc_shift") and ONLY is None:
-        print(f"[table] series, variant {tag}: T at p* -/+ 10^-e in binary128 (collapse side, expansion side), event cell offset |i - j|", flush=True)
+        print(f"[table] series, variant {tag}: T at p* -/+ 10^-e in binary128 (collapse side, expansion side), fates and the event rows j", flush=True)
         by = {(r["e"], r["side_p"]): r for r in rows}
         for e in sorted({r["e"] for r in rows}):
             m, pl = by.get((e, -1)), by.get((e, 1))
@@ -839,6 +839,16 @@ def analyze_f64(raw, infos):
         mx = float(np.max(np.abs(out[tag]))) if len(out.get(tag, [])) else float("nan")
         epred = -math.log10(mx) if mx > 0 else float("nan")
         first = wrong[0] if wrong else None
+        if ONLY is None and not mut("offsets_scaled"):
+            print(f"[table] float64 series about the binary128 p* (variant {tag}): the same amplitudes rounded to float64; T and fate against binary128's", flush=True)
+            f64by = {(r["e"], r["side"]): r for r in rows}
+            for e in sorted({r["e"] for r in rows}):
+                if e < 9.5 or e == int(e) or e == 20.0:
+                    cells = []
+                    for sd in (-1, 1):
+                        r, rb = f64by.get((e, sd)), b128.get((e, sd))
+                        cells.append(f"side {sd:+d}: float64 fate {r['fate']:+d} T = {r['T']:8.4f} | binary128 fate {rb['fate']:+d} T = {rb['T']:8.4f}" if r and rb else "")
+                    print(f"  e = {e:4.1f}  " + "   ".join(cells), flush=True)
         check(f"FS-{tag}", f"the float64 series about the binary128 p* leaves its side near e = -log10(max offset) = {epred:.1f} (+- {AN['fs_band']})",
               first is not None and abs(first - epred) <= AN["fs_band"],
               f"first wrong side e = {first}; {len(wrong)} wrong of {len(rows)}; first e whose event differs from binary128: {diff[0] if diff else None} ({len(diff)} differ)")
@@ -950,6 +960,10 @@ def analyze(a):
     for tag in ("E", "F"):
         if os.path.exists(os.path.join(raw, "runs", tag, "bisect.json")):
             infos[tag] = analyze_variant(raw, tag, es_all)
+    if "E" in infos and "F" in infos and ONLY is None:
+        ev = lambda t: {(r["e"], r["side_p"]): (r["T"], r["fate"], r["j"], r["i"]) for r in infos[t]["rows"]}
+        eE, eF = ev("E"), ev("F")
+        print(f"[info] the series of E and F are equal event by event (T, fate, event cell): {sum(1 for k in eE if eE[k] == eF.get(k))} of {len(eE)} points", flush=True)
     f64d = {}
     if infos and os.path.isdir(os.path.join(raw, "runs", "f64")):
         f64d[4] = analyze_f64(raw, infos).get("F")

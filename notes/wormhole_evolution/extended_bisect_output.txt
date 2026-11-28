@@ -1,0 +1,200 @@
+== python3 extended_bisect.py controls ==
+[pass] K1: float64 sweep = numba row kernel (fate, event cell, T) at D = 4, 5, 6  (20 of 20 equal)
+[pass] K2: binary128 static solution: closed form at D = 4, first integral r'^2 = 1 - r^-2(n-1) at D = 5, 6  (D=4 r 1.8e-32 phi 4.2e-33; first integral D=5 7.9e-33, D=6 5.4e-33; bar 1e-30)
+[pass] K3: binary128 data against float64 data: variant E differs by the dense solution's error (rtol 1e-13), variant F by float64 roundoff  (E: r 7.6e-14 phi 5.4e-13 (bars 3e-13, 2e-12); F: r 3.2e-14 phi 1.1e-16 (bars 1e-13, 1e-14); '+' and '-' rays mirror: 0e+00)
+[pass] K4: binary128 sweep on the float64 data = the float64 events at e = 3, 5, 7, 8  (8 of 8 equal)
+[pass] PL1: planted threshold recovered to the bisection tolerance; planted series: every point on its side, T monotone, slope on [1e-20, 1e-12]  (|p* - p0| = 5.9e-26 (bar 1e-24), wrong side 0, T decreases 0, slope 0.84586 against 0.84605 (-2.2e-04, bar 3e-3), stopped None)
+[pass] PL2: planted linear response p*(eta) = p0 + kappa eta: kappa from eta = 1e-8, 1e-10 predicts the shift at eta = +-1e-16  (kappa 0.37 (eta 1e-8), 0.37 (1e-10), agree to 0.0e+00 (bar 1e-03); predicted shift +3.7000e-17, measured +3.7000e-17 and +3.7000e-17 for -eta (relative error +0.0e+00, +0.0e+00; bar 1e-04))
+[pass] PL3: a planted threshold floor of rms 3e-14 puts the first wrong-side point at e in [12.5, 15.5]  (first wrong e over 8 draws: [14.0, 14.0, 14.5, 14.0, 14.0, 14.0, 14.5, 14.0])
+7 checks, 0 fail
+exit 0
+
+== python3 extended_bisect.py analyze --raw=<negative-mass-raw>/I227-rpi5 ==
+[pass] BR-E: bisection to hi - lo <= 1e-24 with every run an event  (hi - lo = 5.29e-25, stopped None, runs 77, 802.2 s)
+[pass] SR-E: series e = 3 .. 20 step 0.5, both sides, complete  (70 points, e from 3.0 to 20.0)
+[pass] FM-E: fate monotone: every series point p* -/+ 10^-e lands on its own side, e <= 20  (none wrong)
+[pass] TM-E: T non-decreasing as |p - p*| falls, each side  (none)
+[pass] EVC-E: events within 5 cells of the diagonal (the column cap does not bind)  (max |i - j| = 0)
+[pass] LL1-E: slope of T against ln(1/delta) over [1e-20, 1e-12] (the decades the double run could not reach) against 1/W = 0.846045  (0.845980 +- 0.000255 (OLS), -7.75e-05 (bar 5e-03), fit spread [0.843228, 0.847991], n = 34)
+[pass] LL2-E: the extension's slope agrees with the slope over #40's window [1e-11, 1e-3]  (extension 0.845980, double window 0.846642 +- 0.000380: -7.82e-04 (bar 5e-03); both windows 0.846141)
+[pass] LL3-E: log law: largest residual of the extension fit <= one row spacing sqrt2 h  (max residual 0.0140 against sqrt2 h = 0.0283 (rms 0.0080, uniform quantization 0.0082))
+[table] series, variant E: T at p* -/+ 10^-e in binary128 (collapse side, expansion side), fates and the event rows j
+  e =  3.0  T- =    4.9922  T+ =    9.8854  fates -1 +1  rows j 176 349
+  e =  3.5  T- =    6.0104  T+ =   10.8470  fates -1 +1  rows j 212 383
+  e =  4.0  T- =    7.0004  T+ =   11.8370  fates -1 +1  rows j 247 418
+  e =  4.5  T- =    7.9620  T+ =   12.7986  fates -1 +1  rows j 281 452
+  e =  5.0  T- =    8.9520  T+ =   13.7886  fates -1 +1  rows j 316 487
+  e =  5.5  T- =    9.9136  T+ =   14.7502  fates -1 +1  rows j 350 521
+  e =  6.0  T- =   10.9036  T+ =   15.7402  fates -1 +1  rows j 385 556
+  e =  6.5  T- =   11.8653  T+ =   16.7019  fates -1 +1  rows j 419 590
+  e =  7.0  T- =   12.8552  T+ =   17.6635  fates -1 +1  rows j 454 624
+  e =  7.5  T- =   13.8169  T+ =   18.6535  fates -1 +1  rows j 488 659
+  e =  8.0  T- =   14.7785  T+ =   19.6151  fates -1 +1  rows j 522 693
+  e =  8.5  T- =   15.7685  T+ =   20.6051  fates -1 +1  rows j 557 728
+  e =  9.0  T- =   16.7301  T+ =   21.5668  fates -1 +1  rows j 591 762
+  e =  9.5  T- =   17.7201  T+ =   22.5567  fates -1 +1  rows j 626 797
+  e = 10.0  T- =   18.6818  T+ =   23.5184  fates -1 +1  rows j 660 831
+  e = 10.5  T- =   19.6717  T+ =   24.4800  fates -1 +1  rows j 695 865
+  e = 11.0  T- =   20.6334  T+ =   25.4700  fates -1 +1  rows j 729 900
+  e = 11.5  T- =   21.5950  T+ =   26.4317  fates -1 +1  rows j 763 934
+  e = 12.0  T- =   22.5850  T+ =   27.4216  fates -1 +1  rows j 798 969
+  e = 12.5  T- =   23.5467  T+ =   28.3833  fates -1 +1  rows j 832 1003
+  e = 13.0  T- =   24.5366  T+ =   29.3732  fates -1 +1  rows j 867 1038
+  e = 13.5  T- =   25.4983  T+ =   30.3349  fates -1 +1  rows j 901 1072
+  e = 14.0  T- =   26.4882  T+ =   31.2965  fates -1 +1  rows j 936 1106
+  e = 14.5  T- =   27.4499  T+ =   32.2865  fates -1 +1  rows j 970 1141
+  e = 15.0  T- =   28.4398  T+ =   33.2482  fates -1 +1  rows j 1005 1175
+  e = 15.5  T- =   29.4015  T+ =   34.2381  fates -1 +1  rows j 1039 1210
+  e = 16.0  T- =   30.3632  T+ =   35.1998  fates -1 +1  rows j 1073 1244
+  e = 16.5  T- =   31.3531  T+ =   36.1897  fates -1 +1  rows j 1108 1279
+  e = 17.0  T- =   32.3148  T+ =   37.1514  fates -1 +1  rows j 1142 1313
+  e = 17.5  T- =   33.3047  T+ =   38.1413  fates -1 +1  rows j 1177 1348
+  e = 18.0  T- =   34.2664  T+ =   39.1030  fates -1 +1  rows j 1211 1382
+  e = 18.5  T- =   35.2563  T+ =   40.0647  fates -1 +1  rows j 1246 1416
+  e = 19.0  T- =   36.2180  T+ =   41.0546  fates -1 +1  rows j 1280 1451
+  e = 19.5  T- =   37.1797  T+ =   42.0163  fates -1 +1  rows j 1314 1485
+  e = 20.0  T- =   38.1696  T+ =   43.0062  fates -1 +1  rows j 1349 1520
+[pass] BR-F: bisection to hi - lo <= 1e-24 with every run an event  (hi - lo = 5.29e-25, stopped None, runs 77, 813.0 s)
+[pass] SR-F: series e = 3 .. 20 step 0.5, both sides, complete  (70 points, e from 3.0 to 20.0)
+[pass] FM-F: fate monotone: every series point p* -/+ 10^-e lands on its own side, e <= 20  (none wrong)
+[pass] TM-F: T non-decreasing as |p - p*| falls, each side  (none)
+[pass] EVC-F: events within 5 cells of the diagonal (the column cap does not bind)  (max |i - j| = 0)
+[pass] LL1-F: slope of T against ln(1/delta) over [1e-20, 1e-12] (the decades the double run could not reach) against 1/W = 0.846045  (0.845980 +- 0.000255 (OLS), -7.75e-05 (bar 5e-03), fit spread [0.843228, 0.847991], n = 34)
+[pass] LL2-F: the extension's slope agrees with the slope over #40's window [1e-11, 1e-3]  (extension 0.845980, double window 0.846642 +- 0.000380: -7.82e-04 (bar 5e-03); both windows 0.846141)
+[pass] LL3-F: log law: largest residual of the extension fit <= one row spacing sqrt2 h  (max residual 0.0140 against sqrt2 h = 0.0283 (rms 0.0080, uniform quantization 0.0082))
+[table] series, variant F: T at p* -/+ 10^-e in binary128 (collapse side, expansion side), fates and the event rows j
+  e =  3.0  T- =    4.9922  T+ =    9.8854  fates -1 +1  rows j 176 349
+  e =  3.5  T- =    6.0104  T+ =   10.8470  fates -1 +1  rows j 212 383
+  e =  4.0  T- =    7.0004  T+ =   11.8370  fates -1 +1  rows j 247 418
+  e =  4.5  T- =    7.9620  T+ =   12.7986  fates -1 +1  rows j 281 452
+  e =  5.0  T- =    8.9520  T+ =   13.7886  fates -1 +1  rows j 316 487
+  e =  5.5  T- =    9.9136  T+ =   14.7502  fates -1 +1  rows j 350 521
+  e =  6.0  T- =   10.9036  T+ =   15.7402  fates -1 +1  rows j 385 556
+  e =  6.5  T- =   11.8653  T+ =   16.7019  fates -1 +1  rows j 419 590
+  e =  7.0  T- =   12.8552  T+ =   17.6635  fates -1 +1  rows j 454 624
+  e =  7.5  T- =   13.8169  T+ =   18.6535  fates -1 +1  rows j 488 659
+  e =  8.0  T- =   14.7785  T+ =   19.6151  fates -1 +1  rows j 522 693
+  e =  8.5  T- =   15.7685  T+ =   20.6051  fates -1 +1  rows j 557 728
+  e =  9.0  T- =   16.7301  T+ =   21.5668  fates -1 +1  rows j 591 762
+  e =  9.5  T- =   17.7201  T+ =   22.5567  fates -1 +1  rows j 626 797
+  e = 10.0  T- =   18.6818  T+ =   23.5184  fates -1 +1  rows j 660 831
+  e = 10.5  T- =   19.6717  T+ =   24.4800  fates -1 +1  rows j 695 865
+  e = 11.0  T- =   20.6334  T+ =   25.4700  fates -1 +1  rows j 729 900
+  e = 11.5  T- =   21.5950  T+ =   26.4317  fates -1 +1  rows j 763 934
+  e = 12.0  T- =   22.5850  T+ =   27.4216  fates -1 +1  rows j 798 969
+  e = 12.5  T- =   23.5467  T+ =   28.3833  fates -1 +1  rows j 832 1003
+  e = 13.0  T- =   24.5366  T+ =   29.3732  fates -1 +1  rows j 867 1038
+  e = 13.5  T- =   25.4983  T+ =   30.3349  fates -1 +1  rows j 901 1072
+  e = 14.0  T- =   26.4882  T+ =   31.2965  fates -1 +1  rows j 936 1106
+  e = 14.5  T- =   27.4499  T+ =   32.2865  fates -1 +1  rows j 970 1141
+  e = 15.0  T- =   28.4398  T+ =   33.2482  fates -1 +1  rows j 1005 1175
+  e = 15.5  T- =   29.4015  T+ =   34.2381  fates -1 +1  rows j 1039 1210
+  e = 16.0  T- =   30.3632  T+ =   35.1998  fates -1 +1  rows j 1073 1244
+  e = 16.5  T- =   31.3531  T+ =   36.1897  fates -1 +1  rows j 1108 1279
+  e = 17.0  T- =   32.3148  T+ =   37.1514  fates -1 +1  rows j 1142 1313
+  e = 17.5  T- =   33.3047  T+ =   38.1413  fates -1 +1  rows j 1177 1348
+  e = 18.0  T- =   34.2664  T+ =   39.1030  fates -1 +1  rows j 1211 1382
+  e = 18.5  T- =   35.2563  T+ =   40.0647  fates -1 +1  rows j 1246 1416
+  e = 19.0  T- =   36.2180  T+ =   41.0546  fates -1 +1  rows j 1280 1451
+  e = 19.5  T- =   37.1797  T+ =   42.0163  fates -1 +1  rows j 1314 1485
+  e = 20.0  T- =   38.1696  T+ =   43.0062  fates -1 +1  rows j 1349 1520
+[info] the series of E and F are equal event by event (T, fate, event cell): 70 of 70 points
+[pass] KF: float64 bisections from K >= 8 different brackets, each to hi - lo <= 1e-16  (16 bisections)
+[pass] A2-E: p* (binary128, variant E) agrees with every float64 p* to the double floor 1e-11  (float64 minus binary128: mean +8.17e-14, rms 8.20e-14, sd 7.57e-15, max 1.08e-13, K = 16)
+[pass] A2-F: p* (binary128, variant F) agrees with every float64 p* to the double floor 1e-11  (float64 minus binary128: mean +1.70e-14, rms 1.85e-14, sd 7.57e-15, max 4.33e-14, K = 16)
+[pass] A3-F: variant F (the float64 run's own inputs): the float64 offset from the binary128 p* is roundoff alone, rms <= 1e-13  (rms 1.85e-14, mean +1.70e-14, sd 7.57e-15)
+[info] data effect: p*(E) - p*(F) = -6.468e-14 (the dense static solution's error, rtol 1e-13, moves p* by this)
+[table] float64 series about the binary128 p* (variant E): the same amplitudes rounded to float64; T and fate against binary128's
+  e =  3.0  side -1: float64 fate -1 T =   4.9922 | binary128 fate -1 T =   4.9922   side +1: float64 fate +1 T =   9.8854 | binary128 fate +1 T =   9.8854
+  e =  3.5  side -1: float64 fate -1 T =   6.0104 | binary128 fate -1 T =   6.0104   side +1: float64 fate +1 T =  10.8470 | binary128 fate +1 T =  10.8470
+  e =  4.0  side -1: float64 fate -1 T =   7.0004 | binary128 fate -1 T =   7.0004   side +1: float64 fate +1 T =  11.8370 | binary128 fate +1 T =  11.8370
+  e =  4.5  side -1: float64 fate -1 T =   7.9620 | binary128 fate -1 T =   7.9620   side +1: float64 fate +1 T =  12.7986 | binary128 fate +1 T =  12.7986
+  e =  5.0  side -1: float64 fate -1 T =   8.9520 | binary128 fate -1 T =   8.9520   side +1: float64 fate +1 T =  13.7886 | binary128 fate +1 T =  13.7886
+  e =  5.5  side -1: float64 fate -1 T =   9.9136 | binary128 fate -1 T =   9.9136   side +1: float64 fate +1 T =  14.7502 | binary128 fate +1 T =  14.7502
+  e =  6.0  side -1: float64 fate -1 T =  10.9036 | binary128 fate -1 T =  10.9036   side +1: float64 fate +1 T =  15.7402 | binary128 fate +1 T =  15.7402
+  e =  6.5  side -1: float64 fate -1 T =  11.8653 | binary128 fate -1 T =  11.8653   side +1: float64 fate +1 T =  16.7019 | binary128 fate +1 T =  16.7019
+  e =  7.0  side -1: float64 fate -1 T =  12.8552 | binary128 fate -1 T =  12.8552   side +1: float64 fate +1 T =  17.6635 | binary128 fate +1 T =  17.6635
+  e =  7.5  side -1: float64 fate -1 T =  13.8169 | binary128 fate -1 T =  13.8169   side +1: float64 fate +1 T =  18.6535 | binary128 fate +1 T =  18.6535
+  e =  8.0  side -1: float64 fate -1 T =  14.7785 | binary128 fate -1 T =  14.7785   side +1: float64 fate +1 T =  19.6151 | binary128 fate +1 T =  19.6151
+  e =  8.5  side -1: float64 fate -1 T =  15.7685 | binary128 fate -1 T =  15.7685   side +1: float64 fate +1 T =  20.6051 | binary128 fate +1 T =  20.6051
+  e =  9.0  side -1: float64 fate -1 T =  16.7301 | binary128 fate -1 T =  16.7301   side +1: float64 fate +1 T =  21.5668 | binary128 fate +1 T =  21.5668
+  e = 10.0  side -1: float64 fate -1 T =  18.6818 | binary128 fate -1 T =  18.6818   side +1: float64 fate +1 T =  23.5184 | binary128 fate +1 T =  23.5184
+  e = 11.0  side -1: float64 fate -1 T =  20.6334 | binary128 fate -1 T =  20.6334   side +1: float64 fate +1 T =  25.4700 | binary128 fate +1 T =  25.4700
+  e = 12.0  side -1: float64 fate -1 T =  22.5284 | binary128 fate -1 T =  22.5850   side +1: float64 fate +1 T =  27.4782 | binary128 fate +1 T =  27.4216
+  e = 13.0  side -1: float64 fate -1 T =  24.0558 | binary128 fate -1 T =  24.5366   side +1: float64 fate +1 T =  31.2965 | binary128 fate +1 T =  29.3732
+  e = 14.0  side -1: float64 fate -1 T =  24.5083 | binary128 fate -1 T =  26.4882   side +1: float64 fate -1 T =  24.6780 | binary128 fate +1 T =  31.2965
+  e = 15.0  side -1: float64 fate -1 T =  24.6497 | binary128 fate -1 T =  28.4398   side +1: float64 fate -1 T =  24.6497 | binary128 fate +1 T =  33.2482
+  e = 16.0  side -1: float64 fate -1 T =  24.6780 | binary128 fate -1 T =  30.3632   side +1: float64 fate -1 T =  24.6780 | binary128 fate +1 T =  35.1998
+  e = 17.0  side -1: float64 fate -1 T =  24.7346 | binary128 fate -1 T =  32.3148   side +1: float64 fate -1 T =  24.7346 | binary128 fate +1 T =  37.1514
+  e = 18.0  side -1: float64 fate -1 T =  24.7346 | binary128 fate -1 T =  34.2664   side +1: float64 fate -1 T =  24.7346 | binary128 fate +1 T =  39.1030
+  e = 19.0  side -1: float64 fate -1 T =  24.7346 | binary128 fate -1 T =  36.2180   side +1: float64 fate -1 T =  24.7346 | binary128 fate +1 T =  41.0546
+  e = 20.0  side -1: float64 fate -1 T =  24.7346 | binary128 fate -1 T =  38.1696   side +1: float64 fate -1 T =  24.7346 | binary128 fate +1 T =  43.0062
+[pass] FS-E: the float64 series about the binary128 p* leaves its side near e = -log10(max offset) = 13.0 (+- 1.5)  (first wrong side e = 13.5; 14 wrong of 70; first e whose event differs from binary128: 10.5 (36 differ))
+[table] float64 series about the binary128 p* (variant F): the same amplitudes rounded to float64; T and fate against binary128's
+  e =  3.0  side -1: float64 fate -1 T =   4.9922 | binary128 fate -1 T =   4.9922   side +1: float64 fate +1 T =   9.8854 | binary128 fate +1 T =   9.8854
+  e =  3.5  side -1: float64 fate -1 T =   6.0104 | binary128 fate -1 T =   6.0104   side +1: float64 fate +1 T =  10.8470 | binary128 fate +1 T =  10.8470
+  e =  4.0  side -1: float64 fate -1 T =   7.0004 | binary128 fate -1 T =   7.0004   side +1: float64 fate +1 T =  11.8370 | binary128 fate +1 T =  11.8370
+  e =  4.5  side -1: float64 fate -1 T =   7.9620 | binary128 fate -1 T =   7.9620   side +1: float64 fate +1 T =  12.7986 | binary128 fate +1 T =  12.7986
+  e =  5.0  side -1: float64 fate -1 T =   8.9520 | binary128 fate -1 T =   8.9520   side +1: float64 fate +1 T =  13.7886 | binary128 fate +1 T =  13.7886
+  e =  5.5  side -1: float64 fate -1 T =   9.9136 | binary128 fate -1 T =   9.9136   side +1: float64 fate +1 T =  14.7502 | binary128 fate +1 T =  14.7502
+  e =  6.0  side -1: float64 fate -1 T =  10.9036 | binary128 fate -1 T =  10.9036   side +1: float64 fate +1 T =  15.7402 | binary128 fate +1 T =  15.7402
+  e =  6.5  side -1: float64 fate -1 T =  11.8653 | binary128 fate -1 T =  11.8653   side +1: float64 fate +1 T =  16.7019 | binary128 fate +1 T =  16.7019
+  e =  7.0  side -1: float64 fate -1 T =  12.8552 | binary128 fate -1 T =  12.8552   side +1: float64 fate +1 T =  17.6635 | binary128 fate +1 T =  17.6635
+  e =  7.5  side -1: float64 fate -1 T =  13.8169 | binary128 fate -1 T =  13.8169   side +1: float64 fate +1 T =  18.6535 | binary128 fate +1 T =  18.6535
+  e =  8.0  side -1: float64 fate -1 T =  14.7785 | binary128 fate -1 T =  14.7785   side +1: float64 fate +1 T =  19.6151 | binary128 fate +1 T =  19.6151
+  e =  8.5  side -1: float64 fate -1 T =  15.7685 | binary128 fate -1 T =  15.7685   side +1: float64 fate +1 T =  20.6051 | binary128 fate +1 T =  20.6051
+  e =  9.0  side -1: float64 fate -1 T =  16.7301 | binary128 fate -1 T =  16.7301   side +1: float64 fate +1 T =  21.5668 | binary128 fate +1 T =  21.5668
+  e = 10.0  side -1: float64 fate -1 T =  18.6818 | binary128 fate -1 T =  18.6818   side +1: float64 fate +1 T =  23.5184 | binary128 fate +1 T =  23.5184
+  e = 11.0  side -1: float64 fate -1 T =  20.6334 | binary128 fate -1 T =  20.6334   side +1: float64 fate +1 T =  25.4700 | binary128 fate +1 T =  25.4700
+  e = 12.0  side -1: float64 fate -1 T =  22.5850 | binary128 fate -1 T =  22.5850   side +1: float64 fate +1 T =  27.4216 | binary128 fate +1 T =  27.4216
+  e = 13.0  side -1: float64 fate -1 T =  24.3952 | binary128 fate -1 T =  24.5366   side +1: float64 fate +1 T =  29.5995 | binary128 fate +1 T =  29.3732
+  e = 14.0  side -1: float64 fate -1 T =  25.4983 | binary128 fate -1 T =  26.4882   side +1: float64 fate -1 T =  27.3933 | binary128 fate +1 T =  31.2965
+  e = 15.0  side -1: float64 fate -1 T =  25.8660 | binary128 fate -1 T =  28.4398   side +1: float64 fate -1 T =  26.2054 | binary128 fate +1 T =  33.2482
+  e = 16.0  side -1: float64 fate -1 T =  26.2337 | binary128 fate -1 T =  30.3632   side +1: float64 fate -1 T =  25.7528 | binary128 fate +1 T =  35.1998
+  e = 17.0  side -1: float64 fate -1 T =  26.0074 | binary128 fate -1 T =  32.3148   side +1: float64 fate -1 T =  25.9508 | binary128 fate +1 T =  37.1514
+  e = 18.0  side -1: float64 fate -1 T =  25.9508 | binary128 fate -1 T =  34.2664   side +1: float64 fate -1 T =  25.9508 | binary128 fate +1 T =  39.1030
+  e = 19.0  side -1: float64 fate -1 T =  25.9508 | binary128 fate -1 T =  36.2180   side +1: float64 fate -1 T =  25.9508 | binary128 fate +1 T =  41.0546
+  e = 20.0  side -1: float64 fate -1 T =  25.9508 | binary128 fate -1 T =  38.1696   side +1: float64 fate -1 T =  25.9508 | binary128 fate +1 T =  43.0062
+[pass] FS-F: the float64 series about the binary128 p* leaves its side near e = -log10(max offset) = 13.4 (+- 1.5)  (first wrong side e = 14.0; 13 wrong of 70; first e whose event differs from binary128: 12.5 (32 differ))
+[pass] S0-D4: the pair's profile Q grows as W = 1.181970 over t in [8.46, 14.38] (W t in (10.0, 17.0); the window is in the linear regime)  (1.18195 (-1.72e-05, bar 2e-02), 8 pairs)
+[pass] S1-D4: |r_float64 - r_binary128| (rms over |l| <= 4) on the stall grows as W over t in [8.46, 14.38] (W t in (10.0, 17.0))  (rate 1.17560 +- 0.00689 (sd 0.0276), -5.39e-03 against W, bar 2e-02; size extrapolated to t = 0: rms 1.30e-16; max/e^(Wt) 4.54e-16; offset in p: rms 1.85e-14, mean -7.37e-15; residual after the Q projection 0.03; 16 (pair, side) draws)
+[pass] S0-D5: the pair's profile Q grows as W = 1.727703 over t in [5.79, 9.84] (W t in (10.0, 17.0); the window is in the linear regime)  (1.72976 (+1.19e-03, bar 2e-02), 8 pairs)
+[pass] S1-D5: |r_float64 - r_binary128| (rms over |l| <= 4) on the stall grows as W over t in [5.79, 9.84] (W t in (10.0, 17.0))  (rate 1.72755 +- 0.00133 (sd 0.0053), -8.68e-05 against W, bar 2e-02; size extrapolated to t = 0: rms 3.89e-16; max/e^(Wt) 1.30e-15; offset in p: rms 1.70e-13, mean +1.45e-13; residual after the Q projection 0.01; 16 (pair, side) draws)
+[pass] S0-D6: the pair's profile Q grows as W = 2.164860 over t in [4.62, 7.85] (W t in (10.0, 17.0); the window is in the linear regime)  (2.19386 (+1.34e-02, bar 2e-02), 8 pairs)
+[pass] S1-D6: |r_float64 - r_binary128| (rms over |l| <= 4) on the stall grows as W over t in [4.62, 7.85] (W t in (10.0, 17.0))  (rate 2.16976 +- 0.00819 (sd 0.0328), +2.27e-03 against W, bar 2e-02; size extrapolated to t = 0: rms 5.29e-16; max/e^(Wt) 2.15e-15; offset in p: rms 7.46e-13, mean +6.93e-13; residual after the Q projection 0.02; 16 (pair, side) draws)
+[pass] S2-D4: the floor in p* predicted from the seed (offset equivalent to |r_f64 - r_b128|) is within a factor 3 of the float64 bisections' offsets from the binary128 p*  (predicted rms 1.85e-14 (6+ stall draws), measured rms 1.85e-14 (K = 16 brackets): ratio 1.00)
+[pass] S3-D4: the mean offset predicted from the seed has the measured mean's sign and is within a factor 3 of it (p*_float64 - p*_binary128 = -eps)  (predicted +7.37e-15, measured +1.70e-14 (sd of the measured 7.6e-15))
+[pass] S2-D5: the floor in p* predicted from the seed (offset equivalent to |r_f64 - r_b128|) is within a factor 3 of the float64 bisections' offsets from the binary128 p*  (predicted rms 1.70e-13 (6+ stall draws), measured rms 2.07e-13 (K = 8 brackets): ratio 0.82)
+[pass] S3-D5: the mean offset predicted from the seed has the measured mean's sign and is within a factor 3 of it (p*_float64 - p*_binary128 = -eps)  (predicted -1.45e-13, measured -2.02e-13 (sd of the measured 4.5e-14))
+[pass] S2-D6: the floor in p* predicted from the seed (offset equivalent to |r_f64 - r_b128|) is within a factor 3 of the float64 bisections' offsets from the binary128 p*  (predicted rms 7.46e-13 (6+ stall draws), measured rms 9.72e-13 (K = 8 brackets): ratio 0.77)
+[pass] S3-D6: the mean offset predicted from the seed has the measured mean's sign and is within a factor 3 of it (p*_float64 - p*_binary128 = -eps)  (predicted -6.93e-13, measured -9.69e-13 (sd of the measured 7.7e-14))
+[pass] P1-scaleP16: amplitude of the data's pulse scaled by 1 + eta, eta = +1e-16: the shift of p* is -eta p*/(1 + eta) (bar 1.5e-24, the bracket widths)  (predicted -4.7528e-21, measured -4.7525e-21, difference +2.81e-25)
+[pass] P1-scaleM16: amplitude of the data's pulse scaled by 1 + eta, eta = -1e-16: the shift of p* is -eta p*/(1 + eta) (bar 1.5e-24, the bracket widths)  (predicted +4.7528e-21, measured +4.7528e-21, difference +4.73e-26)
+[pass] P2: planted bump of relative size eta in r on both rays: kappa from eta = 1e-8, 1e-10 predicts the shift of p* at eta = +-1e-16  (kappa -0.215729 (eta 1e-8), -0.215729 (1e-10), agree to 1.1e-07 (bar 1e-03); predicted shift -2.1573e-17, measured -2.1573e-17 and -2.1573e-17 for -eta (relative error +1.5e-08, +3.5e-09; bar 1e-04))
+37 checks, 37 pass, 0 fail, 0 skipped
+exit 0
+
+== mutations: analysis level (scripts/mut_table.py analyze), controls level (mut_table.py controls), run level (mut_runs_table.py) ==
+clean            exit 0  fires: -
+time_unit        exit 1  fires: LL1-E, LL3-E, LL1-F, LL3-F
+pstar_off        exit 1  fires: FM-E, TM-E, LL1-E, LL2-E, LL3-E, FM-F, TM-F, LL1-F, LL2-F, LL3-F, P1-scaleP16, P1-scaleM16, P2
+bisect_loose     exit 1  fires: BR-E, FM-E, TM-E, LL1-E, LL2-E, LL3-E, BR-F, FM-F, TM-F, LL1-F, LL2-F, LL3-F, P1-scaleP16, P1-scaleM16, P2
+drop_point       exit 1  fires: SR-E, SR-F
+evc_shift        exit 1  fires: EVC-E, EVC-F
+offsets_scaled   exit 1  fires: FS-E, FS-F, S2-D4, S3-D4, S2-D5, S3-D5, S2-D6, S3-D6
+drop_k           exit 1  fires: KF
+t_unit           exit 1  fires: S0-D4, S1-D4, S0-D5, S1-D5, S0-D6, S1-D6
+seed_scale       exit 1  fires: S2-D4, S3-D4, S2-D5, S3-D5, S2-D6, S3-D6
+pert_sign        exit 1  fires: P1-scaleP16, P1-scaleM16, P2
+clean            exit 0  fires: -
+diag_S           exit 1  fires: K1
+taylor_order     exit 1  fires: K2
+ellis_charge     exit 1  fires: K3
+quad_h           exit 1  fires: K4
+float_cast       exit 1  fires: PL1
+pert_sign        exit 1  fires: PL2
+floor_off        exit 1  fires: PL3
+float_cast   exit 1 only=BR,P1              fires: P1-scaleP16
+noise_f64    exit 1 only=BR,SR,FM,TM,EVC,LL1,LL2,LL3 fires: FM-E, TM-E, LL1-E, LL2-E, LL3-E
+h_wrong      exit 1 only=A2                 fires: A2-E
+eta_dropped  exit 1 only=P1                 fires: P1-scaleP16
