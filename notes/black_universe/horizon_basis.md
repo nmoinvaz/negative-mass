@@ -222,3 +222,19 @@ horizon_basis.py mutations DIR PREFIX                                           
 ```
 
 `horizon_basis_output.txt` is `derive`, `check`, `table` and `mutations` of the runs of record (`I302-mac/runs`, code commit d1f849b), in that order. The cache holds readouts of evolved rectangles; no mutation changes an evolution.
+
+## Coordinator's review
+
+Merged at 8a33f8f. Review folder `negative-mass-raw/I302-mac-review`. The changed files are those the brief names.
+
+- **Rerun on the Mac**: `derive` (3 of 3) and `check` (9 of 9) exit 0, and their logs equal the runner's `runs/` logs apart from timings.
+- **The log at S.** The argument (Sec. 3) rests on Y = δr − gδφ being invariant under every linear diffeomorphism (#248 D3a): a
+  perturbation C² at S in any gauge gives a Y with ∂_s²Y_N(0) = −F_Π(0)Y_N(0), which L1 confirms on eight evolved smooth classes to
+  3.45e-4 (Richardson). Y = c₂VR has Y_N″(0) = 0 and Y_N(0) = c₂R(0) ≠ 0, and F_Π(0) = (π/2)G₀ ≠ 0, so no gauge makes the mode smooth.
+  #269's family in a double-null gauge gives the same coefficient (L2). The coordinator agrees with the reading. It was not rederived by
+  code independent of this note's; the issue for that is filed with this review.
+- **Applied, as corrections:** Paper IV's bullet on regularity (the mode is singular at S as a perturbation; smooth data still have
+  c₂ free) and a paragraph on the decaying partner (`paper_numbers.py` 146 strings, mutation `h3`); `horizon_sector.md`, the folder
+  README, `horizon_lemma.md`, `horizon_literature.md`, `cminus1_mode.md`, `full_slice.md`, `static_c1.md`.
+- What survives: the horizon laws, c₂ and c₂′ free in smooth data, the rate κ, and every number of #248, #258, #259 (all from smooth
+  data). What is open: whether the remainder Y_rem of smooth data decays, so that the late growth is c₂VR.

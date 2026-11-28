@@ -191,7 +191,7 @@ and in the sentence "Data with $c_2=0$, among them all data supported away from 
 - The late-time growth. The march reaches V = 3 (right half) and |s| ≤ 0.5 (diamond); nothing here follows the datum to V ∼ e^{κt} or to I⁺ of the interior. The rate κ is #232's.
 - Non-compact data. The class is strict: exactly zero outside the support. Data with decaying tails (for example the profile of Y_∞ of #262, e^{−κx}) satisfy "decays to pure gauge" in a weaker sense and were not built.
 - That G is typical. 20 random compact data have c₂ between 3.7e-5 and 9.4e-4; the space of compact data was not classified.
-- A planted exact solution through S. E9 is on [0.3, 1.6]: the equation for δφ has g = ρR/√2 ∼ s² in front of its highest derivative, singular at S.
+- A planted exact solution through S. E9 is on [0.3, 1.6]: the equation for δφ has g = ρR/√2 ∼ s² in front of its highest derivative, singular at S. *#302:* that is a symptom, not a limit of the code: no smooth δφ_N exists for the exact mode at S ([horizon_basis.md](horizon_basis.md) Sec. 3).
 - The initial values of E9's δφ. The homogeneous solutions with Y = 0 are not all pure gauge: one carries δM. With zero initial values (`mode_M`) M reaches 3.6e-4 and the evolved Y is off by 3.2e-2 at every h; the fix sets δφ(0.3) = α·1e-3, α = 1.171509, so that M = 0.
 - C1 and C2 are required for compactness, not shown to be required by the physics; the first integral Θ is checked numerically (a′ = μQ), not derived from the Einstein equations here.
 - Nonlinear fate; polar modes; other members.

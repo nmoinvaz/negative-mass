@@ -251,7 +251,7 @@ $a_{1R}$, against the horizon fits to $3.7\times10^{-8}$, $5.1\times10^{-9}$ and
 1. *Done in #301.* **c₁ and the mass at the other members.** *What:* the slice code of this note (Θ_gen, the ρ-form, the exact family r = √L R, which #269 gives for every member) at c = −1.5, c = −0.3 and Schwarzschild, where r_S ≠ 1 and
    R′(ρ_h) ≠ 0. *Why:* the first-law reading δM = κ r_S δr(S) predicts c₁ for every member; only c = −1 was run. *Acceptance:* κ r_S c₁ = δM_ADM of the exact family to 1e-6 at the three members; a wrong r_S (1) fails at c ≠ −1;
    dM = κ dA/(8π) along the family to 1e-12. *Depends on:* #259, #269.
-2. **The decaying partner and the basis (c₁, c₂, c₂′).** *What:* put the time reverse of #262's mode, Y = c₂′ U R(ρ(Π)), through the slice code and read c₂′ = ∂_U δr(S) = ½(n − δr′). *Why:* completes the list of regular
+2. *Done in #302* ([horizon_basis.md](horizon_basis.md); the exact modes cannot pass through S). **The decaying partner and the basis (c₁, c₂, c₂′).** *What:* put the time reverse of #262's mode, Y = c₂′ U R(ρ(Π)), through the slice code and read c₂′ = ∂_U δr(S) = ½(n − δr′). *Why:* completes the list of regular
    numbers at S (mass, growing, decaying) as exact modes. *Acceptance:* c₂′ of the slice equals the mode's to 1e-6; a random regular datum's (c₁, c₂, c₂′) is reproduced by the three modes to 1e-6; swapping V and U fails.
    *Depends on:* #259, #262.
 3. **A conserved quantity for slices that miss S.** *What:* the analogue of Θ_gen for V + U = const ≠ 0 (not time symmetric), so that c₁ is read from one point of a slice like #232's pulses'. *Why:* T11 reads c₁ at one point only

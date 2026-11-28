@@ -15,7 +15,7 @@ Y_ref = R e^{κx},        Ψ = Y_ref e^{−κx} = R,        Y = c₂ V R(ρ(Π))
 
 solves #212's equation, *checked symbolically* (S1). The residual of Y = R e^{Wx} is `2(πW + 2c) e^{Wx}/(ρR(…))`, so the same formula solves the equation for **every** member c at the
 rate W = K = −2c/π = 3m (b = 1); at c = −1, K = κ. At c = 0 (K = 0, W = 0) it is `Y = R`, the variation of the throat radius b in the gauge δφ = 0 (S2). The solution is in the
-Kruskal-regular class (Ψ = R is analytic in ρ and in Π), equals `c₂V` on the future horizon, and has the series `ρ^{1/2}(1 + (π/8)ρ + (5/12 + 3π²/128)ρ² + …)`. Against that
+Kruskal-regular class (Ψ = R is analytic in ρ and in Π; regular as a solution of the Y equation, not as a perturbation at S, #302), equals `c₂V` on the future horizon, and has the series `ρ^{1/2}(1 + (π/8)ρ + (5/12 + 3π²/128)ρ² + …)`. Against that
 series it agrees to 5.9e-61 (bar 1e-30), and against the numerical integration of the master equation on ρ ∈ [−40, 40], static region and interior, to 4.3e-42 (bar 1e-20);
 a coefficient changed by 1% (R² → 1 + 1.01ρ²) gives 5e-5 and 5e-3 against the bars 1e-30 and 1e-20.
 
@@ -32,7 +32,7 @@ dW/dc with the central difference to 2.7e-8 (central difference 0.3486954830). P
 **3. What this means.** The "knife edge" is one smooth branch. At c = −1 the solution that is regular on the horizon and outgoing at infinity,
 `Y_∞ = Y_ref − Y_b/I₀ = Y_ref ∫_ρ^∞ 2Kr²e^{−2κx}/(A R²) dr / I₀`, exists and has W = κ; for c ≠ −1 the one growing mode of #212 is its continuation, with W(c)/κ(c) smooth through
 c = −1 (slope 0.3140; #212's table has 0.31). #212's "none" at c = −1 is the count for the single branch u = Y/ρ → 0, which is Y_b (Y ∼ ρ^{3/2}); at W = κ the whole
-two-dimensional solution space is Kruskal-regular, and the condition at infinity picks Y_∞ in it. Y_ref itself grows as e^{κx} toward large ρ.
+two-dimensional solution space is Kruskal-regular (as solutions of the Y equation; #302), and the condition at infinity picks Y_∞ in it. Y_ref itself grows as e^{κx} toward large ρ.
 
 ```
  c < −1 (ρ_h > 0)       c = −1 (ρ_h = 0)       c > −1 (ρ_h < 0, throat inside the static region)
@@ -171,7 +171,7 @@ with I₀ = 1.01490361. The rate W(c) is smooth through c = −1, W(c) = K(c) + 
 perturbation theory, numerical evidence; the fit of #212's rates gives 0.314029 at third order). The two-sided 0.31 of the table is this slope.*
 
 `horizon_sector.md` D7, D8: *The Frobenius solution of D7 with g₁ = 0 is Y_ref − (π/8) Y_b; Y_ref = R e^{κx} itself has g₁ = π/8, g₂ = 5/12 + 3π²/128 and Ψ = Y_ref e^{−κx} = R(ρ). The
-Kruskal-regular solutions at W = κ form a two-dimensional space {Y_ref + βY_b}; the horizon coefficient c₂ is the same for all of them, and the condition at spatial infinity fixes β.* In the
+Kruskal-regular solutions (of the Y equation; #302) at W = κ form a two-dimensional space {Y_ref + βY_b}; the horizon coefficient c₂ is the same for all of them, and the condition at spatial infinity fixes β.* In the
 Answer replace "the growing solution `Y = c₂ V G(Π)`" by "`Y = c₂ V R(ρ(Π))`, with G(Π) = dρ/dΠ unrelated". Normalization: here e^{2κx} = ρ(1 + …) at 0; #248's chart has Π(ρ = 1) = 1, so Π_{#248} = Π/Π(1) with Π(1) = 2.4725459594.
 
 ## 6. What this does not show

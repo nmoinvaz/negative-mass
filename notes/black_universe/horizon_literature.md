@@ -38,7 +38,7 @@ What each verdict rests on is below. Three points the verdict words do not carry
 
 - S1, S2: `horizon_sector.md` (#248): c₂ = ∂_V δr(V₀, 0) is the number on U = 0 in `Y_h(V) = c₁ + c₂V`, the same at
   every point of H⁺ down to the bifurcation surface; 20 of 20 random regular data have c₂ ≠ 0; the solution `Y = c₂ V
-  G(Π)` is smooth across S. The count of #212 (none at c = −1) is the count for `u = Y/ρ → 0`, which has c₁ = c₂ = 0.
+  G(Π)` is smooth across S as a function (not as a perturbation: #302, [horizon_basis.md](horizon_basis.md)). The count of #212 (none at c = −1) is the count for `u = Y/ρ → 0`, which has c₁ = c₂ = 0.
 - S3: `horizon_lemma.md` (#261, *proved* by hand): on U = 0, δr_VV = 0; c₂ is gauge invariant iff R′(ρ_h) = 0; such a
   horizon with κ > 0 needs A not a function of R alone.
 - S4: `cminus1_mode.md` on `wip/i262-cminus1-mode` (#262, *checked symbolically*): the residual of `Y = R e^{Wx}` is

@@ -9,7 +9,7 @@ the algebra of the D checks is *checked symbolically*, the solver results are *n
 
 **c₂ is free in regular Cauchy data on a slice through the horizon.** It is the number `∂_V δr` at the point where the slice crosses the future horizon, the same
 number at every point of the horizon down to the bifurcation surface S; no constraint restricts it, 20 of 20 random regular data have c₂ ≠ 0, and the growing solution
-`Y = c₂ V G(Π)` (*update from #262:* in closed form `Y = c₂ V R(ρ(Π))`, R the areal radius; this note's `G(Π)` there is not dρ/dΠ) is smooth across S and through the interior (ρ < 0). So #232's horizon sector belongs to physical initial data: at c = −1 the linear problem has a
+`Y = c₂ V G(Π)` (*update from #262:* in closed form `Y = c₂ V R(ρ(Π))`, R the areal radius; this note's `G(Π)` there is not dρ/dΠ) is smooth across S as a function (*correction from #302*, [horizon_basis.md](horizon_basis.md): Y is a smooth function across S, but the perturbation with this Y is not smooth there, ∂_Nδφ ∼ −(π/√2)c₂ ln|s| in every gauge; smooth data still have Y_h = c₁ + c₂V on H⁺ with c₂ free) and through the interior (ρ < 0). So #232's horizon sector belongs to physical initial data: at c = −1 the linear problem has a
 growing solution of rate κ, regular on the whole slice, excited by regular data that change δr at the horizon crossing, and not excited by data supported away from it.
 The count of #212 (none) stands for the class `u = Y/ρ → 0`, which has c₁ = c₂ = 0. Status: the horizon law, the constraint propagation, the series at S and the gauge
 statements are *checked symbolically*; the solver results (functional against #232's solutions to 3e-10 after Richardson, planted case, control, regularity, random data) are *numerical evidence*.
@@ -142,7 +142,7 @@ and N5 uses `linear.py`'s solver.
 #232 corrected #212's "no growing mode at c = −1" to "none for Y_h = 0" and left open whether Y_h ≠ 0 is a class of physical data. It is. `Y_h = 0` means `c₁ = c₂ = 0`: two numbers, `Y(S)` (static) and
 `∂_V δr` at the horizon (growing). c₂ is a free number of regular Cauchy data, so:
 
-- the linear problem about the c = −1 member has one growing direction of rate κ (#232's rate, numerical evidence there), a solution that is regular across S and through the interior, and is excited by regular data
+- the linear problem about the c = −1 member has one growing direction of rate κ (#232's rate, numerical evidence there), a solution that is regular across S as a function of Y (not as a perturbation, #302) and through the interior, and is excited by regular data
   with c₂ ≠ 0, such as a δφ pulse crossing the horizon (class L, c₂ = −9.6e-4 with amplitude 1e-3 and no data on the exterior ray);
 - the rest of the data space, c₂ = 0, is a hyperplane at the horizon crossing; it contains the data supported away from the horizon crossing (class R), which decay, as #212 and #232's class R;
 - #212's L² count misses the growing direction because `Y ∝ V` is `u ∼ 1/U`, not normalizable in the tortoise coordinate; the horizon sector adds one growing direction, W = κ (the logarithm of the Frobenius recursion vanishes only there, #232 D3 and D7 here), so c = −1 then has one like the other 19 members.
@@ -152,7 +152,7 @@ Nothing is said here about the nonlinear fate: #217's lifetime law with slope 1/
 ## What README.md and critical_ghost.md §1.1 should now say (proposed; the files are not touched here)
 
 `README.md`, Result, first bullet, replace the sentence "Update from #232: …": *Update from #232 and #248: with Y regular and nonzero on the horizon the linear problem at c = −1 has a growing solution of rate W = κ
-(`Y ∝ e^{κv}`, regular across the bifurcation surface and the interior). Its coefficient c₂ = ∂_V δr on the horizon is a free number of regular Cauchy data on a slice through the horizon (checked symbolically; numerical evidence); #212's count of zero is
+(`Y ∝ e^{κv}`, regular across the bifurcation surface as a function of Y, not as a perturbation (#302), and in the interior). Its coefficient c₂ = ∂_V δr on the horizon is a free number of regular Cauchy data on a slice through the horizon (checked symbolically; numerical evidence); #212's count of zero is
 the count for `u = Y/ρ → 0` (c₁ = c₂ = 0), which also holds for data supported away from the horizon crossing.* Sec. 8, knife edge, last sentence: *The rate is κ at c = −1 as well; the member decays only for data with c₂ = 0, a single condition on the data at the horizon crossing, which includes data supported away from the horizon (#248).*
 
 `critical_ghost.md` §1.1, the black-universe row, replace #232's sentence: *At c = −1 the count of #212 is zero for perturbations with `u = Y/ρ → 0`; the linear problem has a growing solution of rate κ whose coefficient c₂ = ∂_V δr on the horizon is a free number of regular Cauchy data
@@ -172,7 +172,7 @@ the count for `u = Y/ρ → 0` (c₁ = c₂ = 0), which also holds for data supp
 
 1. **A compactly supported datum on a full slice.** *What:* solve the two constraints along a spacelike slice from the left through S to large ρ, with δφ and ∂_N δφ compactly supported near the crossing and δM_ADM = 0, and evolve. *Why:* closes the infinity gap above.
    *Acceptance:* the constraint solution decays to pure gauge outside the support; c₂ from the slice equals c₂ of the evolved horizon fit to 1e-6; a mutation with the wrong asymptotic condition changes c₂. *Depends on:* #248.
-2. **The count with the Kruskal-regular class.** *What:* #249's recount with the W = κ solution `Y ∝ V G(Π)` admitted at c = −1 and the c ≠ −1 members unchanged. *Why:* the horizon sector is now a datum, not an option. *Acceptance:* as #249's, plus c₂ from this note's functional for the eigenfunction. *Depends on:* #249.
+2. **The count with the Kruskal-regular class** (regular as solutions of the Y equation; #302). *What:* #249's recount with the W = κ solution `Y ∝ V G(Π)` admitted at c = −1 and the c ≠ −1 members unchanged. *Why:* the horizon sector is now a datum, not an option. *Acceptance:* as #249's, plus c₂ from this note's functional for the eigenfunction. *Depends on:* #249.
 3. *Done in #259.* **The static sector.** *What:* identify c₁ (data A0, A1L) with the static M and with a static perturbation of the member. *Why:* c₁ ≠ 0 is regular data; its role in #217's family is open. *Acceptance:* c₁ as a functional of the slice data, checked on #232's solutions to 1e-6. *Depends on:* #232, #248.
 4. **#217's family along c₂.** *What:* #250's lifetime law along class R and a family with c₂ tuned, now that c₂ is a datum. *Acceptance:* #250's. *Depends on:* #250.
 
@@ -219,6 +219,6 @@ Review of branch `wip/i248-horizon-sector` at 0dd8c98 and raw `I248-dh610` at 88
   - Task 3 is #259.
   - Task 4 is added to #250.
 - *Update from #262 (coordinator):* the Frobenius solution of D7 with g₁ = 0 is Y_ref − (π/8) Y_b. Y_ref = R e^{κx} itself has g₁ = π/8 and
-  g₂ = 5/12 + 3π²/128. The Kruskal-regular solutions at W = κ form a two-dimensional space {Y_ref + βY_b} with the same c₂, and the condition at
+  g₂ = 5/12 + 3π²/128. The Kruskal-regular solutions (of the Y equation; #302) at W = κ form a two-dimensional space {Y_ref + βY_b} with the same c₂, and the condition at
   spatial infinity fixes β (`cminus1_mode.md`). #262's normalization has e^{2κx} = ρ(1 + …) at 0, and this note's has Π(ρ = 1) = 1, so they differ by
   Π(1) = 2.4725459594.

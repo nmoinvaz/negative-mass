@@ -78,7 +78,7 @@ All 20 of #212's black universes have A not a function of R alone. Only c = −1
 ## What this does not show
 
 - That c₂ is free in Cauchy data. For the c = −1 member that is #248's result, numerical evidence.
-- Growth off the horizon at fixed ρ. The lemma is about H⁺. #248 shows that the c = −1 mode Y = c₂VΨ(Π) is smooth across S and grows at
+- Growth off the horizon at fixed ρ. The lemma is about H⁺. #248 shows that the c = −1 mode Y = c₂VΨ(Π) is a smooth function across S (not the Y of a smooth perturbation, #302) and grows at
   fixed ρ.
 - Anything nonlinear. Nor whether c₂ ≠ 0 ends in collapse or expansion (#250).
 - Which other known solutions have a non-extremal horizon at an area extremum. A search of the literature is part of #260.
