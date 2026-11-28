@@ -553,6 +553,13 @@ def post_cmd():
         P1_ = P2
         R = E.fit_pred(P1_, tr, tr[:1], M0)
         print(f"    {lab}: (a, b, c) = {', '.join(f'{x:+.4f}' for x in R['co'])}; in-sample max {np.max(np.abs(R['ins'])):.2e}, leave-one-out max {np.max(np.abs(R['loo'])):.2e}")
+    print("\n== Post hoc 4 (gates nothing): M is one number per member, so the frozen V3 prediction from the eps = 1e-3 reading and from the eps = 1e-2 reading of the same member should agree; their difference is the form's change along the member's own trajectory")
+    P1 = readset(names, EPS_A)
+    D = {}
+    for n in train + N3 + test:
+        D[n] = float(predict(fz["fits"]["V3_1e-2"], P2, (n,))[0][0] - predict(fz["fits"]["V3_1e-3"], P1, (n,))[0][0])
+    print("    pred(1e-2 reading, V3_1e-2) - pred(1e-3 reading, V3_1e-3): " + ", ".join(f"{n} {D[n]:+.1e}" for n in train + N3 + test))
+    print(f"    largest |difference|: the 14 training members {max(abs(D[n]) for n in train):.2e}, N1-N3 {max(abs(D[n]) for n in N3):.2e}, X1-X3 {max(abs(D[n]) for n in test):.2e} (X1 {D['X1']:+.2e}, X2 {D['X2']:+.2e}, X3 {D['X3']:+.2e})")
     print(f"\n{time.time() - t0:.0f} s")
     return 0
 
