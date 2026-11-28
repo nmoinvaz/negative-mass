@@ -35,6 +35,7 @@ LD = os.path.join(HERE, "..", "..", "notes", "wormhole_largeD")
 MUTATIONS = {
     "k_D4": ("expansion", "1/H linear in tau: k = 2.0000, tau_s = 17.8902", "1/H linear in tau: k = 2.0001, tau_s = 17.8902"),
     "settled_G": ("settled_g", "delta = 1e-8: 0.235548", "delta = 1e-8: 0.235648"),
+    "member_M12": ("member", "      12  0.237622   0.047732", "      12  0.237722   0.047732"),
     "slope_S6": ("check", "ind40 0.461705", "ind40 0.461805"),
 }
 
@@ -58,6 +59,7 @@ SRC = {
     "drift": read(EV, "throat_drift_output.txt"),
     "scaling": read(EV, "throat_scaling_output.txt"),
     "massb": read(EV, "settled_mass_b_output.txt"),
+    "member": read(EV, "settled_mass_member_output.txt"),
     "expansion": read(EV, "expansion_output.txt"),
     "plateau": read(EV, "constraint_plateau_output.txt"),
     "derive": read(EV, "derive_output.txt"),
@@ -521,6 +523,33 @@ printed(f"(${float(lo[1]) * 1e5:.1f}\\times10^{{-5}}$ against ${float(lo[2]) * 1
 printed(f"holds to ${max(lop) * 1e6:.1f}\\times10^{{-6}}$", "the post-hoc four-B leave-one-out")
 st = re.search(r"first B with no stall \(gain < 2\.0\): ([0-9.]+); the last with a stall: ([0-9.]+)", mb)
 check(st is not None and float(st[1]) <= 0.165 and float(st[2]) >= 0.155, f"the stall ends between {st[2] if st else '?'} and {st[1] if st else '?'} at h = 0.005")
+
+# #267: G's settled mass along the stall, delta = 1e-7 ... 1e-12 (notes/wormhole_evolution/settled_mass_member_output.txt, h = 0.005)
+mo = SRC["member"]
+blk = mo.split("h = 0.005: #266's relation", 1)[1]
+rowsD = {int(m[0]): (float(m[1]), float(m[2]), float(m[3]), float(m[4]), float(m[5])) for m in
+         re.findall(r"^\s+(\d+)\s+([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\s+([0-9.]+)\s+([-+0-9.e]+)\s+\|", blk.split("[FAIL] PRED", 1)[0], re.M)}
+check(sorted(rowsD) == list(range(3, 13)), f"#267's M(delta) table at h = 0.005: e = {sorted(rowsD)}")
+printed(f"${rowsD[8][0]:.6f}a$ at $\\delta=10^{{-8}}$ to ${rowsD[12][0]:.6f}a$ at $10^{{-12}}$", "M(delta)")
+printed(f"misses by ${rowsD[12][4] * 1e4:.1f}\\times10^{{-4}}$ at $10^{{-12}}$", "M - predicted at 1e-12")
+check(all(abs(rowsD[e][4]) > 6e-5 for e in (9, 10, 11, 12)), "PRED fails at every delta from 1e-9 (bar 6e-5)")
+dec = re.search(r"^\s+12\s+([-+0-9.e]+)\s+([-+0-9.e]+)\s+[-+0-9.e]+\s+[-+0-9.e]+\s+[-+0-9.e]+$", mo.split("Decomposition at h = 0.005", 1)[1], re.M)
+check(dec is not None, "#267's decomposition row e = 12")
+printed(f"predicts $+{float(dec[2]) * 1e3:.2f}\\times10^{{-3}}$ of the $+{float(dec[1]) * 1e3:.2f}\\times10^{{-3}}$", "dM predicted / measured, 1e-8 to 1e-12")
+sp = re.search(r"D = 4 late speed rdot_inf = \+([0-9.]+) .*?ratio D = 5 / D = 4: ([0-9.]+) \(window to 20.5\)", mo)
+check(sp is not None, "#267's late speed line")
+printed(f"tends to ${float(sp[1]) * 1e3:.2f}\\times10^{{-3}}$ per unit proper time, ${sp[2]}$ times slower than in $D=5$", "the D = 4 drift")
+check(len(re.findall(re.escape(f"${sp[2]}$ times"), TEXN)) == 3, "the ratio 20.6 is printed three times (intro, body, limits)")
+t14 = re.search(r"t = 14: tau\s+[0-9.]+, r_th ([0-9.]+),", mo)
+check(t14 is not None and float(t14[1]) < min(float(x) for x in re.findall(r"t = (?:12|16): tau\s+[0-9.]+, r_th ([0-9.]+),", mo)), "r_th at t = 14 is below t = 12 and 16")
+printed(f"falls to ${float(t14[1]):.4f}a$ at $t=14$", "the radius's minimum region")
+gl = re.search(r"\(gamma_1 ([0-9.]+) to ([0-9.]+)\)", mo)
+printed(f"$\\gamma_1$ falls from ${float(gl[1]):.4f}$ to ${float(gl[2]):.4f}$", "gamma_1 along the stall")
+tdl = re.search(r"^\s+h = 0\.005: e = 3: .*$", mo, re.M)[0]
+tdv = {int(e): float(t) for e, t in re.findall(r"e = (\d+): T [0-9./]+, t_dep ([0-9.]+)", tdl)}
+td = [round(tdv[e + 1] - tdv[e], 3) for e in range(7, 12)]
+check(all(f"{x:.1f}" == "2.0" for x in td), f"t_dep gains 2.0 per decade at h = 0.005 (delta = 1e-7 ... 1e-12): {td}")
+printed("moves the departure by $2.0$ in $t$", "t_dep per decade")
 
 print(f"\n{count} checks, {bad} failed; mutation {OPT.mutate}")
 sys.exit(1 if bad else 0)
