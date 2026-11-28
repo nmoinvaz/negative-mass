@@ -213,7 +213,7 @@ Review of branch `wip/i263-omega5` at c618f36 and raw `I263-rpi5` at 091e6e1, re
     as the new estimate.
   - `paper_numbers.py` checks each of them, the ln 2 structure by sympy included (0 failures).
   - The README's Result and Limits are updated.
-  - `omega_graph.py` still shows Ω₅ as an estimate; it is the coordinator's figure and is updated separately.
+  - `omega_graph.py` and `omega_coeffs.svg` show Ω₅ as derived and Ω₆ ≈ 3.7 × 10⁶ as the estimate.
 - **Follow-ups.**
   - Task 1 is folded into #264.
   - Task 2 (Ω₆, and whether F stays free of ln 2 at ε⁷) is #282.
