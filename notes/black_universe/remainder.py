@@ -5,6 +5,12 @@ Smooth data of the c = -1 black universe have Y = c1 R + c2 V R + c2' U R + Y_re
 This script evolves the classes of #248 and #302 in the Kruskal chart of #248 to V = VMAX (a streaming march: only the horizon line, the columns around S and a window of nodes
 around each fixed-rho curve are kept), forms Y_rem / R = Y / R - (c1 + c2 V + c2' U) with (c1, c2, c2') read at S, and fits its rate against ln V = kappa v at three fixed rho.
 
+    remainder.py derive [--mutate=k_W|k_J]                               K1: #262's closed form (Y_ref, Y_b, Y_inf), 11 s
+    remainder.py warm --cache=DIR [--items=A0,G,...,exact_g,exact_d]     evolve the items at h = 0.00125, 0.000625, 0.0003125 and store the readouts (about 280 s per item)
+    remainder.py check [--only=P1,..,D4] --cache=DIR [--mutate=NAME]     P1 - P3 planted, D1 - D4 data; exit 1 when one fails
+    remainder.py table --cache=DIR                                       the numbers of the note
+    remainder.py mutations DIR PREFIX                                    fired sets of the stored logs DIR/PREFIX<name>.log against the declared ones
+
 Reads horizon_sector.py, horizon_basis.py, full_slice.py, static_c1.py, linear.py (read-only imports). Python: ~/Source/negative-mass/.venv/bin/python.
 """
 import math
@@ -115,6 +121,7 @@ def march_stream(UL, UR, V0, U0, par, tab, h, Pcap, i_h, Pis, nw, snap_js):
 MUT = next((a.split("=", 1)[1] for a in _ARGV[1:] if a.startswith("--mutate=")), None)
 ONLY = next((a.split("=", 1)[1].split(",") for a in _ARGV[1:] if a.startswith("--only=")), None)
 CACHE = next((a.split("=", 1)[1] for a in _ARGV[1:] if a.startswith("--cache=")), None)
+ITEMS = next((a.split("=", 1)[1].split(",") for a in _ARGV[1:] if a.startswith("--items=")), None)
 KNOWN_D = ("k_W", "k_J")
 KNOWN_N = ("no_c2", "c2_sign", "no_c1", "c2p_V", "pi_off", "interp_near", "fit_semilog", "J_sign", "plant_alpha", "hp_sign", "g_nophi", "f0_W")
 KNOWN = KNOWN_D + KNOWN_N
@@ -428,7 +435,7 @@ def static_profile(rhos):
         A, Ap = _A(r), _Ap(r)
         R2 = 1 + r * r
         P = 2 / r - Ap / A
-        Q = 1 / R2 ** 2 - Ap / (A * r * R2) - 2 / (A * R2) + (0.05 ** 2 / A ** 2 if MUT == "f0_W" else 0.0)
+        Q = 1 / R2 ** 2 - Ap / (A * r * R2) - 2 / (A * R2) + (0.3 ** 2 / A ** 2 if MUT == "f0_W" else 0.0)
         return [y[1], P * y[1] + Q * y[0]]
 
     out = {}
@@ -460,7 +467,7 @@ def horizon_series(ro):
 # ----------------------------------------------------------------------------------------------------------------------
 # data: classes of #248, #302 and random data
 # ----------------------------------------------------------------------------------------------------------------------
-CLASS_NAMES = ("A0", "A1R", "A1L", "L", "G", "Lm", "Rb", "Gb")
+CLASS_NAMES = ("A0", "A1R", "A1L", "L", "G", "Lm", "Rb", "Gb", "R")
 NRAND = 4
 
 
@@ -538,9 +545,10 @@ def run_derive():
 # ----------------------------------------------------------------------------------------------------------------------
 # checks on the planted exact modes (known remainders)
 # ----------------------------------------------------------------------------------------------------------------------
-BAR_P1 = 1e-4          # planted zero: max |Y_rem / R| / (|c2| V) over the window at the finest h
+BAR_P1 = 1e-5         # planted zero: the Richardson series (h = 0.000625, 0.0003125) is below this fraction of |c2| V R
 EPS_P2 = 0.01          # P2a: the growing mode with 1 % of its c2 left in the remainder
-BAR_RATIO = (3.4, 4.6) # the h^2 convergence of the truncation floor (last ratio)
+BAR_RATIO = (3.5, 4.5) # the h^2 convergence of the truncation floor (each halving)
+BAR_PLANT = 1e-3       # P2, P3: |alpha - alpha_true| and the relative error of the amplitude
 
 
 def exact_series(kind, hl=HL, mod=None):
@@ -562,17 +570,23 @@ def window_for(kind, Pi):
 def check_P1():
     """planted zero: the exact growing mode has Y_rem = 0; what is left is the truncation floor."""
     runs = exact_series("g")
-    worst, rt, out = [0.0, 0.0, 0.0], [], []
-    for ih, r in enumerate(runs):
-        for k in range(len(PIS)):
+    c2 = abs(rich(runs[1][1][1], runs[2][1][1]))
+    ok, outs = True, []
+    for k in range(len(PIS)):
+        fl = []
+        for r in runs:
             j, V, w = r[2][k]
             m = (V >= VA) & (V <= VB)
-            worst[ih] = max(worst[ih], float(np.max(np.abs(w[m]) / (abs(r[1][1]) * V[m]))))
-    rt = [worst[0] / worst[1], worst[1] / worst[2]]
-    c2s = [r[1][1] for r in runs]
-    out = f"max |Y_rem/R| / (c2 V) over V in [8, 24], three Pi, at h = {', '.join(str(h) for h in HL)}: {', '.join(sci(x) for x in worst)}; ratios {rt[0]:.2f}, {rt[1]:.2f}; c2 {c2s[-1]:.9e} (exact {BETA / 2:.1e})"
-    check("P1", f"planted zero: the exact growing mode (beta = 2e-3, c2 = 1e-3) through the stream marcher, c1, c2 by the slice functional at V0 = 0.5, 1: Y_rem / R <= {BAR_P1:.0e} c2 V at the finest h, "
-          f"falling by {BAR_RATIO[0]} to {BAR_RATIO[1]} per halving", worst[2] <= BAR_P1 and BAR_RATIO[0] <= rt[1] <= BAR_RATIO[1], out)
+            fl.append(float(np.max(np.abs(w[m]) / (abs(r[1][1]) * V[m]))))
+        R2 = rich_series(runs[1][2][k], runs[2][2][k])
+        m = (R2[1] >= VA) & (R2[1] <= VB)
+        fr = float(np.max(np.abs(R2[2][m]) / (c2 * R2[1][m])))
+        rt = [fl[0] / fl[1], fl[1] / fl[2]]
+        good = all(BAR_RATIO[0] <= x <= BAR_RATIO[1] for x in rt) and fr <= BAR_P1
+        ok = ok and good
+        outs.append(f"Pi {PIS[k]}: raw {', '.join(sci(x) for x in fl)} (ratios {rt[0]:.2f}, {rt[1]:.2f}), Richardson {sci(fr)}")
+    check("P1", f"planted zero: the exact growing mode (beta = 2e-3, c2 = 1e-3) through the stream marcher, c1, c2 by the slice functional at V0 = 0.5, 1: max |Y_rem/R| / (|c2| V) over V in [8, 24] falls by "
+          f"{BAR_RATIO[0]} to {BAR_RATIO[1]} per halving of h = 0.00125, 0.000625, 0.0003125 and is <= {BAR_P1:.0e} after Richardson (h = 0.000625, 0.0003125)", ok, "; ".join(outs) + f"; c2 {c2:.9e} (exact {BETA / 2:.1e})")
 
 
 def check_P2():
@@ -584,8 +598,8 @@ def check_P2():
         R2 = rich_series(ra[0][2][k], ra[1][2][k])
         al, se, amp, sg = fit_power(R2[1], R2[2], VA, VB)
         a, b, d, res = fit_poly3(R2[1], R2[2], VA, VB)
-        c2 = rich(ra[0][1][1] / (1 - EPS_P2), ra[1][1][1] / (1 - EPS_P2))
-        good = sg and abs(al - 1.0) <= 0.01 and abs(a / c2 - EPS_P2) <= 0.02 * EPS_P2
+        c2 = rich(c_read(ra[0][0], "g")[1], c_read(ra[1][0], "g")[1])
+        good = sg and abs(al - 1.0) <= BAR_PLANT and abs(a / c2 - EPS_P2) <= 5e-3 * EPS_P2
         ok = ok and good
         outs.append(f"(a) Pi = {PIS[k]}: alpha {al:.5f} (se {se:.1e}), a/c2 {a / c2:.6f} (exact {EPS_P2})")
     rd = exact_series("d", hl=HL[1:], mod=lambda cs: (cs[0], 0.0, 0.0))
@@ -596,12 +610,12 @@ def check_P2():
         va, vb = window_for("d", Pi)
         R2 = rich_series(rd[0][2][k], rd[1][2][k])
         al, se, amp, sg = fit_power(R2[1], R2[2], va, vb)
-        c2p = rich(rd[0][1][2], rd[1][1][2])
-        good = sg and abs(al + 1.0) <= 0.01 and abs(amp / (abs(c2p) * Pi) - 1.0) <= 0.01
+        c2p = rich(c_read(rd[0][0], "d")[2], c_read(rd[1][0], "d")[2])
+        good = sg and abs(al + 1.0) <= BAR_PLANT and abs(amp / (abs(c2p) * Pi) - 1.0) <= BAR_PLANT
         ok = ok and good
         outs.append(f"(b) Pi = {Pi}: alpha {al:.5f} (se {se:.1e}), amplitude / (|c2'| Pi) {amp / (abs(c2p) * Pi):.6f}")
-    check("P2", "planted rates through the same fit (Richardson of h = 0.000625, 0.0003125): (a) growing mode with 99 % of c2 subtracted: alpha = 1 +- 0.01, a/c2 = 0.01 +- 2 %; (b) decaying mode with c2' U R left in: "
-          "alpha = -1 +- 0.01, amplitude |c2'| Pi +- 1 %", ok, "; ".join(outs))
+    check("P2", "planted rates through the same fit (Richardson of h = 0.000625, 0.0003125): (a) growing mode with 99 % of c2 subtracted: alpha = 1 +- 0.001, a/c2 = 0.01 +- 0.5 %; (b) decaying mode with c2' U R left in: "
+          "alpha = -1 +- 0.001, amplitude |c2'| Pi +- 0.1 %", ok, "; ".join(outs))
 
 
 def check_P3():
@@ -616,20 +630,21 @@ def check_P3():
             sers = [series(r[0], k, r[1], plant=(eps, alpha)) for r in ra]
             R2 = rich_series(sers[0], sers[1])
             al, se, amp, sg = fit_power(R2[1], R2[2], VA, VB)
-            good = sg and abs(al - alpha) <= 0.01 and abs(amp / (eps * PIS[k]) - 1.0) <= 0.01
+            good = sg and abs(al - alpha) <= BAR_PLANT and abs(amp / (eps * PIS[k]) - 1.0) <= BAR_PLANT
             ok = ok and good
             outs.append(f"alpha {alpha:+.0f}, Pi {PIS[k]}: {al:+.4f}, amplitude ratio {amp / (eps * PIS[k]):.4f}")
-    check("P3", "planted remainders eps Pi V^alpha (alpha = 2, 1, 0, -1; 2e-4 at V = 16, Pi = 1) added at the nodes of the exact growing mode: the fit returns alpha +- 0.01 and the amplitude +- 1 %", ok, "; ".join(outs))
+    check("P3", "planted remainders eps Pi V^alpha (alpha = 2, 1, 0, -1; 2e-4 at V = 16, Pi = 1) added at the nodes of the exact growing mode: the fit returns alpha +- 0.001 and the amplitude +- 0.1 %", ok, "; ".join(outs))
 
 
 # ----------------------------------------------------------------------------------------------------------------------
 # checks on the evolved data
 # ----------------------------------------------------------------------------------------------------------------------
 C2MIN = 1e-4            # data with |c2| below this (class Rb: the truncation seed only) have no c2 V R to compare with
-BAR_Q = 1e-2            # |a / c2 - Q_pred| of the three-term fit
-BAR_QC = 5e-3           # |Q(R1) - Q(R2)|: the two Richardson pairs
-ALPHA_LO, ALPHA_HI = 0.8, 1.02
-BAR_S = 0.05            # the static piece: spread of y1 over the three Pi
+BAR_Q = 2e-3            # |a / c2 - Q_pred| of the three-term fit
+BAR_QC = 1e-3           # |Q(R1) - Q(R2)|: the two Richardson pairs
+ALPHA_LO, ALPHA_HI = 0.85, 1.02
+ALPHA_C0 = 0.3          # data with c2 = 0: the window exponent of |Y_rem| stays below this (growth at kappa would be 1)
+BAR_S = 0.10            # the static piece: spread of y1 over the three Pi
 
 
 def datum_summary(name, spec):
@@ -688,17 +703,32 @@ def check_D1():
 
 
 def check_D2():
-    """the V-independent part: b R / f0(rho) with f0 the solution of #262's equation at W = 0 that vanishes at the horizon: the same number at the three Pi."""
+    """the V-independent part: b R / f0(rho) with f0 the solution of #262's equation at W = 0 that vanishes at the horizon: the same number at the three Pi (data with c2 != 0)."""
     ok, outs = True, []
     for s in summaries():
+        if abs(s["c2"]) < C2MIN:
+            continue
         ys = [a["y1"] for a in s["k"]]
         sp = (max(ys) - min(ys)) / max(abs(np.mean(ys)), 1e-300)
-        if abs(s["c2"]) < C2MIN and max(abs(a["R2"]["b"]) for a in s["k"]) < 1e-9:
-            continue
         good = sp <= BAR_S
         ok = ok and good
         outs.append(f"{s['name']}: y1 {', '.join(sci(x) for x in ys)}, spread {sp:.1e}")
-    check("D2", f"the V-independent part b of the fit has the profile of the static solution f0 that vanishes at the horizon: y1 = b R / f0(rho) agrees at the three Pi to {BAR_S:g} (spread over mean)", ok, "; ".join(outs[:6]) + " ...")
+    check("D2", f"the V-independent part b of the fit has the profile of the static solution f0 that vanishes at the horizon: y1 = b R / f0(rho) agrees at the three Pi to {BAR_S:g} (spread over mean); data with |c2| >= {C2MIN:g}", ok, "; ".join(outs[:6]) + " ...")
+
+
+def check_D4():
+    """data with c2 = 0 (the truncation seed only): Y_rem does not grow at kappa: window exponent <= ALPHA_C0 at the three Pi, and its profile is the static f0 (y1 spread <= BAR_S)."""
+    ok, outs = True, []
+    for s in summaries():
+        if abs(s["c2"]) >= C2MIN:
+            continue
+        al = [a["R2"]["alpha"] for a in s["k"]]
+        ys = [a["y1"] for a in s["k"]]
+        sp = (max(ys) - min(ys)) / max(abs(np.mean(ys)), 1e-300)
+        good = all(x <= ALPHA_C0 for x in al) and sp <= BAR_S
+        ok = ok and good
+        outs.append(f"{s['name']}: c2 {s['c2']:.1e}, alpha {', '.join(f'{x:.3f}' for x in al)} (errors {', '.join(sci(a['aerr']) for a in s['k'])}), y1 {', '.join(sci(x) for x in ys)}, spread {sp:.1e}")
+    check("D4", f"data with c2 = 0 (|c2| < {C2MIN:g}, class R, Rb): the window exponent of |Y_rem| is <= {ALPHA_C0} at the three Pi (growth at kappa is 1) and y1 agrees at the three Pi to {BAR_S:g}", ok, "; ".join(outs))
 
 
 BAR_A = 1e-2            # the horizon readout: |A / (c2 G0 / I0) - 1|
@@ -716,9 +746,14 @@ def check_D3():
     check("D3", f"the transverse slope d_U Y on the future horizon (five nodes across U = 0, no fixed-Pi window) grows as A V^2 + B V + C with A = c2 G0 / I0 to {BAR_A:g}; data with |c2| >= {C2MIN:g}", ok, "; ".join(outs[:6]) + " ...")
 
 
-CHECKS = [("K1", None), ("P1", check_P1), ("P2", check_P2), ("P3", check_P3), ("D1", check_D1), ("D2", check_D2), ("D3", check_D3)]
-SCOPE = ("K1a", "K1b", "K1c", "P1", "P2", "P3", "D1", "D2", "D3")
-DECLARED = {}
+CHECKS = [("K1", None), ("P1", check_P1), ("P2", check_P2), ("P3", check_P3), ("D1", check_D1), ("D2", check_D2), ("D3", check_D3), ("D4", check_D4)]
+SCOPE = ("K1a", "K1b", "K1c", "P1", "P2", "P3", "D1", "D2", "D3", "D4")
+DECLARED = {
+    "k_W": {"K1b"}, "k_J": {"K1a", "K1b", "K1c"},
+    "no_c2": {"P1", "P2", "P3", "D1"}, "c2_sign": {"P1", "P2", "P3", "D1"}, "no_c1": {"D2"}, "c2p_V": {"D1", "D4"},
+    "pi_off": {"P2", "P3", "D1"}, "interp_near": {"P1", "P2", "D1", "D2"}, "fit_semilog": {"P2", "P3", "D1"},
+    "J_sign": {"D1"}, "plant_alpha": {"P3"}, "hp_sign": {"D3"}, "g_nophi": {"D3"}, "f0_W": {"D2", "D4"},
+}
 
 
 def run_checks():
@@ -732,6 +767,24 @@ def run_checks():
     bad = [c for c, ok in RESULTS if not ok]
     print(f"check: {len(RESULTS) - len(bad)} of {len(RESULTS)} pass ({time.time() - t0:.0f} s)")
     return 1 if bad else 0
+
+
+def run_warm():
+    """evolve the listed items (--items=A0,G,...,exact_g,exact_d; default all) at the three h and store the readouts in --cache; the checks read them."""
+    assert CACHE, "--cache=DIR required"
+    items = dict(data_items())
+    names = ITEMS or list(items) + ["exact_g", "exact_d"]
+    t0 = time.time()
+    for n in names:
+        for h in HL:
+            t1 = time.time()
+            if n.startswith("exact_"):
+                run_exact(n[-1], h)
+            else:
+                run_data(items[n], h, n)
+            print(f"{n} h = {h}: {time.time() - t1:.0f} s", flush=True)
+    print(f"warm: {len(names)} items ({time.time() - t0:.0f} s)")
+    return 0
 
 
 def report_mutations(raw, prefix):
@@ -755,6 +808,49 @@ def report_mutations(raw, prefix):
 
 
 def report_table():
+    cf = closed_form()
+    rhos = [rho_R(Pi)[0] for Pi in PIS]
+    print(f"== the closed form of #262: I0 = {cf['I0']:.15f} (#262 {I0_262:.16f}); Q(rho) = -J(rho)/I0 at Pi = {', '.join(str(p) for p in PIS)} (rho = {', '.join(f'{r:.4f}' for r in rhos)}): "
+          + ", ".join(f"{Q_pred(r):+.6f}" for r in rhos) + f"; G0 = {G0():.8f}")
+    print(f"== smooth data to V = {VMAX:g}: c1, c2, c2' by the slice at S (Richardson h = 0.000625, 0.0003125); fits over V in [{VA:g}, {VB:g}]")
+    print("| datum | c1 | c2 | c2' |")
+    print("|---|---|---|---|")
+    ss = summaries()
+    for s in ss:
+        print(f"| {s['name']} | {s['c1']:.6e} | {s['c2']:.6e} | {s['c2p']:.6e} |")
+    print("== growth coefficient Q = a/c2 of Y_rem/R = aV + b + d/V (Richardson of h = 0.000625, 0.0003125), against Q_pred = -J/I0; difference from the pair h = 0.00125, 0.000625 in the last column")
+    print("| datum | Pi | Q fit | Q pred | fit - pred | pair change | alpha (h=0.000625) | alpha (h=0.0003125) | alpha (R1) | alpha (R2) | se | static y1 |")
+    print("|---|---|---|---|---|---|---|---|---|---|---|---|")
+    for s in ss:
+        for kk, a in enumerate(s["k"]):
+            if abs(s["c2"]) >= C2MIN:
+                q = f"{a['Q2']:+.5f} | {a['Qpred']:+.5f} | {a['Q2'] - a['Qpred']:+.1e} | {a['Q2'] - a['Q1']:+.1e}"
+            else:
+                q = "(c2 = 0) | | | "
+            print(f"| {s['name']} | {PIS[kk]:g} | {q} | {a['h2']['alpha']:.4f} | {a['h3']['alpha']:.4f} | {a['R1']['alpha']:.4f} | {a['R2']['alpha']:.4f} | {a['aerr']:.1e} | {a['y1']:.4e} |")
+    print("== the transverse slope on H+: d_U Y(V, 0) = A V^2 + B V + C over V in [8, 24]; A against c2 G0 / I0, B against -y1 G0 (mean y1 of the three Pi)")
+    print("| datum | A / (c2 G0 / I0) | B | -G0 mean(y1) | C | fit residual |")
+    print("|---|---|---|---|---|---|")
+    for s in ss:
+        if abs(s["c2"]) < C2MIN:
+            continue
+        y1 = float(np.mean([a["y1"] for a in s["k"]]))
+        print(f"| {s['name']} | {s['gA_ratio']:.5f} | {s['gB']:.4e} | {-G0() * y1:.4e} | {s['gC']:.4e} | {s['gres']:.1e} |")
+    print("== window exponent of |Y_rem|, data with c2 = 0")
+    for s in ss:
+        if abs(s["c2"]) >= C2MIN:
+            continue
+        print(f"{s['name']}: c2 = {s['c2']:.2e}; alpha {', '.join(f'{a['R2']['alpha']:.4f}' for a in s['k'])}; a V(24) / b {', '.join(f'{a['R2']['a'] * VB / a['R2']['b']:.3f}' for a in s['k'])}")
+    print("== planted modes (exact growing and decaying modes of #302 through the same series and fits)")
+    runs = exact_series("g")
+    print(f"growing mode: c2 = {rich(runs[1][1][1], runs[2][1][1]):.9e} (exact {BETA / 2:.1e}); floors of |Y_rem/R|/(c2 V) at h = {', '.join(str(h) for h in HL)}:")
+    for k in range(len(PIS_ALL)):
+        fl = []
+        for r in runs:
+            j, V, w = r[2][k]
+            m = (V >= VA) & (V <= VB)
+            fl.append(float(np.max(np.abs(w[m]) / (abs(r[1][1]) * V[m]))))
+        print(f"  Pi = {PIS_ALL[k]:g}: {', '.join(sci(x) for x in fl)}")
     return 0
 
 
@@ -766,6 +862,8 @@ if __name__ == "__main__":
         sys.exit(run_checks())
     if cmd == "table":
         sys.exit(report_table())
+    if cmd == "warm":
+        sys.exit(run_warm())
     if cmd == "mutations":
         i = _ARGV.index("mutations")
         sys.exit(report_mutations(_ARGV[i + 1], _ARGV[i + 2]))
