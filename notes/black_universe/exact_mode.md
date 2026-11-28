@@ -31,7 +31,7 @@ K is constant on the static solutions (the Wronskian of A − 1 with the other s
 (b = 1). So the rate does not come from asymptotic flatness: with c and K independent the family exists with rate K (S4b). It is a consistent scaling reduction, not a symmetry of the field equations.
 
 **3. Fate (Sec. 5).** β > 0: no singularity at any finite v, r = √(1 + βe^{Kv}) R grows like e^{Kv/2}, and for c < 0 F tends to R²(c + K arctan ρ) < 0 at every ρ. β < 0 (collapse): λ² reaches 0 at the finite
-v\* = −ln|β|/K, where r → 0 at every ρ and the Ricci scalar diverges like 1/(v\* − v) at every ρ ≠ −1/K (*proved* from the closed form; the Kretschmann invariant ∝ λ⁻⁴, N4, *numerical evidence*).
+v\* = −ln|β|/K, where r → 0 at every fixed ρ (*update from #278:* along the outgoing null rays r tends to a positive constant, and v = v\* is a null line with the single singular point P\* = (v\*, −1/K), [family_causal.md](family_causal.md)) and the Ricci scalar diverges like 1/(v\* − v) at every ρ ≠ −1/K (*proved* from the closed form; the Kretschmann invariant ∝ λ⁻⁴, N4, *numerical evidence*).
 
 **4. What it does not give.** For β ≠ 0 the family is not asymptotically flat (F − A grows like ρ at fixed v), and its linearization is Y_ref, not the solution Y_∞ = Y_ref − Y_b/I₀ that decays at infinity
 (#262). It is the fate of the Y_ref direction, which a datum with incoming exponentially growing flux excites; it is not shown to be the fate of asymptotically flat data (#250 stays open).
@@ -93,7 +93,7 @@ F − A = [1 − L − s(1 + Kρ)]/(L + s). Take L = 1.
 | | β > 0 | β < 0 |
 |---|---|---|
 | range of v | all of ℝ | v < v\* = −ln\|β\|/K |
-| areal radius | r² = (1 + s)R² → ∞, d ln r/dv → K/2 (N5: 0.31830989 = K/2 at c = −1) | r → 0 at every ρ as λ² = 1 + s → 0, λ² ≈ K(v\* − v) |
+| areal radius | r² = (1 + s)R² → ∞, d ln r/dv → K/2 (N5: 0.31830989 = K/2 at c = −1) | r → 0 at every fixed ρ as λ² = 1 + s → 0, λ² ≈ K(v\* − v); along outgoing rays r → a positive constant (#278) |
 | F | F → A − 1 − Kρ = R²(c + K arctan ρ) = (2c/π)R² arccot ρ, negative at every ρ for c < 0 (−0.88104 at c = −1, ρ = ½) | F ≈ (1 + Kρ)/λ² → ±∞ |
 | curvature | finite at every v; Kretschmann → a finite limit (2.58708 at c = −1, ρ = ½; N5) | Ricci scalar ≈ −2(1 + Kρ)/(R⁴λ²), diverging for ρ ≠ −1/K; Kλ⁴ → 8.5423 at c = −1, ρ = ½ (N4) |
 | verdict | expansion, no singularity at finite v (late slices have F < 0: ∂_v spacelike everywhere for c < 0) | collapse to a curvature singularity on the null hypersurface v = v\* |

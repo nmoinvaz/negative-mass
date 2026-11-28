@@ -152,6 +152,12 @@ solution: a time-dependent throat radius b(v)² = L + βe^{Kv}, with the scalar 
 collapses at finite advanced time with a diverging Ricci scalar; for β > 0 it expands. It is not asymptotically flat, and it linearizes to Y_ref,
 not to Y_∞, so #250 stays open.
 
+**Update from #278** ([family_causal.md](family_causal.md)): the apparent horizons of the exact family are
+(∇r)² = (ρ/R²)[ρA + sR²A′/2] = 0, that is ρ = 0 and s = −2ρA/(R²A′) (checked symbolically). For β < 0 the event horizon of the asymptotic end is
+the ray into the point P* = (v*, −1/K) where r → 0 on v = v*, between the two apparent-horizon branches. The cone v = v* is a null line with P* its only
+singular point: curvature → 0 on one side, de Sitter on the other. For β > 0 no outgoing ray reaches ρ = +∞, so there is no event horizon, and for c < −1
+the trapped region closes at finite v. The ray statements are numerical evidence.
+
 Near the horizon, with the scaling ρ = ρ_h t at fixed t and ρ_h → 0, V̂ in x tends to a fixed well (sympy, S7, S7c; the members c = −1.0001 and
 −0.9999 follow it to 1.5e-3 and 1.3e-3, S7b, S7d):
 

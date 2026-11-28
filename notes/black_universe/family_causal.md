@@ -143,3 +143,17 @@ family_causal.py mutations DIR PREFIX           # fired sets of stored logs DIR/
 
 `family_causal_output.txt` is `derive` and `check` of run 2 (code 068953c), `table` (code 5ba41d8) and the `mutations` report of the runs of record (`I278-mac/runs`), in that order. The checks are identical in the two commits; the first runs of
 record (code 90a9277) are `runs/*_run1.log`.
+
+## Coordinator's review
+
+Review of branch `wip/i278-causal-structure` at f5fd6a7 and raw `I278-mac` at 66dfb318, recorded in negative-mass-raw `I278-mac-review`.
+
+- **Scope.** The branch adds the script, its output, the diagram and this note.
+- **Rerun.** `derive` gives 7 of 7 and `check` 13 of 13, every verdict line equal.
+- **Status.** The apparent horizon is *checked symbolically* (root against the metric to 1.5e-33). The event horizon, the cone v = v* and
+  the ends are *numerical evidence* from ray integrations. Its controls (throat, ρ_h, AH₊ and AH₋ each tried as the horizon) fail as they
+  should, and backward and forward bisection of the horizon ray agree to 9.4e-12.
+- **The disagreement found.** `exact_mode.md`'s "r → 0 at every ρ" holds at fixed ρ only; it agrees with #277's finding. The note is
+  corrected with a pointer here.
+- **Applied.** `exact_mode.md` (§5 and its table), the README's §5 and Paper IV's sentence on the family's fate are updated. Paper IV's
+  checker is unchanged at 139 of 139, since there are no new decimals.
