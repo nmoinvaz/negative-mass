@@ -14,6 +14,11 @@ multidouble = "=6.1.0"
 [features]
 # the singularity locator of multisolver (#191, #206) in place of the f64 Domb-Sykes fit of `walk.rs` and `hp.rs` (#207)
 locate_lib = []
+# controls of the feature: a window fixed by hand through the library (`locate_at`), first order 2 or the last orders
+locate_mut_early = ["locate_lib"]
+locate_mut_late = ["locate_lib"]
+# not a control: the locator at every step, to check that the gate of `loc.rs` changes nothing
+locate_ungated = ["locate_lib"]
 
 [profile.release]
 opt-level = 3

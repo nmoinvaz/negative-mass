@@ -19,11 +19,19 @@
 //! **The shadow.** On the same steps the f64 fit of the walker runs beside `locate`, with its own five-step rule, and
 //! `LocStats` keeps what it said: the step at which it would have stopped and its eta*. The walk's steps do not depend on the
 //! locator, so the shadow's stop is the one the f64 walker would have made.
+//!
+//! **The controls** (cargo features): `locate_mut_early` replaces `locate` by `locate_at` on the ratio model with the first
+//! order 2 and degree 2 (a window too early: the farther singularities act), `locate_mut_late` by the last 10 orders, degree 2
+//! (a window too short: the fit of the f64 walker, through the library). `locate_ungated` is not a control: it runs `locate` at
+//! every step, to check that the gate changes nothing.
 use crate::walk::{Est, Hist, LocStats};
 use multisolver::locate::{Kind, Location, Opts, Real};
 
-/// the locator runs at a step when the planned step is at most this many stop radii
+/// the locator runs at a step when the planned step is at most this many stop radii (every step with `locate_ungated`)
+#[cfg(not(feature = "locate_ungated"))]
 pub const GATE: f64 = 16.0;
+#[cfg(feature = "locate_ungated")]
+pub const GATE: f64 = f64::INFINITY;
 
 /// where the walker is at the step and what the gate needs
 pub struct Gate {
@@ -72,7 +80,19 @@ fn scaled<T: Real>(c: &[T]) -> Option<(Vec<T>, f64)> {
 
 /// the library's reading of one series
 fn call<T: Real>(c: &[T]) -> Option<Location<T>> {
-    multisolver::locate::locate(c, &Opts::default())
+    let o = Opts::default();
+    #[cfg(feature = "locate_mut_early")]
+    {
+        multisolver::locate::locate_at(c, multisolver::locate::Model::Ratio, 2, 2, &o)
+    }
+    #[cfg(feature = "locate_mut_late")]
+    {
+        multisolver::locate::locate_at(c, multisolver::locate::Model::Ratio, c.len() - 10, 2, &o)
+    }
+    #[cfg(not(any(feature = "locate_mut_early", feature = "locate_mut_late")))]
+    {
+        multisolver::locate::locate(c, &o)
+    }
 }
 
 enum Field {
