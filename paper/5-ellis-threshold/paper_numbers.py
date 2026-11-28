@@ -39,6 +39,7 @@ MUTATIONS = {
     "spectrum_zero": ("spectrum", "zero at W = -2.61874 +0.15269i", "zero at W = -1.61874 +0.15269i"),
     "route_W3": ("route", "-7.55e-04   0.240723      +7.11e-05", "-7.55e-04   0.240723      +5.11e-05"),
     "d56_S5": ("d56", "Richardson 0.145866; spread", "Richardson 0.146866; spread"),
+    "tail_rt": ("tail", "rate x t = [2.112, 2.228, 2.321]", "rate x t = [2.212, 2.228, 2.321]"),
     "slope_S6": ("check", "ind40 0.461705", "ind40 0.461805"),
 }
 
@@ -66,6 +67,7 @@ SRC = {
     "spectrum": read(EV, "ellis_spectrum_output.txt"),
     "route": read(EV, "settled_mass_route_output.txt"),
     "d56": read(EV, "settled_mass_d56_output.txt"),
+    "tail": read(EV, "throat_tail_output.txt"),
     "expansion": read(EV, "expansion_output.txt"),
     "plateau": read(EV, "constraint_plateau_output.txt"),
     "derive": read(EV, "derive_output.txt"),
@@ -597,6 +599,16 @@ check(len(d6) == 8, f"#246: eight delta = 1e-6 Richardson lines ({len(d6)})")
 printed(f"${float(d6[2]):.3f}a^{{2}}$ and ${float(d6[6]):.3f}a^{{3}}$ at $\\delta=10^{{-6}}$", "G at delta = 1e-6 (the first, 4.0e8, line of each G pair)")
 fr = {int(m[0]): float(m[1]) for m in re.findall(r"^\s+([56])\s+S formation \(first trapped cell\)\s+[0-9.]+\s+[0-9.]+\s+([0-9.]+)", do, re.M)}
 printed(f"first trapped cell is ${fr[5]:.3f}$ and ${fr[6]:.3f}$ of it", "S's formation E/E_throat, D = 5, 6")
+
+# #291: the nonlinear tail at D = 4, B = 0.02 (notes/wormhole_evolution/throat_tail_output.txt, h = 0.005, the finest)
+to = SRC["tail"]
+rt = [float(x) for x in re.search(r"\[pass\] S2-h0\.005: .*?rate x t = \[([0-9., ]+)\]", to)[1].split(", ")]
+lin = re.search(r"linear response of #272 \(rate x t at t = 15, 20, 25\): ([0-9.]+),", to)[1]
+tend = re.search(r"\(T_end = ([0-9.]+)\)", to)[1]
+printed(f"is ${rt[0]:.2f}$ at $t=10$ and ${rt[2]:.2f}$ at $t=16$,\nagainst ${float(lin):.2f}$ for the linear response at $t=15$", "#291 rate x t and #272's")
+printed(f"ends the measurement at $t={float(tend):.1f}$", "#291 T_end")
+r15 = float(re.search(r"h = 0\.005: rate x t = \[([0-9.]+),", to.split("rate x t on [15, T_end] itself", 1)[1])[1])
+check(f"{float(lin) - r15:.1f}" == "0.4", f"#291: the exponent at t = 15 is 0.4 below the linear response's ({float(lin):.2f} - {r15:.3f} = {float(lin) - r15:.2f})")
 
 print(f"\n{count} checks, {bad} failed; mutation {OPT.mutate}")
 sys.exit(1 if bad else 0)
