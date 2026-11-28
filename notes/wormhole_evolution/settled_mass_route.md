@@ -170,3 +170,19 @@ and the bullet "It is not a function of the member's $(\gamma_1,r_{\rm th})$ at 
 `settled_mass_route.py` (commands `tag`, `bracket`, `pstar`, `job`, `member`, `planted`, `analyze`; `--mutate=`, `--baseline=`, `--rn=`), `settled_mass_route_output.txt`, `settled_mass_route_graph.py`, `settled_mass_route.svg`, this note; raw `negative-mass-raw/I283-mac` (`README.md` with the criteria,
 the routes' selection, the development findings and the mutation targets; `runs/<tag>/h<h>/{pstar,chain,member,logs}` the 14 runs of record, `runs_rn/` the six second-realization runs, `mut/` the 26 mutated analyses of record, `dev/` the tuning and development sets and their logs,
 `scripts/`, `jobs_rec.txt`, `jobs_rn.txt`, `analyze_record.log`, and the figure with its script).
+
+## Coordinator's review
+
+Merged at b409621. Review folder `negative-mass-raw/I283-mac-review` at 5d0430be, criteria committed (ae6518b7) before the first run of
+`ind283.py`. The changed files are the brief's, plus the figure and its script (`settled_mass_route.svg`, `settled_mass_route_graph.py`).
+
+- **Rerun on the Mac** from 79fbafa: the W3 point at h = 0.005 gives a chain, locus and member bitwise equal to the runner's, and
+  `analyze` equals `settled_mass_route_output.txt` apart from timing (exit 1, as declared).
+- **ind283**, 4 of 4. It shares only the runs, the stored slices and #225's fit (s_m). It recomputes t_dep, the member, the plateau,
+  #266's (M₀, a, b), SEP, and the throat speed with its own estimator (a quadratic fit of r against τ over ±0.5 at τ_dep). It
+  reproduces the table to 5e-7, P2's residuals to 4.6e-7 (all six beyond 6e-5), and P3's to 2.3e-7. With its own speed
+  estimator W3 still misses: M − P3 = +7.09e-5. The mutations `eps-1e-2`, `no-speed` and `swap` fire.
+- Not met, kept as declared: P2, P3 (W3) and HST (W1). The two checks the runner changed before its README (the BR stop rule,
+  the REP bracket) are stated in the raw README; neither moves a result.
+- Applied: `settled_mass_member.md`, `settled_mass_b.md`, `critical_ghost.md` §1.3, and Paper V's settled-mass paragraph and
+  bullet (`paper_numbers.py` 243 of 243).

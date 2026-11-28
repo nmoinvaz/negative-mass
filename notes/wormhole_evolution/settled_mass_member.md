@@ -83,7 +83,7 @@ h = 0.005; M the plateau mean over the last 1.0 of x⁺; the prediction is r_th 
   the six, residual 1.3e-5 at h = 0.005, 1.2e-5 at 0.01, bar 6e-5) passes, and the fit gives p = −2.2, q = +0.13, singular values 7.2e-3 and 2.9e-4 (condition 25), against #266's local gradient p = +0.29, q = +0.235. That is a
   weak test by construction, passed for any smooth M(δ) (its mutation `smooth_swap`, two M exchanged, fires it); the cross-family prediction is the test, and it fails.
 - **What does and does not follow.** That the settled mass depends on the member at departure *and on nothing the stall changes* is not supported: the member changes along the stall (r_th by +5.8e-3, γ₁ by −5.8e-4 from 1e-8 to 1e-12)
-  and M follows the sign and half the size of what the B-relation assigns. *Conjecture* (post hoc, below): a third quantity of the state at departure, the throat's speed, carries the rest.
+  and M follows the sign and half the size of what the B-relation assigns. *Conjecture* (post hoc, below): a third quantity of the state at departure, the throat's speed, carries the rest. *Tested blind in #283* ([settled_mass_route.md](settled_mass_route.md)): with its coefficients fixed, the three-parameter relation predicts six members of two further routes (the normal pulse's width 1.0 at centre 3, and its centre 4.0 at width 0.5; γ₁ = 0.012, 0.048, 0.075) to 7.1e-5, five of six within 6e-5, where #266's relation misses by up to 7.6e-4. Not met as worded: W3 misses by 1.1e-5.
 
 ## Post hoc: what the development runs suggested (gates nothing, printed in the output)
 
@@ -180,7 +180,7 @@ and the bullet at line 554: "Whether it is a function of the member at departure
 
 ## Recommended tasks
 
-1. *The throat's speed as a parameter of the departure state, tested blind.* What: a second family of departure states in which r_th, γ₁ and ṙ_th at departure vary independently of B and δ (for example #266's recommended task 1, the normal pulse's
+1. *Done in #283.* *The throat's speed as a parameter of the departure state, tested blind.* What: a second family of departure states in which r_th, γ₁ and ṙ_th at departure vary independently of B and δ (for example #266's recommended task 1, the normal pulse's
    width or centre varied at tuned amplitude, at δ = 1e-8, h = 0.01 and 0.005), with the chain and the member of this note, and ṙ_th read as here. Why: B and δ each trace one curve; the three-parameter relation fitted post hoc on nine points
    (residual 4.3e-5) needs a point set it was not fitted on. Acceptance (can fail): y = M/r_th − M₀ = 0.2300 γ₁ + 0.272 γ₁² + 0.78 ṙ_th predicts every new member within 6e-5, or the failure is reported. Depends on: this note, #266 task 1.
 2. *Does the stall of G at D = 4 have a mass limit?* What: the tuned pair's throat radius r_th(t) and γ₁(t) to t = 40, past the roundoff floor of the pair (the mode projected out at each row, or a higher-precision march; new method code), at

@@ -330,6 +330,15 @@ apparent-horizon mass with a second code to 1.2e-4 up to e^{−f} ≈ 12):
     function of the member's (γ₁, r_th) alone along this family.
   - That the throat's speed carries the difference is a *conjecture*, from a post hoc fit. No limit as δ → 0 is seen; at δ = 1e-12 the
     pair is at the roundoff floor.
+- *Update from #283* (`wormhole_evolution/settled_mass_route.md`; *numerical evidence*):
+  - The members γ₁ = 0.012, 0.048, 0.075 of family G (D = 4, δ = 1e-8) were reached by changing the normal pulse's width (1.0 at
+    centre 3) or its centre (4.0 at width 0.5) instead of its amplitude. Their throat radii and speeds at departure differ from
+    family B's at the same γ₁ (r_th by −2.2e-2 to +3.8e-3, ṙ_th by −1.1e-3 to −8.8e-5).
+  - #266's relation misses the settled mass at all six points, by up to 7.6e-4 (declared bar 6e-5).
+  - With the throat's speed as a third parameter and the coefficients fixed beforehand by #267's fit, the six are predicted to
+    7.1e-5: five within 6e-5, and W3 misses by 1.1e-5.
+  - So the settled mass is not a function of (γ₁, r_th) at departure. The throat's speed carries most of the difference; that
+    (γ₁, r_th, ṙ_th) suffice is a *conjecture*, not supported at the declared bar.
 
 **Type II?** Nobody reports a power law, and none is expected: the critical solution is static and has a scale.
 

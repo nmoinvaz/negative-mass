@@ -185,7 +185,7 @@ asymmetry of the member at departure; a relation along one family, not a test th
 
 ## Recommended tasks
 
-1. *A second curve in (γ₁, r_th).* What: G with the normal pulse's width or centre changed at tuned amplitude so that γ₁ ≈ 0.012, 0.048, 0.075 are reached by another route, and the same chain and member at h = 0.01, 0.005. Why: B moves γ₁,
+1. *Done in #283: the relation misses all six members of the two new routes (−6.5e-5 to −7.5e-4).* *A second curve in (γ₁, r_th).* What: G with the normal pulse's width or centre changed at tuned amplitude so that γ₁ ≈ 0.012, 0.048, 0.075 are reached by another route, and the same chain and member at h = 0.01, 0.005. Why: B moves γ₁,
    r_th and the tuned ghost amplitude together; a second route separates them. Acceptance (can fail): M/r_th − M₀ lies on 0.2027 γ₁ + 0.853 γ₁² within 6e-5, or the failure is reported. Depends on: this note, #267.
 2. *The chain beyond B = 0.125.* What: B = 0.15, 0.155 with dxp enlarged (so the chain reaches e^{−f} = 1.57e6) and X = 40, h = 0.01, 0.005. Why: the quadratic is extrapolated over a factor 1.4 in γ₁ there. Acceptance: REL's prediction
    for B = 0.15 (γ₁ ≈ 0.107) within 6e-5. Depends on: this note.
