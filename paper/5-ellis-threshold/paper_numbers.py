@@ -41,6 +41,7 @@ MUTATIONS = {
     "d56_S5": ("d56", "Richardson 0.145866; spread", "Richardson 0.146866; spread"),
     "tail_rt": ("tail", "rate x t = [2.112, 2.228, 2.321]", "rate x t = [2.212, 2.228, 2.321]"),
     "route3_N2": ("route3", "0.234139      -2.15e-06", "0.234139      -9.15e-06"),
+    "route4_X2": ("route4", "0.228784      +2.13e-04", "0.228784      +3.13e-04"),
     "slope_S6": ("check", "ind40 0.461705", "ind40 0.461805"),
 }
 
@@ -70,6 +71,7 @@ SRC = {
     "d56": read(EV, "settled_mass_d56_output.txt"),
     "tail": read(EV, "throat_tail_output.txt"),
     "route3": read(EV, "settled_mass_route3_output.txt"),
+    "route4": read(EV, "settled_mass_route4_output.txt"),
     "expansion": read(EV, "expansion_output.txt"),
     "plateau": read(EV, "constraint_plateau_output.txt"),
     "derive": read(EV, "derive_output.txt"),
@@ -622,6 +624,20 @@ printed(f"is predicted to ${max(abs(float(a)) for a, _ in nr) * 1e6:.1f}\\times1
 ins = float(re.search(r"max in-sample ([0-9.e+-]+)\)", r3)[1])
 printed(f"errors on the fitted members reach ${ins * 1e5:.1f}\\times10^{{-5}}$", "#295 in-sample error")
 check("[pass] P4:" in r3, "#295: P4 passes")
+
+# #305: the frozen refit on a high-leverage route (notes/wormhole_evolution/settled_mass_route4_output.txt, h = 0.005)
+r4 = SRC["route4"]
+xr = re.findall(r"^\s+X[123]\s+([0-9.]+)\s+[0-9.]+\s+[0-9.]+\s+([-+0-9.e]+)\s+\|", r4, re.M)
+rms = [float(m) for m in re.findall(r"^\s+X[123]\s+0\.005\s+[0-9.e-]+\s+[0-9.]+\s+[0-9.]+\s+[0-9.]+\s+[-+0-9.e]+\s+([0-9.e-]+)\s+[0-9.]+$", r4, re.M)]
+check(len(xr) == 3 and len(rms) == 3, f"#305's three points ({len(xr)}, {len(rms)})")
+lv = [float(a) for a, _ in xr]; rs = [float(b) for _, b in xr]
+printed(f"has leverage ${lv[0]:.2f}$, ${lv[1]:.2f}$ and ${lv[2]:.2f}$ against $0.39$", "#305 leverage")
+def fmt(x):
+    e = math.floor(math.log10(abs(x)))
+    return f"{x / 10 ** e:.1f}\\times10^{{{e}}}"
+printed(f"misses its settled mass by ${fmt(rs[0])}$, ${fmt(rs[1])}$ and ${fmt(rs[2])}$", "#305 residuals")
+printed(f"rms of ${fmt(rms[1])}$ and ${fmt(rms[2])}$ at two of the three points", "#305 FITQ rms")
+check(all(x > 6e-5 for x in rs) and "[FAIL] P4:" in r4, "#305: P4 misses at all three")
 
 print(f"\n{count} checks, {bad} failed; mutation {OPT.mutate}")
 sys.exit(1 if bad else 0)
