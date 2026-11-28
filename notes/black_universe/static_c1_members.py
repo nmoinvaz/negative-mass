@@ -971,7 +971,28 @@ def run_checks():
 # ----------------------------------------------------------------------------------------------------------------------
 # declared fired sets and the comparison with stored logs
 # ----------------------------------------------------------------------------------------------------------------------
-DECLARED = {}                       # filled from the development runs before the runs of record (raw I301-mac/README.md)
+DECLARED = {                      # computed in the development run d1 (raw I301-mac/dev) before the runs of record; every check is in scope
+    "s_q": {"S1"},
+    "s_pot": {"S2"},
+    "s_k": {"S3"},
+    "rs_one": {"T1", "T4", "T7", "T8"},
+    "ctl_true": {"T5"},
+    "c1_noshift": {"T1"},
+    "th_noF": {"T4", "T6", "T7", "T8"},
+    "th_nophi": {"T4", "T6", "T7", "T8"},
+    "th_asign": {"T3", "T4", "T6", "T7", "T8"},
+    "dm_noT": {"T4", "T7", "T8"},
+    "kappa_off": {"T1", "T4", "T5", "T7", "T8"},
+    "jump_off": {"T4", "T7", "T8"},
+    "xform_p": {"T3", "T4", "T7", "T8"},
+    "xform_q": {"T3", "T4", "T7", "T8"},
+    "rho_ellis": {"T3", "T4", "T7", "T8"},
+    "mode_khat": {"T4", "T7"},
+    "mode_dF0": {"T4", "T7"},
+    "law_norm": {"T2"},
+    "law_mass": {"T2"},
+    "gauge_noRp": {"T6"},
+}
 
 
 def report_mutations(raw, prefix):
@@ -997,11 +1018,11 @@ def report_mutations(raw, prefix):
 
 def report_table():
     print("== members (mpmath references; r_S = R(rho_h), kappa = A'(rho_h)/2 for the Killing field with A -> 1, G = 1, M = Misner-Sharp mass at infinity) ==")
-    print(f"{'member':>14} {'rho_h':>12} {'kappa':>12} {'r_S':>12} {'R_h':>10} {'R(rho)=':>0} {'c1/dL':>13} {'dM/dL':>13} {'kappa r_S c1':>13} {'kappa c1':>13} {'-c/pi':>13}")
+    print(f"{'member':>14} {'rho_h':>12} {'kappa':>12} {'r_S':>12} {'Rp(rho_h)':>10} {'c1 per unit':>13} {'dM per unit':>13} {'kappa r_S c1':>13} {'kappa c1':>13} {'-c/pi':>13}")
     for tag in TAGS:
         m = member(tag)
         c1x, dMx = exact_ref(m)
-        print(f"{m.tag:>14} {m.rh:12.9f} {m.kappa:12.9f} {m.rS:12.9f} {m.Rph:10.7f} {'':>0} {c1x:13.10f} {dMx:13.10f} {m.kappa * m.rS * c1x:13.10f} {m.kappa * c1x:13.10f} {(-m.c / math.pi if m.c is not None else float('nan')):13.10f}")
+        print(f"{m.tag:>14} {m.rh:12.9f} {m.kappa:12.9f} {m.rS:12.9f} {m.Rph:10.7f} {c1x:13.10f} {dMx:13.10f} {m.kappa * m.rS * c1x:13.10f} {m.kappa * c1x:13.10f} {(f'{-m.c / math.pi:13.10f}' if m.c is not None else '            -')}")
     for tag in TAGS:
         m = member(tag)
         md, bg, sl = mode_of(m), bg_of(m), slice_of(m)
