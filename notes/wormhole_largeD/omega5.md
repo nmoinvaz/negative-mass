@@ -192,3 +192,29 @@ RD1 … RD8 with RD5b, LN2 and A7 (`run_07`); RD5c (`run_08`); W7 (`run_09`). **
 - **Off target, all three by exactly RD8:** `rd_B`, `rd_J5` and `rd_master` fire RD8 (the PSLQ relation of `run_06b` against the derived closed form) as well as the declared RD6/RD7/LN2, RD5/RD7/LN2 and RD5/RD5b/RD7. RD8's constant was `None` in the development runs that set those targets, so the declared sets lacked it (A5). Nothing else is off target.
 - **Declared silences that are results:** E1 … E5 hold for any table, so `wrong_c7` is silent on all of them (E0 and the values see it); `e5_const` is silent because the constant of W is zero; `rd_kit` fires only RD4 (the finite parts of the C terms cancel); `rd_Dstep` fires only RD2 (a wrong primitive is still an exact step);
   R6 and R7 do not see `wrong_c7` or `wrong_Om4` (Ω₅ moves by 0.0277 at most), only X3 does; M5 does not see `short_tail` or a wrong input that both grids share.
+
+## Coordinator's review
+
+Review of branch `wip/i263-omega5` at c618f36 and raw `I263-rpi5` at 091e6e1, recorded in negative-mass-raw `I263-mac-review`.
+
+- **Scope.** The branch adds the script, its output and this note.
+- **Independent checks.**
+  - The coordinator evaluates Ω₅'s closed form at 110 digits; it equals the note's value to 1.5e-106.
+  - The ln 2 structure is confirmed from the closed forms of Ω₀ … Ω₅ with sympy: F's coefficients f₀ … f₆ are free of ln 2. Two
+    mutations, one coefficient of Ω₅ and one ln 2 term of Ω₃, each break it.
+  - The coordinator's first run had Ω₁ typed as Ω₁/2, which made the ln 2 check fail; amendment A1 records it.
+  - The note's own independent checks stand: the two grids, which use none of the reduction (382.7 digits), and #195's W² refit, which
+    shares no machinery (31 digits).
+- **Status.** Ω₅ is *derived*, given E1–E3, E4, the two new steps E2W and E5, and seven classical Euler sums checked at 34 digits. E2W
+  and E5 have had no independent derivation yet; #264 (widened) does that. Paper III says so. The PSLQ identification confirmed known
+  coefficients; it was not a blind search, as the note says.
+- **Applied.**
+  - Paper III: the seventh term in the abstract and Eq. (result), Ω₅'s closed form, the ln 2 factor, the review status, and Ω₆ ≈ 4×10⁶
+    as the new estimate.
+  - `paper_numbers.py` checks each of them, the ln 2 structure by sympy included (0 failures).
+  - The README's Result and Limits are updated.
+  - `omega_graph.py` still shows Ω₅ as an estimate; it is the coordinator's figure and is updated separately.
+- **Follow-ups.**
+  - Task 1 is folded into #264.
+  - Task 2 (Ω₆, and whether F stays free of ln 2 at ε⁷) is #282.
+  - Task 3 is done here, except the figure.

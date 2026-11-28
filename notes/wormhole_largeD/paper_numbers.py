@@ -83,7 +83,9 @@ quoted["ratios"] = ", ".join(ratios[:3]) + " and " + ratios[3]
 dB = float(re.search(r"M3: Omega2 of A70 against B2: ([0-9.]+) digits", o4).group(1))
 dC = re.search(r"X3: Omega3 against.*?digits: B3 ([0-9.]+), B4", o5)
 d6 = re.search(r"M4: Omega4 of G1 against G2.*?: ([0-9.]+) digits", o6)
-quoted["Chebyshev digits"] = f"{int(dB)}, {int(float(dC.group(1)))} and {int(float(d6.group(1)))}" if dC and d6 else "?"
+d7q = re.search(r"M5: Omega5 of G1 against G2 .*?: ([0-9.]+) digits", open(os.path.join(HERE, "order7_output.txt")).read())
+quoted["Chebyshev digits"] = (f"{int(dB)}, {int(float(dC.group(1)))}, {int(float(d6.group(1)))} and {int(float(d7q.group(1)))}"
+                              if dC and d6 and d7q else "?")
 crate_rows = {int(m.group(1)): (mp.mpf(m.group(3)), mp.mpf(m.group(4))) for m in re.finditer(
     r"^\s+(\d+)\s+(TS13 Table I|modes_r\.py)\s+([0-9.]+)\s+([0-9.]+)", open(os.path.join(HERE, "w2_output.txt")).read(), re.M)}
 low = max(crate_rows[D][1] - crate_rows[D][0] for D in (20, 30, 50, 100, 200, 500, 1000))
@@ -130,11 +132,42 @@ for D in (20, 30, 50, 100, 200, 500, 1000, 2000):                  # the five-te
     prev = e5
 print("  (data - 3 terms) s^2 tends to Omega2 + Omega3/s: at D = 1000 that is "
       f"{float(OMS[2] + OMS[3] / 1994):.2f}; (data - 5 terms) s^4 tends to Omega4 = {float(OM4):.5f} (derived)")
-s_ = mp.mpf(2 * (2000 - 3))
-O5est = (full[2000] - (s_ + sum(OMS[k] / s_**k for k in range(5)))) * s_**5
-o5txt = f"{float(O5est):.0e}".replace("e+04", "\\times10^4")      # one figure: an estimate
-print(f"  (data - 6 terms) s^5 at D = 2000: {float(O5est):.4g}, an estimate of Omega5; printed as {o5txt}")
-check(f"$\\Omega_5\\approx{o5txt}$" in TEX, f"the Omega5 estimate {o5txt} printed in main.tex")
+# Omega5 (#263): the closed form, against order7_output.txt, and the coefficient c5 = Omega5/32
+OM5 = (mp.mpf(256) / 45 * q**6 + mp.mpf(64) / 9 * PI**2 * q**4 - mp.mpf(2560) / 3 * z3 * q**3 + mp.mpf(176) / 45 * PI**4 * q**2
+       - 3072 * z3 * q**2 + 640 * PI**2 * z3 * q + mp.mpf(9728) / 45 * PI**4 * q - 12288 * z3 * q + 41728 * z5 * q
+       - mp.mpf(38812) / 315 * PI**6 + 3200 * z3**2 - mp.mpf(256) / 3 * PI**2 * z3 + 74240 * z5 + mp.mpf(39424) / 45 * PI**4 - 36864 * z3)
+o7 = open(os.path.join(HERE, "order7_output.txt")).read()
+m7 = re.search(r"Omega5 = (40860\.[0-9]{55,})", o7)
+check(m7 is not None and abs(mp.mpf(m7.group(1)) - OM5) < mp.mpf("1e-50"), "Omega5 closed form against order7_output.txt")
+check(f"c_5={mp.nstr(OM5 / 32, 11)}\\ldots$" in TEX, f"c5 = {mp.nstr(OM5 / 32, 11)} printed in the abstract")
+check(f"$-799.6562413$ and ${mp.nstr(OM5 / 32, 10, strip_zeros=False)}$" in TEX, f"c5 to ten figures ({mp.nstr(OM5 / 32, 10, strip_zeros=False)}) printed in the Result")
+check(f"=40860.45535.\n" in TEX or "=40860.45535." in TEX, "Omega5's value printed with its closed form")
+d7 = re.search(r"M5: Omega5 of G1 against G2 .*?: ([0-9.]+) digits", o7)
+check(d7 is not None and f"209 and {int(float(d7.group(1)))}\ndigits" in TEX, "the Chebyshev digits of Omega5 printed in main.tex")
+OMS7 = OMS + [OM5]
+o6s = []
+for D in (500, 1000):
+    s_ = mp.mpf(2 * (D - 3))
+    o6s.append((full[D] - (s_ + sum(OMS7[k] / s_**k for k in range(6)))) * s_**6)
+o6txt = {f"{float(x):.0e}" for x in o6s}
+print(f"  (data - 7 terms) s^6 at D = 500, 1000: {[f'{float(x):.4g}' for x in o6s]}, an estimate of Omega6")
+check(o6txt == {"4e+06"} and "$\\Omega_6\\approx4\\times10^6$" in TEX, f"the Omega6 estimate {o6txt} printed as 4x10^6")
+# the ln 2 structure (sympy): (1 + sum Omega_k e^(k+1)) e^(4 ln2 e) has ln2-free coefficients through e^6
+import sympy as sp
+Ls, ps, z3s, z5s, es = sp.symbols("L pi z3 z5 e")
+OMsym = [-4 * Ls, 2 * ps**2 / 3 + 8 * Ls**2, 80 * z3s - sp.Rational(8, 3) * ps**2 * Ls - sp.Rational(32, 3) * Ls**3,
+         sp.Rational(22, 45) * ps**4 + sp.Rational(16, 3) * ps**2 * Ls**2 + sp.Rational(32, 3) * Ls**4 - 320 * z3s * Ls - 384 * z3s,
+         (-10432 * z5s - 160 * ps**2 * z3s + 640 * z3s * Ls**2 - sp.Rational(64, 9) * ps**2 * Ls**3 - sp.Rational(88, 45) * ps**4 * Ls
+          - sp.Rational(128, 15) * Ls**5 - sp.Rational(2432, 45) * ps**4 + 1536 * z3s * Ls + 3072 * z3s),
+         (sp.Rational(256, 45) * Ls**6 + sp.Rational(64, 9) * ps**2 * Ls**4 - sp.Rational(2560, 3) * z3s * Ls**3 + sp.Rational(176, 45) * ps**4 * Ls**2
+          - 3072 * z3s * Ls**2 + 640 * ps**2 * z3s * Ls + sp.Rational(9728, 45) * ps**4 * Ls - 12288 * z3s * Ls + 41728 * z5s * Ls
+          - sp.Rational(38812, 315) * ps**6 + 3200 * z3s**2 - sp.Rational(256, 3) * ps**2 * z3s + 74240 * z5s + sp.Rational(39424, 45) * ps**4 - 36864 * z3s)]
+Fser = sp.series((1 + sum(OMsym[k] * es**(k + 1) for k in range(6))) * sp.exp(4 * Ls * es), es, 0, 7).removeO()
+fco = [sp.expand(Fser.coeff(es, k)) for k in range(7)]
+check(all(sp.diff(c, Ls) == 0 for c in fco), "F's coefficients f0 ... f6 are free of ln 2 (sympy)")
+check(fco[2] == sp.Rational(2, 3) * ps**2 and fco[3] == 80 * z3s and sp.expand(fco[4] - (sp.Rational(22, 45) * ps**4 - 384 * z3s)) == 0,
+      f"F's first coefficients as printed: {fco[2]}, {fco[3]}, {fco[4]}")
+check("F(\\varepsilon)=1+\\tfrac23\\pi^2\\varepsilon^2+80\\zeta(3)\\varepsilon^3+(\\tfrac{22}{45}\\pi^4-384\\zeta(3))\\varepsilon^4" in TEX, "F printed in main.tex")
 
 # the ghost sector of Choptuik's solution (notes/wormhole_next, #30): mu(D), as quoted in Sec. 7
 import json

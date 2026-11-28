@@ -26,15 +26,16 @@
 \begin{abstract}
 The static, massless, reflection-symmetric wormhole supported by a ghost scalar field (the Ellis--Bronnikov
 wormhole) has exactly one unstable radial mode, and in $D$ spacetime dimensions its growth rate $W$ has been computed
-numerically. We derive its large-$D$ expansion by matched asymptotic expansions to sixth order:
+numerically. We derive its large-$D$ expansion by matched asymptotic expansions to seventh order:
 \[
 \begin{aligned}
 W^2a^2 &= 2(D-3) - 4\ln 2 + \frac{\pi^2/3+4\ln^2 2}{D-3} + \frac{20\zeta(3)-\frac23\pi^2\ln2-\frac83\ln^32}{(D-3)^2}\\
-&\quad+ \frac{c_3}{(D-3)^3} + \frac{c_4}{(D-3)^4} + O(D^{-5}),
+&\quad+ \frac{c_3}{(D-3)^3} + \frac{c_4}{(D-3)^4} + \frac{c_5}{(D-3)^5} + O(D^{-6}),
 \end{aligned}
 \]
 with $a$ the throat radius, $c_3=\frac{11}{180}\pi^4+\frac23\pi^2\ln^22+\frac43\ln^42-40\zeta(3)\ln2-48\zeta(3)$ and
-$c_4=-652\zeta(5)-10\pi^2\zeta(3)+40\zeta(3)\ln^22-\frac49\pi^2\ln^32-\frac{11}{90}\pi^4\ln2-\frac{8}{15}\ln^52-\frac{152}{45}\pi^4+96\zeta(3)\ln2+192\zeta(3)$. Each
+$c_4=-652\zeta(5)-10\pi^2\zeta(3)+40\zeta(3)\ln^22-\frac49\pi^2\ln^32-\frac{11}{90}\pi^4\ln2-\frac{8}{15}\ln^52-\frac{152}{45}\pi^4+96\zeta(3)\ln2+192\zeta(3)$, and $c_5=1276.8892298\ldots$, whose closed form has weights 6 to 3
+(Sec.~\ref{sec:largeD}). All the $\ln2$ in these terms comes from one factor, $W^2a^2=2(D-3)\,2^{-2/(D-3)}F$ with $F$ free of $\ln2$. Each
 coefficient is reduced by hand from a matching integral to moments of $\ln\cos\theta$ and integrals of the Clausen
 function, and is confirmed by evaluations that use none of the reduction. The master equation is written in the gauge in
 which the scalar is unperturbed; a quad-double integration of it reproduces the published eigenvalues to nine or more
@@ -209,10 +210,11 @@ Consistently, the solution~\eqref{eq:sol} at this order is
 with $u=\sqrt{R-1}$ and $K(u)=\int_0^u\ln(1+t^2)\,(1+t^2)^{-1}\,\dd t$,
 and its $R^{1/2}$ term, $-(4\pi\Omega_0+16\pi\ln2)\,u$, vanishes for the same $\Omega_0$.
 
-\paragraph{Orders 3 to 6.} With $\theta=\arctan u$, so that $R=\sec^2\theta$ and $\ln R=-2\ln\cos\theta$, $G_k$ is an
+\paragraph{Orders 3 to 7.} With $\theta=\arctan u$, so that $R=\sec^2\theta$ and $\ln R=-2\ln\cos\theta$, $G_k$ is an
 integral over $[0,\pi/2]$ of the lower orders. Two integrations by parts (exchange identities) remove $Y_k$ and
 $\Lambda_{k-1}$ in favour of integrals of $h_{k-1}$; at order 5 a third removes $Y_4$, and at order 6 a fourth removes
-$Y_4$ and $\Lambda_4$ after a finite-part integration by parts. What remains are the moments
+$Y_4$ and $\Lambda_4$ after a finite-part integration by parts; at order 7 two further steps remove $\Lambda_4$ with a weight
+and $Y_4$ again. What remains are the moments
 $J_n=\int_0^{\pi/2}\ln^n\!\cos\theta\,\dd\theta$, which follow from the Beta function, and integrals of the Clausen
 function $\mathrm{Cl}_2(\pi-2\theta)$, among them $\int_0^{\pi/2}\tan\theta\,\mathrm{Cl}_2(\pi-2\theta)\,\dd\theta=\pi^3/12$
 and $\int_0^{\pi/2}\mathrm{Cl}_2(\pi-2\theta)^2\,\dd\theta=\pi^5/360$. $G_k$ is linear in $\Omega_{k-2}$ with slope $-4\pi$,
@@ -222,28 +224,35 @@ and $G_k=0$ gives
 \Omega_2&=80\zeta(3)-\tfrac83\pi^2\ln2-\tfrac{32}{3}\ln^32=74.3693867279,\\
 \Omega_3&=\tfrac{22}{45}\pi^4+\tfrac{16}{3}\pi^2\ln^22+\tfrac{32}{3}\ln^42-320\zeta(3)\ln2-384\zeta(3)=-652.84010757,\\
 \Omega_4&=-10432\zeta(5)-160\pi^2\zeta(3)+640\zeta(3)\ln^22-\tfrac{64}{9}\pi^2\ln^32-\tfrac{88}{45}\pi^4\ln2-\tfrac{128}{15}\ln^52\nonumber\\
-&\quad-\tfrac{2432}{45}\pi^4+1536\zeta(3)\ln2+3072\zeta(3)=-12794.49986.
+&\quad-\tfrac{2432}{45}\pi^4+1536\zeta(3)\ln2+3072\zeta(3)=-12794.49986,\\
+\Omega_5&=\tfrac{256}{45}\ln^62+\tfrac{64}{9}\pi^2\ln^42-\tfrac{2560}{3}\zeta(3)\ln^32+\tfrac{176}{45}\pi^4\ln^22-3072\zeta(3)\ln^22+640\pi^2\zeta(3)\ln2\nonumber\\
+&\quad+\tfrac{9728}{45}\pi^4\ln2-12288\zeta(3)\ln2+41728\zeta(5)\ln2-\tfrac{38812}{315}\pi^6+3200\zeta(3)^2-\tfrac{256}{3}\pi^2\zeta(3)\nonumber\\
+&\quad+74240\zeta(5)+\tfrac{39424}{45}\pi^4-36864\zeta(3)=40860.45535.
 \end{align}
 Each step was checked symbolically or by quadrature, and the exchange identities and Clausen integrals were derived a
 second time, independently. The integrals $G_3$ to $G_6$ were also evaluated with none of the reduction, from the
-hierarchy's definitions on Chebyshev panels in $v=\sqrt{\ln R}$, which reproduce $\Omega_2$, $\Omega_3$ and $\Omega_4$ to 64, 112 and 209
+hierarchy's definitions on Chebyshev panels in $v=\sqrt{\ln R}$, which reproduce $\Omega_2$, $\Omega_3$, $\Omega_4$ and $\Omega_5$ to 64, 112, 209 and 382
 digits; $\zeta(5)$ enters $\Omega_4$ through $J_5$. A fit in $1/s$ to the quad-double eigenvalues of Sec.~\ref{sec:numerics}, which uses no matching, agrees with all
 three. The closed form of $\Omega_1$ was first found by an integer-relation search (PSLQ~\cite{PSLQ1999}) on a
 ten-digit value of $G_3$; it is now derived. $\Omega_0$, $\Omega_1$ and $\Omega_2$ each have a single transcendental
 weight, 1, 2 and 3, counting $\ln2$ as 1, $\pi^2$ as 2 and $\zeta(3)$ as 3; $\Omega_3$ does not, since its last term has
-weight 3, and neither does $\Omega_4$, whose terms have weights 5, 4 and 3.
+weight 3, and neither do $\Omega_4$ and $\Omega_5$, whose terms have weights 5, 4 and 3, and 6, 5, 4 and 3. The derivation of $\Omega_5$
+also uses seven classical Euler sums, checked numerically, and its two new integration steps are under independent review
+(\texttt{notes/wormhole\_largeD/omega5.md}).
 
 \paragraph{Result.} With $s=2(D-3)$, so that $\Omega_k/s^k=\Omega_k2^{-k}/(D-3)^k$,
 \begin{equation}
 \boxed{\begin{aligned}W^2a^2&=2(D-3)-4\ln2+\frac{\pi^2/3+4\ln^22}{D-3}\\
-&\quad+\frac{20\zeta(3)-\frac23\pi^2\ln2-\frac83\ln^32}{(D-3)^2}+\frac{c_3}{(D-3)^3}+\frac{c_4}{(D-3)^4}+O(D^{-5}),\end{aligned}}\label{eq:result}
+&\quad+\frac{20\zeta(3)-\frac23\pi^2\ln2-\frac83\ln^32}{(D-3)^2}+\frac{c_3}{(D-3)^3}+\frac{c_4}{(D-3)^4}+\frac{c_5}{(D-3)^5}+O(D^{-6}),\end{aligned}}\label{eq:result}
 \end{equation}
-with $c_3=\Omega_3/8$ and $c_4=\Omega_4/16$ as in the abstract. Numerically the coefficients of $(D-3)^{-k}$ are
-$5.211680189$, $18.59234668$, $-81.60501345$ and $-799.6562413$. Table~\ref{tab:W} and
+with $c_3=\Omega_3/8$, $c_4=\Omega_4/16$ and $c_5=\Omega_5/32$. Numerically the coefficients of $(D-3)^{-k}$ are
+$5.211680189$, $18.59234668$, $-81.60501345$, $-799.6562413$ and $1276.889230$. All the $\ln2$ of the seven terms comes from
+one factor: $W^2a^2=s\,2^{-4/s}F(1/s)$ with $F(\varepsilon)=1+\tfrac23\pi^2\varepsilon^2+80\zeta(3)\varepsilon^3+(\tfrac{22}{45}\pi^4-384\zeta(3))\varepsilon^4+\dots$ free of
+$\ln2$ through $\varepsilon^6$ (checked symbolically for these terms; nothing is claimed beyond them). Table~\ref{tab:W} and
 Fig.~\ref{fig:main}(a) compare the expansion with the numerical eigenvalues. The difference from the first three terms,
 times $s^2$, tends to $\Omega_2+\Omega_3/s$, and the difference from all five, times $s^4$, tends to
 $\Omega_4$; a fit in $1/s$ to the quad-double eigenvalues gives $\Omega_4$ to all of its 14 digits. The difference from all
-six, times $s^5$, gives $\Omega_5\approx4\times10^4$, an estimate. The series is asymptotic: the ratios
+seven, times $s^6$, gives $\Omega_6\approx4\times10^6$, an estimate. The series is asymptotic: the ratios
 $|\Omega_{k+1}/\Omega_k|$ are 3.8, 7.1, 8.8 and 19.6 for $k=0$ to $3$. At $D\le8$ the five terms are no better than three,
 and at $D=4$ neither is useful; at $D=50$ the five terms are within $1.7\times10^{-6}$ (relative) and at $D=1000$ within
 $4.1\times10^{-13}$.

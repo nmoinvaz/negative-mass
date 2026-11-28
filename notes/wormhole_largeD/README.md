@@ -68,7 +68,21 @@ W^2a^2 = 2(D-3) - 4\ln 2 + \frac{\pi^2/3 + 4\ln^2 2}{D-3} + O(D^{-2}) .
   It comes from G₆ = 0 by E1, E2, E3 and a new step E4. Two method-B grids agree to 209 digits, and #195's fit agrees
   to its 14. *Added by the coordinator:* the review's own Taylor hierarchy, sharing no code with method B, gives it
   to 1.1e-39. Ω₄ is not of uniform weight either: its terms have weights 5, 4 and 3. The remainder after six terms is
-  Ω₅/(2(D − 3))⁵, with Ω₅ ≈ 4 × 10⁴ an estimate.
+  Ω₅/(2(D − 3))⁵. **Update from #263** ([omega5.md](omega5.md)): the seventh term is **derived** as well:
+  Ω₅ = (256/45)ln⁶2 + (64/9)π²ln⁴2 − (2560/3)ζ(3)ln³2 + (176/45)π⁴ln²2 − 3072ζ(3)ln²2 + 640π²ζ(3)ln 2 + (9728/45)π⁴ln 2
+  − 12288ζ(3)ln 2 + 41728ζ(5)ln 2 − (38812/315)π⁶ + 3200ζ(3)² − (256/3)π²ζ(3) + 74240ζ(5) + (39424/45)π⁴ − 36864ζ(3)
+  = 40860.4553545256873…, so (Ω₅/32)/(D − 3)⁵ = 1276.8892298289277…/(D − 3)⁵.
+  - Method: G₇ = 0 by E1–E3, E4 one level up, and two new steps, E2W for L₄ with a weight and E5 for Y₄. Then finite-part
+    integration by parts to Beta moments, Parseval and seven classical Euler sums, which are checked numerically at 34 digits and not
+    proved here.
+  - Checks: two method-B grids agree to 382.7 digits, and #195's W² values give it to 31 digits with nothing shared. The
+    coordinator's evaluation of the closed form matches to 1e-106 (`I263-mac-review`).
+  - E2W and E5 are under independent review (#264).
+  - Ω₅'s terms have weights 6, 5, 4 and 3. No Li₄(½), Li₅(½), Li₆(½) and no weight-7 constant enters.
+  - **All the ln 2 of Ω₀ … Ω₅ comes from one factor:** W²a² = s 2^{−4/s} F(1/s), with F(ε) = 1 + (2π²/3)ε² + 80ζ(3)ε³ + (22π⁴/45 − 384ζ(3))ε⁴
+    + … free of ln 2 through ε⁶. That is checked symbolically for these terms, both here and in the coordinator's review; nothing is
+    claimed beyond them.
+  - The remainder after seven terms is Ω₆/(2(D − 3))⁶, with Ω₆ ≈ 3.7 × 10⁶ an estimate.
 
 **What it means.**
 - **Faster in higher D.** The e-folding time is a/√(2(D − 3)) at large D. The exact values are 0.846 a (D = 4),
@@ -183,7 +197,7 @@ comes only from the absence of the growing term.
   and E2, which are derived in omega2.md and checked numerically, but not yet re-derived independently (#209). Ω₃ is a
   fit, not identified (#195; #208 computes it from the order-5 integral).
   **Update from #208:** Ω₃ is now derived too, resting on E1, E2 and a third identity, E3, which #209 should also
-  re-derive. Ω₄ is derived (#220); Ω₅ is an estimate (≈ 4 × 10⁴), not computed.
+  re-derive. Ω₄ is derived (#220); Ω₅ is derived (#263; E2W and E5 under review in #264); Ω₆ is an estimate (≈ 3.7 × 10⁶), not computed.
   **Update from #209:** E1, E2, E3 and the two Clausen integrals are re-derived independently, without the notes
   ([exchange_review.md](exchange_review.md)), with every boundary term stated. No sign, constant or result differs.
   So Ω₁, Ω₂ and Ω₃ are **derived**, and #25 is closed. *Added by the coordinator:* the review checked E1 to E3 on a
