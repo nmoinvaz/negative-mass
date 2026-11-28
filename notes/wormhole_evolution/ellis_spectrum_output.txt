@@ -1,0 +1,79 @@
+ellis_spectrum.py  code adc4c02  mutate=None  crate=../wormhole_largeD/w2_crate/target/release/w2_crate
+
+== planted cases (same code paths, known answers)
+PASS    PT1: Poeschl-Teller V0 = 2.5, alpha = 1, W = -i omega, first three overtones, worst |W - exact| = 7.93e-14 (bar 1e-8); n=0 even 1.96e-14; n=1 odd 7.93e-14; n=2 even 5.73e-14
+PASS    PT2: argument-principle windings, same scan routine; (-1.0, 0.0, 1.0, 2.0) even: 1.000 (want 1); (-2.0, -1.0, 1.0, 2.0) odd: 1.000 (want 1); (-3.0, -2.0, 1.0, 2.0) even: 1.000 (want 1); (-2.0, -1.0, 1.0, 2.0) even: -0.000 (want 0); (-1.0, 0.0, 1.0, 2.0) odd: 0.000 (want 0); (-1.0, 0.0, 2.0, 3.0) even: -0.000 (want 0)
+PASS    PT3: second eigen-solver (Chebyshev on a complex-scaled contour) on Poeschl-Teller: worst relative error of W^2 = 2.38e-07 (bar 1e-6); n=0 1.6e-07; n=1 8.0e-08; n=2 2.4e-07
+PASS    W1-D5: unstable W^2 at D = 5 from the shooting solver 2.98495893035200 against #195's crate (qd) 2.98495893035176: relative 7.97e-14 (bar 1e-8)
+PASS    W2-D5: second eigen-solver (ECS, theta = -0.7, N = 481) 2.98489338-1.8e-04i: relative 6.39e-05 (bar 1e-4)
+PASS    W3-D5: finite-difference operator of the time-domain code: relative error 2.15e-04 (h = 0.02), 5.39e-05 (0.01), ratio 3.98 (second order: 4)
+PASS    W1-D4: unstable W^2 at D = 4 from the shooting solver 1.39705243433370 against #195's crate (qd) 1.39705243433351: relative 1.39e-13 (bar 1e-8)
+PASS    W2-D4: second eigen-solver (ECS, theta = -0.7, N = 481) 1.39701610-1.0e-04i: relative 7.58e-05 (bar 1e-4)
+PASS    W3-D4: finite-difference operator of the time-domain code: relative error 1.76e-04 (h = 0.02), 4.41e-05 (0.01), ratio 4.00 (second order: 4)
+== zero modes, secular solutions, generalized kernel
+PASS    Z1-n2: n = 2 (D = 4): with L = Y'/r0' + g(l), N = L - nY/r0 + c(t), E2 gives Y_tt = D Y - 2(n-1) g/r0 (difference 0); E1tt, E1ll at g = 0: 0, 0
+PASS    Z2-n2 Y1 (scale): residuals of (E1tt, E1tl, E1ll, E2, S) = 0, 0, 0, 0, 0
+PASS    Z2-n2 t Y1: residuals of (E1tt, E1tl, E1ll, E2, S) = 0, 0, 0, 0, 0
+PASS    Z2-n2 Y2 (asymmetry): residuals of (E1tt, E1tl, E1ll, E2, S) = 0, 0, 0, 0, 0
+PASS    Z2-n2 t Y2: residuals of (E1tt, E1tl, E1ll, E2, S) = 0, 0, 0, 0, 0
+PASS    Z2-n2 t^2/2 Y1 + Y^(1): residuals of (E1tt, E1tl, E1ll, E2, S) = 0, 0, 0, 0, 0
+PASS    Z2-n2 Yphi (translation, g != 0): residuals of (E1tt, E1tl, E1ll, E2, S) = 0, 0, 0, 0, 0
+PASS    Z2-n2 t Yphi (no secular partner): must NOT be a solution; residuals: 2*(t - 1)/(R**3*sqrt((R**2 - 1)/R**2)*(R**2 - 1)), 0, 2*(-2*R**2*t + 2*R**2 + t - 1)/(R**3*sqrt((R**2 - 1)/R**2)*(, 2*(t - 1)/(R*sqrt(1 - 1/R**2)), 0
+PASS    Z1-n3: n = 3 (D = 5): with L = Y'/r0' + g(l), N = L - nY/r0 + c(t), E2 gives Y_tt = D Y - 2(n-1) g/r0 (difference 0); E1tt, E1ll at g = 0: 0, 0
+PASS    Z2-n3 Y1 (scale): residuals of (E1tt, E1tl, E1ll, E2, S) = 0, 0, 0, 0, 0
+PASS    Z2-n3 t Y1: residuals of (E1tt, E1tl, E1ll, E2, S) = 0, 0, 0, 0, 0
+PASS    Z2-n3 Y2 (asymmetry): residuals of (E1tt, E1tl, E1ll, E2, S) = 0, 0, 0, 0, 0
+PASS    Z2-n3 t Y2: residuals of (E1tt, E1tl, E1ll, E2, S) = 0, 0, 0, 0, 0
+PASS    Z2-n3 t^2/2 Y1 + Y^(1): residuals of (E1tt, E1tl, E1ll, E2, S) = 0, 0, 0, 0, 0
+PASS    Z2-n3 Yphi (translation, g != 0): residuals of (E1tt, E1tl, E1ll, E2, S) = 0, 0, 0, 0, 0
+PASS    Z2-n3 t Yphi (no secular partner): must NOT be a solution; residuals: 16*(t - 1)/(R**4*sqrt((R**4 - 1)/R**4)*(R**4 - 1)), 0, 8*(-3*R**4*t + 3*R**4 + t - 1)/(R**4*sqrt((R**4 - 1)/R**4)*(, 8*(t - 1)/(R**2*sqrt(1 - 1/R**4)), 0
+PASS    Z3-n3: generalized zero mode D Z = Y1 (even, Z(0) = 0), unbounded as l^3 (ln l at D = 5): Z/l^3 at l = 1e2, 1e3, 1e4: 2.0146, 3.1331, 4.2793; per e-fold over the last decade 0.4978 (predicted 1/2: Z ~ (1/2) l^3 ln l)
+PASS    Z3-n2: generalized zero mode D Z = Y1 (even, Z(0) = 0), unbounded as l^3 (ln l at D = 5): Z/l^3 at l = 1e2, 1e3, 1e4: 0.4991, 0.5000, 0.5000 (predicted 1/2: Z ~ l^3/(6 - 2n))
+PASS    Z4-n2: d ln|Delta| / d ln W at W = 0.01 ... 0.08: [1.031 1.057 1.102] (band [0.90, 1.20]): simple pole of the resolvent at W = 0 at D = 4
+PASS    Z4-n3: d ln|Delta| / d ln W at W = 0.01 ... 0.08: [1.767 1.73  1.687] (band [1.55, 2.10]): double pole with a logarithm at D = 5
+== poles of the resolvent: argument-principle scan (shooting) and complex-scaled collocation
+PASS    S1-D5: Re W > 0, boxes around and beside the unstable root W = 1.727703: windings 1.000, -0.000, -0.000 (want 1, 0, 0)
+   D = 5 even: Re W in [-8.2, -0.2], Im W in [0, 8], 1 zero(s), 2 cell(s) skipped near the origin, 63 s
+      zero at W = -4.23470 +0.37426i; over ray angle and far point (n = 8): spread 1.6e-06
+PASS    S2-D5-even: no zero with Re W in [-1.4, -0.2], Im W in [0, 1] (the region of kappa = 0.495 and 0.244): 0 found
+PASS    S3-D5-even: the 1 zero(s) near the cut: worst spread over four ray angles and two far points 1.6e-06 (bar 1e-3)
+   D = 5 odd: Re W in [-8.2, -0.2], Im W in [0, 8], 1 zero(s), 2 cell(s) skipped near the origin, 64 s
+      zero at W = -6.78097 +0.46746i; over ray angle and far point (n = 8): spread 1.8e-01
+PASS    S2-D5-odd: no zero with Re W in [-1.4, -0.2], Im W in [0, 1] (the region of kappa = 0.495 and 0.244): 0 found
+FAIL    S3-D5-odd: the 1 zero(s) near the cut: worst spread over four ray angles and two far points 1.8e-01 (bar 1e-3)
+PASS    S4-D5-even: complex scaling at theta = -0.7, -0.85, -1.0 (N = 481): eigenvalues |W^2| < 80 present at all three: ['2.98489-0.00018i', '-0.00003-0.00123i']; counts [74, 73, 73]
+PASS    S4-D5-odd: complex scaling at theta = -0.7, -0.85, -1.0 (N = 481): eigenvalues |W^2| < 80 present at all three: []; counts [72, 72, 71]
+PASS    S1-D4: Re W > 0, boxes around and beside the unstable root W = 1.181970: windings 1.000, 0.000, -0.000 (want 1, 0, 0)
+   D = 4 even: Re W in [-8.2, -0.2], Im W in [0, 8], 2 zero(s), 2 cell(s) skipped near the origin, 82 s
+      zero at W = -5.66677 +0.24749i; over ray angle and far point (n = 8): spread 3.5e-05
+      zero at W = -2.61874 +0.15269i; over ray angle and far point (n = 8): spread 2.2e-10
+PASS    S2-D4-even: no zero with Re W in [-1.4, -0.2], Im W in [0, 1] (the region of kappa = 0.495 and 0.244): 0 found
+PASS    S3-D4-even: the 2 zero(s) near the cut: worst spread over four ray angles and two far points 3.5e-05 (bar 1e-3)
+   D = 4 odd: Re W in [-8.2, -0.2], Im W in [0, 8], 2 zero(s), 2 cell(s) skipped near the origin, 68 s
+      zero at W = -7.21809 +0.26614i; over ray angle and far point (n = 8): spread 1.8e-02
+      zero at W = -4.13102 +0.21485i; over ray angle and far point (n = 8): spread 6.9e-08
+PASS    S2-D4-odd: no zero with Re W in [-1.4, -0.2], Im W in [0, 1] (the region of kappa = 0.495 and 0.244): 0 found
+FAIL    S3-D4-odd: the 2 zero(s) near the cut: worst spread over four ray angles and two far points 1.8e-02 (bar 1e-3)
+PASS    S4-D4-even: complex scaling at theta = -0.7, -0.85, -1.0 (N = 481): eigenvalues |W^2| < 80 present at all three: ['1.39702-0.00010i']; counts [74, 73, 73]
+PASS    S4-D4-odd: complex scaling at theta = -0.7, -0.85, -1.0 (N = 481): eigenvalues |W^2| < 80 present at all three: []; counts [72, 72, 71]
+== time-domain linear response of the throat radius (even sector, unstable mode projected out)
+PASS    T1-D4: h = 0.02, 0.01, 0.005: observed order of Y(t, 0) at t = 10, 20: 2.00, 1.99 (band [1.8, 2.3]); the Richardson correction is 4.1e-04 of Y (bar 1e-2); Y_ext(10), Y_ext(20) = 0.44026, 0.45296
+   D = 4 (c=3 w=0.5, Richardson of h = 0.01, 0.005): t=8: Y 0.4323, v 5.1299e-03, rate 0.283 | t=10: Y 0.4403, v 3.0318e-03, rate 0.245 | t=12: Y 0.4451, v 1.9155e-03, rate 0.216 | t=15: Y 0.4494, v 1.0574e-03, rate 0.182 | t=20: Y 0.4530, v 4.7043e-04, rate 0.144 | t=25: Y 0.4547, v 2.4474e-04, rate 0.119
+   D = 4: the #255 estimator v = v_inf + c exp(-k (t - 6.5)) on t in [6.5, 12]: v_inf = 8.2160e-04, k = 0.3380; late rates at t = 20 over four data: [0.144 0.166 0.144 0.14 ]
+FAIL    T2-D4: k of the #255 estimator on the linear response = 0.3380 against kappa = 0.244 (bar +-0.024)
+FAIL    T2m-D4: late rate of the throat speed at t = 20 (mean over four data) 0.148 against #267's mass-excess rate 0.205 to 0.222 per proper time (-ln of 0.649 ... 0.669 per decade over 1.95; bar +-10%)
+FAIL    T3-D4: late decay rate of the throat speed at t = 20 over four data (centers 3, 6, 1.5, widths 0.5, 1): [0.144 0.166 0.144 0.14 ], spread 0.025 (bar 0.02)
+PASS    T4-D4: Y(t, 0)/P for two data far from the throat (P = integral w Y1 sigma0, w = 1/(r'^2 r^n)) at t = 20 differ by 1.81e-03 (bar 1e-2): the response is that of one conjugate momentum, Y/P = 0.9896
+PASS    T7-D4: the late throat speed is a power law, not an exponential: -d ln v / d ln t = rate x t at t = 15, 20, 25: [2.736 2.887 2.965], spread 8.0 % of the mean (bar 12 %; an exponential's grows as t, 67 % over this range), exponent 2.86
+PASS    T5-D4: the shift saturates: Y(40)/Y(30) - 1 = 2.04e-03 (bar 1e-2); Y(30)/P = 0.9954
+PASS    T1-D5: h = 0.02, 0.01, 0.005: observed order of Y(t, 0) at t = 10, 20: 1.99, 1.97 (band [1.8, 2.3]); the Richardson correction is 3.6e-03 of Y (bar 1e-2); Y_ext(10), Y_ext(20) = 0.46874, 0.73670
+   D = 5 (c=3 w=0.5, Richardson of h = 0.01, 0.005): t=8: Y 0.4088, v 3.0818e-02, rate 0.032 | t=10: Y 0.4687, v 2.9175e-02, rate 0.024 | t=12: Y 0.5258, v 2.7977e-02, rate 0.019 | t=15: Y 0.6077, v 2.6640e-02, rate 0.014 | t=20: Y 0.7367, v 2.5083e-02, rate 0.010 | t=25: Y 0.8592, v 2.3981e-02, rate 0.008
+   D = 5: the #255 estimator v = v_inf + c exp(-k (t - 6.5)) on t in [6.5, 12]: v_inf = 2.5422e-02, k = 0.1850; late rates at t = 20 over four data: [0.01  0.012 0.01  0.01 ]
+FAIL    T2-D5: k of the #255 estimator on the linear response = 0.1850 against kappa = 0.495 (bar +-0.010)
+PASS    T3-D5: late decay rate of the throat speed at t = 20 over four data (centers 3, 6, 1.5, widths 0.5, 1): [0.01  0.012 0.01  0.01 ], spread 0.002 (bar 0.02)
+PASS    T4-D5: Y(t, 0)/P for two data far from the throat (P = integral w Y1 sigma0, w = 1/(r'^2 r^n)) at t = 20 differ by 7.74e-03 (bar 1e-2): the response is that of one conjugate momentum, Y/P = 7.1096
+PASS    T7-D5: the late throat speed is a power law, not an exponential: -d ln v / d ln t = rate x t at t = 15, 20, 25: [0.215 0.205 0.198], spread 7.9 % of the mean (bar 12 %; an exponential's grows as t, 67 % over this range), exponent 0.21
+FAIL    T5-D5: the secular speed is constant: d ln v/dt at t = 15, 25 = -0.0143, -0.0079 (a constant speed has 0; bar 0.005); v/P at t = 10, 20 = 0.2816, 0.2421
+FAIL    T6: rdot_inf / E_net at B = 0.02, 0.04, 0.07, 0.1 (throat_drift.md's table): [0.0136 0.0231 0.0476 0.068 ], max/min 5.01 (a speed linear in the injected energy needs <= 1.2)
+
+57 checks, 49 pass, 8 fail: S3-D5-odd, S3-D4-odd, T2-D4, T2m-D4, T3-D4, T2-D5, T5-D5, T6
