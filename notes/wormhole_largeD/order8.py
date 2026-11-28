@@ -558,7 +558,7 @@ def free_constants():
 # basis name -> (lowest weight of the ln 2-free monomials, highest power of ln 2, maxcoeff H, planted seed); ln 2^j times the free monomials of weight <= 7 - j
 PSLQ_BASES = {"F1": (7, 0, 10**16, 282001), "F2": (6, 0, 10**16, 282002), "F3": (5, 0, 10**16, 282003), "F4": (4, 0, 10**16, 282004),
               "F5": (3, 0, 10**16, 282005), "F6": (0, 0, 10**16, 282006),
-              "X1": (0, 1, 10**12, 282007), "X2": (0, 2, 10**11, 282008), "X3": (0, 3, 10**10, 282009), "XF": (0, 7, 10**8, 282010)}
+              "X1": (0, 1, 10**12, 282007), "X2": (0, 2, 10**11, 282008), "X3": (0, 3, 10**10, 282009), "XF": (0, 7, 10**10, 282010)}
 
 
 def constants(name):
