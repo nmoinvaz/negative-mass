@@ -19,6 +19,7 @@ MUTATIONS = {
     "slope": ("evolve_output.txt", "primary slope 1.57042", "primary slope 1.57052"),                 # c = -1, h = 0.0025
     "rate": ("linear_output.txt", "(0.636627 against kappa", "(0.636637 against kappa"),            # R3, c = -1
     "slope262": ("cminus1_mode_output.txt", "beta*  = 0.3140290188873", "beta*  = 0.3140290198873"),  # d(W/kappa)/dc, #262
+    "c1theta": ("static_c1_output.txt", "Theta 7.4e-08", "Theta 9.4e-08"),                         # A1R, #259
 }
 _mut = None
 

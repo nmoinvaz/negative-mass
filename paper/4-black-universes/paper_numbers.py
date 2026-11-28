@@ -375,6 +375,15 @@ need(f"falls by ${min(rats):.3f}$ to ${max(rats):.3f}$ per halving of $h$ from $
 need(f"found to ${max(e[0] for e in verr) * 1e4:.1f}\\times10^{{-4}}$ at the coarsest step and ${max(e[-1] for e in verr) * 1e7:.1f}\\times10^{{-7}}$ at the finest", "#277 v*")
 need("at $c=-1.5$ and $-1$ with $\\beta=\\pm0.05$", "#277 members")
 
+# #259: the static coefficient c1 (notes/black_universe/static_c1_output.txt)
+SC = S.read("static_c1_output.txt")
+t6 = [float(x) for x in re.findall(r"(?:A0|A1R|A1L): c1 [0-9.e+-]+, Theta ([0-9.e+-]+),", SC)]
+t7 = [float(x) for x in re.findall(r"\|Theta\|max ([0-9.e+-]+) \(Richardson\)", SC)]
+check(len(t6) == 3 and len(t7) == 3 and "[pass] T6:" in SC and "[pass] T7:" in SC, f"#259's T6 and T7 ({t6}, {t7})")
+need(f"satisfy it to ${sci(max(t6))}$", "#259: kappa c1 = -kappa Theta_gen for A0, A1R, A1L")
+need(f"have $\\Theta=0$ to ${sci(max(t7), d=0)}$", "#259: Theta of the c1 = 0 classes")
+need("$M_{\\rm ADM}=2L^{3/2}/(3\\pi)$", "#259: the mass of the static member (ind259 J1)")
+
 # ---------------------------------------------------------------------------------------------------- placeholders and marks
 pend = re.findall(r"\\pending\{\\#(\d+)", TEX)
 needs = len(re.findall(r"% NEEDS #260", TEX))
