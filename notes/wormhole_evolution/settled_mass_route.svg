@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="934" viewBox="0 0 760 934" font-family="system-ui, sans-serif">
+<style>@media (prefers-color-scheme: dark){[fill="#fcfcfb"]{fill:#201f1d}[stroke="#fcfcfb"]{stroke:#201f1d}[fill="#0b0b0b"]{fill:#e8e6e3}[stroke="#0b0b0b"]{stroke:#e8e6e3}[fill="#52514e"]{fill:#a8a49d}[stroke="#52514e"]{stroke:#a8a49d}[fill="#e7e6e2"]{fill:#343230}[stroke="#e7e6e2"]{stroke:#343230}[fill="#c98500"]{fill:#d69a2d}[stroke="#c98500"]{stroke:#d69a2d}[fill="#eb6834"]{fill:#dd5c26}[stroke="#eb6834"]{stroke:#dd5c26}[fill="#eda100"]{fill:#c08800}[stroke="#eda100"]{stroke:#c08800}[fill="#e87ba4"]{fill:#d1678f}[stroke="#e87ba4"]{stroke:#d1678f}[fill="#4a3aa7"]{fill:#7263cf}[stroke="#4a3aa7"]{stroke:#7263cf}[fill="#a6339a"]{fill:#c257b5}[stroke="#a6339a"]{stroke:#c257b5}[fill="#7a7668"]{fill:#948e82}[stroke="#7a7668"]{stroke:#948e82}}</style>
+<rect width="760" height="934" fill="#fcfcfb"/>
+<text x="16.0" y="28.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">M / r_th - M_0 minus P2's curve, against the member's asymmetry gamma_1</text>
+<text x="16.0" y="44.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">family G, D = 4, delta = 1e-8, h = 0.005; zero is P2 (0.2027 g + 0.8534 g^2); grey: family B (#266), circles: route W, diamonds: route C</text>
+<line x1="86.0" y1="74.0" x2="86.0" y2="244.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="86.0" y="259.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.00</text>
+<line x1="236.0" y1="74.0" x2="236.0" y2="244.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="236.0" y="259.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.02</text>
+<line x1="386.0" y1="74.0" x2="386.0" y2="244.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="386.0" y="259.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.04</text>
+<line x1="536.0" y1="74.0" x2="536.0" y2="244.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="536.0" y="259.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.06</text>
+<line x1="686.0" y1="74.0" x2="686.0" y2="244.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="686.0" y="259.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.08</text>
+<line x1="86.0" y1="187.3" x2="686.0" y2="187.3" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="191.3" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">-5.0e-04</text>
+<line x1="86.0" y1="116.5" x2="686.0" y2="116.5" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="120.5" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+0.0e+00</text>
+<line x1="86.0" y1="244.0" x2="686.0" y2="244.0" stroke="#52514e" stroke-width="1"/>
+<line x1="86.0" y1="74.0" x2="86.0" y2="244.0" stroke="#52514e" stroke-width="1"/>
+<text x="386.0" y="278.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">gamma_1 at departure</text>
+<text x="17.0" y="159.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 17.0 159.0)">M / r_th - M_0 - P2</text>
+<line x1="86.0" y1="116.5" x2="686.0" y2="116.5" stroke="#7a7668" stroke-width="1"/>
+<g><rect x="102.5" y="111.2" width="11.0" height="11.0" fill="#9aa0a6" stroke="#fcfcfb" stroke-width="2"/><title>family B, B = 0.025: gamma_1 0.00294, excess over P2 -1.17e-06</title></g>
+<g><rect x="169.3" y="111.1" width="11.0" height="11.0" fill="#9aa0a6" stroke="#fcfcfb" stroke-width="2"/><title>family B, B = 0.05: gamma_1 0.01184, excess over P2 -3.69e-07</title></g>
+<g><rect x="442.9" y="110.9" width="11.0" height="11.0" fill="#9aa0a6" stroke="#fcfcfb" stroke-width="2"/><title>family B, B = 0.1: gamma_1 0.04832, excess over P2 +4.24e-07</title></g>
+<g><rect x="646.4" y="111.1" width="11.0" height="11.0" fill="#9aa0a6" stroke="#fcfcfb" stroke-width="2"/><title>family B, B = 0.125: gamma_1 0.07545, excess over P2 -4.19e-07</title></g>
+<g><circle cx="176.0" cy="136.0" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>W1: gamma_1 0.01200, r_th 0.99496, excess over P2 -1.37e-04</title></g>
+<g><circle cx="445.9" cy="187.5" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>W2: gamma_1 0.04798, r_th 0.98918, excess over P2 -5.01e-04</title></g>
+<g><circle cx="648.7" cy="224.1" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>W3: gamma_1 0.07502, r_th 0.99363, excess over P2 -7.60e-04</title></g>
+<g><polygon points="175.9,119.2 182.4,125.7 175.9,132.2 169.4,125.7" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>C1: gamma_1 0.01199, r_th 0.99962, excess over P2 -6.46e-05</title></g>
+<g><polygon points="446.0,148.3 452.5,154.8 446.0,161.3 439.5,154.8" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>C2: gamma_1 0.04801, r_th 1.00632, excess over P2 -2.70e-04</title></g>
+<g><polygon points="647.2,174.2 653.7,180.7 647.2,187.2 640.7,180.7" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>C3: gamma_1 0.07483, r_th 1.01937, excess over P2 -4.53e-04</title></g>
+<text x="686.0" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">route C</text>
+<circle cx="631.3" cy="60" r="4.5" fill="#eb6834"/>
+<text x="615.3" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">route W</text>
+<circle cx="560.7" cy="60" r="4.5" fill="#2a78d6"/>
+<text x="544.7" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">family B</text>
+<circle cx="483.6" cy="60" r="4.5" fill="#9aa0a6"/>
+<text x="16.0" y="324.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">The throat's speed at departure against gamma_1</text>
+<text x="16.0" y="340.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">the third parameter of P3: dr_th/dtau of the pair's mean at t_dep; grey line: family B</text>
+<line x1="86.0" y1="370.0" x2="86.0" y2="540.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="86.0" y="555.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.00</text>
+<line x1="236.0" y1="370.0" x2="236.0" y2="540.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="236.0" y="555.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.02</text>
+<line x1="386.0" y1="370.0" x2="386.0" y2="540.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="386.0" y="555.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.04</text>
+<line x1="536.0" y1="370.0" x2="536.0" y2="540.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="536.0" y="555.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.06</text>
+<line x1="686.0" y1="370.0" x2="686.0" y2="540.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="686.0" y="555.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.08</text>
+<line x1="86.0" y1="528.7" x2="686.0" y2="528.7" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="532.7" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">-1.0e-03</text>
+<line x1="86.0" y1="472.0" x2="686.0" y2="472.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="476.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+0.0e+00</text>
+<line x1="86.0" y1="415.3" x2="686.0" y2="415.3" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="419.3" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+1.0e-03</text>
+<line x1="86.0" y1="540.0" x2="686.0" y2="540.0" stroke="#52514e" stroke-width="1"/>
+<line x1="86.0" y1="370.0" x2="86.0" y2="540.0" stroke="#52514e" stroke-width="1"/>
+<text x="386.0" y="574.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">gamma_1 at departure</text>
+<text x="17.0" y="455.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 17.0 455.0)">dr_th/dtau at departure</text>
+<polyline fill="none" stroke="#9aa0a6" stroke-width="1.5" points="86.0,472.2 108.0,477.5 174.8,489.1 448.4,468.3 651.9,381.6"/>
+<g><rect x="102.5" y="472.0" width="11.0" height="11.0" fill="#9aa0a6" stroke="#fcfcfb" stroke-width="2"/><title>family B, B = 0.025: gamma_1 0.00294, rdot_th -9.69e-05</title></g>
+<g><rect x="169.3" y="483.6" width="11.0" height="11.0" fill="#9aa0a6" stroke="#fcfcfb" stroke-width="2"/><title>family B, B = 0.05: gamma_1 0.01184, rdot_th -3.03e-04</title></g>
+<g><rect x="442.9" y="462.8" width="11.0" height="11.0" fill="#9aa0a6" stroke="#fcfcfb" stroke-width="2"/><title>family B, B = 0.1: gamma_1 0.04832, rdot_th +6.50e-05</title></g>
+<g><rect x="646.4" y="376.1" width="11.0" height="11.0" fill="#9aa0a6" stroke="#fcfcfb" stroke-width="2"/><title>family B, B = 0.125: gamma_1 0.07545, rdot_th +1.59e-03</title></g>
+<g><circle cx="176.0" cy="500.6" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>W1: gamma_1 0.01200, rdot_th -5.05e-04</title></g>
+<g><circle cx="445.9" cy="509.7" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>W2: gamma_1 0.04798, rdot_th -6.65e-04</title></g>
+<g><circle cx="648.7" cy="443.7" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>W3: gamma_1 0.07502, rdot_th +4.99e-04</title></g>
+<g><polygon points="175.9,487.5 182.4,494.0 175.9,500.5 169.4,494.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>C1: gamma_1 0.01199, rdot_th -3.89e-04</title></g>
+<g><polygon points="446.0,482.0 452.5,488.5 446.0,495.0 439.5,488.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>C2: gamma_1 0.04801, rdot_th -2.92e-04</title></g>
+<g><polygon points="647.2,409.1 653.7,415.6 647.2,422.1 640.7,415.6" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>C3: gamma_1 0.07483, rdot_th +9.95e-04</title></g>
+<text x="16.0" y="606.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">Measured minus predicted, P2 and P3</text>
+<text x="16.0" y="622.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">lines: the declared bar +-6e-5; both predictions fixed by the issue before the runs</text>
+<line x1="136.0" y1="652.0" x2="136.0" y2="822.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="136.0" y="837.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums"></text>
+<line x1="336.0" y1="652.0" x2="336.0" y2="822.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="336.0" y="837.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums"></text>
+<line x1="536.0" y1="652.0" x2="536.0" y2="822.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="536.0" y="837.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums"></text>
+<line x1="86.0" y1="760.2" x2="686.0" y2="760.2" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="764.2" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">-5.0e-04</text>
+<line x1="86.0" y1="682.9" x2="686.0" y2="682.9" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="686.9" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+0.0e+00</text>
+<line x1="86.0" y1="822.0" x2="686.0" y2="822.0" stroke="#52514e" stroke-width="1"/>
+<line x1="86.0" y1="652.0" x2="86.0" y2="822.0" stroke="#52514e" stroke-width="1"/>
+<text x="386.0" y="856.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">point (W: route W, C: route C; 1, 2, 3: gamma_1 near 0.012, 0.048, 0.075)</text>
+<text x="17.0" y="737.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 17.0 737.0)">M - predicted (a)</text>
+<text x="136.0" y="838.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">W1</text>
+<text x="236.0" y="838.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">W2</text>
+<text x="336.0" y="838.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">W3</text>
+<text x="436.0" y="838.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">C1</text>
+<text x="536.0" y="838.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">C2</text>
+<text x="636.0" y="838.0" font-size="12" fill="#52514e" text-anchor="middle" font-weight="normal">C3</text>
+<line x1="86.0" y1="673.6" x2="686.0" y2="673.6" stroke="#7a7668" stroke-width="1"/>
+<line x1="86.0" y1="692.2" x2="686.0" y2="692.2" stroke="#7a7668" stroke-width="1"/>
+<g><polygon points="136.0,697.5 142.5,709.5 129.5,709.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>W1: M - P2 = -1.37e-04</title></g>
+<g><circle cx="136.0" cy="680.7" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>W1: M - P3 = +1.41e-05</title></g>
+<g><polygon points="236.0,753.0 242.5,765.0 229.5,765.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>W2: M - P2 = -4.96e-04</title></g>
+<g><circle cx="236.0" cy="675.6" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>W2: M - P3 = +4.72e-05</title></g>
+<g><polygon points="336.0,793.1 342.5,805.1 329.5,805.1" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>W3: M - P2 = -7.55e-04</title></g>
+<g><circle cx="336.0" cy="671.9" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>W3: M - P3 = +7.11e-05</title></g>
+<g><polygon points="436.0,686.4 442.5,698.4 429.5,698.4" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>C1: M - P2 = -6.46e-05</title></g>
+<g><circle cx="436.0" cy="683.5" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>C1: M - P3 = -3.81e-06</title></g>
+<g><polygon points="536.0,718.5 542.5,730.5 529.5,730.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>C2: M - P2 = -2.72e-04</title></g>
+<g><circle cx="536.0" cy="685.0" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>C2: M - P3 = -1.36e-05</title></g>
+<g><polygon points="636.0,747.8 642.5,759.8 629.5,759.8" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>C3: M - P2 = -4.62e-04</title></g>
+<g><circle cx="636.0" cy="686.4" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>C3: M - P3 = -2.24e-05</title></g>
+<text x="686.0" y="642.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">P3 (circles)</text>
+<circle cx="599.4" cy="638" r="4.5" fill="#1baf7a"/>
+<text x="583.4" y="642.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">P2 (triangles)</text>
+<circle cx="484.1" cy="638" r="4.5" fill="#eda100"/>
+<text x="16.0" y="922.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">Apple M5, 32 GB, macOS 27.0.1</text>
+<text x="16.0" y="908.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">settled_mass_route.py at negative-mass f60a81d  ·  chain: #41 via #253  ·  member: #225 via #266  ·  speed: #267, #255  ·  P2: #266, P3: #267</text>
+<text x="16.0" y="892.0" font-size="10" fill="#c98500" text-anchor="start" font-weight="normal">⚠</text>
+<text x="30.0" y="892.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">P2 and P3 residuals against the bar 6e-5; W3's P3 residual is +7.1e-05</text>
+<a href="https://github.com/nmoinvaz/negative-mass"><text x="744" y="922" font-size="10" fill="#52514e" text-anchor="end" text-decoration="underline">github.com/nmoinvaz/negative-mass</text></a>
+</svg>

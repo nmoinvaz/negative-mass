@@ -1,4 +1,4 @@
-settled_mass_route.py analyze {'raw': '/Users/nathan/Source/negative-mass-raw/I283-mac', 'rn': '/Users/nathan/Source/negative-mass-raw/I283-mac/runs_rn'}: numba 0.68.1, numpy 2.5.4, python 3.14.7, Nathans-MacBook-Air-M5-3.local, mutation None, 2026-11-27 22:46:21
+settled_mass_route.py analyze {'raw': '/Users/nathan/Source/negative-mass-raw/I283-mac', 'rn': '/Users/nathan/Source/negative-mass-raw/I283-mac/runs_rn'}: numba 0.68.1, numpy 2.5.4, python 3.14.7, Nathans-MacBook-Air-M5-3.local, mutation None, 2026-11-27 22:50:20
 == Runs read from /Users/nathan/Source/negative-mass-raw/I283-mac/runs: 14 of 14 (point, h) complete
 [pass] CFG: settled_mass.CRIT (F1, K, W1, rcut, tol, dxp, dm) equal #41's declared chain, X = 28 for G, the ghost pulse (xc 3, w 0.5), and the (B, xc, w) stored in each run equal the declared one
 [pass] FAM0: route_family with the default normal pulse (B, 3.0, 0.5) returns what threshold.family returns (the pulses, symmetry flag and signs), bit for bit
@@ -90,21 +90,21 @@ settled_mass_route.py analyze {'raw': '/Users/nathan/Source/negative-mass-raw/I2
 [pass] RH: the settled value at two h: |plat(0.01) - plat(0.005)| (plateau mean over the last 1.0 of x+) <= 5e-5  (W1: 9.7e-06; W2: 8.4e-06; W3: 6.1e-06; C1: 1.4e-05; C2: 9.8e-06; C3: 7.6e-06; REP: 9.3e-06)
 
 == The member at departure (#225's slice_masses and fit_asym on the pair's mean profile; t_dep: the unstable mode's part reaches eps = 1e-3 of r_th) and the throat's speed there (#267's)
-    point  h       p*_h            t_dep    r_th      gamma_1   rdot_th    rms(fit)  M(plateau)
-    W1    0.01    5.2718211925e-03   13.348  0.994956  0.012001  -0.00050  8.6e-06  0.224377
-    W1    0.005   5.2541981067e-03   13.348  0.994956  0.012003  -0.00050  8.6e-06  0.224367
-    W2    0.01    2.0166009633e-02   13.568  0.989178  0.047980  -0.00067  5.0e-05  0.231749
-    W2    0.005   2.0149051468e-02   13.568  0.989179  0.047982  -0.00067  5.0e-05  0.231740
-    W3    0.01    3.1005464243e-02   13.776  0.993630  0.075019  +0.00050  2.5e-05  0.240800
-    W3    0.005   3.0989067370e-02   13.776  0.993634  0.075022  +0.00050  2.5e-05  0.240794
-    C1    0.01    7.3133734825e-04   13.365  0.999624  0.011989  -0.00039  4.4e-06  0.225503
-    C1    0.005   7.1354384944e-04   13.365  0.999623  0.011989  -0.00039  3.6e-06  0.225489
-    C2    0.01    2.9500845064e-03   13.640  1.006322  0.048006  -0.00029  1.8e-05  0.236005
-    C2    0.005   2.9324065605e-03   13.640  1.006321  0.048006  -0.00029  1.9e-05  0.235995
-    C3    0.01    4.7554582764e-03   13.891  1.019366  0.074834  +0.00099  5.8e-05  0.247286
-    C3    0.005   4.7378894795e-03   13.891  1.019366  0.074833  +0.00099  5.9e-05  0.247278
-    REP   0.01    1.4877359967e-02   13.615  1.002877  0.048315  +0.00006  7.8e-06  0.235558
-    REP   0.005   1.4860254854e-02   13.615  1.002878  0.048316  +0.00007  6.4e-06  0.235548
+    point  h       p*_h            t_dep    r_th      gamma_1   rdot_th     rms(fit)  M(plateau)
+    W1    0.01    5.2718211925e-03   13.348  0.994956  0.012001  -5.049e-04  8.6e-06  0.224377
+    W1    0.005   5.2541981067e-03   13.348  0.994956  0.012003  -5.048e-04  8.6e-06  0.224367
+    W2    0.01    2.0166009633e-02   13.568  0.989178  0.047980  -6.656e-04  5.0e-05  0.231749
+    W2    0.005   2.0149051468e-02   13.568  0.989179  0.047982  -6.653e-04  5.0e-05  0.231740
+    W3    0.01    3.1005464243e-02   13.776  0.993630  0.075019  +4.980e-04  2.5e-05  0.240800
+    W3    0.005   3.0989067370e-02   13.776  0.993634  0.075022  +4.989e-04  2.5e-05  0.240794
+    C1    0.01    7.3133734825e-04   13.365  0.999624  0.011989  -3.888e-04  4.4e-06  0.225503
+    C1    0.005   7.1354384944e-04   13.365  0.999623  0.011989  -3.888e-04  3.6e-06  0.225489
+    C2    0.01    2.9500845064e-03   13.640  1.006322  0.048006  -2.918e-04  1.8e-05  0.236005
+    C2    0.005   2.9324065605e-03   13.640  1.006321  0.048006  -2.916e-04  1.9e-05  0.235995
+    C3    0.01    4.7554582764e-03   13.891  1.019366  0.074834  +9.946e-04  5.8e-05  0.247286
+    C3    0.005   4.7378894795e-03   13.891  1.019366  0.074833  +9.949e-04  5.9e-05  0.247278
+    REP   0.01    1.4877359967e-02   13.615  1.002877  0.048315  +6.474e-05  7.8e-06  0.235558
+    REP   0.005   1.4860254854e-02   13.615  1.002878  0.048316  +6.505e-05  6.4e-06  0.235548
 [pass] TGT: gamma_1 at departure (h = 0.005) is within 3% of its target (0.012, 0.048, 0.075)  (W1: +2.2e-04; W2: -3.7e-04; W3: +3.0e-04; C1: -9.5e-04; C2: +1.1e-04; C3: -2.2e-03)
     HST W1: gamma_1 1.1e-04, r_th 1.4e-09, rdot_th 6.2e-08
     HST W2: gamma_1 5.1e-05, r_th 1.1e-06, rdot_th 3.3e-07
@@ -156,7 +156,7 @@ settled_mass_route.py analyze {'raw': '/Users/nathan/Source/negative-mass-raw/I2
 [pass] REP: the point (B, xc, w) = (0.1, 3.0, 0.5) reproduces #266's B = 0.1 (p*_h to 1e-13, M and the member (gamma_1, r_th, rdot_th) to 1e-6)
 [pass] REP-ph: POST HOC, gates nothing (the reproduction point at h = 0.01): the point (B, xc, w) = (0.1, 3.0, 0.5) reproduces #266's B = 0.1 (p*_h to 1e-13, M and the member (gamma_1, r_th, rdot_th) to 1e-6)
 
-== Post hoc (gates nothing): a second roundoff realization of the six points at h = 0.005 (p*_h bisected from another bracket: the same p*_h to a few 1e-15, a different ulp-noise realization of the chain), /Users/nathan/Source/negative-mass-raw/I283-mac/runs_rn
+== Post hoc (gates nothing): a second roundoff realization of the six points at h = 0.005 (p*_h bisected from another bracket: the same p*_h to within its own floor, a different ulp-noise realization of the chain), /Users/nathan/Source/negative-mass-raw/I283-mac/runs_rn
     point  p*_h difference  M(rn) - M    gamma_1, r_th, rdot_th differences      M - P2 (rn)   M - P3 (rn)
     W1     -3.1e-15       -4.7e-07    -2.7e-11, +2.2e-10, -1.1e-09        -1.37e-04    +1.36e-05
     W2     +2.9e-15       +2.0e-07    -4.5e-10, -5.1e-10, +6.7e-09        -4.96e-04    +4.74e-05
@@ -171,4 +171,4 @@ settled_mass_route.py analyze {'raw': '/Users/nathan/Source/negative-mass-raw/I2
     fit over these 10 points, y = a g + b g^2 + c rdot: coefficients +0.2269, +0.3294, +0.7096; residual max 3.9e-05; leave-one-out errors -7.6e-07, -5.8e-07, -1.0e-05, -6.6e-05, -5.8e-06, -2.3e-05, -4.8e-05, +4.7e-06, +2.6e-05, +5.7e-05
     *post hoc: fitted on points that include the ones tested; descriptions, not tests*
 
-32 checks (10 post hoc, gating nothing), 3 gating checks failed, 1 post hoc checks failed; 12 s
+32 checks (10 post hoc, gating nothing), 3 gating checks failed, 1 post hoc checks failed; 11 s

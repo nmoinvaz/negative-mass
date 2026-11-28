@@ -506,10 +506,10 @@ def analyze_cmd(raw, rn=None):
     emit("RH", "the settled value at two h: |plat(0.01) - plat(0.005)| (plateau mean over the last 1.0 of x+) <= 5e-5", acc, "; ".join(det))
 
     print("\n== The member at departure (#225's slice_masses and fit_asym on the pair's mean profile; t_dep: the unstable mode's part reaches eps = 1e-3 of r_th) and the throat's speed there (#267's)")
-    print("    point  h       p*_h            t_dep    r_th      gamma_1   rdot_th    rms(fit)  M(plateau)")
+    print("    point  h       p*_h            t_dep    r_th      gamma_1   rdot_th     rms(fit)  M(plateau)")
     for (nm, h), e in ok.items():
         mem = e["mem"]
-        print(f"    {nm:5s} {h:<7g} {e['p']['ps']:.10e}  {mem['t_dep']:7.3f}  {mem['r_th']:.6f}  {mem['g1']:.6f}  {e['sp']:+.5f}  {e['rms']:.1e}  {e['SS']['plat1']:.6f}")
+        print(f"    {nm:5s} {h:<7g} {e['p']['ps']:.10e}  {mem['t_dep']:7.3f}  {mem['r_th']:.6f}  {mem['g1']:.6f}  {e['sp']:+.3e}  {e['rms']:.1e}  {e['SS']['plat1']:.6f}")
     acc, det = Acc(), []
     for nm, spec, tg in POINTS:
         e = ok.get((nm, H_FIN))
@@ -633,7 +633,7 @@ def analyze_cmd(raw, rn=None):
     emit("REP", "the point (B, xc, w) = (0.1, 3.0, 0.5) reproduces #266's B = 0.1 (p*_h to 1e-13, M and the member (gamma_1, r_th, rdot_th) to 1e-6)", acc)
 
     if rn:
-        print(f"\n== Post hoc (gates nothing): a second roundoff realization of the six points at h = {H_FIN:g} (p*_h bisected from another bracket: the same p*_h to a few 1e-15, a different ulp-noise realization of the chain), {rn}")
+        print(f"\n== Post hoc (gates nothing): a second roundoff realization of the six points at h = {H_FIN:g} (p*_h bisected from another bracket: the same p*_h to within its own floor, a different ulp-noise realization of the chain), {rn}")
         R2 = {}
         for nm, spec, tg in POINTS:
             e2 = load_point(os.path.join(rn, "runs"), spec, H_FIN)
