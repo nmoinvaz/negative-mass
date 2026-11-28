@@ -44,8 +44,9 @@ dependencies = [
 
 [[package]]
 name = "multishoot"
-version = "4.2.0"
-source = "git+https://github.com/nmoinvaz/multishoot?rev=60d21ab8f1623ae6877014b76da8d2a1f4fc9b75#60d21ab8f1623ae6877014b76da8d2a1f4fc9b75"
+version = "5.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "096d5d01f5170d3cd782c964383b6abc075109d9c254b5e54886e15c6fd556ef"
 dependencies = [
  "multidouble",
  "multisolver",
@@ -55,8 +56,7 @@ dependencies = [
 [[package]]
 name = "multishoot"
 version = "5.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "096d5d01f5170d3cd782c964383b6abc075109d9c254b5e54886e15c6fd556ef"
+source = "git+https://github.com/nmoinvaz/multishoot?rev=75d1e1e67a37cb977817d666c2b2a2570d0e144b#75d1e1e67a37cb977817d666c2b2a2570d0e144b"
 dependencies = [
  "multidouble",
  "multisolver",
@@ -98,6 +98,6 @@ name = "taylor_polar"
 version = "0.1.0"
 dependencies = [
  "multidouble",
- "multishoot 4.2.0",
- "multishoot 5.0.0",
+ "multishoot 5.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "multishoot 5.0.0 (git+https://github.com/nmoinvaz/multishoot?rev=75d1e1e67a37cb977817d666c2b2a2570d0e144b)",
 ]

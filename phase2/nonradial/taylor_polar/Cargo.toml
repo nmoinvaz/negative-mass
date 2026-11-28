@@ -8,9 +8,9 @@ publish = false
 [dependencies]
 multishoot = "=5.0.0"
 multidouble = "6.1.0"
-# the Taylor tables of multishoot#79 (branch feat/taylor-tables: 4.2.0 plus `plane` and `table`), not merged or released; renamed so that the
-# crates.io multishoot above stays the one the default build uses. The feature lib_table waits for a release that contains the pull request.
-multishoot_tables = { package = "multishoot", git = "https://github.com/nmoinvaz/multishoot", rev = "60d21ab8f1623ae6877014b76da8d2a1f4fc9b75", optional = true, features = ["mutate"] }
+# the Taylor tables of multishoot#79 (module `table`), merged into multishoot main (75d1e1e) and in no release (5.0.0 predates it); renamed so that the
+# crates.io multishoot above stays the one the default build uses. The feature lib_table waits for the release that contains the module.
+multishoot_tables = { package = "multishoot", git = "https://github.com/nmoinvaz/multishoot", rev = "75d1e1e67a37cb977817d666c2b2a2570d0e144b", optional = true, features = ["mutate"] }
 
 [features]
 # J's table (table.rs: build_table) from multishoot's `table` module instead of the crate's own step rule (negative-mass #192); compatible with lib_plane and complex
