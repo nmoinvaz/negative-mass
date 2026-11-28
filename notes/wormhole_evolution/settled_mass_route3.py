@@ -617,6 +617,20 @@ def analyze_cmd(raw, rn=None):
     except Exception as ex:
         print(f"    post hoc refit not computable: {ex!r}")
 
+    print("\n== Post hoc (gates nothing): #283's description of P3's residual on the new members (its constant, K = -3.365e-3 from six points of routes W and C, is not refitted)")
+    try:
+        K283 = -3.365e-3
+        for nm in names:
+            e = ok.get((nm, H_FIN))
+            if e is None:
+                continue
+            g1_, rth_, rd_ = e["mem"]["g1"], e["mem"]["r_th"], e["sp"]
+            d_ = sep3(g1_, (rth_, rd_), (rth_, rd_), refs["B"], k=0.0)["q"]["r_th"]["d_lin"]
+            obs = e["SS"]["plat1"] - predict("P3", g1_, rth_, rd_, H_FIN)
+            print(f"    {nm}: r_th - family B's {d_:+.2e}; K x that {K283 * d_:+.2e}; observed M - P3 (#267's) {obs:+.2e}; difference {obs - K283 * d_:+.1e}")
+    except Exception as ex:
+        print(f"    not computable: {ex!r}")
+
     if rn:
         print(f"\n== Post hoc (gates nothing): a second roundoff realization of the new points at h = {H_FIN:g} (p*_h bisected from another bracket), {rn}")
         R2 = {}
