@@ -193,4 +193,4 @@ asymmetry of the member at departure; a relation along one family, not a test th
 ## Files
 
 `settled_mass_b.py` (commands `pstar`, `job`, `member`, `stallscan`, `planted`, `analyze`; `--mutate=`), `settled_mass_b_output.txt`, this note; raw `negative-mass-raw/I266-mac` (`README.md` with the criteria, amendment A1 and
-the mutation targets; `runs/<member>/h<h>/{pstar,chain,member,logs}`, `runs/stallscan*`, `mut/` the 19 mutated analyses of record, `dev/` development runs and their logs, `scripts/`).
+the mutation targets; `runs/<member>/h<h>/{pstar,chain,member,logs}`, `runs/stallscan*`, `mut/` the 19 mutated analyses of record, `dev/` development runs and their logs, `scripts/`, `plot_settled_mass_b.py` with the vendored `data_graphs.py`, and `settled_mass_b.svg`: M(B) and M/r_th − M₀ against γ₁).
