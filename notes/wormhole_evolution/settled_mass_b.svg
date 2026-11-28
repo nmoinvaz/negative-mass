@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="664" viewBox="0 0 760 664" font-family="system-ui, sans-serif">
+<style>@media (prefers-color-scheme: dark){[fill="#fcfcfb"]{fill:#201f1d}[stroke="#fcfcfb"]{stroke:#201f1d}[fill="#0b0b0b"]{fill:#e8e6e3}[stroke="#0b0b0b"]{stroke:#e8e6e3}[fill="#52514e"]{fill:#a8a49d}[stroke="#52514e"]{stroke:#a8a49d}[fill="#e7e6e2"]{fill:#343230}[stroke="#e7e6e2"]{stroke:#343230}[fill="#c98500"]{fill:#d69a2d}[stroke="#c98500"]{stroke:#d69a2d}[fill="#eb6834"]{fill:#dd5c26}[stroke="#eb6834"]{stroke:#dd5c26}[fill="#eda100"]{fill:#c08800}[stroke="#eda100"]{stroke:#c08800}[fill="#e87ba4"]{fill:#d1678f}[stroke="#e87ba4"]{stroke:#d1678f}[fill="#4a3aa7"]{fill:#7263cf}[stroke="#4a3aa7"]{stroke:#7263cf}[fill="#a6339a"]{fill:#c257b5}[stroke="#a6339a"]{stroke:#c257b5}[fill="#7a7668"]{fill:#948e82}[stroke="#7a7668"]{stroke:#948e82}}</style>
+<rect width="760" height="664" fill="#fcfcfb"/>
+<text x="16.0" y="28.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">Settled mass of family G against the normal amplitude B</text>
+<text x="16.0" y="44.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">M_AH plateau at e^-f = 1.57e6, D = 4, delta = 1e-8, h = 0.005; a = 1. Diamond: B = 0.125, post hoc. B = 0.2 has no stall.</text>
+<line x1="86.0" y1="74.0" x2="86.0" y2="264.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="86.0" y="279.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0</text>
+<line x1="300.3" y1="74.0" x2="300.3" y2="264.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="300.3" y="279.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.05</text>
+<line x1="514.6" y1="74.0" x2="514.6" y2="264.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="514.6" y="279.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.1</text>
+<line x1="86.0" y1="209.7" x2="686.0" y2="209.7" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="213.7" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">0.230</text>
+<line x1="86.0" y1="141.9" x2="686.0" y2="141.9" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="145.9" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">0.240</text>
+<line x1="86.0" y1="74.0" x2="686.0" y2="74.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="78.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">0.250</text>
+<line x1="86.0" y1="264.0" x2="686.0" y2="264.0" stroke="#52514e" stroke-width="1"/>
+<line x1="86.0" y1="74.0" x2="86.0" y2="264.0" stroke="#52514e" stroke-width="1"/>
+<text x="386.0" y="298.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">normal amplitude B</text>
+<text x="36.1" y="169.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 36.1 169.0)">settled mass M_AH (a)</text>
+<g><circle cx="86.0" cy="256.6" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>B = 0: M = 0.223086</title></g>
+<g><circle cx="193.1" cy="253.4" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>B = 0.025: M = 0.223563</title></g>
+<g><circle cx="300.3" cy="242.0" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>B = 0.05: M = 0.225235</title></g>
+<g><circle cx="514.6" cy="172.1" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>B = 0.1: M = 0.235548</title></g>
+<g><polygon points="621.7,87.2 628.2,93.7 621.7,100.2 615.2,93.7" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>B = 0.125: M = 0.247100</title></g>
+<text x="680.0" y="254.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">B = 0.2: no stall, no settled mass (chain stops at 'horizon lost')</text>
+<circle cx="86.0" cy="256.6" r="10" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
+<line x1="94.2" y1="250.9" x2="126.0" y2="228.6" stroke="#0b0b0b" stroke-width="1"/>
+<text x="130.0" y="232.6" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="bold">B = 0: 0.223086 (S: 0.22309)</text>
+<circle cx="514.6" cy="172.1" r="10" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
+<line x1="508.2" y1="164.4" x2="484.6" y2="136.1" stroke="#0b0b0b" stroke-width="1"/>
+<text x="480.6" y="140.1" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="bold">B = 0.1: 0.235548 (#253)</text>
+<text x="16.0" y="330.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">M / r_th - M_0 against the asymmetry gamma_1 of the member at departure</text>
+<text x="16.0" y="346.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">line: dM' = a gamma_1 + b gamma_1^2 through the four B; gray: the same without the r_th scaling</text>
+<line x1="86.0" y1="376.0" x2="86.0" y2="566.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="86.0" y="581.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0</text>
+<line x1="227.2" y1="376.0" x2="227.2" y2="566.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="227.2" y="581.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.02</text>
+<line x1="368.4" y1="376.0" x2="368.4" y2="566.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="368.4" y="581.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.04</text>
+<line x1="509.5" y1="376.0" x2="509.5" y2="566.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="509.5" y="581.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.06</text>
+<line x1="650.7" y1="376.0" x2="650.7" y2="566.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="650.7" y="581.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.08</text>
+<line x1="86.0" y1="566.0" x2="686.0" y2="566.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="570.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">0.000</text>
+<line x1="86.0" y1="528.0" x2="686.0" y2="528.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="532.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">0.005</text>
+<line x1="86.0" y1="490.0" x2="686.0" y2="490.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="494.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">0.010</text>
+<line x1="86.0" y1="452.0" x2="686.0" y2="452.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="456.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">0.015</text>
+<line x1="86.0" y1="414.0" x2="686.0" y2="414.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="418.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">0.020</text>
+<line x1="86.0" y1="376.0" x2="686.0" y2="376.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="380.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">0.025</text>
+<line x1="86.0" y1="566.0" x2="686.0" y2="566.0" stroke="#52514e" stroke-width="1"/>
+<line x1="86.0" y1="376.0" x2="86.0" y2="566.0" stroke="#52514e" stroke-width="1"/>
+<text x="386.0" y="600.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">asymmetry gamma_1 of the member at departure</text>
+<text x="36.1" y="471.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 36.1 471.0)">M / r_th - M_0 (a)</text>
+<polyline fill="none" stroke="#2a78d6" stroke-width="1.5" points="86.0,566.0 96.2,563.8 106.3,561.5 116.5,559.2 126.7,556.9 136.8,554.6 147.0,552.2 157.2,549.8 167.4,547.4 177.5,544.9 187.7,542.5 197.9,540.0 208.0,537.4 218.2,534.9 228.4,532.3 238.5,529.7 248.7,527.0 258.9,524.4 269.1,521.7 279.2,519.0 289.4,516.2 299.6,513.5 309.7,510.7 319.9,507.8 330.1,505.0 340.2,502.1 350.4,499.2 360.6,496.3 370.7,493.3 380.9,490.3 391.1,487.3 401.3,484.3 411.4,481.2 421.6,478.1 431.8,475.0 441.9,471.8 452.1,468.7 462.3,465.5 472.4,462.2 482.6,459.0 492.8,455.7 502.9,452.4 513.1,449.0 523.3,445.7 533.5,442.3 543.6,438.9 553.8,435.4 564.0,432.0 574.1,428.5 584.3,424.9 594.5,421.4 604.6,417.8 614.8,414.2 625.0,410.6 635.2,406.9 645.3,403.2 655.5,399.5 665.7,395.8 675.8,392.0 686.0,388.2"/>
+<g><circle cx="106.7" cy="562.4" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>B = 0.025: M - M_0 = 0.000477 (no r_th scaling)</title></g>
+<g><circle cx="106.7" cy="561.4" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>B = 0.025: gamma_1 = 0.00294, r_th = 0.99945, M/r_th - M_0 = 0.000601</title></g>
+<g><circle cx="169.6" cy="549.7" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>B = 0.05: M - M_0 = 0.002149 (no r_th scaling)</title></g>
+<g><circle cx="169.6" cy="546.8" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>B = 0.05: gamma_1 = 0.01184, r_th = 0.99836, M/r_th - M_0 = 0.002520</title></g>
+<g><circle cx="427.1" cy="471.3" r="5.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>B = 0.1: M - M_0 = 0.012462 (no r_th scaling)</title></g>
+<g><circle cx="427.1" cy="476.4" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>B = 0.1: gamma_1 = 0.04832, r_th = 1.00288, M/r_th - M_0 = 0.011786</title></g>
+<g><polygon points="618.6,377.0 625.1,383.5 618.6,390.0 612.1,383.5" fill="#7a7668" stroke="#fcfcfb" stroke-width="2"/><title>B = 0.125: M - M_0 = 0.024014 (no r_th scaling)</title></g>
+<g><polygon points="618.6,406.4 625.1,412.9 618.6,419.4 612.1,412.9" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>B = 0.125: gamma_1 = 0.07545, r_th = 1.01588, M/r_th - M_0 = 0.020151</title></g>
+<text x="686.0" y="366.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">M - M_0, no r_th scaling</text>
+<circle cx="522.9" cy="362" r="4.5" fill="#7a7668"/>
+<text x="506.9" y="366.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">M / r_th - M_0</text>
+<circle cx="407.6" cy="362" r="4.5" fill="#2a78d6"/>
+<circle cx="427.1" cy="476.4" r="10" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
+<line x1="420.0" y1="469.4" x2="387.1" y2="436.4" stroke="#0b0b0b" stroke-width="1"/>
+<text x="383.1" y="440.4" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="bold">B = 0.1: gamma_1 = 0.0483, r_th = 1.0029</text>
+<text x="16.0" y="652.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">settled_mass_b.py at negative-mass 04c8407  ·  chain: #41 via #253  ·  member: #225  ·  Apple M5, 32 GB, macOS 27.0.1</text>
+<text x="16.0" y="636.0" font-size="10" fill="#c98500" text-anchor="start" font-weight="normal">⚠</text>
+<text x="30.0" y="636.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">post hoc: B = 0.125 (diamond) and h = 0.02 gate nothing · the gating leave-one-out over three B misses its bar (7.9e-5 against 6e-5)</text>
+<a href="https://github.com/nmoinvaz/negative-mass"><text x="744" y="652" font-size="10" fill="#52514e" text-anchor="end" text-decoration="underline">github.com/nmoinvaz/negative-mass</text></a>
+</svg>

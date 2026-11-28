@@ -120,7 +120,9 @@ tortoise gauge as data, a D = 6 growth control (W²a² = 4.68662054311946479 is 
 `bench/` (the design's kernel stand-ins, not the evolution), `design.md`, `domain.svg`; `threshold.py` (+ `threshold_output.txt`,
 `threshold.md`, #40) and `threshold_check.py` (+ `threshold_check_output.txt`, the coordinator's review of #40); `expansion.py`
 (+ `expansion_output.txt`, `expansion.md`, `expansion_H.svg`, #213); `constraint_plateau.py` (+ `constraint_plateau_output.txt`,
-`constraint_plateau.md`, #226).
+`constraint_plateau.md`, #226). The settled-mass notes of #253, #266 and #267 each have a figure drawn from their raw folder:
+`settled_mass_g.svg`, `settled_mass_b.svg` and `settled_mass_member.svg`, by `settled_mass_g_graph.py`, `settled_mass_b_graph.py` and
+`settled_mass_member_graph.py`.
 
 ## Coordinator's review
 

@@ -5,6 +5,10 @@ Code: [settled_mass_g.py](settled_mass_g.py), a thin driver that imports #41's `
 written before any chain run of G (criteria at 08af1c1, mutation targets at 17f453b, runs of record at a31d31d): negative-mass-raw `I253-rpi5` (README, `runs/`, `mut/`, `dev/`, `settled_mass_g.svg`). Status words as in AGENTS.md: every mass below is *numerical evidence*; what is not shown is
 marked *conjecture*. No sentence here says a result is new. Units: a = 1 is the throat radius of the initial static wormhole, 8πG = 1, D = 4, M = r/2 on the apparent horizon (r₊ = 0).
 
+![M_AH of family G against S from formation to the limit, its plateau, and the settled mass against δ (#253)](settled_mass_g.svg)
+
+The figure is drawn by [settled_mass_g_graph.py](settled_mass_g_graph.py) from the raw folder named above.
+
 ## Answer
 
 **Family G does not settle at S's mass, and its settled mass is not one number.** At D = 4, on the collapse side of its own p*ₕ with δ = 1e-8, M_AH falls from 0.4955 a at the first trapped cell and settles, to the

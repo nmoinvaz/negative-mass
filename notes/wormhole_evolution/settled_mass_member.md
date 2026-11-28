@@ -7,6 +7,10 @@ negative-mass-raw `I267-mac` (README with the criteria, the bars and the mutatio
 parameter below is *numerical evidence*; what is not shown is marked *conjecture*. No sentence here says a result is new. Units: a = 1 is the throat radius of the initial static wormhole, 8πG = 1, D = 4, M = r/2 on the
 apparent horizon.
 
+![Settled mass of family G against δ with #266's prediction, the residual, and r_th along the stall (#267)](settled_mass_member.svg)
+
+The figure is drawn by [settled_mass_member_graph.py](settled_mass_member_graph.py) from the raw folder named above.
+
 ## Answer
 
 **No. Family G's settled mass rises with the stall as the member's throat radius does, but #266's relation, found along B, predicts only 57 % of the rise and misses by up to 9e-4 against a declared bar of 6e-5.**

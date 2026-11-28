@@ -6,6 +6,10 @@ one gating check fails, REL, below). Raw output, with the criteria written befor
 mutation targets; `runs/`, `mut/`, `dev/`, `scripts/`). Status words as in AGENTS.md: every mass and every member parameter below is *numerical evidence*; what is not shown is
 marked *conjecture*. No sentence here says a result is new. Units: a = 1 is the throat radius of the initial static wormhole, 8πG = 1, D = 4, M = r/2 on the apparent horizon.
 
+![Settled mass of family G against the normal amplitude B, and M/r_th − M₀ against γ₁ (#266)](settled_mass_b.svg)
+
+The figure is drawn by [settled_mass_b_graph.py](settled_mass_b_graph.py) from the raw folder named above.
+
 ## Answer
 
 **B = 0 reproduces S's settled mass, B up to 0.1 gives a settled mass that rises with the asymmetry of the member the run leaves, and B = 0.2 has no stall to measure.** At D = 4,
