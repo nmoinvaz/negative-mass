@@ -1,0 +1,78 @@
+# derive
+[pass] S1: series at S: A'(0) = 2 kappa, A''(0) = -2, F_Pi(0) = G0/kappa, a = g/s^2 = G0/sqrt2, g' + eps r s phi_Pi = 2 sqrt2 s G rho^2/R exactly; so M forces g z' = -(Y_N' + s F_Pi Y_N) + O(s^3) and the exact mode (Y_N = c2 R) has z = -(pi/sqrt2) c2 ln|s| + O(1)  (F_Pi(0) = pi*G0/2, a = sqrt(2)*G0/2, zeta = -sqrt(2)*pi/2, identity residual 0)
+[pass] S2: Y = V R(rho(Pi)) and Y = U R(rho(Pi)) both solve the master equation 2 kappa^2 Pi u_VU + Vhat u/2 = 0 (u = Y/rho): the same ODE kappa A f' + A (A f')'/2 = Vhat f/2 for f = R/rho (its Pi-dependence drops out); evaluated at 50 digits at 6 points  (max relative residual 7.1e-49; symbolic simplify: 0)
+[pass] S3: time reversal of the slice code (n and dphi_N flipped): c2(TD) = -c2'(D), c2'(TD) = -c2(D), c1(TD) = c1(D) on #258's datum G and 3 random compact data, relative to max(|c2|, |c2'|)  (0.0e+00 (c2 -6.6535e-04, c2' 3.5682e-04); 0.0e+00 (c2 -3.1061e-04, c2' -2.8814e-05); 0.0e+00 (c2 -2.7093e-04, c2' 1.3908e-04); 0.0e+00 (c2 -1.6971e-04, c2' 2.5808e-04))
+derive: 3 of 3 pass (2 s)
+
+# check
+[pass] P1: exact growing mode data of #258 (M = 0, [0.3, 1.6]): |Theta_gen| over its largest term <= 1e-8 (the mode carries no mass), M <= 1e-9 of its scale before the fix; dz/d ln s of the M equation with Y_N = c2 R over -(pi/sqrt2) c2 equals 1 to 1e-5 at s = 1e-4 and 1e-3 at s = 1e-3  (Theta 1.5e-12; M 2.8e-11; slope ratio 1.0015386, 1.0000243, 1.0000003)
+    (P1: 0 s)
+[pass] L1: smoothness condition on gauge-invariant Y: Y_N''(0)/(-F_Pi(0) Y_N(0)) = 1 to 1e-3 (Richardson, h = 0.00125, 0.000625) for the evolved smooth classes A0, A1R, A1L, L, G, Lm, Rb, Gb with |Y_N(0)| >= 1e-4; the exact mode Y_N = c2 R has Y_N''(0) = 0 (|.| <= 1e-6 c2)  (A0: 1.000151, 1.000037 -> 1.000000 (Y_N(0) 2.98e-02); A1R: 1.000130, 1.000034 -> 1.000003 (Y_N(0) 1.38e-03); A1L: 1.000090, 1.000024 -> 1.000003 (Y_N(0) 1.68e-02); L: 0.999987, 0.999996 -> 1.000000 (Y_N(0) -9.94e-04); G: 0.999986, 0.999997 -> 1.000000 (Y_N(0) -9.94e-04); Lm: 1.000236, 1.000059 -> 1.000000 (Y_N(0) -2.73e-03); Rb: 0.834017, 0.958763 -> 1.000345 (Y_N(0) -2.36e-04); Gb: 0.986964, 0.996765 -> 1.000032 (Y_N(0) -2.96e-03); exact mode R'' (s = 0) = 1.5e-09, against -F_Pi = -3.8839)
+    (L1: 61 s)
+[pass] L2: exact double-null fields (#269's EF family + gauge vector): d_V dphi = zeta ln V + const with zeta = -(pi/sqrt2) c2 (S1's coefficient) to 1e-3 at V = 1e-6 and 1e-2 at V = 1e-5, for two U and two base rays (the residual gauge only shifts the constant)  (U -0.5, Vb 0.05: 1.01530, 1.00243, 1.00033, 1.00004; U -0.5, Vb 1.0: 1.03822, 1.00473, 1.00056, 1.00006; U -1.0, Vb 0.05: 1.03155, 1.00497, 1.00068, 1.00009; U -1.0, Vb 1.0: 1.10263, 1.01212, 1.00139, 1.00016)
+    (L2: 0 s)
+[pass] P2: static mass mode (amplitude dL = 2e-3, exact ray data of #259) through the solver, Richardson of h = 0.0025, 0.00125: c1 = 1e-3 at S and on both horizons to 1e-6 relative; c2, c2' by the slice functionals and both fits <= 1e-6 c1  (c1S = 1.0000e-03, c2S = -4.0441e-11, c2pS = -1.3216e-12, c1p = 1.0000e-03, c1m = 1.0000e-03, c2p = -3.0650e-11, c2m = -9.6158e-13, c2pH1 = -1.7615e-11)
+    (P2: 2 s)
+[pass] P3: growing mode Y = c2 V R from exact ray data on V >= 0.05: error of Y over its maximum <= 1e-3 at h = 0.00125, last ratio 4.0 +- 0.3; c2 = beta/2 by the horizon fit and by the slice functional at V0 = 0.5, 1 to 1e-6 relative (Richardson h = 0.0025, 0.00125); c1 of the fit <= 1e-6 c2  (Y errors 3.64e-03, 9.11e-04, 2.28e-04; ratio 4.00; fit 1.000000004e-03, slices 1.000000009e-03, 1.000000121e-03 (exact 1.0e-03); c1 1.8e-11)
+    (P3: 2 s)
+[pass] P4: decaying mode Y = c2' U R from the time reversed exact ray data (U <= -0.05): error of Y over its maximum <= 1e-3 at h = 0.00125, last ratio 4.0 +- 0.3; c2' = -beta/2 by the fit on V = 0 and by the slice functional d_U at U0 = -0.5, -1 to 1e-6 relative; c1 of the fit <= 1e-6 |c2'|  (Y errors 1.16e-02, 2.90e-03, 7.25e-04; ratio 4.00; fit -1.000000085e-03, slices -1.000000083e-03, -1.000000123e-03 (exact -1.0e-03); c1 -2.9e-10)
+    (P4: 2 s)
+[pass] H1: horizon law on the past horizon V = 0: dr(0, U) is linear in U on [-2, 0.06]; least-squares residual <= 2e-5 of max(max|dr|, 1e-3) at h = 0.00125, and falling by 4 +- 0.5 per halving where max|dr| >= 1e-5; classes L, G, A0, A1R, A1L, Lm, Rb, Gb  (L: res 9.2e-01, 9.2e-01, 9.2e-01 (ratios 1.00, 1.00), max|dr| on V = 0 1.45e-10 (seed only, ratios not scored); G: res 5.6e-01, 1.4e-01, 3.5e-02 (ratios 3.99, 3.99), max|dr| on V = 0 3.84e-09 (seed only, ratios not scored); A0: res 5.7e-06, 1.4e-06, 3.6e-07 (ratios 3.99, 3.99), max|dr| on V = 0 4.15e-03; A1R: res 1.7e-05, 4.3e-06, 1.1e-06 (ratios 3.99, 4.00), max|dr| on V = 0 1.36e-04; A1L: res 5.1e-06, 1.3e-06, 3.2e-07 (ratios 3.98, 3.99), max|dr| on V = 0 2.76e-03; Lm: res 2.0e-01, 2.0e-01, 2.0e-01 (ratios 1.00, 1.00), max|dr| on V = 0 9.53e-09 (seed only, ratios not scored); Rb: res 3.3e-05, 8.2e-06, 2.1e-06 (ratios 4.00, 4.00), max|dr| on V = 0 4.72e-04; Gb: res 3.3e-05, 8.2e-06, 2.1e-06 (ratios 3.97, 3.99), max|dr| on V = 0 4.72e-04)
+    (H1: 4 s)
+[pass] H2: c2' = d_U dr(S): the slice functional (d_U from the slice values and the normal derivative) at the slices crossing V = 0 at U0 = 0 (through S), -0.5, -1 equals the fit on V = 0 to 1e-6 of max(|c2'|, 1e-5) (Richardson, h = 0.00125, 0.000625) for 8 classes and 8 random data; no random datum has |c2'| < 1e-6  (worst 8.8e-08; |c2'| of the random data from 5.02e-05 to 1.96e-03; L: c2' -2.341045e-14, slices U0 = 0, -0.5, -1: 1.5e-09, 3.1e-09, 2.3e-09; G: c2' -1.920060e-09, slices U0 = 0, -0.5, -1: 1.5e-09, 3.1e-09, 2.3e-09; A0: c2' 1.418882e-03, slices U0 = 0, -0.5, -1: 6.0e-11, 1.4e-10, 2.1e-10; A1R: c2' 3.853927e-05, slices U0 = 0, -0.5, -1: 5.6e-10, 1.2e-09, 1.0e-09; A1L: c2' 1.337668e-03, slices U0 = 0, -0.5, -1: 1.6e-10, 2.1e-10, 1.7e-10; Lm: c2' 2.936974e-13, slices U0 = 0, -0.5, -1: 2.9e-08, 3.5e-08, 1.4e-08; Rb: c2' -2.359099e-04, slices U0 = 0, -0.5, -1: 5.3e-08, 6.7e-08, 8.2e-08; Gb: c2' -2.359099e-04, slices U0 = 0, -0.5, -1: 5.2e-08, 6.5e-08, 8.2e-08)
+    (H2: 64 s)
+[pass] H3: the three modes reproduce the horizon values of evolved data: dr(V, 0) - (c1 + c2 V) and dr(0, U) - (c1 + c2' U), with c1, c2, c2' from the slice at S (Richardson, h = 0.00125, 0.000625), over max(max|dr_h|, 1e-3) <= 1e-6 at every node of both horizons, for 8 classes and 8 random data  (worst 3.8e-08; L: c1 -2.139e-17, c2 -9.942e-04, c2' -8.178e-15; dev 1.9e-11 (U = 0), 5.5e-12 (V = 0); G: c1 -1.032e-17, c2 -9.942e-04, c2' -1.920e-09; dev 1.4e-10 (U = 0), 5.8e-12 (V = 0); A0: c1 4.068e-03, c2 2.838e-02, c2' 1.419e-03; dev 3.8e-10 (U = 0), 9.6e-12 (V = 0); A1R: c1 1.338e-04, c2 1.338e-03, c2' 3.854e-05; dev 3.2e-10 (U = 0), 9.7e-12 (V = 0); A1L: c1 2.675e-03, c2 1.542e-02, c2' 1.338e-03; dev 2.9e-10 (U = 0), 6.9e-12 (V = 0) ...)
+    (H3: 0 s)
+check: 9 of 9 pass (135 s)
+
+# table
+== the three exact modes through the Kruskal solver (Richardson of h = 0.0025, 0.00125); exact values in the last column ==
+static (dL = 2e-3):  c1 = 9.999999965e-04 (S), 9.999999951e-04 (H+ fit), 9.999999966e-04 (H- fit); c2 = -4.04e-11, -3.06e-11; c2' = -1.32e-12, -9.62e-13;  exact (1e-3, 0, 0)
+growing  (beta = 2e-3): Y error 3.64e-03, 9.11e-04, 2.28e-04; c2: fit 1.000000004e-03, slices at 3 crossings 1.000000009e-03, 1.000000121e-03, 1.000002499e-03; c1 fit 1.8e-11;  exact 1.000e-03
+decaying (beta = 2e-3): Y error 1.16e-02, 2.90e-03, 7.25e-04; c2': fit -1.000000085e-03, slices at 3 crossings -1.000000083e-03, -1.000000123e-03, -1.000000264e-03; c1 fit -2.9e-10;  exact -1.000e-03
+== classes and random data: c1, c2, c2' by the slice at S, by the fits (Richardson of h = 0.00125, 0.000625) ==
+| datum | c1 (S) | c1 (fit U = 0) | c1 (fit V = 0) | c2 (S) | c2 (fit) | c2' (S) | c2' (fit) |
+|---|---|---|---|---|---|---|---|
+| L | -2.139007e-17 | -1.133135e-13 | -2.825546e-14 | -9.942330e-04 | -9.942330e-04 | -8.178065e-15 | -2.341045e-14 |
+| G | -1.032004e-17 | -4.982133e-13 | -2.824574e-14 | -9.942330e-04 | -9.942330e-04 | -1.920045e-09 | -1.920060e-09 |
+| A0 | 4.067796e-03 | 4.067796e-03 | 4.067796e-03 | 2.837763e-02 | 2.837763e-02 | 1.418882e-03 | 1.418882e-03 |
+| A1R | 1.337668e-04 | 1.337668e-04 | 1.337668e-04 | 1.337668e-03 | 1.337668e-03 | 3.853927e-05 | 3.853927e-05 |
+| A1L | 2.675336e-03 | 2.675336e-03 | 2.675336e-03 | 1.541571e-02 | 1.541571e-02 | 1.337668e-03 | 1.337668e-03 |
+| Lm | 1.103947e-13 | 1.378094e-12 | 2.113665e-13 | -2.725805e-03 | -2.725805e-03 | 3.197818e-15 | 2.936974e-13 |
+| Rb | -5.736556e-13 | -3.422370e-12 | -5.598405e-13 | -1.880631e-11 | -5.160952e-12 | -2.359099e-04 | -2.359099e-04 |
+| Gb | -4.630951e-13 | -2.044466e-12 | -3.483363e-13 | -2.725805e-03 | -2.725805e-03 | -2.359099e-04 | -2.359099e-04 |
+| rand0 | -1.599719e-03 | -1.599719e-03 | -1.599719e-03 | -9.443356e-03 | -9.443356e-03 | -3.525909e-04 | -3.525910e-04 |
+| rand1 | 1.441618e-03 | 1.441618e-03 | 1.441618e-03 | 8.434544e-03 | 8.434544e-03 | 7.033524e-04 | 7.033524e-04 |
+| rand2 | 1.115894e-03 | 1.115894e-03 | 1.115894e-03 | 7.174750e-03 | 7.174750e-03 | 6.353961e-04 | 6.353961e-04 |
+| rand3 | 2.066310e-03 | 2.066310e-03 | 2.066310e-03 | 1.491365e-02 | 1.491365e-02 | 8.235080e-04 | 8.235080e-04 |
+| rand4 | -4.177025e-03 | -4.177025e-03 | -4.177025e-03 | -2.400532e-02 | -2.400532e-02 | -1.958906e-03 | -1.958906e-03 |
+| rand5 | -9.274148e-04 | -9.274148e-04 | -9.274148e-04 | -8.094288e-03 | -8.094288e-03 | -1.802697e-04 | -1.802697e-04 |
+| rand6 | -6.638092e-04 | -6.638092e-04 | -6.638092e-04 | -6.853508e-03 | -6.853508e-03 | -5.016543e-05 | -5.016543e-05 |
+| rand7 | -5.692435e-04 | -5.692435e-04 | -5.692435e-04 | -3.280071e-03 | -3.280071e-03 | -2.813128e-04 | -2.813128e-04 |
+== the smoothness condition Y_N''(0)/(-F_Pi(0) Y_N(0)), Richardson of h = 0.00125, 0.000625 ==
+A0: 1.000151, 1.000037 -> 1.000000; Y_N(0) = 2.9797e-02
+A1R: 1.000130, 1.000034 -> 1.000003; Y_N(0) = 1.3762e-03
+A1L: 1.000090, 1.000024 -> 1.000003; Y_N(0) = 1.6753e-02
+L: 0.999987, 0.999996 -> 1.000000; Y_N(0) = -9.9423e-04
+G: 0.999986, 0.999997 -> 1.000000; Y_N(0) = -9.9423e-04
+Lm: 1.000236, 1.000059 -> 1.000000; Y_N(0) = -2.7258e-03
+Rb: 0.834017, 0.958763 -> 1.000345; Y_N(0) = -2.3591e-04
+Gb: 0.986964, 0.996765 -> 1.000032; Y_N(0) = -2.9617e-03
+F_Pi(0) = 3.88386611 (pi G0/2 with G0 = 2.47254596), -pi/sqrt2 = -2.22144147
+
+# mutations
+s_zeta: fired ['S1']; declared ['S1']; equal
+s_kappa: fired ['S2']; declared ['S2']; equal
+s_noflip: fired ['S3']; declared ['S3']; equal
+s_swapfn: fired ['S3']; declared ['S3']; equal
+fn_swap: fired ['H2', 'H3', 'P2', 'P4']; declared ['H2', 'H3', 'P2', 'P4']; equal
+fn_aT: fired ['H2', 'H3', 'P2', 'P4']; declared ['H2', 'H3', 'P2', 'P4']; equal
+law_c1: fired ['H3']; declared ['H3']; equal
+law_x: fired ['H2', 'P4']; declared ['H2', 'P4']; equal
+law_off: fired ['H1', 'H2', 'H3', 'P2', 'P4']; declared ['H1', 'H2', 'H3', 'P2', 'P4']; equal
+gauge_dF: fired ['P3', 'P4']; declared ['P3', 'P4']; equal
+gauge_dphi: fired ['L2', 'P3', 'P4']; declared ['L2', 'P3', 'P4']; equal
+alpha_off: fired ['P1']; declared ['P1']; equal
+sc_off: fired ['L1']; declared ['L1']; equal
+zeta_F: fired ['P1']; declared ['P1']; equal
+14 of 14 fired sets equal the declared ones
