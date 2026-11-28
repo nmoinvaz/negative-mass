@@ -42,6 +42,9 @@ MUTATIONS = {
     "m1_basis": "M1's closed form with 5 zeta(5) as 4 zeta(5)",
     "m1_J2": "M1's closed form with J2 + 0.01",
     "fp_const": "FP rule's constant term replaced by the next term",
+    "m2_K2K2": "<K2^2>'s (61/6) zeta(6) as (60/6) zeta(6)",
+    "m2_J5": "J5's 1080 zeta(5) as 1008 zeta(5)",
+    "m2_M3": "<lt^3 D3>'s (11/4) zeta(6) as (10/4) zeta(6)",
 }
 
 
@@ -763,7 +766,7 @@ def main():
     for part in args.parts:
         print("\n== part %s ==" % part)
         t = time.time()
-        {"sym": run_sym, "exch": run_exch, "shifts": run_shifts, "bnd": run_bnd, "masters": run_masters, "fp": run_fp, "ctlsum": run_ctlsum}[part](args)
+        {"sym": run_sym, "exch": run_exch, "shifts": run_shifts, "bnd": run_bnd, "masters": run_masters, "masters2": run_masters2, "fp": run_fp, "ctlsum": run_ctlsum}[part](args)
         print("# part %s: %.1f s" % (part, time.time() - t))
     print("\n%d check(s) failed%s" % (len(FAILS), ": " + ", ".join(FAILS) if FAILS else ""))
     sys.exit(1 if FAILS else 0)
@@ -1023,6 +1026,75 @@ def run_masters(args):
     check("M3", digits(M3h, M3c) >= 40, "<lt^3 D3> = %s against pi (9/16 zeta(3)^2 - 11 pi^6/3780) found by PSLQ: %s digits" % (mp.nstr(M3h, 30), dd(digits(M3h, M3c), 4)))
 
 
+def run_masters2(args):
+    """every master integral that omega4.md and omega5.md use, by quadrature of the definitions (no Fourier series, no Parseval)
+    against the closed forms the notes state (read after the derivations were committed; amendment A2)."""
+    mp.mp.dps = 58
+    q, pi = mp.log(2), mp.pi
+    z2, z3, z4, z5, z6 = (mp.zeta(n) for n in (2, 3, 4, 5, 6))
+    half = pi / 2
+    ell = lambda t: mp.log(mp.cos(t))
+    lt = lambda t: mp.log(2 * mp.cos(t))
+    Cf = lambda t: mp.clsin(2, pi - 2 * t)
+    D3f = lambda t: mp.mpf(3) / 4 * z3 + mp.clcos(3, pi - 2 * t)
+    cacheK2, cacheK3 = {}, {}
+    def K2(t):
+        if t not in cacheK2:
+            cacheK2[t] = mp.quad(lambda s_: lt(s_) ** 2, [0, t])
+        return cacheK2[t]
+    def K3(t):
+        if t not in cacheK3:
+            cacheK3[t] = mp.quad(lambda s_: lt(s_) ** 3, [0, t])
+        return cacheK3[t]
+    def Q(f):
+        return mp.quad(f, [0, half])
+    def cmp(name, val, ref, what, bar=40):
+        d = digits(val, ref) if ref != 0 else -mp.log10(abs(val))
+        dtxt = dd(d, 4) if d < 900 else ">= %d (equal at the working precision)" % mp.mp.dps
+        check(name, d >= bar, "%s: quadrature %s, closed form %s, %s digits (bar %d)" % (what, mp.nstr(val, 22), mp.nstr(ref, 22), dtxt, bar))
+    # moments of ln cos and of lt
+    J = [Q(lambda t, n=n: ell(t) ** n) for n in range(0, 6)]
+    Bf = lambda a: mp.sqrt(pi) / 2 * mp.gamma((a + 1) / 2) / mp.gamma(a / 2 + 1)
+    tay = mp.taylor(Bf, 0, 5)
+    worst = max(digits(J[n], tay[n] * mp.factorial(n)) for n in range(1, 6))
+    check("MJ", min(digits(J[n], tay[n] * mp.factorial(n)) for n in range(1, 6)) >= 40, "J_n = int ln^n cos for n = 1 .. 5 against n! [a^n] B(a), B(a) = (sqrt(pi)/2) Gamma((a+1)/2)/Gamma(a/2+1): worst %s digits" % dd(min(digits(J[n], tay[n] * mp.factorial(n)) for n in range(1, 6)), 4))
+    c1219 = 1080 if MUT != "m2_J5" else 1008
+    J5c = pi / 96 * (-19 * pi**4 * q - c1219 * z5 - 60 * pi**2 * z3 - 720 * q**2 * z3 - 40 * pi**2 * q**3 - 48 * q**5)
+    cmp("MJ5", J[5], J5c, "J5 of omega4.md")
+    Jt = [Q(lambda t, n=n: lt(t) ** n) for n in range(0, 7)]
+    Jtc = {2: pi**3 / 24, 3: -3 * pi * z3 / 4, 4: 19 * pi**5 / 480, 5: -(5 * pi / 8) * (18 * z5 + pi**2 * z3),
+           6: 5 * pi / 2688 * (6048 * z3**2 + 55 * pi**6)}
+    for n in range(2, 7):
+        cmp("MJt%d" % n, Jt[n], Jtc[n], "J~_%d = int ln^%d(2 cos)" % (n, n))
+    cmp("Mth2", Q(lambda t: t**2), pi**3 / 24, "<theta^2>")
+    C2 = Q(lambda t: Cf(t) ** 2)
+    cmp("MC2", C2, pi**5 / 360, "<C^2>")
+    cmp("MlC2", Q(lambda t: ell(t) * Cf(t) ** 2), -q * pi**5 / 360, "<ell C^2> = -ln2 <C^2>")
+    v = Q(lambda t: lt(t) * Cf(t) ** 2)
+    check("MltC2", abs(v) < mp.mpf(10) ** -40, "<lt C^2> = %s (closed form 0, bar 1e-40)" % mp.nstr(v, 5))
+    cmp("MthltC", Q(lambda t: t * lt(t) * Cf(t)), -C2 / 4, "<theta lt C> = -<C^2>/4")
+    cmp("MthC", Q(lambda t: t * Cf(t)), pi * z3 / 4, "<theta C>")
+    cmp("MuC", Q(lambda t: mp.tan(t) * Cf(t)), pi**3 / 12, "<u C>")
+    l2D3 = Q(lambda t: lt(t) ** 2 * D3f(t))
+    cmp("Mlt2D3", l2D3, pi / 4 * (5 * z5 - 2 * z2 * z3) + pi**3 * z3 / 32, "<lt^2 D3>")
+    ell2D3 = Q(lambda t: ell(t) ** 2 * D3f(t))
+    Lc2 = lambda t: K2(t) - q * Cf(t) + q**2 * t        # Lc2 = K2 - ln2 C + ln^2 2 theta
+    cmp("MCLc2", Q(lambda t: Cf(t) * Lc2(t)), mp.mpf(7) / 8 * z3 * J[2] - ell2D3 / 2, "<C Lc2> = (7/8) zeta(3) J2 - (1/2) int ell^2 D3")
+    cmp("MCK2", Q(lambda t: Cf(t) * K2(t)), mp.mpf(7) / 8 * z3 * Jt[2] - l2D3 / 2, "<C K2> = (7/8) zeta(3) J~2 - <lt^2 D3>/2")
+    lt2C2 = Q(lambda t: lt(t) ** 2 * Cf(t) ** 2)
+    lt3D3 = Q(lambda t: lt(t) ** 3 * D3f(t))
+    cmp("MltCK2", Q(lambda t: lt(t) * Cf(t) * K2(t)), -lt2C2 / 4, "<lt C K2> = -<lt^2 C^2>/4")
+    cmp("MCK3", Q(lambda t: Cf(t) * K3(t)), mp.mpf(7) / 8 * z3 * Jt[3] - lt3D3 / 2, "<C K3> = (7/8) zeta(3) J~3 - <lt^3 D3>/2")
+    th2lt2 = Q(lambda t: t**2 * lt(t) ** 2)
+    cmp("Mth2lt2", th2lt2, 11 * pi**5 / 1440, "<theta^2 lt^2>")
+    cmp("MthK2", Q(lambda t: t * K2(t)), pi**2 / 8 * Jt[2] - th2lt2 / 2, "<theta K2> = (pi^2/8) J~2 - <theta^2 lt^2>/2")
+    c61 = mp.mpf(61) / 6 if MUT != "m2_K2K2" else mp.mpf(60) / 6
+    cmp("MK2K2", Q(lambda t: K2(t) ** 2), pi**7 / 3456 - pi**7 / 2880 + pi / 16 * (c61 * z6 - 6 * z3**2), "<K2^2>")
+    cmp("NM2", lt2C2, pi * (mp.mpf(3) / 4 * z3**2 - mp.mpf(95) / 96 * z6), "<lt^2 C^2> against omega5.md's pi (3/4 zeta(3)^2 - (95/96) zeta(6))")
+    c114 = mp.mpf(11) / 4 if MUT != "m2_M3" else mp.mpf(10) / 4
+    cmp("NM3", lt3D3, pi * (mp.mpf(9) / 16 * z3**2 - c114 * z6), "<lt^3 D3> against omega5.md's pi (9/16 zeta(3)^2 - (11/4) zeta(6))")
+
+
 def run_fp(args):
     mp.mp.dps = 60
     q, pi = mp.log(2), mp.pi
@@ -1056,6 +1128,7 @@ CTL_PARTS = {
     "e4_20": "sym exch", "e4_Om1": "sym exch", "e4_C": "sym exch", "e2w_P": "sym exch", "e2w_g": "sym exch",
     "e5_noD3": "sym exch", "e5_a1": "sym exch", "e5_K": "sym exch", "hyp_G4": "exch", "c_wrong": "exch bnd",
     "g6r_slope": "exch", "g7r_slope": "exch", "m1_basis": "masters", "m1_J2": "masters", "fp_const": "fp",
+    "m2_K2K2": "masters2", "m2_J5": "masters2", "m2_M3": "masters2",
 }
 TARGETS = {   # name -> the checks that must fail (and no other), from development runs dev_ctl_* / dev2_ctl_* of raw I264-rpi5 (amendment A1)
     "e4_20": ['E4_6', 'E4_7', 'G6R', 'G7R', 'SY_W4'],
@@ -1073,6 +1146,9 @@ TARGETS = {   # name -> the checks that must fail (and no other), from developme
     "m1_basis": ['M1'],
     "m1_J2": ['M1'],
     "fp_const": ['FP1', 'FP2'],
+    "m2_K2K2": ['MK2K2'],
+    "m2_J5": ['MJ5'],
+    "m2_M3": ['NM3'],
 }
 
 
