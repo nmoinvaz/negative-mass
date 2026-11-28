@@ -40,6 +40,7 @@ MUTATIONS = {
     "route_W3": ("route", "-7.55e-04   0.240723      +7.11e-05", "-7.55e-04   0.240723      +5.11e-05"),
     "d56_S5": ("d56", "Richardson 0.145866; spread", "Richardson 0.146866; spread"),
     "tail_rt": ("tail", "rate x t = [2.112, 2.228, 2.321]", "rate x t = [2.212, 2.228, 2.321]"),
+    "route3_N2": ("route3", "0.234139      -2.15e-06", "0.234139      -9.15e-06"),
     "slope_S6": ("check", "ind40 0.461705", "ind40 0.461805"),
 }
 
@@ -68,6 +69,7 @@ SRC = {
     "route": read(EV, "settled_mass_route_output.txt"),
     "d56": read(EV, "settled_mass_d56_output.txt"),
     "tail": read(EV, "throat_tail_output.txt"),
+    "route3": read(EV, "settled_mass_route3_output.txt"),
     "expansion": read(EV, "expansion_output.txt"),
     "plateau": read(EV, "constraint_plateau_output.txt"),
     "derive": read(EV, "derive_output.txt"),
@@ -609,6 +611,17 @@ printed(f"is ${rt[0]:.2f}$ at $t=10$ and ${rt[2]:.2f}$ at $t=16$,\nagainst ${flo
 printed(f"ends the measurement at $t={float(tend):.1f}$", "#291 T_end")
 r15 = float(re.search(r"h = 0\.005: rate x t = \[([0-9.]+),", to.split("rate x t on [15, T_end] itself", 1)[1])[1])
 check(f"{float(lin) - r15:.1f}" == "0.4", f"#291: the exponent at t = 15 is 0.4 below the linear response's ({float(lin):.2f} - {r15:.3f} = {float(lin) - r15:.2f})")
+
+# #295: the frozen fifteen-point refit on a third route (notes/wormhole_evolution/settled_mass_route3_output.txt, h = 0.005)
+r3 = SRC["route3"]
+co = [float(x) for x in re.search(r"recomputed \(a, b, c\) = ([-+0-9.]+), ([-+0-9.]+), ([-+0-9.]+);", r3).groups()]
+printed(f"$(a,b,c)=({co[0]:.4f},{co[1]:.4f},{co[2]:.4f})$", "#295's frozen refit")
+nr = re.findall(r"^\s+N[123]\s+[0-9.]+\s+[0-9.]+\s+([-+0-9.e]+)\s+\|\s+[-+0-9.e]+\s+([-+0-9.e]+)", r3, re.M)
+check(len(nr) == 3, f"#295's three new members ({len(nr)})")
+printed(f"is predicted to ${max(abs(float(a)) for a, _ in nr) * 1e6:.1f}\\times10^{{-6}}$; without the speed the same fit misses by up to\n${max(abs(float(b)) for _, b in nr) * 1e4:.2f}\\times10^{{-4}}$", "#295 residuals with and without the speed")
+ins = float(re.search(r"max in-sample ([0-9.e+-]+)\)", r3)[1])
+printed(f"errors on the fitted members reach ${ins * 1e5:.1f}\\times10^{{-5}}$", "#295 in-sample error")
+check("[pass] P4:" in r3, "#295: P4 passes")
 
 print(f"\n{count} checks, {bad} failed; mutation {OPT.mutate}")
 sys.exit(1 if bad else 0)
