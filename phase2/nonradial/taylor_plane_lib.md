@@ -85,8 +85,9 @@ spread, not at `ln(1/ε)`. The test `skip_one_{f64,dd,qd}` in multishoot prints 
 
 ## The crate's switch (feature `lib_plane`)
 
-`phase2/nonradial/taylor_polar/`: `Cargo.toml` has the feature and a `[patch.crates-io] multishoot = { git, rev = a880903… }` beside the multidouble patch (the
-dependency `multishoot = "=4.2.0"` is satisfied: the branch is 4.2.0 plus the module). `num.rs`: `Num` gets `type Lib` and `to_lib`, `from_lib` (identities for the
+`phase2/nonradial/taylor_polar/`: as #189 left it, `Cargo.toml` had the feature and a `[patch.crates-io] multishoot = { git, rev = a880903… }` beside the
+multidouble patch (the dependency `multishoot = "=4.2.0"` was satisfied: the branch was 4.2.0 plus the module). Since #192 the crate takes multishoot 5.0.0, which
+contains the module, from crates.io. `num.rs`: `Num` gets `type Lib` and `to_lib`, `from_lib` (identities for the
 four lanes) under the feature. `plane.rs`: under the feature, `gram_schmidt` calls `plane::orthonormalize`, and `integrate` builds a `Plane`, steps it through a
 bridge from the crate's `JetSource` (its jets at s² copied into the library's entries; the `TP_MAX_SECONDS` guard is kept there) and copies the plane back. With
 the feature off the crate's own code is unchanged. `taylor_polar.py` is not edited and builds without features, so the binaries were built by cargo and copied
@@ -132,13 +133,14 @@ From a clone of multishoot at `feat/plane-stepper`: `cargo test --release --feat
 
 ## Coordinator's review
 
-Under review: multishoot pull request #70 (`feat/plane-stepper` at a880903, **not merged**: its review and release are *Update 2026-11-28:* merged (squash, 70fea18) and released in multishoot 5.0.0.
+Under review: multishoot pull request #70 (`feat/plane-stepper` at a880903, **not merged**: its review and release are
 the user's), `wip/i189-plane-lib` at 6c40e02, raw `I189-mac` at bb964b6. Review folder
 `negative-mass-raw/I189-mac-review`, whose README holds the criteria, committed before the first run of `ind189.py`.
 *Update, 2026-11-27:* the user squash-merged multishoot#70 into multishoot main as 70fea18. No release contains it yet
 (the latest is 4.2.0). The merged `plane.rs` adds one change: a column whose length falls outside 2^±256 is rescaled by
 a power of two before normalizing, and other columns are normalized bitwise as before. The crate still pins a880903,
-which is on no branch now. #199 repins it to main and checks the rows bit for bit.
+which is on no branch now. #199 repins it to main and checks the rows bit for bit. *Update 2026-11-28:* multishoot 5.0.0
+contains #70 (70fea18), and #192 moved the crate to it from crates.io; its 3532 records equal the old pin's bit for bit.
 The changed files are those the brief names.
 
 - **ind189, a planted case the runner did not use.**

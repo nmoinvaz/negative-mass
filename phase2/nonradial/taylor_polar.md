@@ -20,8 +20,9 @@ No sentence here claims novelty.
   below `tol` (multishoot's `plan_path` rule; the crate does not call multishoot's `Equations` or `Shooting`, whose 8-lane
   double-double boundary-value layout has no place for the orthonormalization between steps). Lanes f64, double-double,
   quad-double, octo-double are multidouble's scalar types. Reciprocals 1/k are formed in the lane (R1 holds, and its control
-  `recip_dd` fires). multishoot 4.2.0 and multidouble main ba0ad101ce76 (series module) resolve together by `[patch.crates-io]`
-  (multishoot's requirement is the caret "5.1.0"); no multishoot change was needed. `mullow` and `Relaxed` are not used: their
+  `recip_dd` fires). In #186 multishoot 4.2.0 and multidouble main ba0ad101ce76 (series module) resolved together by `[patch.crates-io]`
+  (multishoot's requirement is the caret "5.1.0"); no multishoot change was needed. Since #192 the crate takes multishoot
+  5.0.0 and multidouble 6.1.0 from crates.io, with no patch. `mullow` and `Relaxed` are not used: their
   crossovers (512 in double-double, 64 in quad-double, 16 in octo-double) lie above the 30 coefficients of every product here.
 - **J.** `jgen.rs` is the syntax-tree translation of `polar_matrix_generated.py`, which `reduce_polar.py` wrote (the issue's
   `gen_matrix2.py` is not in the repository). **The symbolic source is shared with `polar_solver.py`; it is not independent.**
@@ -557,3 +558,19 @@ first step, and every later step is checked to hold nothing outside it (a panic 
 2. **Look up J from the library too.** What: `Table::shifted` and `TableJets` for the lookups, with J0 + s² J1 formed before the
    shift (the library has no parameter), under `lib_plane`. Why: the crate's shift in its own lane duplicates `table::shift`.
    Accept: D equal to this section's rows to the last digit, or the difference explained. Depends: task 1.
+
+### Coordinator's review (#192, stage 3)
+
+Merged at bc59048. Review folder `negative-mass-raw/I192-mac-review/s3` at aca36da9, criteria committed (2eacc699) before the
+first run. The changed files are those the brief names.
+
+- **Rerun on the Mac** from a7a57dd: the default and `lib_table` builds succeed, and the default tree names multishoot 5.0.0
+  and no git source. `s3_steps.py` on the two new binaries passes, and each of its six step lists is byte-equal (`cmp`) to the
+  runner's `s3_steps_out/`.
+- **Default mode with `lib_table`:** 21 passed, 0 failed, and every verdict equals the runner's `run_44` except R1. R1 is
+  skipped here, because it compares the old-pin and new-pin binaries, which the review tree does not have. Its content is the
+  runner's RP2 (3532 records, 0 differ), which was not rerun.
+- **Stale text fixed:** the pin passages of this note (§ on the series, #186's patch) and of `taylor_plane_lib.md` now read as
+  history, and the split sentence in `taylor_plane_lib.md`'s review is repaired.
+- `lib_table`'s git dependency on multishoot main 75d1e1e stays until a release contains `table`; the default build is
+  crates.io only.
