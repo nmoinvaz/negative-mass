@@ -14,6 +14,7 @@ Reads horizon_sector.py, full_slice.py and linear.py (read-only imports). Python
 """
 import math
 import os
+import re
 import sys
 import time
 
@@ -468,6 +469,8 @@ def want(cid):
 
 
 def check(cid, text, ok, detail=""):
+    if re.search(r"(?<![a-z])(nan|-?inf)(?![a-z])", str(detail).lower()):   # max() and <= hide a NaN
+        ok = False
     RESULTS.append((cid, bool(ok)))
     print(f"[{'pass' if ok else 'FAIL'}] {cid}: {text}" + (f"  ({detail})" if detail else ""), flush=True)
 
@@ -532,9 +535,28 @@ def derive_S3():
           dc == 0, f"d(V/c)/dc = {dc}")
 
 
+def derive_S4():
+    import sympy as sp
+    s, kap = sp.symbols("s kappa", positive=True)
+    x = sp.symbols("rho", real=True)
+    Af = sp.Function("A")(x)
+    R = sp.sqrt(1 + x ** 2)
+    ds = lambda f: (Af / (kap * s)) * sp.diff(f, x)              # d/ds = rho_s d/drho, rho_s = A/(kappa s) (Pi = s^2, d rho/d Pi = A/(2 kappa Pi))
+    rho_Pi = Af / (2 * kap * s ** 2)
+    mu = s * R
+    mu_s_rPi = sp.simplify(mu * s * (x / R) * rho_Pi)             # mu s r_Pi = rho A/(2 kappa)
+    E = Af / (2 * kap ** 2 * s ** 2)
+    V = (1 - sp.diff(x * Af, x)) / R ** 2 + (1 / R ** 2 if MUT == "s_pot" else 0)   # (theta theta): V R^2 = 1 - (rho A)'
+    lhs = ds(mu_s_rPi)
+    rhs = mu * E * (1 / R - V * R)
+    res = sp.simplify(lhs - rhs)
+    check("S4", "the background identity of T1: mu s r_Pi = rho A/(2 kappa) and (mu s r_Pi)' = mu E (1/r - V r) with V R^2 = 1 - (rho A)' ((theta theta), #269), symbolic in A(rho)",
+          res == 0 and sp.simplify(mu_s_rPi - x * Af / (2 * kap)) == 0, f"residual {res}")
+
+
 def run_derive():
     t0 = time.time()
-    for fn in (derive_S1, derive_S2, derive_S3):
+    for fn in (derive_S1, derive_S2, derive_S3, derive_S4):
         fn()
     bad = [c for c, ok in RESULTS if not ok]
     print(f"\n{len(RESULTS) - len(bad)} of {len(RESULTS)} checks pass" + (f"; fired: {', '.join(bad)}" if bad else "") + f"  [{time.time() - t0:.0f} s]  mutation: {MUT}")
@@ -675,7 +697,7 @@ def check_T5():
         c1 = sol.sol(0.0)[0]
         dr, drs = sol.sol(fs.SR)
         rm = read_mass(bg, fs.SR, dr, drs, 0.0, 0.0)
-        errs.append(abs(KAPPA_C * c1 - rm["dM"]) / rm["dM"])
+        errs.append(abs(KAPPA_C * c1 - rm["dM"]) / abs(rm["dM"]))
         cs.append((c1, rm["dM"], rm["dms"][1], rm["dms"][2]))
     ok = w <= 1e-12 and max(errs) <= 1e-6
     check("T5", "compact datum G (#258, ODE path): |Theta_gen| <= 1e-12 at 22 points of |s| <= 1.05; homogeneous left starts of dM = 1e-4 and 2e-4: kappa c1 against dm at rho = 1e8 (relative)",
@@ -805,7 +827,7 @@ def check_T10():
 
 CHECKS = [("T1", check_T1), ("T2", check_T2), ("T3", check_T3), ("T4", check_T4), ("T5", check_T5), ("T6", check_T6), ("T7", check_T7), ("T8", check_T8), ("T9", check_T9), ("T10", check_T10)]
 SCOPE = tuple(c for c, _ in CHECKS)
-SCOPE_D = ("S1", "S2", "S3")
+SCOPE_D = ("S1", "S2", "S3", "S4")
 
 
 def run_checks():
@@ -824,7 +846,24 @@ def run_checks():
 # ----------------------------------------------------------------------------------------------------------------------
 # declared fired sets and the comparison with stored logs
 # ----------------------------------------------------------------------------------------------------------------------
-DECLARED = {}
+DECLARED = {                      # computed in the development runs d4 and d5 (raw I259-mac/dev/logs) before the runs of record; every check is in scope
+    "s_q": {"S1"},
+    "s_pot": {"S1", "S3", "S4"},
+    "th_noF": {"T3", "T4", "T6", "T7", "T8"},
+    "th_nophi": {"T3", "T4", "T5", "T6", "T7", "T8"},
+    "th_asign": {"T3", "T4", "T5", "T6", "T7", "T8"},
+    "dm_noT": {"T2", "T4", "T5", "T6", "T8"},
+    "kappa_off": {"T4", "T5", "T6"},
+    "jump_off": {"T4", "T6", "T8"},
+    "xform_p": {"T2", "T4", "T5", "T6", "T8"},
+    "xform_q": {"T2", "T4", "T5", "T6", "T8"},
+    "mode_khat": {"T4", "T8"},
+    "mode_dF0": {"T4", "T8"},
+    "fn_c1_noV": {"T9"},
+    "fn_c1_aT": {"T8", "T9"},
+    "fn_c1_sign": {"T9"},
+    "law_norm": {"T10"},
+}
 
 
 def report_mutations(raw, prefix):
@@ -876,6 +915,23 @@ def report_table():
     for name in ("A0", "A1L"):
         r = [class_run(name, h) for h in HL]
         print(f"   {name}: c1 fit " + ", ".join(f"{x['c1fit']:.7e}" for x in r) + "; Theta(0) " + ", ".join(f"{x['theta'][0.0]:.7e}" for x in r) + "; Theta(1.9) " + ", ".join(f"{x['theta'][1.9]:.7e}" for x in r))
+    print("== the formal neighbouring member d/dc at c = -1 (a solution of the potential V_c, not of V_-1): mpmath, 40 digits ==")
+    import mpmath as mp
+    mp.mp.dps = 40
+
+    def Ac_(cc, r):
+        return 1 + cc * (r * r + 1) - 2 * cc / mp.pi * (r + (r * r + 1) * mp.atan(r))
+
+    def M_of(cc):
+        r = mp.mpf(10) ** 14
+        return (1 + r * r * (1 - Ac_(cc, r))) / (2 * mp.sqrt(1 + r * r))
+
+    def area_S(cc):
+        rr = mp.findroot(lambda x: Ac_(cc, x), (mp.pi / 4) * (-(cc + 1)) if cc != -1 else mp.mpf(0))
+        return mp.sqrt(1 + rr * rr)                    # r at S = R(rho_h(c))
+    dMdc = mp.diff(M_of, mp.mpf(-1))
+    c1c = mp.diff(area_S, mp.mpf(-1))
+    print(f"dM_ADM/dc = {float(dMdc):.12f} (-2/(3 pi) = {-2 / (3 * math.pi):.12f}); c1 = d_c R(rho_h(c)) = {float(c1c):.2e} (R'(0) = 0); kappa c1 = 0 against dM_ADM/dc: the identity does not hold for it, and it is not a perturbation of the fixed theory (S3)")
     print("== the evolved exact mode (amplitude 2e-3), Richardson of h = 0.0025, 0.00125 ==")
     rs = {h: mode_run(h, 2e-3) for h in HL}
     h1, h2 = HL[-2], HL[-1]
