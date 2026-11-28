@@ -42,6 +42,7 @@ MUTATIONS = {
     "tail_rt": ("tail", "rate x t = [2.112, 2.228, 2.321]", "rate x t = [2.212, 2.228, 2.321]"),
     "route3_N2": ("route3", "0.234139      -2.15e-06", "0.234139      -9.15e-06"),
     "route4_X2": ("route4", "0.228784      +2.13e-04", "0.228784      +3.13e-04"),
+    "eps_T2": ("eps", "max |M - predicted| 9.34e-05", "max |M - predicted| 5.34e-05"),
     "slope_S6": ("check", "ind40 0.461705", "ind40 0.461805"),
 }
 
@@ -72,6 +73,7 @@ SRC = {
     "tail": read(EV, "throat_tail_output.txt"),
     "route3": read(EV, "settled_mass_route3_output.txt"),
     "route4": read(EV, "settled_mass_route4_output.txt"),
+    "eps": read(EV, "settled_mass_eps_output.txt"),
     "expansion": read(EV, "expansion_output.txt"),
     "plateau": read(EV, "constraint_plateau_output.txt"),
     "derive": read(EV, "derive_output.txt"),
@@ -638,6 +640,13 @@ def fmt(x):
 printed(f"misses its settled mass by ${fmt(rs[0])}$, ${fmt(rs[1])}$ and ${fmt(rs[2])}$", "#305 residuals")
 printed(f"rms of ${fmt(rms[1])}$ and ${fmt(rms[2])}$ at two of the three points", "#305 FITQ rms")
 check(all(x > 6e-5 for x in rs) and "[FAIL] P4:" in r4, "#305: P4 misses at all three")
+
+# #296: the relation read at departure eps = 1e-2 (notes/wormhole_evolution/settled_mass_eps_output.txt)
+eo = SRC["eps"]
+t1 = float(re.search(r"\[FAIL\] T1: .*?max \|M - predicted\| ([0-9.e+-]+)", eo)[1])
+t2 = float(re.search(r"\[FAIL\] T2: .*?max \|M - predicted\| ([0-9.e+-]+)", eo)[1])
+check(t1 > 6e-5 and t2 > 6e-5, f"#296: T1 {t1:.2e} and T2 {t2:.2e} beyond 6e-5")
+printed(f"predicts the third route to ${fmt(t2)}$ and the first two to ${fmt(t1)}$, beyond the bar", "#296 T2 and T1")
 
 print(f"\n{count} checks, {bad} failed; mutation {OPT.mutate}")
 sys.exit(1 if bad else 0)
