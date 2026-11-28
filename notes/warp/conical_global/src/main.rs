@@ -8,7 +8,7 @@
 //! Any argument --mutate=NAME turns on a deliberate error of the crate.
 use conical_global::connect::{connect, ConnectIn};
 use conical_global::json;
-use conical_global::model::{conical, conical_poly, end_state, Implicit, Mutation, NoEnds};
+use conical_global::model::{conical, conical_poly, Implicit, Mutation, NoEnds};
 use conical_global::planted;
 use conical_global::poly::{abs_dd, PolyN};
 use conical_global::scan::{class_label, conical_kind, lane0, start_state, verdict};
@@ -236,7 +236,7 @@ fn plant_blowup(m: &Mutation) {
     opts.flip_side = m.plant_locator;
     let xstar = planted::dd(7321.0, 10000.0);
     let cases: [(&str, PolyN, &str); 2] = [("cube", planted::blowup_cube(), "F->inf"), ("sqrt", planted::blowup_sqrt(), "F->0")];
-    for (name, poly, kind) in cases {
+    for (name, poly, _kind) in cases {
         let eq = Implicit { n: poly.clone(), ends: NoEnds, skip_order: None };
         for dir in [-1.0f64, 1.0] {
             // dir = -1: walk toward smaller x, the singularity at x*, the solution on x > x*
@@ -316,8 +316,8 @@ fn plant_connect(cubic: bool, m: &Mutation) {
             let mut node_err = 0.0f64;
             for (i, &x) in nodes.iter().enumerate() {
                 let ex = planted::exact(alpha, a, b, DD::from_f64(x));
-                for f in 0..3 {
-                    node_err = node_err.max(abs_dd(o.nodes[i][f] - ex[f]).hi);
+                for (f, e) in ex.iter().enumerate() {
+                    node_err = node_err.max(abs_dd(o.nodes[i][f] - *e).hi);
                 }
             }
             let fl: Vec<String> = o.fnorm.iter().map(|x| json::num(*x)).collect();
@@ -351,8 +351,8 @@ fn plant_walk() {
         let mut nrel = 0.0f64;
         for st in &w.steps {
             let ex = planted::exact(alpha, a, b, DD::from_f64(st.x));
-            for f in 0..3 {
-                err = err.max(abs_dd(st.s[f] - ex[f]).hi);
+            for (f, e) in ex.iter().enumerate() {
+                err = err.max(abs_dd(st.s[f] - *e).hi);
             }
             nrel = nrel.max(st.n_rel);
         }

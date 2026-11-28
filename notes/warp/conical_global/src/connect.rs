@@ -48,8 +48,8 @@ pub fn connect<E: Equations<1>>(eq: E, inp: &ConnectIn) -> Result<ConnectOut, St
     set(&mut z, 0, inp.left[0]);
     set(&mut z, 8, inp.left[1]);
     for (i, s) in inp.node_states.iter().enumerate() {
-        for f in 0..3 {
-            set(&mut z, sh.off_node(i) + f * 8, s[f]);
+        for (f, &sf) in s.iter().enumerate() {
+            set(&mut z, sh.off_node(i) + f * 8, sf);
         }
     }
     set(&mut z, sh.off_right(), inp.right);

@@ -164,9 +164,9 @@ fn stop_name(s: &Stop) -> &'static str {
 /// the first index k with residual <= the bar at L = LS[k] (and the residuals up to it)
 pub fn pick_start<P: Precision<Native>>(fi: f64, c: f64, m: &Mutation, o: &OgOpts, ev: &EvalS<P>) -> (Option<usize>, Vec<f64>) {
     let mut resids = Vec::new();
-    for lk in 0..LS.len() {
+    for (lk, &l) in LS.iter().enumerate() {
         let s = series_state::<P>(fi, c, lk, m);
-        let r = resid_of::<P>(ev, &s, LS[lk]);
+        let r = resid_of::<P>(ev, &s, l);
         resids.push(r);
         if r <= o.resid_bar && r.is_finite() {
             return (Some(lk), resids);
