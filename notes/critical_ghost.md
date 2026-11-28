@@ -346,6 +346,13 @@ apparent-horizon mass with a second code to 1.2e-4 up to e^{−f} ≈ 12):
     0.048, 0.075) to 2.2e-6, against the declared bar of 6e-5. The same fit without the speed misses by up to 4.55e-4.
   - The new members lie between routes W and C, inside the fitted data. So (γ₁, r_th, ṙ_th) suffice between the routes fitted,
     at the declared bar; outside them it is a *conjecture*.
+- *Update from #305* (`wormhole_evolution/settled_mass_route4.md`; *numerical evidence*):
+  - #295's frozen refit was tried on three members of a route chosen for leverage in its design (the normal pulse's width 1.5
+    at centre 4.0, γ₁ = 0.012, 0.048, 0.075; leverage 0.27, 1.98, 3.06 against the fitted maximum 0.39; ṙ_th down to −2.7e-3
+    against −6.7e-4). It misses the settled mass by +9.0e-5, +2.1e-4, +2.0e-4, against the declared bar of 6e-5.
+  - The member's static-profile fit at those points has rms up to 2.1e-4 (bar 1e-4), following |ṙ_th|. The data do not say
+    whether the miss belongs to the form or to the reading of the member.
+  - So (γ₁, r_th, ṙ_th) with these coefficients suffice between the routes fitted (#295) and not far outside them (#305).
 - *Update from #246* (`wormhole_evolution/settled_mass_d56.md`; *numerical evidence*):
   - The same chain at D = 5 and 6 (M = r^{n−1}/2 on the apparent horizon; second order at three h; a planted Tangherlini recovered
     to 3e-6 to 6e-6; to e^{−f} = 4.0e8 on the horizon) gives for the symmetric family S a settled mass of 0.14587 a²

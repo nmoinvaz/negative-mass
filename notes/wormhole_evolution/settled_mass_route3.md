@@ -111,6 +111,8 @@ displaced by 1e-4 has a leave-one-out error equal to the displacement); the pred
   the coefficients at any h but 0.005; any dependence on ε, the definition of departure (#266: 1e-4 level); other pulse kinds, the ghost pulse changed, δ ≠ 1e-8 on these routes; D = 5, 6 (#246); γ₁ above 0.075.
 - Not a failure of the chain: the chain, its first law and its planted cases are #41's and pass at every point (RC4 to 1.3e-4, RC8 settled, RH 1.0e-5 to 1.2e-5), and the reproduction of #283 is exact.
 
+- *Tested outside the fitted data in #305* ([settled_mass_route4.md](settled_mass_route4.md)): a route chosen for leverage in the fit's design (normal pulse width 1.5, centre 4.0; leverage 0.27, 1.98, 3.06 against 0.39; ṙ_th down to −2.7e-3 against −6.7e-4) is missed by this refit by +9.0e-5, +2.1e-4, +2.0e-4, against the bar 6e-5. The static-member fit at the same points has rms up to 2.1e-4 (bar 1e-4). Whether the miss belongs to the form or to the member's reading is not separated by the data.
+
 ## Stale or conflicting text found (for the coordinator; none was edited)
 
 1. `settled_mass_route.md`, "What this says, and does not", "*Not shown:* that M is a function of (γ₁, r_th, ṙ_th) alone (P3 misses W3 by 1.1e-5 …)", and recommended task 1 ("A third route, blind, with P3 refitted first"): done here.

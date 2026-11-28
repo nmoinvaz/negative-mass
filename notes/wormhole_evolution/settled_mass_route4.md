@@ -167,3 +167,16 @@ is missed by this refit by +9.0e-5, +2.1e-4, +2.0e-4, against the bar 6e-5; the 
 `settled_mass_route4.py` (commands `tag`, `bracket`, `pstar`, `job`, `member`, `planted`, `analyze`; `--mutate=`, `--baseline=`, `--rn=`), `settled_mass_route4_output.txt`, `settled_mass_route4_post.py`, `settled_mass_route4_post_output.txt`, `settled_mass_route4_graph.py`, `settled_mass_route4.svg`, this note;
 raw `negative-mass-raw/I305-mac` (`README.md` in stages 1, 1b, 2a, 2b: the choice rule, the scan, the placement readings, the criteria and the mutation table; `runs/<tag>/h<h>/{pstar,chain,member,logs}` the six runs of record, `runs_rep/` the N3 reproduction, `runs_rn/` the second realization,
 `mut/` the 35 mutated analyses of record, `dev/` the scan (`logs/`), the development set (`set_a/`), its analyses and mutations, `devselect.*.log`, `fitq_diag.1.log`, `scripts/`, `jobs_*.txt`, `analyze_record.log` (final) and `analyze_record.1.log`, `post_hoc_1.log`, and the figure).
+
+## Coordinator's review
+
+Merged at 61d4b6d. Review folder `negative-mass-raw/I305-mac-review` at 16eb447d, criteria committed (6007ca53) before the first run of
+`ind305.py`. The route was chosen by the rule committed before the scan (94a1cd63). The coordinator ruled to keep it after the
+development set showed the miss, because switching would choose the test by its outcome.
+
+- **Rerun on the Mac** from ca6d11a: the X3 point at h = 0.005 is bitwise equal to the runner's, and `analyze` equals the output of
+  record (exit 1: P4 and FITQ fail, as declared).
+- **ind305**, 3 of 3, with ind283's reader (its own member, plateau and speed): M − P4 = +9.00e-5, +2.13e-4, +1.98e-4, leverage
+  0.272, 1.975, 3.058 (fitted maximum 0.3932), ṙ_th as the note's to 3e-6. `old-coef` and `no-speed` fire.
+- Not met, kept as declared: P4 and FITQ. Which of the two the miss belongs to is open (recommended task 2, filed).
+- Applied: `settled_mass_route3.md`, `critical_ghost.md` §1.3, and Paper V (`paper_numbers.py` 264 of 264).
