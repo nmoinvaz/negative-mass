@@ -49,7 +49,7 @@ No sentence here claims novelty; the prior equations used are README.md's order 
   the seven-term series leaves Ω₆/s⁶. R6 and R7 see an error of Ω₅ of about 4 or 0.13 or more, not less; X3 is the sharp check.
 
 - **PSLQ.** `mp.pslq` at d = 330 digits (tolerance 1e-318, maxsteps 10⁶, Ω₅ of G2; the two grids share 382.7 digits, so every relation is also checked at 350 digits), bases declared before the run (raw README), each with a planted relation recovered exactly and a perturbed basis
-  (a constant + √2·10⁻³) that finds nothing. The weight-7 constants of Q9 and the polylogarithm products of Q2, Q7, Q8 are in the table's last column:
+  (a constant + √2·10⁻³) that finds nothing.
 
   | basis | constants besides Ω₅ | n | H | budget | result |
   |---|---|---|---|---|---|
@@ -128,8 +128,9 @@ The derivatives close: ℓ′ = −u, u′ = 1 + u², C′ = 2ℓ + 2 ln 2, D₃
    - ⟨K₂²⟩ = π⁷/3456 − π⁷/2880 + (π/16)((61/6)ζ(6) − 6ζ(3)²) (**new**): K₂ = (π²/12)θ + Σα_n sin 2nθ/(2n) and Parseval, with ΣH_n/n⁵ = (7/4)ζ(6) − ½ζ(3)² and ΣH_n²/n⁴ = (97/24)ζ(6) − 2ζ(3)².
    - ⟨lt³D₃⟩ = π((9/16)ζ(3)² − (11/4)ζ(6)) (**new**): from ∫₀^{π/2}(2cos θ)^a cos 2nθ dθ = (π/2)Γ(a + 1)/(Γ(a/2 + n + 1)Γ(a/2 − n + 1)): with b = a/2, ⟨(2cos θ)^aD₃⟩ = (π/2)G(a)[¾ζ(3) − b Σ_n (1 − b)_{n−1}/((1 + b)_n n³)], G = Γ(a + 1)/Γ(a/2 + 1)²,
      and the sum is ζ(4) + … + b²(ζ(6) − 2ΣH_n/n⁵ + 2ΣH_n²/n⁴) = … + b²((67/12)ζ(6) − 3ζ(3)²); the coefficient of a³ gives the value. It uses the same two Euler sums as ⟨K₂²⟩.
-   - **⟨lt²C²⟩ = π((3/4)ζ(3)² − (95/96)ζ(6)) is identified, not derived.** PSLQ at 55 digits in {π⁶, ζ(3)²} for ⟨lt²C²⟩/π gives the relation (−18144, −19, 13608), and the value holds at 100 digits (RD5b). By Parseval ⟨lt²C²⟩ = (π/4)Σ_m s_m², where lt·C = Σs_m sin 2mθ,
-     s_m = (−1)^m[(H_m^{(2)} − ζ(2))/m + 2H_m/m² − 3/(2m³)] (derived by hand, not checked here): a sum of Euler sums of weight 6 that I did not evaluate.
+   - ⟨lt²C²⟩ = π((3/4)ζ(3)² − (95/96)ζ(6)): found first by PSLQ at 55 digits in {π⁶, ζ(3)²} for ⟨lt²C²⟩/π (the relation (−18144, −19, 13608); it holds at 100 digits, RD5b), then **derived**: lt·C = Σs_m sin 2mθ with
+     s_m = (−1)^m[(H_m^{(2)} − ζ(2))/m + 2H_m/m² − 3/(2m³)] (from the product of the two series, partial fractions in the sums over n and k), so by Parseval ⟨lt²C²⟩ = (π/4)Σ_m s_m², and Σ_m s_m² = 4ΣH_nH_n^{(2)}/n³ − 7ζ(3)² + (107/24)ζ(6) after the other six Euler sums are put in;
+     with ΣH_nH_n^{(2)}/n³ = (5/2)ζ(3)² − (101/48)ζ(6) it is 3ζ(3)² − (95/24)ζ(6) (RD5c: the exact assembly from the seven closed forms, sympy residual 0; the sum Σs_m² against it to 33.7 digits, and each Euler sum to 34 digits).
 10. **Assembly.** ⟨F′⟩ sums: G₇ = Σ_i B[F_i] + Σ (coefficient)·(master). Its slope in Ω₅ is −4π exactly (RD3), so Ω₅ = G₇(Ω₅ = 0)/(4π), which is the closed form of the Result. The number G₇(Ω₅ = 0) = 513467.625456446519397870844712… equals the quadrature of the integrand of closed forms to 39 digits (RD6); the closed form equals the grids to their digits (RD7).
 
 ## The structure of the series in ln 2
@@ -144,7 +145,7 @@ This is a statement about the six terms; nothing is claimed for the series beyon
 ## What each status word covers
 
 *Derived* (by hand, each step checked): steps 1 to 10, given E1, E2, E3 (#209), the closed forms of Y₀ … Y₃, L₀ … L₃ and Ω₀ … Ω₄ (#26, #208, #220), the Beta-function moments, Parseval's identity, and **seven classical Euler sums**
-(ΣH_n/n³, ΣH_n/n⁵, ΣH_n²/n⁴, ΣH_n^{(2)}/n², ΣH_n^{(2)}/n⁴, Σ(H_n^{(2)})²/n², ΣH_nH_n^{(2)}/n³), which RD5c checks numerically at 40 digits and which are not proved here.
+(ΣH_n/n³, ΣH_n/n⁵, ΣH_n²/n⁴, ΣH_n^{(2)}/n², ΣH_n^{(2)}/n⁴, Σ(H_n^{(2)})²/n², ΣH_nH_n^{(2)}/n³), which RD5c checks numerically at 34 digits and which are not proved here.
 *Checked symbolically*: XS, RD2, RD3, the exact assembly in RD5c, LN2. *Numerical evidence*: RD1, RD4 to RD7, E1_7 … G7R, A7, and the agreement of G1, G2 and #195's fit (X3), which use none of the reduction.
 Not derived here: E5's and E2W's boundary terms are argued as E3's in #209 and checked on the hierarchy; the finite-part calculus beyond its statement (step 7), whose series RD4 checks numerically; the Euler sums.
 **The reduction is not independent of the closed-form evaluation (A7 shares E1 … E5 and the closed forms); G1 and G2, which use none of them, are the independent check**, and #195's refit shares no machinery with either.
@@ -162,3 +163,32 @@ Not derived here: E5's and E2W's boundary terms are argued as E3's in #209 and c
 - **The bars of R6, R7 and X3 were set knowing a development Ω₅** (a 148-digit grid): 1e-4, 2500 and 1e-22 (declared in the raw README). R6 and R7 do not see an error of Ω₅ below about 4 and 0.13; X3 does not see an error below 1e-22.
 - **Shared machinery.** G1, G2 and B1 … B3 use the same `PanelB`, table and cached chain; the independent check of Ω₅ is #195's refit (X3, 7.5e-28) and the closed-form reduction (RD7, 418.9 and 382.7 digits), which share with the grids only the table of c_m (E0).
   The cached chain equals the uncached chain bit for bit (CACHE).
+
+## What README.md's "Result" and "Limits", #195, #210 and Paper III should now say
+
+- **README.md, Result.** Add the seventh term of the series: Ω₅/32 = (8/45)ln⁶2 + (2/9)π²ln⁴2 − (80/3)ζ(3)ln³2 + (11/90)π⁴ln²2 − 96ζ(3)ln²2 + 20π²ζ(3)ln 2 + (304/45)π⁴ln 2 − 384ζ(3)ln 2 + 1304ζ(5)ln 2 − (9703/2520)π⁶ + 100ζ(3)² − (8/3)π²ζ(3) + 2320ζ(5) + (1232/45)π⁴ − 1152ζ(3) = 1276.8892298289277…,
+  **derived** from the order-7 matching integral (this note: G₇ = 0, E1 … E3, E4 one level up, a weighted exchange E2W for L₄, a new step E5 for Y₄, then finite-part integration by parts to Beta-function moments, Parseval's identity and seven classical Euler sums), confirmed to 419 and 383 digits by two evaluations that use none of the reduction,
+  to 31 digits by #195's W² values, and identified by PSLQ at 330 digits in five bases. The remainder statement becomes: the seven terms leave Ω₆/(2(D − 3))⁶ with Ω₆ ≈ 3.67·10⁶ (an estimate from rem·s⁶; not computed).
+  Ω₅ is not of uniform weight: weights 6, 5, 4 and 3 (Ω₄ had 5, 4, 3); no Li₄(½), Li₅(½), Li₆(½) and no weight-7 constant enters. All the ln 2 of Ω₀ … Ω₅ is that of 2^{−4/s}: W²a² = s 2^{−4/s}F(1/s) with F free of ln 2 (six terms, checked symbolically).
+- **README.md, Limits.** Replace "Ω₅ is an estimate (≈ 4 × 10⁴), not computed" by: Ω₆ is an estimate (≈ 3.67 × 10⁶), not computed.
+- **#195** (W² to 60 digits and the fit): its values give Ω₅ to 7.5e-28 with Ω₀ … Ω₄ fixed (X3); it printed no fit of Ω₅.
+- **#210 (Paper III).** The seventh term can be quoted as derived. Its derivation needs E1 … E3, E4 twice (Y₄ at k = 6, Y₅ at k = 7), the new E2W and E5, the finite-part bookkeeping in lt = ln(2 cos θ), the Beta moments up to J̃₆ (ζ(3)² enters first there), Parseval and seven classical Euler sums.
+  Three masters (⟨K₂²⟩, ⟨lt³D₃⟩, ⟨lt²C²⟩) are derived through those sums. The "how this work was done" section should record that the closed forms and their checks were done by a language model with sympy and mpmath, as AGENTS.md asks.
+  `omega_graph.py` and `paper_numbers.py` carry Ω₅ as an estimate; the derived value replaces it (the coordinator's files).
+
+## Files
+
+- `order7.py` (parts `sym`, `cache`, `xsym`, `exch7`, `evals`, `values`, `pslq`, `remainder`, `reduce7`, `euler7`, `weights7`; `grid` for development; `--mutate=NAME`, `--cgrids`, `--grids=`, `--bases=`, `--pslq-cap=`, `--save=`, `--load=`, `--w2raw=`, `--no-real`), `order7_output.txt` (the runs of record concatenated, then the control summaries), this note.
+  It imports `PanelB`, the closed forms and `Lc2_poly` from `order4.py`, which is unchanged. The commands run as written from `notes/wormhole_largeD` with mpmath and sympy installed, for example `python3 order7.py sym xsym cache exch7` (a minute), `python3 order7.py weights7` (a second) and
+  `python3 order7.py reduce7 --load=../../../negative-mass-raw/I263-rpi5/G1.json,../../../negative-mass-raw/I263-rpi5/G2.json,../../../negative-mass-raw/I263-rpi5/B.json` (five minutes; the raw clone beside the checkout).
+- Raw: `negative-mass-raw/I263-rpi5` (README with the criteria, grids, bases, controls and amendments A1 to A5; `dev_*` the development runs; `run_01` … `run_09` the runs of record; `ctl_*` the controls of record; `G1.json`, `G2.json`, `B.json` the saved Ω's;
+  `declared_*.json`; `scratch_prototypes/` the sympy and mpmath prototypes of the reduction; `assemble_output.py`, `queue.sh`, `ctl_summary.py`).
+
+## Controls and checks
+
+`order7.py` has 49 checks in the runs of record (`run_01` … `run_09`): CACHE, E0, XS, E1_7, E2_6, E2_5, E2_4, E3_7, E123_7, E4_7, E2Wa, E2Wb, E5_7, G7R, LC2 (`run_01`); PL0 … PL4, SL, RES, M5, RNG, R6, R7, X3 (`run_05`); PQ1 … PQ9 (`run_06a` … `run_06c`, with the real PSLQ verdicts);
+RD1 … RD8 with RD5b, LN2 and A7 (`run_07`); RD5c (`run_08`); W7 (`run_09`). **All pass** (eleven runs, all exit status 0). Each has a control (`--mutate=NAME`, 33 of them) except PLW, which is the controls' own statement, whose targets were computed in development runs before being declared (raw README and its amendments A1 to A5).
+**Controls of record: 51 runs, 48 on target and 3 off target.** On target means that the set of checks that fire is exactly the declared set (`order7_output.txt`, last section). The groups: T1 12 runs (11 grid-dependent mutations on the control grids and the nominal run: 12 on target), T2 5 and T2b 3 (the PSLQ and series mutations on the saved Ω's of record: 8 on target), EX 13 (the exchange steps: 13), CHK 6 (E0, CACHE, XS: 6), and RD 12 (the reduction, the Euler sums and the weights: 9 on target).
+- **Off target, all three by exactly RD8:** `rd_B`, `rd_J5` and `rd_master` fire RD8 (the PSLQ relation of `run_06b` against the derived closed form) as well as the declared RD6/RD7/LN2, RD5/RD7/LN2 and RD5/RD5b/RD7. RD8's constant was `None` in the development runs that set those targets, so the declared sets lacked it (A5). Nothing else is off target.
+- **Declared silences that are results:** E1 … E5 hold for any table, so `wrong_c7` is silent on all of them (E0 and the values see it); `e5_const` is silent because the constant of W is zero; `rd_kit` fires only RD4 (the finite parts of the C terms cancel); `rd_Dstep` fires only RD2 (a wrong primitive is still an exact step);
+  R6 and R7 do not see `wrong_c7` or `wrong_Om4` (Ω₅ moves by 0.0277 at most), only X3 does; M5 does not see `short_tail` or a wrong input that both grids share.
