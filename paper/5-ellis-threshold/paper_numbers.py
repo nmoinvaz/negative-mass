@@ -56,6 +56,7 @@ SRC = {
     "settled": read(EV, "settled_mass_output.txt"),
     "settled_g": read(EV, "settled_mass_g_output.txt"),
     "drift": read(EV, "throat_drift_output.txt"),
+    "scaling": read(EV, "throat_scaling_output.txt"),
     "expansion": read(EV, "expansion_output.txt"),
     "plateau": read(EV, "constraint_plateau_output.txt"),
     "derive": read(EV, "derive_output.txt"),
@@ -478,6 +479,24 @@ printed(f"$\\dot r_\\infty=0.0{round(float(rd[1]) * 1000):d}a$", "rdot_inf at B 
 printed(f"$B^{{{float(rd[2]):.2f}}}$", "rdot_inf exponent")
 check(kx[1] == kx[2], "k equal at both h")
 printed(f"$k={kx[1]}$ at two $h$", "G's expanding member, k")
+
+
+# #230: the late state (notes/wormhole_evolution/throat_scaling_output.txt)
+sc = SRC["scaling"]
+k6 = [float(x) for x in re.findall(r"D6_A0\.\d+_h0\.003_X200 .*?k_fit=([0-9.]+)", sc)]
+c6 = re.search(r"C6: .*?D6_A0\.05_h0\.003_X200 ([0-9.]+), D6_A0\.2_h0\.003_X200 ([0-9.]+), D6_A0\.01_h0\.003_X200 ([0-9.]+)\)", sc)
+t8 = re.search(r"D4_tuned_h0\.01_X800 .*?tau_s-tau_end=([0-9.]+)\s+k_fit=([0-9.]+)\s+tau_s=([0-9.]+)", sc)
+k5 = re.search(r"K5X: .*?D5_tuned_h0\.00353553 ([0-9.]+),", sc)
+kp = [float(x) for x in re.findall(r"^\s+[456]\s+[-+][0-9.]+\s+[0-9.]+\s+([0-9.]+)\s+[0-9.]+\s+[0-9.]+", sc, re.M)]
+jt = re.search(r"JTK: .*?\(worst ([0-9.e-]+) over 11 runs", sc)
+check(len(k6) == 3 and c6 and t8 and k5 and len(kp) == 11 and jt, "#230's rows in throat_scaling_output.txt")
+printed(f"$k_{{\\rm fit}}={min(k6):.3f}$ to ${max(k6):.3f}$", "D = 6 k_fit range")
+cv = sorted(float(x) for x in c6.groups())
+printed(f"$|\\rho|/H^2={cv[0]:.3f}$ to ${cv[-1]:.3f}$ at $r=50a$", "D = 6 c range")
+printed(f"$\\tau_s-\\tau={float(t8[1]):.3f}a$ gives $\\tau_s={float(t8[3]):.5f}a$ and $k={float(t8[2]):.5f}$", "D = 4 at X = 800")
+printed(f"extrapolated over the same runs is ${k5[1]}$", "D = 5 extrapolated exponent")
+printed(f"for $k$ from ${min(kp):.2f}$ to ${max(kp):.1f}$, to $2\\times10^{{-4}}$", "jump-test k range")
+check(f"{float(jt[1]):.0e}" == "2e-04", f"jump-test agreement {jt[1]} rounds to 2e-4")
 
 print(f"\n{count} checks, {bad} failed; mutation {OPT.mutate}")
 sys.exit(1 if bad else 0)

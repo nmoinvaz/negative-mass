@@ -226,6 +226,15 @@ generic family, the lifetime against ln|p − p*|, and comparison with the linea
   - The throat stays quasi-static (ρ_g within 4e-3 of a static throat's) and is not driven by the normal flux or the unstable
     mode. The cause is not established.
   - The expanding member A = 0.05, run to X = 160, is class FT with k = 3.9957 at two h.
+- **Update from #230** (`wormhole_evolution/throat_scaling.md`; the coordinator's review checked the closed form at n = 2 in its
+  own forms): the late state of the symmetric expanding throat is a closed-form solution of the field equations with the sphere term
+  dropped (*checked symbolically*): rⁿ = x⁺ + x⁻, φ = A arcsin((x⁺ − x⁻)/(x⁺ + x⁻)), H = k/(τ_s − τ) with k = 2/(nA² − n − 1) and
+  |ρ|/H² = n²A²/2. A is the field's step across the throat.
+  - With A = (2/π)φ_∞ of the static wormhole (hypothesis H1, not derived), k = 2(n − 1): 2, 4, 6 at D = 4, 5, 6. So #213's conjecture
+    is now *conditional* on H1.
+  - D = 6 (new run, h = 0.003): k_fit = 5.998 to 6.000. D = 4 to τ_s − τ = 0.155: τ_s = 17.89022, k = 2.00000.
+  - A step b added to the field's end value moves k as the formula says (0.64 to 12.6 at D = 4, 5, 6, to 2e-4, *numerical evidence*).
+    So the exponent is a property of the field's total step, not a universal constant.
 
 **What [SH02] measured** (their eq. 3.5, Tables I–II):
 - Ghost pulses: e^{x_H⁻ − 3} ∝ E₀^{−0.60}. Normal pulses: E₀^{−0.61}. Here x_H⁻ is the null coordinate where the final

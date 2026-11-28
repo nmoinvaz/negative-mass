@@ -312,3 +312,8 @@ Review of branch `wip/i213-expanding-branch` at 94d89f7 and raw `I213-dh610` at 
   - Task 1 is filed as #230 and task 4 as #231.
   - Task 2 is folded into #230 as its D = 4 check.
   - Task 3 is added to #225, which runs the one-sided family on the throat locus.
+
+**Update from #230** ([throat_scaling.md](throat_scaling.md)): recommended tasks 1 and 2 are done. k = 2(n − 1) is *conditional* on H1. The closed form
+rⁿ = x⁺ + x⁻, φ = A arcsin((x⁺ − x⁻)/(x⁺ + x⁻)) is *checked symbolically* for the field equations with the sphere term dropped. It gives H = k/(τ_s − τ) with
+k = 2/(nA² − n − 1) and c = n²A²/2, and A = (2/π)φ_∞ of the static wormhole gives k = 2(n − 1), c = n³/(2(n − 1)). At D = 4, X = 800: τ_s = 17.890219, k = 2.000000,
+K(τ_s − τ)² = 4.00000 at τ_s − τ = 0.155. The D = 5 fitted k of 3.9875 is a pre-asymptotic value: the extrapolated exponent is 4.00003 on the same runs.

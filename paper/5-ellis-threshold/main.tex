@@ -46,7 +46,8 @@ $0.8495a$, the e-folding time $0.847a$ of that member. In $D=4$ the black hole f
 $0.2231a$ (apparent-horizon radius $0.4462a$, $a$ the throat radius) for the symmetric family, the value of
 Gonz\'alez, Guzm\'an and Sarbach, and at $0.2355a$ for the one-sided family, where it also depends on the distance from
 threshold. Above threshold the symmetric throat's expansion rate grows as $H=k/(\tau_s-\tau)$ in its proper time $\tau$,
-with $k=2.0000$ in $D=4$ and $3.99$ in $D=5$: the throat does not approach a de Sitter rate.
+with $k=2.0000$ in $D=4$ and $3.99$ in $D=5$: the throat does not approach a de Sitter rate. Its late state is a closed form
+that gives $k=2(n-1)$, met at $D=6$, if the field's step across the throat is the static wormhole's.
 \end{abstract}
 
 \tableofcontents
@@ -534,11 +535,20 @@ $\tau_s$ from the linear fit of $1/H$; it tends to $2$ in $D=4$ and to $3.99$ in
 \paragraph{Reading.} The expanding throat is not a de Sitter phase. Its rate rises without bound on the fitted law, the
 curvature rises with it ($K(\tau_s-\tau)^2\to4$ in $D=4$), and the symmetry fixes its equation of state at
 $\bar w=(1-n)/(1+n)$. The ends of the grid gain mass, by exactly the ghost field's negative-energy flux through them. In
-$D=4$ and $5$, $k=2$ and $k\approx4$, which fit $k=2(n-1)$; that is a \emph{conjecture} from two points.
+$D=4$, $5$ and $6$, $k=2$, $4$ and $6$, which is $k=2(n-1)$; that is \emph{conditional} on H1, that the field's end value fixes
+$A$ (Sec.~\ref{sec:expand}).
 
-\pending{\#230}{$k(n)$ from the scaling solution of the expanding throat: a closed form or a numerical scaling solution
-whose $k$ and $c$ match Table~\ref{tab:expand} to $10^{-3}$, its prediction for $D=6$ tested by a run, and a longer
-$D=4$ run that approaches $\tau_s$ more closely.}
+\emph{The late state.} Near $\tau_s$ the sphere term of the radial equation is negligible. In null coordinates in which
+$r^n=x^++x^-$ the field obeys the cylindrical wave equation, and $\phi=A\arcsin[(x^+-x^-)/(x^++x^-)]$ with
+$e^f\propto(x^+x^-)^{A^2}[(x^++x^-)/2]^{(n-1)/n-A^2}$ solves the five field equations of Appendix~\ref{app:equations} with the
+sphere term dropped (\emph{checked symbolically}); the dropped term then vanishes at late times when $nA^2>n+1$. On the throat
+it gives Eq.~\eqref{eq:ft} with $k=2/(nA^2-n-1)$ and $c=n^2A^2/2$. Taking $A=(2/\pi)\phi_\infty=\sqrt{n/(n-1)}$ from the static
+wormhole's end value (hypothesis H1, not derived) gives $k=2(n-1)$ and $c=n^3/[2(n-1)]$: $2$, $4$, $6$ and $4$, $27/4$,
+$32/3$ in $D=4$, $5$, $6$. A run at $D=6$, $h=0.003$, gives $k_{\rm fit}=5.998$ to $6.000$ and $|\rho|/H^2=10.667$ to $10.668$ at $r=50a$. A
+$D=4$ run to $\tau_s-\tau=0.155a$ gives $\tau_s=17.89022a$ and $k=2.00000$. The $D=5$ fits of Table~\ref{tab:expand} are
+pre-asymptotic: the exponent extrapolated over the same runs is $4.00003$. A step $b$ added to the field's end value moves $k$
+to $2/(nA^2-n-1)$ with $A=(2/\pi)(\phi_\infty+b)$, for $k$ from $0.64$ to $12.6$, to $2\times10^{-4}$ (numerical evidence). So
+the exponent is set by the field's total step across the throat.
 
 \section{Consequences and limits}\label{sec:limits}
 
@@ -683,7 +693,7 @@ $\dot r=\sqrt2e^{f/2}r_+$. The flux laws of Appendix~\ref{app:equations}, with $
 \end{equation}
 Differentiating $m$ and dividing by $r^{n-1}\dot r$ gives $\ddot r/r=-(n-1)(1+\dot r^2)/(2r^2)-\rho/n$, and with
 $H=\dot r/r$, $\dot H=\ddot r/r-H^2$, this is Eq.~\eqref{eq:hdot} (\emph{proved}, given the flux laws). If
-$H=k/(\tau_s-\tau)$ then $\dot H=H^2/k$ and $r\propto(\tau_s-\tau)^{-k}$, so $1/r^2=o(H^2)$ for $k>1$, and
+$H=k/(\tau_s-\tau)$ then $\dot H=H^2/k$ and $r\propto(\tau_s-\tau)^{-k}$, so $1/r^2=o(H^2)$ for $k>-1$, and
 $\rho=-cH^2$ requires $c=n\,(1/k+(n+1)/2)$.
 
 \begin{thebibliography}{99}

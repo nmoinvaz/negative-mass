@@ -232,3 +232,29 @@ Also: "the D = 5 fitted k of 3.9875 is a pre-asymptotic value: the extrapolated 
 ## Files
 
 `throat_scaling.py`, `throat_scaling_output.txt`, this note; raw `negative-mass-raw/I230-dh610` (README, `dev/`, `runs/`, `scripts/`, `figures/throat_scaling.svg`).
+
+## Coordinator's review
+
+Review of branch `wip/i230-throat-kn` at bab2391 and raw `I230-dh610` at 7ea342f0, recorded in negative-mass-raw `I230-mac-review`.
+
+- **Scope.** The branch adds the script, its output and this note.
+- **Rulings during the task.** The D = 5 comparison keeps its declared reading, #213's fitted k (not met as worded), with the
+  extrapolated exponent reported beside it. JTC keeps its declared estimator. Both are on the issue.
+- **Independent check** (`ind230.py`).
+  - Method: the coordinator's own double-null forms (ind217's, verified against a brute-force Ricci tensor) at n = 2, with V = 0 and the
+    sphere term dropped. It shares no code with `throat_scaling.py`.
+  - Result: the closed form makes all five residuals vanish symbolically, for A and C symbolic. On the throat, k comes out exactly as
+    2/(2A² − 3).
+  - Mutations of the exponent and of φ's amplitude fail.
+- **Status.** The late state is *checked symbolically*, as a solution of the equations without the sphere term. Its relevance as the
+  asymptote needs nA² > n + 1, under which the dropped term vanishes (step 5). k = 2(n − 1) is *conditional* on H1. The D = 6 and X = 800
+  runs and the jump test are *numerical evidence*.
+- **Applied.**
+  - `expansion.md`, `critical_ghost.md` §1.3, Paper III (one sentence) and Paper V (the #230 placeholder, the conditional statement in
+    place of the conjecture, the abstract, and Appendix B's k > −1) are updated.
+  - Paper V's checker is at 209 of 209. It caught the text's "10.667" for three values from 10.66688 to 10.66814; the text now says
+    "10.667 to 10.668".
+- **Follow-ups.**
+  - Task 1 (derive H1) is #280.
+  - Task 3 (asymmetric ends) is #281.
+  - Tasks 2 and 4 are not filed: they refine the estimators of checks that are explained.
