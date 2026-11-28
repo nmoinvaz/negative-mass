@@ -102,7 +102,7 @@ outside the smooth-u class `Y = O(UV)`. `Y = V G(Π)` (= V R(ρ(Π)), #262) is t
   | R | pulse on the ray U = −2 only (exterior, away from the horizon crossing) | −3.9e-12 | 5e-13 (seed 1.8e-9 at h = 0.00125, falling by 4 per halving) |
 
   Class L carries no data on the exterior ray (δr = δφ = 0 on U = −2 for all V), and has c₂ = −9.6e-4. Class R gives c₂ = 0 up to the truncation seed: c₂ depends only on data in the
-  past of the crossing, and the same number holds all along H⁺, so data supported away from the crossing and from S do not excite it. This is the unperturbed-horizon class of #232.
+  past of the crossing, and the same number holds all along H⁺, so data supported away from the crossing and from S do not excite it (*update from #258:* this holds for one-sided data; on a full slice the constraints also tie c₂ to the data on the other side of S, and two-sided data supported away from S have c₂ ≠ 0 in general, −3.18e-4 at amplitude 1e-3, because the constraint solution is non-zero between the supports). This is the unperturbed-horizon class of #232.
 
 ## Planted case and control
 
@@ -160,8 +160,8 @@ the count for `u = Y/ρ → 0` (c₁ = c₂ = 0), which also holds for data supp
 
 ## What this does not show
 
-- A full Cauchy slice to spatial infinity. The solver rectangle reaches ρ ≈ 1.7 in the exterior; class L has no data on the exterior ray, so no exterior condition is violated, but a datum on a slice
-  that solves the constraints with δM_ADM = 0 and compact support was not constructed. Slice data here are extracted from characteristic solutions (normal derivative from neighbouring slices); D4 and N10 are the argument that they are admissible.
+- A full Cauchy slice to spatial infinity: *built in #258* ([full_slice.md](full_slice.md)). Compactly supported δφ and ∂_Nδφ on the slice V + U = 0 through S
+  solve both constraints with a solution that is exactly zero outside the support (δM_ADM = 0), and c₂ from the slice equals c₂ of the evolved horizon fit to 2.7e-8 (numerical evidence).
 - The left exterior beyond a sliver (V ≥ −0.05, U ≤ 0.06); the interior past −Π = 0.18 (the analytic solution is followed to ρ = −40, D8, but I⁺ was not examined).
 - The late-time growth: the Kruskal chart cannot reach V ∼ e^{bP}. The rate κ is #232's; here only the horizon law and its coefficient are tested. The decaying partner `Y ∝ U` (the coefficient ∂_U Y(S) on the past horizon) is not computed separately.
 - The static source M and c₁: data with c₁ ≠ 0 exist (A0, A1L), their nature (a δc-like static mode?) is not analysed.

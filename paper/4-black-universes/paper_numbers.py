@@ -357,11 +357,20 @@ nine = re.search(r"repeated without a new computation in 11 later papers", HL)
 check(nine is not None, "#260: 11 later papers repeat BKZ12's verdict (Bro18, BBS20 and nine further)")
 need("in~\\cite{Bro18,BBS20} and in nine further papers", "two cited and nine further = 11 (#260)")
 
+# #258: the full-slice datum (notes/black_universe/full_slice_output.txt)
+FS = S.read("full_slice_output.txt")
+e4 = re.search(r"E4: .*?\(slice (-[0-9.]+e-04); raw fits [^;]*; Rich relative errors [0-9.e-]+, ([0-9.e-]+),", FS)
+o1 = re.search(r"O1: two-sided .*?\(c2 slice (-[0-9.]+e-04) \(amplitude 1e-3\)", FS)
+check(e4 is not None and o1 is not None, "#258's E4 and O1 in full_slice_output.txt")
+need(f"$c_2={float(e4[1]) * 1e4:.6f}\\times10^{{-4}}$", "c2 of the full-slice datum")
+need(f"to ${float(e4[2]) * 1e8:.1f}\\times10^{{-8}}$ (relative; Richardson of $h=0.005$ and $0.0025$)", "slice vs horizon fit")
+need(f"(${float(o1[1]) * 1e4:.6f}\\times10^{{-4}}$ at amplitude $10^{{-3}}$)", "two-sided c2")
+
 # ---------------------------------------------------------------------------------------------------- placeholders and marks
 pend = re.findall(r"\\pending\{\\#(\d+)", TEX)
 needs = len(re.findall(r"% NEEDS #260", TEX))
 print(f"\nplaceholders in the text: {', '.join('#' + p for p in pend)}; sentences marked NEEDS #260: {needs}")
-check("258" in pend and "262" not in pend, "the placeholder for #258 remains; #262's are filled")
+check(not pend, "no placeholder remains (#262 and #258 filled)")
 
 # ---------------------------------------------------------------------------------------------------- coverage
 body = TEX.split("\\begin{abstract}")[1].split("\\begin{thebibliography}")[0]

@@ -218,3 +218,25 @@ full_slice.py mutations DIR PREFIX            # fired sets of stored logs DIR/PR
 
 `full_slice_output.txt` is `check`, `table` and `mutations` of the runs of record (`I258-mac/runs`), in that order. `check.2.log` and `table.2.log` are at code commit 7b7805c; the logs of the 14 older mutations are of run 1
 (4f31b3f), which differs from 7b7805c only by the mutation `mode_M` and one `table` line, and `check.log` equals `check.2.log` apart from times. Memory 140 MB at most.
+
+## Coordinator's review
+
+Review of branch `wip/i258-full-slice` at c1276a4 and raw `I258-mac` at a1b39db5, recorded in negative-mass-raw `I258-mac-review`.
+
+- **Design.** The design was approved, with the strict compact reading, the 1e-6 bar relative to c₂, E6 and X20 in, and the two-sided
+  finding made a declared check (O1 against E7). It was built as approved.
+- **Scope.** The branch adds the script, its output and this note.
+- **Rerun.** `full_slice.py check` on the Mac gives 17 of 17, every verdict line as recorded.
+- **No separate independent code.** The end-to-end check E4 compares the slice functional with the evolved horizon fit, two paths of this
+  note's code. E9 plants #262's exact mode, Y = c₂VR, through the same path to 6.5e-8, and that mode is confirmed independently by the
+  coordinator (`I262-mac-review/ind262c.py`). The Θ identity (δM_ADM = 0 for compact data, c₁ = δM_ADM/κ) is numerical evidence, with a
+  scalar-equation condition derived by hand.
+- **Applied.**
+  - `horizon_sector.md` (the class R sentence qualified, the slice gap closed) and the README (the one-sided qualification, an update
+    from #258) are updated.
+  - Paper IV's #258 placeholder is replaced by the datum, with its numbers checked by `paper_numbers.py` (136 of 136). No placeholder
+    remains in Paper IV.
+- **Follow-ups.**
+  - Task 1 (c₁ of #248's classes through Θ) is added to #259.
+  - Task 3 (late-time growth of the compact datum) is #279.
+  - Tasks 2 and 4 are not filed: E9 already plants the exact mode, and decaying tails are a weaker reading of a check that passed.
