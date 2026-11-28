@@ -180,3 +180,17 @@ PX_S1r (X3 −7.1e-05), PX_WJ (X1 −5.1e-05, X2 −7.4e-05) and PX_WJi (X3 +7.8
 
 `settled_mass_speed.py` (commands `analyze [--part=dev] [--mutate=NAME] [--baseline=FILE]`, `planted`), `settled_mass_speed_output.txt`, `settled_mass_speed_post.py`, `settled_mass_speed_post_output.txt`, `settled_mass_speed_graph.py`, `settled_mass_speed.svg`, this note;
 raw `negative-mass-raw/I314-mac` (`README.md`: stage 1 the readings, bars, planted cases, 18 mutations with their development effects; stage 2 the record; `dev/` the development logs and mutations on the dev partition; `record/analyze_record.3.log` (final, with Y1 to Y3), `.log` (record 2) and `.1.log` (record 1), `record/mut/` (record 2's) and `record/mut_3/` (the output of record's) 18 mutated records; `scripts/run_muts.sh`).
+
+## Coordinator's review
+
+Merged at 77befa8. Review folder `negative-mass-raw/I314-mac-review` at 581e7ec9. The changed files are those the brief names, plus a
+post hoc script and its output.
+
+- **Rerun on the Mac**: `analyze` equals `settled_mass_speed_output.txt` apart from the header (exit 1, as stored).
+- **Independent reading**: the coordinator's `I305-mac-review/ind305.py` reads ṙ_th by a quadratic fit in τ, an estimator this note
+  does not use, and found the same miss at X1–X3. With this note's readings that is eight that leave X2 and X3 beyond the bar.
+- REFX's declared bar (6e-8) was smaller than the printed digits of #305's residuals allow; it fails as declared and passes post hoc at
+  half a unit of the last digit, as the note says. 17 of 18 record mutations match.
+- Applied: `critical_ghost.md` §1.3, `settled_mass_route4.md`, and Paper V (`paper_numbers.py` 273 of 273; my first wording claimed all
+  three points stayed beyond the bar, which WJ's X1 = 3.9e-5 contradicts, and gave 1.43e-4 for the smallest X2/X3 miss where the
+  output has 1.14e-4; both were corrected before the commit).

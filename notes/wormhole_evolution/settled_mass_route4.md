@@ -180,3 +180,7 @@ development set showed the miss, because switching would choose the test by its 
   0.272, 1.975, 3.058 (fitted maximum 0.3932), ṙ_th as the note's to 3e-6. `old-coef` and `no-speed` fire.
 - Not met, kept as declared: P4 and FITQ. Which of the two the miss belongs to is open (recommended task 2, filed).
 - Applied: `settled_mass_route3.md`, `critical_ghost.md` §1.3, and Paper V (`paper_numbers.py` 264 of 264).
+
+*Update from #314* ([settled_mass_speed.md](settled_mass_speed.md)): no reading of the speed or the member removes the miss. Three
+estimators of ṙ_th move it by at most 1.65 % at X1–X3 (10.3 to 10.8 % would be needed), the best member weighting (WJ) brings X1 to
+3.9e-5 and leaves X2, X3 at 1.4e-4 and 1.8e-4, and under every reading X2 and X3 stay beyond the bar. The miss is the form's.

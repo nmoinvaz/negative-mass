@@ -365,6 +365,10 @@ apparent-horizon mass with a second code to 1.2e-4 up to e^{−f} ≈ 12):
     below its settled mass's h change (1.3e-5).
   - The static-member fit is poor at two of the three (rms 1.5e-4, 2.3e-4), and the misses are not ordered by leverage (#305's X1
     at 0.27 missed by 9e-5). So the miss of #305's route is not explained by leverage or by the static fit's rms alone.
+- *Update from #314* (`wormhole_evolution/settled_mass_speed.md`; *numerical evidence*): eight readings of the throat speed and
+  the member (three speed estimators and three member weightings sharing no code with `speed_at`, plus the reference and the
+  coordinator's) leave #305's X2 and X3 beyond the bar under every reading (at least 1.14e-4), while N1–N3 and Y1–Y3 stay within it.
+  So #305's miss belongs to the three-parameter form, not to how the member is read.
 - *Update from #246* (`wormhole_evolution/settled_mass_d56.md`; *numerical evidence*):
   - The same chain at D = 5 and 6 (M = r^{n−1}/2 on the apparent horizon; second order at three h; a planted Tangherlini recovered
     to 3e-6 to 6e-6; to e^{−f} = 4.0e8 on the horizon) gives for the symmetric family S a settled mass of 0.14587 a²
