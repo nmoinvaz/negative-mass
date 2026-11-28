@@ -198,6 +198,24 @@ def rdot_at(S, t0, win=None):
     return float(np.polyfit(S["tau"][m], S["r"][m], 1)[0])
 
 
+def stopped_pstar(base, B, h):
+    """p*_h of a bisection that its 2 h limit stopped: from its points (the last collapse and the first expansion), written to pstar_stopped.json by `stopped-pstar`. None if there is none."""
+    f = os.path.join(base, "bisect", f"D6_B{B:g}_h{h:g}", "pstar_stopped.json")
+    return json.load(open(f)) if os.path.exists(f) else None
+
+
+def cmd_stopped_pstar(a):
+    """From the points of a stopped bisection: lo = the largest A with fate -1, hi = the smallest A with fate +1; writes pstar_stopped.json (pstar = (lo + hi)/2, the bracket)."""
+    d = a["dir"]
+    pts = [json.loads(l) for l in open(os.path.join(d, "points.jsonl"))]
+    lo = max(p["A"] for p in pts if p.get("fate") == -1 and p.get("phase") == "bisect")
+    hi = min(p["A"] for p in pts if p.get("fate") == 1 and p.get("phase") == "bisect")
+    out = dict(lo=lo, hi=hi, pstar=0.5 * (lo + hi), bracket=hi - lo, runs=sum(1 for p in pts if p.get("phase") == "bisect"), source="points.jsonl of a bisection stopped by its 2 h limit")
+    json.dump(out, open(os.path.join(d, "pstar_stopped.json"), "w"), indent=1)
+    print(json.dumps(out))
+    return True
+
+
 def load_drift(base, hks, Bs):
     ents = {}
     for B in Bs:
@@ -208,8 +226,13 @@ def load_drift(base, hks, Bs):
                 continue
             bis = os.path.join(base, "bisect")
             if B != td.CRIT["B_ref"] and not os.path.exists(os.path.join(bis, f"D6_B{B:g}_h{h:g}", "summary.json")):
-                continue
-            ps = td.pstar_of(6, B, hk, bis)
+                sp = stopped_pstar(base, B, h)
+                if sp is None:
+                    continue
+                ps = sp["pstar"]
+                print(f"    note: B = {B:g}, h = {h:g}: p*_h from a bisection stopped by its 2 h limit, bracket {sp['bracket']:.1e} after {sp['runs']} runs (declared 1e-12); the pair at delta = {C6['delta']:g} straddles it")
+            else:
+                ps = td.pstar_of(6, B, hk, bis)
             ents[(B, hk)] = td.pair_entry(6, B, hk, pr[0], pr[1], ps)
             ents[(B, hk)]["delta"] = C6["delta"]
     return ents
@@ -278,6 +301,85 @@ def analyze_drift(ents):
     return tab
 
 
+def posthoc_departure(hk, La, Lb):
+    """Post hoc, gates nothing. The deviation of the run at p* + delta from the tuned throat, in the linear regime, is delta/delta_0 times the pair's odd part (delta_0 = 1e-9, the pair of `stall`):
+    its time of departure t_dep(delta) is where |odd| = eps delta_0/delta (eps = 0.1 of the throat radius; 0.03 and 0.3 give the sensitivity). Reported against #40's lifetimes T of the job
+    at the same h: the offset T - t_dep, the local slopes per two e-folds of dtau_dep/dln(1/delta) (which is 1/lambda = r_th/W) and of T in t, and the lapse factor dt/dtau on the locus."""
+    h = th.CRIT["H"][4][hk]
+    W = tl.W_EXACT[4]
+    com = np.intersect1d(La["s"], Lb["s"])
+    ia, ib = np.searchsorted(La["s"], com), np.searchsorted(Lb["s"], com)
+    t, tau = La["t"][ia], 0.5 * (La["tau"][ia] + Lb["tau"][ib])
+    odd, r = 0.5 * (Lb["r"][ib] - La["r"][ia]), 0.5 * (La["r"][ia] + Lb["r"][ib])
+    ok = np.abs(odd) > 0
+    lt, tt, ta, rr = np.log(np.abs(odd[ok])), t[ok], tau[ok], r[ok]
+    m = np.concatenate([[True], np.diff(lt) > 0]) & (tt < 17.5)               # the monotone, linear part of the growth
+    lt, tt, ta, rr = lt[m], tt[m], ta[m], rr[m]
+    d0 = 10.0 ** (-tl.STALL["e"])
+    pts = [json.loads(l) for l in open(os.path.join(MERGED, f"D6_G_h{h:g}", "points.jsonl"))]
+    ser = {(round(p["e"], 1), p["side"]): p["T"] for p in pts if p["phase"] == "series" and p["T"] is not None}
+    print(f"    PH D=6 h={h:g} (post hoc, gates nothing): departure of p* + delta from the tuned throat, |odd(t)| = eps delta_0/delta of the pair at delta_0 = {d0:g}; T of #40's job in t")
+    for eps in (0.03, 0.1, 0.3):
+        rows = []
+        for e in np.arange(3.0, 11.01, 0.5):
+            target = math.log(eps * d0 * 10.0 ** e)
+            if not (lt.min() <= target <= lt.max()):
+                continue
+            rows.append(dict(e=float(e), t=float(np.interp(target, lt, tt)), tau=float(np.interp(target, lt, ta)), r=float(np.interp(target, lt, rr))))
+        for x in rows:
+            x["Tm"], x["Tp"] = ser.get((round(x["e"], 1), -1)), ser.get((round(x["e"], 1), 1))
+        if eps == 0.1:
+            for x in rows:
+                print(f"       eps {eps} e {x['e']:4.1f}: t_dep {x['t']:6.2f} tau_dep {x['tau']:6.2f} r_th {x['r']:.3f} r_th/W {x['r'] / W:.3f}; T(collapse) {x['Tm'] if x['Tm'] is None else round(x['Tm'], 2)} "
+                      f"(T - t_dep {x['Tm'] - x['t'] if x['Tm'] else float('nan'):+.2f}), T(expansion) {x['Tp'] if x['Tp'] is None else round(x['Tp'], 2)} (T - t_dep {x['Tp'] - x['t'] if x['Tp'] else float('nan'):+.2f})")
+        by = {round(x["e"], 1): x for x in rows}
+        out = []
+        for a, b in ((3.0, 5.0), (4.0, 6.0), (5.0, 7.0), (6.0, 8.0), (7.0, 9.0)):
+            if a in by and b in by:
+                L = (b - a) * math.log(10.0)
+                sl_tau = (by[b]["tau"] - by[a]["tau"]) / L
+                sl_t = (by[b]["t"] - by[a]["t"]) / L
+                sl_Tm = (by[b]["Tm"] - by[a]["Tm"]) / L if by[a]["Tm"] and by[b]["Tm"] else float("nan")
+                rW = 0.5 * (by[a]["r"] + by[b]["r"]) / W
+                out.append(f"e {a:g}-{b:g}: dtau_dep/dln {sl_tau:.3f} (r_th/W at the mid {rW:.3f}), dt_dep/dln {sl_t:.3f}, dT(collapse)/dln {sl_Tm:.3f}")
+        offs = [x["Tm"] - x["t"] for x in rows if x["Tm"] and x["e"] >= 4.5]
+        print(f"       eps {eps}: " + "; ".join(out) + (f"; T(collapse) - t_dep over e >= 4.5: {min(offs):+.2f} to {max(offs):+.2f}" if offs else ""))
+
+
+def posthoc_B(tab, base):
+    """Post hoc, gates nothing: p*_h(B) at the three h (h = 0.005 from dev/bisect; B = 0.1 from #40's raw), the Richardson order and p* and the exponent of the extrapolated p*, and, with the
+    energy E_net = (B^2 - p*_h^2) I_2 that the two pulses leave (#255's definition, I_2 from throat_drift.pulse_integrals(4)), the fitted rdot_inf / E_net^(3/2) where the fit converged."""
+    I2, _ = td.pulse_integrals(4)
+
+    def pstar(B, hk):
+        h = th.CRIT["H"][4][hk]
+        if B == td.CRIT["B_ref"]:
+            return tl.pstar_raw40(6, "G", hk)[0]
+        for b in (os.path.join(base, "bisect"), os.path.join(RAW, "dev", "bisect")):
+            f = os.path.join(b, f"D6_B{B:g}_h{h:g}", "summary.json")
+            if os.path.exists(f):
+                return json.load(open(f))["pstar"]
+        return None
+    print("    PHB D=6 (post hoc, gates nothing): p*_h(B) at h = 0.005, 0.0025, 0.00125, the observed order, the Richardson p*; E_net = (B^2 - p*_h^2) I_2 (I_2 = %.4f), rdot_inf / E_net^(3/2) where the fit converged" % I2)
+    ext = {}
+    for B in sorted({B for B, _ in tab} | {0.02, 0.04, 0.07, 0.1, 0.2}):
+        p = [pstar(B, k) for k in (0, 1, 2)]
+        if all(x is not None for x in p) and (p[1] - p[2]) != 0 and (p[0] - p[1]) / (p[1] - p[2]) > 0:
+            q = math.log2((p[0] - p[1]) / (p[1] - p[2]))
+            ext[B] = p[2] - (p[1] - p[2]) / (2 ** q - 1)
+            print(f"       B {B:g}: p*_h {fmt(p, '{:.7e}')}, order {q:.3f}, Richardson p* {ext[B]:.7e}")
+        else:
+            print(f"       B {B:g}: p*_h {fmt([x for x in p if x is not None], '{:.7e}')} (not all three h)")
+    Bs = sorted(ext)
+    print("       exponent of the extrapolated p*: " + "; ".join(f"B {a:g} to {b:g}: {math.log(ext[b] / ext[a]) / math.log(b / a):.3f}" for a, b in zip(Bs, Bs[1:])) + (f"; B {Bs[0]:g} to {Bs[-1]:g}: {math.log(ext[Bs[-1]] / ext[Bs[0]]) / math.log(Bs[-1] / Bs[0]):.3f}" if len(Bs) > 1 else ""))
+    for (B, hk), x in sorted(tab.items()):
+        f = x["fit"]
+        if x["conv"]:
+            A = pstar(B, hk) if pstar(B, hk) is not None else x["ps"]
+            E = (B * B - A * A) * I2
+            print(f"       B {B:g} h {x['h']:g}: E_net {E:.5f}, rdot_inf {f['inf']:+.5f} +- {f['se_inf']:.1e}, rdot_inf / E_net^(3/2) = {f['inf'] / E ** 1.5:.4f}")
+
+
 def chk_planted6():
     """The estimators of #255 at n = 4: planted static throat of radius c and planted moving throats through the locus code (PL1, PL2 of #255's bars), and planted rdot(tau) series through the
     local slope and the fit (PL3)."""
@@ -321,8 +423,11 @@ def analyze(base, hks, mutation=None):
     chk_P246(hks)
     S, stalls = load_locus(base, hks)
     analyze_locus(S, stalls)
+    for (D, hk), (La, Lb) in sorted(stalls.items()):
+        posthoc_departure(hk, La, Lb)
     ents = load_drift(base, hks, C6["Bs"] + C6["Bs_extra"])
-    analyze_drift(ents)
+    tab = analyze_drift(ents)
+    posthoc_B(tab, base)
     chk_planted6()
     bad = [c for c, ok in all_results() if ok is False]
     print(f"\n{sum(1 for _, ok in all_results() if ok)} of {len(all_results())} checks pass; {len(bad)} fail" + (f": {', '.join(bad)}" if bad else ""))
@@ -368,6 +473,8 @@ def main():
             a[k] = v
     if cmd == "tail":
         sys.exit(0 if cmd_tail(a) else 1)
+    if cmd == "stopped-pstar":
+        sys.exit(0 if cmd_stopped_pstar(a) else 1)
     if cmd == "threshold-analyze":
         th.CRIT["not_run"] = {}
         if mut:
