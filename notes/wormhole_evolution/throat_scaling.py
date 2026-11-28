@@ -265,6 +265,28 @@ def k_inf(r, kloc, nfold=None):
     return float(best.x[0]), float(best.x[2]), math.sqrt(2 * best.cost / len(rr))
 
 
+def limit_fit(r, y, nfold=None):
+    """Report only (post hoc, gates nothing): y(r) = y_inf - a (r/r_end)^-g over the last e-fold of r, a of either sign. Same window as k_inf."""
+    w = CRIT["nfold"] if nfold is None else nfold
+    sel = r >= r[-1] * math.exp(-w)
+    rr, yy = r[sel], y[sel]
+    step = max(1, len(rr) // 400)
+    rr, yy = rr[::step], yy[::step]
+    best = None
+    a0 = yy[-1] - yy[0] if yy[-1] != yy[0] else 1e-4
+    for g0 in (0.5, 1.0, 2.0, 3.0, 4.0):
+        s = least_squares(lambda p: (p[0] - p[1] * (rr / rr[-1]) ** (-p[2])) - yy, [yy[-1], a0, g0], bounds=([-1e3, -1e3, 0.05], [1e3, 1e3, 12]))
+        if best is None or s.cost < best.cost:
+            best = s
+    return float(best.x[0]), float(best.x[2]), math.sqrt(2 * best.cost / len(rr))
+
+
+def k_from_relation(M, n):
+    """Report only: k = H^2/Hdot with Hdot from the throat relation, Hdot = -(n+1)H^2/2 - (n-1)/(2 r^2) - rho/n (an identity, no numerical derivative)."""
+    H, r, rho = M["H"], M["r"], M["rho"]
+    return H ** 2 / (-(n + 1) / 2.0 * H ** 2 - (n - 1) / (2.0 * r ** 2) - rho / n)
+
+
 def c_at(r, rho, H, rc):
     j = min(int(np.searchsorted(r, rc)), len(r) - 1)
     return float(-rho[j] / H[j] ** 2), float(r[j])
@@ -437,6 +459,30 @@ def job(argv):
 # --------------------------------------------------------------------------------------------------------------------
 # analysis of the stored runs
 # --------------------------------------------------------------------------------------------------------------------
+def posthoc_fields(M, r, rho, H, kl, n):
+    """Report only (post hoc, gates nothing): the extrapolated c, the extrapolated exponent of the throat-relation series, and the scatter of k_loc."""
+    try:
+        return _posthoc_fields(M, r, rho, H, kl, n)
+    except Exception as e:                       # a report must never change a verdict
+        nan = float("nan")
+        return dict(cinf=nan, gc=nan, rmsc=nan, ktinf=nan, gk=nan, rmsk=nan, scatter=nan, Hnoise=nan, mean_kloc=nan, mean_kt=nan, error=repr(e))
+
+
+def _posthoc_fields(M, r, rho, H, kl, n):
+    with np.errstate(all="ignore"):
+        cl = -rho / H ** 2
+    kt = k_from_relation(M, n)
+    ci, gc, rc_ = limit_fit(r, cl)
+    kti, gk, rk = limit_fit(r, kt)
+    w = r >= r[-1] * math.exp(-CRIT["nfold"])
+    seg = kl[w]
+    sm = np.convolve(seg, np.ones(201) / 201, mode="same")
+    scat = float(np.std((seg - sm)[200:-200])) if len(seg) > 500 else float("nan")
+    dH = np.diff(H[w], 2) / H[w][1:-1]
+    return dict(cinf=ci, gc=gc, rmsc=rc_, ktinf=kti, gk=gk, rmsk=rk, scatter=scat, Hnoise=float(np.std(dH)) if len(dH) > 10 else float("nan"),
+                mean_kloc=float(np.mean(seg)), mean_kt=float(np.mean(kt[w])))
+
+
 def summarize(path, tag=None, rc=None):
     """One run: the estimators and the spatial test. A dict."""
     R, M = throat(path)
@@ -452,7 +498,7 @@ def summarize(path, tag=None, rc=None):
     c, rr = c_at(r, rho, H, rc)
     K = H ** 2 + 1 / r ** 2
     s = dict(path=path, name=os.path.basename(path).replace(".npz", ""), n=n, D=n + 2, h=float(R["h"]), X=float(R["meta"].get("X", R["N"] * R["h"])), N=int(R["N"]),
-             A=float(R["meta"].get("A", float("nan"))), b=R["meta"].get("b"), r_end=float(r[-1]), tau_end=float(tau[-1]), kfit=kf, ts=ts, kinf=ki, g=g, rms=rms, kinf_ws=ki2,
+             A=float(R["meta"].get("A", float("nan"))), b=R["meta"].get("b"), r_end=float(r[-1]), tau_end=float(tau[-1]), kfit=kf, ts=ts, kinf=ki, g=g, rms=rms, kinf_ws=ki2, ph=posthoc_fields(M, r, rho, H, kl, n),
              c=c, r_c=rr, kl_end=float(kl[-3]), KT=float(K[-1] * (ts - tau[-1]) ** 2), R=R, M=M, kloc=kl, spatial=run_spatial(R, n, R["meta"].get("b") or 0.0))
     return s
 
@@ -594,6 +640,34 @@ def reports(runs):
         print(f"  {n + 2:<3d}{n:<3d}{2.0 * (n - 1):>12.4f}{c_pred(n):>12.5f}")
 
 
+def posthoc_report(runs):
+    """Report only (post hoc, after the runs of record; the coordinator allowed the extrapolated c for the jump test): nothing here gates anything."""
+    print("\n--- post hoc rows (added after the runs of record; they gate nothing) ---")
+    allS = [s for g in ("D4", "D5", "D6", "D6c", "X800") for s in runs.get(g, [])]
+    print("  the extrapolated exponent of the throat-relation series k = H^2/Hdot (no numerical derivative), against the declared k_inf of the differenced k_loc;")
+    print("  scatter = rms of k_loc about its 201-cell mean over the window; H noise = rms of the second difference of H / H over the window")
+    print(f"  {'run':30s}{'k_pred':>8s}{'k_inf':>10s}{'k_inf(rel.)':>13s}{'g':>6s}{'rms':>9s}{'mean k_loc':>12s}{'mean k_rel':>12s}{'scatter':>10s}{'H noise':>10s}")
+    for s in allS:
+        q = s["ph"]
+        print(f"  {s['name']:30s}{k_pred(s['n']):8.3f}{s['kinf']:10.5f}{q['ktinf']:13.5f}{q['gk']:6.2f}{q['rmsk']:9.1e}{q['mean_kloc']:12.5f}{q['mean_kt']:12.5f}{q['scatter']:10.1e}{q['Hnoise']:10.1e}")
+    if runs.get("JT"):
+        print("  the extrapolated c of the jump test (JTC gates c at r = 50a, as declared), same window and estimator as k_inf:")
+        print(f"  {'run':30s}{'c_pred':>9s}{'c(r=50)':>10s}{'rel':>10s}{'c_inf':>10s}{'rel':>10s}{'g':>6s}")
+        for s in runs["JT"]:
+            cp = c_jump(s["n"], s["b"])
+            print(f"  {s['name']:30s}{cp:9.4f}{s['c']:10.4f}{s['c'] / cp - 1:+10.1e}{s['ph']['cinf']:10.4f}{s['ph']['cinf'] / cp - 1:+10.1e}{s['ph']['gc']:6.2f}")
+    # planted cases at the scatter of the fine-h runs (1.8e-3 per point): the declared extrapolation when the approach at r_end is 1.5e-3 (the A = 0.05 run) and 7e-5 (the A = 0.2 run)
+    print("  planted k_loc (n = 4, g = 2.4, r_end = 170, 20000 points) with scatter 1.8e-3 per point, 20 seeds, through the declared k_inf (the declared PX used scatter 1e-4):")
+    for dev in (1.5e-3, 7e-5):
+        errs = []
+        for seed in range(1, 21):
+            r, kl, k = planted_kloc(4, 2.4, dev, 170.0, 20000, 1.8e-3, seed)
+            errs.append(k_inf(r, kl)[0] - k)
+        errs = np.array(errs)
+        print(f"    deviation at r_end {dev:.1e}: error rms {np.sqrt(np.mean(errs ** 2)):.1e}, max {np.max(np.abs(errs)):.1e}, median |error| {np.median(np.abs(errs)):.1e}, "
+              f"{int(np.sum(np.abs(errs) > CRIT['k6_abs']))} of 20 outside {CRIT['k6_abs']:g}")
+
+
 def load_runs(i213, i230):
     runs = {}
     if i213:
@@ -681,6 +755,7 @@ def main():
     analyze(suite)
     if cmd == "analyze":
         reports(suite)
+        posthoc_report(suite)
     bad = [c for c, ok in results if ok is False]
     n_ok = sum(1 for _, ok in results if ok)
     print(f"\n{n_ok} of {sum(1 for _, ok in results if ok is not None)} checks pass; failing: {bad}")
