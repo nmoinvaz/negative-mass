@@ -175,3 +175,17 @@ to $0.14$ between $t=10$ and $17$, not as an exponential; the roundoff offset of
 `negative-mass-raw/I291-mac` (`README.md` with the criteria, the planted cases and the mutation sets; `runs/` and `runs_k1` … `runs_k7`: `G_B0.02/h<h>/{pstar,e12/{member,logs}}`, with
 `e11`, `e10` of member 0; `mut/` the 13 mutated analyses of record; `dev/` the development runs, analyses and mutations; `scripts/`: `run_one.sh`, `run_jobs.sh`, `launch_I291.sh`,
 `run_muts.sh`, `repro.sh`; `analyze_record.log`).
+
+## Coordinator's review
+
+Merged at c868582. Review folder `negative-mass-raw/I291-mac-review` at aba5784b, criteria committed (d6371690) before the first run of
+`ind291.py`. The changed files are the brief's, plus the figure's script.
+
+- **Rerun on the Mac** from 532f56b: `analyze` equals `throat_tail_output.txt` apart from the header (exit 1, S1 at h = 0.005).
+- **ind291**, 3 of 3. It shares only the pairs. From the eight members per h it forms its own ensemble mean, its own speed
+  (a quadratic fit over ±0.25 in τ) and the log-log slope over [15, 18.2]. Slopes −2.4065 and −2.3050 (worst 0.007 from the
+  note's); rate × t 2.13, 2.23, 2.34 and 2.13, 2.23, 2.32 at t = 10, 13, 16, spread 9.5 %. With member 0 alone it gets −2.357 and
+  −2.083, the note's single-pair scatter.
+- The estimator was redesigned after the development set and before the runs of record (the ensemble mean, S2 on [10, 16]), as
+  the raw README states; S1's bar was not moved. S1 stays not met at h = 0.005, by 0.016.
+- Applied: `ellis_spectrum.md`, `throat_drift.md`, and a sentence in Paper V's drift paragraph (`paper_numbers.py` 254 of 254).
