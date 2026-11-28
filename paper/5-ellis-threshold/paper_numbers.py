@@ -37,6 +37,7 @@ MUTATIONS = {
     "settled_G": ("settled_g", "delta = 1e-8: 0.235548", "delta = 1e-8: 0.235648"),
     "member_M12": ("member", "      12  0.237622   0.047732", "      12  0.237722   0.047732"),
     "spectrum_zero": ("spectrum", "zero at W = -2.61874 +0.15269i", "zero at W = -1.61874 +0.15269i"),
+    "route_W3": ("route", "-7.55e-04   0.240723      +7.11e-05", "-7.55e-04   0.240723      +5.11e-05"),
     "slope_S6": ("check", "ind40 0.461705", "ind40 0.461805"),
 }
 
@@ -62,6 +63,7 @@ SRC = {
     "massb": read(EV, "settled_mass_b_output.txt"),
     "member": read(EV, "settled_mass_member_output.txt"),
     "spectrum": read(EV, "ellis_spectrum_output.txt"),
+    "route": read(EV, "settled_mass_route_output.txt"),
     "expansion": read(EV, "expansion_output.txt"),
     "plateau": read(EV, "constraint_plateau_output.txt"),
     "derive": read(EV, "derive_output.txt"),
@@ -564,6 +566,18 @@ printed(f"its nearest zeros decay at rates ${min(conf):.2f}$", "the slowest conf
 t7 = {D: [float(x) for x in re.search(rf"T7-D{D}: .*?rate x t at t = 15, 20, 25: \[([^\]]+)\]", so)[1].split()] for D in (4, 5)}
 printed(f"the speed falls only as $t^{{-{sum(t7[5]) / 3:.2f}}}$", "D = 5 tail exponent, mean of rate x t at t = 15, 20, 25")
 printed(f"a speed falling as $t^{{-{sum(t7[4]) / 3:.1f}}}$", "D = 4 tail exponent, mean of rate x t")
+
+# #283: G's settled mass on two further routes (notes/wormhole_evolution/settled_mass_route_output.txt, h = 0.005)
+ro = SRC["route"]
+rr = {m[0]: (float(m[1]), float(m[2])) for m in
+      re.findall(r"^\s+([WC][123])\s+True\s+[0-9.]+\s+[0-9.]+\s+([-+0-9.e]+)\s+[0-9.]+\s+([-+0-9.e]+)\s+\|", ro, re.M)}
+check(sorted(rr) == ["C1", "C2", "C3", "W1", "W2", "W3"], f"#283's six points: {sorted(rr)}")
+p2 = [abs(v[0]) for v in rr.values()]
+p3 = [abs(v[1]) for v in rr.values()]
+check(min(p2) > 6e-5, f"#283: P2 misses all six (smallest {min(p2):.2e})")
+check(sum(x <= 6e-5 for x in p3) == 5, f"#283: P3 within 6e-5 at five of six ({sorted(p3)})")
+printed(f"by up to\n${max(p2) * 1e4:.2f}\\times10^{{-4}}$", "the largest P2 miss")
+printed(f"predicted to ${max(p3) * 1e5:.2f}\\times10^{{-5}}$, five of them within $6\\times10^{{-5}}$", "the largest P3 miss and the count within the bar")
 
 print(f"\n{count} checks, {bad} failed; mutation {OPT.mutate}")
 sys.exit(1 if bad else 0)
