@@ -11,6 +11,7 @@ member B = 0). Its variant V3 subtracts B = 0's reading from every member (M_0 =
 
     python3 settled_mass_blind.py freeze  [--part=record|dev]
     python3 settled_mass_blind.py analyze [--part=record|dev] [--mutate=NAME] [--baseline=FILE]
+    python3 settled_mass_blind.py post    post hoc, after the record, gates nothing: the shift that would close the miss, other eps, refits that include X
 
 `--part=dev` is the development partition: fifteen training members only (the fit is 11 of the 14, the prediction is three held out), X1 to X3 and N1 to N3 are never read (a guard raises).
 The mutations' declared effects (MUTATIONS) are computed there before the freeze. Readings are #296's (settled_mass_eps.read, through #266's member_at and #267's speed_at), imported unchanged.
@@ -504,6 +505,58 @@ def analyze_cmd():
     return finish(t0)
 
 
+def post_cmd():
+    """Post hoc (after the record; gates nothing): the shift of one reading that would close the miss at X, the same procedure at other eps, and refits that include X (in-sample)."""
+    t0 = time.time()
+    train, test = FIT, XN
+    fz = json.load(open(frozen_path()))
+    seed_x()
+    names = (REF,) + train + test + N3
+    P2 = readset(names, EPS_B)
+    f = fz["fits"][GATING_KEY]
+    res, pred, Pv = resid(f, P2, test)
+    a, b_, c = f["co"]
+    dr0, dv0 = f["b0"]["dr"], f["b0"]["dv"]
+    print(f"== Post hoc 1 (gates nothing): the shift of one reading that would close the frozen V3 miss at X (eps = 1e-2), against B = 0's second-order part (dr {dr0:+.3e}, dv {dv0:+.3e})")
+    print("    point  M - pred    leverage | needed shift of rdot_th' (frac of |rdot_th'|, / B=0's dv) | of r_th' (/ B=0's dr) | of gamma_1 (/ gamma_1)")
+    lev_t, _ = leverage(Pv, train, test)
+    for i, n in enumerate(test):
+        y = pred[i] / Pv[n]["rth"]
+        dv_s = res[i] / (Pv[n]["rth"] * c)
+        dr_s = res[i] / y
+        dg_s = res[i] / (Pv[n]["rth"] * (a + 2 * b_ * Pv[n]["g1"]))
+        print(f"    {n}   {res[i]:+.3e}  {lev_t[i]:.3f}  | {dv_s:+.3e} ({dv_s / abs(Pv[n]['rdot']):+.1%}, {dv_s / dv0:+.2f}) | {dr_s:+.3e} ({dr_s / dr0:+.2f}) | {dg_s:+.3e} ({dg_s / Pv[n]['g1']:+.1%})")
+    print("\n== Post hoc 2 (gates nothing; X was read at these eps after the record, so no eps may be chosen from this table): the frozen procedure repeated at other eps (V3 and unsubtracted refit over the 14, predict X and N)")
+    print("    eps     | V3: X1, X2, X3 | max X, max N | unsubtracted: X1, X2, X3 | max X, max N | in-sample (V3, fixed) | rdot_th at X1, X2, X3 | B = 0's dr, dv")
+    for eps in (EPS_A, 2e-3, 5e-3, EPS_B, 2e-2, 5e-2):
+        try:
+            P = readset(names, eps)
+            row = []
+            ref = P[REF]
+            Pq = apply_offsets(P, **offsets_of(ref))
+            R3x = E.fit_pred(Pq, train, test, M0)
+            R3n = E.fit_pred(Pq, train, N3, M0)
+            Rfx = E.fit_pred(P, train, test, M0)
+            Rfn = E.fit_pred(P, train, N3, M0)
+            print(f"    {eps:<7g} | " + " ".join(f"{x:+.2e}" for x in R3x["res"]) + f" | {np.max(np.abs(R3x['res'])):.2e} {np.max(np.abs(R3n['res'])):.2e} | " + " ".join(f"{x:+.2e}" for x in Rfx["res"])
+                  + f" | {np.max(np.abs(Rfx['res'])):.2e} {np.max(np.abs(Rfn['res'])):.2e} | {np.max(np.abs(R3x['ins'])):.1e} {np.max(np.abs(Rfx['ins'])):.1e} | " + " ".join(f"{P[n]['rdot']:+.2e}" for n in test)
+                  + f" | {ref['rth'] - 1:+.2e} {ref['rdot']:+.2e}")
+        except Exception as ex:
+            print(f"    {eps:<7g} | not computable: {ex!r}")
+    print("\n== Post hoc 3 (gates nothing): refits that include X (descriptions on points that include the tested ones), V3 at eps = 1e-2")
+    Pq = apply_offsets(P2, **offsets_of(P2[REF]))
+    for lab, tr in (("14 + X1-X3 (17 points)", train + test), ("14 + N1-N3 (17 points)", train + N3), ("14 + N + X (20 points)", train + N3 + test)):
+        R = E.fit_pred(Pq, tr, tr[:1], M0)
+        print(f"    {lab}: (a, b, c) = {', '.join(f'{x:+.4f}' for x in R['co'])}; in-sample max {np.max(np.abs(R['ins'])):.2e}, leave-one-out max {np.max(np.abs(R['loo'])):.2e}; in-sample at X: "
+              + ", ".join(f"{n} {R['ins'][tr.index(n)]:+.2e}" for n in test if n in tr) + "; leave-one-out at X: " + ", ".join(f"{n} {R['loo'][tr.index(n)]:+.2e}" for n in test if n in tr))
+    for lab, tr in (("14 + X1-X3 (17 points), unsubtracted", train + test),):
+        P1_ = P2
+        R = E.fit_pred(P1_, tr, tr[:1], M0)
+        print(f"    {lab}: (a, b, c) = {', '.join(f'{x:+.4f}' for x in R['co'])}; in-sample max {np.max(np.abs(R['ins'])):.2e}, leave-one-out max {np.max(np.abs(R['loo'])):.2e}")
+    print(f"\n{time.time() - t0:.0f} s")
+    return 0
+
+
 MUTATIONS = {      # name: the checks it newly fails on the development partition (--part=dev --baseline=the unmutated log); declared in the raw README before the freeze
     "asym_sign": ['FRZ', 'PL296', 'PX', 'PX-FIX_1e-3', 'PX-V1_1e-2', 'PX-V3_1e-3', 'REFX', 'REP296'],
     "b0_eps": ['FRZ'],
@@ -557,6 +610,8 @@ def main():
         sys.exit(freeze_cmd())
     if cmd == "analyze":
         sys.exit(analyze_cmd())
+    if cmd == "post":
+        sys.exit(post_cmd())
     raise SystemExit(__doc__)
 
 
