@@ -63,6 +63,15 @@ elsewhere.
 `cargo clippy --all-targets -- -D warnings` in this directory is clean on the one path. At step 1 it was not: 11 errors, 6 of them in
 the recursion and the walk that step 2 deletes (`run_12_clippy_step1_off`, `run_21_clippy_step1_on`).
 
+### Coordinator's review
+
+Rerun on the Mac at nice 10 from main at 62ebb47 (the merge), raw `negative-mass-raw/I216-mac-review` at 1ec1f776, criteria in its
+README. `conical_global.py` passes 17 of 17 with 13 of 13 controls on target. Against #190's baseline #216's comparator finds 0
+gated differences in 126 lines (the same 4 error-sized numbers differ as in the runner's run); against the runner's one-path run
+nothing differs at all. This is a reproduction with the same code, not an independent check. `conical_loglog.py` and the `ctl`
+runs were not rerun. The changed files are inside the brief's scope. `implicit_taylor_lib.md` now marks the feature, the lib
+modules and the pin as #190's history.
+
 ## Rerun
 
 From the repository root, in the repository's Python environment (the scripts build the crate):
