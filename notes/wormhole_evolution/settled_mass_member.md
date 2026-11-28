@@ -190,3 +190,20 @@ and the bullet at line 554: "Whether it is a function of the member at departure
 
 `settled_mass_member.py` (commands `pstar`, `job`, `member`, `planted`, `analyze`; `--mutate=`), `settled_mass_member_output.txt`, this note; raw `negative-mass-raw/I267-mac` (`README.md` with the criteria and the mutation targets; `runs/G_B0.1/h<h>/{pstar,e<e>/{chain,member,logs}}`,
 `mut/` the 28 mutated analyses of record, `dev/` development runs and their logs, `scripts/`, `plot_settled_mass_member.py` with the vendored `data_graphs.py`, and `settled_mass_member.svg`: M(δ) with the prediction, the residual, and r_th(t) along the stall).
+
+## Coordinator's review
+
+Merged at 39d2f6e. Review folder `negative-mass-raw/I267-mac-review` at 2e3cb9c9, criteria committed (ca9f23fb) before the first run of
+`ind267.py`. The changed files are those the brief names.
+
+- **Rerun on the Mac** from 86b6039: the job and the pair at h = 0.005, δ = 1e-12 are bitwise equal to the runner's (chain, locus,
+  member rows, t_dep), and `analyze` reproduces the stored output except for its timestamp (exit 1, HST and PRED fail).
+- **ind267**, 5 of 5. It shares the evolution, the stored slices and #225's `fit_asym` (the stored s_m) with this note's code, and
+  nothing else. From the raw files it recomputes the departure time, the member at departure, the plateau and #266's (a, b, M₀) over the
+  four B. It reproduces the table to 5e-7 in r_th, γ₁ and M, and M − predicted to 4.7e-7. It confirms that PRED fails (8.88e-4 against
+  6e-5) and the post hoc ratios 0.650, 0.653, 0.670, 0.650. The mutations `eps-1e-2`, `b-scale` and `rth-side` fire. `plat-half` does
+  not: the plateau over the last 0.5 of x⁺ is within 7.4e-7 of the one over the last 1.0.
+- **Not met, kept as declared:** HST at δ = 1e-12 and PRED. The stale items 1 to 3 above are applied (`settled_mass_g.md`,
+  `critical_ghost.md` §1.3, `throat_locus.md`), and so is Paper V's paragraph. Item 5 is right as `settled_mass_g.md` states it: RC6
+  there is for δ = 1e-6 and 1e-8.
+- **Follow-ups:** the recommended tasks are filed as issues; task 4 is #272's D = 4 half, added to #272.

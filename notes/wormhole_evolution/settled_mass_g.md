@@ -85,8 +85,10 @@ Plateau of M_AH at the limit, `scan`, h = 0.01 and 0.005 (they agree to 1.4e-5 f
 
 The plateau has a minimum near δ = 1e-5 (0.23497) and rises as δ falls: per decade +1.7e-5 (1e-5 to 1e-6), +2.2e-4, +3.5e-4, +4.4e-4, +5.1e-4, +5.5e-4, +5.7e-4 (to 1e-12). The increments still grow at 1e-12; no limit
 as δ → 0 is visible, and none is claimed. The formation value M_start rises the same way below 1e-7 (0.4952 to 0.4990). The gap to S is +1.2e-2 to +1.5e-2 over this range. At δ = 1e-12 the p*ₕ bracket (5.7e-15) is 0.6 % of δ.
-*Conjecture, not tested here:* during the stall G sits near the member γ₁ = 0.048, r_th = 1.0028 a of #225, which drifts slowly (r_th relaxes by −0.23 % from t = 10 to 15; γ₁ 0.0485 to 0.0483 over t = 12 to 14); a longer stall
-(smaller δ) lets it drift further, and the settled mass follows the member at departure. S has no such drift (its member is the symmetric one).
+*Tested in #267* ([settled_mass_member.md](settled_mass_member.md)): the member at departure drifts along the stall (r_th: 1.00288 a at δ = 1e-8 to
+1.00864 a at 1e-12, after a minimum at t = 13.5; γ₁: 0.04832 to 0.04773), and the settled mass rises with it (0.235548 a to 0.237622 a). #266's
+relation, found along B, assigns +1.19e-3 of the +2.07e-3 and misses by 8.9e-4 at 1e-12 (bar 6e-5). So the settled mass is not a function of the
+member's (γ₁, r_th) at departure alone. S has no such drift (its member is the symmetric one).
 
 ## Is the convergence in h at the roundoff floor of #226?
 
@@ -159,7 +161,7 @@ mirrored family, and the value rises by $2\times10^{-4}$ to $6\times10^{-4}$ per
 
 1. *Settled mass against the normal amplitude (#253).* What: the chain for G with B = 0, 0.025, 0.05, 0.1, 0.2 at D = 4, each with its own bisected p*ₕ (14 to 140 s per h on rpi5), plus family O, at δ = 1e-8, h = 0.01, 0.005. Why: tests
    whether the settled mass follows the member's γ₁ (B = 0 must give S's 0.2231). Acceptance: B = 0 reproduces 0.22309 within the bar of this note; M(B) compared with γ₁ and r_th measured by #225's method at departure. Depends on: #225, this note.
-2. *Does the plateau of G converge as δ → 0? (#253).* What: the member's γ₁(t), r_th(t) along the stall (`throat_locus.py`) at each δ of the scan and M_settled(δ) against them. Why: the plateau still rises at δ = 1e-12. Acceptance: M_settled is a
+2. *Does the plateau of G converge as δ → 0? (#253).* Done in #267: no limit as δ → 0 is seen, and the pair is at the roundoff floor at 1e-12. What: the member's γ₁(t), r_th(t) along the stall (`throat_locus.py`) at each δ of the scan and M_settled(δ) against them. Why: the plateau still rises at δ = 1e-12. Acceptance: M_settled is a
    single function of (γ₁, r_th) at departure for six δ to 1e-4; or the failure is reported. Depends on: this note.
 3. *G at D = 5, 6.* What: the chain with M = r^{n−1}/2 and a planted Tangherlini per D, at #40's G h (D = 5 has a drifting throat, #255). Acceptance: planted M recovered at second order; G against S at the same D. Depends on: #246, #255.
 4. *The mechanism of the late scatter.* What: why the roundoff-realization scatter of M_AH falls as h² in the last window; the level boundaries are identical, so test whether the box placement relative to the horizon (sub-cell phase) sets
