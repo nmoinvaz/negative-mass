@@ -1,0 +1,72 @@
+settled_mass_blind.py analyze {'part': 'record'}: numba 0.68.1, numpy 2.5.4, python 3.14.7, Nathans-MacBook-Air-M5-3.local, part record, mutation None, 2026-11-28 04:43:33
+== Part record: train 14 ('B0.025', 'B0.05', 'B0.1', 'B0.125', 'e7', 'e9', 'e10', 'e11', 'W1', 'W2', 'W3', 'C1', 'C2', 'C3'); test ('X1', 'X2', 'X3'); frozen file /Users/nathan/Source/negative-mass-raw/I317-mac/frozen_v3.json
+[pass] CFG: M_0 = 0.223086 equals B = 0's plateau (h = 0.005) to 1e-6; P4's constants equal #295's frozen refit; the bar is 6e-5; the frozen file is this part's, over this training set, with M_0 and bar as declared; X1 to X3 are the declared (B, x_c, w) of #305  (|M_0 - B = 0 plateau| 1.8e-07; frozen part record, 14 training points, M_0 0.223086, bar 6e-05)
+[pass] GIT: the frozen file is tracked, unmodified and contained in a pushed commit of the raw repository, before X1 to X3 are read  (tracked True, unmodified True, pushed True, last commit 7a8a4e8c8a1674b0316dd56dc10d98b2120405d8 2026-11-28T04:41:01-08:00)
+[pass] RUNS: every member and B = 0 reads without error at both eps, with finite (t_dep, gamma_1, r_th, rdot_th, M)
+[pass] RDX: the stored-run loader used for X1 to X3 (settled_mass_route.load_point, the root and spec of the point) returns members bit for bit equal to #296's on points both read  (points ['N1', 'N2', 'N3']; differing [])
+
+== The members at departure (h = 0.005)
+    B0     eps 1e-3: g -0.000000 r_th 0.999999 rdot -3.261e-06 M 0.223086 | eps 1e-2: g -0.000000 r_th 0.999859 rdot -3.240e-04 M 0.223086 | t_dep 13.287 15.234
+    B0.025 eps 1e-3: g +0.002936 r_th 0.999446 rdot -9.690e-05 M 0.223563 | eps 1e-2: g +0.002934 r_th 0.999152 rdot -3.921e-04 M 0.223563 | t_dep 13.303 15.252
+    B0.05  eps 1e-3: g +0.011844 r_th 0.998356 rdot -3.026e-04 M 0.225235 | eps 1e-2: g +0.011836 r_th 0.997748 rdot -5.185e-04 M 0.225235 | t_dep 13.355 15.311
+    B0.1   eps 1e-3: g +0.048316 r_th 1.002878 rdot +6.505e-05 M 0.235548 | eps 1e-2: g +0.048165 r_th 1.003340 rdot +1.885e-04 M 0.235548 | t_dep 13.615 15.618
+    B0.125 eps 1e-3: g +0.075449 r_th 1.015883 rdot +1.594e-03 M 0.247100 | eps 1e-2: g +0.074880 r_th 1.019660 rdot +1.973e-03 M 0.247100 | t_dep 13.864 15.929
+    e7     eps 1e-3: g +0.048511 r_th 1.003370 rdot -6.316e-04 M 0.235198 | eps 1e-2: g +0.048321 r_th 1.002742 rdot -2.561e-04 M 0.235198 | t_dep 11.610 13.615
+    e9     eps 1e-3: g +0.048159 r_th 1.003477 rdot +5.094e-04 M 0.235991 | eps 1e-2: g +0.048019 r_th 1.004650 rdot +4.834e-04 M 0.235991 | t_dep 15.618 17.623
+    e10    eps 1e-3: g +0.048013 r_th 1.004787 rdot +8.052e-04 M 0.236497 | eps 1e-2: g +0.047876 r_th 1.006441 rdot +6.828e-04 M 0.236497 | t_dep 17.624 19.630
+    e11    eps 1e-3: g +0.047870 r_th 1.006583 rdot +1.011e-03 M 0.237051 | eps 1e-2: g +0.047734 r_th 1.008588 rdot +8.404e-04 M 0.237051 | t_dep 19.628 21.639
+    W1     eps 1e-3: g +0.012003 r_th 0.994956 rdot -5.048e-04 M 0.224367 | eps 1e-2: g +0.012021 r_th 0.994024 rdot -6.580e-04 M 0.224367 | t_dep 13.348 15.300
+    W2     eps 1e-3: g +0.047982 r_th 0.989179 rdot -6.653e-04 M 0.231740 | eps 1e-2: g +0.047924 r_th 0.988479 rdot -3.118e-04 M 0.231740 | t_dep 13.568 15.554
+    W3     eps 1e-3: g +0.075022 r_th 0.993634 rdot +4.989e-04 M 0.240794 | eps 1e-2: g +0.074594 r_th 0.995570 rdot +1.231e-03 M 0.240794 | t_dep 13.776 15.810
+    C1     eps 1e-3: g +0.011989 r_th 0.999623 rdot -3.888e-04 M 0.225489 | eps 1e-2: g +0.011964 r_th 0.998882 rdot -5.724e-04 M 0.225489 | t_dep 13.365 15.322
+    C2     eps 1e-3: g +0.048006 r_th 1.006321 rdot -2.916e-04 M 0.235995 | eps 1e-2: g +0.047799 r_th 1.006215 rdot -4.720e-05 M 0.235995 | t_dep 13.640 15.643
+    C3     eps 1e-3: g +0.074833 r_th 1.019366 rdot +9.949e-04 M 0.247278 | eps 1e-2: g +0.074203 r_th 1.022170 rdot +1.562e-03 M 0.247278 | t_dep 13.891 15.951
+    X1     eps 1e-3: g +0.011999 r_th 0.993694 rdot -1.130e-03 M 0.223687 | eps 1e-2: g +0.012118 r_th 0.991790 rdot -1.066e-03 M 0.223687 | t_dep 13.376 15.329
+    X2     eps 1e-3: g +0.047545 r_th 0.983798 rdot -2.733e-03 M 0.228997 | eps 1e-2: g +0.047648 r_th 0.979913 rdot -1.652e-03 M 0.228997 | t_dep 13.649 15.636
+    X3     eps 1e-3: g +0.074911 r_th 0.983968 rdot -2.439e-03 M 0.236361 | eps 1e-2: g +0.074473 r_th 0.981383 rdot -6.535e-04 M 0.236361 | t_dep 13.879 15.908
+    N1     eps 1e-3: g +0.011993 r_th 0.997459 rdot -4.348e-04 M 0.224974 | eps 1e-2: g +0.011987 r_th 0.996643 rdot -6.054e-04 M 0.224974 | t_dep 13.361 15.315
+    N2     eps 1e-3: g +0.047988 r_th 0.998724 rdot -4.177e-04 M 0.234137 | eps 1e-2: g +0.047844 r_th 0.998415 rdot -1.350e-04 M 0.234137 | t_dep 13.623 15.618
+    N3     eps 1e-3: g +0.075017 r_th 1.008541 rdot +8.649e-04 M 0.244642 | eps 1e-2: g +0.074467 r_th 1.011110 rdot +1.482e-03 M 0.244642 | t_dep 13.867 15.916
+[pass] REP296: the members' t_dep, gamma_1, r_th, rdot_th at eps = 1e-3 and 1e-2 and M equal #296's printed table to half a unit of the last printed digit  (162 numbers compared; differing [])
+[pass] FRZ: the five frozen fits (coefficients, B = 0's offsets, the sha256 of the inputs) equal the refit recomputed from the stored runs now, to 1e-9  (differing []; inputs hash equal True)
+[pass] REPV3: #296's printed max |M - predicted| without e12 (fixed M_0, V1, V3; T1 over the nine less e12, T2 over those and the six at the record) at eps = 1e-3 and 1e-2 equal the recomputed values to half a unit of the last digit  (12 compared; differing [])
+    fixed T1 0.001: 5.257e-05 (5.26e-05); fixed T2 0.001: 2.933e-06 (2.93e-06); V1 T1 0.001: 5.271e-05 (5.27e-05); V1 T2 0.001: 3.433e-06 (3.43e-06); V3 T1 0.001: 5.233e-05 (5.23e-05); V3 T2 0.001: 2.367e-06 (2.37e-06); fixed T1 0.01: 8.145e-05 (8.15e-05); fixed T2 0.01: 7.897e-05 (7.90e-05); V1 T1 0.01: 2.204e-05 (2.20e-05); V1 T2 0.01: 2.239e-06 (2.24e-06); V3 T1 0.01: 2.130e-05 (2.13e-05); V3 T2 0.01: 2.122e-06 (2.12e-06)
+[pass] PARSE305: #305's printed M - P4 (+9.00e-05, +2.13e-04, +1.98e-04) and leverage are read from its output  (X1 +9.00e-05, X2 +2.13e-04, X3 +1.98e-04)
+[pass] REFX: at eps = 1e-3 the frozen P4 (#295's refit) misses X1 to X3 by #305's printed +9.00e-05, +2.13e-04, +1.98e-04, to half a unit of the last digit  (X1 +9.001e-05, X2 +2.128e-04, X3 +1.980e-04)
+
+== Planted cases
+[pass] PL1: planted members that follow the form exactly, offset by B = 0's second-order part (r_th -1.41e-4, rdot_th -3.24e-4), through the fit and the frozen prediction with V3: residual <= 1e-12, coefficients to 1e-9  (max |M - predicted| 2.8e-17; max |coefficient - P4's| 1.0e-14)
+[pass] PL2: the same with a x 1.05 in the test members' M fires (bar 6e-5)  (8.4e-04)
+[pass] PL3: the same with c x 0.8 in the test members' M fires (bar 6e-5)  (2.5e-04)
+[pass] PL4: the same with the offset at the test members 1.5 times B = 0's (a member dependence of the second-order part) fires (bar 6e-5)  (1.4e-04)
+[pass] PDEP2: planted growing pair (odd part q0 e^{lambda t}, known crossing time of 1e-2) through departure_time  (|t_dep - exact| 5.8e-06 (bar 2e-05))
+    PTD2 gamma_1 0.012 r_th 0.997 v -1.0e-03 h 0.01: t_dep 15.6093 (15.6093), gamma_1 0.011873 (0.011873), r_th 0.995517 (0.995513), rdot_th +2.445e-05 (+2.732e-05)
+    PTD2 gamma_1 0.012 r_th 0.997 v -1.0e-03 h 0.005: t_dep 15.6093 (15.6093), gamma_1 0.011873 (0.011873), r_th 0.995517 (0.995513), rdot_th +2.447e-05 (+2.732e-05)
+    PTD2 gamma_1 0.048 r_th 0.999 v +2.0e-04 h 0.01: t_dep 15.6093 (15.6093), gamma_1 0.047873 (0.047873), r_th 1.000529 (1.000523), rdot_th +1.090e-03 (+1.095e-03)
+    PTD2 gamma_1 0.048 r_th 0.999 v +2.0e-04 h 0.005: t_dep 15.6093 (15.6093), gamma_1 0.047873 (0.047873), r_th 1.000529 (1.000523), rdot_th +1.090e-03 (+1.095e-03)
+    PTD2 gamma_1 0.075 r_th 1.008 v +2.0e-03 h 0.01: t_dep 15.6093 (15.6093), gamma_1 0.074873 (0.074873), r_th 1.014046 (1.014037), rdot_th +2.688e-03 (+2.696e-03)
+    PTD2 gamma_1 0.075 r_th 1.008 v +2.0e-03 h 0.005: t_dep 15.6093 (15.6093), gamma_1 0.074873 (0.074873), r_th 1.014046 (1.014037), rdot_th +2.688e-03 (+2.696e-03)
+    PTD2 gamma_1 0.012 r_th 1.001 v +1.0e-03 h 0.01: t_dep 15.6093 (15.6093), gamma_1 0.011873 (0.011873), r_th 1.004537 (1.004529), rdot_th +1.800e-03 (+1.806e-03)
+    PTD2 gamma_1 0.012 r_th 1.001 v +1.0e-03 h 0.005: t_dep 15.6093 (15.6093), gamma_1 0.011873 (0.011873), r_th 1.004537 (1.004529), rdot_th +1.800e-03 (+1.806e-03)
+[pass] PTD2: planted pairs (odd part Q0 delta e^{lambda t}, trajectories of the measured size, rows every 0.5 in t from the exact static member) through member_at and speed_at at eps = 1e-2: departure time, gamma_1, r_th and rdot_th at departure  (max error t_dep 6.6e-06 (bar 2e-05), gamma_1 4.4e-10 (1e-05), r_th 9.0e-06 (5e-05), rdot_th 8.1e-06 (1e-05))
+[pass] PFIT2: planted data that follow the form exactly (M = r_th (M_0 + a g + b g^2 + c rdot) on the real eps = 1e-2 (gamma_1, r_th, rdot_th)) pass the T1 and T2 code at 1e-12; with a x 1.05, or c x 0.8, in the test points it fires (bar 6e-5)  (max |M - predicted|: own 2.8e-17; a x 1.05 8.7e-04; c x 0.8 2.4e-04 (bar 6e-05))
+[pass] PL296: #296's planted cases (PDEP2, PTD2, PFIT2) pass through the same readings at eps = 1e-2 (the sets patched to this part's)  (3 run; not passing [])
+
+== The frozen prediction of X1, X2, X3 (h = 0.005, M_0 = 0.223086, bar 6e-05; M - predicted)
+    leverage in the frozen V3 design at eps = 1e-2: training max 0.415 (W3), mean 0.214; test X1 0.294, X2 2.201, X3 3.502
+    V3_1e-2   (a, b, c) = +0.229606, +0.131549, +0.558734; in-sample 2.05e-05, loo 2.97e-05: X1 +3.346e-05, X2 +7.317e-05, X3 +7.733e-05; max 7.733e-05
+    V1_1e-2   (a, b, c, icpt) = +0.229658, +0.131501, +0.558264, +0.000212; in-sample 2.08e-05, loo 3.04e-05: X1 +3.359e-05, X2 +7.285e-05, X3 +7.722e-05; max 7.722e-05
+    V3_1e-3   (a, b, c) = +0.228776, +0.297261, +0.749986; in-sample 3.99e-05, loo 6.28e-05: X1 +7.774e-05, X2 +1.769e-04, X3 +1.439e-04; max 1.769e-04
+    FIX_1e-2  (a, b, c) = +0.236537, +0.099542, +0.467328; in-sample 1.55e-04, loo 1.64e-04: X1 +6.956e-05, X2 -1.168e-04, X3 -1.020e-04; max 1.168e-04
+    FIX_1e-3  (a, b, c) = +0.228897, +0.296149, +0.749665; in-sample 3.96e-05, loo 6.31e-05: X1 +7.886e-05, X2 +1.756e-04, X3 +1.432e-04; max 1.756e-04
+      X1: gamma_1 0.012118, r_th' 0.991932, rdot_th' -7.4181e-04, M 0.223687, predicted 0.223654, M - predicted +3.346e-05, (M - predicted)/rdot_th' -0.0451 (c = 0.5587)
+      X2: gamma_1 0.047648, r_th' 0.980054, rdot_th' -1.3280e-03, M 0.228997, predicted 0.228924, M - predicted +7.317e-05, (M - predicted)/rdot_th' -0.0551 (c = 0.5587)
+      X3: gamma_1 0.074473, r_th' 0.981524, rdot_th' -3.2956e-04, M 0.236361, predicted 0.236283, M - predicted +7.733e-05, (M - predicted)/rdot_th' -0.2346 (c = 0.5587)
+[FAIL] PX: the frozen V3 fit at eps = 1e-2 (B = 0's reading subtracted, M_0 = 0.223086, coefficients over 14 points) predicts X1, X2, X3 within 6e-5  (max |M - predicted| 7.73e-05 (bar 6e-05); X1 +3.35e-05, X2 +7.32e-05, X3 +7.73e-05)
+[FAIL] PX-V1_1e-2: NON-GATING (declared): V1 (free intercept) at eps = 1e-2: X1, X2, X3 within 6e-5  (max 7.72e-05; X1 +3.36e-05, X2 +7.29e-05, X3 +7.72e-05)
+[FAIL] PX-V3_1e-3: NON-GATING (declared): V3 at eps = 1e-3: X1, X2, X3 within 6e-5  (max 1.77e-04; X1 +7.77e-05, X2 +1.77e-04, X3 +1.44e-04)
+[FAIL] PX-FIX_1e-2: NON-GATING (declared): the unsubtracted refit at eps = 1e-2: X1, X2, X3 within 6e-5  (max 1.17e-04; X1 +6.96e-05, X2 -1.17e-04, X3 -1.02e-04)
+[FAIL] PX-FIX_1e-3: NON-GATING (declared): the unsubtracted refit at eps = 1e-3 (#305's setting, e12 dropped): X1, X2, X3 within 6e-5  (max 1.76e-04; X1 +7.89e-05, X2 +1.76e-04, X3 +1.43e-04)
+    control, not X: the frozen V3 fit at eps = 1e-2 on #295's N1 to N3: N1 +7.32e-08, N2 -2.12e-06, N3 -1.79e-06 (#296's T2 V3 without e12: 2.12e-06)
+
+19 checks (4 non-gating), 1 gating checks failed, 4 non-gating checks failed; 15 s

@@ -1,0 +1,27 @@
+settled_mass_blind.py post {}: numba 0.68.1, numpy 2.5.4, python 3.14.7, Nathans-MacBook-Air-M5-3.local, part record, mutation None, 2026-11-28 04:43:33
+== Post hoc 1 (gates nothing): the shift of one reading that would close the frozen V3 miss at X (eps = 1e-2), against B = 0's second-order part (dr -1.412e-04, dv -3.240e-04)
+    point  M - pred    leverage | needed shift of rdot_th' (frac of |rdot_th'|, / B=0's dv) | of r_th' (/ B=0's dr) | of gamma_1 (/ gamma_1)
+    X1   +3.346e-05  0.294  | +6.037e-05 (+8.1%, -0.19) | +1.484e-04 (-1.05) | +1.449e-04 (+1.2%)
+    X2   +7.317e-05  2.201  | +1.336e-04 (+10.1%, -0.41) | +3.133e-04 (-2.22) | +3.083e-04 (+0.6%)
+    X3   +7.733e-05  3.502  | +1.410e-04 (+42.8%, -0.44) | +3.212e-04 (-2.28) | +3.161e-04 (+0.4%)
+
+== Post hoc 2 (gates nothing; X was read at these eps after the record, so no eps may be chosen from this table): the frozen procedure repeated at other eps (V3 and unsubtracted refit over the 14, predict X and N)
+    eps     | V3: X1, X2, X3 | max X, max N | unsubtracted: X1, X2, X3 | max X, max N | in-sample (V3, fixed) | rdot_th at X1, X2, X3 | B = 0's dr, dv
+    0.001   | +7.77e-05 +1.77e-04 +1.44e-04 | 1.77e-04 2.37e-06 | +7.89e-05 +1.76e-04 +1.43e-04 | 1.76e-04 2.93e-06 | 4.0e-05 4.0e-05 | -1.13e-03 -2.73e-03 -2.44e-03 | -1.50e-06 -3.26e-06
+    0.002   | +6.54e-05 +1.31e-04 +1.22e-04 | 1.31e-04 2.11e-06 | +6.95e-05 +1.26e-04 +1.19e-04 | 1.26e-04 4.94e-06 | 3.1e-05 3.0e-05 | -1.00e-03 -2.24e-03 -1.69e-03 | -5.43e-06 -1.30e-05
+    0.005   | +4.40e-05 +9.66e-05 +9.98e-05 | 9.98e-05 1.91e-06 | +6.44e-05 +6.24e-05 +7.49e-05 | 7.49e-05 2.73e-05 | 2.4e-05 4.8e-05 | -9.17e-04 -1.76e-03 -9.34e-04 | -3.53e-05 -8.10e-05
+    0.01    | +3.35e-05 +7.32e-05 +7.73e-05 | 7.73e-05 2.12e-06 | +6.96e-05 -1.17e-04 -1.02e-04 | 1.17e-04 7.90e-05 | 2.0e-05 1.6e-04 | -1.07e-03 -1.65e-03 -6.54e-04 | -1.41e-04 -3.24e-04
+    0.02    | +1.90e-05 +5.50e-05 +4.75e-05 | 5.50e-05 6.85e-06 | -6.45e-05 -5.91e-04 -6.73e-04 | 6.73e-04 1.46e-04 | 1.6e-05 2.1e-04 | -1.96e-03 -2.33e-03 -1.18e-03 | -5.47e-04 -1.30e-03
+    0.05    | +6.07e-05 -5.18e-05 -1.70e-05 | 6.07e-05 5.45e-05 | -1.34e-04 -6.31e-04 -7.30e-04 | 7.30e-04 1.53e-04 | 5.5e-05 2.4e-04 | -8.72e-03 -8.87e-03 -7.59e-03 | -3.38e-03 -8.12e-03
+
+== Post hoc 3 (gates nothing): refits that include X (descriptions on points that include the tested ones), V3 at eps = 1e-2
+    14 + X1-X3 (17 points): (a, b, c) = +0.2292, +0.1480, +0.5276; in-sample max 2.31e-05, leave-one-out max 3.12e-05; in-sample at X: X1 +1.29e-05, X2 +1.45e-05, X3 +6.53e-06; leave-one-out at X: X1 +1.41e-05, X2 +2.37e-05, X3 +1.56e-05
+    14 + N1-N3 (17 points): (a, b, c) = +0.2296, +0.1313, +0.5592; in-sample max 2.00e-05, leave-one-out max 2.61e-05; in-sample at X: ; leave-one-out at X: 
+    14 + N + X (20 points): (a, b, c) = +0.2291, +0.1488, +0.5275; in-sample max 2.35e-05, leave-one-out max 2.90e-05; in-sample at X: X1 +1.36e-05, X2 +1.61e-05, X3 +7.67e-06; leave-one-out at X: X1 +1.47e-05, X2 +2.55e-05, X3 +1.74e-05
+    14 + X1-X3 (17 points), unsubtracted: (a, b, c) = +0.2378, +0.0702, +0.5007; in-sample max 1.65e-04, leave-one-out max 1.67e-04
+
+== Post hoc 4 (gates nothing): M is one number per member, so the frozen V3 prediction from the eps = 1e-3 reading and from the eps = 1e-2 reading of the same member should agree; their difference is the form's change along the member's own trajectory
+    pred(1e-2 reading, V3_1e-2) - pred(1e-3 reading, V3_1e-3): B0.025 -1.9e-06, B0.05 -5.4e-06, B0.1 -7.6e-06, B0.125 -3.2e-06, e7 -6.6e-07, e9 -4.6e-06, e10 +1.2e-07, e11 +1.8e-05, W1 +2.1e-07, W2 +1.5e-05, W3 +2.0e-05, C1 -5.1e-06, C2 -1.4e-05, C3 -1.9e-05, N1 -1.9e-06, N2 -2.5e-07, N3 +8.9e-08, X1 +4.4e-05, X2 +1.0e-04, X3 +6.7e-05
+    largest |difference|: the 14 training members 2.01e-05, N1-N3 1.92e-06, X1-X3 1.04e-04 (X1 +4.43e-05, X2 +1.04e-04, X3 +6.66e-05)
+
+21 s

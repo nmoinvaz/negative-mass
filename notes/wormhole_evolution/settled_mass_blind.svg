@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="712" viewBox="0 0 760 712" font-family="system-ui, sans-serif">
+<style>@media (prefers-color-scheme: dark){[fill="#fcfcfb"]{fill:#201f1d}[stroke="#fcfcfb"]{stroke:#201f1d}[fill="#0b0b0b"]{fill:#e8e6e3}[stroke="#0b0b0b"]{stroke:#e8e6e3}[fill="#52514e"]{fill:#a8a49d}[stroke="#52514e"]{stroke:#a8a49d}[fill="#e7e6e2"]{fill:#343230}[stroke="#e7e6e2"]{stroke:#343230}[fill="#c98500"]{fill:#d69a2d}[stroke="#c98500"]{stroke:#d69a2d}[fill="#eb6834"]{fill:#dd5c26}[stroke="#eb6834"]{stroke:#dd5c26}[fill="#eda100"]{fill:#c08800}[stroke="#eda100"]{stroke:#c08800}[fill="#e87ba4"]{fill:#d1678f}[stroke="#e87ba4"]{stroke:#d1678f}[fill="#4a3aa7"]{fill:#7263cf}[stroke="#4a3aa7"]{stroke:#7263cf}[fill="#a6339a"]{fill:#c257b5}[stroke="#a6339a"]{stroke:#c257b5}[fill="#7a7668"]{fill:#948e82}[stroke="#7a7668"]{stroke:#948e82}}</style>
+<rect width="760" height="712" fill="#fcfcfb"/>
+<text x="16.0" y="28.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">The miss at X1 to X3 under six readings of the corrected and the earlier fit</text>
+<text x="16.0" y="44.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">h = 0.005; M - predicted of fits frozen over 14 points (P4: #295's, fifteen points); lines: bar 6e-5; V3 at 1e-2 is the gated prediction, the others are reported only</text>
+<line x1="136.0" y1="74.0" x2="136.0" y2="274.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="136.0" y="289.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums"></text>
+<line x1="336.0" y1="74.0" x2="336.0" y2="274.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="336.0" y="289.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums"></text>
+<line x1="536.0" y1="74.0" x2="536.0" y2="274.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="536.0" y="289.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums"></text>
+<line x1="86.0" y1="244.0" x2="686.0" y2="244.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="248.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">-1e-04</text>
+<line x1="86.0" y1="194.0" x2="686.0" y2="194.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="198.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+0e+00</text>
+<line x1="86.0" y1="144.0" x2="686.0" y2="144.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="148.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+1e-04</text>
+<line x1="86.0" y1="94.0" x2="686.0" y2="94.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="98.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+2e-04</text>
+<line x1="86.0" y1="274.0" x2="686.0" y2="274.0" stroke="#52514e" stroke-width="1"/>
+<line x1="86.0" y1="74.0" x2="86.0" y2="274.0" stroke="#52514e" stroke-width="1"/>
+<text x="386.0" y="308.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">reading (fit, eps)</text>
+<text x="29.7" y="174.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 29.7 174.0)">M - predicted</text>
+<text x="136.0" y="290.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal">P4, 1e-3 (#305)</text>
+<text x="236.0" y="290.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal">refit, 1e-3</text>
+<text x="336.0" y="290.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal">V3, 1e-3</text>
+<text x="436.0" y="290.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal">refit, 1e-2</text>
+<text x="536.0" y="290.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal">V1, 1e-2</text>
+<text x="636.0" y="290.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal">V3, 1e-2</text>
+<line x1="86.0" y1="164.0" x2="686.0" y2="164.0" stroke="#7a7668" stroke-width="1"/>
+<line x1="86.0" y1="224.0" x2="686.0" y2="224.0" stroke="#7a7668" stroke-width="1"/>
+<line x1="86.0" y1="194.0" x2="686.0" y2="194.0" stroke="#9aa0a6" stroke-width="1"/>
+<g><circle cx="124.0" cy="149.0" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1 under P4, 1e-3 (#305): M - predicted = +9.00e-05</title></g>
+<g><rect x="130.5" y="82.1" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2 under P4, 1e-3 (#305): M - predicted = +2.13e-04</title></g>
+<g><polygon points="148.0,88.5 154.5,100.5 141.5,100.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3 under P4, 1e-3 (#305): M - predicted = +1.98e-04</title></g>
+<g><circle cx="224.0" cy="154.6" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1 under refit, 1e-3: M - predicted = +7.89e-05</title></g>
+<g><rect x="230.5" y="100.7" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2 under refit, 1e-3: M - predicted = +1.76e-04</title></g>
+<g><polygon points="248.0,115.9 254.5,127.9 241.5,127.9" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3 under refit, 1e-3: M - predicted = +1.43e-04</title></g>
+<g><circle cx="324.0" cy="155.1" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1 under V3, 1e-3: M - predicted = +7.77e-05</title></g>
+<g><rect x="330.5" y="100.1" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2 under V3, 1e-3: M - predicted = +1.77e-04</title></g>
+<g><polygon points="348.0,115.5 354.5,127.5 341.5,127.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3 under V3, 1e-3: M - predicted = +1.44e-04</title></g>
+<g><circle cx="424.0" cy="159.2" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1 under refit, 1e-2: M - predicted = +6.96e-05</title></g>
+<g><rect x="430.5" y="246.9" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2 under refit, 1e-2: M - predicted = -1.17e-04</title></g>
+<g><polygon points="448.0,238.5 454.5,250.5 441.5,250.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3 under refit, 1e-2: M - predicted = -1.02e-04</title></g>
+<g><circle cx="524.0" cy="177.2" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1 under V1, 1e-2: M - predicted = +3.36e-05</title></g>
+<g><rect x="530.5" y="152.1" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2 under V1, 1e-2: M - predicted = +7.29e-05</title></g>
+<g><polygon points="548.0,148.9 554.5,160.9 541.5,160.9" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3 under V1, 1e-2: M - predicted = +7.72e-05</title></g>
+<g><circle cx="624.0" cy="177.3" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1 under V3, 1e-2: M - predicted = +3.35e-05</title></g>
+<g><rect x="630.5" y="151.9" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2 under V3, 1e-2: M - predicted = +7.32e-05</title></g>
+<g><polygon points="648.0,148.8 654.5,160.8 641.5,160.8" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3 under V3, 1e-2: M - predicted = +7.73e-05</title></g>
+<circle cx="636.0" cy="155.3" r="10" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
+<line x1="626.4" y1="152.6" x2="516.0" y2="121.3" stroke="#0b0b0b" stroke-width="1"/>
+<text x="512.0" y="125.3" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="bold">gated: X2, X3 beyond the bar</text>
+<text x="686.0" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">X3</text>
+<circle cx="663.2" cy="60" r="4.5" fill="#1baf7a"/>
+<text x="647.2" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">X2</text>
+<circle cx="624.5" cy="60" r="4.5" fill="#eb6834"/>
+<text x="608.5" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">X1</text>
+<circle cx="585.7" cy="60" r="4.5" fill="#2a78d6"/>
+<text x="16.0" y="354.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">The V3 procedure repeated at other eps (post hoc; the frozen eps is 1e-2)</text>
+<text x="16.0" y="370.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">V3 refit over the 14 at each eps; grey: largest of N1 to N3; read after the record, so no eps may be chosen from it</text>
+<line x1="86.0" y1="400.0" x2="86.0" y2="600.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="86.0" y="615.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.001</text>
+<line x1="192.3" y1="400.0" x2="192.3" y2="600.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="192.3" y="615.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.002</text>
+<line x1="332.8" y1="400.0" x2="332.8" y2="600.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="332.8" y="615.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.005</text>
+<line x1="439.2" y1="400.0" x2="439.2" y2="600.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="439.2" y="615.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.01</text>
+<line x1="545.5" y1="400.0" x2="545.5" y2="600.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="545.5" y="615.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.02</text>
+<line x1="686.0" y1="400.0" x2="686.0" y2="600.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="686.0" y="615.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.05</text>
+<line x1="86.0" y1="600.0" x2="686.0" y2="600.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="604.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">-1e-04</text>
+<line x1="86.0" y1="533.3" x2="686.0" y2="533.3" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="537.3" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+0e+00</text>
+<line x1="86.0" y1="466.7" x2="686.0" y2="466.7" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="470.7" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+1e-04</text>
+<line x1="86.0" y1="400.0" x2="686.0" y2="400.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="404.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+2e-04</text>
+<line x1="86.0" y1="600.0" x2="686.0" y2="600.0" stroke="#52514e" stroke-width="1"/>
+<line x1="86.0" y1="400.0" x2="86.0" y2="600.0" stroke="#52514e" stroke-width="1"/>
+<text x="386.0" y="634.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">departure threshold eps (|odd| / r)</text>
+<text x="29.7" y="500.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 29.7 500.0)">M - predicted</text>
+<line x1="86.0" y1="493.3" x2="686.0" y2="493.3" stroke="#7a7668" stroke-width="1"/>
+<line x1="86.0" y1="573.3" x2="686.0" y2="573.3" stroke="#7a7668" stroke-width="1"/>
+<line x1="86.0" y1="533.3" x2="686.0" y2="533.3" stroke="#9aa0a6" stroke-width="1"/>
+<line x1="86.0" y1="481.5" x2="192.3" y2="489.8" stroke="#2a78d6" stroke-width="1.5"/>
+<line x1="192.3" y1="489.8" x2="332.8" y2="504.0" stroke="#2a78d6" stroke-width="1.5"/>
+<line x1="332.8" y1="504.0" x2="439.2" y2="511.0" stroke="#2a78d6" stroke-width="1.5"/>
+<line x1="439.2" y1="511.0" x2="545.5" y2="520.7" stroke="#2a78d6" stroke-width="1.5"/>
+<line x1="545.5" y1="520.7" x2="686.0" y2="492.9" stroke="#2a78d6" stroke-width="1.5"/>
+<g><circle cx="86.0" cy="481.5" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1, eps 0.001: M - predicted = +7.77e-05</title></g>
+<g><circle cx="192.3" cy="489.8" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1, eps 0.002: M - predicted = +6.54e-05</title></g>
+<g><circle cx="332.8" cy="504.0" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1, eps 0.005: M - predicted = +4.40e-05</title></g>
+<g><circle cx="439.2" cy="511.0" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1, eps 0.01: M - predicted = +3.35e-05</title></g>
+<g><circle cx="545.5" cy="520.7" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1, eps 0.02: M - predicted = +1.90e-05</title></g>
+<g><circle cx="686.0" cy="492.9" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>X1, eps 0.05: M - predicted = +6.07e-05</title></g>
+<line x1="86.0" y1="415.4" x2="192.3" y2="446.3" stroke="#eb6834" stroke-width="1.5"/>
+<line x1="192.3" y1="446.3" x2="332.8" y2="468.9" stroke="#eb6834" stroke-width="1.5"/>
+<line x1="332.8" y1="468.9" x2="439.2" y2="484.6" stroke="#eb6834" stroke-width="1.5"/>
+<line x1="439.2" y1="484.6" x2="545.5" y2="496.7" stroke="#eb6834" stroke-width="1.5"/>
+<line x1="545.5" y1="496.7" x2="686.0" y2="567.8" stroke="#eb6834" stroke-width="1.5"/>
+<g><rect x="80.5" y="409.9" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2, eps 0.001: M - predicted = +1.77e-04</title></g>
+<g><rect x="186.8" y="440.8" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2, eps 0.002: M - predicted = +1.31e-04</title></g>
+<g><rect x="327.3" y="463.4" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2, eps 0.005: M - predicted = +9.66e-05</title></g>
+<g><rect x="433.7" y="479.1" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2, eps 0.01: M - predicted = +7.32e-05</title></g>
+<g><rect x="540.0" y="491.2" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2, eps 0.02: M - predicted = +5.50e-05</title></g>
+<g><rect x="680.5" y="562.3" width="11.0" height="11.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>X2, eps 0.05: M - predicted = -5.18e-05</title></g>
+<line x1="86.0" y1="437.4" x2="192.3" y2="452.2" stroke="#1baf7a" stroke-width="1.5"/>
+<line x1="192.3" y1="452.2" x2="332.8" y2="466.8" stroke="#1baf7a" stroke-width="1.5"/>
+<line x1="332.8" y1="466.8" x2="439.2" y2="481.8" stroke="#1baf7a" stroke-width="1.5"/>
+<line x1="439.2" y1="481.8" x2="545.5" y2="501.7" stroke="#1baf7a" stroke-width="1.5"/>
+<line x1="545.5" y1="501.7" x2="686.0" y2="544.7" stroke="#1baf7a" stroke-width="1.5"/>
+<g><polygon points="86.0,430.9 92.5,442.9 79.5,442.9" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3, eps 0.001: M - predicted = +1.44e-04</title></g>
+<g><polygon points="192.3,445.7 198.8,457.7 185.8,457.7" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3, eps 0.002: M - predicted = +1.22e-04</title></g>
+<g><polygon points="332.8,460.3 339.3,472.3 326.3,472.3" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3, eps 0.005: M - predicted = +9.98e-05</title></g>
+<g><polygon points="439.2,475.3 445.7,487.3 432.7,487.3" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3, eps 0.01: M - predicted = +7.73e-05</title></g>
+<g><polygon points="545.5,495.2 552.0,507.2 539.0,507.2" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3, eps 0.02: M - predicted = +4.75e-05</title></g>
+<g><polygon points="686.0,538.2 692.5,550.2 679.5,550.2" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>X3, eps 0.05: M - predicted = -1.70e-05</title></g>
+<circle cx="86.0" cy="534.9" r="4" fill="#9aa0a6"><title>N1 to N3 at eps 0.001: largest M - predicted -2.37e-06</title></circle>
+<circle cx="192.3" cy="534.7" r="4" fill="#9aa0a6"><title>N1 to N3 at eps 0.002: largest M - predicted -2.11e-06</title></circle>
+<circle cx="332.8" cy="534.6" r="4" fill="#9aa0a6"><title>N1 to N3 at eps 0.005: largest M - predicted -1.91e-06</title></circle>
+<circle cx="439.2" cy="534.7" r="4" fill="#9aa0a6"><title>N1 to N3 at eps 0.01: largest M - predicted -2.12e-06</title></circle>
+<circle cx="545.5" cy="537.9" r="4" fill="#9aa0a6"><title>N1 to N3 at eps 0.02: largest M - predicted -6.85e-06</title></circle>
+<circle cx="686.0" cy="497.0" r="4" fill="#9aa0a6"><title>N1 to N3 at eps 0.05: largest M - predicted +5.45e-05</title></circle>
+<circle cx="439.2" cy="481.8" r="10" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
+<line x1="447.2" y1="475.8" x2="479.2" y2="451.8" stroke="#0b0b0b" stroke-width="1"/>
+<text x="483.2" y="455.8" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="bold">frozen eps</text>
+<text x="686.0" y="390.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">X3</text>
+<circle cx="663.2" cy="386" r="4.5" fill="#1baf7a"/>
+<text x="647.2" y="390.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">X2</text>
+<circle cx="624.5" cy="386" r="4.5" fill="#eb6834"/>
+<text x="608.5" y="390.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">X1</text>
+<circle cx="585.7" cy="386" r="4.5" fill="#2a78d6"/>
+<text x="16.0" y="700.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">Apple M5, 32 GB, macOS 27.0.1</text>
+<text x="16.0" y="686.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">settled_mass_blind.py at negative-mass 010c9e7  ·  readings: #296  ·  chain: #41  ·  member: #266  ·  speed: #267  ·  X: #305</text>
+<text x="16.0" y="670.0" font-size="10" fill="#c98500" text-anchor="start" font-weight="normal">⚠</text>
+<text x="30.0" y="670.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">V3 at eps = 1e-2: M - predicted +3.35e-05, +7.32e-05, +7.73e-05 against the bar 6e-5</text>
+<a href="https://github.com/nmoinvaz/negative-mass"><text x="744" y="700" font-size="10" fill="#52514e" text-anchor="end" text-decoration="underline">github.com/nmoinvaz/negative-mass</text></a>
+</svg>
