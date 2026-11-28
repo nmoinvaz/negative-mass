@@ -362,6 +362,41 @@ def order_of(a, b_, c):
     return math.log2(d1 / d2) if d1 * d2 > 0 else float("nan")
 
 
+def eps_matrix(members, ts, ref=None):
+    """(v_k - v_ref) / (lambda odd_ref / delta_ref) at the times ts for each member k: the offset of the pair's mean from the reference (the mean of the members, or the series `ref`) in units of the
+    amplitude of p*_h. A first-order offset makes this constant in t."""
+    lam = 1.181
+    V = np.array([v_on(S, ts) for S in members])
+    base = V.mean(0) if ref is None else v_on(ref, ts)
+    Sr = ref if ref is not None else members[0]
+    Q = np.interp(ts, Sr["t"], np.abs(Sr["odd"])) / Sr["delta"] * lam * np.sign(np.interp(ts, Sr["t"], Sr["odd"]))
+    if ref is None:       # relative to the mean: use each member's own profile
+        Q = np.array([np.interp(ts, S["t"], np.abs(S["odd"])) / S["delta"] * lam * np.sign(np.interp(ts, S["t"], S["odd"])) for S in members])
+    return (V - base) / Q
+
+
+def report_offsets(raw, S, M):
+    """Report only (added after the declaration): the offsets of the K pairs of each h from their mean at t = 12 ... 18 (constant in t), and the dependence on delta of one bisection's pair."""
+    print("\n--- offsets of the K pairs' means from the ensemble mean, (v_k - v_mean) / (lambda odd_k / delta), in units of 1e-14, at t = 12, 14, 16, 18 (report) ---")
+    ts = np.array([12.0, 14.0, 16.0, 18.0])
+    for h in H3:
+        mem = [S[h][k] for k in sorted(S[h])]
+        E = eps_matrix(mem, ts)
+        print(f"  h = {h:g}: members {['%+.2f' % (x / 1e-14) for x in E[:, 0]]} at t = 12; spread over t of one member {np.max(np.abs(E - E[:, :1])) / 1e-14:.3f}; std over members {np.std(E[:, 0], ddof=1) / 1e-14:.2f}")
+    print("\n--- delta dependence (report): member 0's pairs at e = 10, 11 against e = 12, (v_e - v_12) / (lambda odd_12 / delta_12), 1e-14, at t = 10, 12, 14, 16 ---")
+    ts = np.array([10.0, 12.0, 14.0, 16.0])
+    for h in H3:
+        try:
+            S12 = S[h][0]
+            rows = []
+            for e in (11, 10):
+                Se = series_member(load_member(raw, h, 0, e=e))
+                rows.append(f"e = {e}: " + ", ".join(f"{x / 1e-14:+.2f}" for x in eps_matrix([Se], ts, ref=S12)[0]))
+            print(f"  h = {h:g}: " + " | ".join(rows))
+        except (FileNotFoundError, OSError):
+            print(f"  h = {h:g}: no e = 10, 11 pairs stored")
+
+
 def load_all(raw):
     """members[h][k] for every h in H3 and k in range(K_ENS) whose files exist (h = 0.02: the primary only is required)."""
     out = {}
@@ -457,6 +492,7 @@ def analyze_cmd(raw):
             check(f"ORD-v{T:g}", f"the speed at t = {T:g} converges at second order over the three h", c["ord_band"][0] <= o <= c["ord_band"][1], f"v = {fmt(vv, '{:.5e}')}, order {o:.2f}", ph=True)
     # ---- reports
     report(M, S, SM, W, T_end, st, inf_all, mem)
+    report_offsets(raw, S, M)
     # ---- planted: the base series is the stored primary pair at the finest gating h; the offsets' spread is the measured one
     if sig and 0.005 in S and 0 in S[0.005]:
         sg = math.sqrt(np.mean([sig[h] ** 2 for h in H2 if h in sig]))
