@@ -1,0 +1,121 @@
+== derive: runs/derive_run2.log (code 068953c) ==
+[pass] S0: static member: (grad r)^2 = g^{ab} d_a r d_b r = rho^2 A / R^2 for symbolic c (planted truth: the apparent horizon of the static member is A = 0 and the throat)
+    (S0: 0 s)
+[pass] S1: family: (grad r)^2 = (rho/R^2) [rho A + s R^2 A'/2], symbolic c and beta, from the metric components
+    (S1: 0 s)
+[pass] S2: R^2 A' = 2K + 2 rho (A - 1) and A' = 2K (1 - rho arccot rho) (K > 0 for c < 0 and rho arccot rho < 1, so A' > 0 for every rho: proved by arctan x < x)  (identity: 0, derivative: 0)
+    (S2: 0 s)
+[pass] S3: l(r) = P/(2 R lam), n(r) = -lam rho/R with P = rho A + s R^2 A'/2, and (grad r)^2 = -2 l(r) n(r)  (l: 0, n: 0, product: 0)
+    (S3: 0 s)
+[pass] S4: P = (R^2 A'/2)(s - s_AH(rho)), s_AH = -2 rho A/(R^2 A'): the apparent horizon is s = s_AH(rho) (and rho = 0); F(v, 0) = c + 1/lam^2; F(v, -1/K) = A(-1/K) for every v  (P: 0, F(v,0): 0, F(v,-1/K): 0)
+    (S4: 0 s)
+[pass] S5: A -> 1 at rho -> +infinity: the (v, rho) part of the family is exactly -dT^2 + 2 dT dr, T = int dv/lam, r = lam rho (Minkowski)
+    (S5: 0 s)
+[pass] S6: Gamma^v_{rho rho} = Gamma^rho_{rho rho} = 0 for any F(v, rho): rho is affine on the ingoing rays v = const
+    (S6: 0 s)
+
+7 checks, 7 pass; failed: []; mutation None; 1 s
+rc=0
+
+== check: runs/check_run2.log (code 068953c) ==
+[pass] N0: planted: beta = 0, c = -1, -3/2, -3/10: the ray separatrix (55 bisections) equals the static horizon rho_h to 1e-9 and rays at rho_h +- 1e-4 escape / fall; c = 0 (Ellis, time dependent): rays equal 1 - beta rho = C (1 + beta v)^{-1/2} to 1e-9 and the beta = -1 separatrix is rho = -1  (c = -1.0: separatrix 0.000000000000, claimed rho_h 0.000000000000, diff 1.7e-16, rays at rho_h +-1e-4: outside escapes, inside falls; c = -1.5: separatrix 0.339617128522, claimed rho_h 0.339617128522, diff 1.1e-16, rays at rho_h +-1e-4: outside escapes, inside falls; c = -0.3: separatrix -0.926753835863, claimed rho_h -0.926753835863, diff 3.3e-16, rays at rho_h +-1e-4: outside escapes, inside falls; Ellis c = 0: exact rays to 1.3e-12, beta = -1 separatrix -1.000000000000 (exact -1))
+    (N0: 20 s)
+[pass] N1: (grad r)^2 = 2 r_v r_rho + F r_rho^2 from the metric: its root at fixed v equals the closed-form root of s_AH(rho) = s to 1e-12 (c = -1, -3/2; beta = -1: both branches at four s; beta = 1, c = -3/2: the two roots), and it vanishes on rho = 0 to 1e-30  (worst root difference 1.45e-33, rho = 0 residual 0.0; 20 roots; c = -1.0, beta = -1, plus, s = -0.05: rho = 0.15033443946716, diff 9.0e-42; c = -1.0, beta = -1, plus, s = -0.3: rho = 0.35343588713383, diff 5.8e-43)
+    (N1: 0 s)
+[pass] N2: region labels: at 4 x (5-6 v) x 12 points the signs of n(r) = -r_rho and l(r) = r_v + F r_rho/2 from the metric jets equal the closed-form labels (-sign rho; sign(s - s_AH(rho))), l(r) equals P/(2R lam) (1e-9), and dr/dv along an integrated ray equals l(r) (1e-3)  (264 points; worst relative l(r) difference 6.9e-14, worst ray 1.5e-04; disagreements [])
+    (N2: 0 s)
+[pass] N3: beta = +1, c = -1, -3/2: 72 outgoing rays from v_0 = -10, -3, 0, 2 and rho_0 from -30 to 1e8 all reach rho = -infinity at finite v with r > 1e6, none escapes, and the fall time v_b rises with rho_0 (the curve rho = -infinity is spacelike); F -> -K R^2 arccot(rho) < 0 at v = 60 (1e-9)  (0 rays escape []; late-time F difference 3.6e-16; fall time rises with rho_0 (I+ spacelike): True; c = -1.0: rho_0 = 0 falls at v = -1.77; c = -1.0: rho_0 = 1000 falls at v = 25.32; c = -1.0: rho_0 = 1e+08 falls at v = 61.47; c = -1.5: rho_0 = 0 falls at v = -8.05; c = -1.5: rho_0 = 1000 falls at v = 16.88; c = -1.5: rho_0 = 1e+08 falls at v = 40.98)
+    (N3: 1 s)
+[pass] N4: beta = -1, c = -1, -3/2: the ray into P* (backward from v* - 1e-7) equals the forward-bisection separatrix to 1e-8 at v_0 = -10, -3; rays at EH +- 1e-3 escape / fall at v_0 = -10, -5, -2, while for the throat, the static horizon and both apparent-horizon branches the ray on one side reaches the wrong end (the controls)  (worst backward-forward 9.4e-12; unexpected []; c = -1.5, v_0 = -2.0: EH: separates, throat rho = 0: does not, static horizon rho_h: does not, AH+ (rho > 0): does not, AH- (rho < 0): does not)
+    (N4: 7 s)
+[pass] N5: beta = -1, c = -1, -3/2: at 55 values of v from v* - 1e-3 to -10 the apparent horizons bracket the event horizon, rho_AH- < rho_EH < rho_AH+  (c = -1.0: smallest gaps rho_EH - rho_AH- = 0.0219, rho_AH+ - rho_EH = 0.0368; c = -1.5: smallest gaps rho_EH - rho_AH- = 0.1753, rho_AH+ - rho_EH = 0.0055)
+    (N5: 0 s)
+[pass] N6: beta = -1, c = -1, -3/2: along the ray into P* (rho_EH + 1/K)/tau -> -A(-1/K)/3 and r/sqrt(tau) -> sqrt(K) R(-1/K) (1e-3, 2e-3 at tau = 1e-5); rays at rho_EH + d (d = 1e-3 ... 1e-7) reach the cone v = v* at radii r_* that fall strictly with d, r_*(1e-7) < 0.1 r_*(1e-4)  (c = -1.0: (rho_EH + 1/K)/tau = 1.894441 (-A0/3 = 1.894464), r/sqrt(tau) = 1.485722 (sqrt(K) R(-1/K) = 1.485738), r_*(d) = 1.51277, 0.59012, 0.11646, 0.01343, 0.00136; c = -1.5: (rho_EH + 1/K)/tau = 1.587831 (-A0/3 = 1.587850), r/sqrt(tau) = 1.414951 (sqrt(K) R(-1/K) = 1.414965), r_*(d) = 1.03038, 0.30591, 0.04571, 0.00487, 0.00049)
+    (N6: 0 s)
+[pass] N7: rays on the throat rho = 0 move at d rho/dv = F(v, 0)/2 = (c + 1/lam^2)/2 (1%), the throat is null at lam^2 = -1/c (1e-6); the ray from a point of an apparent horizon branch (beta = -1: both branches at v = -6, -2, -0.5; beta = 1, c = -3/2: both roots of the lens at v = -6, -4) ends on the side of the curve that the closed-form slope d rho_AH/dv = K s/s_AH'(rho) against F/2 predicts, to 10%  (0 disagreements []; c = -1.5: throat null at v = -1.150464, d rho/dv there 1.8e-07; c = -1.0, AH plus, v = -6.0: timelike (d rho_AH/dv = 0.0312, ray slope 0.0714); c = -1.0, AH plus, v = -2.0: timelike (d rho_AH/dv = 0.1039, ray slope 0.4042); c = -1.0, AH plus, v = -0.5: timelike (d rho_AH/dv = 0.1709, ray slope 2.0255); c = -1.0, AH minus, v = -6.0: spacelike (d rho_AH/dv = -0.0369, ray slope -0.0658); c = -1.0, AH minus, v = -2.0: spacelike (d rho_AH/dv = -0.2224, ray slope -0.3152); c = -1.0, AH minus, v = -0.5: spacelike (d rho_AH/dv = -1.4670, ray slope -1.7515); c = -1.5, AH plus, v = -6.0: timelike (d rho_AH/dv = 0.0049, ray slope 0.0050); c = -1.5, AH plus, v = -2.0: timelike (d rho_AH/dv = 0.1166, ray slope 0.2071); c = -1.5, AH plus, v = -0.5: timelike (d rho_AH/dv = 0.2878, ray slope 1.6061); c = -1.5, AH minus, v = -6.0: spacelike (d rho_AH/dv = -0.0058, ray slope -0.2543); c = -1.5, AH minus, v = -2.0: spacelike (d rho_AH/dv = -0.1690, ray slope -0.4152); c = -1.5, AH minus, v = -0.5: spacelike (d rho_AH/dv = -1.1321, ray slope -1.5845); c = -1.5, AH in, v = -6.0: spacelike (d rho_AH/dv = 0.0061, ray slope -0.2456); c = -1.5, AH in, v = -4.0: spacelike (d rho_AH/dv = 0.0519, ray slope -0.2178); c = -1.5, AH out, v = -6.0: timelike (d rho_AH/dv = -0.0053, ray slope -0.0051); c = -1.5, AH out, v = -4.0: timelike (d rho_AH/dv = -0.0465, ray slope -0.0374))
+    (N7: 0 s)
+[pass] N8: beta = -1 and -0.3: the ray into P* gives the same rho_EH at the same s (v-translation, 1e-8), c = -1, -3/2, s = -0.01 ... -0.9  (worst 1.4e-13)
+    (N8: 0 s)
+  info: c = -1.0: lam^2 = 1/100: K on EH 66.497692, on rho = -1/K 69.979325, at rho_EH - 0.3 101.373; lam^2 = 1/1000: K on EH 67.176368, on rho = -1/K 69.979325, at rho_EH - 0.3 1307.19; lam^2 = 1/10000: K on EH 67.244107, on rho = -1/K 69.979325, at rho_EH - 0.3 108478.0; lam^2 = 1/100000: K on EH 67.250879, on rho = -1/K 69.979325, at rho_EH - 0.3 1.06919e+7
+  info: c = -1.0: the line rho = -1/K = -1.570796 has F = A = -5.683393 at every v, so it is spacelike; the event horizon ends on it at v*
+  info: c = -1.5: lam^2 = 1/100: K on EH 112.89146, on rho = -1/K 123.96132, at rho_EH - 0.3 397.889; lam^2 = 1/1000: K on EH 114.29561, on rho = -1/K 123.96132, at rho_EH - 0.3 16822.8; lam^2 = 1/10000: K on EH 114.43615, on rho = -1/K 123.96132, at rho_EH - 0.3 1.57861e+6; lam^2 = 1/100000: K on EH 114.45021, on rho = -1/K 123.96132, at rho_EH - 0.3 1.56951e+8
+  info: c = -1.5: the line rho = -1/K = -1.047198 has F = A = -4.763551 at every v, so it is spacelike; the event horizon ends on it at v*
+    (N9: 0 s)
+[pass] N10: outgoing rays into rho = -infinity (c = -1, -3/2, beta = +-1, from (v, rho) = (-4, -2)): the affine parameter lam_aff = int exp(int F_rho dv/2) dv grows linearly in |rho|, lam_aff(-1e6)/lam_aff(-1e3) = 1e3 within 2%  (c = -1.0, beta = -1: lam_aff(rho = -1e6)/lam_aff(rho = -1e3) = 1002.00; c = -1.0, beta = +1: lam_aff(rho = -1e6)/lam_aff(rho = -1e3) = 1002.00; c = -1.5, beta = -1: lam_aff(rho = -1e6)/lam_aff(rho = -1e3) = 1002.00; c = -1.5, beta = +1: lam_aff(rho = -1e6)/lam_aff(rho = -1e3) = 1002.00)
+    (N10: 0 s)
+[pass] N11: beta = -1, c = -1, -3/2: rays at rho_EH(-10) - d reach the cone v = v* at rho = -infinity for d < d_crit and fall at v_b < v* for d > d_crit; at d_crit (1 -+ eps), eps = 0.1, 0.01, 0.001, r_* rises (> 100 at 0.001) and tau_fall = v* - v_b falls (< 1e-6): I+ meets the cone at a point with r = infinity; tau_fall falls monotonically along the 8 offsets from 0.3 to 2 d_crit (the curve I+ is spacelike)  (c = -1.0: d_crit = 5.150847e-05; r_*(eps = 0.1, 0.01, 0.001) = 6.204, 63.27, 370.6; tau_fall = 2.698e-03, 2.695e-05, 6.423e-09; tau_fall at d = 0.3 ... 2 d_crit falls monotonically (I+ spacelike): True; c = -1.5: d_crit = 1.210547e-04; r_*(eps = 0.1, 0.01, 0.001) = 5.147, 53.65, 360.7; tau_fall = 2.659e-03, 2.799e-05, 5.494e-08; tau_fall at d = 0.3 ... 2 d_crit falls monotonically (I+ spacelike): True)
+    (N11: 4 s)
+[pass] N12: beta = +1: from the metric jets, c = -1 has l(r) > 0 for every rho > 0 at 49 values of v (no trapped region ever); c = -3/2 has trapped points at s = 0.995 s_max and none at 1.005 s_max (s_max = max of s_AH on (0, rho_h)); rho < 0 is anti-trapped (n, l > 0) at all v  (c = -1.0: l(r) > 0 at all 49 v from -12 to 12 and 24001 rho > 0 (no trapped region); c = -1.5: at s = 0.995 s_max (s_max = 0.04903680 at rho = 0.176045, v_max = -3.15749) trapped points found; c = -1.5: at s = 1.005 s_max (s_max = 0.04903680 at rho = 0.176045, v_max = -3.15749) trapped points none)
+    (N12: 0 s)
+[pass] N13: beta = -1, c = -1, -3/2, rays at rho_EH(-10) + 1e-4 (AF side) and - 3e-5 (other side) to the cone: AF side, Ricci(1e-6)/Ricci(1e-8) in (8, 12), Kretschmann ratio in (80, 120), |Ricci| < 0.02 and Kretschmann < 1e-3 at tau = 1e-8; other side, Ricci and Kretschmann at tau = 1e-8 within 0.5% of 12 H^2 and 24 H^4, H^2 = -2c  (c = -1.0: right ray (tau = 1e-6 -> 1e-8): Ricci -0.004986 -> -0.0004948 (ratio 10.08), Kretschmann 7.457e-05 -> 7.344e-07 (ratio 101.5); left ray at tau = 1e-8: Ricci 24 (12 H^2 = 24), Kretschmann 96.001 (24 H^4 = 96); c = -1.5: right ray (tau = 1e-6 -> 1e-8): Ricci -0.06607 -> -0.006528 (ratio 10.12), Kretschmann 0.0131 -> 0.0001279 (ratio 102.4); left ray at tau = 1e-8: Ricci 36.026 (12 H^2 = 36), Kretschmann 216.31 (24 H^4 = 216))
+    (N13: 0 s)
+
+13 checks, 13 pass; failed: []; mutation None; 33 s
+rc=0
+
+== table: runs/table_run1.log (code 5ba41d8) ==
+== static members: rho_h, surface gravity kappa = A'(rho_h)/2, K ==
+c = -1.0: K = 0.636620, rho_h = 0.000000, kappa = 0.636620
+c = -1.5: K = 0.954930, rho_h = 0.339617, kappa = 0.551682
+
+== beta = -1 (v* = 0): the throat rho = 0, AH-, the event horizon, AH+ at chosen v; rho_1 with s_AH(rho_1) = -1 ==
+c = -1.0: P* at rho = -1/K = -1.570796, A(-1/K) = -5.683393, rho_1 = 0.636620, F(v, 0) = 1/lam^2 - 1 > 0 for all v < v*
+      v          s       rho_AH-      rho_EH    rho_AH+    r_EH = lam R(rho_EH)
+    -10.00   -0.00172    -0.02967    -0.00776    0.02899    0.99917
+     -7.00   -0.01160    -0.07874    -0.03630    0.07414    0.99484
+     -5.00   -0.04146    -0.15425    -0.09582    0.13739    0.98354
+     -3.00   -0.14810    -0.31880    -0.24534    0.25249    0.95036
+     -2.00   -0.27992    -0.48498    -0.39861    0.34193    0.91350
+     -1.00   -0.52908    -0.83490    -0.69108    0.46445    0.83416
+     -0.50   -0.72738    -1.28273    -0.97544    0.54286    0.72940
+     -0.10   -0.93832    -2.96787    -1.40183    0.61645    0.42765
+     -0.01   -0.99365    -9.12551    -1.55208    0.63457    0.14708
+   the event horizon crosses the throat rho = 0 at v = never (rho_EH < 0 for all v)
+c = -1.5: P* at rho = -1/K = -1.047198, A(-1/K) = -4.763551, rho_1 = 0.954930, F(v, 0) = c + 1/lam^2 null at v = -1.150464 (beta = -1)
+      v          s       rho_AH-      rho_EH    rho_AH+    r_EH = lam R(rho_EH)
+    -10.00   -0.00007    -0.00014     0.33423    0.33973    1.05434
+     -7.00   -0.00125    -0.00237     0.31231    0.34166    1.04698
+     -5.00   -0.00844    -0.01558     0.26113    0.35292    1.02916
+     -3.00   -0.05700    -0.09188     0.12033    0.41526    0.97809
+     -2.00   -0.14810    -0.20865    -0.02684    0.50150    0.92332
+     -1.00   -0.38484    -0.48638    -0.29702    0.66145    0.81819
+     -0.50   -0.62035    -0.83912    -0.54572    0.78541    0.70193
+     -0.10   -0.90892    -2.07160    -0.90570    0.91648    0.40716
+     -0.01   -0.99050    -6.27637    -1.03151    0.95097    0.14006
+   the event horizon crosses the throat rho = 0 at v = -2.14617
+
+== beta = +1, c = -3/2: the trapped lens ==
+s_max = max s_AH on (0, rho_h) = 0.04903680 at rho = 0.176045; the lens closes at v_max = ln(s_max)/K = -3.15749
+      v          s       rho_AH(in)   rho_AH(out)
+    -10.00    0.00007     0.000136     0.339500
+     -7.00    0.00125     0.002401     0.337551
+     -5.00    0.00844     0.016765     0.325092
+     -4.00    0.02193     0.047152     0.298204
+     -3.50    0.03536     0.085495     0.263244
+     -3.20    0.04709     0.142348     0.209270
+
+== beta = +1, c = -1: the throat F(v, 0) = c + 1/lam^2 and l(r) on it ==
+   v =  -6.0: s = 0.021934, F(v, 0) = -0.021463, 2 R lam l(r) = P(v, 0) = s K = 0.013964
+   v =   0.0: s = 1, F(v, 0) = -0.5, 2 R lam l(r) = P(v, 0) = s K = 0.63662
+   v =   3.0: s = 6.7521, F(v, 0) = -0.871, 2 R lam l(r) = P(v, 0) = s K = 4.2985
+rc=0
+
+== Mutations: fired sets in m_<name>.log against the declared ones ==
+  ah_coef     fired ['N1', 'N12', 'S1', 'S4']  declared ['S1', 'S4', 'N1', 'N12']  equal
+  ah_sign     fired ['N1', 'N12', 'N2', 'N4', 'N5', 'N7', 'S1', 'S4']  declared ['S1', 'S4', 'N1', 'N2', 'N4', 'N5', 'N7', 'N12']  equal
+  ell_sign    fired ['N2', 'S3']  declared ['S3', 'N2']  equal
+  throat      fired ['N7', 'S4']  declared ['S4', 'N7']  equal
+  eh_shift    fired ['N11', 'N4', 'N6']  declared ['N4', 'N6', 'N11']  equal
+  pstar       fired ['N4', 'N6']  declared ['N4', 'N6']  equal
+  beta_sign   fired ['N3']  declared ['N3']  equal
+  rate_ray    fired ['N2', 'N6']  declared ['N2', 'N6']  equal
+  hz_shift    fired ['N0']  declared ['N0']  equal
+  inv_k       fired ['N8']  declared ['N8']  equal
+  ellis       fired ['N0']  declared ['N0']  equal
+  aff_sign    fired ['N10']  declared ['N10']  equal
+  kA          fired ['S1', 'S2', 'S3']  declared ['S1', 'S2', 'S3']  equal
+  r_scale     fired ['S0']  declared ['S0']  equal
+  f2          fired ['S5']  declared ['S5']  equal
+  gpp         fired ['S6']  declared ['S6']  equal
+  ds_h        fired ['N13']  declared ['N13']  equal
+17 of 17 equal
