@@ -34,7 +34,7 @@ sys.argv = _ARGV
 MUT = next((a.split("=", 1)[1] for a in sys.argv[1:] if a.startswith("--mutate=")), None)
 ONLY = next((a.split("=", 1)[1].split(",") for a in sys.argv[1:] if a.startswith("--only=")), None)
 KNOWN_D = ("s_q", "s_pot")
-KNOWN_N = ("law_norm", "th_noF", "th_nophi", "th_asign", "dm_noT", "kappa_off", "jump_off", "xform_p", "xform_q", "mode_khat", "mode_dF0", "fn_c1_noV", "fn_c1_aT", "fn_c1_sign")
+KNOWN_N = ("cor_noa0", "cor_dU", "law_norm", "th_noF", "th_nophi", "th_asign", "dm_noT", "kappa_off", "jump_off", "xform_p", "xform_q", "mode_khat", "mode_dF0", "fn_c1_noV", "fn_c1_aT", "fn_c1_sign")
 KNOWN = KNOWN_D + KNOWN_N
 assert MUT is None or MUT in KNOWN, MUT
 
@@ -801,6 +801,39 @@ def check_T9():
           ok, "; ".join(det))
 
 
+SIGMA_STAR = 16.0                              # #232's chart: Q(sigma) = sinh(b (sigma* - sigma))/sinh(b sigma*), the corner (p, sigma) = (0, 0) is (V, U) = (1, -1)
+
+
+def corner_c1(a0, a1R, a1L):
+    """c1 = -Theta_gen at the corner of #232's chart, a point of the slice V + U = 0 (s = 1, rho = 1) where dphi = dF = 0 for the corner-constant classes:
+    Theta_gen = a dr + mu dr', dr = a0, dr' = d_V dr - d_U dr = a1R/b - a1L tanh(b sigma*)/b (d_V = d_p/(b V), d_U = d_sigma/(-Q'(0)), -Q'(0) = b coth(b sigma*))."""
+    sl = slice_obj()
+    b = SQ2 * KAPPA
+    drs = a1R / b - (a1L if MUT != "cor_dU" else -a1L) * math.tanh(b * SIGMA_STAR) / b
+    return -theta_gen(sl, 1.0, 0.0 if MUT == "cor_noa0" else a0, drs, 0.0, 0.0)
+
+
+def check_T11():
+    """c1 of #232's corner-constant classes at one point of the t = 0 slice: Theta_gen at the corner (s = 1) against the horizon fit."""
+    A = {"A0": (1e-3, 0.0, 0.0), "A1R": (0.0, 1e-3, 0.0), "A1L": (0.0, 0.0, 1e-3), "L": (0.0, 0.0, 0.0), "R": (0.0, 0.0, 0.0)}
+    det, ok = [], True
+    for name, (a0, a1R, a1L) in A.items():
+        r = {h: run232(name, h) for h in H232}
+        h1, h2 = H232[-2], H232[-1]
+        c1f = rich(r[h1]["c1"], r[h2]["c1"])
+        c1c = corner_c1(a0, a1R, a1L)
+        if name in ("A0", "A1R", "A1L"):
+            e = abs(c1c - c1f) / abs(c1f)
+            good = e <= 1e-6
+            det.append(f"{name}: closed form {c1c:.9e}, fit {c1f:.9e}, relative {e:.1e}")
+        else:
+            good = abs(c1c) <= 1e-12 and abs(c1f) <= 1e-9
+            det.append(f"{name}: closed form {c1c:.1e}, fit {c1f:.1e}")
+        ok = ok and good
+    check("T11", "c1 from one point of the slice: #232's corner (p, sigma) = (0, 0) is (V, U) = (1, -1) on V + U = 0, so c1 = -Theta_gen(s = 1) = -(a dr + mu dr') with dr = a0, dr' = a1R/b - a1L tanh(b sigma*)/b "
+          "equals the horizon fit of #232's solver (h = 0.005, 0.0025 Richardson) to 1e-6 for A0, A1R, A1L and is 0 for the pulse classes L, R (1e-12; fit 1e-9)", ok, "; ".join(det))
+
+
 def check_T10():
     """the first law dM = (kappa_xi/8 pi) dA along the exact static family at finite L (mpmath, 40 digits): dA = 8 pi r_h dr_h is the area change that c1 measures."""
     import mpmath as mp
@@ -825,7 +858,7 @@ def check_T10():
           worst <= 1e-12, "ratios " + ", ".join(rows))
 
 
-CHECKS = [("T1", check_T1), ("T2", check_T2), ("T3", check_T3), ("T4", check_T4), ("T5", check_T5), ("T6", check_T6), ("T7", check_T7), ("T8", check_T8), ("T9", check_T9), ("T10", check_T10)]
+CHECKS = [("T1", check_T1), ("T2", check_T2), ("T3", check_T3), ("T4", check_T4), ("T5", check_T5), ("T6", check_T6), ("T7", check_T7), ("T8", check_T8), ("T9", check_T9), ("T10", check_T10), ("T11", check_T11)]
 SCOPE = tuple(c for c, _ in CHECKS)
 SCOPE_D = ("S1", "S2", "S3", "S4")
 
@@ -851,7 +884,9 @@ DECLARED = {                      # computed in the development runs d4 and d5 (
     "s_pot": {"S1", "S3", "S4"},
     "th_noF": {"T3", "T4", "T6", "T7", "T8"},
     "th_nophi": {"T3", "T4", "T5", "T6", "T7", "T8"},
-    "th_asign": {"T3", "T4", "T5", "T6", "T7", "T8"},
+    "th_asign": {"T3", "T4", "T5", "T6", "T7", "T8", "T11"},
+    "cor_noa0": {"T11"},
+    "cor_dU": {"T11"},
     "dm_noT": {"T2", "T4", "T5", "T6", "T8"},
     "kappa_off": {"T4", "T5", "T6"},
     "jump_off": {"T4", "T6", "T8"},
@@ -948,6 +983,10 @@ def report_table():
         dr, drs = sol.sol(fs.SR)
         rm = read_mass(bg, fs.SR, dr, drs, 0.0, 0.0)
         print(f"homogeneous start (dM(3e4) = {k * 1e-4:.0e} of #258): c1 = {c1h:.9e}, kappa c1 = {KAPPA * c1h:.9e}; dm at rho = " + ", ".join(f"{r_:.0e}: {v:.9e}" for r_, v in zip(rm["rhos"][1:], rm["dms"][1:])) + f"; -kappa Theta = {-KAPPA * rm['th_after']:.9e}; dm(3e4) of the s-form = {fs.dm_of(bg, fs.SFAR, *sl.hom_even(fs.SR, fs.SFAR, (dr, drs)).sol(fs.SFAR)):.9e}")
+    print("== #232's corner (p, sigma) = (0, 0) = (V, U) = (1, -1) lies on V + U = 0: c1 = -Theta_gen(s = 1) in closed form ==")
+    mu1, a1_, cc1, Q1, b1 = sl.theta_coef(1.0)
+    print(f"rho(s = 1) = {b1['rho']:.12f}, r = {mu1:.12f} (sqrt2 = {SQ2:.12f}), a(1) = -R A'/(2 kappa) = {a1_:.12f}; c1(A0) = -a(1) a0 = {-a1_ * 1e-3:.9e} = sqrt2 (1 - pi/4) a0 = {SQ2 * (1 - math.pi / 4) * 1e-3:.9e}; "
+          f"c1(A1L) = {corner_c1(0.0, 0.0, 1e-3):.9e}, c1(A1R) = {corner_c1(0.0, 1e-3, 0.0):.9e} (a/kappa = {1e-3 / KAPPA:.9e})")
     print("== #232's solver (linear.py, c = -1, P = 7), Richardson of h = 0.005, 0.0025: c1 as a functional of the slice data ==")
     for name in ("A0", "A1R", "A1L", "L", "R"):
         r = {h: run232(name, h) for h in H232}
