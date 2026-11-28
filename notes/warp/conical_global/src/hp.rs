@@ -15,7 +15,9 @@
 //!   step in it.
 use crate::model::Mutation;
 use crate::tables::N_TERMS;
-use crate::walk::{fit_radius_w, Est};
+use crate::walk::{fit_radius_w, Est, LocStats};
+#[cfg(feature = "locate_lib")]
+use crate::walk::Hist;
 use multishoot::implicit::{
     taylor_shift, Coefficients, ImplicitControl, Jets, Mono, Real, Scalar, Stop as WStop, WalkOpts, Walker,
 };
@@ -244,6 +246,8 @@ pub struct HpOut<P: Precision<Native>> {
     /// with `HpCfg::rstop`: the last steps' (x, h, median radius of F'' from the last five Taylor ratios in x units, sign
     /// changes of the last ten ratios), oldest first (the diagnostic of a `Stop::TinyStep`)
     pub recent: Vec<(f64, f64, f64, usize)>,
+    /// what the locator did (the calls of `multisolver::locate` and the f64 fit beside them; zero without `locate_lib`)
+    pub loc: LocStats,
 }
 
 pub(crate) fn n_rel_of<P: Precision<Native>>(ev: &EvalS<P>, s: &[Sc<P>; 3], x: f64) -> (f64, Sc<P>, Sc<P>) {
@@ -364,6 +368,55 @@ impl<P: Precision<Native>> Real for W<P> {
     }
 }
 
+/// the lane's scalar as the arithmetic of `multisolver::locate`, so that the locator runs in the precision of the series
+#[cfg(feature = "locate_lib")]
+impl<P: Precision<Native>> multisolver::locate::Real for W<P> {
+    const UNIT: f64 = match P::PARTS {
+        2 => 4.930380657631324e-32,
+        4 => 2.4308653429145085e-63,
+        _ => 5.909106315382871e-126,
+    };
+    fn from_f64(x: f64) -> Self {
+        W(P::new(&[x]))
+    }
+    fn to_f64(self) -> f64 {
+        P::part(self.0, 0)
+    }
+    /// Newton from the f64 root: each step doubles the digits (2, 3 and 4 steps for double-, quad- and octo-double)
+    fn sqrt(self) -> Self {
+        let a = P::part(self.0, 0);
+        if !(a > 0.0 && a.is_finite()) {
+            return W(P::ZERO);
+        }
+        let half = W(P::new(&[0.5]));
+        let mut y = W(P::new(&[a.sqrt()]));
+        for _ in 0..P::PARTS / 2 + 1 {
+            y = half * (y + self / y);
+        }
+        y
+    }
+}
+
+/// the three fields' coefficients in the lane's precision (what `locate` reads); empty without `locate_lib`
+pub struct Full<P: Precision<Native>> {
+    #[cfg(feature = "locate_lib")]
+    pub c: [Vec<W<P>>; 3],
+    #[cfg(not(feature = "locate_lib"))]
+    _p: std::marker::PhantomData<P>,
+}
+
+fn full_of<P: Precision<Native>>(c: &[Vec<W<P>>; 3], kt: usize) -> Full<P> {
+    #[cfg(feature = "locate_lib")]
+    {
+        Full { c: [0, 1, 2].map(|f| c[f][..=kt].to_vec()) }
+    }
+    #[cfg(not(feature = "locate_lib"))]
+    {
+        let _ = (c, kt);
+        Full { _p: std::marker::PhantomData }
+    }
+}
+
 /// N's monomials as the library's source: the coefficient of each (a, b, c) is the polynomial in x of `PolyQ`, its jet the
 /// Taylor shift about x0 in the lane's precision (rounded to double-double for the control `recip-dd`)
 pub struct PolyQSrc<'a, P: Precision<Native>> {
@@ -469,8 +522,11 @@ pub fn hp_walk<P: Precision<Native>>(
         n_rel_pre_max: 0.0,
         sing: None,
         recent: Vec::new(),
+        loc: LocStats::default(),
     };
     let mut hist: Vec<(f64, f64)> = Vec::new(); // (x*, R) of the locator
+    #[cfg(feature = "locate_lib")]
+    let mut shadow = Hist::default();
     let mut first = true;
     loop {
         let x = w.x();
@@ -487,8 +543,10 @@ pub fn hp_walk<P: Precision<Native>>(
         if !first {
             out.n_rel_pre_max = out.n_rel_pre_max.max(n_pre);
         }
-        let formed = w.form().map(|s| (s.l, [0, 1, 2].map(|f| (0..=kt).map(|k| hi_w::<P>(s.c[f][k])).collect::<Vec<f64>>())));
-        let (l, cf) = match formed {
+        let formed = w
+            .form()
+            .map(|s| (s.l, [0, 1, 2].map(|f| (0..=kt).map(|k| hi_w::<P>(s.c[f][k])).collect::<Vec<f64>>()), full_of::<P>(&s.c, kt)));
+        let (l, cf, full) = match formed {
             Ok(v) => v,
             Err(WStop::ZeroPivot | WStop::NonFinite) => {
                 out.stop = Stop::NonFinite;
@@ -501,8 +559,23 @@ pub fn hp_walk<P: Precision<Native>>(
         if !first {
             out.n_rel_max = out.n_rel_max.max(if cfg.project { n_post } else { n_pre });
         }
+        let _ = &full;
         if let Some(rstop) = cfg.rstop {
+            #[cfg(not(feature = "locate_lib"))]
             let est = estimate_c(&cf, kt, l, cfg.fit_window);
+            // `locate` in the lane's precision at the steps inside the gate, the f64 fit of the window beside it
+            #[cfg(feature = "locate_lib")]
+            let est = {
+                let g = crate::loc::Gate {
+                    h: w.planned(),
+                    bound: if cfg.rstop_rel { rstop * x.abs().max(1.0) } else { rstop },
+                    dir,
+                    flip: cfg.flip_side,
+                    x,
+                    steps: out.steps,
+                };
+                crate::loc::step([&full.c[0], &full.c[1], &full.c[2]], l, estimate_c(&cf, kt, l, cfg.fit_window), &g, &mut out.loc, &mut shadow)
+            };
             let ahead = |e: &Est| (e.side as f64 == dir) != cfg.flip_side;
             match est {
                 Some(e) if ahead(&e) => hist.push((x + dir * e.r, e.r)),
@@ -576,5 +649,41 @@ pub fn hp_walk<P: Precision<Native>>(
             }
         }
     }
+    out.loc.step = out.steps;
     out
+}
+
+#[cfg(all(test, feature = "locate_lib"))]
+mod tests {
+    use super::*;
+    use multidouble::precision::{Double, Octo, Quad};
+    use multisolver::locate::Real as LReal;
+
+    /// `sqrt` squares back to the argument within `units` of the lane's rounding; zero and a negative argument give zero
+    fn check<P: Precision<Native>>(sqrt: impl Fn(W<P>) -> W<P>, units: f64) {
+        for a in [2.0, 3.0, 0.3, 1e10, 1e-10] {
+            let x = W::<P>(P::new(&[a]));
+            let y = sqrt(x);
+            let err = ((y * y - x) / x).0;
+            assert!(P::part(err, 0).abs() <= units * <W<P> as LReal>::UNIT, "a = {a}: {:e}", P::part(err, 0));
+        }
+        assert_eq!(P::part(sqrt(W::<P>(P::ZERO)).0, 0), 0.0);
+        assert_eq!(P::part(sqrt(W::<P>(P::new(&[-1.0]))).0, 0), 0.0);
+    }
+
+    /// the f64 root with no Newton step: the planted error the check must see
+    fn f64_root<P: Precision<Native>>(x: W<P>) -> W<P> {
+        let a = P::part(x.0, 0);
+        W(P::new(&[if a > 0.0 { a.sqrt() } else { 0.0 }]))
+    }
+
+    #[test]
+    fn newton_sqrt() {
+        check::<Double>(LReal::sqrt, 4.0);
+        check::<Quad>(LReal::sqrt, 4.0);
+        check::<Octo>(LReal::sqrt, 4.0);
+        assert!(std::panic::catch_unwind(|| check::<Double>(f64_root, 4.0)).is_err());
+        assert!(std::panic::catch_unwind(|| check::<Quad>(f64_root, 4.0)).is_err());
+        assert!(std::panic::catch_unwind(|| check::<Octo>(f64_root, 4.0)).is_err());
+    }
 }

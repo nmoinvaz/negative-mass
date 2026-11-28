@@ -1,7 +1,7 @@
 //! The verdict of one (F_inf, C): the inward walk from eta = +200, and the bisection in C between verdict classes.
 use crate::model::{conical, end_state, end_state_at, Mutation};
 use crate::poly::{abs_dd, PolyN};
-use crate::walk::{walk, Est, Outcome, Walk, WalkOpts, S3};
+use crate::walk::{walk, Est, LocStats, Outcome, Walk, WalkOpts, S3};
 use multishoot::lane::DV;
 use multishoot::{Fl, DD};
 
@@ -43,6 +43,8 @@ pub struct Verdict {
     pub start_l: f64,
     pub n_rel_start: f64,
     pub n_rel_200: f64,
+    /// the locator's counts of the walk that ended the verdict (`locate_lib`; zero otherwise)
+    pub loc: LocStats,
 }
 
 pub fn lane0(f: &Fl<DV, 1>) -> DD {
@@ -223,6 +225,7 @@ pub fn verdict(fi: f64, c: DD, m: &Mutation, opts: &WalkOpts) -> Verdict {
         start_l: l0,
         n_rel_start: r_start,
         n_rel_200: r_200,
+        loc: LocStats::default(),
     };
     v.x_last = l0;
     let mut targets: Vec<f64> = Vec::new();
@@ -235,6 +238,7 @@ pub fn verdict(fi: f64, c: DD, m: &Mutation, opts: &WalkOpts) -> Verdict {
     for &t in &targets {
         let w = walk(&eq, &p, s, x, t, g, opts);
         v.steps += w.steps.len();
+        v.loc = w.loc.clone();
         nrel = nrel.max(n_rel_until(&w));
         match &w.outcome {
             Outcome::End => {
@@ -283,6 +287,7 @@ pub fn verdict(fi: f64, c: DD, m: &Mutation, opts: &WalkOpts) -> Verdict {
     if bounded {
         let w = walk(&eq, &p, s, ETA_MIN, -LEND, g, opts);
         v.steps += w.steps.len();
+        v.loc = w.loc.clone();
         match &w.outcome {
             Outcome::End => {
                 let se = w.last().s;

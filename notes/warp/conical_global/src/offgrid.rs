@@ -12,7 +12,7 @@ use crate::hp::{hi, hp_walk, sc_of, EvalS, HpCfg, HpOut, PolyQ, Stop};
 use crate::model::{conical_poly, Mutation};
 use crate::scan::{conical_kind, fit_c_fixed, fit_minus};
 use crate::tables_hp::{LN_L, SERIES_HP};
-use crate::walk::Est;
+use crate::walk::{Est, LocStats};
 use multishoot::multidouble::precision::Precision;
 use multishoot::multidouble::simd::Native;
 use multishoot::{Fl, DD};
@@ -145,6 +145,8 @@ pub struct VerdictP {
     /// or "stalled" (they do not)
     pub tiny: Vec<(f64, f64, f64, usize)>,
     pub tiny_kind: String,
+    /// the locator's counts of the walk that ended the verdict (`locate_lib`; zero otherwise)
+    pub loc: LocStats,
 }
 
 fn dd3<P: Precision<Native>>(s: &[Sc<P>; 3]) -> [DD; 3] {
@@ -234,6 +236,7 @@ pub fn verdict_p<P: Precision<Native>>(fi: f64, c: f64, m: &Mutation, o: &OgOpts
         alpha_pred: None,
         tiny: Vec::new(),
         tiny_kind: String::new(),
+        loc: LocStats::default(),
     };
     // the start rule: the first radius whose residual is within the bar
     let (pick, resids) = pick_start::<P>(fi, c, m, o, &ev);
@@ -259,6 +262,7 @@ pub fn verdict_p<P: Precision<Native>>(fi: f64, c: f64, m: &Mutation, o: &OgOpts
     cps.extend([1e-2, 1e-4]);
     let out: HpOut<P> = hp_walk::<P>(&poly, s0, l0, ETA_MIN, &cps, &o.cfg, false);
     v.steps = out.steps;
+    v.loc = out.loc.clone();
     v.n_rel_max = out.n_rel_max;
     for cp in &out.cps {
         if cp.x == LEND {
@@ -292,6 +296,7 @@ pub fn verdict_p<P: Precision<Native>>(fi: f64, c: f64, m: &Mutation, o: &OgOpts
             if bounded {
                 let o2: HpOut<P> = hp_walk::<P>(&poly, out.s_end, ETA_MIN, -LEND, &[], &o.cfg, false);
                 v.steps += o2.steps;
+                v.loc = o2.loc.clone();
                 match o2.stop {
                     Stop::End => {
                         let sm = dd3::<P>(&o2.s_end);
@@ -372,7 +377,7 @@ impl VerdictP {
         format!(
             "{{\"fi\": {}, \"c\": {}, \"class\": \"{}\", \"kind\": \"{}\", \"xstar\": {}, \"bar\": {}, \"est\": {}, \"l\": {}, \
              \"resid\": {}, \"resids\": [{}], \"x_last\": {}, \"s_last\": {}, \"s200\": {}, \"floor\": [{}], \"through\": {}, \
-             \"global\": {}, \"steps\": {}, \"n_rel_max\": {}, \"alpha_pred\": {}, \"tiny_kind\": \"{}\", \"tiny\": [{}]}}",
+             \"global\": {}, \"steps\": {}, \"n_rel_max\": {}, \"alpha_pred\": {}, \"tiny_kind\": \"{}\", \"tiny\": [{}]{}}}",
             num(self.fi),
             dd(DD::from_f64(self.c)),
             self.class,
@@ -393,7 +398,8 @@ impl VerdictP {
             num(self.n_rel_max),
             opt(self.alpha_pred),
             self.tiny_kind,
-            self.tiny.iter().map(|t| format!("[{}, {}, {}, {}]", num(t.0), num(t.1), num(t.2), t.3)).collect::<Vec<_>>().join(", ")
+            self.tiny.iter().map(|t| format!("[{}, {}, {}, {}]", num(t.0), num(t.1), num(t.2), t.3)).collect::<Vec<_>>().join(", "),
+            crate::json::loc_key(&self.loc)
         )
     }
 }

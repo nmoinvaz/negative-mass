@@ -11,5 +11,9 @@ multishoot = { version = "=5.0.0", features = ["mutate"] }
 multisolver = "=0.3.0"
 multidouble = "=6.1.0"
 
+[features]
+# the singularity locator of multisolver (#191, #206) in place of the f64 Domb-Sykes fit of `walk.rs` and `hp.rs` (#207)
+locate_lib = []
+
 [profile.release]
 opt-level = 3
