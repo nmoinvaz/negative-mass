@@ -593,6 +593,26 @@ def analyze_cmd(raw, rn=None):
         worst = max(abs(res["P2h"][nm]) for nm in inf)
         check("P2-ph", f"POST HOC, gates nothing: P2 at h = 0.01 with #266's (a, b) at that h", worst <= CRITR["bar_pred"], f"max |M - predicted| {worst:.1e}", ph=True)
 
+    print("\n== Post hoc (gates nothing): where P2's miss goes, and what P3 leaves (h = 0.005)")
+    print("    point   M - P2      speed term r_th c rdot_th   (a, b) shift term   M - P3      r_th - family B's (linear)   (M - P3) / that")
+    xs_, ys_ = [], []
+    for nm, spec, tg in POINTS:
+        e = ok.get((nm, H_FIN))
+        if e is None or nm not in SEP:
+            continue
+        g1, rth, rd = e["mem"]["g1"], e["mem"]["r_th"], e["sp"]
+        a3, b3, c3 = CRITR["P3"]
+        a2, b2 = CRITR["P2"][H_FIN]
+        drt = SEP[nm]["q"]["r_th"]["d_lin"]
+        r3 = e["SS"]["plat1"] - predict("P3", g1, rth, rd, H_FIN)
+        xs_.append(drt)
+        ys_.append(r3)
+        print(f"    {nm:6s}  {e['SS']['plat1'] - predict('P2', g1, rth, rd, H_FIN):+.2e}   {rth * c3 * rd:+.2e}                  {rth * ((a3 - a2) * g1 + (b3 - b2) * g1 ** 2):+.2e}          {r3:+.2e}   {drt:+.2e}                  {(r3 / drt if abs(drt) > 1e-12 else float('nan')):+.2e}")
+    if xs_:
+        xs_, ys_ = np.array(xs_), np.array(ys_)
+        k_ = float(xs_ @ ys_ / max(xs_ @ xs_, 1e-300))
+        print(f"    least squares through the origin: (M - P3) = {k_:+.3e} (r_th - family B's); residual max {np.max(np.abs(ys_ - k_ * xs_)):.1e} (six points, one parameter: a description, not a test)")
+
     print("\n== Reproduction of #266's B = 0.1 point (the default pulse through this driver; stored runs of #266 read only)")
     acc, det = Acc(), []
     for h in H2:
