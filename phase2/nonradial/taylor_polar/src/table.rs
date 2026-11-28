@@ -8,8 +8,12 @@ use crate::jgen::{j_series, Pars};
 use crate::num::Num;
 use crate::plane::{Jets, JetSource};
 use crate::ser::*;
-use crate::star::{Star, NS};
+use crate::star::{Star, StarStep, NS};
 use multidouble::dd::DD;
+#[cfg(feature = "lib_table")]
+use multishoot_tables::table::{Opts, SeriesSource, Table};
+#[cfg(feature = "lib_table")]
+use std::cell::Cell;
 
 /// coefficients kept per entry
 pub const NB: usize = NS; // 0..NB-1
@@ -64,6 +68,7 @@ pub fn bg_series<T: Num>(co: &[[T; KMAX + 1]; 4], x0: f64) -> (Ser<T>, Ser<T>, S
 
 /// Largest width h (up to hmax) at which the series of every entry still converges to `tail` relative to the sum of
 /// its terms: |c_k| h^k / sum_j |c_j| h^j <= tail for the last two coefficients kept, by bisection on h.
+#[cfg(not(feature = "lib_table"))]
 fn width_of(sers: &[[DD; NB]], hmax: f64, tail: f64) -> f64 {
     let ok = |h: f64| -> bool {
         sers.iter().all(|c| {
@@ -102,10 +107,57 @@ fn width_of(sers: &[[DD; NB]], hmax: f64, tail: f64) -> f64 {
 pub const TAIL: f64 = 1e-25;
 pub const WIDTH_FRACTION: f64 = 0.3;
 
+/// J about `b` at s = 0, 1 and 1.5 (J0, J0 + J1 and a check of the linearity in s^2): the series of (alpha, a, phi0, u) about `b`
+/// by shifting the star step `st` that holds it.
+type J3 = ([[Ser<DD>; 6]; 6], [[Ser<DD>; 6]; 6], [[Ser<DD>; 6]; 6]);
+
+fn j_about(st: &StarStep<DD>, b: f64, l: usize, model: &Model) -> J3 {
+    let mut co = st.coef;
+    let delta = DD::from_f64(b) - DD::from_f64(st.x0);
+    for f in 0..4 {
+        taylor_shift(&mut co[f][..=NS], delta, NS + 1);
+    }
+    let (r, alpha, a, phi0, u) = bg_series(&co, b);
+    let ja = j_series(&r, &alpha, &a, &phi0, &u, &pars(model, l, DD::ZERO));
+    let jb = j_series(&r, &alpha, &a, &phi0, &u, &pars(model, l, DD::from_f64(1.0)));
+    let jc = j_series(&r, &alpha, &a, &phi0, &u, &pars(model, l, DD::from_f64(1.5)));
+    (ja, jb, jc)
+}
+
+/// Entry (i, j) as J0 and J1 = J(s = 1) - J(s = 0): J = J0 + s^2 J1.
+fn entry_series(ja: &[[Ser<DD>; 6]; 6], jb: &[[Ser<DD>; 6]; 6], i: usize, j: usize) -> ([DD; NB], [DD; NB]) {
+    let mut a0 = [DD::ZERO; NB];
+    let mut a1 = [DD::ZERO; NB];
+    for k in 0..NB {
+        a0[k] = ja[i][j].get(k);
+        a1[k] = jb[i][j].get(k) - ja[i][j].get(k);
+    }
+    (a0, a1)
+}
+
+/// Relative defect of J(s = 1.5) = J0 + 2.25 J1 at order 0 (None where J(s = 1.5) is zero).
+fn linear_rel(a0: &[DD; NB], a1: &[DD; NB], jc: &Ser<DD>) -> Option<f64> {
+    let pred = a0[0] + DD::from_f64(2.25) * a1[0];
+    let got = jc.get(0);
+    let rel = ((pred - got).to_f64() / got.to_f64().abs().max(1e-300)).abs();
+    (got.to_f64() != 0.0).then_some(rel)
+}
+
+/// the control `jsign`: J[3][2], the largest entry, negated in the table
+fn jsign_flip(a0: &mut [DD; NB], a1: &mut [DD; NB], (i, j): (usize, usize)) {
+    if crate::mutate::on("jsign") && (i, j) == (3, 2) {
+        for k in 0..NB {
+            a0[k] = -a0[k];
+            a1[k] = -a1[k];
+        }
+    }
+}
+
+#[cfg(not(feature = "lib_table"))]
 pub fn build_table(star: &Star<DD>, l: usize, model: &Model, rmin: f64, rmax: f64) -> JTable<DD> {
     let mut t = JTable { l, pattern: vec![], x0: vec![], x1: vec![], c0: vec![], c1: vec![], linear_defect: 0.0 };
     let mut pat: Vec<(usize, usize)> = vec![];
-    let mut tmp: Vec<([[Ser<DD>; 6]; 6], [[Ser<DD>; 6]; 6], [[Ser<DD>; 6]; 6])> = vec![];
+    let mut tmp: Vec<J3> = vec![];
     for st in &star.steps {
         if st.x1 < rmin || st.x0 > rmax {
             continue;
@@ -113,15 +165,7 @@ pub fn build_table(star: &Star<DD>, l: usize, model: &Model, rmin: f64, rmax: f6
         let mut b = st.x0.max(rmin * 0.999);
         while b < st.x1 {
             // the star's series re-expanded about b
-            let mut co = st.coef;
-            let delta = DD::from_f64(b) - DD::from_f64(st.x0);
-            for f in 0..4 {
-                taylor_shift(&mut co[f][..=NS], delta, NS + 1);
-            }
-            let (r, alpha, a, phi0, u) = bg_series(&co, b);
-            let ja = j_series(&r, &alpha, &a, &phi0, &u, &pars(model, l, DD::ZERO));
-            let jb = j_series(&r, &alpha, &a, &phi0, &u, &pars(model, l, DD::from_f64(1.0)));
-            let jc = j_series(&r, &alpha, &a, &phi0, &u, &pars(model, l, DD::from_f64(1.5)));
+            let (ja, jb, jc) = j_about(st, b, l, model);
             let mut sers: Vec<[DD; NB]> = vec![];
             for i in 0..6 {
                 for j in 0..6 {
@@ -129,12 +173,7 @@ pub fn build_table(star: &Star<DD>, l: usize, model: &Model, rmin: f64, rmax: f6
                         if !pat.contains(&(i, j)) {
                             pat.push((i, j));
                         }
-                        let mut a0 = [DD::ZERO; NB];
-                        let mut a1 = [DD::ZERO; NB];
-                        for k in 0..NB {
-                            a0[k] = ja[i][j].get(k);
-                            a1[k] = jb[i][j].get(k) - ja[i][j].get(k);
-                        }
+                        let (a0, a1) = entry_series(&ja, &jb, i, j);
                         sers.push(a0);
                         sers.push(a1);
                     }
@@ -154,25 +193,12 @@ pub fn build_table(star: &Star<DD>, l: usize, model: &Model, rmin: f64, rmax: f6
         let mut e0 = vec![];
         let mut e1 = vec![];
         for &(i, j) in &pat {
-            let mut a0 = [DD::ZERO; NB];
-            let mut a1 = [DD::ZERO; NB];
-            for k in 0..NB {
-                a0[k] = ja[i][j].get(k);
-                a1[k] = jb[i][j].get(k) - ja[i][j].get(k);
-            }
+            let (mut a0, mut a1) = entry_series(ja, jb, i, j);
             // linearity in s^2: J(s = 1.5) = J0 + 2.25 J1
-            let pred = a0[0] + DD::from_f64(2.25) * a1[0];
-            let got = jc[i][j].get(0);
-            let rel = ((pred - got).to_f64() / got.to_f64().abs().max(1e-300)).abs();
-            if got.to_f64() != 0.0 {
+            if let Some(rel) = linear_rel(&a0, &a1, &jc[i][j]) {
                 t.linear_defect = t.linear_defect.max(rel);
             }
-            if crate::mutate::on("jsign") && (i, j) == (3, 2) {
-                for k in 0..NB {
-                    a0[k] = -a0[k];
-                    a1[k] = -a1[k];
-                }
-            }
+            jsign_flip(&mut a0, &mut a1, (i, j));
             e0.push(a0);
             e1.push(a1);
         }
@@ -180,6 +206,91 @@ pub fn build_table(star: &Star<DD>, l: usize, model: &Model, rmin: f64, rmax: f6
         t.c1.push(e1);
     }
     t.pattern = pat;
+    t
+}
+
+/// J0 and J1 of every entry of the pattern as the functions of multishoot's table: function 2e is J0 and 2e + 1 is J1 of `pattern[e]`.
+/// A step's series are those about its start, from the star step that holds it; the piece ends at the star step's end.
+#[cfg(feature = "lib_table")]
+struct JSource<'a> {
+    star: &'a Star<DD>,
+    model: &'a Model,
+    l: usize,
+    pattern: Vec<(usize, usize)>,
+    /// the largest defect of the linearity in s^2 over the steps the table asked for
+    linear_defect: Cell<f64>,
+}
+
+#[cfg(feature = "lib_table")]
+impl SeriesSource<DD> for JSource<'_> {
+    fn functions(&self) -> usize {
+        2 * self.pattern.len()
+    }
+
+    fn series(&self, x0: f64, _dir: f64, nb: usize, out: &mut [DD]) -> f64 {
+        assert_eq!(nb, NB);
+        // the star step that starts last at or before x0: a boundary belongs to the step that starts there
+        let steps = &self.star.steps;
+        let n = steps.partition_point(|s| s.x0 <= x0);
+        assert!(n > 0, "x0 = {x0} is before the star's first step");
+        let st = &steps[n - 1];
+        let (ja, jb, jc) = j_about(st, x0, self.l, self.model);
+        for i in 0..6 {
+            for j in 0..6 {
+                if !self.pattern.contains(&(i, j)) {
+                    assert!(ja[i][j].n == 0 && jb[i][j].n == 0, "entry ({i}, {j}) is nonzero at x = {x0}, outside the pattern");
+                }
+            }
+        }
+        for (e, &(i, j)) in self.pattern.iter().enumerate() {
+            let (mut a0, mut a1) = entry_series(&ja, &jb, i, j);
+            if let Some(rel) = linear_rel(&a0, &a1, &jc[i][j]) {
+                self.linear_defect.set(self.linear_defect.get().max(rel));
+            }
+            jsign_flip(&mut a0, &mut a1, (i, j));
+            out[2 * e * nb..(2 * e + 1) * nb].copy_from_slice(&a0);
+            out[(2 * e + 1) * nb..(2 * e + 2) * nb].copy_from_slice(&a1);
+        }
+        st.x1
+    }
+}
+
+/// Table steps of J along the star by multishoot's `table` module (negative-mass #192): the module's rule is the one above (a step is
+/// `WIDTH_FRACTION` of the width at which the last two coefficients kept carry at most `TAIL` of the sum), passed as `last` 2, `tail`,
+/// `fraction` and `nb`. It does not carry the jump of the own build for a step shorter than 1e-14 b, which hides a stall: a step that
+/// does not move x is an error. The pattern is that of the first step (every later step is checked to hold no entry outside it).
+/// `mutate=wide_table` is the library's `TableControl::Wide`, `mutate=lib_last4` the library called with `last` 4.
+#[cfg(feature = "lib_table")]
+pub fn build_table(star: &Star<DD>, l: usize, model: &Model, rmin: f64, rmax: f64) -> JTable<DD> {
+    let included: Vec<&StarStep<DD>> = star.steps.iter().filter(|st| !(st.x1 < rmin || st.x0 > rmax)).collect();
+    let (first, last) = (included.first().expect("no star step in the table's range"), included.last().unwrap());
+    let xa = first.x0.max(rmin * 0.999);
+    let (ja, jb, _) = j_about(first, xa, l, model);
+    let mut pattern: Vec<(usize, usize)> = vec![];
+    for i in 0..6 {
+        for j in 0..6 {
+            if ja[i][j].n > 0 || jb[i][j].n > 0 {
+                pattern.push((i, j));
+            }
+        }
+    }
+    let src = JSource { star, model, l, pattern, linear_defect: Cell::new(0.0) };
+    let mut opts = Opts::new(NB, TAIL);
+    opts.last = if crate::mutate::on("lib_last4") { 4 } else { 2 };
+    opts.fraction = WIDTH_FRACTION;
+    if crate::mutate::on("wide_table") {
+        opts.control = multishoot_tables::control::TableControl::Wide;
+    }
+    let tab = Table::<DD>::build(&src, xa, last.x1, &opts).unwrap_or_else(|e| panic!("J's table, l = {l}: {e}"));
+    let mut t = JTable { l, pattern: src.pattern.clone(), x0: vec![], x1: vec![], c0: vec![], c1: vec![], linear_defect: src.linear_defect.get() };
+    for s in 0..tab.steps() {
+        let (x0, x1) = tab.bounds(s);
+        t.x0.push(x0);
+        t.x1.push(x1);
+        let arr = |f: usize| -> [DD; NB] { tab.series(s, f).try_into().unwrap() };
+        t.c0.push((0..src.pattern.len()).map(|e| arr(2 * e)).collect());
+        t.c1.push((0..src.pattern.len()).map(|e| arr(2 * e + 1)).collect());
+    }
     t
 }
 

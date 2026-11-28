@@ -5,7 +5,8 @@
     python taylor_polar.py --only=T1,P1       run the named checks only
     python taylor_polar.py --mutate=NAME      run with one deliberate error (a control: the check it targets must fail)
     python taylor_polar.py --gen              write taylor_polar/src/jgen.rs from polar_matrix_generated.py
-    python taylor_polar.py --build            cargo build --release (nice 10, -j 2)
+    python taylor_polar.py --build            cargo build --release (nice 10, -j 2); --features=lib_table adds the cargo feature (#192:
+                                              J's table from multishoot's table module; lib_plane likewise; both replace target/release's binary)
     python taylor_polar.py --scipy-timing OUT run the scipy path (convergence.py's base variant) at the timing points,
                                               appending one JSON line per evaluation to OUT (long: about 30 min)
     python taylor_polar.py --list             the checks and the controls
@@ -189,9 +190,9 @@ def gen():
     print(f"wrote {path}: {len(text.splitlines())} lines, {len(g.needed())} temporaries, {len(g.entries)} entries")
 
 
-def build():
+def build(features=None):
     env = dict(os.environ, CARGO_NET_GIT_FETCH_WITH_CLI="true")
-    subprocess.check_call(["nice", "-n", "10", "cargo", "build", "--release", "-j", "2"], cwd=CRATE, env=env)
+    subprocess.check_call(["nice", "-n", "10", "cargo", "build", "--release", "-j", "2"] + (["--features", features] if features else []), cwd=CRATE, env=env)
 
 
 # ---------------------------------------------------------------------------------------------------------------
@@ -2027,7 +2028,7 @@ def main():
     if "--gen" in args:
         return gen()
     if "--build" in args:
-        return build()
+        return build(next((a.split("=", 1)[1] for a in args if a.startswith("--features=")), None))
     if "--scipy-timing" in args:
         return scipy_timing(args[args.index("--scipy-timing") + 1])
     rows_mode = "--rows" in args

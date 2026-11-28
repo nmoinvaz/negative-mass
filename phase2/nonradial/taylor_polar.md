@@ -469,3 +469,91 @@ Mac, nice 10, at a load of 20 to 60 from other projects.
   - Task 1 (recount #126's boxes with the crate as a second evaluator) is #274.
   - Task 2 is added to #116.
   - Tasks 3–5 are not filed yet. Task 5 waits for a release that contains #81.
+
+## #192: J's table from multishoot
+
+Status: **numerical evidence**. The crate takes multishoot 5.0.0 and multidouble 6.1.0 from crates.io, with no git pin, and gives
+the same bits as before: 3532 records of three builds and every printed token of the check logs (default mode, `--rows`,
+`--rows` with `lib_plane`, `--complex`) are equal, old pin against new pin, except load averages, the timing check TC and one
+R1 line (all classified below). Behind the cargo feature `lib_table`, J's table is built by multishoot's `table` module with
+#186's settings, and its step list is #186's bit for bit: 464 steps at l = 2 to 6 and 389 for the r0 = 3e-3 range, every
+breakpoint and every stored coefficient equal. The 22 default checks and the `--rows` checks give the same verdicts and the
+same tokens with the feature on. **The feature waits for a release**: the module is merged into multishoot main and is in no
+release, so the optional dependency is a git revision. Raw folder `negative-mass-raw/I192-mac` (README: the criteria of this
+stage first, amendments A4 to A13; last commit when assembled: 2cad9bb5). No sentence here claims novelty.
+
+### What was added
+
+| File | Change |
+|---|---|
+| `Cargo.toml`, `Cargo.lock` | `multishoot = "=5.0.0"` and `multidouble = "6.1.0"` from crates.io, `[patch.crates-io]` removed, multisolver follows to 0.3.0. **The repin forced no source change**: the default, `lib_plane` and `complex` builds compile as they were. The feature `lib_table` enables the optional dependency `multishoot_tables` (package multishoot, git, rev 75d1e1e, library feature `mutate`) |
+| `src/table.rs` | the pieces both builds share are helpers (`j_about`, `entry_series`, `linear_rel`, `jsign_flip`); the own `build_table` and `width_of` are `#[cfg(not(feature = "lib_table"))]`; with the feature, `JSource` (a `SeriesSource`) and a `build_table` that calls `Table::build` |
+| `src/main.rs` | the `setup` record of `d` gets `"table":"multishoot"` under the feature, nothing without it |
+| `taylor_polar.py` | `--build --features=NAME` passes a cargo feature; nothing else |
+
+`JTable`, its lookups (`jets`, with the crate's `taylor_shift` in the lane), `to_lane`, `VacSource` and the plane integrators are
+the crate's own in both builds: the library builds the table in double-double and the table is copied into `JTable<DD>`.
+
+**The pin.** multishoot#79 was merged into multishoot main by rebase, so the pull request's head 60d21ab is not on main. The
+dependency is `rev = 75d1e1e` (main, where `src/table.rs` is the file of 60d21ab byte for byte; `plane.rs` differs by #81).
+5.0.0 predates the module, so **the flag waits for the next multishoot release**; the default build stays on crates.io. Build:
+`cargo build --release --features lib_table`, or `python taylor_polar.py --build --features=lib_table`. The builds
+`lib_table,lib_plane` and `lib_table,complex` compile and were not run.
+
+**The library call.** `nb` 30 (`NS`), `tail` 1e-25, `last` 2 passed explicitly (the library's default is 4), `fraction` 0.3, no
+`hmax`, no `atol`. The source's `valid_to` is the end of the star step. The functions are J0 and J1 = J(s = 1) - J(s = 0) of
+each entry of the pattern (two per entry, combined as `a0 + s² a1` before the shift, as before). The pattern is that of the
+first step, and every later step is checked to hold nothing outside it (a panic otherwise). The path is
+[max(first star step's x0, 0.999 rmin), x1 of the last star step with x0 <= rmax], as #186's loop.
+
+### Results
+
+| Criterion (raw README A4) | Result |
+|---|---|
+| RP1, builds; no git source in the default tree | **met**: default, `lib_plane` and `complex` build with 5.0.0; `cargo tree --locked -e normal` lists crates.io packages only |
+| RP2, 1167 + 1167 + 1198 records of `d` (f64, dd, qd, l = 2, 6; D to 130 digits), `planted`, `starsteps`, `jtable` (l = 2, 6: every coefficient of J0 and J1, 20 digits), `recipcheck` (f64, dd, qd, od), `tabcheck`, `jjets`, and for `complex` `dc` and `cp1`: old pin against new pin, every field as a string except times | **met**: 0 differ in the default, `lib_plane` and `complex` pairs. Control (`mutate=jsign` on the new binary only): 949 of 1167 differ, exit 1 |
+| RP3, default mode, old pin against new pin | new pin 22 passed, 1 skipped (TS); old pin 21 passed, 1 skipped, and **R1 failed there by my own `kill` of its child process**. Of the 24 lines (1401 tokens) only R1 and the SUMMARY line that counts it differ. R1 rerun alone on the old tree passes and its 45 tokens equal the new run's |
+| RP3, `--rows` | 12 passed, 2 failed (CAP5c, CAP5s, as #187) in both; 1451 tokens, **2 differ: the load average printed in CAP5b and CAP6b** (`load N,`; the rule replaced `load average N` only) |
+| RP3, `--rows` with the `lib_plane` binaries (#189's rows) | the same verdicts, 1451 tokens, the same 2 load tokens; the printed E2 and E3 equal (1.42e-24, 3.58e-9; 8.81e-25, 9.60e-9) |
+| RP3, `--complex` (13 checks) | 12 passed, 1 failed (XR, as #188) in both; 1034 tokens, **13 differ, all in TC, the timing check** (load average, times per D and their ranges, speed-up ratios); the other 12 check lines are token for token equal |
+| the refactor of `build_table` into helpers | bit-neutral: the binary with the code and the feature off against the repin-only binary, 1167 records, 0 differ |
+| JT1, `lib_table`, `lib_table,lib_plane`, `lib_table,complex` | **met**: they build |
+| JT2, the step list against #186's (every x0, x1 within 1e-9) | **met, with nothing to spare**: 464 against 464 steps (l = 2 to 6) and 389 against 389; all 5418 breakpoints bitwise equal; the coefficients of every step equal as 20-digit strings; head records equal. Control (`mutate=lib_last4`, the library called with `last` 4): 532 and 451 steps, exit 1 |
+| JT3, with the feature: default mode, `--rows` | default mode 22 passed, 0 failed, 1 skipped; tokens equal to the repin-only build's log (1463, 0 differ). Rows 12 passed, 2 failed (CAP5c, CAP5s); 1451 tokens, the same 2 load tokens; RA2, RA4, RA5, RA6 pass |
+| JT4, `--mutate=wide_table` | **met**: T3 (worst entry relative to itself 26.3, bar 1e-20) and A2 (D of the opposite sign) fail in both builds, and the two logs are equal token for token (193). The step count under it is 87, the star's, in both (464 without) |
+| JT5, the table's build time | the same: `t_table` 5.38 to 5.58 s (own) against 5.27 to 5.48 s (library), l = 2 and 6, three runs each; 422 table steps and `linear_defect` (5.124e-25, 3.335e-24) equal. The star's solve and J's series dominate |
+
+### Found, and not fixed in the crate's own `table.rs`
+
+1. **#186's jump to the star step for `h < 1e-14 b` never fired on these inputs** (design, section 9, item 1). The library has no
+   such jump and returns `Stall` where a step does not move x, and it gives the same 464 and 389 steps. The jump would hide a
+   singularity on the path; multishoot#79's planted case PG shows what the library does there (`Stall` in f64, `NotFinite` in dd and qd).
+2. **#186's `width_of` forms `|c_k| h^k` in plain f64** (item 2). The library scales by powers of two, and at nb 30 and r >= 5e-4
+   the two give the same bits. The scaled form matters from nb 60 with a pole near 1e-3 (multishoot#79's case PS), not here.
+3. **The library's default `last` is 4.** With it J's table has 532 steps instead of 464 (+14.7 %; +15.9 % for the second
+   range) at the same `tail`. The crate passes 2 to reproduce #186. A symmetry of period 3 in a J series would need 3.
+4. **multidouble 6's reciprocals** (#193, multidouble#188), named as a candidate cause of a difference: none was found.
+   `recipcheck` is equal in f64, dd, qd and od, and so is every D to 130 digits in dd and qd.
+5. The octo-double `d` record was dropped from RP2: it had not finished in 31 minutes on the old binary alone. The od lane is
+   compared through `recipcheck` only.
+
+### Not run, and what the numbers do not say
+
+- `lib_table` with `lib_plane` or `complex` was built, not run. aarch64 NEON only; no x86 build here. The timings were taken at
+  a load average of 4 to 33 from other projects.
+- The runs compare two builds of one crate on one machine: the repin and the table swap change no printed bit. They do not say
+  J's table is right; that is T1, T2 and T3 (against direct evaluation), which pass in both builds.
+- The consumer's reach (the plane's steps past the table's width) is multishoot#79's open point, filed as #256. The crate's checks
+  pass at `fraction` 0.3 as before.
+- Process notes (raw README A5 to A8): the first od record, a scratch tree without `phase2/boson_star.py` (S1 to S3 failed
+  there), a jjets parsing fault in my comparison script, and one `kill` of a child I did not mean to stop. None changed a bar.
+
+### Recommended tasks
+
+1. **Take `lib_table` to the release.** What: when multishoot releases a version that contains `table`, replace the git
+   dependency by the release, then drop the own `build_table`, `width_of` and the feature. Why: one code path and the library's
+   controls. Accept: `jtable` for l = 2 to 6 bitwise equal to the lists stored in the raw folder (`s3_steps_out/`, `run_52`), the 22 default
+   checks pass, and `--mutate=wide_table` fails T3 and A2. Depends: the release, and #256 for the plane's cap.
+2. **Look up J from the library too.** What: `Table::shifted` and `TableJets` for the lookups, with J0 + s² J1 formed before the
+   shift (the library has no parameter), under `lib_plane`. Why: the crate's shift in its own lane duplicates `table::shift`.
+   Accept: D equal to this section's rows to the last digit, or the difference explained. Depends: task 1.

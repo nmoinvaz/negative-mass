@@ -35,16 +35,28 @@ checksum = "0e9c71c2167ca323c882b99918929403426e2373ea17242ff5653e0d5e1058be"
 
 [[package]]
 name = "multidouble"
-version = "5.1.0"
-source = "git+https://github.com/nmoinvaz/multidouble?rev=ba0ad101ce7661f45153bc557dcb093d4dd41893#ba0ad101ce7661f45153bc557dcb093d4dd41893"
+version = "6.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "73bfd680939e8293d665b8967d145e6cec569cb8f2338b410d3c45381ff38e50"
 dependencies = [
  "rayon",
 ]
 
 [[package]]
 name = "multishoot"
-version = "4.2.0"
-source = "git+https://github.com/nmoinvaz/multishoot?rev=a880903331a43b6f49694cc9222acce8ebd34b37#a880903331a43b6f49694cc9222acce8ebd34b37"
+version = "5.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "096d5d01f5170d3cd782c964383b6abc075109d9c254b5e54886e15c6fd556ef"
+dependencies = [
+ "multidouble",
+ "multisolver",
+ "rayon",
+]
+
+[[package]]
+name = "multishoot"
+version = "5.0.0"
+source = "git+https://github.com/nmoinvaz/multishoot?rev=75d1e1e67a37cb977817d666c2b2a2570d0e144b#75d1e1e67a37cb977817d666c2b2a2570d0e144b"
 dependencies = [
  "multidouble",
  "multisolver",
@@ -53,9 +65,9 @@ dependencies = [
 
 [[package]]
 name = "multisolver"
-version = "0.2.2"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7c776c430dc11cb5bb92588cf1c838dded0b26e7ea0eb8b83a31a516bbf3de4a"
+checksum = "72b0ff8d5619d319724c67a4aa02f0ede309f029bf00ecdf6dce5ae4d553ac75"
 dependencies = [
  "multidouble",
  "rayon",
@@ -86,5 +98,6 @@ name = "taylor_polar"
 version = "0.1.0"
 dependencies = [
  "multidouble",
- "multishoot",
+ "multishoot 5.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "multishoot 5.0.0 (git+https://github.com/nmoinvaz/multishoot?rev=75d1e1e67a37cb977817d666c2b2a2570d0e144b)",
 ]
