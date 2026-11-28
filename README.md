@@ -31,23 +31,52 @@ N. Moinvaziri, *Stability of a negative-mass boson star* —
   instability is not triggered. Numerical scans, not proofs.
 - **Verified by:** `phase2/radial/`, `phase2/nonradial/`, `phase2/mass_check/`, `phase5/spherical/`.
 
+![The complex growth rates s searched for polar modes of the phantom star, box by box, at true scale](phase2/nonradial/complex_s_boxes.svg)
+
 ## Paper III — ghost-scalar wormholes at large D
 N. Moinvaziri, *The instability of ghost-scalar wormholes at large dimension* —
 [`paper/3-wormhole-largeD/main.pdf`](paper/3-wormhole-largeD/main.pdf)
 - **Growth rate.** The Ellis–Bronnikov wormhole's single unstable radial mode has
-  W²a² = 2(D − 3) − 4 ln 2 + (π²/3 + 4 ln²2)/(D − 3) + O(D⁻²), by matched asymptotics (the third term's closed form
-  identified numerically).
+  W²a² = 2(D − 3) − 4 ln 2 + (π²/3 + 4 ln²2)/(D − 3) + … to seventh order, by matched asymptotics, with every
+  coefficient through (D − 3)⁻⁵ in closed form. All the ln 2 comes from one factor, W²a² = 2(D − 3)·2^(−2/(D−3))·F,
+  with F free of ln 2.
 - **Mode.** At large D the throat moves rigidly and the mode is (r/a) e^{1 − r²/a²} in the nearly flat region outside.
 - **Threshold.** 1/W is the slope of the type I lifetime law between collapse and expansion; published runs in D = 4, 5, 6
   are consistent with it.
 - **Verified by:** `notes/wormhole_largeD/` (symbolic check with control, two integrations against Torii–Shinkai's table,
   `paper_numbers.py`).
 
-All three papers: AI-assisted (see each paper's "How the results were obtained"); not yet reviewed by specialists.
+![The coefficients Ω₀ … Ω₅ of W²a², the estimate of Ω₆, and the error of each truncation](notes/wormhole_largeD/omega_coeffs.svg)
+
+## Paper IV — black universes (draft)
+N. Moinvaziri, *Linear radial instability of the Bronnikov–Fabris black universes, including the member whose horizon
+sits at the throat* — [`paper/4-black-universes/main.pdf`](paper/4-black-universes/main.pdf)
+- **One growing radial mode** for each of 19 members c ≠ −1 (c = −10 to −0.01), with a rate that tends to the
+  horizon's surface gravity κ = 2/(πb) as c → −1.
+- **The member c = −1**, whose horizon sits at the throat, has no normalizable mode. It grows instead through the
+  horizon, δr = c₁ + c₂e^{κv}, with c₂ free in regular data and gauge invariant (proved by hand).
+- **Nonlinear evolutions** give a lifetime slope of 1/W at c = −0.3 and −1.5, and 1/κ at c = −1, to 2.4×10⁻⁴.
+- **Verified by:** `notes/black_universe/` (`paper/4-black-universes/paper_numbers.py`).
+
+![Growth rate of the radial mode against c](notes/black_universe/growth_rate.svg)
+
+## Paper V — the Ellis threshold (draft)
+N. Moinvaziri, *Near-critical evolution of the Ellis wormhole: the type I lifetime law, the settled black-hole mass and
+the expanding throat* — [`paper/5-ellis-threshold/main.pdf`](paper/5-ellis-threshold/main.pdf)
+- **Type I lifetime law** in D = 4, 5 and 6: two independent codes give the slope 1/W to a relative 7×10⁻⁶,
+  3×10⁻⁵ and 5×10⁻⁴.
+- **Settled mass** in D = 4: 0.2231a for the symmetric family. For a one-sided family it is 0.2355a and still rising as
+  the data approach threshold, and it is not a function of the approached member's parameters alone.
+- **The expanding throat** has H = k/(τ_s − τ), with k = 2.0000 in D = 4: it does not approach a de Sitter rate.
+- **Verified by:** `notes/wormhole_evolution/` (`paper/5-ellis-threshold/paper_numbers.py`).
+
+![Settled mass of the one-sided family against the distance from threshold, with the prediction from the member](notes/wormhole_evolution/settled_mass_member.svg)
+
+All five papers: AI-assisted (see each paper's "How the results were obtained"); not yet reviewed by specialists.
 
 ## Repository layout
 - `PLAN.md` — phases, status, next steps
-- `paper/` — the three papers above, with `figures/make_figures.py` regenerating every figure from repo data
+- `paper/` — the five papers above, with the scripts that regenerate every figure from repo data
 - `notes/literature.md` — papers read, with what each establishes
 - `phase0/` — verification of published perturbation results for negative-mass Schwarzschild
 - `phase2/` — regular negative-mass (phantom boson) stars: backgrounds, Dotti–Gleiser spectrum, radial and
