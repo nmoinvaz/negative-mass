@@ -123,7 +123,7 @@ Where F² = η² + 1 the coefficient a₃ = 2Fη²(F² − η² − 1) of F″³
 For large C the solution is close to the constant F ≡ F_∞ down to the curve, which it meets at η = √(F_∞² − 1) from below as C grows (η* rises with C to within 1e-6 relative at C = 10⁸). The label depends on the stop radius:
 at R ≤ 1e-8 there were 167 such ends, 41 of which cross the curve at R ≤ 1e-12 (a complex pair of Taylor singularities between 1e-12 and 1e-8 from the real axis) and end at `F->0` further in (for instance (F_∞, C) = (4, 10⁴):
 3.8518 at R ≤ 1e-8, `F->0` at 3.5276 at R ≤ 1e-12). In development at R ≤ 1e-11 with the first step guard 1e-13|x|, 22 points ended `TINYSTEP` (F_∞ = 64 for |C| ≤ 3·10⁴, and (16, 10⁵)); with the guard 1e-15|x| and R ≤ 1e-12 they cross the curve
-and end at `F->0` (63.95, 15.86), and none ends `TINYSTEP` in the run of record (raw `dev_05_dd.log`, `dev_06_dd.log`). The 126 survivors are real log ends to 1e-12 relative;
+and end at `F->0` (63.95, 15.86), and none ends `TINYSTEP` in the run of record (raw `dev_05_dd.log`, `dev_06_dd.log`). The 126 survivors are real log ends to 1e-12 relative by the f64 fit; with multisolver's `locate` 116 keep that reading and 10 read as a complex pair (§11, #207);
 whether a C¹ solution continues across such an end is the question of #167 §5, not answered here.
 
 ## 5. The floor
@@ -222,6 +222,23 @@ Raw folder `I183-rpi5` of negative-mass-raw: README with the grid, start rule an
 (including the stopped `dev_07` and `dev_08` and the failed first run of `dev_09`), and the run of record `run_03` in five stages. Stages (stage times in the raw `run_03_times.log`): `run_04a` 876 s (15 checks, full grid), `run_03b` 1001 s (`dd_qd`), `run_03c` 2285 s (8 controls), `run_03d` 2307 s (5), `run_03e` 952 s (3), all exit 0, at nice 10 with 2 threads, one process at a time; the script at 0da94f6
 (`run_03a` and the stages b to e ran at 8b4c5e5, whose script differs by the printed summaries), crate binary sha256 5b608b378a73…; Rust 1.100.0, multishoot 4.2.0, multisolver 0.2.2, multidouble 5.1.0; memory was sampled with `ps` only (the Python process 63 to 70 MB during the scans; the stopped `odefun` attempt of `dev_08` reached 10.7 % of 8 GB).
 No library change, no pull request.
+
+
+## 11. The library's locator in the walker (#207)
+
+Status: numerical evidence. The Cargo feature `locate_lib` (`conical_global/`, README "Changes of #207"; off by default) replaces the
+f64 fit of `walk.rs` and `hp.rs` with `multisolver::locate` (#191, #206), in the lane's precision with the library's window and degree.
+The stop rule and the labels are unchanged. Run on the Mac, raw `I207-mac` (b28e2e69); the coordinator's rerun is `I207-mac-review`.
+
+- **The exponent.** At the 509 `F->0` points α(F) is within 1.7e-8 (relative) of 2/(η*² + 4); the f64 fit was within 1.5e-2. At the
+  20 points of O8, double- and quad-double both print 1.000, so §7's window of 33 orders is not needed.
+- **η\*.** Of the 818 points, 808 keep class and kind, and their η\* are within 1.9e-11 max(1, η\*) of §2's.
+- **The κ curve.** 116 of the 126 `a3->0` records keep their label. At 10 the library reads a complex pair (Im s about 1.5e-11, α(F)
+  = 5/2) where the f64 fit read a real singularity. Five then end `TINYSTEP` ((2, 1e4), (−2, −1e4), (4, 3e4), (8, 1e5), (128, −1e6)),
+  and five pass the curve and end `F->0` ((5, 3e4), (12, 1e5), (24, 3e5), (64, 1e6), (128, −3e6)). #167's `walk.rs` ends `NONFINITE`
+  at (±2, ±3000). The nature of the pair is not decided: `locate`'s bar is an estimator range, not a bound, and at (1.5, 1e4)
+  double-double reads a real singularity where quad-double reads a pair.
+- With the feature off every output equals the baselines (#216's one-path run, the coordinator's rerun included).
 
 ## Coordinator's review
 

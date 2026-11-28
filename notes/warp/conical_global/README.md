@@ -157,3 +157,14 @@ python3 notes/warp/conical_offgrid.py --nobuild --no-controls --dump=/tmp/dump_b
 python3 notes/warp/conical_global.py --nobuild
 python3 notes/warp/conical_loglog.py --nobuild
 ```
+
+### Coordinator's review (#207)
+
+Merged at 63248b6 with `locate_lib` off by default; #207's acceptance is not met with the feature on (10 of 818 verdicts change).
+Review folder `negative-mass-raw/I207-mac-review` at 62967047, criteria committed (176269ee) before the runs.
+
+- The default build is unchanged: the `ctl` grid passes 16 of 16 and equals #216's one-path run with no difference at all
+  (0 gated against #190's baseline).
+- The feature-on `ctl` run reproduces the runner's `run_06` exactly, dumps included (535 η*, largest difference 0).
+- Not checked here: the pair reading at the 10 changed records (recommended task 1, filed). `conical_offgrid.md` §11 now records
+  the feature's results and §4's "real log ends" sentence is qualified.
