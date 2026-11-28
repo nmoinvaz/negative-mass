@@ -238,7 +238,7 @@ $a_{1R}$, against the horizon fits to $3.7\times10^{-8}$, $5.1\times10^{-9}$ and
 
 - That the first-law reading is the literature's. δA_S = 8π r_S c₁ with r_S = 1 and κ c₁ = δM_ADM are checked numbers; naming them the first law of black-hole mechanics (Bardeen–Carter–Hawking, Iyer–Wald)
   was not checked against a source *(unverified)*, and #260's notes do not cover it.
-- Any member but c = −1. Here r_S = 1 and R′(ρ_h) = 0. At the other members δA_S = 8π r_S δr(S) and c₂ is pure gauge (the lemma of #261); c₁ = δr(S) is gauge invariant there as well (r_V = r_U = 0 at S) but was not run.
+- *Done in #301* ([static_c1_members.md](static_c1_members.md)): at c = −1.5, c = −0.3 and on Schwarzschild κ r_S c₁ = δM_ADM, with c₁ = R_h/2 + R′_h/(2κ) per unit δL and δM_ADM = −c/π (= K/2, the static constant at the horizon); c₁ is gauge invariant at R′(ρ_h) ≠ 0, where c₂ is pure gauge.
 - A proof for tails. Sec. 2 assumes δφ = δF = 0 beyond a finite ρ. The exact mode has δφ ∼ 1/ρ and δF → const at infinity; Θ_gen = −c₁ and δM = κ c₁ hold for it (T4, T10), which is one planted case, not an argument for such tails.
 - That the cut extension is a physical datum. It is a hard cut with the jump condition of Sec. 1; it solves the constraints, and by the conservation of Θ_gen every cut gives the same δM (seven cuts of the exact mode, three of each class agree).
 - A slice through S for #232's horizon values. Its chart has none, so T9 extends the horizon law to V = 0 (lever arm e^{bp₀}, 220 at p₀ = 6; the observed deviations do not grow with p₀). T11 is exact only because the corner
@@ -248,7 +248,7 @@ $a_{1R}$, against the horizon fits to $3.7\times10^{-8}$, $5.1\times10^{-9}$ and
 
 ## 9. Recommended tasks
 
-1. **c₁ and the mass at the other members.** *What:* the slice code of this note (Θ_gen, the ρ-form, the exact family r = √L R, which #269 gives for every member) at c = −1.5, c = −0.3 and Schwarzschild, where r_S ≠ 1 and
+1. *Done in #301.* **c₁ and the mass at the other members.** *What:* the slice code of this note (Θ_gen, the ρ-form, the exact family r = √L R, which #269 gives for every member) at c = −1.5, c = −0.3 and Schwarzschild, where r_S ≠ 1 and
    R′(ρ_h) ≠ 0. *Why:* the first-law reading δM = κ r_S δr(S) predicts c₁ for every member; only c = −1 was run. *Acceptance:* κ r_S c₁ = δM_ADM of the exact family to 1e-6 at the three members; a wrong r_S (1) fails at c ≠ −1;
    dM = κ dA/(8π) along the family to 1e-12. *Depends on:* #259, #269.
 2. **The decaying partner and the basis (c₁, c₂, c₂′).** *What:* put the time reverse of #262's mode, Y = c₂′ U R(ρ(Π)), through the slice code and read c₂′ = ∂_U δr(S) = ½(n − δr′). *Why:* completes the list of regular

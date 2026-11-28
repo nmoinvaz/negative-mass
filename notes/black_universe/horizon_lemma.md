@@ -25,6 +25,10 @@ For every linear perturbation (δr, δF, δφ) that solves the linearized field 
 4. If A = f(R(ρ)) with f differentiable, then R′(ρ_h) = 0 forces A′(ρ_h) = 0, that is κ = 0. A non-extremal horizon at an extremum of
    the areal radius needs a metric function A that is not a function of the areal radius alone.
 
+*Added from #301* ([static_c1_members.md](static_c1_members.md)): by item 2, L_ξ r = −V ξᵁ R′(ρ_h) ρ′(0) on U = 0 vanishes at V = 0, so
+c₁ = δr(S) is the same in every gauge at every member, also where R′(ρ_h) ≠ 0 and c₂ is pure gauge; δA_S = 8π r_S c₁ with
+r_S = R(ρ_h). #301 checks it on exact pure gauge at c = −1, −1.5, −0.3 and on Schwarzschild.
+
 ## Proof
 
 1. For this metric R_VV = −(n/r)(r_VV + F_V r_V) (L0, by a brute-force Ricci tensor at n = 2 and 3). Since g_VV = 0, the VV equation is
@@ -55,6 +59,7 @@ spherical symmetry).
 |---|---|---|---|
 | c = −1 black universe (b = 1) | 0 | 2/π | c₂ gauge invariant, growing as e^{κv} on H⁺ (#248 finds it free in regular data) |
 | c = −1.5 black universe | 0.321578 | 0.551682 | c₂ pure gauge; #248 uses this as its planted case (0.3216) |
+| c = −0.3 black universe | −0.679735 | 0.601300 | c₂ pure gauge; c₁ invariant (#301) |
 | Schwarzschild (2M = 1) | 1 | 1/2 | c₂ pure gauge |
 | Simpson–Visser, a = 2m | 0 | 0 | extremal: outside the lemma (item 4) |
 

@@ -231,3 +231,17 @@ static_c1_members.py mutations DIR PREFIX                                       
 ```
 
 `static_c1_members_output.txt` is `derive`, `check`, `table` and `mutations` of the runs of record (`I301-mac/runs`, code commit cde8be5), in that order. Memory 0.68 GB at most (the finest step of the solver, T7).
+
+## Coordinator's review
+
+Merged at edec471. Review folder `negative-mass-raw/I301-mac-review` at 95e1df88, criteria committed (cd63bcc6) before the first run of
+`ind301.py`. The changed files are those the brief names.
+
+- **Rerun on the Mac** from 167e537: `derive`, `check` and `table` exit 0, and their logs equal the runner's apart from timings.
+- **ind301**, 4 of 4, from closed forms alone: M(L) = (K/3) L^{3/2} for every c (sympy, c symbolic) and L^{3/2}/2 for Schwarzschild;
+  κ r_S c₁ = dM/dL to 2e-31 at c = −1.5, −0.3 and Schwarzschild, with the horizon's shift dρ_h/dL = 1/A′(ρ_h) in c₁; r_S = 1 misses by
+  5.3e-2 and 0.267; the first law along each family to 2e-31. κ R_h² + R_h R′_h equals the static constant K at the horizon exactly,
+  which is the hand proof of κ r_S c₁ = K/2. The mutations `no-shift`, `rs-one` and `no-norm` fire.
+- The solver bar the runner moved at c = −0.3 (1e-3 to 5e-2) is named in its raw README before the run of record.
+- Applied: `static_c1.md`, `horizon_lemma.md` (a row and a remark on c₁'s invariance), and Paper IV (`paper_numbers.py` 144 strings,
+  mutation `rsone`).
