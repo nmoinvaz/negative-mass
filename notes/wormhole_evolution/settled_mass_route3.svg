@@ -1,0 +1,124 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="652" viewBox="0 0 760 652" font-family="system-ui, sans-serif">
+<style>@media (prefers-color-scheme: dark){[fill="#fcfcfb"]{fill:#201f1d}[stroke="#fcfcfb"]{stroke:#201f1d}[fill="#0b0b0b"]{fill:#e8e6e3}[stroke="#0b0b0b"]{stroke:#e8e6e3}[fill="#52514e"]{fill:#a8a49d}[stroke="#52514e"]{stroke:#a8a49d}[fill="#e7e6e2"]{fill:#343230}[stroke="#e7e6e2"]{stroke:#343230}[fill="#c98500"]{fill:#d69a2d}[stroke="#c98500"]{stroke:#d69a2d}[fill="#eb6834"]{fill:#dd5c26}[stroke="#eb6834"]{stroke:#dd5c26}[fill="#eda100"]{fill:#c08800}[stroke="#eda100"]{stroke:#c08800}[fill="#e87ba4"]{fill:#d1678f}[stroke="#e87ba4"]{stroke:#d1678f}[fill="#4a3aa7"]{fill:#7263cf}[stroke="#4a3aa7"]{stroke:#7263cf}[fill="#a6339a"]{fill:#c257b5}[stroke="#a6339a"]{stroke:#c257b5}[fill="#7a7668"]{fill:#948e82}[stroke="#7a7668"]{stroke:#948e82}}</style>
+<rect width="760" height="652" fill="#fcfcfb"/>
+<text x="16.0" y="28.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">Measured minus the frozen refit, against the member's asymmetry gamma_1</text>
+<text x="16.0" y="44.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">h = 0.005; small filled: in-sample, open: leave-one-out, of the fifteen fitted points; large green: the three new members</text>
+<line x1="86.0" y1="74.0" x2="86.0" y2="244.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="86.0" y="259.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.00</text>
+<line x1="236.0" y1="74.0" x2="236.0" y2="244.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="236.0" y="259.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.02</text>
+<line x1="386.0" y1="74.0" x2="386.0" y2="244.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="386.0" y="259.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.04</text>
+<line x1="536.0" y1="74.0" x2="536.0" y2="244.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="536.0" y="259.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.06</text>
+<line x1="686.0" y1="74.0" x2="686.0" y2="244.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="686.0" y="259.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.08</text>
+<line x1="86.0" y1="244.0" x2="686.0" y2="244.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="248.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">-1e-04</text>
+<line x1="86.0" y1="201.5" x2="686.0" y2="201.5" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="205.5" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">-5e-05</text>
+<line x1="86.0" y1="159.0" x2="686.0" y2="159.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="163.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+0e+00</text>
+<line x1="86.0" y1="116.5" x2="686.0" y2="116.5" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="120.5" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+5e-05</text>
+<line x1="86.0" y1="74.0" x2="686.0" y2="74.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="78.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">+1e-04</text>
+<line x1="86.0" y1="244.0" x2="686.0" y2="244.0" stroke="#52514e" stroke-width="1"/>
+<line x1="86.0" y1="74.0" x2="86.0" y2="244.0" stroke="#52514e" stroke-width="1"/>
+<text x="386.0" y="278.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">gamma_1 at departure</text>
+<text x="29.7" y="159.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 29.7 159.0)">M - predicted</text>
+<line x1="86.0" y1="108.0" x2="686.0" y2="108.0" stroke="#7a7668" stroke-width="1"/>
+<line x1="86.0" y1="210.0" x2="686.0" y2="210.0" stroke="#7a7668" stroke-width="1"/>
+<line x1="86.0" y1="159.0" x2="686.0" y2="159.0" stroke="#9aa0a6" stroke-width="1"/>
+<g><rect x="102.5" y="154.5" width="11.0" height="11.0" fill="#9aa0a6" stroke="#fcfcfb" stroke-width="2"/><title>B0.025 (fitted), in-sample M - P4 = -1.12e-06</title></g>
+<circle cx="108.0" cy="160.0" r="5" fill="none" stroke="#9aa0a6" stroke-width="1.5"><title>B0.025 (fitted), leave-one-out M - P4 = -1.13e-06</title></circle>
+<g><rect x="169.3" y="160.0" width="11.0" height="11.0" fill="#9aa0a6" stroke="#fcfcfb" stroke-width="2"/><title>B0.05 (fitted), in-sample M - P4 = -7.69e-06</title></g>
+<circle cx="174.8" cy="165.9" r="5" fill="none" stroke="#9aa0a6" stroke-width="1.5"><title>B0.05 (fitted), leave-one-out M - P4 = -8.14e-06</title></circle>
+<g><rect x="442.9" y="170.6" width="11.0" height="11.0" fill="#9aa0a6" stroke="#fcfcfb" stroke-width="2"/><title>B0.1 (fitted), in-sample M - P4 = -2.01e-05</title></g>
+<circle cx="448.4" cy="178.3" r="5" fill="none" stroke="#9aa0a6" stroke-width="1.5"><title>B0.1 (fitted), leave-one-out M - P4 = -2.27e-05</title></circle>
+<g><rect x="646.4" y="161.0" width="11.0" height="11.0" fill="#9aa0a6" stroke="#fcfcfb" stroke-width="2"/><title>B0.125 (fitted), in-sample M - P4 = -8.86e-06</title></g>
+<circle cx="651.9" cy="171.2" r="5" fill="none" stroke="#9aa0a6" stroke-width="1.5"><title>B0.125 (fitted), leave-one-out M - P4 = -1.44e-05</title></circle>
+<g><polygon points="449.8,153.0 456.3,165.0 443.3,165.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>e7 (fitted), in-sample M - P4 = -5.97e-07</title></g>
+<circle cx="449.8" cy="159.7" r="5" fill="none" stroke="#eda100" stroke-width="1.5"><title>e7 (fitted), leave-one-out M - P4 = -8.06e-07</title></circle>
+<g><polygon points="447.2,168.6 453.7,180.6 440.7,180.6" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>e9 (fitted), in-sample M - P4 = -1.89e-05</title></g>
+<circle cx="447.2" cy="177.6" r="5" fill="none" stroke="#eda100" stroke-width="1.5"><title>e9 (fitted), leave-one-out M - P4 = -2.19e-05</title></circle>
+<g><polygon points="446.1,162.3 452.6,174.3 439.6,174.3" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>e10 (fitted), in-sample M - P4 = -1.15e-05</title></g>
+<circle cx="446.1" cy="171.3" r="5" fill="none" stroke="#eda100" stroke-width="1.5"><title>e10 (fitted), leave-one-out M - P4 = -1.44e-05</title></circle>
+<g><polygon points="445.0,153.5 451.5,165.5 438.5,165.5" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>e11 (fitted), in-sample M - P4 = -1.13e-06</title></g>
+<circle cx="445.0" cy="160.3" r="5" fill="none" stroke="#eda100" stroke-width="1.5"><title>e11 (fitted), leave-one-out M - P4 = -1.54e-06</title></circle>
+<g><polygon points="444.0,105.7 450.5,117.7 437.5,117.7" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>e12 (fitted), in-sample M - P4 = +5.51e-05</title></g>
+<circle cx="444.0" cy="91.8" r="5" fill="none" stroke="#eda100" stroke-width="1.5"><title>e12 (fitted), leave-one-out M - P4 = +7.90e-05</title></circle>
+<g><circle cx="176.0" cy="152.2" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>W1 (fitted), in-sample M - P4 = +7.99e-06</title></g>
+<circle cx="176.0" cy="151.6" r="5" fill="none" stroke="#2a78d6" stroke-width="1.5"><title>W1 (fitted), leave-one-out M - P4 = +8.69e-06</title></circle>
+<g><circle cx="445.9" cy="135.3" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>W2 (fitted), in-sample M - P4 = +2.79e-05</title></g>
+<circle cx="445.9" cy="126.6" r="5" fill="none" stroke="#2a78d6" stroke-width="1.5"><title>W2 (fitted), leave-one-out M - P4 = +3.81e-05</title></circle>
+<g><circle cx="648.7" cy="120.2" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>W3 (fitted), in-sample M - P4 = +4.57e-05</title></g>
+<circle cx="648.7" cy="95.0" r="5" fill="none" stroke="#2a78d6" stroke-width="1.5"><title>W3 (fitted), leave-one-out M - P4 = +7.53e-05</title></circle>
+<g><polygon points="175.9,159.2 182.4,165.7 175.9,172.2 169.4,165.7" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>C1 (fitted), in-sample M - P4 = -7.87e-06</title></g>
+<circle cx="175.9" cy="166.1" r="5" fill="none" stroke="#eb6834" stroke-width="1.5"><title>C1 (fitted), leave-one-out M - P4 = -8.41e-06</title></circle>
+<g><polygon points="446.0,175.1 452.5,181.6 446.0,188.1 439.5,181.6" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>C2 (fitted), in-sample M - P4 = -2.65e-05</title></g>
+<circle cx="446.0" cy="185.9" r="5" fill="none" stroke="#eb6834" stroke-width="1.5"><title>C2 (fitted), leave-one-out M - P4 = -3.16e-05</title></circle>
+<g><polygon points="647.2,185.9 653.7,192.4 647.2,198.9 640.7,192.4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>C3 (fitted), in-sample M - P4 = -3.93e-05</title></g>
+<circle cx="647.2" cy="207.6" r="5" fill="none" stroke="#eb6834" stroke-width="1.5"><title>C3 (fitted), leave-one-out M - P4 = -5.72e-05</title></circle>
+<circle cx="176.0" cy="159.4" r="8" fill="#1baf7a" stroke="#0b0b0b" stroke-width="1.5"><title>N1 (new): gamma_1 0.01199, M - P4 = -4.77e-07</title></circle>
+<circle cx="445.9" cy="160.8" r="8" fill="#1baf7a" stroke="#0b0b0b" stroke-width="1.5"><title>N2 (new): gamma_1 0.04799, M - P4 = -2.15e-06</title></circle>
+<circle cx="648.6" cy="158.0" r="8" fill="#1baf7a" stroke="#0b0b0b" stroke-width="1.5"><title>N3 (new): gamma_1 0.07502, M - P4 = +1.21e-06</title></circle>
+<text x="686.0" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">new route</text>
+<circle cx="618.6" cy="60" r="4.5" fill="#1baf7a"/>
+<text x="602.6" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">route C</text>
+<circle cx="547.9" cy="60" r="4.5" fill="#eb6834"/>
+<text x="531.9" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">route W</text>
+<circle cx="477.3" cy="60" r="4.5" fill="#2a78d6"/>
+<text x="461.3" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">delta scan</text>
+<circle cx="387.5" cy="60" r="4.5" fill="#eda100"/>
+<text x="371.5" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">B</text>
+<circle cx="355.1" cy="60" r="4.5" fill="#9aa0a6"/>
+<text x="16.0" y="324.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">Where the third route sits: r_th and rdot_th at departure minus family B's at the same gamma_1</text>
+<text x="16.0" y="340.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">h = 0.005; each route's three points at gamma_1 = 0.012, 0.048, 0.075 (labelled 1, 2, 3); the new route lies near the chord of routes W and C</text>
+<line x1="216.9" y1="370.0" x2="216.9" y2="540.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="216.9" y="555.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">-2e-02</text>
+<line x1="395.0" y1="370.0" x2="395.0" y2="540.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="395.0" y="555.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">-1e-02</text>
+<line x1="573.0" y1="370.0" x2="573.0" y2="540.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="573.0" y="555.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">+0e+00</text>
+<line x1="86.0" y1="497.6" x2="686.0" y2="497.6" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="501.6" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">-1e-03</text>
+<line x1="86.0" y1="433.7" x2="686.0" y2="433.7" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="437.7" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">-5e-04</text>
+<line x1="86.0" y1="540.0" x2="686.0" y2="540.0" stroke="#52514e" stroke-width="1"/>
+<line x1="86.0" y1="370.0" x2="86.0" y2="540.0" stroke="#52514e" stroke-width="1"/>
+<text x="386.0" y="574.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">r_th - family B's</text>
+<text x="29.7" y="455.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 29.7 455.0)">rdot_th - family B's</text>
+<g><circle cx="512.1" cy="395.9" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>route W1: r_th - B -3.42e-03, rdot_th - B -2.04e-04</title></g>
+<text x="520.1" y="389.9" font-size="11" fill="#52514e" text-anchor="start" font-weight="normal">W1</text>
+<g><circle cx="329.8" cy="462.7" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>route W2: r_th - B -1.37e-02, rdot_th - B -7.27e-04</title></g>
+<text x="337.8" y="456.7" font-size="11" fill="#52514e" text-anchor="start" font-weight="normal">W2</text>
+<g><circle cx="180.5" cy="506.7" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>route W3: r_th - B -2.20e-02, rdot_th - B -1.07e-03</title></g>
+<text x="188.5" y="500.7" font-size="11" fill="#52514e" text-anchor="start" font-weight="normal">W3</text>
+<g><polygon points="595.3,374.6 601.8,381.1 595.3,387.6 588.8,381.1" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>route C1: r_th - B +1.25e-03, rdot_th - B -8.77e-05</title></g>
+<text x="603.3" y="375.1" font-size="11" fill="#52514e" text-anchor="start" font-weight="normal">C1</text>
+<g><polygon points="635.0,408.5 641.5,415.0 635.0,421.5 628.5,415.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>route C2: r_th - B +3.48e-03, rdot_th - B -3.54e-04</title></g>
+<text x="643.0" y="409.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="normal">C2</text>
+<g><polygon points="640.3,435.5 646.8,442.0 640.3,448.5 633.8,442.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>route C3: r_th - B +3.78e-03, rdot_th - B -5.65e-04</title></g>
+<text x="648.3" y="436.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="normal">C3</text>
+<g><polygon points="556.7,380.5 563.2,392.5 550.2,392.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>N1: r_th - B -9.16e-04, rdot_th - B -1.34e-04</title></g>
+<text x="564.7" y="381.0" font-size="11" fill="#52514e" text-anchor="start" font-weight="normal">N1</text>
+<g><polygon points="499.8,424.6 506.3,436.6 493.3,436.6" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>N2: r_th - B -4.11e-03, rdot_th - B -4.79e-04</title></g>
+<text x="507.8" y="425.1" font-size="11" fill="#52514e" text-anchor="start" font-weight="normal">N2</text>
+<g><polygon points="446.0,453.4 452.5,465.4 439.5,465.4" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>N3: r_th - B -7.13e-03, rdot_th - B -7.05e-04</title></g>
+<text x="454.0" y="453.9" font-size="11" fill="#52514e" text-anchor="start" font-weight="normal">N3</text>
+<line x1="512.1" y1="395.9" x2="595.3" y2="381.1" stroke="#c8ccd0" stroke-width="1"/>
+<line x1="329.8" y1="462.7" x2="635.0" y2="415.0" stroke="#c8ccd0" stroke-width="1"/>
+<line x1="180.5" y1="506.7" x2="640.3" y2="442.0" stroke="#c8ccd0" stroke-width="1"/>
+<text x="686.0" y="360.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">new route</text>
+<circle cx="618.6" cy="356" r="4.5" fill="#1baf7a"/>
+<text x="602.6" y="360.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">route C</text>
+<circle cx="547.9" cy="356" r="4.5" fill="#eb6834"/>
+<text x="531.9" y="360.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">route W</text>
+<circle cx="477.3" cy="356" r="4.5" fill="#2a78d6"/>
+<text x="16.0" y="640.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">Apple M5, 32 GB, macOS 27.0.1</text>
+<text x="16.0" y="626.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">settled_mass_route3.py at negative-mass f058afd  ·  chain: #41 via #253  ·  member: #225 via #266  ·  speed: #267, #255  ·  refit: #295, frozen before the runs</text>
+<text x="16.0" y="610.0" font-size="10" fill="#c98500" text-anchor="start" font-weight="normal">⚠</text>
+<text x="30.0" y="610.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">the frozen refit's largest leave-one-out error is 7.9e-05; the new members' largest residual is 2.2e-06</text>
+<a href="https://github.com/nmoinvaz/negative-mass"><text x="744" y="640" font-size="10" fill="#52514e" text-anchor="end" text-decoration="underline">github.com/nmoinvaz/negative-mass</text></a>
+</svg>
