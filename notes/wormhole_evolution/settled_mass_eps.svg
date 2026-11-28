@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="756" viewBox="0 0 760 756" font-family="system-ui, sans-serif">
+<style>@media (prefers-color-scheme: dark){[fill="#fcfcfb"]{fill:#201f1d}[stroke="#fcfcfb"]{stroke:#201f1d}[fill="#0b0b0b"]{fill:#e8e6e3}[stroke="#0b0b0b"]{stroke:#e8e6e3}[fill="#52514e"]{fill:#a8a49d}[stroke="#52514e"]{stroke:#a8a49d}[fill="#e7e6e2"]{fill:#343230}[stroke="#e7e6e2"]{stroke:#343230}[fill="#c98500"]{fill:#d69a2d}[stroke="#c98500"]{stroke:#d69a2d}[fill="#eb6834"]{fill:#dd5c26}[stroke="#eb6834"]{stroke:#dd5c26}[fill="#eda100"]{fill:#c08800}[stroke="#eda100"]{stroke:#c08800}[fill="#e87ba4"]{fill:#d1678f}[stroke="#e87ba4"]{stroke:#d1678f}[fill="#4a3aa7"]{fill:#7263cf}[stroke="#4a3aa7"]{stroke:#7263cf}[fill="#a6339a"]{fill:#c257b5}[stroke="#a6339a"]{stroke:#c257b5}[fill="#7a7668"]{fill:#948e82}[stroke="#7a7668"]{stroke:#948e82}}</style>
+<rect width="760" height="756" fill="#fcfcfb"/>
+<text x="16.0" y="28.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">Largest miss of the refit against the departure threshold eps</text>
+<text x="16.0" y="44.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">h = 0.005; T1: refit over the nine, predict the six; T2: fifteen, predict the three; V3: B = 0's reading at the same eps subtracted</text>
+<line x1="129.4" y1="74.0" x2="129.4" y2="294.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="129.4" y="309.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.001</text>
+<line x1="213.7" y1="74.0" x2="213.7" y2="294.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="213.7" y="309.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.002</text>
+<line x1="325.1" y1="74.0" x2="325.1" y2="294.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="325.1" y="309.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.005</text>
+<line x1="409.4" y1="74.0" x2="409.4" y2="294.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="409.4" y="309.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.01</text>
+<line x1="493.7" y1="74.0" x2="493.7" y2="294.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="493.7" y="309.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.02</text>
+<line x1="605.1" y1="74.0" x2="605.1" y2="294.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="605.1" y="309.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.05</text>
+<line x1="86.0" y1="294.0" x2="646.0" y2="294.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="298.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-06</text>
+<line x1="86.0" y1="271.9" x2="646.0" y2="271.9" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="275.9" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">2e-06</text>
+<line x1="86.0" y1="242.7" x2="646.0" y2="242.7" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="246.7" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">5e-06</text>
+<line x1="86.0" y1="220.7" x2="646.0" y2="220.7" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="224.7" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-05</text>
+<line x1="86.0" y1="198.6" x2="646.0" y2="198.6" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="202.6" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">2e-05</text>
+<line x1="86.0" y1="169.4" x2="646.0" y2="169.4" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="173.4" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">5e-05</text>
+<line x1="86.0" y1="147.3" x2="646.0" y2="147.3" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="151.3" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-04</text>
+<line x1="86.0" y1="125.3" x2="646.0" y2="125.3" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="129.3" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">2e-04</text>
+<line x1="86.0" y1="96.1" x2="646.0" y2="96.1" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="100.1" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">5e-04</text>
+<line x1="86.0" y1="74.0" x2="646.0" y2="74.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="78.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-03</text>
+<line x1="86.0" y1="294.0" x2="646.0" y2="294.0" stroke="#52514e" stroke-width="1"/>
+<line x1="86.0" y1="74.0" x2="86.0" y2="294.0" stroke="#52514e" stroke-width="1"/>
+<text x="366.0" y="328.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">departure threshold eps (|odd| / r_tuned)</text>
+<text x="36.1" y="184.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 36.1 184.0)">max |M - predicted|</text>
+<line x1="86" y1="163.6" x2="646" y2="163.6" stroke="#0b0b0b" stroke-width="1" stroke-dasharray="5 4"/>
+<text x="94.0" y="178.6" font-size="11" fill="#0b0b0b" text-anchor="start" font-weight="normal">bar 6e-5</text>
+<line x1="129.4" y1="157.7" x2="213.7" y2="157.9" stroke="#2a78d6" stroke-width="1.5"/>
+<line x1="213.7" y1="157.9" x2="325.1" y2="155.9" stroke="#2a78d6" stroke-width="1.5"/>
+<line x1="325.1" y1="155.9" x2="409.4" y2="139.1" stroke="#2a78d6" stroke-width="1.5"/>
+<line x1="409.4" y1="139.1" x2="493.7" y2="105.7" stroke="#2a78d6" stroke-width="1.5"/>
+<line x1="493.7" y1="105.7" x2="605.1" y2="111.6" stroke="#2a78d6" stroke-width="1.5"/>
+<g><circle cx="129.4" cy="157.7" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>T1 (fixed) at eps = 0.001: max |M - predicted| = 7.22e-05</title></g>
+<g><circle cx="213.7" cy="157.9" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>T1 (fixed) at eps = 0.002: max |M - predicted| = 7.19e-05</title></g>
+<g><circle cx="325.1" cy="155.9" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>T1 (fixed) at eps = 0.005: max |M - predicted| = 7.63e-05</title></g>
+<g><circle cx="409.4" cy="139.1" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>T1 (fixed) at eps = 0.01: max |M - predicted| = 1.29e-04</title></g>
+<g><circle cx="493.7" cy="105.7" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>T1 (fixed) at eps = 0.02: max |M - predicted| = 3.69e-04</title></g>
+<g><circle cx="605.1" cy="111.6" r="5.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>T1 (fixed) at eps = 0.05: max |M - predicted| = 3.07e-04</title></g>
+<line x1="129.4" y1="269.6" x2="213.7" y2="244.5" stroke="#eb6834" stroke-width="1.5"/>
+<line x1="213.7" y1="244.5" x2="325.1" y2="190.9" stroke="#eb6834" stroke-width="1.5"/>
+<line x1="325.1" y1="190.9" x2="409.4" y2="149.5" stroke="#eb6834" stroke-width="1.5"/>
+<line x1="409.4" y1="149.5" x2="493.7" y2="123.6" stroke="#eb6834" stroke-width="1.5"/>
+<line x1="493.7" y1="123.6" x2="605.1" y2="124.2" stroke="#eb6834" stroke-width="1.5"/>
+<g><circle cx="129.4" cy="269.6" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>T2 (fixed) at eps = 0.001: max |M - predicted| = 2.15e-06</title></g>
+<g><circle cx="213.7" cy="244.5" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>T2 (fixed) at eps = 0.002: max |M - predicted| = 4.73e-06</title></g>
+<g><circle cx="325.1" cy="190.9" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>T2 (fixed) at eps = 0.005: max |M - predicted| = 2.54e-05</title></g>
+<g><circle cx="409.4" cy="149.5" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>T2 (fixed) at eps = 0.01: max |M - predicted| = 9.34e-05</title></g>
+<g><circle cx="493.7" cy="123.6" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>T2 (fixed) at eps = 0.02: max |M - predicted| = 2.11e-04</title></g>
+<g><circle cx="605.1" cy="124.2" r="5.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>T2 (fixed) at eps = 0.05: max |M - predicted| = 2.07e-04</title></g>
+<line x1="129.4" y1="157.8" x2="213.7" y2="158.2" stroke="#2a78d6" stroke-width="1.5"/>
+<line x1="213.7" y1="158.2" x2="325.1" y2="156.4" stroke="#2a78d6" stroke-width="1.5"/>
+<line x1="325.1" y1="156.4" x2="409.4" y2="155.4" stroke="#2a78d6" stroke-width="1.5"/>
+<line x1="409.4" y1="155.4" x2="493.7" y2="109.5" stroke="#2a78d6" stroke-width="1.5"/>
+<line x1="493.7" y1="109.5" x2="605.1" y2="107.4" stroke="#2a78d6" stroke-width="1.5"/>
+<g><polygon points="129.4,151.3 135.9,157.8 129.4,164.3 122.9,157.8" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>T1 (V3) at eps = 0.001: max |M - predicted| = 7.20e-05</title></g>
+<g><polygon points="213.7,151.7 220.2,158.2 213.7,164.7 207.2,158.2" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>T1 (V3) at eps = 0.002: max |M - predicted| = 7.11e-05</title></g>
+<g><polygon points="325.1,149.9 331.6,156.4 325.1,162.9 318.6,156.4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>T1 (V3) at eps = 0.005: max |M - predicted| = 7.53e-05</title></g>
+<g><polygon points="409.4,148.9 415.9,155.4 409.4,161.9 402.9,155.4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>T1 (V3) at eps = 0.01: max |M - predicted| = 7.76e-05</title></g>
+<g><polygon points="493.7,103.0 500.2,109.5 493.7,116.0 487.2,109.5" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>T1 (V3) at eps = 0.02: max |M - predicted| = 3.28e-04</title></g>
+<g><polygon points="605.1,100.9 611.6,107.4 605.1,113.9 598.6,107.4" fill="#2a78d6" stroke="#fcfcfb" stroke-width="2"/><title>T1 (V3) at eps = 0.05: max |M - predicted| = 3.50e-04</title></g>
+<line x1="129.4" y1="274.3" x2="213.7" y2="253.5" stroke="#eb6834" stroke-width="1.5"/>
+<line x1="213.7" y1="253.5" x2="325.1" y2="232.0" stroke="#eb6834" stroke-width="1.5"/>
+<line x1="325.1" y1="232.0" x2="409.4" y2="179.5" stroke="#eb6834" stroke-width="1.5"/>
+<line x1="409.4" y1="179.5" x2="493.7" y2="137.1" stroke="#eb6834" stroke-width="1.5"/>
+<line x1="493.7" y1="137.1" x2="605.1" y2="123.4" stroke="#eb6834" stroke-width="1.5"/>
+<g><polygon points="129.4,267.8 135.9,274.3 129.4,280.8 122.9,274.3" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>T2 (V3) at eps = 0.001: max |M - predicted| = 1.86e-06</title></g>
+<g><polygon points="213.7,247.0 220.2,253.5 213.7,260.0 207.2,253.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>T2 (V3) at eps = 0.002: max |M - predicted| = 3.56e-06</title></g>
+<g><polygon points="325.1,225.5 331.6,232.0 325.1,238.5 318.6,232.0" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>T2 (V3) at eps = 0.005: max |M - predicted| = 7.01e-06</title></g>
+<g><polygon points="409.4,173.0 415.9,179.5 409.4,186.0 402.9,179.5" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>T2 (V3) at eps = 0.01: max |M - predicted| = 3.65e-05</title></g>
+<g><polygon points="493.7,130.6 500.2,137.1 493.7,143.6 487.2,137.1" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>T2 (V3) at eps = 0.02: max |M - predicted| = 1.38e-04</title></g>
+<g><polygon points="605.1,116.9 611.6,123.4 605.1,129.9 598.6,123.4" fill="#eb6834" stroke="#fcfcfb" stroke-width="2"/><title>T2 (V3) at eps = 0.05: max |M - predicted| = 2.12e-04</title></g>
+<circle cx="409.4" cy="149.5" r="10" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
+<line x1="402.9" y1="141.9" x2="375.4" y2="109.5" stroke="#0b0b0b" stroke-width="1"/>
+<text x="371.4" y="113.5" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="bold">T2 at 1e-2: 9.3e-05 (fails)</text>
+<g opacity="0.35"><line x1="664.0" y1="104.0" x2="664.0" y2="160.0" stroke="#52514e" stroke-width="2"/><polygon points="664.0,166.0 660.0,157.0 668.0,157.0" fill="#52514e"/><text x="664.0" y="128.0" font-size="11" fill="#52514e" text-anchor="middle" transform="rotate(90.0 664.0 135.0)">lower</text></g>
+<text x="646.0" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">T2, V3 (diamond)</text>
+<circle cx="533.9" cy="60" r="4.5" fill="#eb6834"/>
+<text x="517.9" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">T1, V3 (diamond)</text>
+<circle cx="405.8" cy="60" r="4.5" fill="#2a78d6"/>
+<text x="389.8" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">T2, M_0 fixed</text>
+<circle cx="296.9" cy="60" r="4.5" fill="#eb6834"/>
+<text x="280.9" y="64.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">T1, M_0 fixed</text>
+<circle cx="188.0" cy="60" r="4.5" fill="#2a78d6"/>
+<text x="16.0" y="378.0" font-size="12" fill="#0b0b0b" text-anchor="start" font-weight="normal">The symmetric member B = 0 read at eps: r_th - 1 and rdot_th should be 0 (static member)</text>
+<text x="16.0" y="394.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">h = 0.005; the reading is the pair's mean profile; dotted: slope 2 in eps (the second-order part of the unstable mode)</text>
+<line x1="129.4" y1="424.0" x2="129.4" y2="644.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="129.4" y="659.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.001</text>
+<line x1="213.7" y1="424.0" x2="213.7" y2="644.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="213.7" y="659.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.002</text>
+<line x1="325.1" y1="424.0" x2="325.1" y2="644.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="325.1" y="659.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.005</text>
+<line x1="409.4" y1="424.0" x2="409.4" y2="644.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="409.4" y="659.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.01</text>
+<line x1="493.7" y1="424.0" x2="493.7" y2="644.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="493.7" y="659.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.02</text>
+<line x1="605.1" y1="424.0" x2="605.1" y2="644.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="605.1" y="659.0" font-size="11" fill="#52514e" text-anchor="middle" font-weight="normal" font-variant-numeric="tabular-nums">0.05</text>
+<line x1="86.0" y1="644.0" x2="646.0" y2="644.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="648.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-06</text>
+<line x1="86.0" y1="630.8" x2="646.0" y2="630.8" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="634.8" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">2e-06</text>
+<line x1="86.0" y1="613.2" x2="646.0" y2="613.2" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="617.2" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">5e-06</text>
+<line x1="86.0" y1="600.0" x2="646.0" y2="600.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="604.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-05</text>
+<line x1="86.0" y1="586.8" x2="646.0" y2="586.8" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="590.8" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">2e-05</text>
+<line x1="86.0" y1="569.2" x2="646.0" y2="569.2" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="573.2" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">5e-05</text>
+<line x1="86.0" y1="556.0" x2="646.0" y2="556.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="560.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-04</text>
+<line x1="86.0" y1="542.8" x2="646.0" y2="542.8" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="546.8" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">2e-04</text>
+<line x1="86.0" y1="525.2" x2="646.0" y2="525.2" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="529.2" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">5e-04</text>
+<line x1="86.0" y1="512.0" x2="646.0" y2="512.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="516.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-03</text>
+<line x1="86.0" y1="498.8" x2="646.0" y2="498.8" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="502.8" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">2e-03</text>
+<line x1="86.0" y1="481.2" x2="646.0" y2="481.2" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="485.2" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">5e-03</text>
+<line x1="86.0" y1="468.0" x2="646.0" y2="468.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="472.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-02</text>
+<line x1="86.0" y1="454.8" x2="646.0" y2="454.8" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="458.8" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">2e-02</text>
+<line x1="86.0" y1="437.2" x2="646.0" y2="437.2" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="441.2" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">5e-02</text>
+<line x1="86.0" y1="424.0" x2="646.0" y2="424.0" stroke="#e7e6e2" stroke-width="1"/>
+<text x="80.0" y="428.0" font-size="11" fill="#52514e" text-anchor="end" font-weight="normal" font-variant-numeric="tabular-nums">1e-01</text>
+<line x1="86.0" y1="644.0" x2="646.0" y2="644.0" stroke="#52514e" stroke-width="1"/>
+<line x1="86.0" y1="424.0" x2="86.0" y2="644.0" stroke="#52514e" stroke-width="1"/>
+<text x="366.0" y="678.0" font-size="12" fill="#0b0b0b" text-anchor="middle" font-weight="normal">departure threshold eps (|odd| / r_tuned)</text>
+<text x="36.1" y="534.0" font-size="12" fill="#0b0b0b" text-anchor="middle" transform="rotate(-90 36.1 534.0)">magnitude at B = 0</text>
+<g><circle cx="129.4" cy="636.3" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>B = 0 |r_th - 1| at eps = 0.001: 1.496e-06 (1.50 eps^2)</title></g>
+<g><circle cx="213.7" cy="611.7" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>B = 0 |r_th - 1| at eps = 0.002: 5.432e-06 (1.36 eps^2)</title></g>
+<g><circle cx="325.1" cy="575.9" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>B = 0 |r_th - 1| at eps = 0.005: 3.527e-05 (1.41 eps^2)</title></g>
+<g><circle cx="409.4" cy="549.4" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>B = 0 |r_th - 1| at eps = 0.01: 1.412e-04 (1.41 eps^2)</title></g>
+<g><circle cx="493.7" cy="523.5" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>B = 0 |r_th - 1| at eps = 0.02: 5.468e-04 (1.37 eps^2)</title></g>
+<g><circle cx="605.1" cy="488.7" r="5.5" fill="#1baf7a" stroke="#fcfcfb" stroke-width="2"/><title>B = 0 |r_th - 1| at eps = 0.05: 3.378e-03 (1.35 eps^2)</title></g>
+<line x1="86.0" y1="651.1" x2="646.0" y2="475.1" stroke="#1baf7a" stroke-width="1" stroke-dasharray="2 3"/>
+<g><rect x="123.9" y="615.9" width="11.0" height="11.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>B = 0 |rdot_th| at eps = 0.001: 3.261e-06 (3.26 eps^2)</title></g>
+<g><rect x="208.2" y="589.5" width="11.0" height="11.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>B = 0 |rdot_th| at eps = 0.002: 1.296e-05 (3.24 eps^2)</title></g>
+<g><rect x="319.6" y="554.5" width="11.0" height="11.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>B = 0 |rdot_th| at eps = 0.005: 8.097e-05 (3.24 eps^2)</title></g>
+<g><rect x="403.9" y="528.0" width="11.0" height="11.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>B = 0 |rdot_th| at eps = 0.01: 3.240e-04 (3.24 eps^2)</title></g>
+<g><rect x="488.2" y="501.5" width="11.0" height="11.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>B = 0 |rdot_th| at eps = 0.02: 1.296e-03 (3.24 eps^2)</title></g>
+<g><rect x="599.6" y="466.5" width="11.0" height="11.0" fill="#eda100" stroke="#fcfcfb" stroke-width="2"/><title>B = 0 |rdot_th| at eps = 0.05: 8.121e-03 (3.25 eps^2)</title></g>
+<line x1="86.0" y1="635.2" x2="646.0" y2="459.2" stroke="#eda100" stroke-width="1" stroke-dasharray="2 3"/>
+<circle cx="409.4" cy="533.5" r="10" fill="none" stroke="#0b0b0b" stroke-width="1.5"/>
+<line x1="403.0" y1="525.9" x2="379.4" y2="497.5" stroke="#0b0b0b" stroke-width="1"/>
+<text x="375.4" y="501.5" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="bold">rdot_th = -3.24e-04 at 1e-2</text>
+<text x="646.0" y="414.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">|rdot_th| (3.24 eps^2)</text>
+<circle cx="495.6" cy="410" r="4.5" fill="#eda100"/>
+<text x="479.6" y="414.0" font-size="11" fill="#0b0b0b" text-anchor="end" font-weight="normal">|r_th - 1| (1.4 eps^2)</text>
+<circle cx="329.3" cy="410" r="4.5" fill="#1baf7a"/>
+<text x="16.0" y="744.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">Apple M5, 32 GB, macOS 27.0.1</text>
+<text x="16.0" y="730.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">settled_mass_eps.py at negative-mass 97a41f4  ·  chain: #41 via #253  ·  member: #225 via #266  ·  speed: #267, #255  ·  stored runs of #266, #267, #283, #295</text>
+<text x="16.0" y="714.0" font-size="10" fill="#c98500" text-anchor="start" font-weight="normal">⚠</text>
+<text x="30.0" y="714.0" font-size="10" fill="#52514e" text-anchor="start" font-weight="normal">T1 already exceeds the bar at eps = 1e-3 (7.2e-5 at W3, as #283's P3); V3 and the eps scan are post hoc, declared before the test points were read</text>
+<a href="https://github.com/nmoinvaz/negative-mass"><text x="744" y="744" font-size="10" fill="#52514e" text-anchor="end" text-decoration="underline">github.com/nmoinvaz/negative-mass</text></a>
+</svg>
