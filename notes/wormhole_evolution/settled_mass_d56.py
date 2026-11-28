@@ -318,7 +318,10 @@ def flux_planted():
 # runs: stored, or fresh under a mutation
 # --------------------------------------------------------------------------------------------------------------------
 def pstar_json(raw, n, fam, k):
-    return json.load(open(os.path.join(raw, "runs", f"pstar_D{n + 2}_{fam}_k{k}.json")))
+    pj = json.load(open(os.path.join(raw, "runs", f"pstar_D{n + 2}_{fam}_k{k}.json")))
+    if mut("pstar_shift"):
+        pj["ps"] += 3e-10
+    return pj
 
 
 RUN_MUTS = ("mass_exponent", "finder_sign", "hm_swap", "interp_shift", "no_zoom", "short_limit", "pstar_off", "theta_coef", "rcut_off", "col_shift", "delta_swap", "family_B", "trk_shift")
@@ -375,8 +378,12 @@ def planted_checks(log=print, ns=NS, cases=None):
             if cases is not None and (n, c["name"]) not in cases:
                 continue
             eM, st, Fend = [], [], []
-            for h in hs:
-                out, e = tang_planted(n, h, c["lam"], c["kp"], c["xh"], nc_of(h), K=K)
+            try:
+                runs_ = [tang_planted(n, h, c["lam"], c["kp"], c["xh"], nc_of(h), K=K) for h in hs]
+            except Exception as ex:
+                check(f"PT1-{n + 2}{c['name']}", f"exact Tangherlini D = {n + 2} ({c['name']}-like) through the chain", False, "failed: " + repr(ex))
+                continue
+            for h, (out, e) in zip(hs, runs_):
                 s = out["ser"]
                 eM.append(float(np.max(e["e_M"])))
                 st.append(out["status"])
